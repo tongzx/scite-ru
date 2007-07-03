@@ -1,0 +1,422 @@
+Abs (number)
+Array (arglist)
+Asc (string)
+Atn (number)
+CBool (expression)
+CByte (expression)
+CCur (expression)
+CDate (date)
+CDbl (expression)
+Chr (charcode)
+CInt (expression)
+CLng (expression)
+Cos (number)
+CSng (expression)
+CStr (expression)
+DateAdd (interval,number,date)
+DateDiff (interval,date1,date2,firstdayofweek[],firstweekofyear[])
+DatePart (interval,date,firstdayofweek[],firstweekofyear[]) 
+DateSerial (year,month,day)
+DateValue (date)
+Day (date)
+Eval (expression)
+Exp (number)
+Filter (InputStrings,Value,Include[],Compare[])
+Fix (number)
+FormatCurrency (Expression,NumDigitsAfterDecimal[],IncludeLeadDigit[],UseParens[],GroupDigits[])
+FormatDateTime (Date,NamedFormat[])
+FormatNumber (Expression,NumDigitsAfterDecimal[],IncludeLeadDigit[],UseParens[],GroupDigits[])
+FormatPercent (Expression,NumDigitsAfterDecimal[],IncludeLeadDigit[],UseParens[],GroupDigits[])
+GetObject (pathname[],class[])
+GetRef (procname)
+Hex (number)
+Hour (time)
+InputBox (prompt,title[],default[],xpos[],helpfile[],context[])
+InStr (start[],string1,string2,compare[])
+InStrRev (string1,string2,start[],compare[])
+Int (number)
+IsArray (varname)
+IsDate (expression)
+IsEmpty (expression)
+IsNull (expression)
+IsNumeric (expression)
+IsObject (expression)
+Join (list,delimiter[])
+LBound (arrayname,dimension[])
+LCase (string)
+Left (string,length)
+Len (string|varname)
+LoadPicture (picturename)
+Log (number)
+LTrim (string)
+Mid (string,start,length[])
+Minute (time)
+Month (date)
+MonthName (month,abbreviate[])
+Oct (number)
+Replace (expression,find,replacewith,start[],count[],compare[])
+RGB (red,green,blue)
+Right (string,length)
+Rnd (number[])
+Round (expression,numdecimalplaces[])
+RTrim (string)
+Second (time)
+Sgn (number)
+Sin (number)
+Space (number)
+Split (expression,delimiter[],count,compare[])
+Sqr (number)
+StrComp (string1,string2,compare[])
+String (number,character)
+StrReverse (string1)
+Tan (number)
+TimeSerial (hour,minute,second)
+TimeValue (time)
+Trim (string)
+TypeName (varname)
+UBound (arrayname,dimension[])
+UCase (string)
+VarType (varname)
+Weekday (date,firstdayofweek[])
+WeekdayName (weekday,abbreviate,firstdayofweek)
+Year (date)
+
+If
+Then
+Else
+End
+Do
+Loop
+Sub
+Function
+MsgBox
+MsgBox (prompt,buttons[],title[],helpfile[],context[])
+MsgBox ("Message",vbCritical,"Title")
+
+Date
+Now
+ScriptEngine
+ScriptEngineBuildVersion
+ScriptEngineMajorVersion
+ScriptEngineMinorVersion
+Time
+Timer
+Terminate
+Status
+
+StdIn.AtEndOfLine
+StdIn.AtEndOfStream
+StdIn.Column
+StdIn.Line
+StdIn.Close
+StdIn.Read
+Read (characters)
+StdIn.ReadAll
+StdIn.ReadLine
+StdIn.Skip
+Skip (characters)
+StdIn.SkipLine
+StdIn.Write
+Write (string)
+StdIn.WriteLine
+WriteLine ([string])
+StdIn.WriteBlankLines
+WriteBlankLines (lines)
+StdOut.AtEndOfLine
+StdOut.AtEndOfStream
+StdOut.Column
+StdOut.Line
+StdOut.Close
+StdOut.Read
+Read (characters)
+StdOut.ReadAll
+StdOut.ReadLine
+StdOut.Skip
+Skip (characters)
+StdOut.SkipLine
+StdOut.Write
+Write (string)
+StdOut.WriteLine
+WriteLine ([string])
+StdOut.WriteBlankLines
+WriteBlankLines (lines)
+StdErr.AtEndOfLine
+StdErr.AtEndOfStream
+StdErr.Column
+StdErr.Line
+StdErr.Close
+StdErr.Read
+Read (characters)
+StdErr.ReadAll
+StdErr.ReadLine
+StdErr.Skip
+Skip (characters)
+StdErr.SkipLine
+StdErr.Write
+Write (string)
+StdErr.WriteLine
+WriteLine ([string])
+StdErr.WriteBlankLines
+WriteBlankLines (lines)
+
+Err.Description
+Err.HelpContext
+Err.HelpFile
+Err.Number
+Err.Source
+Err.Clear
+Err.Raise
+Raise (number,source,description,helpfile,helpcontext)
+
+WScript.Application
+WScript.Arguments
+WScript.FullName
+WScript.Name
+WScript.Path
+WScript.ScriptFullName
+WScript.ScriptName
+WScript.StdErr
+WScript.StdIn
+WScript.StdOut
+WScript.Version
+WScript.ConnectObject
+ConnectObject (strObject,strPrefix)
+WScript.CreateObject
+CreateObject (servername.typename,location[])
+CreateObject (strProgID,strPrefix[])
+CreateObject ("WScript.Shell")
+InternetExplorer.Application
+Scripting.FileSystemObject
+WScript.DisconnectObject
+DisconnectObject (object)
+WScript.Echo
+Echo (Echostring)
+WScript.GetObject
+GetObject (strPathname,strProgId[],strPrefix[])
+WScript.Quit
+Quit (intErrorCode[])
+WScript.Sleep
+Sleep (intTime)
+
+Arguments.Item
+Arguments.Count
+Arguments.Length
+
+WScript.Shell
+WshShell.Environment
+Environment (strType[])
+WshShell.SpecialFolders
+SpecialFolders (strFolder)
+WshShell.AppActivate
+AppActivate (title)
+WshShell.CreateShortcut
+CreateShortcut (strPathName)
+WshShell.Exec
+Exec (strCommand)
+Exec ("calc.exe")
+WshShell.ExpandEnvironmentStrings
+ExpandEnvironmentStrings (strString)
+WshShell.LogEvent
+LogEvent (intType,strMessage,strTarget[])
+WshShell.Popup
+Popup (strtext,[natSecondstoWait],[strTitle],[natType])
+Popup ("Message",0,"Title",vbInformation+vbOKOnly)
+WshShell.RegDelete
+RegDelete (strName)
+WshShell.RegRead
+RegRead (strname)
+WshShell.RegWrite
+RegWrite (strname,anyvalue,[strType])
+WshShell.Run
+Run (strCommand,[intWindowType],[bWaitOnReturn])
+Run ("notepad.exe",1,true)
+WshShell.SendKeys
+SendKeys (string)
+
+SpecialFolders.Item
+Item (nIndex)
+SpecialFolders.Count
+SpecialFolders.length
+
+WScript.Network
+Network.ComputerName
+Network.UserDomain
+Network.UserName
+Network.AddPrinterConnection
+AddPrinterConnection (strLocalName,strRemoteName,[bUpdateProfile],[strUser],[strPassword])
+Network.AddWindowsPrinterConnection
+AddWindowsPrinterConnection (strPrinterPath,strDriverName[,strPort])
+Network.MapNetworkDrive
+MapNetworkDrive (strLocalName,strRemoteName,[bUpdateProfile],[strUser],[strPassword])
+Network.RemoveNetworkDrive
+RemoveNetworkDrive (strName,[bForce],[bUpdateProfile])
+Network.RemovePrinterConnection
+RemovePrinterConnection (strName,[bForce],[bUpdateProfile])
+Network.SetDefaultPrinter
+SetDefaultPrinter (strPrinterName)
+Network.EnumNetworkDrives
+EnumNetworkDrives.Item
+EnumNetworkDrives.Count
+EnumNetworkDrives.length
+Network.EnumPrinterConnections
+EnumPrinterConnections.Item
+EnumPrinterConnections.Count
+EnumPrinterConnections.length
+
+Environment.Item
+Environment.Count
+Environment.length
+Environment.Remove
+Remove (strName)
+
+Shortcut.Arguments
+Shortcut.Description
+Shortcut.FullName
+Shortcut.Hotkey
+Shortcut.IconLocation
+Shortcut.TargetPath
+Shortcut.WindowStyle
+Shortcut.WorkingDirectory
+Shortcut.Save
+
+Dictionary.CompareMode
+Dictionary.Count
+Dictionary.Item
+Dictionary.Key
+Dictionary.Add
+Add (key,item)
+Dictionary.Exists
+Exists (key)
+Dictionary.Items
+Dictionary.Keys
+Dictionary.Remove (key)
+Remove (key)
+Dictionary.RemoveAll
+
+fso.Drives
+fso.BuildPath
+BuildPath (path,name)
+fso.CopyFile
+CopyFile (source,destination,[overwrite])
+fso.CopyFolder
+CopyFolder (source,destination,[overwrite])
+fso.CreateFolder
+CreateFolder (foldername)
+fso.CreateTextFile
+CreateTextFile (filename,[overwrite,[unicode]])
+CreateTextFile ("c:\testfile.txt",true)
+fso.DeleteFile
+DeleteFile (filespec,[force])
+fso.DeleteFolder
+DeleteFolder (folderspec,[force])
+fso.DriveExists
+DriveExists (drivespec)
+fso.FileExists
+FileExists (filespec)
+fso.FolderExists
+FolderExists (folderspec)
+fso.GetAbsolutePathName
+GetAbsolutePathName (pathspec)
+fso.GetBaseName
+GetBaseName (path)
+fso.GetDrive
+GetDrive (drivespec)
+fso.GetDriveName
+GetDriveName (path)
+fso.GetExtensionName
+GetExtensionName (path)
+fso.GetFile
+GetFile (filespec)
+fso.GetFileName
+GetFileName (pathspec)
+fso.GetFolder
+GetFolder (folderspec)
+fso.GetParentFolderName
+GetParentFolderName (path)
+fso.GetSpecialFolder
+GetSpecialFolder (folderspec)
+fso.GetTempName
+fso.MoveFile
+MoveFile (source,destination)
+fso.MoveFolder
+MoveFolder (source,destination)
+fso.OpenTextFile
+OpenTextFile (filename,[iomode,[create,[format]]])
+OpenTextFile ("c:\testfile.txt",ForAppending,true)
+
+Drive.AvailableS
+Drive.DriveLette
+Drive.DriveType
+Drive.FileSystem
+Drive.FreeSpace
+Drive.IsReady
+Drive.Path
+Drive.RootFolder
+Drive.SerialNumb
+Drive.ShareName
+Drive.TotalSize
+Drive.VolumeName
+Drive.Drives
+Drives.Count
+Drives.Item
+
+file.Attributes
+file.DateCreated
+file.DateLastAccessed
+file.DateLastModified
+file.Drive
+file.Name
+file.ParentFolder
+file.Path
+file.ShortName
+file.ShortPath
+file.Size
+file.Type
+file.Copy
+Copy (destination,[overwrite])
+file.Delete
+Delete (force)
+file.Move
+Move (destination)
+file.OpenAsTextStream
+OpenAsTextStream ([iomode],[format])
+file.SubFolders
+
+file.AtEndOfLine
+file.AtEndOfStream
+file.Column
+file.Line
+file.Close
+file.Read
+file.ReadAll
+file.ReadLine
+file.Skip
+file.SkipLine
+file.Write
+file.WriteLine
+file.WriteBlankLines
+
+file.Files
+Files.Count
+Files.Item
+
+file.SubFolders
+SubFolders.Count
+SubFolders.Item
+SubFolders.Add
+Add (foldername)
+
+SciTE.About
+SciTE.GetSelText = String\n Get selected text
+SciTE.GetText = String\n Get all text in document
+SciTE.Height = Value
+SciTE.Left = Value
+SciTE.Top = Value
+SciTE.Width = Value
+SciTE.LUA (Command) = Result\n run command use SciTE Lua Scripting Extension
+SciTE.MenuCommand (IDM_Command)\n run specifed menu command
+SciTE.OnTop (WindowName, true|false)\n Set OnTop specifed window
+SciTE.Props (Key) = Value\n Return or set the value of a property
+SciTE.ReplaceSel (ReplaceText)\n Replace selected text
+SciTE.Send (String) = Result\n run String command SciTE Director Interface
+SciTE.Trace (String)\n in SciTE, writes String to the output pane (no prefix, no newlines)

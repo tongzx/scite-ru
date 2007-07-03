@@ -1,0 +1,313 @@
+==================
+SciTE v.1.73 .38Ru
+==================
+[TabbarTitleMaxLength] (Author: VladVRO)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    New property (in file .properties)
+    tabbar.title.maxlength=number
+    Накладывает ограничение на длину надписи (имя файла) в табе. Если имя файла длиннее, то оно будет урезано с пометкой "…"
+
+
+==================
+SciTE v.1.73 .37Ru
+==================
+[NewIcons] (Author: VladVRO)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    New icons for the files associated with SciTE and for sessions files.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[StyleDefault] (Author: VladVRO)
+    Removed default colors of symbols and background. That allows not to set all values for all styles for getting corresponding background when exporting file.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[BookmarksWithSession] (Author: dB6)
+    While saving session SciTE also saves list of bookmarks in session file for every file.
+    Bookmarks are saved in next format:
+    <pos=1 bm=12,142,300> C:\Some\Path\To\File.ext
+    "bm=" and numbers of strings marked with bookmarks separated by comma.
+    The length of string can't exceed 110 symbols. Bookmarks which doesn't meet the lenght of string (110) are being cut off.
+    While loading saved session SciTE loads list of bookmarks from session file. The same operation performs for every file.
+    Reads line limited by 110 symbols, other symbols are cut off.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[FileAttr] (Author: mimir, Midas)
+    Modified functions in LUA Extension:
+    - os.getfileattr(<FileName>) - return File Attribute as number;
+    - os.setfileattr(<FileName>, <FileAttr>) - Set File Attribute;
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[os.run] (Автор: mimir)
+    Added new LUA command os.run(Command, [WindowStyle], [WaitOnReturn]) which allows to set windows appearance of started external command and pause script execution for time of command execution and get return code.
+    Similar command os.exec(<Cmd>, <WindowStyle>) was removed as not wanted.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[TabsMoving] (Author: VladVRO)
+    Two new commands IDM_MOVETABLEFT and IDM_MOVETABRIGHT use to move buffer tab.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[SubMenu] (Author: HSolo)
+    Fixed error at which SciTE crash at excess of some number of items of menu Tools (Author: VladVRO)
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[selection.hide.on.deactivate] (Author: mozers)
+    The parameter selection.hide.on.deactivate=0 allows to not hide selection from the text when window SciTE loses focus.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ToolbarButtons] (Author: mozers, dB6)
+    Add on a toolbar buttons for recording / play of macro
+
+
+==================
+SciTE v.1.72 .36Ru
+==================
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ParametersDialogFromLua] (Author: VladVRO)
+    Add new function in LUA Extension for show "Parameters" dialog (Shift+F8)
+    scite.ShowParametersDialog(text)
+        text - short comment for window.
+        Return false if the user has refused (has pressed a Cancel or Escape) differently true.
+Sample:
+    function Dialog()
+        props["1"]=props["CurrentSelection"]
+        props["2"]=props["SciteDefaultHome"]
+        if scite.ShowParametersDialog("Please set params") then
+        print ("1="..props["1"].."\n2="..props["2"].."\n3="..props["3"].."\n4="..props["4"])
+        else
+            print ("Cancel")
+        end
+    end
+
+
+==================
+SciTE v.1.72 .35Ru
+==================
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[macro] (Author: VladVRO)
+    Support of record and play macro using LUA.
+    Small correction, by analogy to base functions.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[FileAttr in PROPS] (Author: Midas)
+    Now accessible from scripts additional file properties
+    FileAttr, FileTime, FileDate.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[Euphoria] (Author: Midas)
+    Add new lexer Euphoria <http://www.rapideuphoria.com>
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ToolsMax] (Author: Moon_aka_Sun, VladVRO)
+    Extended amount of line in Tools menu till 300.
+    For creation of the user commands in user.context.menu it is necessary to use the formula:
+    User command = 2000 + number of this command in menu Tools
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[MSGBOX] (Author: Midas)
+    Add new functions in LUA Extension:
+    - os.msgbox(<Text>, <Title>, <Options>) - Message Box. Return select button;
+    - os.exec(<Cmd>, <WindowStyle>) - wrapper for WinExec;
+    - os.getfileattr(<FileName>) - return File Attribute as number;
+    - os.setfileattr(<FileName>, <FileAttr>) - Set File Attribute;
+
+
+==================
+SciTE v.1.72 .34Ru
+==================
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[LowerUpperCase] (Author: Midas)
+    Correct working with national characters
+     - for Make Lower / Upper Case,
+     - for Search without match case,
+     - for Search with Regular expression
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[IncrementalSearch.AddHotkeys] (Author: Midas)
+    Add on "Incremental Search" (Ctrl+Alt+I) Hotkeys:
+     - Enter or F3 - Find Next
+     - Shift+Enter or Shift+F3 - Find Previous
+
+
+==================
+SciTE v.1.72 .28Ru
+==================
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[WarningMessage] (Author: VladVRO)
+    Now can to set up alert with warning message for each warning type: 
+    warning.findwrapped.message, warning.notfound.message, warning.wrongfile.message, warning.executeok.message, warning.executeko.message, warning.nootherbookmark.message
+
+
+==================
+SciTE v.1.72 .24Ru
+==================
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[scite.userhome] (Author: gansA, mozers)
+    Optional parameter scite.userhome let you assign path to directory $SciteUserHome for user data saving.
+    (SciTE.recent, SciTE.ses, SciTEUser.properties)
+    Possible to use in the path internal variables of SciTE (for instance: scite.userhome=$(SciteDefaultHome)\home)
+
+
+==================
+SciTE v.1.72 .23Ru
+==================
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[SubMenu] (Author: HSolo)
+    Added possibility of creation submenu in Tools menu. It can be defined in any .properties file as well as in SciTEGlobal.properties.
+    You should define menus name and id, i.e.:
+      command.submenu.name.2.*=Insert from Text
+    If it must be nested into other submenu you should pointed parent menu id:
+      command.submenu.parent.2=4
+    The commands that are located in submenu must have the line with menu id:
+      command.parent.6=2
+      command.name.6.*=Date and Time
+    If there is not the menu it placed in the root menu (Tools)
+
+
+===================================
+SciTE v.1.72 .22Ru and old versions
+===================================
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[UpdateStatusBar] (Author: VladVRO)
+   Added new function for LUA script:
+   UpdateStatusBar(bool bUpdateSlowData)
+   parameter bUpdateSlowData - optional, so you can use:
+   scite.UpdateStatusBar()
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[OnMenuCommand] (Author: VladVRO)
+    Added new SciTE event - OnMenuCommand (msg, source)
+    msg - function id (SCI_constant)
+    source - input parameter of editor's internal function MenuCommand. It can be equal to IDM_SRCWIN (350) - editor's window, or IDM_RUNWIN (351) - output window, or something else where the focus is.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[OnSendEditor] (Author: VladVRO) | Last changes: 10/29/2006
+    Added new event to SciTE - OnSendEditor (msg, wp, lp)
+    Parameters the same as SendEditor.
+    msg - function id (SCI_constant)
+    wp и lp - input parameters, wp - numeric, lp - string. according to function they can be used or not.
+    OnSendEditor called for command that available for macro recording only.
+
+    Example of letter case changing macro:
+    function OnSendEditor (msg)
+        if msg == SCI_UPPERCASE then
+            ChangeCase("U")
+        elseif msg == SCI_LOWERCASE then
+            ChangeCase("L")
+        end
+    end
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[MenuCommandString] (Author: VladVRO)
+    Added possibility to use command like that: scite.MenuCommand("IDM_COMMAND"), where "IDM_COMMAND" is the name of some constant.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[Perform] (Author: VladVRO) | Last changes: 10/29/2006
+    Added command scite.Perform() to Lua.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[Tools] (Author: mozers)
+    Slightly changed appearance of Tools menu. Now all the embedded commands are separated for user's command.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[CalltipBreaks] (Author: Mitchell Foral)
+    Long bubble helps can be carried on the next line (by adding symbol \n at appropriate line in api-file)
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[OnDoubleClick] (Author: mimir) | Last changes: 01/24/2007
+    Added parameter into standard event OnDoubleClick() - a line "CtrlAltShift", that generated according to pressed keys when you make a mouse click
+    so now you are able to write like that:
+    function OnDoubleClick(key)
+        local ctrl  = string.find(key,'Ctrl', 1)
+        if (ctrl~=nil) then ....
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[FindInFiles] (Author: dB6) | Last changes: 11/24/2006
+    Selected text inserted into FindInFiles dialog solely in the UTF-8, thus russian letter turned out unreadable.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[oem2ansi] (Author: gansA)
+    Parameter output.code.page.oem2ansi=1 turn on console output text encoding from OEM to ANSI
+    It let to edit script in win1251 codepage and see it output in console in dos866 codepage without switching codepages.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[abbrev.always.update] (Author: mimir)
+    If there is only one abbreviation file in use, without "abbrev.always.update=1" it will be renewed after Scite restart only.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[SQLcase] (Author: mimir)
+    The word "case" added into LexSQL to start folding (Author: mimir)
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[caret] (Author: mimir)
+    Added possibility to customize the width and the color of cursor for every lexer individually, i.e. like this:
+    caret.fore.$(file.patterns.cpp)=#FF0000
+    caret.width.$(file.patterns.cpp)=3
+    It is not convenient when there are different colors and backgrounds for different languages but there is only one color for cursor.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[C_Word] (Author: mimir)
+    Added 3 new classes for LexCpp's keywords (i.e. now you can set up to 4х additional vocabularies with different highlight)
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+[AbbrevFixCaretPos] (Author: VladVRO) | Last changes: 11/29/2006
+    Fixed positioning of caret in insert abbreviation action. Bug was in case when abbreviation body has one simbol '|' and in action was not selection text.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+[AbbrevExpandIncremental] (Author: VladVRO) | Last changes: 11/29/2006
+    New property (in file .properties)
+    abbrev.expand.incremental=1
+    Changing expanding method to incremental for expand abbreviation by Ctrl+B, in other words new method  to expand abbreviation is taking one char first, then two and so on 
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+[AbbrevMaxLength] (Author: VladVRO) | Last changes: 11/29/2006
+    New property (in file .properties)
+    abbrev.maximum.length=<value>
+    Set value of length limit for expand abbreviation by Ctrl+B, in other words it is the maximum length of text for comparing with abbreviations set 
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[VarAbbrev] (Author: mimir, VladVRO) | Last changes: 12/16/2006
+    It is possible to add user variables into list of abbreviation (abbrev).
+    - %SEL% - selected text
+    - %CLP% - text from clipboard
+    - %[var_name]% - value of internal variable SciTE (for example , CurrentSelection, FileNameExt, SciteDefaultHome etc.)
+    - %GUID% - unic GUID of new object (suggested by codewarlock1101)
+    For example, add that string into abbrev file:
+    <a+=<a href="%CLP%" title="|">%SEL%</a>
+    Copy string "http://scite.ruteam.ru/" to clipboard (Ctrl+C)
+    Type '<a+My Site' and select 'My Site'. Then pushing Сtrl+B - have got a completed construction:
+    <a href="http://scite.ruteam.ru/" title="|">My Site</a>
+    and caret have position of first meeting of '|'.
+
+    The same action: Type 'My Site' and select 'My Site'. Then press Ctrl+Shift+R and to choose "<a+" from a drop-down list.
+
+    New property (in file .properties)
+    abbrev.preserve.selection=1
+    allows to insert selected text without using %SEL% variable.
+    In this case selected text is inserted instead of last char '|'.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[AbbrevRefactoring] (Author: VladVRO) | Last changes: 12/16/2006
+    Using of char '|' identical for Insert Abbreviation (Ctrl+Shift+R) and for Expand Abbreviation (Сtrl+B).
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[LuaWord] (Author: mimir)
+    Lexer for LUA interpret separator ":" as well as "."
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[import] (Author: mimir)
+    It is possible to use import instruction in "*.abbrev" files.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[AutoComplete] (Author: mimir)
+    Autocomplete function takes templates from both edited text and appropriate ".api" file.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[InputErr] (Author: mimir)
+    Bug fixed in deadlock of SciTE on using command.input.
+    If user forget to select text before running script it cause deadlock.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[SelectionErr] (Author: mimir)
+    Bug fixed in text output on command.input and $(CurrentSelection) in UTF-8 code page only
+    It prevent from transfer Russian text into external script or programm.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ /// Translate by HSolo ///

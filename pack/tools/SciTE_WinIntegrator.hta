@@ -1,0 +1,240 @@
+<html><HEAD>
+<meta http-equiv=Content-Type Content="text-html; charset=Windows-1251">
+<meta http-equiv=MSThemeCompatible Content=Yes>
+<hta:application
+id=SWI
+applicationName=SciTE_Windows_Integrator
+icon=regedit.exe
+maximizeButton=no
+innerBorder=no
+scroll=no
+selection=no
+contextMenu=no
+singleinstance=yes
+version=1.3
+>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+<style type="text/css">
+	body, table {font-family:MS Sans Serif; font-size:8px; background-color:threedface; cursor:default;}
+	input,button {font-family:MS Sans Serif; font-size:8px;}
+	a {color:#000080; text-decoration:none;}
+	a:hover {color:red;}
+	fieldset{cursor:default;margin: 0px;text-align:left;padding:4px;padding-top:0px;}
+	legend{margin-bottom:2px; color:blue;}
+	label{cursor: hand; white-space:nowrap;}
+</style>
+<script language="JavaScript">
+var WshShell = new ActiveXObject("WScript.Shell");
+var ForReading = 1, ForWriting = 2, ForAppending = 8;
+var fso = new ActiveXObject("Scripting.FileSystemObject");
+var script_path = unescape(self.location.href).replace(/file:\/\/\/([a-z]:.*)\/.*?$/i,'$1').replace(/\//g,'\\');
+
+function Del_from_Tools(){
+	var filename = form.home.value + '\\SciTEGlobal.properties';
+	var file = fso.OpenTextFile(filename, 1);
+	var text = file.ReadAll();
+	text = text.replace(/(command\.name\.\d+\.\*=Windows Integration)/,'# $1');
+	file = fso.OpenTextFile(filename, 2);
+	file.Write(text);
+	file.Close();
+}
+function Set(){
+	if(form.chk_home.checked){
+		WshShell.RegWrite('HKCU\\Environment\\SCITE_HOME', form.home.value);
+	}
+	if(form.chk_associations.checked){
+		var Arr_associations = form.associations.value.split(';');
+		for (var i=0;i<Arr_associations.length;i++){
+			var ext = Arr_associations[i];
+			if (ext != ''){
+				WshShell.RegWrite('HKCR\\.'+ext+'\\', 'SciTE.File');
+			}
+		}
+		WshShell.RegWrite('HKCR\\SciTE.File\\', 'SciTE file');
+		WshShell.RegWrite('HKCR\\SciTE.File\\DefaultIcon\\', form.home.value + '\\SciTE.exe,1');
+		WshShell.RegWrite('HKCR\\SciTE.File\\shell\\open\\command\\', '"' + form.home.value + '\\SciTE.exe" "%1"');
+	}
+	if(form.openfor.checked){
+		WshShell.RegWrite('HKCR\\*\\shell\\Open with SciTE\\', 'Открыть в &SciTE');
+		WshShell.RegWrite('HKCR\\*\\shell\\Open with SciTE\\command\\', '"' + form.home.value + '\\SciTE.exe" "%1"');
+	}
+	if(form.ses.checked){
+		var open_ses_file = 'open_session.js';
+		WshShell.RegWrite('HKCR\\.session\\', 'SciTE.Session');
+		WshShell.RegWrite('HKCR\\SciTE.Session\\', 'SciTE session file');
+		WshShell.RegWrite('HKCR\\SciTE.Session\\DefaultIcon\\', form.home.value + '\\SciTE.exe,2');
+		WshShell.RegWrite('HKCR\\SciTE.Session\\shell\\open\\command\\', 'wscript "' + script_path + '\\' + open_ses_file + '" "%1"');
+		var text = 'var scite = "' + form.home.value.replace(/\\/g,'\\\\') + '\\\\SciTE.exe";\n';
+		text += 'var WshShell = new ActiveXObject("WScript.Shell");\n';
+		text += 'var filename = WScript.Arguments(0);\n';
+		text += 'var opt = \'\"-loadsession:\' + filename.replace(\/\\\\\/g,\"\\\\\\\\\") + \'\"\';\n'
+		text += 'var cmd = \'\"\' + scite + \'\" \' + opt;\nWshShell.Run(cmd, 0, false);\n\n';
+		var file = fso.OpenTextFile(script_path + '\\' + open_ses_file, 2, true);
+		file.Write(text);
+		file.Close();
+	}
+	if(form.html_def.checked){
+		WshShell.RegWrite('HKLM\\SOFTWARE\\Microsoft\\Internet Explorer\\View Source Editor\\Editor Name\\', '"' + form.home.value + '\\SciTE.exe"');
+	}
+	if(form.html.checked){
+		WshShell.RegWrite('HKCR\\.htm\\OpenWithList\\SCITE.EXE\\', '');
+		WshShell.RegWrite('HKCR\\Applications\\SCITE.EXE\\shell\\edit\\command\\', form.home.value + '\\SciTE.exe "%1"');
+		try {WshShell.RegDelete('HKCU\\Software\\Microsoft\\Internet Explorer\\Default HTML Editor\\shell\\edit\\ddeexec\\');
+		} catch(e) {};
+		WshShell.RegWrite('HKCU\\Software\\Microsoft\\Internet Explorer\\Default HTML Editor\\shell\\edit\\command\\', form.home.value + '\\SciTE.exe "%1"');
+		WshShell.RegWrite('HKCU\\Software\\Microsoft\\Internet Explorer\\Default HTML Editor\\Description', 'SciTE - a Scintilla based Text Editor');
+		WshShell.RegWrite('HKCU\\Software\\Microsoft\\Shared\\HTML\\Default Editor\\shell\\edit\\command\\', form.home.value + '\\SciTE.exe "%1"');
+	}
+	if(form.helper.checked){
+		var file_dll = form.home.value + '\\tools\\Helper\\SciTE.dll';
+		if (fso.FileExists(file_dll)){
+			WshShell.Run('Regsvr32 "' + file_dll + '"',0,false);
+		}
+	}
+	if(form.del.checked){
+		Del_from_Tools();
+	}
+	alert("Выбранные параметры успешно внесены в реестр!");
+	self.close();
+}
+function ShowPopup(p){
+	switch(p){
+		case "home":
+			text='Задает местоположение ВСЕХ файлов настроек <span class=q>*.properties<\/span>, <span class=q>SciTE.session<\/span>, <span class=q>SciTE.recent<\/span><br><br><span class=war>Если Вы установите это значение, то любой экземпляр <span class=q>SciTE.exe<\/span>, запущенный на этой машине,<br>будет искать файлы настроек не в своем каталоге, а по пути указанному в этой переменной!<\/span>';
+			break;
+		case "associations":
+			text='Позволяет открывать в SciTE файлы ассоциированных типов с помощью двойного клика мыши';
+			break;
+		case "openfor":
+			text='Позволяет открыть любой выбранный файл в SciTE';
+			break;
+		case "ses":
+			text='Позволяет открывать сохраненные ранее сессиии SciTE';
+			break;
+		case "html_def":
+			text='Выбор пункта меню Internet Explorer <span class=q>"Просмотр HTML кода"<\/span><br>откроет текущую страницу в SciTE';
+			break;
+		case "html":
+			text='На панели инструментов Internet Explorer можно установить кнопку <span class=q>"Правка".<\/span><br>Данная опция добавит в меню этой кнопки пункт <span class=q>"Править в SciTE"<\/span>';
+			break;
+		case "helper":
+			text='C помощью <span class=q>SciTE.Helper<\/span> внешние скрипты и программы<br>смогут управлять SciTE и получать из него данные';
+			break;
+		default:
+			if (oPopUp){oPopUp.hide()}
+			return;
+	}
+	var popup_html='<html><head><style>body {margin:2; background-color:white; overflow:auto; border-style: solid; border-width: 1px; border-color: #999999; font-size: 10px; font-family: MS Sans Serif, Verdana, Arial, Helvetica; white-space:nowrap} .war{color:#CC3300;} .q{color:#0033CC;}<\/style><\/head><body onmouseout=\"if ((event.clientX<0)||(event.clientY<0)) {parent.oPopUp.hide();}\">'+text+'<\/body><\/html>';
+	oPopUp=window.createPopup(); 
+	oPopUp.document.write(popup_html);
+	ev_obj=window.event.srcElement;
+	oPopUp.show(0,0,0,0,ev_obj);
+	popup_height=oPopUp.document.body.scrollHeight+2;
+	popup_width=oPopUp.document.body.scrollWidth+4;
+	oPopUp.hide();
+	setTimeout('oPopUp.show(60,-35,popup_width,popup_height,ev_obj)',600);
+}
+function About() {
+	if(top.location=='about:blank') {alert('На пустой странице не работаю!')}
+	else{
+		atr='status:no; help:no; dialogWidth:250px; dialogHeight:150px;';
+		try {dW=PrxRealModelessDialog('dialog.htm',window,atr).document}
+		catch(e) {dW=showModelessDialog('dialog.htm',window,atr).document}
+		// -----------------------------------------------------------------------------------
+		str1 = '<HTML><HEAD>\n';
+		str1 += '<title>О программе</title>\n';
+		str1 += '<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1251">\n';
+		str1 += '</HEAD><style>body {font-family:verdana; font-size:x-small; background-color:black; color:white} a{color:white; text-decoration:none;} a:hover{color:#99FFFF;}</style>\n';
+		str1 += '<center><span style="width:240; height:30; font:40px Impact; color:#0EDA05; font-weight:bold; filter:Shadow (Color=#6699CC, Direction=135")>SciTE<\/span>\n';
+		str1 += '<br><span style="position: absolute; margin-top:-28px; margin-left:-85px; font-family:Arial; font-size:20px; font-style:italic; font-weight:bold; color:#E5E1B1; filter:Shadow (Color=#84602C, Direction=135")">Windows Integrator<\/span><br><font color=white>Version <b>'+SWI.version+'</b><br>Copyleft by <b><a href="mailto:mozers@mail.ru?subject=SciTE_Windows_Integrator_'+SWI.version+'" title="Жду предложений и пожеланий :)">mozers&trade;</a></b></font></center>\n';
+		str1 += '</BODY></HTML>';
+		// -----------------------------------------------------------------------------------
+		dW.write(str1);
+	}
+}
+</script>
+</HEAD><body >
+<form id="form">
+<TABLE width=100%><TR><TD>
+<fieldset>
+<legend>&nbsp;Установка переменных окружения:&nbsp;</legend>
+<TABLE width=100%>
+<TR onMouseOver=ShowPopup("home")><TD><nobr><INPUT type="checkbox" id=chk_home hidefocus> <label for=chk_path>SCITE_HOME&nbsp;=</label></TD><TD style="width:100%"><INPUT TYPE=text id="home" value="" style="width:100%"></nobr></TD></TR>
+</TABLE>
+</fieldset>
+&nbsp;
+<fieldset>
+<legend>&nbsp;Интеграция в Проводник:&nbsp;</legend>
+<TABLE width=100%>
+<TR onMouseOver=ShowPopup("associations")><TD>&nbsp;Связать файлы заданных расширений с SciTE:<br><INPUT type="checkbox" id=chk_associations hidefocus onClick="associations.disabled=!chk_associations.checked">&nbsp;<INPUT TYPE=text id="associations" value="txt;php;h;cxx" style="width:94%" disabled></TD></TR>
+<TR onMouseOver=ShowPopup("openfor")><TD><INPUT CHECKED type="checkbox" id=openfor hidefocus> <label for=openfor>Добавить в контекстное меню всех файлов пункт "Открыть в SciTE"</label></TD></TR>
+<TR onMouseOver=ShowPopup("ses")><TD><INPUT CHECKED type="checkbox" id=ses hidefocus> <label for=ses>Открывать файлы *.session как файлы сессий SciTE</label></TD></TR>
+</TABLE>
+</fieldset>
+&nbsp;
+<fieldset>
+<legend>&nbsp;Интеграция в Internet Explorer:&nbsp;</legend>
+<TABLE width=100%>
+<TR onMouseOver=ShowPopup("html_def")><TD><INPUT CHECKED type="checkbox" id=html_def hidefocus> <label for=html_def>Установить SciTE в качестве дефолтового HTML редактора</label></TD></TR>
+<TR onMouseOver=ShowPopup("html")><TD><INPUT CHECKED type="checkbox" id=html hidefocus> <label for=html>SciTE в качестве одного из редакторов в меню кнопки "Правка"</label></TD></TR>
+</TABLE>
+</fieldset>
+&nbsp;
+<fieldset>
+<legend>&nbsp;Интеграция в Windows:&nbsp;</legend>
+<TABLE width=100%>
+<TR onMouseOver=ShowPopup("helper")><TD><INPUT CHECKED type="checkbox" id=helper hidefocus> <label for=helper>Установить SciTE.Helper (COM-сервер для управления SciTE)</label></TD></TR>
+</TABLE>
+</fieldset>
+&nbsp;
+<fieldset>
+<legend>&nbsp;Интеграция в SciTE:&nbsp;</legend>
+<TABLE width=100%>
+<TR><TD><INPUT CHECKED type="checkbox" id=del hidefocus> <label for=del>Удалить пункт вызова этой утилиты из меню Tools</label></TD></TR>
+</TABLE>
+</fieldset>
+&nbsp;
+<TABLE width=100%>
+<TR><TD align=center width=33%><button onClick="Set();">&nbsp;&nbsp;&nbsp;ОК&nbsp;&nbsp;&nbsp;</button></TD>
+<TD align=center width=33%><button onClick="self.close();">Отмена</button></TD>
+<TD align=center width=33%><button onClick="About();">О программе</button></TD></TR>
+</TABLE>
+</TD></TR>
+</TABLE>
+</form>
+<script language="JavaScript">
+function check_scite(scite_path){
+	if (fso.FileExists(scite_path + "\\SciTE.exe")){
+		//~ alert("True: "+scite_path + "\\SciTE.exe");
+		return true;
+	}else{
+		//~ alert("False: "+scite_path + "\\SciTE.exe");
+		return false;
+	}
+}
+function find_scite(){
+	var scite_path = script_path;
+	//~ alert(scite_path);
+	if (check_scite(scite_path)){
+		return scite_path;
+	}else{
+		scite_path = scite_path.replace(/\\[^\\]+$/,'');
+		//~ alert(scite_path);
+		if (check_scite(scite_path)){
+			return scite_path;
+		}else{
+			return "";
+		}
+	}
+}
+document.title = SWI.applicationName.replace(/_/g,' ') + ' ' + SWI.version;
+window.resizeTo(440,465);
+var scite_path = find_scite();
+if (scite_path == ""){
+	alert("SciTE не найден!\nЗапустите скрипт из каталога с установленным SciTE");
+	self.close();
+}
+form.home.value = scite_path;
+</script>
+</body>
+</HTML>
