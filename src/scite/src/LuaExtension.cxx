@@ -1796,12 +1796,20 @@ bool LuaExtension::OnDoubleClick() {
 }
 */
 //!-start-[OnDoubleClick]
-bool LuaExtension::OnDoubleClick(unsigned int key) {
-	SString keys;
-	if(key&SCMOD_SHIFT) keys += "Shift";
-	if(key&SCMOD_CTRL)  keys += "Ctrl";
-	if(key&SCMOD_ALT)   keys += "Alt";
-	return CallNamedFunction("OnDoubleClick",keys.c_str());
+bool LuaExtension::OnDoubleClick(int modifiers) {
+	bool handled = false;
+	if (luaState) {
+		lua_getglobal(luaState, "OnDoubleClick");
+		if (lua_isfunction(luaState, -1)) {
+			lua_pushboolean(luaState, (SCMOD_SHIFT & modifiers) != 0 ? 1 : 0); // shift/lock
+			lua_pushboolean(luaState, (SCMOD_CTRL  & modifiers) != 0 ? 1 : 0); // control
+			lua_pushboolean(luaState, (SCMOD_ALT   & modifiers) != 0 ? 1 : 0); // alt
+			handled = call_function(luaState, 3);
+		} else {
+			lua_pop(luaState, 1);
+		}
+	}
+	return handled;
 }
 //!-end-[OnDoubleClick]
 

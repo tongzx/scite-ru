@@ -36,127 +36,26 @@ SciTEBase *SciTEBase::GetApplicationInstance() {
 //!-end-[GetApplicationProps]
 
 //!-start-[position.autosave]
-class PropFileEx
-{
-public:
-	bool Open(FilePath filename) {
-		m_filename = filename;
-		FILE * file = filename.Open(fileRead);
-		if (file) {
-			char propsData[100];
-			int len;
-			while ( !feof(file) ) {
-				len = fread(propsData, 1, sizeof(propsData)-1, file);
-				propsData[len] = '\0';
-				m_buf += propsData;
-			}
-			fclose(file);
-			TypeEOL = GetEOLtype(m_buf);
-			return true;
-		}
-		return false;
-	}
-
-	void SetProperty(SString sProperty, int Value) {
-		char buf[1024] = {0};
-		sprintf(buf,"%s=%d", sProperty.c_str(), Value);
-		int insertPos =	m_buf.search(sProperty.c_str());
-		if (insertPos != -1 ) {
-			int firstPos = insertPos;
-			while (firstPos > 0 && m_buf[firstPos-1] != '\n' && m_buf[firstPos-1] != '\r' )
-				firstPos--;
-			int lastPos = m_buf.search(StringFromEOLMode(TypeEOL), insertPos);
-			m_buf.remove(firstPos, 
-				lastPos > firstPos ? lastPos - firstPos : m_buf.length() - firstPos);
-			m_buf.insert(firstPos, buf);
-		}
-		else {
-			if ( !m_buf.endswith(StringFromEOLMode(TypeEOL)) )
-				m_buf += StringFromEOLMode(TypeEOL);
-			m_buf += buf;
-			m_buf += StringFromEOLMode(TypeEOL);
+static void ToDesctopRect(RECT &rc){
+	// See if taskbar's autohide property is on
+	APPBARDATA abd;
+	memset(&abd, 0, sizeof(abd));
+	abd.cbSize = sizeof(abd); 
+	if(!(::SHAppBarMessage(ABM_GETSTATE, &abd) & ABS_AUTOHIDE))	{
+		// Get the taskbar rect
+		::SHAppBarMessage(ABM_GETTASKBARPOS, &abd);
+		switch(abd.uEdge) {
+		case ABE_TOP:
+			rc.top		+= abd.rc.bottom - abd.rc.top;
+			rc.bottom	+= abd.rc.bottom - abd.rc.top;
+			break;
+		case ABE_LEFT:
+			rc.left += abd.rc.right - abd.rc.left;
+			rc.right+= abd.rc.right - abd.rc.left;
+			break;
 		}
 	}
-	
-	void Save()	{
-		if (m_filename.IsSet())	{
-			FILE * file = m_filename.Open(fileWrite);
-			if (file) {
-				fwrite(m_buf.c_str(), sizeof(char), m_buf.length(), file);
-				fclose(file);
-			}
-		}
-	}
-
-	SString GetString() {
-		return m_buf;
-	}
-
-	int GetEOLtype() {
-		return TypeEOL;
-	}
-
-public:
-	static const char *StringFromEOLMode(int eolMode) {
-		if (eolMode == SC_EOL_CR) return "\r";
-		if (eolMode == SC_EOL_LF) return "\n";
-		return "\r\n";
-	}
-
-	static int GetEOLtype(SString &str) {
-		int linesCR = 0;
-		int linesLF = 0;
-		int linesCRLF = 0;
-		
-		int lengthDoc = str.length();
-		char chPrev = ' ';
-		for (int i = 0; i < lengthDoc; i++) {
-			char ch = str[i];
-			char chNext = str[i + 1];
-			if (ch == '\r') {
-				(chNext == '\n') ? linesCRLF++ : linesCR++;
-			} else if (ch == '\n') {
-				if (chPrev != '\r') linesLF++;
-			}
-			chPrev = ch;
-		}
-		if (((linesLF >= linesCR) && (linesLF > linesCRLF)) || ((linesLF > linesCR) && (linesLF >= linesCRLF)))
-			return SC_EOL_LF;
-		if (((linesCR >= linesLF) && (linesCR > linesCRLF)) || ((linesCR > linesLF) && (linesCR >= linesCRLF)))
-			return  SC_EOL_CR;
-		return SC_EOL_CRLF;
-	}
-
-	static void ToDesctopRect(RECT &rc){
-		ToDesctopRect(rc.left, rc.top, rc.right, rc.bottom);
-	}
-	
-	static void ToDesctopRect(long &left, long &top, long &right, long &bottom) {
-		// See if taskbar's autohide property is on
-		APPBARDATA abd;
-		memset(&abd, 0, sizeof(abd));
-		abd.cbSize = sizeof(abd); 
-		if(!(::SHAppBarMessage(ABM_GETSTATE, &abd) & ABS_AUTOHIDE))	{
-			// Get the taskbar rect
-			::SHAppBarMessage(ABM_GETTASKBARPOS, &abd);
-			switch(abd.uEdge) {
-			case ABE_TOP:
-				top		+= abd.rc.bottom - abd.rc.top;
-				bottom	+= abd.rc.bottom - abd.rc.top;
-				break;
-			case ABE_LEFT:
-				left += abd.rc.right - abd.rc.left;
-				right+= abd.rc.right - abd.rc.left;
-				break;
-			}
-		}
-	}
-
-private:
-	int TypeEOL;
-	SString m_buf;
-	FilePath m_filename;
-};
+}
 //!-end-[position.autosave]
 
 long SciTEKeys::ParseKeyCode(const char *mnemonic) {
@@ -1248,12 +1147,15 @@ void SciTEWin::QuitProgram() {
 			FullScreenToggle();
 
 //!-start-[position.autosave]
-		if (props.GetInt("position.autosave")) {
+		SString value = props.GetExpanded("save.settings.path");
+		if (value.length()) {
+			char *retval = new char[value.length() + 1];
+			char *setfile = strcpy(retval, value.c_str());
 			winPlace.length = sizeof(winPlace);
 			::GetWindowPlacement(MainHWND(), &winPlace);
 			PropFileEx file;
-			file.Open( GetUserPropertiesFileName() );
-			file.ToDesctopRect(winPlace.rcNormalPosition);
+			file.Open(setfile);
+			ToDesctopRect(winPlace.rcNormalPosition);
 			file.SetProperty("position.left", winPlace.rcNormalPosition.left);
 			file.SetProperty("position.top", winPlace.rcNormalPosition.top);
 			file.SetProperty("position.width", winPlace.rcNormalPosition.right - winPlace.rcNormalPosition.left);
@@ -1907,8 +1809,6 @@ LRESULT SciTEWin::WndProc(UINT iMessage, WPARAM wParam, LPARAM lParam) {
 				if (tabclick > -1 ) {
 					::SetCapture(reinterpret_cast<HWND>(wTabBar.GetID()));
 					wTabBar.SetCursor(Window::cursorReverseArrow);
-					//::SetCursor(::LoadCursor(NULL, MAKEINTRESOURCE(IDC_MARGIN)));
-					//::SetCursor(::LoadCursor(NULL,IDC_UPARROW));
 				}
 			}
 			break;

@@ -1,0 +1,398 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta name="generator" content="HTML Tidy, see www.w3.org" />
+    <meta name="generator" content="SciTE" />
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <title>
+      SciTE
+    </title>
+    <link rel="stylesheet" type="text/css" href="style.css" />
+</head>
+  <body bgcolor="#FFFFFF" text="#000000">
+    <table bgcolor="#000000" width="100%" cellspacing="0" cellpadding="0" border="0"  summary="banner">
+      <tr>
+        <td>
+          <img src="SciTEIco.png" border="3" height="64" width="64" alt="Scintilla icon" />
+        </td>
+        <td>
+          <font size="5" color="white">
+          SciTE Ru-Board Kernel</font>
+        </td>
+      </tr>
+    </table>
+    <table bgcolor="#CCCCCC" width="100%" cellspacing="0" cellpadding="8" border="0">
+      <tr>
+        <td class="topmenu">
+          <nobr><A href="SciTEDoc_rus.html">Äîêóìåíòàöèÿ</A></nobr>&nbsp;&nbsp;
+          <nobr><A href="SciTEFAQ_rus.html">FAQ</A></nobr>&nbsp;&nbsp;
+          <nobr><A href="SciTERegEx_rus.html">Ðåãóëÿðíûå âûðàæåíèÿ</A></nobr>&nbsp;&nbsp;
+          <nobr><A href="SciTELua_rus.html">LUA</A></nobr>&nbsp;&nbsp;
+          <nobr><A href="SciTEDirector_rus.html">SciTE Director</A></nobr>&nbsp;&nbsp;
+          <nobr><A href="CommandValuesExt_rus.html">Êîìàíäû SciTE è Scintilla</A></nobr>&nbsp;&nbsp;
+          <nobr><A href="SciTE-Ru_Pack_rus.html">Ñáîðêà Ru-Board</A></nobr>&nbsp;&nbsp;
+          <nobr><A href="SciTE-Ru_Kernel_rus.html">ßäðî SciTE-Ru</A></nobr>&nbsp;&nbsp;
+          <nobr><A href="ScintillaHistory_rus.html">Èñòîðèÿ</A></nobr>&nbsp;&nbsp;
+        </td>
+      </tr>
+    </table>
+    <h1>
+      Text editor SciTE RU-Board 1.74 .49
+    </h1>
+    <p>All modifications of original <A href="http://www.scintilla.org">SciTE editor</A> version 1.74 has been developed by persons from <A href="http://forum.ru-board.com/topic.cgi?forum=5&topic=3215&glp">Ru-Board community</A>.
+
+    <br>This document described all changes and extensions from original version of editor.
+    <br>All modifications in source code marked by special tags to allow apply it to original separately.
+    <br>You can download <A href="http://scite.ruteam.ru/scite/sborki/scite-ru-board">package SciTE-Ru</A> with updated version of editor and many more extensions by scripts.
+
+    <p>List of modifications split in three parts to be more sense:
+    <ul style="margin-top: 5; font-weight:bold">
+      <li><a href="#1">Interface</a></li>
+      <li><a href="#2">Extensions</a></li>
+      <li><a href="#3">Bug fix</a></li>
+    </ul>
+    </p>
+
+    <h3>
+      <a name="1"></a>
+      Interface
+    </h3>
+<h5> <sup>update</sup> [SubMenu] <span class=desc>(Author: HSolo, Updated by: Dmitry Maslov)</span></h5>
+User's commands in menu Tools separated from other commands now by line.<br>
+And you can insert separator between any new commands in menu Tools.<br>
+For example, <span class="example">command.separator.34=1</span> adding separator before command 34.<br>
+<br>
+Added possibility of creation submenu in Tools menu.<br>
+All submenu items located on top of menu and separated by line from other.<br>
+For define submenu you should set up name first:
+<div class="example">command.submenu.name.2.*=Insert from Text</div>
+If it is part of another menu then you should setup parent's menu number:
+<div class="example">command.submenu.parent.2=4</div>
+And next for all subitems of this menu you should setup parent's menu number:
+<div class="example">command.parent.6=2<br>
+command.name.6.*=Date and Time</div>
+<br>
+All menu items text can be localized same as other menu command by file locale.properties.
+
+<h5> <sup>update</sup> [ToolsMax] <span class=desc>(Authors: Moon_aka_Sun, VladVRO)</span></h5>
+Extended amount of line in Tools menu till 300.<br>
+For creation of the user commands in <span class="example">user.context.menu</span> it is necessary to use the formula:<br>
+User command = 9000 + number of this command in menu Tools
+
+<h5> <sup>new</sup> [ExtendedContextMenu] <span class=desc>(Author: Dmitry Maslov)</span></h5>
+You can setup each context menu now by using new parameters in .properties file:<br>
+<span class="example">user.context.menu</span> - editor context menu<br>
+<span class="example">user.tabcontext.menu</span> - tabbar context menu<br>
+<span class="example">user.outputcontext.menu</span> - output context menu<br>
+And you can setup submenus there by using tags <span class="example">POPUPBEGIN</span> and <span class="example">POPUPEND</span>!<br>
+Format:
+<div class="example">user.context.menu=\<br>
+Command&nbsp;name1|IDM_COMMAND1|\<br>
+Command&nbsp;name2|IDM_COMMAND2|...</div>
+you can add separator by leaving both fields empty:
+<div class="example">user.context.menu=\<br>
+Command&nbsp;name1|IDM_COMMAND1|\<br>
+||\<br>
+Command&nbsp;name2|IDM_COMMAND2|...</div><br>
+If parameter absent or empty then context menu will standard.
+
+<h5> <sup>new</sup> [user.toolbar] <span class=desc>(Author: Dmitry Maslov)</span></h5>
+You can setup toolbar now by using new parameter <span class="example">user.toolbar</span> in .properties file:<br>
+Format:
+<div class="example">user.toolbar=\<br>
+Hint1|IDM_COMMAND1|icon&nbsp;number1|\<br>
+Hint2|IDM_COMMAND2|icon&nbsp;number2|...</div>
+you can add separator by leaving fields empty:
+<div class="example">user.toolbar=\<br>
+Hint1|IDM_COMMAND1|icon&nbsp;number1|\<br>
+|||\<br>
+Hint2|IDM_COMMAND2|icon&nbsp;number2|...</div>
+If parameter absent or empty then toolbar will standard.
+
+<h5> <sup>new</sup> [FindResultListStyle] <span class=desc>(Authors: VladVRO, Dmitry Maslov)</span></h5>
+Internal search (Ctrl+Shift+F) result text looks more better now:<br>
+- each line colorized by two colors: file path and line number by one color and other by second color.<br>
+- all tabs in result replaced by spaces, start spaces removed, double spaces replaced by single.<br>
+- searched string can be highlighted by setup new style parameter in properties:
+<div class="example">style.errorlist.30=fore:#000000 ,bold</div>
+<br>
+You can switch off this feature by setup new parameter in properties:<br>
+<span class="example">lexer.errorlist.findliststyle=0</span>
+
+<h5> <sup>new</sup> [TabsMoving] <span class=desc>(Authors: VladVRO, Dmitry Maslov)</span></h5>
+You can move tabs now. In editor added two new commands <span class="example">IDM_MOVETABLEFT</span> and <span class="example">IDM_MOVETABRIGHT</span> for shift current tab left or right and added identical commands in menu Buffers.<br>
+And also you can move tab by mouse now.
+
+<h5> <sup>new</sup> [TabbarTitleMaxLength] <span class=desc>(Author: VladVRO)</span></h5>
+New property (in file .properties)<br>
+<span class="example">tabbar.title.maxlength=&lt;number value&gt;</span><br>
+set limit of tab text length (file name). If text length greater than setup value then text will cut off and finalized with "…"
+
+<h5> <sup>new</sup> [NewBufferPosition] <span class=desc>(Author: VladVRO)</span></h5>
+New property (in file .properties)<br>
+<span class="example">buffers.new.to.next=1</span><br>
+set position where appears new tab when new buffer opened from last position in list to next the current tab.
+
+<h5> <sup>new</sup> [new_on_dbl_clk] <span class=desc>(Author: Dmitry Maslov)</span></h5>
+You can open new buffer now by double click on empty space on right of tabs (a-la FireFox).
+
+<h5> <sup>new</sup> [SetBookmark] <span class=desc>(Author: Midas)</span></h5>
+You can set bookmark by single click on Bookmark's bar now.<br>
+And you can switch off this feature by setup new parameter in .properties:<br>
+<span class="example">margin.bookmark.by.single.click=0</span>
+
+<h5> <sup>new</sup> [position.autosave] <span class=desc>(Author: Dmitry Maslov)</span></h5>
+New property (in file .properties)<br>
+<span class="example">save.settings.path=</span> set to file, which, at the close of SciTE will automatically save the current size and position of window.
+
+<h5>[NewIcons] <span class=desc>(Author: VladVRO)</span></h5>
+New icons for the files associated with SciTE and for sessions files.
+
+<h5>[AbbrevRefactoring] <span class=desc>(Author: VladVRO)</span></h5>
+Using of char '|' identical for Insert Abbreviation (Ctrl+Shift+R) and for Expand Abbreviation (Ñtrl+B).
+
+<h5>[VarAbbrev] <span class=desc>(Authors: mimir, VladVRO)</span></h5>
+It is possible to add user variables into list of abbreviation (abbrev).<br>
+- <span class="example">%SEL%</span> - selected text<br>
+- <span class="example">%CLP%</span> - text from clipboard<br>
+- <span class="example">%[var_name]%</span> - value of internal variable SciTE (for example , CurrentSelection, FileNameExt, SciteDefaultHome etc.)<br>
+- <span class="example">%GUID%</span> - unic GUID of new object (suggested by codewarlock1101)<br>
+<br>
+For example, add that string into abbrev file:
+<div class="example">&lt;a+=&lt;a href="%CLP%" title="|"&gt;%SEL%&lt;/a&gt;</div>
+Copy string "http://scite.ruteam.ru/" to clipboard (Ctrl+C)<br>
+Type '&lt;a+My Site' and select 'My Site'. Then pushing Ñtrl+B - have got a completed construction:
+<div class="example">&lt;a href="http://scite.ruteam.ru/" title="|"&gt;My Site&lt;/a&gt;</div>
+and caret have position of first meeting of '<span class="example">|</span>'.<br>
+<br>
+    The same action: Type 'My Site' and select 'My Site'. Then press Ctrl+Shift+R and to choose "&lt;a+" from a drop-down list.<br>
+<br>
+New property (in file .properties)<br>
+<span class="example">abbrev.preserve.selection=1</span><br>
+allows to insert selected text without using %SEL% variable.<br>
+In this case selected text is inserted instead of last char '<span class="example">|</span>'.
+
+<h5>[abbrev.always.update] <span class=desc>(Author: mimir)</span></h5>
+If there is only one abbreviation file in use, without <br>
+<span class="example">abbrev.always.update=1</span><br>
+it will be renewed after Scite restart only.
+
+<h5>[AbbrevExpandIncremental] <span class=desc>(Author: VladVRO)</span></h5>
+New property (in file .properties)<br>
+<span class="example">abbrev.expand.incremental=1</span><br>
+Changing expanding method to incremental for expand abbreviation by Ctrl+B, in other words new method  to expand abbreviation is taking one char first, then two and so on.
+
+<h5>[AbbrevMaxLength] <span class=desc>(Author: VladVRO)</span></h5>
+New property (in file .properties)<br>
+<span class="example">abbrev.maximum.length=[value]</span><br>
+Set value of length limit for expand abbreviation by Ctrl+B, in other words it is the maximum length of text for comparing with abbreviations set
+
+<h5>[import] <span class=desc>(Author: mimir)</span></h5>
+It is possible to use <span class="example">import</span> instruction in *.abbrev files.
+
+<h5>[selection.hide.on.deactivate] <span class=desc>(Author: mozers)</span></h5>
+The parameter <span class="example">selection.hide.on.deactivate=0</span> allows to not hide selection from the text when window SciTE loses focus.
+
+<h5>[scite.userhome] <span class=desc>(Authors: gansA, mozers, VladVRO)</span></h5>
+New property (in file .properties)<br>
+<span class="example">scite.userhome</span> let you assign path to directory $SciteUserHome for user data saving.
+(SciTE.recent, SciTE.ses, SciTEUser.properties)<br>
+Possible to use in the path internal variables of SciTE, for instance:
+<div class="example">scite.userhome=$(SciteDefaultHome)\home</div>
+
+<h5>[IncrementalSearch.AddHotkeys] <span class=desc>(Author: Midas)</span></h5>
+Add on "<span class="example">Incremental Search</span>" (Ctrl+Alt+I) Hotkeys:<br>
+- Enter or F3 - Find Next<br>
+- Shift+Enter or Shift+F3 - Find Previous
+
+<h5>[WarningMessage] <span class=desc>(Author: VladVRO)</span></h5>
+Now can to set up alert with warning message for each warning type:<br>
+<span class="example">warning.findwrapped.message=alert's text</span><br>
+<span class="example">warning.notfound.message=alert's text</span><br>
+<span class="example">warning.wrongfile.message=alert's text</span><br>
+<span class="example">warning.executeok.message=alert's text</span><br>
+<span class="example">warning.executeko.message=alert's text</span><br>
+<span class="example">warning.nootherbookmark.message=alert's text</span><br>
+
+<h5>[AutoComplete] <span class=desc>(Author: mimir)</span></h5>
+Autocomplete function takes templates from both edited text and appropriate ".api" file.
+
+<h5> <sup>new</sup> [CirillicKeywords] <span class=desc>(Author: VladVRO)</span></h5>
+Support national characters in operators
+
+<h5>[oem2ansi] <span class=desc>(Author: gansA)</span></h5>
+Parameter <span class="example">output.code.page.oem2ansi=1</span> turn on console output text encoding from OEM to ANSI.<br>
+It let to edit script in win1251 codepage and see it output in console in dos866 codepage without switching codepages.
+
+<h5>[caret] <span class=desc>(Author: mimir)</span></h5>
+Added possibility to customize the width and the color of cursor for every lexer individually, i.e. like this:
+<div class="example">caret.fore.$(file.patterns.cpp)=#FF0000<br>
+caret.width.$(file.patterns.cpp)=3</div>
+It is not convenient when there are different colors and backgrounds for different languages but there is only one color for cursor.
+
+    <h3>
+      <a name="2"></a>
+      Extensions
+    </h3>
+
+<h5> <sup>update</sup> [macro] <span class=desc>(Author: VladVRO)</span></h5>
+Support of record and play macro using LUA.
+
+<h5>[OnMenuCommand] <span class=desc>(Author: VladVRO)</span></h5>
+Added new SciTE event - <span class="example">OnMenuCommand (msg, source)</span><br>
+<span class="example">msg</span> - function id (SCI_constant)<br>
+<span class="example">source</span> - input parameter of editor's internal function MenuCommand.<br>
+It can be equal to IDM_SRCWIN (350) - editor's window, or IDM_RUNWIN (351) - output window, or something else where the focus is.
+
+<h5>[OnSendEditor] <span class=desc>(Author: VladVRO)</span></h5>
+Added new event to SciTE - <span class="example">OnSendEditor (msg, wp, lp)</span><br>
+Parameters the same as SendEditor.<br>
+<span class="example">msg</span> - function id (SCI_constant)<br>
+<span class="example">wp</span> and <span class="example">lp</span> - input parameters, wp - numeric, lp - string. According to function they can be used or not.<br>
+OnSendEditor called for command that available for macro recording only and for SCI_SETREADONLY.<br>
+<br>
+Example of letter case changing macro:
+<div class="example">function OnSendEditor (msg)<br>
+&nbsp;&nbsp;if msg == SCI_UPPERCASE then<br>
+&nbsp;&nbsp;&nbsp;&nbsp;ChangeCase("U")<br>
+&nbsp;&nbsp;elseif msg == SCI_LOWERCASE then<br>
+&nbsp;&nbsp;&nbsp;&nbsp;ChangeCase("L")<br>
+&nbsp;&nbsp;end<br>
+end</div>
+
+<h5>[MenuCommandString] <span class=desc>(Author: VladVRO)</span></h5>
+Added possibility to use command like that:<br>
+<span class="example">scite.MenuCommand("IDM_COMMAND")</span><br>
+where "IDM_COMMAND" is the name of some constant.
+
+<h5>[OnDoubleClick] <span class=desc>(Author: mimir, Dmitry Maslov)</span></h5>
+Function <span class="example">OnDoubleClick()</span> is expanded, now it is transferred to the state of key modifiers (Shift, Ctrl, Alt):<br>
+<span class="example">function OnDoubleClick(shift, ctrl, alt)</span>
+
+<h5> <sup>update</sup> [OnKey] <span class=desc>(Author: Dmitry Maslov)</span></h5>
+Function <span class="example">OnKey</span> is expanded, now in it the pressed symbol is passed also:<br>
+<span class="example">function OnKey(key, shift, ctrl, alt, char)</span>
+
+<h5>[Perform] <span class=desc>(Author: VladVRO)</span></h5>
+In SciTE Lua Scripting Extension added new command<br>
+<span class="example">scite.Perform(actionList)</span> - execute commands <a href="SciTEDirector_rus.html">SciTE Director Interface</a><br>
+whin <span class="example">actionList</span> - one or several commands separated by a symbol of a new line.
+
+<h5> <sup>new</sup> [GetLexerLanguage] <span class=desc>(Author: Dmitry Maslov)</span></h5>
+Added Scitilla message allowing to receive a name current lexers:<br>
+Now <span class="example">editor.LexerLanguage</span> - allows both to set lexer, and to receive current
+
+<h5> <sup>new</sup> [AbbrevRefactoring] <span class=desc>(Author: Dmitry Maslov)</span></h5>
+In SciTE Lua Scripting Extension added new command<br>
+<span class="example">InsertAbbreviation(string)</span><br>
+where "<span class="example">string</span>" - is a text, on a format similar to abbreviation, for example:
+<div class="example">scite.InsertAbbreviation("&lt;a href="|" title=""&gt;%SEL%&lt;/a&gt;")</div>
+
+<h5>[os.run] <span class=desc>(Author: mimir)</span></h5>
+In SciTE Lua Scripting Extension added new command<br>
+<span class="example">os.run(Command, [WindowStyle], [WaitOnReturn])</span><br>
+which allows to set windows appearance of started external command and pause script execution for time of command execution and get return code.
+
+<h5>[MSGBOX] <span class=desc>(Author: Midas, mimir)</span></h5>
+In SciTE Lua Scripting Extension added new commands:<br>
+- <span class="example">os.msgbox (Text, [Title], [Options])</span> - Message Box. Return select button;<br>
+- <span class="example">os.getfileattr (FileName)</span> - return File Attribute as number;<br>
+- <span class="example">os.setfileattr (FileName, FileAttr)</span> - Set File Attribute;;
+
+<h5> <sup>new</sup> [ParametersDialogFromLua] <span class=desc>(Author: VladVRO)</span></h5>
+In SciTE Lua Scripting Extension added new command  for show "Parameters" dialog (Shift+F8)<br>
+<span class="example">scite.ShowParametersDialog(text)</span><br>
+<span class="example">text</span> - short comment for window.<br>
+Return false if the user has refused (has pressed a Cancel or Escape) differently true.<br>
+Sample:
+<div class="example">
+&nbsp;&nbsp;function Dialog()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;props["1"]=props["CurrentSelection"]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;props["2"]=props["SciteDefaultHome"]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;if scite.ShowParametersDialog("Please set params") then<br>
+&nbsp;&nbsp;&nbsp;&nbsp;print ("1="..props["1"].."\n2="..props["2"].."\n3="..props["3"].."\n4="..props["4"])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;else<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print ("Cancel")<br>
+&nbsp;&nbsp;&nbsp;&nbsp;end<br>
+&nbsp;&nbsp;end
+</div>
+
+<h5>[FileAttr in PROPS] <span class=desc>(Author: Midas)</span></h5>
+Now accessible from scripts additional file properties<br>
+<span class="example">FileAttr</span>, <span class="example">FileTime</span>, <span class="example">FileDate</span>.
+
+<h5>[CalltipBreaks] <span class=desc>(Author: Mitchell Foral)</span></h5>
+Long bubble helps can be carried on the next line (by adding symbol \n at appropriate line in api-file)
+
+<h5>[Euphoria] <span class=desc>(Author: Midas)</span></h5>
+Add new lexer <a href="http://www.rapideuphoria.com">Euphoria</a>
+
+<h5>[C_Word] <span class=desc>(Author: mimir)</span></h5>
+Added 3 new classes for LexCpp's keywords (i.e. now you can set up to 4õ additional vocabularies with different highlight)
+
+
+    <h3>
+      <a name="3"></a>
+      Bug fix
+    </h3>
+
+<h5>[InputErr] <span class=desc>(Author: mimir)</span></h5>
+Bug fixed in deadlock of SciTE on using <span class="example">command.input</span>.<br>
+If user forget to select text before running script it cause deadlock.
+
+<h5>[SelectionErr] <span class=desc>(Author: mimir)</span></h5>
+Bug fixed in text output on <span class="example">command.input</span> and <span class="example">$(CurrentSelection)</span> in UTF-8 code page only.<br>
+It prevent from transfer Russian text into external script or programm.
+
+<h5> <sup>new</sup> [Tread.SmartExecute] <span class=desc>(Author: Dmitry Maslov)</span></h5>
+Stream caused itself recursively under certain conditions. For example:
+<div class="example">function command(cmd, mode)<br>
+&nbsp;&nbsp;local p0 = props["command.name.0.*"]<br>
+&nbsp;&nbsp;local p1 = props["command.0.*"]<br>
+&nbsp;&nbsp;local p2 = props["command.mode.0.*"]<br>
+&nbsp;&nbsp;props["command.name.0.*"] = 'tmp'<br>
+&nbsp;&nbsp;props["command.0.*"] = cmd<br>
+&nbsp;&nbsp;props["command.mode.0.*"] = 'subsystem:'..mode..',replaceselection:no,savebefore:no'<br>
+&nbsp;&nbsp;scite.MenuCommand(1100)<br>
+&nbsp;&nbsp;props["command.name.0.*"] = p0<br>
+&nbsp;&nbsp;props["command.0.*"] = p1<br>
+&nbsp;&nbsp;props["command.mode.0.*"] = p2<br>
+end<br>
+<br>
+command('CMD /C TIME /T', 'console')</div>
+
+<h5> <sup>new</sup> [StyleDefault] <span class=desc>(Authors: VladVRO, Dmitry Maslov)</span></h5>
+Are removed default values of symbols color (black) and a background (white), that allows to not set them obviously in files of adjustment in all styles for set of a corresponding background at export of a file.<br>
+If the <span class="example">style.*.32</span> do not raised characters and the background color, these parameters are collected from your Windows, i.e. equal system Window Text/Background.
+
+<h5> <sup>update</sup> [LowerUpperCase] <span class=desc>(Author: Midas)</span></h5>
+Correct working with national characters<br>
+- for Make Lower / Upper Case,<br>
+- for Search without match case,<br>
+- for Search with Regular expression
+
+<h5>[FindInFiles] <span class=desc>(Author: dB6)</span></h5>
+Selected text inserted into FindInFiles dialog solely in the UTF-8, thus russian letter turned out unreadable.
+
+<h5> <sup>new</sup> [FileReaderUnlimitedLen] <span class=desc>(Author: VladVRO)</span></h5>
+Removed the restriction on the length of lines in the internal Find in Files. Earlier in long lines only to find worked 1,001 characters, the rest ignored.
+
+<h5> <sup>new</sup> [no_wornings] <span class=desc>(Author: Dmitry Maslov)</span></h5>
+Added compatibility with the compiler Visual C++ 6.0<br>
+Eliminated some of warnings in the compilation of Visual C++ 6.0<br>
+<span class="example">warning C4702: unreachable code</span>
+
+<h5>[SQLcase] <span class=desc>(Author: mimir)</span></h5>
+The word "case" added into LexSQL to start folding
+
+<h5>[LuaWord] <span class=desc>(Author: mimir)</span></h5>
+Lexer for LUA interpret separator ":" as well as "."
+
+<p><hr>
+<small>On the found inaccuracies in the description I ask to report to mozers(@)mail.ru</small>
+
+</body>
+</html>
+

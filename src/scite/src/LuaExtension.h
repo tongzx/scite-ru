@@ -33,7 +33,7 @@ public:
 	virtual bool OnSavePointLeft();
 	//virtual bool OnStyle(unsigned int startPos, int lengthDoc, int initStyle, Accessor *styler);
 //!	virtual bool OnDoubleClick();
-	virtual bool OnDoubleClick(unsigned int); //!-add-[OnDoubleClick]
+	virtual bool OnDoubleClick(int modifiers); //!-add-[OnDoubleClick]
 	virtual bool OnUpdateUI();
 	virtual bool OnMarginClick();
 	virtual bool OnUserListSelection(int listType, const char *selection);

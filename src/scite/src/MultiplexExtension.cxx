@@ -187,10 +187,10 @@ bool MultiplexExtension::OnDoubleClick() {
 }
 */
 //!-start-[OnDoubleClick]
-bool MultiplexExtension::OnDoubleClick(unsigned int key) {
+bool MultiplexExtension::OnDoubleClick(int modifiers) {
 	bool handled = false;
 	for (int i=0; i<extensionCount && !handled; ++i)
-                if (extensions[i]->OnDoubleClick(key))
+                if (extensions[i]->OnDoubleClick(modifiers))
                         handled = true;
 	return handled;
 }

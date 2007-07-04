@@ -734,7 +734,7 @@ void SciTEBase::SetAboutMessage(WindowID wsci, const char *appTitle) {
 		}
 #endif
 		AddStyledText(wsci, GetTranslationToAbout("Version").c_str(), trsSty);
-		AddStyledText(wsci, " 1.74 .48Ru\n", 1); //!-change-[SciTE-Ru]
+		AddStyledText(wsci, " 1.74 .49Ru\n", 1); //!-change-[SciTE-Ru]
 		AddStyledText(wsci, "    " __DATE__ " " __TIME__ "\n", 1);
 		SetAboutStyle(wsci, 4, ColourDesired(0, 0x7f, 0x7f)); //!-add-[SciTE-Ru]
 		AddStyledText(wsci, "http://scite.ruteam.ru\n", 4); //!-add-[SciTE-Ru]
@@ -1623,6 +1623,10 @@ void SciTEBase::RemoveFindMarks() {
 }
 
 int SciTEBase::MarkAll() {
+	//-start-[NewFind-MarkerDeleteAll]
+	if ( props.GetInt("find.mark.delete") )
+		SendEditor(SCI_MARKERDELETEALL, 1);
+	//-end-[NewFind-MarkerDeleteAll]
 	int posCurrent = SendEditor(SCI_GETCURRENTPOS);
 	int marked = 0;
 	int posFirstFound = FindNext(false, false);
@@ -2587,11 +2591,41 @@ bool SciTEBase::InsertAbbreviation(const char* data, int expandedLength) {
 							strncpy(pPerc,&expbuf[i],lenPerc);
 							pPerc[lenPerc] = '\0'; 
 							if(strcmp(pPerc,"%SEL%")==0){
+								if (at_start) {
+									int texteol = PropFileEx::GetEOLtype(currentSelection);
+									int pos = currentSelection.search(texteol == SC_EOL_CRLF || texteol == SC_EOL_LF?"\n":"\r");
+									int	tpos = currentSelection.search("\t", pos);
+									int	tabcount=0;
+									if (tpos == pos+1)
+									{
+										do 
+										{
+											tabcount++;
+											tpos = currentSelection.search("\t", tpos+1);
+										} while(tpos == pos + tabcount + 1);
+									}
+									sel_start += indentSize / indentChars * (currentSelection.findcount(texteol == SC_EOL_CRLF || texteol == SC_EOL_LF?"\n":"\r") - tabcount);
+								}
 								abbrevText +=currentSelection;
 								i+=lenPerc-1;
 								UseSel = true;
 							}else
 							if(strcmp(pPerc,"%CLP%")==0){
+								if (at_start) {
+									int texteol = PropFileEx::GetEOLtype(clpBuffer);
+									int pos = clpBuffer.search(texteol == SC_EOL_CRLF || texteol == SC_EOL_LF?"\n":"\r");
+									int	tpos = clpBuffer.search("\t", pos);
+									int	tabcount=0;
+									if (tpos == pos+1)
+									{
+										do 
+										{
+											tabcount++;
+											tpos = clpBuffer.search("\t", tpos+1);
+										} while(tpos == pos + tabcount + 1);
+									}
+									sel_start += indentSize / indentChars * (clpBuffer.findcount(texteol == SC_EOL_CRLF || texteol == SC_EOL_LF?"\n":"\r") - tabcount);
+								}
 								abbrevText +=clpBuffer;
 								i+=lenPerc-1;
 								UseSel = true;
@@ -2602,7 +2636,7 @@ bool SciTEBase::InsertAbbreviation(const char* data, int expandedLength) {
 								CoCreateGuid (&guid);
 								GUIDToStr(guid,chGUID);
 								abbrevText += chGUID;
-								i+=strlen(chGUID)-1;
+								i+=lenPerc-1;
 							}else
 							if(lenPerc>4 && pPerc[1]=='[' && pPerc[lenPerc-2]==']'){
 								pPerc[lenPerc-2] = '\0'; 

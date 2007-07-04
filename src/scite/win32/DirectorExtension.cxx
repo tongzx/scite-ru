@@ -233,7 +233,7 @@ bool DirectorExtension::OnStyle(unsigned int, int, int, Accessor *) {
 // These should probably have arguments
 
 //! bool DirectorExtension::OnDoubleClick() {
-bool DirectorExtension::OnDoubleClick(unsigned int){ //!-changed-[OnDoubleClick]
+bool DirectorExtension::OnDoubleClick(int){ //!-changed-[OnDoubleClick]
 	return false;
 }
 

@@ -134,8 +134,8 @@ bool SingleThreadExtension::OnDoubleClick() {
 }
 */
 //!-start-[OnDoubleClick]
-bool SingleThreadExtension::OnDoubleClick(unsigned int key){
-	return ext->OnDoubleClick(key);
+bool SingleThreadExtension::OnDoubleClick(int modifiers){
+	return ext->OnDoubleClick(modifiers);
 }
 //!-end-[OnDoubleClick]
 

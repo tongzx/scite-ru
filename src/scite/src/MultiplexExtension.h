@@ -63,7 +63,7 @@ public:
 	virtual bool OnSavePointLeft();
 	virtual bool OnStyle(unsigned int, int, int, Accessor *);
 //!	virtual bool OnDoubleClick();
-	virtual bool OnDoubleClick(unsigned int); //!-add-[OnDoubleClick]
+	virtual bool OnDoubleClick(int); //!-add-[OnDoubleClick]
 	virtual bool OnUpdateUI();
 	virtual bool OnMarginClick();
 	virtual bool OnMacro(const char *, const char *);

@@ -63,7 +63,7 @@ public:
 		return false;
 	}
 //!	virtual bool OnDoubleClick() { return false; }
-	virtual bool OnDoubleClick(unsigned int) { return false; } //!-add-[OnDoubleClick]
+	virtual bool OnDoubleClick(int) { return false; } //!-add-[OnDoubleClick]
 	virtual bool OnUpdateUI() { return false; }
 	virtual bool OnMarginClick() { return false; }
 	virtual bool OnMacro(const char *, const char *) { return false; }
