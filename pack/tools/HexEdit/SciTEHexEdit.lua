@@ -1333,9 +1333,9 @@ end
 -- hex editor initialization
 ------------------------------------------------------------------------
   local old_OnDoubleClick = OnDoubleClick
-  function OnDoubleClick(key)
+  function OnDoubleClick(shift, ctrl, alt)
       local result
-      if old_OnDoubleClick then result = old_OnDoubleClick(key) end
+      if old_OnDoubleClick then result = old_OnDoubleClick(shift, ctrl, alt) end
       if HandleClick() then return true end
       return result
   end

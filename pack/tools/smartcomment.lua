@@ -1,10 +1,13 @@
 -- SciTE Smart comment
--- Version: 2.4
+-- Version: 2.5
 -- Autor: Dmitry Maslov
 ---------------------------------------------------
 -- Веделяем текст нажимаем на клавиатуре символ 
 -- с которого начинается комментарий и строка комментируется
 -- пример: выделить строку в cpp, нажать на клавишу * или /
+---------------------------------------------------
+-- Версия 2.5
+-- Добавлена совместимость автозакрытия скобок с всплывающей подсказкой
 ---------------------------------------------------
 -- Версия 2.4
 -- Поправлена обработка { в cpp
@@ -291,19 +294,19 @@ local function SmartComment(char)
 					end
 					editor:AddText('}')
 					editor:GotoPos(pos)
+					editor:EndUndoAction()
+					return true
 				-- по волшебному обрабатываем скобку } в cpp
 				elseif (char == '}') and (editor.LexerLanguage == 'cpp') then
 					editor:BackTab()
-					editor:AddText('}')
 				-- вставляем закрывающуюся скобку
 				else
 					local symE = GetCharInProps('braces.close',brIdx)
 					if (symE==nil) then symE='' end
-					editor:InsertText(editor.CurrentPos, char..symE)
-					editor:CharRight()
+					editor:InsertText(editor.CurrentPos, symE)
 				end
 				editor:EndUndoAction()
-				return true
+				return false
 			end
 		end
 	end

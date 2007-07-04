@@ -32,8 +32,8 @@
           <nobr><A href="SciTELua_rus.html">LUA</A></nobr>&nbsp;&nbsp;
           <nobr><A href="SciTEDirector_rus.html">SciTE Director</A></nobr>&nbsp;&nbsp;
           <nobr><A href="CommandValuesExt_rus.html">Команды SciTE и Scintilla</A></nobr>&nbsp;&nbsp;
-          <nobr><A href="SciTE-Ru_Pack.html">Сборка Ru-Board</A></nobr>&nbsp;&nbsp;
-          <nobr><A href="SciTE-Ru_Kernel.html">Ядро SciTE-Ru</A></nobr>&nbsp;&nbsp;
+          <nobr><A href="SciTE-Ru_Pack_rus.html">Сборка Ru-Board</A></nobr>&nbsp;&nbsp;
+          <nobr><A href="SciTE-Ru_Kernel_rus.html">Ядро SciTE-Ru</A></nobr>&nbsp;&nbsp;
           <nobr><A href="ScintillaHistory_rus.html">История</A></nobr>&nbsp;&nbsp;
         </td>
       </tr>
@@ -134,6 +134,10 @@
 	</p>
 	<h4>Добавлено много других полезных скриптов:</h4>
 	<ul>
+	<li> <sup>new</sup> Удобный интерфейс для работы с сессиями предоставляет <span class=name>SessionManager</span>.<br>
+	Снимите комментарий с параметра <span class=name>session.manager=1</span> и попробуйте сохранить текущую сессию обычным порядком - через меню "Файл" - "Сохранить сессию..." Вы увидите что все файлы сессий сохраняются в одном месте (каталоге, заданном переменной <span class=name>scite.userhome</span>), можно задать комментарий (в т.ч. многострочный), который будет виден при просмотре каталога в файловом менеджере.<br>
+	При открытии (через меню "Файл" - "Открыть сессию...") так же появится наглядное диалоговое окно, где все сохраненные сессии будут отсортированы по дате. Контекстное меню открывающееся по правому клику мыши на выбранной записи откроет вам и другие возможности... <span class=desc>[SessionManager.hta, SessionManager.lua]</span>
+
 	<li> <sup>update</sup> Возможно сохранение текущих настроек редактора. Установки записываются в файл SciTEUser.properties. Сохраняются размер и положение окна SciTE и другие текущие параметры, измененные через меню <span class=desc>[доработка ядра, save_settings.lua]</span>
 
 	<li> Скрипт для смены текущих шрифтов. C блеском заменяет <span class=name>Ctrl+F11</span>. Действует одновременно на все отрытые буфера. Можно задать любые комбинации шрифтов. <span class=desc>[настройки в SciTEGlobal.properties, FontChanger.lua]</span>
@@ -212,8 +216,8 @@
 	Снабдите подробными и понятными комментариями любой из файлов настроек, напишите полезный скрипт, придумайте оригинальную цветовую схему, переведите один их абзацев оригинального файла помощи и поделитесь результатом и ваше имя навсегда останется в памяти благодарных пользователей :)
 
 <h3>История версий</h3>
-<h5><span class=desc>[02.07.2007]</span> Сборка (ядро 1.74 .49Ru)</h5>
-	Новое ядро 1.74 .49Ru (<a href="SciTE-Ru_Kernel.html">настраиваемый тулбар, контекстные меню и много другого</a>)
+<h5><span class=desc>[04.07.2007]</span> Сборка (ядро 1.74 .49Ru)</h5>
+	Новое ядро 1.74 .49Ru (<a href="SciTE-Ru_Kernel_rus.html">настраиваемый тулбар, контекстные меню и много другого</a>)
 	<br>Обновлены настройки интерфейса
 	<br>Добавлены новые и доработаны существующие файлы сокращений (abbrev) и API файлы
 	<br>Много новых скриптов, доработаны имеющиеся

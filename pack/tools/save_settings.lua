@@ -26,7 +26,7 @@ local function SaveKey(text, key)
 end
 
 function SaveSetting()
-	local file = props["scite.userhome"].."\\SciTEUser.properties"
+	local file = props["save.settings.path"]
 	io.input(file)
 	local text = io.read('*a')
 	text = SaveKey(text, 'toolbar.visible')

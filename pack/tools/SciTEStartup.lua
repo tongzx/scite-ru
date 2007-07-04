@@ -67,8 +67,8 @@ dofile (props["SciteDefaultHome"].."\\tools\\SessionManager\\SessionManager.lua"
 -- При изменении текущего размера шрифта, масштабируется и выводимый на принтер шрифт и показатель в строке состояния
 dofile (props["SciteDefaultHome"].."\\tools\\Zoom.lua")
 
--- Быстрое комментирование выделенного кода
---~ dofile (props["SciteDefaultHome"].."\\tools\\smartcomment.lua")
+-- Быстрое комментирование выделенного кода, автозакрытие скобок
+dofile (props["SciteDefaultHome"].."\\tools\\smartcomment.lua")
 
 -- При вводе слова, если это сокращение то вызывается список аббривиатур
 dofile (props["SciteDefaultHome"].."\\tools\\abbrevlist.lua")
