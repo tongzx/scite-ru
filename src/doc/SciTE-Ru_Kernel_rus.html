@@ -65,7 +65,7 @@
 Например, <span class="example">command.separator.34=1</span> вставляет разделитель перед командой 34.<br>
 <br>
 Добавлена возможность создания вложенных подменю в меню Tools.<br>
-Они создаются вначале меню и отделены от остальных пуктов разделителем.<br>
+Они создаются вначале меню и отделены от остальных пунктов разделителем.<br>
 Сначала задаются названия подменю:
 <div class="example">command.submenu.name.2.*=Insert from Text</div>
 если они вложены в другое подменю, то задается номер родительского меню:
@@ -145,6 +145,11 @@ command.name.6.*=Date and Time</div>
 Новый параметр в .properties<br>
 <span class="example">save.settings.path=</span> позволяет задавать файл, в котором, при закрытии SciTE, будут автоматически сохранятся текущие размеры и позиция окна
 
+<h5> <sup>new</sup> [NewFind-MarkerDeleteAll] <span class=desc>(Автор: Дмитрий Маслов)</span></h5>
+Новый параметр в .properties<br>
+<span class="example">find.mark.delete=1</span><br>
+Если 1, то при нажатии на кнопку "Пометить все" удаляются все установленные ранее букмарки.
+
 <h5>[NewIcons] <span class=desc>(Автор: VladVRO)</span></h5>
 Новые иконки для файлов, ассоциированных с SciTE и для файлов сессий.
 
@@ -185,7 +190,7 @@ command.name.6.*=Date and Time</div>
 <h5>[AbbrevMaxLength] <span class=desc>(Автор: VladVRO)</span></h5>
 Новый параметр в .properties<br>
 <span class="example">abbrev.maximum.length=[число]</span><br>
-Задает максимальную длинну сокращения, обрабатываемого по Ctrl+B, иначе говоря, максимальную длинну текста который будет сравниваться с набором сокращений.
+Задает максимальную длину сокращения, обрабатываемого по Ctrl+B, иначе говоря, максимальную длину текста который будет сравниваться с набором сокращений.
 
 <h5>[import] <span class=desc>(Автор: mimir)</span></h5>
 Возможно использование директивы <span class="example">import</span> в файлах *.abbrev

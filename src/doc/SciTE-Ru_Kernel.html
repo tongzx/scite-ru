@@ -26,15 +26,14 @@
     <table bgcolor="#CCCCCC" width="100%" cellspacing="0" cellpadding="8" border="0">
       <tr>
         <td class="topmenu">
-          <nobr><A href="SciTEDoc_rus.html">Документация</A></nobr>&nbsp;&nbsp;
-          <nobr><A href="SciTEFAQ_rus.html">FAQ</A></nobr>&nbsp;&nbsp;
-          <nobr><A href="SciTERegEx_rus.html">Регулярные выражения</A></nobr>&nbsp;&nbsp;
-          <nobr><A href="SciTELua_rus.html">LUA</A></nobr>&nbsp;&nbsp;
-          <nobr><A href="SciTEDirector_rus.html">SciTE Director</A></nobr>&nbsp;&nbsp;
-          <nobr><A href="CommandValuesExt_rus.html">Команды SciTE и Scintilla</A></nobr>&nbsp;&nbsp;
-          <nobr><A href="SciTE-Ru_Pack_rus.html">Сборка Ru-Board</A></nobr>&nbsp;&nbsp;
-          <nobr><A href="SciTE-Ru_Kernel_rus.html">Ядро SciTE-Ru</A></nobr>&nbsp;&nbsp;
-          <nobr><A href="ScintillaHistory_rus.html">История</A></nobr>&nbsp;&nbsp;
+          <nobr><A href="http://scintilla.sourceforge.net/SciTEDoc.html">Documentation</A></nobr>&nbsp;&nbsp;
+          <nobr><A href="http://scintilla.sourceforge.net/SciTEFAQ.html">FAQ</A></nobr>&nbsp;&nbsp;
+          <nobr><A href="http://scintilla.sourceforge.net/SciTERegEx.html">Regular Expressions</A></nobr>&nbsp;&nbsp;
+          <nobr><A href="http://scintilla.sourceforge.net/SciTELua.html">LUA</A></nobr>&nbsp;&nbsp;
+          <nobr><A href="http://scintilla.sourceforge.net/SciTEDirector.html">SciTE Director</A></nobr>&nbsp;&nbsp;
+          <nobr><A href="CommandValuesExt_rus.html">Commands SciTE и Scintilla</A></nobr>&nbsp;&nbsp;
+          <nobr><A href="SciTE-Ru_Pack_rus.html">Ru-Board Pack</A></nobr>&nbsp;&nbsp;
+          <nobr><A href="http://scintilla.sourceforge.net/ScintillaHistory.html">History</A></nobr>&nbsp;&nbsp;
         </td>
       </tr>
     </table>
@@ -45,7 +44,7 @@
 
     <br>This document described all changes and extensions from original version of editor.
     <br>All modifications in source code marked by special tags to allow apply it to original separately.
-    <br>You can download <A href="http://scite.ruteam.ru/scite/sborki/scite-ru-board">package SciTE-Ru</A> with updated version of editor and many more extensions by scripts.
+    <br>You can examine updated editor with all of his expanded characteristics by downloading the <A href="http://scite.ruteam.ru/scite/sborki/scite-ru-board">package SciTE-Ru</A>
 
     <p>List of modifications split in three parts to be more sense:
     <ul style="margin-top: 5; font-weight:bold">
@@ -86,7 +85,7 @@ You can setup each context menu now by using new parameters in .properties file:
 <span class="example">user.context.menu</span> - editor context menu<br>
 <span class="example">user.tabcontext.menu</span> - tabbar context menu<br>
 <span class="example">user.outputcontext.menu</span> - output context menu<br>
-And you can setup submenus there by using tags <span class="example">POPUPBEGIN</span> and <span class="example">POPUPEND</span>!<br>
+And you can create submenus there by using tags <span class="example">POPUPBEGIN</span> and <span class="example">POPUPEND</span>!<br>
 Format:
 <div class="example">user.context.menu=\<br>
 Command&nbsp;name1|IDM_COMMAND1|\<br>
@@ -147,23 +146,28 @@ And you can switch off this feature by setup new parameter in .properties:<br>
 New property (in file .properties)<br>
 <span class="example">save.settings.path=</span> set to file, which, at the close of SciTE will automatically save the current size and position of window.
 
+<h5> <sup>new</sup> [NewFind-MarkerDeleteAll] <span class=desc>(Author: Dmitry Maslov)</span></h5>
+New property (in file .properties)<br>
+<span class="example">find.mark.delete=1</span><br>
+If 1, then pressing the button "Mark all" removed any earlier bookmarks.
+
 <h5>[NewIcons] <span class=desc>(Author: VladVRO)</span></h5>
 New icons for the files associated with SciTE and for sessions files.
 
 <h5>[AbbrevRefactoring] <span class=desc>(Author: VladVRO)</span></h5>
-Using of char '|' identical for Insert Abbreviation (Ctrl+Shift+R) and for Expand Abbreviation (Сtrl+B).
+Using of char '|' identical for Insert Abbreviation (Ctrl+Shift+R) and for Expand Abbreviation (Ctrl+B).
 
 <h5>[VarAbbrev] <span class=desc>(Authors: mimir, VladVRO)</span></h5>
 It is possible to add user variables into list of abbreviation (abbrev).<br>
 - <span class="example">%SEL%</span> - selected text<br>
 - <span class="example">%CLP%</span> - text from clipboard<br>
 - <span class="example">%[var_name]%</span> - value of internal variable SciTE (for example , CurrentSelection, FileNameExt, SciteDefaultHome etc.)<br>
-- <span class="example">%GUID%</span> - unic GUID of new object (suggested by codewarlock1101)<br>
+- <span class="example">%GUID%</span> - unique GUID of new object (suggested by codewarlock1101)<br>
 <br>
 For example, add that string into abbrev file:
 <div class="example">&lt;a+=&lt;a href="%CLP%" title="|"&gt;%SEL%&lt;/a&gt;</div>
 Copy string "http://scite.ruteam.ru/" to clipboard (Ctrl+C)<br>
-Type '&lt;a+My Site' and select 'My Site'. Then pushing Сtrl+B - have got a completed construction:
+Type '&lt;a+My Site' and select 'My Site'. Then pushing Ctrl+B - have got a completed construction:
 <div class="example">&lt;a href="http://scite.ruteam.ru/" title="|"&gt;My Site&lt;/a&gt;</div>
 and caret have position of first meeting of '<span class="example">|</span>'.<br>
 <br>
@@ -277,8 +281,8 @@ Function <span class="example">OnKey</span> is expanded, now in it the pressed s
 
 <h5>[Perform] <span class=desc>(Author: VladVRO)</span></h5>
 In SciTE Lua Scripting Extension added new command<br>
-<span class="example">scite.Perform(actionList)</span> - execute commands <a href="SciTEDirector_rus.html">SciTE Director Interface</a><br>
-whin <span class="example">actionList</span> - one or several commands separated by a symbol of a new line.
+<span class="example">scite.Perform(actionList)</span> - execute commands <a href="http://scintilla.sourceforge.net/SciTEDirector.html">SciTE Director Interface</a><br>
+with <span class="example">actionList</span> - one or several commands separated by a symbol of a new line.
 
 <h5> <sup>new</sup> [GetLexerLanguage] <span class=desc>(Author: Dmitry Maslov)</span></h5>
 Added Scitilla message allowing to receive a name current lexers:<br>
@@ -344,7 +348,7 @@ If user forget to select text before running script it cause deadlock.
 
 <h5>[SelectionErr] <span class=desc>(Author: mimir)</span></h5>
 Bug fixed in text output on <span class="example">command.input</span> and <span class="example">$(CurrentSelection)</span> in UTF-8 code page only.<br>
-It prevent from transfer Russian text into external script or programm.
+It prevent from transfer Russian text into external script or program.
 
 <h5> <sup>new</sup> [Tread.SmartExecute] <span class=desc>(Author: Dmitry Maslov)</span></h5>
 Stream caused itself recursively under certain conditions. For example:
@@ -374,7 +378,7 @@ Correct working with national characters<br>
 - for Search with Regular expression
 
 <h5>[FindInFiles] <span class=desc>(Author: dB6)</span></h5>
-Selected text inserted into FindInFiles dialog solely in the UTF-8, thus russian letter turned out unreadable.
+Selected text inserted into FindInFiles dialog solely in the UTF-8, thus Russian letter turned out unreadable.
 
 <h5> <sup>new</sup> [FileReaderUnlimitedLen] <span class=desc>(Author: VladVRO)</span></h5>
 Removed the restriction on the length of lines in the internal Find in Files. Earlier in long lines only to find worked 1,001 characters, the rest ignored.
