@@ -109,9 +109,15 @@ int BufferList::Add() {
 	MoveToStackTop(length - 1);
 
 //!-start-[NewBufferPosition]
-	if (SciTEBase::GetProps()->GetInt("buffers.new.to.next", 0) == 1) {
+	switch (SciTEBase::GetProps()->GetInt("buffers.new.position", 0)) {
+	case 1:
 		ShiftTo(length - 1, current + 1);
 		return current + 1;
+		break;
+	case 2:
+		ShiftTo(length - 1, 0);
+		return 0;
+		break;
 	}
 //!-end-[NewBufferPosition]
 
