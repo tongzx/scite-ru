@@ -91,7 +91,7 @@ local old_OnMenuCommand = OnMenuCommand
 function OnMenuCommand (msg, source)
 	local result
 	if old_OnMenuCommand then result = old_OnMenuCommand(msg, source) end
-	if tonumber(props['save.settings.path'])==1 then
+	if props['save.settings.path']~=nil then
 		if msg == 140 then --IDM_QUIT
 			SaveSetting()
 		end
