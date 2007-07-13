@@ -156,6 +156,11 @@ void BufferList::RemoveCurrent() {
 		if (current < 0) {
 			SetCurrent(0);
 		}
+//!-start-[ZorderSwitchingOnClose]
+		if (SciTEBase::GetProps()->GetInt("buffers.zorder.switching", 0)) {
+			SetCurrent(stack[stackcurrent]);
+		}
+//!-end-[ZorderSwitchingOnClose]
 	} else {
 		buffers[current].Init();
 	}
