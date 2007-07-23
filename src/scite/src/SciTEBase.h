@@ -840,6 +840,10 @@ protected:
 	virtual void StopExecute() = 0;
 	void GoMessage(int dir);
 	virtual bool StartCallTip();
+//!-start-[CVS]
+	char *GetNearestWords(const char *wordStart, int searchLen,
+		const char *separators, bool ignoreCase=false, bool exactLen=false);
+//!-end-[CVS]
 	virtual void FillFunctionDefinition(int pos = -1);
 	void ContinueCallTip();
 	virtual void EliminateDuplicateWords(char *words);

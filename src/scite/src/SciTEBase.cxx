@@ -2073,13 +2073,29 @@ void SciTEBase::Redraw() {
 	wOutput.InvalidateAll();
 }
 
+//!-start-[CVS]
+char *SciTEBase::GetNearestWords(const char *wordStart, int searchLen,
+		const char *separators, bool ignoreCase /*=false*/, bool exactLen /*=false*/) {
+	char *words = 0;
+	while (!words && *separators) {
+		words = apis.GetNearestWords(wordStart, searchLen, ignoreCase, *separators, exactLen);
+		separators++;
+	}
+	return words;
+}
+//!-end-[CVS]
+
 void SciTEBase::FillFunctionDefinition(int pos /*= -1*/) {
 	if (pos > 0) {
 		lastPosCallTip = pos;
 	}
 	if (apis) {
-		char *words = apis.GetNearestWords(currentCallTipWord.c_str(), currentCallTipWord.length(),
-		        callTipIgnoreCase, calltipParametersStart[0], true);
+/*!		char *words = apis.GetNearestWords(currentCallTipWord.c_str(), currentCallTipWord.length(),
+		        callTipIgnoreCase, calltipParametersStart[0], true);*/
+//!-start-[CVS]
+		char *words = GetNearestWords(currentCallTipWord.c_str(), currentCallTipWord.length(),
+			calltipParametersStart.c_str(), callTipIgnoreCase, true);
+//!-end-[CVS]
 		if (!words)
 			return;
 		// Counts how many call tips
@@ -2336,8 +2352,12 @@ bool SciTEBase::StartAutoComplete() {
 	}
 
 	if (apis) {
-		char *words = apis.GetNearestWords(root.c_str(), root.length(),
-			autoCompleteIgnoreCase, calltipParametersStart[0]);
+/*!		char *words = apis.GetNearestWords(root.c_str(), root.length(),
+			autoCompleteIgnoreCase, calltipParametersStart[0]);*/
+//!-start-[CVS]
+		char *words = GetNearestWords(root.c_str(), root.length(),
+			calltipParametersStart.c_str(), autoCompleteIgnoreCase);
+//!-end-[CVS]
 		if (words) {
 			wordsNear += words;
 			delete []words;
