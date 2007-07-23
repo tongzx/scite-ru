@@ -3,6 +3,12 @@ VladVRO 23.07.07
 -----------------------------
 [CVS] - внес обновление CalltipParamStartFix2.patch на Issue 8
 
+[output.caret] - добавил параметры для задания стиля курсора и строки курсора (Issue 14)
+output.caret.fore
+output.caret.line.back
+output.caret.line.back.alpha
+
+
 ========================================================
 VladVRO 13.07.07
 -----------------------------

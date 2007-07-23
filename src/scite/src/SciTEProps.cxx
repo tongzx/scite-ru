@@ -920,6 +920,20 @@ void SciTEBase::ReadProperties() {
 	}
 	SendEditor(SCI_SETCARETLINEBACKALPHA, props.GetInt("caret.line.back.alpha", SC_ALPHA_NOALPHA));
 
+//!-start-[output.caret]
+	SendOutput(SCI_SETCARETFORE,
+	           ColourOfProperty(props, "output.caret.fore", ColourDesired(0, 0, 0)));
+
+	SString outputCaretLineBack = props.Get("output.caret.line.back");
+	if (outputCaretLineBack.length()) {
+		SendOutput(SCI_SETCARETLINEVISIBLE, 1);
+		SendOutput(SCI_SETCARETLINEBACK, ColourFromString(outputCaretLineBack));
+	} else {
+		SendOutput(SCI_SETCARETLINEVISIBLE, 0);
+	}
+	SendOutput(SCI_SETCARETLINEBACKALPHA, props.GetInt("output.caret.line.back.alpha", SC_ALPHA_NOALPHA));
+//!-end-[output.caret]
+
 	SString findMark = props.Get("find.mark");
 	if (findMark.length()) {
 		SendEditor(SCI_INDICSETSTYLE, indicatorMatch, INDIC_ROUNDBOX);
