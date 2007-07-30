@@ -70,6 +70,7 @@ local function AutocompleteObject(char)
 
 	-- Get api file
 	local api_filename = props['api.'..editor.LexerLanguage]
+	if api_filename == '' then return false end
 	local api_file = io.open(api_filename)
 	if not api_file then
 		return false
