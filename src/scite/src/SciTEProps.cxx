@@ -669,6 +669,20 @@ SString SciTEBase::FindLanguageProperty(const char *pattern, const char *default
 	return ret;
 }
 
+//!-start-[BetterCalltips]
+int SciTEBase::FindIntLanguageProperty(const char *pattern, int defaultValue /*=0*/) {
+	SString key = pattern;
+	key.substitute("*", language.c_str());
+	SString val = props.GetExpanded(key.c_str());
+	if (val == "")
+		val = props.GetExpanded(pattern);
+	if (val == "")
+		return defaultValue;
+	else
+		return val.value();
+}
+//!-end-[BetterCalltips]
+
 /**
  * A list of all the properties that should be forwarded to Scintilla lexers.
  */
@@ -1027,8 +1041,18 @@ void SciTEBase::ReadProperties() {
 	char key[200];
 	SString sval;
 
+//!-start-[BetterCalltips]
+	sval = FindLanguageProperty("calltip.*.automatic", "1");
+	callTipAutomatic = sval == "1";
+//!-end-[BetterCalltips]
+
 	sval = FindLanguageProperty("calltip.*.ignorecase");
 	callTipIgnoreCase = sval == "1";
+
+//!-start-[BetterCalltips]
+	calltipShowPerPage = FindIntLanguageProperty("calltip.*.show.per.page", 1);
+	if (calltipShowPerPage < 1) calltipShowPerPage = 1;
+//!-end-[BetterCalltips]
 
 	calltipWordCharacters = FindLanguageProperty("calltip.*.word.characters",
 		"_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
@@ -1038,6 +1062,11 @@ void SciTEBase::ReadProperties() {
 	calltipParametersSeparators = FindLanguageProperty("calltip.*.parameters.separators", ",;");
 
 	calltipEndDefinition = FindLanguageProperty("calltip.*.end.definition");
+
+//!-start-[BetterCalltips]
+	int calltipWordWrap = FindIntLanguageProperty("calltip.*.word.wrap");
+	SendEditor(SCI_CALLTIPSETWORDWRAP, calltipWordWrap > 0 ? calltipWordWrap : 0);
+//!-end-[BetterCalltips]
 
 	sprintf(key, "autocomplete.%s.start.characters", language.c_str());
 	autoCompleteStartCharacters = props.GetExpanded(key);

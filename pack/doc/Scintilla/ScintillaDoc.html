@@ -3386,10 +3386,15 @@ struct TextToFind {
      <a class="message" href="#SCI_CALLTIPPOSSTART">SCI_CALLTIPPOSSTART</a><br />
      <a class="message" href="#SCI_CALLTIPSETHLT">SCI_CALLTIPSETHLT(int highlightStart, int
     highlightEnd)</a><br />
+     <a class="message" href="#SCI_CALLTIPADDHLT">SCI_CALLTIPADDHLT(int highlightStart, int
+    highlightEnd)</a><br />
+     <a class="message" href="#SCI_CALLTIPCLEARHLT">SCI_CALLTIPCLEARHLT</a><br />
+     <a class="message" href="#SCI_CALLTIPUPDATEHLT">SCI_CALLTIPUPDATEHLT</a><br />
      <a class="message" href="#SCI_CALLTIPSETBACK">SCI_CALLTIPSETBACK(int colour)</a><br />
      <a class="message" href="#SCI_CALLTIPSETFORE">SCI_CALLTIPSETFORE(int colour)</a><br />
      <a class="message" href="#SCI_CALLTIPSETFOREHLT">SCI_CALLTIPSETFOREHLT(int colour)</a><br />
      <a class="message" href="#SCI_CALLTIPUSESTYLE">SCI_CALLTIPUSESTYLE(int tabsize)</a><br />
+     <a class="message" href="#SCI_CALLTIPSETWORDWRAP">SCI_CALLTIPSETWORDWRAP(int wrapBnd)</a><br />
     </code>
 
     <p><b id="SCI_CALLTIPSHOW">SCI_CALLTIPSHOW(int posStart, const char *definition)</b><br />
@@ -3433,6 +3438,24 @@ struct TextToFind {
     <code>SCI_CALLTIPSETFOREHLT</code>.
     </p>
 
+    <p><b id="SCI_CALLTIPADDHLT">SCI_CALLTIPADDHLT(int hlStart, int hlEnd)</b><br />
+     This adds the region of the call tips text to display in a highlighted style to internal list.
+    Call <code>SCI_CALLTIPUPDATEHLT</code> to redraw calltip window after adding one or more ranges.
+    Call <code>SCI_CALLTIPCLEARHLT</code> to clear internal list.
+    <code>hlStart</code> is the zero-based index into the string of the first character to
+    highlight and <code>hlEnd</code> is the index of the first character after the highlight.
+    <code>hlEnd</code> must be greater than <code>hlStart</code>; <code>hlEnd-hlStart</code> is the
+    number of characters to highlight. Highlights can extend over line ends if this is
+    required.</p>
+
+    <p><b id="SCI_CALLTIPCLEARHLT">SCI_CALLTIPCLEARHLT</b><br />
+     Clear internal list of highlighted ranges.
+    Call <code>SCI_CALLTIPUPDATEHLT</code> to redraw calltip window.</p>
+
+    <p><b id="SCI_CALLTIPUPDATEHLT">SCI_CALLTIPUPDATEHLT</b><br />
+     Redraw calltip window after calling <code>SCI_CALLTIPADDHLT</code> or <code>SCI_CALLTIPCLEARHLT</code>.
+    </p>
+
     <p><b id="SCI_CALLTIPSETBACK">SCI_CALLTIPSETBACK(int colour)</b><br />
      The background colour of call tips can be set with this message; the default colour is white.
     It is not a good idea to set a dark colour as the background as the default colour for normal
@@ -3452,6 +3475,10 @@ struct TextToFind {
     <code>STYLE_CALLTIP</code> and sets a tab size in screen pixels. If <code>tabsize</code> is
     less than 1, Tab characters are not treated specially. Once this call has been used, the
     call tip foreground and background colours are also taken from the style.</p>
+
+    <p><b id="SCI_CALLTIPSETWORDWRAP">SCI_CALLTIPSETWORDWRAP(int wrapBnd)</b><br />
+     This message enables word wrap of calltip lines and sets maximum number of characters per line.
+    Set to 0 to disable this feature.</p>
 
 
     <h2 id="KeyboardCommands">Keyboard commands</h2>

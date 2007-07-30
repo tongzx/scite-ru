@@ -400,6 +400,13 @@ void ScintillaBase::CallTipShow(Point pt, const char *defn) {
 		rc.top -= offset;
 		rc.bottom -= offset;
 	}
+//!-start-[BetterCalltips]
+	// adjust X position so that max. amount of calltip text is visible
+	if (rc.Width() > rcClient.Width())
+		rc.Move(-rc.left, 0);
+	else if (rc.right > rcClient.right)
+		rc.Move(-(rc.right - rcClient.right), 0);
+//!-end-[BetterCalltips]
 	// Now display the window.
 	CreateCallTipWindow(rc);
 	ct.wCallTip.SetPositionRelative(rc, wMain);
@@ -639,6 +646,20 @@ sptr_t ScintillaBase::WndProc(unsigned int iMessage, uptr_t wParam, sptr_t lPara
 		ct.SetHighlight(wParam, lParam);
 		break;
 
+//!-start-[BetterCalltips]
+	case SCI_CALLTIPADDHLT:
+		ct.AddHighlight(wParam, lParam);
+		break;
+
+	case SCI_CALLTIPCLEARHLT:
+		ct.ClearHighlight();
+		break;
+
+	case SCI_CALLTIPUPDATEHLT:
+		ct.UpdateHighlight();
+		break;
+//!-end-[BetterCalltips]
+
 	case SCI_CALLTIPSETBACK:
 		ct.colourBG = ColourDesired(wParam);
 		vs.styles[STYLE_CALLTIP].fore = ct.colourBG;
@@ -660,6 +681,13 @@ sptr_t ScintillaBase::WndProc(unsigned int iMessage, uptr_t wParam, sptr_t lPara
 		ct.SetTabSize((int)wParam);
 		InvalidateStyleRedraw();
 		break;
+
+//!-start-[BetterCalltips]
+	case SCI_CALLTIPSETWORDWRAP:
+		ct.SetWrapBound((int)wParam);
+		InvalidateStyleRedraw();
+		break;
+//!-end-[BetterCalltips]
 
 	case SCI_USEPOPUP:
 		displayPopupMenu = wParam != 0;

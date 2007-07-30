@@ -376,6 +376,7 @@ SciTEBase::SciTEBase(Extension *ext) : apis(true), extender(ext) {
 
 	autoCompleteIgnoreCase = false;
 	callTipIgnoreCase = false;
+	calltipShowPerPage = 1; //!-add-[BetterCalltips]
 	autoCCausedByOnlyOne = false;
 	startCalltipWord = 0;
 	currentCallTip = 0;
@@ -2108,17 +2109,33 @@ void SciTEBase::FillFunctionDefinition(int pos /*= -1*/) {
 		delete []words;
 
 		// Should get current api definition
-		const char *word = apis.GetNearestWord(currentCallTipWord.c_str(), currentCallTipWord.length(),
-		        callTipIgnoreCase, calltipWordCharacters, currentCallTip);
-		if (word) {
+/*!		const char *word = apis.GetNearestWord(currentCallTipWord.c_str(), currentCallTipWord.length(),
+		        callTipIgnoreCase, calltipWordCharacters, currentCallTip);*/
+//!-start-[BetterCalltips]
+		functionDefinition = "";
+		for (int i = currentCallTip; i < currentCallTip + calltipShowPerPage; i++) {
+			const char *word = apis.GetNearestWord(currentCallTipWord.c_str(), currentCallTipWord.length(),
+				callTipIgnoreCase, calltipWordCharacters, i);
+			if (!word) break;
+			if (functionDefinition != "")
+				functionDefinition.append("\n");
+			functionDefinition.append(word);
+		}
+//!-end-[BetterCalltips]
+/*!		if (word) {
 			functionDefinition = word;
-			if (maxCallTips > 1) {
+			if (maxCallTips > 1) {*/
+//!-start-[BetterCalltips]
+		if (functionDefinition.length()) {
+			if (maxCallTips > calltipShowPerPage) {
+//!-end-[BetterCalltips]
 				functionDefinition.insert(0, "\001");
 			}
 
 			if (calltipEndDefinition != "") {
 				int posEndDef = functionDefinition.search(calltipEndDefinition.c_str());
-				if (maxCallTips > 1) {
+//!				if (maxCallTips > 1) {
+				if (maxCallTips > calltipShowPerPage) { //!-change-[BetterCalltips]
 					if ((posEndDef > 1) &&
 					        ((posEndDef + calltipEndDefinition.length()) < functionDefinition.length())) {
 						functionDefinition.insert(posEndDef + calltipEndDefinition.length(), "\n\002");
@@ -2126,12 +2143,14 @@ void SciTEBase::FillFunctionDefinition(int pos /*= -1*/) {
 						functionDefinition.append("\n\002");
 					}
 				} else {
-					if ((posEndDef > 1) &&
+//!					if ((posEndDef > 1) &&
+					if ((posEndDef > calltipShowPerPage) && //!-change-[BetterCalltips]
 					        ((posEndDef + calltipEndDefinition.length()) < functionDefinition.length())) {
 						functionDefinition.insert(posEndDef + calltipEndDefinition.length(), "\n");
 					}
 				}
-			} else if (maxCallTips > 1) {
+//!			} else if (maxCallTips > 1) {
+			} else if (maxCallTips > calltipShowPerPage) { //!-change-[BetterCalltips]
 				functionDefinition.insert(1, "\002");
 			}
 			functionDefinition.substitute("\\n", "\n"); //!-add-[CalltipBreaks]
@@ -2200,7 +2219,7 @@ void SciTEBase::ContinueCallTip() {
 			commas++;
 	}
 
-	int startHighlight = 0;
+/*!	int startHighlight = 0;
 	while (functionDefinition[startHighlight] && !calltipParametersStart.contains(functionDefinition[startHighlight]))
 		startHighlight++;
 	if (calltipParametersStart.contains(functionDefinition[startHighlight]))
@@ -2221,7 +2240,53 @@ void SciTEBase::ContinueCallTip() {
 	while (functionDefinition[endHighlight] && !calltipParametersSeparators.contains(functionDefinition[endHighlight]) && !calltipParametersEnd.contains(functionDefinition[endHighlight]))
 		endHighlight++;
 
-	SendEditor(SCI_CALLTIPSETHLT, startHighlight, endHighlight);
+	SendEditor(SCI_CALLTIPSETHLT, startHighlight, endHighlight);*/
+//!-start-[BetterCalltips]
+	SendEditor(SCI_CALLTIPCLEARHLT);
+	int startHighlight = 0;
+	while(startHighlight != -1) {
+		if (startHighlight) {
+			// go to next line
+			startHighlight = functionDefinition.search("\n", startHighlight);
+			if (startHighlight == -1) break;
+			startHighlight++; // go to start of the line
+			// check if line starts with calltip word
+			if (startHighlight + currentCallTipWord.length() > functionDefinition.length()) break;
+			int cmp_res;
+			if (callTipIgnoreCase)
+				cmp_res = ::CompareNCaseInsensitive(functionDefinition.c_str() + startHighlight, currentCallTipWord.c_str(), currentCallTipWord.length());
+			else
+				cmp_res = ::strncmp(functionDefinition.c_str() + startHighlight, currentCallTipWord.c_str(), currentCallTipWord.length());
+			// line does not start with definition - goto next line
+			if (cmp_res != 0)
+				continue;
+		}
+		
+		while (functionDefinition[startHighlight] && !calltipParametersStart.contains(functionDefinition[startHighlight]))
+			startHighlight++;
+		if (calltipParametersStart.contains(functionDefinition[startHighlight]))
+			startHighlight++;
+		int comma_cnt = commas;
+		while (functionDefinition[startHighlight] && comma_cnt > 0) {
+			if (calltipParametersSeparators.contains(functionDefinition[startHighlight]))
+				comma_cnt--;
+			// If it reached the end of the argument list it means that the user typed in more
+			// arguments than the ones listed in the calltip
+			if (calltipParametersEnd.contains(functionDefinition[startHighlight]))
+				comma_cnt = 0;
+			else
+				startHighlight++;
+		}
+		if (calltipParametersSeparators.contains(functionDefinition[startHighlight]))
+			startHighlight++;
+		int endHighlight = startHighlight;
+		while (functionDefinition[endHighlight] && !calltipParametersSeparators.contains(functionDefinition[endHighlight]) && !calltipParametersEnd.contains(functionDefinition[endHighlight]))
+			endHighlight++;
+
+		SendEditor(SCI_CALLTIPADDHLT, startHighlight, endHighlight);
+	};
+	SendEditor(SCI_CALLTIPUPDATEHLT);
+//!-end-[BetterCalltips]
 }
 
 void SciTEBase::EliminateDuplicateWords(char *words) {
@@ -3544,7 +3609,8 @@ void SciTEBase::CharAdded(char ch) {
 		} else if (SendEditor(SCI_AUTOCACTIVE)) {
 			if (calltipParametersStart.contains(ch)) {
 				braceCount++;
-				StartCallTip();
+//!				StartCallTip();
+				if (callTipAutomatic) StartCallTip(); //!-change-[BetterCalltips]
 			} else if (calltipParametersEnd.contains(ch)) {
 				braceCount--;
 			} else if (!wordCharacters.contains(ch)) {
@@ -3560,7 +3626,8 @@ void SciTEBase::CharAdded(char ch) {
 		} else {
 			if (calltipParametersStart.contains(ch)) {
 				braceCount = 1;
-				StartCallTip();
+//!				StartCallTip();
+				if (callTipAutomatic) StartCallTip(); //!-change-[BetterCalltips]
 			} else {
 				autoCCausedByOnlyOne = false;
 				if (indentMaintain)
@@ -4812,10 +4879,19 @@ void SciTEBase::Notify(SCNotification *notification) {
 
 	case SCN_CALLTIPCLICK: {
 			if (notification->position == 1 && currentCallTip > 0) {
-				currentCallTip--;
+/*!				currentCallTip--;
 				FillFunctionDefinition();
 			} else if (notification->position == 2 && currentCallTip + 1 < maxCallTips) {
-				currentCallTip++;
+				currentCallTip++;*/
+//!-start-[BetterCalltips]
+				if (currentCallTip >= calltipShowPerPage)
+					currentCallTip -= calltipShowPerPage;
+				else
+					currentCallTip = 0;
+				FillFunctionDefinition();
+			} else if (notification->position == 2 && currentCallTip + calltipShowPerPage < maxCallTips) {
+				currentCallTip += calltipShowPerPage;
+//!-end-[BetterCalltips]
 				FillFunctionDefinition();
 			}
 		}

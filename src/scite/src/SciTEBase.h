@@ -597,7 +597,9 @@ protected:
 	bool indentationWSVisible;
 
 	bool autoCompleteIgnoreCase;
+	bool callTipAutomatic; //!-add-[BetterCalltips]
 	bool callTipIgnoreCase;
+	int calltipShowPerPage; //!-add-[BetterCalltips]
 	bool autoCCausedByOnlyOne;
 	SString calltipWordCharacters;
 	SString calltipParametersStart;
@@ -969,6 +971,7 @@ protected:
 	void DefineMarker(int marker, int markerType, ColourDesired fore, ColourDesired back);
 	void ReadAPI(const SString &fileNameForExtension);
 	SString FindLanguageProperty(const char *pattern, const char *defaultValue = "");
+	int FindIntLanguageProperty(const char *pattern, int defaultValue = 0); //!-add-[BetterCalltips]
 	virtual void ReadProperties();
 	void SetOneStyle(Window &win, int style, const StyleDefinition &sd);
 	void SetStyleFor(Window &win, const char *language);

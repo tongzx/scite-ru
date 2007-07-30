@@ -11,6 +11,7 @@
 #include "Platform.h"
 
 #include "Scintilla.h"
+#include "SVector.h"
 #include "CallTip.h"
 #include <stdio.h>
 
@@ -29,8 +30,8 @@ CallTip::CallTip() {
 	rectUp = PRectangle(0,0,0,0);
 	rectDown = PRectangle(0,0,0,0);
 	lineHeight = 1;
-	startHighlight = 0;
-	endHighlight = 0;
+/*!	startHighlight = 0;
+	endHighlight = 0;*/
 	tabSize = 0;
 	useStyleCallTip = false;    // for backwards compatibility
 
@@ -165,7 +166,7 @@ void CallTip::DrawChunk(Surface *surface, int &x, const char *s,
 	}
 }
 
-int CallTip::PaintContents(Surface *surfaceWindow, bool draw) {
+/*!int CallTip::PaintContents(Surface *surfaceWindow, bool draw) {
 	PRectangle rcClientPos = wCallTip.GetClientPosition();
 	PRectangle rcClientSize(0, 0, rcClientPos.right - rcClientPos.left,
 	                        rcClientPos.bottom - rcClientPos.top);
@@ -214,7 +215,122 @@ int CallTip::PaintContents(Surface *surfaceWindow, bool draw) {
 		maxWidth = Platform::Maximum(maxWidth, x);
 	}
 	return maxWidth;
+}*/
+
+//!-start-[BetterCalltips]
+#define IS_WS(ch) (((ch) == ' ') || ((ch) == '\t'))
+void CallTip::WrapLine(const char *text, int offset, int length, SVector &wrapPosList) {
+	wrapPosList.SetLength(0);
+	int lastWrapPos = -1;
+	int nextWrapBound = offset + wrapBound;
+	for (int i = offset; i < offset + length; i++) {
+		if (IS_WS(text[i]) && (i > offset) && !IS_WS(text[i - 1])) {
+			lastWrapPos = i;
+		}
+		if ((i >= nextWrapBound) && (lastWrapPos != -1)) {
+			wrapPosList[wrapPosList.Length()] = lastWrapPos;
+			nextWrapBound = lastWrapPos + wrapBound;
+			lastWrapPos = -1;
+		}
+	}
 }
+
+PRectangle CallTip::PaintContents(Surface *surfaceWindow, bool draw) {
+	PRectangle rcClientPos = wCallTip.GetClientPosition();
+	PRectangle rcClientSize(0, 0, rcClientPos.right - rcClientPos.left,
+	                        rcClientPos.bottom - rcClientPos.top);
+	PRectangle rcClient(1, 1, rcClientSize.right - 1, rcClientSize.bottom - 1);
+
+	// To make a nice small call tip window, it is only sized to fit most normal characters without accents
+	int ascent = surfaceWindow->Ascent(font) - surfaceWindow->InternalLeading(font);
+
+	int ytext = rcClient.top + ascent + 1;
+	rcClient.bottom = ytext + surfaceWindow->Descent(font) + 1;
+	char *chunkVal = val;
+	bool moreChunks = true;
+	int maxWidth = 0;
+	int numLines = 0;
+	SVector wrapPosList;
+	
+	while (moreChunks) {
+		char *chunkEnd = strchr(chunkVal, '\n');
+		if (chunkEnd == NULL) {
+			chunkEnd = chunkVal + strlen(chunkVal);
+			moreChunks = false;
+		}
+		int chunkOffset = chunkVal - val;
+		int chunkLength = chunkEnd - chunkVal;
+		int chunkEndOffset = chunkOffset + chunkLength;
+
+		rcClient.top = ytext - ascent - 1;
+
+		int x = insetX;     // start each line at this inset
+
+		if (wrapBound)
+			WrapLine(val, chunkOffset, chunkLength, wrapPosList);
+		
+		int off = chunkOffset;
+		do {
+			int hlStart = chunkEndOffset;
+			int hlEnd = chunkEndOffset;
+			// find next highlighted range within the rest of the current line
+			int i;
+			for (i = 0; i < startHighlight.Length(); i++) {
+				if ((startHighlight[i] >= off) && (startHighlight[i] < chunkEndOffset)) {
+					if (hlStart > startHighlight[i]) {
+						hlStart = startHighlight[i];
+						hlEnd = endHighlight[i];
+					}
+				}
+			}
+			if (hlEnd > chunkEndOffset) hlEnd = chunkEndOffset;
+
+			// draw definition part (not highlighted)
+			int wrapPos = off;
+			for (i = 0; i < wrapPosList.Length(); i++) {
+				if ((wrapPosList[i] >= off) && (wrapPosList[i] <= hlStart)) {
+					// line wrap is needed here
+					DrawChunk(surfaceWindow, x, chunkVal, wrapPos - chunkOffset, wrapPosList[i] - chunkOffset,
+						ytext, rcClient, false, draw);
+					wrapPos = wrapPosList[i];
+					ytext += lineHeight;
+					rcClient.bottom += lineHeight;
+					maxWidth = Platform::Maximum(maxWidth, x);
+					x = insetX;
+					numLines++;
+				}
+			}
+			DrawChunk(surfaceWindow, x, chunkVal, wrapPos - chunkOffset, hlStart - chunkOffset,
+				ytext, rcClient, false, draw);
+			// draw definition part (highlighted)
+			wrapPos = hlStart;
+			for (i = 0; i < wrapPosList.Length(); i++) {
+				if ((wrapPosList[i] >= hlStart) && (wrapPosList[i] <= hlEnd)) {
+					DrawChunk(surfaceWindow, x, chunkVal, wrapPos - chunkOffset, wrapPosList[i] - chunkOffset,
+						ytext, rcClient, true, draw);
+					wrapPos = wrapPosList[i];
+					ytext += lineHeight;
+					rcClient.bottom += lineHeight;
+					maxWidth = Platform::Maximum(maxWidth, x);
+					x = insetX;
+					numLines++;
+				}
+			}
+			DrawChunk(surfaceWindow, x, chunkVal, wrapPos - chunkOffset, hlEnd - chunkOffset,
+				ytext, rcClient, true, draw);
+
+			off = hlEnd;
+		} while (off < chunkEndOffset);
+
+		chunkVal = chunkEnd + 1;
+		ytext += lineHeight;
+		rcClient.bottom += lineHeight;
+		maxWidth = Platform::Maximum(maxWidth, x);
+		numLines++;
+	}
+	return PRectangle(0, 0, maxWidth + insetX, lineHeight * numLines - surfaceWindow->InternalLeading(font) + 2 + 2);
+}
+//!-end-[BetterCalltips]
 
 void CallTip::PaintCT(Surface *surfaceWindow) {
 	if (!val)
@@ -250,7 +366,7 @@ void CallTip::MouseClick(Point pt) {
 		clickPlace = 2;
 }
 
-PRectangle CallTip::CallTipStart(int pos, Point pt, const char *defn,
+/*!PRectangle CallTip::CallTipStart(int pos, Point pt, const char *defn,
                                  const char *faceName, int size,
                                  int codePage_, int characterSet, Window &wParent) {
 	clickPlace = 0;
@@ -294,7 +410,46 @@ PRectangle CallTip::CallTipStart(int pos, Point pt, const char *defn,
 	int height = lineHeight * numLines - surfaceMeasure->InternalLeading(font) + 2 + 2;
 	delete surfaceMeasure;
 	return PRectangle(pt.x - offsetMain, pt.y + 1, pt.x + width - offsetMain, pt.y + 1 + height);
+}*/
+
+//!-start-[BetterCalltips]
+PRectangle CallTip::CallTipStart(int pos, Point pt, const char *defn,
+                                 const char *faceName, int size,
+                                 int codePage_, int characterSet, Window &wParent) {
+	clickPlace = 0;
+	if (val)
+		delete []val;
+	val = new char[strlen(defn) + 1];
+	if (!val)
+		return PRectangle();
+	strcpy(val, defn);
+	codePage = codePage_;
+	Surface *surfaceMeasure = Surface::Allocate();
+	if (!surfaceMeasure)
+		return PRectangle();
+	surfaceMeasure->Init(wParent.GetID());
+	surfaceMeasure->SetUnicodeMode(SC_CP_UTF8 == codePage);
+	surfaceMeasure->SetDBCSMode(codePage);
+	ClearHighlight();
+	inCallTipMode = true;
+	posStartCallTip = pos;
+	int deviceHeight = surfaceMeasure->DeviceHeightFont(size);
+	font.Create(faceName, characterSet, deviceHeight, false, false);
+	// Look for multiple lines in the text
+	// Only support \n here - simply means container must avoid \r!
+	rectUp = PRectangle(0,0,0,0);
+	rectDown = PRectangle(0,0,0,0);
+	offsetMain = insetX;            // changed to right edge of any arrows
+	lineHeight = surfaceMeasure->Height(font);
+	PRectangle rcSize = PaintContents(surfaceMeasure, false);
+	delete surfaceMeasure;
+
+	// Extra line for border and an empty line at top and bottom. The returned
+	// rectangle is aligned to the right edge of the last arrow encountered in
+	// the tip text, else to the tip text left edge.
+	return PRectangle(pt.x - offsetMain, pt.y + 1, pt.x - offsetMain + rcSize.Width(), pt.y + 1 + rcSize.Height());
 }
+//!-end-[BetterCalltips]
 
 void CallTip::CallTipCancel() {
 	inCallTipMode = false;
@@ -303,7 +458,7 @@ void CallTip::CallTipCancel() {
 	}
 }
 
-void CallTip::SetHighlight(int start, int end) {
+/*!void CallTip::SetHighlight(int start, int end) {
 	// Avoid flashing by checking something has really changed
 	if ((start != startHighlight) || (end != endHighlight)) {
 		startHighlight = start;
@@ -312,7 +467,69 @@ void CallTip::SetHighlight(int start, int end) {
 			wCallTip.InvalidateAll();
 		}
 	}
+}*/
+
+//!-start-[BetterCalltips]
+void CallTip::SetHighlight(int start, int end) {
+	ClearHighlight();
+	AddHighlight(start, end);
+	UpdateHighlight();
 }
+
+void CallTip::AddHighlight(int start, int end) {
+	int i = 0;
+	if (start == end) return;
+	while (i < startHighlight.Length()) {
+		if ((start == startHighlight[i]) && (end == endHighlight[i])) return;
+		// check if ranges overlap
+		if ((start <= endHighlight[i]) && (end >= startHighlight[i])) {
+			// combine ranges
+			start = Platform::Minimum(start, startHighlight[i]);
+			end = Platform::Maximum(end, endHighlight[i]);
+			// delete old range
+			for (int j = i; j + 1 < startHighlight.Length(); j++) {
+				startHighlight[j] = startHighlight[j + 1];
+				endHighlight[j] = endHighlight[j + 1];
+			}
+			startHighlight.SetLength(startHighlight.Length() - 1);
+			endHighlight.SetLength(endHighlight.Length() - 1);
+		}
+		else {
+			i++;
+		}
+	}
+	startHighlight[startHighlight.Length()] = start;
+	endHighlight[endHighlight.Length()] = end;
+}
+
+void CallTip::ClearHighlight() {
+	startHighlightOld = startHighlight;
+	endHighlightOld = endHighlight;
+	startHighlight.Free();
+	endHighlight.Free();
+}
+
+void CallTip::UpdateHighlight() {
+	// Avoid flashing by checking something has really changed
+	bool changed = (startHighlight.Length() != startHighlightOld.Length());
+	if (!changed) {
+		for (int i = 0; i < startHighlight.Length(); i++) {
+			int j;
+			for (j = 0; j < startHighlightOld.Length(); j++) {
+				if ((startHighlight[i] == startHighlightOld[j]) && (endHighlight[i] == endHighlightOld[j]))
+					break;
+			}
+			if (j == startHighlightOld.Length()) {
+				changed = true;
+				break;
+			}
+		}
+	}
+	if (changed && wCallTip.Created()) {
+		wCallTip.InvalidateAll();
+	}
+}
+//!-end-[BetterCalltips]
 
 // Set the tab size (sizes > 0 enable the use of tabs). This also enables the
 // use of the STYLE_CALLTIP.
@@ -327,3 +544,9 @@ void CallTip::SetForeBack(const ColourPair &fore, const ColourPair &back) {
 	colourBG = back;
 	colourUnSel = fore;
 }
+
+//!-start-[BetterCalltips]
+void CallTip::SetWrapBound(int wrapBnd) {
+	wrapBound = wrapBnd;
+}
+//!-end-[BetterCalltips]
