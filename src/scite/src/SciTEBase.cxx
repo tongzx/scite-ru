@@ -4852,7 +4852,8 @@ void SciTEBase::Notify(SCNotification *notification) {
 		if (extender && OnSendEditorCallsCount < _MAX_EXTENSION_RECURSIVE_CALL) {
 			OnSendEditorCallsCount++;
 			char zoom[10];
-			extender->OnSendEditor(SCI_SETZOOM, 0, itoa(SendEditor(SCI_GETZOOM),zoom,10));
+			sprintf(zoom, "%d", (int)SendEditor(SCI_GETZOOM));
+			extender->OnSendEditor(SCI_SETZOOM, 0, zoom);
 			OnSendEditorCallsCount--;
 		}
 //!-end-[Zoom]
