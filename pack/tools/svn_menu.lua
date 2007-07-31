@@ -14,18 +14,21 @@ Add next line to lua startup file (SciTEStartup.lua):
 local SVNContectMenu =
   "||"..
 	"SVN|POPUPBEGIN|"..
-	"Update…|9181|"..
+	"Update|9181|"..
 	"Commit…|9182|"..
 	"Revert…|9183|"..
+	"Show log|9184|"..
 	"$(BranchMenuCommands)"..
 	"||"..
-	"Update All…|9186|"..
-	"Commit All…|9187|"..
+	"Update All|9188|"..
+	"Commit All…|9189|"..
+	"Show log for All|9190|"..
 	"SVN|POPUPEND|"
 local BranchMenuCommands =
 	"||"..
-	"Update 'trunk'…|9184|"..
-	"Commit 'trunk'…|9185|"
+	"Update 'trunk'|9185|"..
+	"Commit 'trunk'…|9186|"..
+	"Show log for 'trunk'|9187|"
 
 local function svn_menu(file)
 	local menu = props["user.tabcontext.menu"]
