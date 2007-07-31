@@ -50,7 +50,7 @@ local function svn_menu(file)
 			elseif name == "branches" then
 				svnbranch = child
 				local _,_,branchname = string.find(svnbranch, ".*\\([^\\]+)")
-				branchmenu = string.gsub(SVNContectMenu, "trunk", branchname)
+				branchmenu = string.gsub(BranchMenuCommands, "trunk", branchname)
 			end
 			if parent then
 				if os.getfileattr(parent.."\\.svn") or os.getfileattr(parent.."\\_svn") then
