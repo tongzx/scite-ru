@@ -17,18 +17,19 @@ local SVNContectMenu =
 	"Update|9181|"..
 	"Commit…|9182|"..
 	"Revert…|9183|"..
-	"Show log|9184|"..
+	"Diff|9184|"..
+	"Show log|9185|"..
 	"$(BranchMenuCommands)"..
 	"||"..
-	"Update All|9188|"..
-	"Commit All…|9189|"..
-	"Show log for All|9190|"..
+	"Update All|9189|"..
+	"Commit All…|9190|"..
+	"Show log for All|9191|"..
 	"SVN|POPUPEND|"
 local BranchMenuCommands =
 	"||"..
-	"Update 'trunk'|9185|"..
-	"Commit 'trunk'…|9186|"..
-	"Show log for 'trunk'|9187|"
+	"Update 'trunk'|9186|"..
+	"Commit 'trunk'…|9187|"..
+	"Show log for 'trunk'|9188|"
 
 local function svn_menu(file)
 	local menu = props["user.tabcontext.menu"]
