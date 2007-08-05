@@ -1,6 +1,6 @@
 -- Создание резервной копии сохраняемого после редактирования файла
 -- mozers
--- version 1.2
+-- version 1.4
 ------------------------------------------------
 -- Based by Frank Wunderlich
 -- Mon, 27 Mar 2006 07:19:27 -0800
@@ -25,6 +25,14 @@
 --   backup.path=%TEMP%\SciTE
 ------------------------------------------------
 
+local function FileExist(path)
+	if (os.rename (path,path)) then
+		return true
+	else
+		return false
+	end
+end
+
 local function GetPath()
 	local path = props['backup.path']
 
@@ -41,9 +49,9 @@ local function GetPath()
 	end
 
 -- 	if backup folder not exist
-	if not (os.rename (path,path)) then
-		os.run('CMD /C MD '..path,0,true) -- Silient window (only SciTE-Ru)
---~ 		os.execute('CMD /C MD '..path)
+	if not FileExist(path) then
+		os.run('CMD /C MD "'..path..'"',0,true) -- Silient window (only SciTE-Ru)
+--~ 		os.execute('CMD /C MD "'..path..'"')
 	end
 	return path
 end
@@ -55,7 +63,6 @@ local function BakupFile(filename)
 	end
 	local sfilename = filename
 	filename = GetPath().."\\"..string.gsub(filename,'.*\\','')
-
 	local nbck = 1
 	while (sbck > nbck ) do
 		local fn1 = sbck-nbck 
@@ -68,8 +75,15 @@ local function BakupFile(filename)
 		end
 		nbck = nbck + 1
 	end
-	os.remove (filename.."."..".bak")
+	os.remove (filename..".bak")
+	if not FileExist(sfilename) then
+		io.output(sfilename)
+		io.close()
+	end
 	os.rename (sfilename, filename..".bak")
+	if not FileExist(filename..".bak") then
+		_ALERT("=>\tERROR CREATE BACKUP FILE: "..filename..".bak".."\t"..sbck)
+	end
 	return false
 end
 

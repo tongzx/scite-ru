@@ -70,14 +70,14 @@ dofile (props["SciteDefaultHome"].."\\tools\\Zoom.lua")
 -- Быстрое комментирование выделенного кода, автозакрытие скобок
 dofile (props["SciteDefaultHome"].."\\tools\\smartcomment.lua")
 
--- При вводе слова, если это сокращение то вызывается список аббривиатур
-dofile (props["SciteDefaultHome"].."\\tools\\abbrevlist.lua")
+-- При вводе слова, если это сокращение то вызывается список аббревиатур
+--~ dofile (props["SciteDefaultHome"].."\\tools\\abbrevlist.lua")
 
 -- Сохранение параметров настройки SciTE, измененных через меню
 dofile (props["SciteDefaultHome"].."\\tools\\save_settings.lua")
 
 -- Создает в контекстном меню таба (закладки) подменю для команд SVN
-dofile (props["SciteDefaultHome"].."\\tools\\svn_menu.lua")
+--~ dofile (props["SciteDefaultHome"].."\\tools\\svn_menu.lua")
 
 -- Установка размера символа табуляции в окне консоли
 local tab_width = tonumber(props['output.tabsize'])

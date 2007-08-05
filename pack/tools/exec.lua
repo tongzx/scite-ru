@@ -35,8 +35,9 @@ end
 
 if (string.len(str) > 2) then
   if string.find(str,'http://(.*)') then
-    local browser = ('explorer ' .. str .. ' &')
-    os.execute(browser)
+    local browser = ('explorer "' .. str .. '"')
+    os.run (browser, 0, false)
+    --~ os.execute (browser)
   else
     if string.find(str, "(math\.%w+)") then  -- В случае сложных математических выражений форматирование оставляем на пользователя
       str = string.gsub(str,"[=]",'')
@@ -65,3 +66,5 @@ end
 --~ Колбаса = 24.5кг. * 120руб./кг 
 --~ Бензин(ABC) = (2500км. / (11,5л./100км.)) * 18.4руб./л + Канистра =100руб. 
 --~ Штукатурка = 22.4 м2 /80руб./100 м2
+
+--~ http://forum.ru-board.com/topic.cgi?forum=2&topic=3339&start=160#lt

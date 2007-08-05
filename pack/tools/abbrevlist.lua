@@ -1,11 +1,10 @@
 -- SciTE Abbreviation in UserList
--- Version: 1.0
--- Autor: Dmitry Maslov
+-- Version: 1.1
+-- Autor: Dmitry Maslov, frs
 ---------------------------------------------------
--- При вводе слова, если это сокращение то вызывается список аббривиатур
--- Работу со списками подсмотрел в AutocompleteObject.lua (автор: mozers)
+-- При вводе слова, если это сокращение то вызывается список аббревиатур
 -- Примечание:
--- 1. Использует выподающий список № 11
+-- 1. Использует выпадающий список № 11
 -- 2. Полностью автономен (нужно подключить в SciTEStartup.lua)
 ---------------------------------------------------
 
@@ -27,12 +26,12 @@ local function InsertProp(sel_value)
 		editor:CharLeftExtend()
 	end
 	editor:DeleteBack()
-	scite.InsertAbbreviation(sel_value)
+	ind = string.rep(" ",editor.Column[editor.CurrentPos])
+		scite.InsertAbbreviation(string.gsub(sel_value,'\\n','\\n'..ind))
 	return true
 end
 
 local function Abbrev()
-
 	local abb_file = io.open(props["SciteDefaultHome"].."\\abbrev\\"..editor.LexerLanguage..".abbrev")
 	if not abb_file then
 		abb_file = io.open(props["SciteDefaultHome"].."\\home\\abbrev.properties")
@@ -46,7 +45,7 @@ local function Abbrev()
 	if len_currword < 1 then
 		return false
 	end
-	
+
 	local user_list = {}
 	for line in abb_file:lines() do
 		local abbrev_word = string.sub(line,1,len_currword)
