@@ -586,8 +586,8 @@ IDC_MARGIN         CURSOR  DISCARDABLE     "Margin.cur"
 #endif
 
 VS_VERSION_INFO VERSIONINFO
-FILEVERSION	1, 7, 4, 49
-PRODUCTVERSION	1, 7, 4, 49
+FILEVERSION	1, 7, 4, 51
+PRODUCTVERSION	1, 7, 4, 51
 FILEFLAGSMASK	0x3fL
 FILEFLAGS 0
 FILEOS VOS_NT_WINDOWS32
@@ -604,12 +604,12 @@ BEGIN
 		BEGIN
 			VALUE	"CompanyName",	"scite.ruteam.ru\0"
 			VALUE	"FileDescription",	"SciTE - a Scintilla based Text Editor\0"
-			VALUE	"FileVersion",	"1.74 .49Ru\0"
+			VALUE	"FileVersion",	"1.74 .51Ru\0"
 			VALUE	"InternalName",	"SciTE\0"
 			VALUE	"LegalCopyright",	"Copyright 1998-2007 by Neil Hodgson\0"
 			VALUE	"OriginalFilename",	"SciTE.EXE\0"
 			VALUE	"ProductName",	"SciTE\0"
-			VALUE	"ProductVersion",	"1.74 .49Ru\0"
+			VALUE	"ProductVersion",	"1.74 .51Ru\0"
 		END
 	END
 END
