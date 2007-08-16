@@ -14,9 +14,12 @@
 
 local function SetReadOnly(ro)
 	if ro then
-		props["caret.period.normal"] = props["caret.period"]
-		props["caret.width.normal"] = props["caret.width"]
-		props["style.*.33.normal"] = props["style.*.33"]
+		if props["normal.style.saved"] == "" then
+			props["normal.style.saved"] = "1"
+			props["caret.period.normal"] = props["caret.period"]
+			props["caret.width.normal"] = props["caret.width"]
+			props["style.*.33.normal"] = props["style.*.33"]
+		end
 
 		props["caret.period"] = 0
 		props["caret.width"] = 0
