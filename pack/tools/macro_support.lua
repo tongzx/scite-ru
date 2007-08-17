@@ -1,6 +1,6 @@
 --[[
 Macros support for SciTE
-Version 2.1.0
+Version 2.2.0
 Author: VladVRO
 ---------------------------------------------------
 Description:
@@ -35,22 +35,30 @@ local glb_macro_buf = {}
 local glb_macros_table = {}
 local glb_macros_name_table = {}
 
+-- working state
+local is_load_from_file = false
+
 -- position in list for new recorded macro
 --  -1 - last position
 --  default = 1
-local new_position =  props['macro.new.record.position']
-if new_position == "" then
-  new_position = 1
-else
-  new_position = tonumber(new_position)
+local function macro_new_record_position()
+  local position =  props['macro.new.record.position']
+  if position == "" then
+    return 1
+  else
+    return tonumber(position)
+  end
 end
 
 -- path to file with macros
-macro_file = props['macro.file.path']
-if macro_file == "" then
-  macro_file = props['scite.userhome']
-  if macro_file == "" then macro_file = props['SciteDefaultHome'] end
-  macro_file = macro_file.."\\SciTE.macro"
+local function macro_file_path()
+  local path = props['macro.file.path']
+  if path == "" then
+    path = props['scite.userhome']
+    if path == "" then path = props['SciteDefaultHome'] end
+    path = path.."\\SciTE.macro"
+  end
+  return path
 end
 
 
@@ -91,8 +99,10 @@ function OnMacro(cmd, msg)
       scite.Perform("reloadproperties:")
     end
   elseif cmd == "macro:stoprecord" then
-    local name = MacroAddToList(glb_macro_buf, nil, new_position)
-    scite.Perform("currentmacro:"..ifnil(name,""))
+    local name = MacroAddToList(glb_macro_buf, nil, macro_new_record_position())
+    if name then
+      scite.Perform("currentmacro:"..name)
+    end
     table_clear(glb_macro_buf)
     -- visualization
     if props['macro.recording.numfield.style'] ~= "" then
@@ -100,8 +110,8 @@ function OnMacro(cmd, msg)
       scite.Perform("reloadproperties:")
     end
     -- autosave
-    if props['macro.autosave'] == "1" then
-      MacroSaveToFile(macro_file)
+    if name and props['macro.autosave'] == "1" then
+      MacroSaveToFile(macro_file_path())
     end
   elseif cmd == "macro:getlist" then
     if table.getn(glb_macros_name_table) > 0 then
@@ -120,6 +130,12 @@ function OnMacro(cmd, msg)
   end
 end
 
+local function str_to_macro_name(str)
+  for a in string.gfind(str, "([a-zA-Z0-9_%-%+%.%(%)]+)") do
+    return a
+  end
+end
+
 function MacroAddToList(macro, name, pos)
   if table.getn(macro) > 0 then
     if not name then
@@ -128,6 +144,16 @@ function MacroAddToList(macro, name, pos)
         i = i + 1
         name = "record"..i
       until glb_macros_table[name] == nil or i > 9999
+      if not is_load_from_file and props["macro.fill.name.dialog"] == "1" then
+        repeat
+          props[1] = name
+          if scite.ShowParametersDialog("Имя макроса (a-zA-Z0-9_-+.())") then
+            name = str_to_macro_name(props[1])
+          else
+            return
+          end
+        until name == props[1]
+      end
     end
     if not glb_macros_table[name] or table.getn(glb_macros_name_table) == 0 then
       if pos then
@@ -137,8 +163,8 @@ function MacroAddToList(macro, name, pos)
       end
     end
     glb_macros_table[name] = table_icopy({},macro)
+    return name
   end
-  return name
 end
 
 local function macro_to_string(mode)
@@ -190,10 +216,7 @@ local function macro_load(text)
     if string.sub(str, 1, 3) == "---" then
       MacroAddToList(macro, name)
       macro = {}
-      name = nil
-      for a in string.gfind(str, "([%w_]+)") do
-        name = a; break;
-      end
+      name = str_to_macro_name(string.sub(str, 4))
     else
       str = string.gsub(str, "\r", "")
       for fnc,wp,lp in string.gfind(str, "(%w+);(%d+);(.*)") do
@@ -383,17 +406,19 @@ function MacroLoadFromSelection()
   macro_load(editor:GetSelText())
   -- autosave
   if props['macro.autosave'] == "1" then
-    MacroSaveToFile(macro_file)
+    MacroSaveToFile(macro_file_path())
   end
 end
 
 function MacroLoadFromFile(filename)
+  is_load_from_file = true
   local fl = io.open(filename)
   if fl ~= nil then
     fl:seek("set")
     macro_load(fl:read("*a"))
     fl:close()
   end
+  is_load_from_file = false
 end
 
 function MacroSaveToFile(filename)
@@ -427,5 +452,5 @@ end
 ----------------------------------------------------------
 -- load macros at startup
 if props['macro.load.on.startup'] == "1" then
-  MacroLoadFromFile(macro_file)
+  MacroLoadFromFile(macro_file_path())
 end
