@@ -28,12 +28,23 @@
 ------------------------------------------------
 local function IsComment()
 	local style = editor.StyleAt[editor.CurrentPos-2]
-	local ext = props["FileExt"]
-	if ext == 'css' then
-		if style == 9 then return true end
+	local lexer = editor.LexerLanguage
+	if lexer == 'css' then
+		if style == 9 then
+			return true
+		else
+			return false
+		end
+	elseif lexer == 'batch' then
+		if style == 1 then
+			return true
+		else
+			return false
+		end
 	else
 		if (style >= 1 and style <= 3) then return true end
 	end
+	return false
 end
 
 local function GetWordLeft()
