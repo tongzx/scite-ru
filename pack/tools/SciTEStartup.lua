@@ -61,7 +61,8 @@ dofile (props["SciteDefaultHome"].."\\tools\\Calculator\\SciTECalculatorPD.lua")
 -- Автодополнение объектов их методами и свойствами
 dofile (props["SciteDefaultHome"].."\\tools\\AutocompleteObject.lua")
 
--- Cохранение текущей сессиии при закрытии SciTE
+-- Показ модифицированного диалога сохранения текущей сессиии при закрытии SciTE
+-- (если в SciTEGlobal.properties установлены параметры session.manager=1 и save.session.manager.on.quit=1)
 dofile (props["SciteDefaultHome"].."\\tools\\SessionManager\\SessionManager.lua")
 
 -- При изменении текущего размера шрифта, масштабируется и выводимый на принтер шрифт и показатель в строке состояния

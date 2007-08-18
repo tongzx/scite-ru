@@ -1,10 +1,18 @@
+-- Open_Selected_Filename.lua
+-- mozers™, vladvro
+-- version 1.2
+---------------------------------------
 -- Замена команды "Открыть выделенный файл"
 -- В отличии от встроенной команды SciTE, понимающей только явно заданный путь и относительные пути
 -- обрабатывает переменные SciTE, переменные окружения, конструкции LUA
--- Подключение: Добавьте в SciTEStartup.lua строку
+---------------------------------------
+-- Connection:
+-- In file SciTEStartup.lua add a line:
 -- dofile (props["SciteDefaultHome"].."\\tools\\Open_Selected_Filename.lua")
--- mozers™, vladvro
--- version 1.2
+---------------------------------------
+-- Подключение:
+-- Добавьте в SciTEStartup.lua строку
+-- dofile (props["SciteDefaultHome"].."\\tools\\Open_Selected_Filename.lua")
 --------------------------------------------------------------
 
 local function Open_Selected_Filename()
@@ -46,7 +54,7 @@ local function Open_Selected_Filename()
 	end
 end
 
--- Добавляем свой обработчик события OnMenuCommand
+-- Add user event handler OnMenuCommand
 local old_OnMenuCommand = OnMenuCommand
 function OnMenuCommand (msg, source)
 	local result
