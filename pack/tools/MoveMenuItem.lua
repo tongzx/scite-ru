@@ -1,27 +1,24 @@
--- Изменение номера выделенных параметров меню Tools
--- version: 1.1
--- author: VladVRO
+-- Изменение номера выделенных параметров
+-- Возможно использование в файлах .properties (изменение нумерации пунктов меню Tools SciTE),
+-- а так же в .ini (.bar) файлах (например, задание пунктов меню и тулбара в Total Commander)
+-- version: 1.2
+-- author: VladVRO, mozers™
 
 -- Подключение:
 -- В файл *.properties добавьте строки:
---    command.name.111.*.properties=Move menu item Up
---    command.111.*.properties=dostring delta=-1 dofile(props["SciteDefaultHome"].."\\tools\\MoveMenuItem.lua")
---    command.mode.111.*.properties=subsystem:lua,savebefore:no
---    command.shortcut.111.*.properties=Alt+Shift+Up
+--   file.patterns.used.numeric.values=*.properties;*.ini;*.bar
+--   command.name.3.$(file.patterns.used.numeric.values)=Increase number of items
+--   command.3.$(file.patterns.used.numeric.values)=dostring delta=1 dofile(props["SciteDefaultHome"].."\\tools\\MoveMenuItem.lua")
+--   command.mode.3.$(file.patterns.used.numeric.values)=subsystem:lua,savebefore:no
+--   command.shortcut.3.$(file.patterns.used.numeric.values)=Alt+Shift+Up
 
---    command.name.112.*.properties=Move menu item Down
---    command.112.*.properties=dostring delta=1 dofile(props["SciteDefaultHome"].."\\tools\\MoveMenuItem.lua")
---    command.mode.112.*.properties=subsystem:lua,savebefore:no
---    command.shortcut.112.*.properties=Alt+Shift+Down
+--   command.name.4.$(file.patterns.used.numeric.values)=Decrease number of items
+--   command.4.$(file.patterns.used.numeric.values)=dostring delta=-1 dofile(props["SciteDefaultHome"].."\\tools\\MoveMenuItem.lua")
+--   command.mode.4.$(file.patterns.used.numeric.values)=subsystem:lua,savebefore:no
+--   command.shortcut.4.$(file.patterns.used.numeric.values)=Alt+Shift+Down
 ---------------------------------------------
-
-local new = ""
-local text = editor:GetSelText().."\n"
-for str in string.gfind(text, "([^\n]*)\n") do
-	str = string.gsub(str, "%.(%d+)", function (s) return "."..tonumber(s)+delta end, 1)
-	if new ~= "" then new = new.."\n" end
-	new = new..str
-end
+local text = editor:GetSelText()
+text = string.gsub(text, "(%s-[%a.]+)(%d+)([%a%.%*%$%(%)]*=[^\n]-)", function (s1,s2,s3) return s1..tonumber(s2)+delta..s3 end)
 local ss = editor.SelectionStart
-editor:ReplaceSel(new)
-editor:SetSel(ss, ss+string.len(new))
+editor:ReplaceSel(text)
+editor:SetSel(ss, ss+string.len(text))
