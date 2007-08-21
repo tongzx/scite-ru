@@ -1,4 +1,5 @@
 -- Изменение номера выделенных параметров меню Tools
+-- version: 1.1
 -- author: VladVRO
 
 -- Подключение:
@@ -17,10 +18,10 @@
 local new = ""
 local text = editor:GetSelText().."\n"
 for str in string.gfind(text, "([^\n]*)\n") do
-	str = string.gsub(str, "(%.%d+)", function (s) return "."..tonumber(string.sub(s,2))+delta end, 1)
+	str = string.gsub(str, "%.(%d+)", function (s) return "."..tonumber(s)+delta end, 1)
 	if new ~= "" then new = new.."\n" end
 	new = new..str
 end
-local ss, se = editor.SelectionStart, editor.SelectionEnd
+local ss = editor.SelectionStart
 editor:ReplaceSel(new)
-editor:SetSel(ss, se)
+editor:SetSel(ss, ss+string.len(new))
