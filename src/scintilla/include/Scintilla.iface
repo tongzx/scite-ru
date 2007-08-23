@@ -991,6 +991,20 @@ set void CallTipSetForeHlt=2207(colour fore,)
 # Enable use of STYLE_CALLTIP and set call tip tab size in pixels.
 set void CallTipUseStyle=2212(int tabSize,)
 
+##!-start-[BetterCalltips]
+# Add a range of characters to be displayed in a highlight style.
+fun void CallTipAddHlt=4013(int start, int end)
+
+# Delete all highlighted ranges
+fun void CallTipClearHlt=4014(,)
+
+# Update calltip window to reflect changes made by CallTipAddHlt and CallTipClearHlt
+fun void CallTipUpdateHlt=4015(,)
+
+# Set calltip line wrap bound in characters, 0 means no wrap
+fun void CallTipSetWordWrap=4016(int wrapBnd,)
+##!-end-[BetterCalltips]
+
 # Find the display line of a document line taking hidden lines into account.
 fun int VisibleFromDocLine=2220(int line,)
 
@@ -1808,6 +1822,11 @@ set void SetKeyWords=4005(int keywordSet, string keyWords)
 # Set the lexing language of the document based on string name.
 set void SetLexerLanguage=4006(, string language)
 
+##!-start-[GetLexerLanguage]
+# Retrieve lexing language of the document.
+fun int GetLexerLanguage=4012(, string language)
+##!-end-[GetLexerLanguage]
+
 # Load a lexer library (dll / so).
 fun void LoadLexerLibrary=4007(, string path)
 
@@ -1972,7 +1991,9 @@ val SCLEX_CMAKE=80
 val SCLEX_GAP=81
 val SCLEX_PLM=82
 val SCLEX_PROGRESS=83
-val SCLEX_EUPHORIA=86	//!-add-[Euphoria]
+##!-start-[Euphoria]
+val SCLEX_EUPHORIA=86
+##!-end-[Euphoria]
 
 # When a lexer specifies its language as SCLEX_AUTOMATIC it receives a
 # value assigned in sequence from SCLEX_AUTOMATIC+1.
@@ -2019,6 +2040,11 @@ val SCE_C_WORD2=16
 val SCE_C_COMMENTDOCKEYWORD=17
 val SCE_C_COMMENTDOCKEYWORDERROR=18
 val SCE_C_GLOBALCLASS=19
+##!-start-[C_Word]
+val SCE_C_WORD3=20
+val SCE_C_WORD4=21
+val SCE_C_WORD5=22
+##!-end-[C_Word]
 # Lexical states for SCLEX_D
 lex D=SCLEX_D SCE_D_
 val SCE_D_DEFAULT=0
@@ -2344,6 +2370,9 @@ val SCE_ERR_IFORT=17
 val SCE_ERR_ABSF=18
 val SCE_ERR_TIDY=19
 val SCE_ERR_JAVA_STACK=20
+##!-start-[FindResultListStyle]
+val SCE_ERR_FIND_VALUE=30
+##!-end-[FindResultListStyle]
 # Lexical states for SCLEX_BATCH
 lex Batch=SCLEX_BATCH SCE_BAT_
 val SCE_BAT_DEFAULT=0
@@ -3189,7 +3218,7 @@ val SCE_4GL_COMMENT3_=28
 val SCE_4GL_COMMENT4_=29
 val SCE_4GL_COMMENT5_=30
 val SCE_4GL_COMMENT6_=31
-//!-start-[Euphoria]
+##!-start-[Euphoria]
 # Lexical states for SCLEX_EUPHORIA
 lex Euphoria=SCLEX_EUPHORIA SCE_EUPHORIA_
 val SCE_EUPHORIA_DEFAULT=0
@@ -3209,7 +3238,7 @@ val SCE_EUPHORIA_WORD5=14
 val SCE_EUPHORIA_WORD6=15
 val SCE_EUPHORIA_WORD7=16
 val SCE_EUPHORIA_WORD8=17
-//!-end-[Euphoria]
+##!-end-[Euphoria]
 
 # Events
 
