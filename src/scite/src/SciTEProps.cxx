@@ -1395,7 +1395,6 @@ void SciTEBase::ReadFontProperties() {
 	SetOneStyle(wEditor, STYLE_DEFAULT, sval.c_str());
 	SetOneStyle(wOutput, STYLE_DEFAULT, sval.c_str());
 #endif
-	SendEditor(SCI_SETZOOM, props.GetInt("magnification")); //!-add-[Zoom]
 //!-end-[StyleDefault]
 
 	sprintf(key, "style.%s.%0d", language.c_str(), STYLE_DEFAULT);
