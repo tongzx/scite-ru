@@ -1,48 +1,49 @@
 -- Βρςΰβκΰ ροεφρθμβξλξβ (©,®,§,±,…) θη πΰρκπϋβΰώωεγξρÿ ροθρκΰ (δλÿ HTML βρςΰβλÿώςρÿ θυ ξαξηνΰχενθÿ)
 -- mozers™ icq#256106175
--- version 0.3
+-- version 0.4
 -----------------------------------------------
+local cp=1
 
 local char2html = {
-	' ', "&nbsp;",
-	'&', "&amp;",
-	'"', "&quot;",
-	'<', "&lt;",
-	'>', "&gt;",
-	'‘', "&lsquo;",
-	'’', "&rsquo;",
-	'“', "&ldquo;",
-	'”', "&rdquo;",
-	'‹', "&lsaquo;",
-	'›', "&rsaquo;",
-	'«', "&laquo;",
-	'»', "&raquo;",
-	'„', "&bdquo;",
-	'‚', "&sbquo;",
-	'·', "&middot;",
-	'…', "&hellip;",
-	'§', "&sect;",
-	'©', "&copy;",
-	'®', "&reg;",
-	'™', "&trade;",
-	'¦', "&brvbar;",
-	'†', "&dagger;",
-	'‡', "&Dagger;",
-	'¬', "&not;",
-	'­', "&shy;",
-	'±', "&plusmn;",
-	'µ', "&micro;",
-	'‰', "&permil;",
-	'°', "&deg;",
-	'', "&euro;",
-	'¤', "&curren;",
-	'•', "&bull;",
+	' ', '  ', '&nbsp;',
+	'&', '& ', '&amp;',
+	'"', '" ', '&quot;',
+	'<', '< ', '&lt;',
+	'>', '> ', '&gt;',
+	'‘', 'β€', '&lsquo;',
+	'’', 'β€™', '&rsquo;',
+	'“', 'β€', '&ldquo;',
+	'”', 'β€', '&rdquo;',
+	'‹', 'β€Ή', '&lsaquo;',
+	'›', 'β€Ί', '&rsaquo;',
+	'«', 'Β«', '&laquo;',
+	'»', 'Β»', '&raquo;',
+	'„', 'β€', '&bdquo;',
+	'‚', 'β€', '&sbquo;',
+	'·', 'Β·', '&middot;',
+	'…', 'β€¦', '&hellip;',
+	'§', 'Β§', '&sect;',
+	'©', 'Β©', '&copy;',
+	'®', 'Β®', '&reg;',
+	'™', 'β„Ά', '&trade;',
+	'¦', 'Β¦', '&brvbar;',
+	'†', 'β€ ', '&dagger;',
+	'‡', 'β€΅', '&Dagger;',
+	'¬', 'Β¬', '&not;',
+	'­', 'Β­', '&shy;',
+	'±', 'Β±', '&plusmn;',
+	'µ', 'Βµ', '&micro;',
+	'‰', 'β€°', '&permil;',
+	'°', 'Β°', '&deg;',
+	'', 'β‚¬', '&euro;',
+	'¤', 'Β¤', '&curren;',
+	'•', 'β€Ά', '&bull;',
 }
 
 local function f_char2html (char)
 	function f(index,value)
 		if (value == char) then
-			html = char2html[index+1]
+			html = char2html[index+3-cp]
 		end
 	end
 	table.foreachi (char2html, f)
@@ -61,13 +62,18 @@ local function InsertSpecialChar(sel_value)
 end
 
 function SpecialChar()
+	if editor.CodePage==0 then
+		cp=1
+	else
+		cp=2
+	end
 	local user_list = ''
 	local sep = ';'
 	local n = table.getn(char2html)
-	for i = 1,n-2,2 do
+	for i = cp,n-3,3 do
 		user_list = user_list..char2html[i]..sep
 	end
-	user_list = user_list..char2html[n-1]
+	user_list = user_list..char2html[n-3+cp]
 	editor.AutoCSeparator = string.byte(sep)
 	editor:UserListShow(12,user_list)
 	editor.AutoCSeparator = string.byte(' ')
