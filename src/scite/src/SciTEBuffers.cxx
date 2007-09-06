@@ -66,16 +66,6 @@ Job::Job() {
 	Clear();
 }
 
-//!-start--[Tread.SmartExecute]
-Job::Job(const Job &jb) {
-	command.append(jb.command.c_str(), jb.command.size() );
-	directory = jb.directory;
-	input.append(jb.input.c_str(), jb.input.size() );
-	jobType = jb.jobType;
-	flags = jb.flags;
-}
-//!-end--[Tread.SmartExecute]
-
 void Job::Clear() {
 	command = "";
 	directory.Init();
