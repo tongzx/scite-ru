@@ -1,16 +1,33 @@
--- Вывод списка функций / процедур, имеющихся в коде
+-- FuncProcList.lua
+-- Version: 1.2
 -- mozers™ , Maximka (выполняя пожелание ALeXkRU при активном тестировании mimir)
 -- Использованы идеи: Grisper и gansA
------------------------------------------------------------------------
+---------------------------------------------------
+-- Вывод списка функций / процедур, имеющихся в коде
+-- Для подключения добавьте в свой файл .properties следующие строки:
+--   command.name.17.*=List of Functions / Procedures
+--   command.17.*=dofile $(SciteDefaultHome)\tools\FuncProcList.lua 
+--   command.mode.17.*=subsystem:lua,savebefore:no
+--   command.shortcut.17.*=Alt+Shift+F
+---------------------------------------------------
 
 local function IsComment(pos)
 	local style = editor.StyleAt[pos]
-	local ext = props["FileExt"]
-	if ext == 'css' then
-		if style == 9 then return true end
-	else
-		if (style >= 1 and style <= 3) then return true end
+	local lexer = editor.LexerLanguage
+	local comment = ""
+	if     lexer == 'cpp' then comment = "1,2,3"
+	elseif lexer == 'lua' then comment = "1,2,3"
+	elseif lexer == 'sql' then comment = "1,2,3"
+	elseif lexer == 'pascal' then comment = "1,2,3"
+	elseif lexer == 'ruby' then comment = "2"
+	elseif lexer == 'perl' then comment = "2"
+	elseif lexer == 'hypertext' then comment = "9,42,43,44,57,58,59,72,82,92,107,124,125"
+	elseif lexer == 'xml' then comment = "9,29"
+	elseif lexer == 'css' then comment = "9"
+	else comment = "1"
 	end
+	if string.find(comment, '[^%d]'..style..'[^%d]') ~= nil then return true end
+	return false
 end
 
 -- паттерны для разных языков программирования (корректируйте, дополняйте)
@@ -20,6 +37,7 @@ local findRegExp = {
 	['cxx']="([^.,<>=\n]-[ :][^.,<>=\n%s]+[(][^.<>=)]-[)])[%s\/}]-%b{}",
 	  ['h']="([^.,<>=\n]-[ :][^.,<>=\n%s]+[(][^.<>=)]-[)])[%s\/}]-%b{}",
 	['js']="(\n[^,<>\n]-function[^(]-%b())[^{]-%b{}",
+	['vbs']="(\n[SsFf][Uu][BbNn][^\r]-)\r",
 	['css']="([%w.#-_]+)[%s}]-%b{}",
 	['pas']="\nprocedure[^ ]* ([^(]*%b());"
 }
@@ -30,7 +48,7 @@ if findPattern == nil then
 end
 
 -- дальше - банальный поиск заданнго паттерна по всему тексту
-editor:MarkerDeleteAll(1)
+--~ editor:MarkerDeleteAll(1)
 local textAll = editor:GetText()
 local startPos, endPos, findString
 local count = 0
@@ -45,7 +63,7 @@ while true do
 	-- если функция не закомментирована, то выводим ее в список
 	if not IsComment(startPos) then
 		local line = editor:LineFromPosition(startPos)
-		editor:MarkerAdd(line,1)
+		--~ editor:MarkerAdd(line,1)
 		print(props['FileNameExt']..':'..(line+1)..':\t'..findString) 
 		count = count + 1
 	end

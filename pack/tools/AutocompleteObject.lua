@@ -26,24 +26,22 @@
 --   api.lua=$(SciteDefaultHome)\api\SciTELua.api
 --   autocomplete.lua.start.characters=.:
 ------------------------------------------------
-local function IsComment()
-	local style = editor.StyleAt[editor.CurrentPos-2]
+local function IsComment(pos)
+	local style = editor.StyleAt[pos]
 	local lexer = editor.LexerLanguage
-	if lexer == 'css' then
-		if style == 9 then
-			return true
-		else
-			return false
-		end
-	elseif lexer == 'batch' then
-		if style == 1 then
-			return true
-		else
-			return false
-		end
-	else
-		if (style >= 1 and style <= 3) then return true end
+	local comment = ""
+	if     lexer == 'cpp' then comment = "1,2,3"
+	elseif lexer == 'lua' then comment = "1,2,3"
+	elseif lexer == 'sql' then comment = "1,2,3"
+	elseif lexer == 'pascal' then comment = "1,2,3"
+	elseif lexer == 'ruby' then comment = "2"
+	elseif lexer == 'perl' then comment = "2"
+	elseif lexer == 'hypertext' then comment = "9,42,43,44,57,58,59,72,82,92,107,124,125"
+	elseif lexer == 'xml' then comment = "9,29"
+	elseif lexer == 'css' then comment = "9"
+	else comment = "1"
 	end
+	if string.find(comment, '[^%d]'..style..'[^%d]') ~= nil then return true end
 	return false
 end
 
@@ -71,7 +69,7 @@ local function InsertProp(sel_value)
 end
 
 local function AutocompleteObject(char)
-	if IsComment() then return false end
+	if IsComment(editor.CurrentPos-2) then return false end
 
 	if char ~= " " then
 		if string.find(props["autocomplete."..editor.LexerLanguage..".start.characters"], char, 1, 1) == nil then
