@@ -382,6 +382,7 @@ public:
 	int flags;
 
 	Job();
+	Job(const Job &jb);//!-add--[Tread.SmartExecute]
 	void Clear();
 };
 

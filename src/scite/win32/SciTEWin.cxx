@@ -733,7 +733,7 @@ DWORD SciTEWin::ExecuteOne(const Job &jobToRun, bool &seenOutput) {
 				// There is input to transmit to the process.  Do it in small blocks, interleaved
 				// with reads, so that our hRead buffer will not be overrun with results.
 
-				size_t bytesToWrite = jobToRun.input.search("\n", writingPosition) + 1 - writingPosition;
+				/*size_t*/ int bytesToWrite = jobToRun.input.search("\n", writingPosition) + 1 - writingPosition; //-[Issue 34 fix]
 				if ((bytesToWrite <= 0) || (writingPosition + bytesToWrite >= totalBytesToWrite)) {
 					bytesToWrite = totalBytesToWrite - writingPosition;
 				}
