@@ -9,9 +9,10 @@
 local function CheckExt()
 	local toggle_foldall_ext = string.upper(props['fold.on.open.ext'])
 	local file_ext = '('..string.upper(props['FileExt'])..')'
-	local _, _, toggle_foldall = string.find(toggle_foldall_ext, file_ext)
-	if toggle_foldall ~= nil then
-		scite.MenuCommand('IDM_TOGGLE_FOLDALL')
+	if string.find(toggle_foldall_ext, file_ext) ~= nil then
+		props["fold.on.open"]=1
+	else
+		props["fold.on.open"]=0
 	end
 end
 
