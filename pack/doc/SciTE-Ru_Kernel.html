@@ -260,9 +260,9 @@ This option specifies number of definitions displayed per page in calltip window
 calltip.*.word.wrap</div>
 This option enables word wrapping of calltip lines. Specify maximum number of characters allowed per line. Specify 0 to disable this feature (default). The * form is used if there is no lexer specific setting.<br>
 <br>
-Если окошко calltip'а по горизонтали выходит за пределы окна редактора (к примеру, если курсор находится близко к правой границе окна), то смещаем горизонтальную позицию calltip таким образом, чтобы на экране было видно максимальное количество информации.<br>
+Calltip horizontal position is adjusted to maximize amount of information displayed. This is useful when cursor is located closely to right window border for example.<br>
 <br>
-Добавлена возможность указывать несколько диапазонов подсветки для окошка calltip'а, введены новые команды Scintilla для этих целей (SCI_CALLTIPADDHLT, SCI_CALLTIPCLEARHLT, SCI_CALLTIPUPDATEHLT)
+New Scintilla commands to support several highlight regions inside calltip window (SCI_CALLTIPADDHLT, SCI_CALLTIPCLEARHLT, SCI_CALLTIPUPDATEHLT).
 
 <h3>
       <a name="2"></a>
