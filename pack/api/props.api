@@ -34,7 +34,7 @@ subsystem:windows - or 1
 subsystem:shellexec - or 2
 subsystem:lua - or  3
 subsystem:director - or 3
-subsystem:winhelp - or 4
-subsystem:htmlhelp - or 5
+subsystem:htmlhelp - or 4
+subsystem:winhelp - or 5
 groupundo:yes
 groupundo:no
