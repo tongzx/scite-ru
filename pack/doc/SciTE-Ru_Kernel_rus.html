@@ -39,7 +39,7 @@
       </tr>
     </table>
     <h1>
-      “екстовый редактор SciTE RU-Board 1.74 .50
+      “екстовый редактор SciTE RU-Board 1.74 .52
     </h1>
     <p>¬се модификации оригинального кода редактора <A href="http://www.scintilla.org">SciTE версии 1.74</A> выполнены энтузиастами <A href="http://forum.ru-board.com/topic.cgi?forum=5&topic=3215&glp">форума Ru-Board</A>.
 
@@ -245,6 +245,22 @@ command.name.6.*=Date and Time</div>
 <div class="example">caret.fore.$(file.patterns.cpp)=#FF0000<br>
 caret.width.$(file.patterns.cpp)=3</div>
 Ёто акктуально дл€ тех, у кого дл€ разных €зыков заданы принципиально отличающиес€ цветовые решени€, например, с разным (светлым и темным) фоном.
+
+<h5> <sup>new</sup> [BetterCalltips] <span class=desc>(јвтор: chupakabra)</span></h5>
+Ќовые параметры в .properties<br>
+<div class="example">calltip.lexer.automatic<br>
+calltip.*.automatic</div>
+Yстановка этого параметра в 0 означает что не будет происходить автоматическое отображение окошка с calltip'ом при наборе текста, но останетс€ возможность вызвать его вручную.
+<div class="example">calltip.lexer.show.per.page<br>
+calltip.*.show.per.page</div>
+¬озможность указать количество определений, отображаемых одновременно в calltip'е. «начение по умолчанию - 1.
+<div class="example">calltip.lexer.word.wrap<br>
+calltip.*.word.wrap</div>
+ќпци€ включает возможность переноса по словам длинных calltip'ов, еЄ значение определ€ет максимальный размер строки calltip'а в символах, 0 означает что данна€ функци€ будет отключена.<br>
+<br>
+≈сли окошко calltip'а по горизонтали выходит за пределы окна редактора (к примеру, если курсор находитс€ близко к правой границе окна), то смещаем горизонтальную позицию calltip таким образом, чтобы на экране было видно максимальное количество информации.<br>
+<br>
+ƒобавлена возможность указывать несколько диапазонов подсветки дл€ окошка calltip'а, введены новые команды Scintilla дл€ этих целей (SCI_CALLTIPADDHLT, SCI_CALLTIPCLEARHLT, SCI_CALLTIPUPDATEHLT)
 
     <h3>
       <a name="2"></a>

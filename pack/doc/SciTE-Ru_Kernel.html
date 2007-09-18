@@ -38,7 +38,7 @@
       </tr>
     </table>
     <h1>
-      Text editor SciTE RU-Board 1.74 .50
+      Text editor SciTE RU-Board 1.74 .52
     </h1>
     <p>All modifications of original <A href="http://www.scintilla.org">SciTE editor</A> version 1.74 has been developed by persons from <A href="http://forum.ru-board.com/topic.cgi?forum=5&topic=3215&glp">Ru-Board community</A>.
 
@@ -248,7 +248,23 @@ Added possibility to customize the width and the color of cursor for every lexer
 caret.width.$(file.patterns.cpp)=3</div>
 It is not convenient when there are different colors and backgrounds for different languages but there is only one color for cursor.
 
-    <h3>
+<h5> <sup>new</sup> [BetterCalltips] <span class=desc>(Author: chupakabra)</span></h5>
+New variable in properties files<br>
+<div class="example">calltip.lexer.automatic<br>
+calltip.*.automatic</div>
+Setting this option to 0 disables automatic calltip popup display but leaves user with possibility to invoke calltip manually. The * form is used if there is no lexer specific setting.
+<div class="example">calltip.lexer.show.per.page<br>
+calltip.*.show.per.page</div>
+This option specifies number of definitions displayed per page in calltip window (default 1). Use arrow buttons to switch to next/previous page. The * form is used if there is no lexer specific setting.
+<div class="example">calltip.lexer.word.wrap<br>
+calltip.*.word.wrap</div>
+This option enables word wrapping of calltip lines. Specify maximum number of characters allowed per line. Specify 0 to disable this feature (default). The * form is used if there is no lexer specific setting.<br>
+<br>
+Если окошко calltip'а по горизонтали выходит за пределы окна редактора (к примеру, если курсор находится близко к правой границе окна), то смещаем горизонтальную позицию calltip таким образом, чтобы на экране было видно максимальное количество информации.<br>
+<br>
+Добавлена возможность указывать несколько диапазонов подсветки для окошка calltip'а, введены новые команды Scintilla для этих целей (SCI_CALLTIPADDHLT, SCI_CALLTIPCLEARHLT, SCI_CALLTIPUPDATEHLT)
+
+<h3>
       <a name="2"></a>
       Extensions
     </h3>

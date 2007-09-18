@@ -37,6 +37,7 @@ td.topmenu {text-align:center; font-size:0.7em;}
 .gtkonly { background: #FFFFE7; }
 .name {font-family:Courier; color:#993300;}
 .windowsonly { background: #E7EFFF; }
+.ruboardonly { background: #FFECFF; }
 
 h3 {
 	border: 2px solid #FFCC00;

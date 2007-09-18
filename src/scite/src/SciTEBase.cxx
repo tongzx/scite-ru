@@ -735,7 +735,7 @@ void SciTEBase::SetAboutMessage(WindowID wsci, const char *appTitle) {
 		}
 #endif
 		AddStyledText(wsci, GetTranslationToAbout("Version").c_str(), trsSty);
-		AddStyledText(wsci, " 1.74 .51Ru\n", 1); //!-change-[SciTE-Ru]
+		AddStyledText(wsci, " 1.74 .52Ru\n", 1); //!-change-[SciTE-Ru]
 		AddStyledText(wsci, "    " __DATE__ " " __TIME__ "\n", 1);
 		SetAboutStyle(wsci, 4, ColourDesired(0, 0x7f, 0x7f)); //!-add-[SciTE-Ru]
 		AddStyledText(wsci, "http://scite.ruteam.ru\n", 4); //!-add-[SciTE-Ru]
