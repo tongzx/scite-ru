@@ -23,7 +23,7 @@ for line_num = line_start, line_end do
 			if indent_char == "\t" then
 				indent = string.rep (" ", len)
 			else
-				indent = string.rep ("\t", len/editor.Indent + 0.5)
+				indent = string.rep ("\t", len/editor.Indent)
 			end
 			editor.TargetStart = editor:PositionFromLine(line_num)
 			editor.TargetEnd = editor.LineIndentPosition[line_num]
