@@ -6,7 +6,7 @@
 dofile (props["SciteDefaultHome"].."\\tools\\macro_support.lua")
 
 -- Автоматическое сворачивание всех секций при открытии файлов заданного типа
---~ dofile (props["SciteDefaultHome"].."\\tools\\ToggleFoldAll.lua")
+dofile (props["SciteDefaultHome"].."\\tools\\ToggleFoldAll.lua")
 
 -- Включает HTML подсветку для файлов без расширения, открываемых из меню "просмотр HTML-кода" Internet Explorer
 dofile (props["SciteDefaultHome"].."\\tools\\set_html.lua")
