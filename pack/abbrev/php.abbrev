@@ -45,7 +45,7 @@ rt=return true;
 rf=return false;
 
 # Полезные функции
-e=echo "|";
+ec=echo "|";
 pr=print_r(|);
 
 # Разное
