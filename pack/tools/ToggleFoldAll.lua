@@ -42,6 +42,8 @@ function OnOpen(file)
 	if old_OnOpen then result = old_OnOpen(file) end
 	if CheckExt() then
 		bToggleFoldAll=true
+	else
+		bToggleFoldAll=false
 	end
 	return result
 end
