@@ -1,79 +1,151 @@
 assert (v [, message]) error if v nil or false, otherwise returns v
 collectgarbage ([limit]) set threshold to limit KBytes, default 0, may run GC
-coroutine.create (f) creates coroutine from function f, returns coroutine
-coroutine.resume (co, val1, ...) continues execution of co, returns bool status plus any values
-coroutine.status (co) returns co status: "running", "suspended" or "dead"
-coroutine.wrap (f) creates coroutine with body f, returns function that resumes co
-coroutine.yield (val1, ...) suspend execution of calling coroutine
-debug.debug () enters interactive debug mode, line with only "cont" terminates
-debug.gethook () returns current hook function, hook mask, hook count
-debug.getinfo (function [, what]) returns table with information about a function
-debug.getlocal (level, local) returns name and value of local variable with index local at stack level
-debug.getupvalue (func, up) returns name and value of upvalue with index up of function func
-debug.sethook (hook, mask [, count]) sets given function as a hook, mask="[crl]"
-debug.setlocal (level, local, value) sets local variable with index local at stack level with value
-debug.setupvalue (func, up, value) sets upvalue with index up of function func with value
-debug.traceback ([message]) returns a string with a traceback of the call stack
+
+coroutine.create
+coroutine.resume
+coroutine.status
+coroutine.wrap
+coroutine.yield
+create (f) creates coroutine from function f, returns coroutine
+resume (co, val1, ...) continues execution of co, returns bool status plus any values
+status (co) returns co status: "running", "suspended" or "dead"
+wrap (f) creates coroutine with body f, returns function that resumes co
+yield (val1, ...) suspend execution of calling coroutine
+
+debug.debug
+debug.gethook
+debug.getinfo
+debug.getlocal
+debug.getupvalue
+debug.sethook
+debug.setlocal
+debug.setupvalue
+debug.traceback
+debug () enters interactive debug mode, line with only "cont" terminates
+gethook () returns current hook function, hook mask, hook count
+getinfo (function [, what]) returns table with information about a function
+getlocal (level, local) returns name and value of local variable with index local at stack level
+getupvalue (func, up) returns name and value of upvalue with index up of function func
+sethook (hook, mask [, count]) sets given function as a hook, mask="[crl]"
+setlocal (level, local, value) sets local variable with index local at stack level with value
+setupvalue (func, up, value) sets upvalue with index up of function func with value
+traceback ([message]) returns a string with a traceback of the call stack
+
 dofile (filename) executes as Lua chunk, default stdin, returns value
 dostring (s) in SciTE, executes s as a Lua string, like Lua's dostring
 error (message [, level]) terminates protected func, never returns, level 1 (default), 2=parent
 gcinfo () returns dynamic mem in use (KB), and current GC threshold (KB)
 getfenv (f) gets env, f can be a function or number (stack level, default=1), 0=global env
 getmetatable (object) returns metatable of given object, otherwise nil
-io.close ([file]) closes file, or the default output file
-io.flush () flushes the default output file
-io.input ([file]) opens file in text mode, sets as default input file, or returns current default input file
-io.lines ([filename]) open file in read mode, returns iterator function to return lines, nil ends
-io.open (filename [, mode]) opens file in specified mode "[rawb+]", returns handle or nil
-io.output ([file]) opens file in text mode, sets as default output file, or returns current default output file
-io.read (format1, ...) reads file according to given formats, returns read values or nil
-io.tmpfile () returns a handle for a temporary file, opened in update mode
-io.type (obj) returns "file" if obj is an open file handle, "close file" if closed, or nil if not a file handle
-io.write (value1, ...) writes strings or numbers to file
+
+io.close
+io.flush
+io.input
+io.lines
+io.open
+io.output
+io.read
+io.tmpfile
+io.type
+io.write
+close ([file]) closes file, or the default output file
+flush () flushes the default output file
+input ([file]) opens file in text mode, sets as default input file, or returns current default input file
+lines ([filename]) open file in read mode, returns iterator function to return lines, nil ends
+open (filename [, mode]) opens file in specified mode "[rawb+]", returns handle or nil
+output ([file]) opens file in text mode, sets as default output file, or returns current default output file
+read (format1, ...) reads file according to given formats, returns read values or nil
+tmpfile () returns a handle for a temporary file, opened in update mode
+type (obj) returns "file" if obj is an open file handle, "close file" if closed, or nil if not a file handle
+write (value1, ...) writes strings or numbers to file
+
 ipairs (t) returns an iterator function, table t and 0
 loadfile (filename) loads chunk without execution, returns chunk as function, else nil plus error
 loadlib (libname, funcname) links to dynamic library libname, returns funcname as a C function
 loadstring (string [, chunkname]) loads string as chunk, returns chunk as function, else nil plus error
-math.abs (v) returns absolute value of v
-math.acos (v) returns arc cosine value of v in radians
-math.asin (v) returns arc sine value of v in radians
-math.atan (v) returns arc tangent value of v in radians
-math.atan2 (v1, v2) returns arc tangent value of v1/v2 in radians
-math.ceil (v) returns smallest integer >= v
-math.cos (rad) returns cosine value of angle rad
-math.deg (rad) returns angle in degrees of radians rad
-math.exp (v) returns e^v
-math.floor (v) returns largest integer <= v
-math.frexp (v) returns mantissa [0.5,1) and exponent values of v
-math.ldexp (v1, v2) returns v1*2^v2
-math.log (v) returns natural logarithm of v
-math.log10 (v) returns logarithm 10 of v
-math.max (v1, ...) returns maximum in a list of one or more values
-math.min (v1, ...) returns minimum in a list of one or more values
-math.mod (v1, v2) returns remainder of v1/v2 which is v1 - iV2 for some integer i
-math.pow (v1, v2) returns v1 raised to the power of v2
-math.rad (deg) returns angle in radians of degrees deg
-math.random ([n [, u]]) returns random real [0,1), integer [1,n] or real [1,u] (with n=1)
-math.randomseed (seed) sets seed for pseudo-random number generator
-math.sin (rad) returns sine value of angle rad 
-math.sqrt (v) returns square root of v
-math.tan (rad) returns tangent value of angle rad  
+
+math.abs
+math.acos
+math.asin
+math.atan
+math.atan2
+math.ceil
+math.cos
+math.deg
+math.exp
+math.floor
+math.frexp
+math.ldexp
+math.log
+math.log10
+math.max
+math.min
+math.mod
+math.pow
+math.rad
+math.random
+math.randomseed
+math.sin
+math.sqrt
+math.tan
+abs (v) returns absolute value of v
+acos (v) returns arc cosine value of v in radians
+asin (v) returns arc sine value of v in radians
+atan (v) returns arc tangent value of v in radians
+atan2 (v1, v2) returns arc tangent value of v1/v2 in radians
+ceil (v) returns smallest integer >= v
+cos (rad) returns cosine value of angle rad
+deg (rad) returns angle in degrees of radians rad
+exp (v) returns e^v
+floor (v) returns largest integer <= v
+frexp (v) returns mantissa [0.5,1) and exponent values of v
+ldexp (v1, v2) returns v1*2^v2
+log (v) returns natural logarithm of v
+log10 (v) returns logarithm 10 of v
+max (v1, ...) returns maximum in a list of one or more values
+min (v1, ...) returns minimum in a list of one or more values
+mod (v1, v2) returns remainder of v1/v2 which is v1 - iV2 for some integer i
+pow (v1, v2) returns v1 raised to the power of v2
+rad (deg) returns angle in radians of degrees deg
+random ([n [, u]]) returns random real [0,1), integer [1,n] or real [1,u] (with n=1)
+randomseed (seed) sets seed for pseudo-random number generator
+sin (rad) returns sine value of angle rad 
+sqrt (v) returns square root of v
+tan (rad) returns tangent value of angle rad  
+
 next (table [, index]) returns next index,value pair, if index=nil (default), returns first index
-os.clock () returns CPU time used by program in seconds
-os.date ([format [, time]]) returns a string or table containing date and time, "*t" returns a table
-os.difftime (t2, t1) returns number of seconds from time t1 to time t2
-os.execute (command) executes command using C function system, returns status code
-os.exit ([code]) terminates host program with optional code, default is success code
-os.getenv (varname) returns value of environment variable varname. nil if not defined
-os.remove (filename) deletes file with given name, nil if fails
-os.rename (oldname, newname) renames file oldname to newname, nil if fails
-os.setlocale (locale [, category]) set current locale of program, returns name of new locate or nil
-os.time ([table]) returns current time (usually seconds) or time as represented by table
-os.tmpname () returns a string with a filename for a temporary file (dangerous! tmpfile is better)
-os.msgbox (<Text>, <Title>, <Options>) - Message Box. Return select button (only SciTE-Ru)
-os.getfileattr (<FileName>) - return File Attribute as number (only SciTE-Ru)
-os.setfileattr (<FileName>, <FileAttr>) - Set File Attribute (only SciTE-Ru)
-os.run (Command, [WindowStyle], [WaitOnReturn]) (only SciTE-Ru)
+
+os.clock
+os.date
+os.difftime
+os.execute
+os.exit
+os.getenv
+os.remove
+os.rename
+os.setlocale
+os.time
+os.tmpname
+os.msgbox
+os.getfileattr
+os.setfileattr
+os.run
+clock () returns CPU time used by program in seconds
+date ([format [, time]]) returns a string or table containing date and time, "*t" returns a table
+difftime (t2, t1) returns number of seconds from time t1 to time t2
+execute (command) executes command using C function system, returns status code
+exit ([code]) terminates host program with optional code, default is success code
+getenv (varname) returns value of environment variable varname. nil if not defined
+remove (filename) deletes file with given name, nil if fails
+rename (oldname, newname) renames file oldname to newname, nil if fails
+setlocale (locale [, category]) set current locale of program, returns name of new locate or nil
+time ([table]) returns current time (usually seconds) or time as represented by table
+tmpname () returns a string with a filename for a temporary file (dangerous! tmpfile is better)
+msgbox (<Text>, <Title>, <Options>) - Message Box. Return select button (only SciTE-Ru)
+getfileattr (<FileName>) - return File Attribute as number (only SciTE-Ru)
+setfileattr (<FileName>, <FileAttr>) - Set File Attribute (only SciTE-Ru)
+run (Command, [WindowStyle], [WaitOnReturn]) (only SciTE-Ru)
+
 pairs (t) returns the next function and table t plus a nil, iterates over all key-value pairs
 pcall (f, arg1, arg2, ...) protected mode call, catches errors, returns status code first (true=success)
 print (e1, e2, ...) prints values to stdout using tostring
@@ -83,26 +155,49 @@ rawset (table, index, value) non-metamethod set value of table[index], index != 
 require (packagename) loads package, updates _LOADED, returns boolean
 setfenv (f, table) sets env, f can be a function or number (stack level, default=1), 0=global env
 setmetatable (table, metatable) sets metatable, nil to remove metatable
-string.byte (s [, i]) returns numerical code, nil if index out of range, default i=1
-string.char (i1, i2, ...) returns a string built from 0 or more integers
-string.dump (function) returns binary representation of function, used with loadstring
-string.find (s, pattern [, init [, plain]]) matches pattern in s, returns start,end indices, else nil
-string.format (formatstring, e1, e2, ...) returns formatted string, printf-style
-string.gfind (s, pat) returns iterator function that returns next captures from pattern pat on s
-string.gsub (s, pat, repl [, n]) returns copy of s with pat replaced by repl, and substitutions made
-string.len (s) returns string length
-string.lower (s) returns string with letters in lower case
-string.rep (s, n) returns string with n copies of string s
-string.sub (s, i [, j]) returns substring from index i to j of s, default j=-1 (string length)
-string.upper (s) returns string with letters in upper case
-table.concat (table [, sep [, i [, j]]]) returns concatenated table elements i to j separated by sep
-table.foreach (table, f) executes f(index,value) over all elements of table, returns first non-nil of f
-table.foreachi (table, f) executes f(index,value) in sequential order 1 to n, returns first non-nil of f
-table.getn (table) returns size of table, or n field, or table.setn value, or 1 less first index with nil value
-table.insert (table, [pos,] value) insert value at location pos in table, default pos=n+1
-table.remove (table [, pos]) removes element at pos from table, default pos=n
-table.setn (table, n) sets size of table, n field of table if it exists
-table.sort (table [, comp]) sorts in-place elements 1 to n, comp(v1,v2) should return true if v1<v2
+
+string.byte
+string.char
+string.dump
+string.find
+string.format
+string.gfind
+string.gsub
+string.len
+string.lower
+string.rep
+string.sub
+string.upper
+byte (s [, i]) returns numerical code, nil if index out of range, default i=1
+char (i1, i2, ...) returns a string built from 0 or more integers
+dump (function) returns binary representation of function, used with loadstring
+find (s, pattern [, init [, plain]]) matches pattern in s, returns start,end indices, else nil
+format (formatstring, e1, e2, ...) returns formatted string, printf-style
+gfind (s, pat) returns iterator function that returns next captures from pattern pat on s
+gsub (s, pat, repl [, n]) returns copy of s with pat replaced by repl, and substitutions made
+len (s) returns string length
+lower (s) returns string with letters in lower case
+rep (s, n) returns string with n copies of string s
+sub (s, i [, j]) returns substring from index i to j of s, default j=-1 (string length)
+upper (s) returns string with letters in upper case
+
+table.concat
+table.foreach
+table.foreachi
+table.getn
+table.insert
+table.remove
+table.setn
+table.sort
+concat (table [, sep [, i [, j]]]) returns concatenated table elements i to j separated by sep
+foreach (table, f) executes f(index,value) over all elements of table, returns first non-nil of f
+foreachi (table, f) executes f(index,value) in sequential order 1 to n, returns first non-nil of f
+getn (table) returns size of table, or n field, or table.setn value, or 1 less first index with nil value
+insert (table, [pos,] value) insert value at location pos in table, default pos=n+1
+remove (table [, pos]) removes element at pos from table, default pos=n
+setn (table, n) sets size of table, n field of table if it exists
+sort (table [, comp]) sorts in-place elements 1 to n, comp(v1,v2) should return true if v1<v2
+
 tonumber (e [, base]) convert to number, returns number, nil if non-convertible, 2<=base<=36
 tostring (e) convert to string, returns string
 type (v) returns type of v as a string
@@ -115,755 +210,1138 @@ _VERSION () returns version of Lua
 trace(s) -  in SciTE, writes s to the output pane (no prefix, no newlines)
 dostring(s) - executes s as a Lua string, like Lua 4's dostring
 
-editor:textrange(startPos, endPos) - gets the text in the specified range
-editor:findtext(text, [flags], [startPos, [endPos]]) - returns the start and end of the first match, or nil if no match
-editor:match(text, [flags], [startPos]) - returns a generator that allows you to loop over the matches i.e. for m in editor:match(text, flags) do ... end
-editor:append(text) - appends text to the end of the document
-editor:insert(pos, text) - inserts text at the specified position
-editor:remove(startPos, endPos) - removes the text in the range
+editor:textrange
+editor:findtext
+editor:match
+editor:append
+editor:insert
+editor:remove
+textrange(startPos, endPos) - gets the text in the specified range
+findtext(text, [flags], [startPos, [endPos]]) - returns the start and end of the first match, or nil if no match
+match(text, [flags], [startPos]) - returns a generator that allows you to loop over the matches\ni.e. for m in editor:match(text, flags) do ... end
+append(text) - appends text to the end of the document
+insert(pos, text) - inserts text at the specified position
+remove(startPos, endPos) - removes the text in the range
 
-output:textrange(startPos, endPos) - gets the text in the specified range
-output:findtext(text, [flags], [startPos, [endPos]]) - returns the start and end of the first match, or nil if no match
-output:match(text, [flags], [startPos]) - returns a generator that allows you to loop over the matches i.e. for m in output:match(text, flags) do ... end
-output:append(text) - appends text to the end of the document
-output:insert(pos, text) - inserts text at the specified position
-output:remove(startPos, endPos) - removes the text in the range
+output:textrange
+output:findtext
+output:match
+output:append
+output:insert
+output:remove
+textrange(startPos, endPos) - gets the text in the specified range
+findtext(text, [flags], [startPos, [endPos]]) - returns the start and end of the first match, or nil if no match
+match(text, [flags], [startPos]) - returns a generator that allows you to loop over the matches\ni.e. for m in output:match(text, flags) do ... end
+append(text) - appends text to the end of the document
+insert(pos, text) - inserts text at the specified position
+remove(startPos, endPos) - removes the text in the range
 
-scite.Open(filename) - opens a file in a new buffer
-scite.ConstantName(number) returns the symbolic name of a Scintilla / SciTE constant
-scite.MenuCommand(number) run specifed menu command
-scite.MenuCommand("IDM_COMMAND") run specifed menu command (only SciTE-Ru)
-scite.SendEditor(SCI_constant, ...) sends a message to the editor pane
-scite.SendOutput(SCI_constant, ...) sends a message to the output pane
-scite.ShowParametersDialog(text) show parametrs dialog with message (txt) and return result action (only SciTE-Ru)
-scite.Perform("action") execute commands of SciTE Director Interface (only SciTE-Ru)
-scite.UpdateStatusBar([bUpdateSlowData]) perform update status bar
+scite.Open
+scite.ConstantName
+scite.MenuCommand
+scite.MenuCommand
+scite.SendEditor
+scite.SendOutput
+scite.ShowParametersDialog
+scite.Perform
+scite.UpdateStatusBar
+Open(filename) - opens a file in a new buffer
+ConstantName(number) returns the symbolic name of a Scintilla / SciTE constant
+MenuCommand(number) run specifed menu command
+MenuCommand("IDM_COMMAND") run specifed menu command (only SciTE-Ru)
+SendEditor(SCI_constant, ...) sends a message to the editor pane
+SendOutput(SCI_constant, ...) sends a message to the output pane
+ShowParametersDialog(text) show parametrs dialog with message (txt) and return result action (only SciTE-Ru)
+Perform("action") execute commands of SciTE Director Interface (only SciTE-Ru)
+UpdateStatusBar([bUpdateSlowData]) perform update status bar
 
 props[string] = text_value
 
-editor:AddRefDocument(int doc)\n Create a new document object. Starts with reference count of 1 and not selected into editor. Extend life of document.
-editor:AddStyledText(int length, cells c)\n Add array of cells to document.
-editor:AddText(int length, string text)\n Add text to the document at current position.
-editor:Allocate(int bytes)\n Enlarge the document to a particular size of text bytes.
-editor:AppendText(int length, string text)\n Append a string to the end of the document without changing the selection.
-editor:AssignCmdKey(keymod km, int msg)\n When key+modifier combination km is pressed perform msg.
-editor:AutoCActive() = bool\n Is there an auto-completion list visible?
-editor:AutoCCancel()\n Remove the auto-completion list from the screen.
-editor:AutoCComplete()\n User has selected an item so remove the list and insert the selection.
-editor:AutoCGetCurrent() = int\n Get currently selected item position in the auto-completion list
-editor:AutoCPosStart() = int pos\n Retrieve the position of the caret when the auto-completion list was displayed.
-editor:AutoCSelect(string text)\n Select the item in the auto-completion list that starts with a string.
-editor:AutoCShow(int lenEntered, string itemList)\n Display a auto-completion list. The lenEntered parameter indicates how many characters before the caret should be used to provide context.
-editor:AutoCStops(string characterSet)\n Define a set of character that when typed cancel the auto-completion list.
-editor:BackTab()\n Dedent the selected lines.
-editor:BeginUndoAction()\n Start a sequence of actions that is undone and redone as a unit. May be nested.
-editor:BraceBadLight(position pos)\n Highlight the character at a position indicating there is no matching brace.
-editor:BraceHighlight(int posStart, int posEnd)\n Highlight the characters at two positions.
-editor:BraceMatch(int pos) = int pos\n Find the position of a matching brace or INVALID_POSITION if no match.
-editor:CallTipActive() = bool\n Is there an active call tip?
-editor:CallTipCancel()\n Remove the call tip from the screen.
-editor:CallTipPosStart() = int pos\n Retrieve the position where the caret was before displaying the call tip.
-editor:CallTipSetHlt(int start, int end)\n Highlight a segment of the definition.
-editor:CallTipShow(int pos, string definition)\n Show a call tip containing a definition near position pos.
-editor:CanPaste() = bool\n Will a paste succeed?
-editor:CanRedo() = bool\n Are there any redoable actions in the undo history?
-editor:CanUndo() = bool\n Are there any undoable actions in the undo history?
-editor:Cancel()\n Cancel any modes such as call tip or auto-completion list display.
-editor:CharLeft()\n Move caret left one character.
-editor:CharLeftExtend()\n Move caret left one character extending selection to new caret position.
-editor:CharLeftRectExtend()\n Move caret left one character, extending rectangular selection to new caret position.
-editor:CharRight()\n Move caret right one character.
-editor:CharRightExtend()\n Move caret right one character extending selection to new caret position.
-editor:CharRightRectExtend()\n Move caret right one character, extending rectangular selection to new caret position.
-editor:ChooseCaretX()\n Set the last x chosen value to be the caret x position.
-editor:Clear()\n Clear the selection.
-editor:ClearAll()\n Delete all text in the document.
-editor:ClearAllCmdKeys()\n Drop all key mappings.
-editor:ClearCmdKey(int keymod)\n When key+modifier combination km is pressed do nothing.
-editor:ClearDocumentStyle()\n Set all style bytes to 0, remove all folding information.
-editor:ClearRegisteredImages()\n Clear all the registered XPM images.
-editor:Colourise(int posStart, int posEnd)\n Colourise a segment of the document using the current lexing language.
-editor:ConvertEOLs(int eolMode)\n Convert all line endings in the document to one mode.
-editor:Copy()\n Copy the selection to the clipboard.
-editor:CopyRange(int posStart, int posEnd)\n Copy a range of text to the clipboard. Positions are clipped into the document.
-editor:CopyText(int length, string text)\n Copy argument text to the clipboard.
-editor:CreateDocument() = int\n Create a new document object. Starts with reference count of 1 and not selected into editor.
-editor:Cut()\n Cut the selection to the clipboard.
-editor:DelLineLeft()\n Delete back from the current position to the start of the line.
-editor:DelLineRight()\n Delete forwards from the current position to the end of the line.
-editor:DelWordLeft()\n Delete the word to the left of the caret.
-editor:DelWordRight()\n Delete the word to the right of the caret.
-editor:DeleteBack()\n Delete the selection or if no selection, the character before the caret.
-editor:DeleteBackNotLine()\n Delete the selection or if no selection, the character before the caret. Will not delete the character before at the start of a line.
-editor:DocLineFromVisible(int lineDisplay) = int\n Find the document line of a display line taking hidden lines into account.
-editor:DocumentEnd()\n Move caret to last position in document.
-editor:DocumentEndExtend()\n Move caret to last position in document extending selection to new caret position.
-editor:DocumentStart()\n Move caret to first position in document.
-editor:DocumentStartExtend()\n Move caret to first position in document extending selection to new caret position.
-editor:EditToggleOvertype()\n Switch from insert to overtype mode or the reverse.
-editor:EmptyUndoBuffer()\n Delete the undo history.
-editor:EncodedFromUTF8(string text)\n = string text
-editor:EndUndoAction()\n End a sequence of actions that is undone and redone as a unit.
-editor:EnsureVisible(int line)\n Ensure a particular line is visible by expanding any header line hiding it.
-editor:EnsureVisibleEnforcePolicy(int line)\n Ensure a particular line is visible by expanding any header line hiding it. Use the currently set visibility policy to determine which range to display.
-editor:FindColumn(int, int) = int
-editor:FindText(int flags, findtext ft) = int pos\n Find some text in the document.
-editor:FormFeed()\n Insert a Form Feed character.
-editor:FormatRange(bool draw, formatrange fr) = int pos\n On Windows, will draw the document into a display context such as a printer.
-editor:GetCurLine(int length, stringresult text) = string text\n Retrieve the text of the line containing the caret. Returns the index of the caret on the line.
-editor:GetLastChild(int, int) = int
-editor:GetLine(int line, stringresult text) = string text\n Retrieve the contents of a line. Returns the length of the line.
-editor:GetLineSelEndPosition(int line) = int pos\n Retrieve the position of the end of the selection at the given line (INVALID_POSITION if no selection on this line)\n.
-editor:GetLineSelStartPosition(int line) = int pos\n Retrieve the position of the start of the selection at the given line (INVALID_POSITION if no selection on this line).
-editor:GetProperty(string text) = string text
-editor:GetPropertyExpanded(string text) = string text
-editor:GetSelText(stringresult text) = string text\n Retrieve the selected text. Return the length of the text.
-editor:GetStyledText(textrange tr) = int\n Retrieve a buffer of cells. Returns the number of bytes in the buffer not including terminating NULs.
-editor:GetText(int length, stringresult text) = string text\n Retrieve all the text in the document. Returns number of characters retrieved.
-editor:GetTextRange(textrange tr) = int\n Retrieve a range of text. Return the length of the text.
-editor:GotoLine(int line)\n Set caret to start of a line and ensure it is visible.
-editor:GotoPos(int pos)\n Set caret to a position and ensure it is visible.
-editor:GrabFocus()\n Set the focus to this Scintilla widget. GTK+ Specific.
-editor:HideLines(int lineStart, int lineEnd)\n Make a range of lines invisible.
-editor:HideSelection(bool normal)\n Draw the selection in normal style or with selection highlighted.
-editor:Home()\n Move caret to first position on line.
-editor:HomeDisplay()\n Move caret to first position on display line.
-editor:HomeDisplayExtend()\n Move caret to first position on display line extending selection to new caret position.
-editor:HomeExtend()\n Move caret to first position on line extending selection to new caret position.
-editor:HomeRectExtend()\n Move caret to first position on line, extending rectangular selection to new caret position.
-editor:HomeWrap()
-editor:HomeWrapExtend()
-editor:InsertText(int pos, string text)\n Insert string at a position. (position=-1 -> current position)
-editor:LineCopy()\n Copy the line containing the caret.
-editor:LineCut()\n Cut the line containing the caret.
-editor:LineDelete()\n Delete the line containing the caret.
-editor:LineDown()\n# Start of key messages Move caret down one line.
-editor:LineDownExtend()\n Move caret down one line extending selection to new caret position.
-editor:LineDownRectExtend()\n# RectExtended rectangular selection moves Move caret down one line, extending rectangular selection to new caret position.
-editor:LineDuplicate()\n Duplicate the current line.
-editor:LineEnd()\n Move caret to last position on line.
-editor:LineEndDisplay()\n Move caret to last position on display line.
-editor:LineEndDisplayExtend()\n Move caret to last position on display line extending selection to new caret position.
-editor:LineEndExtend()\n Move caret to last position on line extending selection to new caret position.
-editor:LineEndRectExtend()\n Move caret to last position on line, extending rectangular selection to new caret position.
-editor:LineEndWrap()
-editor:LineEndWrapExtend()
-editor:LineFromPosition(int pos) = int line\n Retrieve the line containing a position.
-editor:LineLength(int line) = int length\n How many characters are on a line, not including end of line characters?
-editor:LineScroll(int columns, int lines)\n Scroll horizontally and vertically.
-editor:LineScrollDown()\n Scroll the document down, keeping the caret visible.
-editor:LineScrollUp()\n Scroll the document up, keeping the caret visible.
-editor:LineTranspose()\n Switch the current line with the previous.
-editor:LineUp()\n Move caret up one line.
-editor:LineUpExtend()\n Move caret up one line extending selection to new caret position.
-editor:LineUpRectExtend()\n Move caret up one line, extending rectangular selection to new caret position.
-editor:LinesJoin()\n Join the lines in the target.
-editor:LinesSplit(int pixelWidth)\n Split the lines in the target into lines that are less wide than pixelWidth where possible.
-editor:LoadLexerLibrary(string path)\n Load a lexer library (dll / so).
-editor:LowerCase()\n Transform the selection to lower case.
-editor:MarkerAdd(int line, int markerNumber) = int\n Add a marker to a line, returning an ID which can be used to find or delete the marker.
-editor:MarkerAddSet(int line, int markerNumber)
-editor:MarkerDefine(int markerNumber, int markerSymbol)\n Set the symbol used for a particular marker number.
-editor:MarkerDefinePixmap(int markerNumber, string pixmap)\n Define a marker from a pixmap.
-editor:MarkerDelete(int line, int markerNumber)\n Delete a marker from a line.
-editor:MarkerDeleteAll(int markerNumber)\n Delete all markers with a particular number from all lines.
-editor:MarkerDeleteHandle(int handle)\n Delete a marker.
-editor:MarkerGet(int line) = int\n Get a bit mask of all the markers set on a line.
-editor:MarkerLineFromHandle(int handle) = int\n Retrieve the line number at which a particular marker is located.
-editor:MarkerNext(int lineStart, int markerMask) = int\n Find the next line after lineStart that includes a marker in mask.
-editor:MarkerPrevious(int lineStart, int markerMask) = int\n Find the previous line before lineStart that includes a marker in mask.
-editor:MarkerSetAlpha(int markerNumber, int colour)
-editor:MarkerSetBack(int markerNumber, colour back)\n Set the background colour used for a particular marker number.
-editor:MarkerSetFore(int markerNumber, colour fore)\n Set the foreground colour used for a particular marker number.
-editor:MoveCaretInsideView()\n Move the caret inside current view if it's not there already.
-editor:NewLine()\n Insert a new line, may use a CRLF, CR or LF depending on EOL mode.
-editor:Null()\n Null operation.
-editor:PageDown()\n Move caret one page down.
-editor:PageDownExtend()\n Move caret one page down extending selection to new caret position.
-editor:PageDownRectExtend()\n Move caret one page down, extending rectangular selection to new caret position.
-editor:PageUp()\n Move caret one page up.
-editor:PageUpExtend()\n Move caret one page up extending selection to new caret position.
-editor:PageUpRectExtend()\n Move caret one page up, extending rectangular selection to new caret position.
-editor:ParaDown()\n Move caret between paragraphs (delimited by empty lines).
-editor:ParaDownExtend()\n Move caret between paragraphs (delimited by empty lines).
-editor:ParaUp()\n Move caret between paragraphs (delimited by empty lines).
-editor:ParaUpExtend()\n Move caret between paragraphs (delimited by empty lines).
-editor:Paste()\n Paste the contents of the clipboard into the document replacing the selection.
-editor:PointXFromPosition(int pos) = int\n Retrieve the x value of the point in the window where a position is displayed.
-editor:PointYFromPosition(int pos) = int\n Retrieve the y value of the point in the window where a position is displayed.
-editor:PositionAfter(int pos) = int pos\n Given a valid document position, return the next position taking code page into account. Maximum value returned is the last position in the document.
-editor:PositionBefore(int pos) = int pos\n Given a valid document position, return the previous position taking code page into account. Returns 0 if passed 0.
-editor:PositionFromLine(int line) = int pos\n Retrieve the position at the start of a line.
-editor:PositionFromPoint(int x, int y) = int pos\n Find the position from a point within the window.
-editor:PositionFromPointClose(int x, int y) = int pos\n Find the position from a point within the window but return INVALID_POSITION if not close to text.
-editor:Redo()\n Redoes the next action on the undo history.
-editor:RegisterImage(int type, string xpmData)\n Register an XPM image for use in autocompletion lists.
-editor:ReleaseDocument(int doc)\n Create a new document object. Starts with reference count of 1 and not selected into editor.\n Extend life of document. Release a reference to the document, deleting document if it fades to black.
-editor:ReplaceSel(string text)\n Replace the selected text with the argument text.
-editor:ReplaceTarget(int length, string text) = int\n Replace the target text with the argument text. Text is counted so it can contain NULs. Returns the length of the replacement text.
-editor:ReplaceTargetRE(int length, string text) = int\n Replace the target text with the argument text after \d processing. Text is counted so it can contain NULs.\n Looks for \d where d is between 1 and 9 and replaces these with the strings matched in the last search operation which were surrounded by \( and \).\n Returns the length of the replacement text including any change caused by processing the \d patterns.
-editor:ScrollCaret()\n Ensure the caret is visible.
-editor:SearchAnchor()\n Sets the current caret position to be the search anchor.
-editor:SearchInTarget(int length, string text) = int\n Search for a counted string in the target and set the target to the found range. Text is counted so it can contain NULs.\n Returns length of range or -1 for failure in which case target is not moved.
-editor:SearchNext(int flags, string text) = int\n Find some text starting at the search anchor. Does not ensure the selection is visible.
-editor:SearchPrev(int flags, string text) = int\n Find some text starting at the search anchor and moving backwards. Does not ensure the selection is visible.
-editor:SelectAll()\n Select all the text in the document.
-editor:SelectionDuplicate()
-editor:SetCaretPolicy(int caretPolicy, int caretSlop)\n CARET_POLICY changed in 1.47
-editor:SetCharsDefault()\n Reset the set of characters for whitespace and word characters to the defaults.
-editor:SetFoldFlags(int flags)\n Set some style options for folding.
-editor:SetFoldMarginColour(bool useSetting, colour back)\n Set the colours used as a chequerboard pattern in the fold margin
-editor:SetFoldMarginHiColour(bool useSetting, colour fore)\n Set the colours used as a chequerboard pattern in the fold margin
-editor:SetLengthForEncode(int)
-editor:SetSavePoint()\n Remember the current position in the undo history as the position at which the document was saved.
-editor:SetSel(int posStart, int posEnd)\n Select a range of text.
-editor:SetSelBack(bool useSetting, colour back)\n Set the background colour of the selection and whether to use this setting.
-editor:SetSelFore(bool useSetting, colour fore)\n Set the foreground colour of the selection and whether to use this setting.
-editor:SetStyling(int length, int style)\n Change style from current styling position for length characters to a style and move the current styling position to after this newly styled segment.\n (style sample: INDIC1_MASK)
-editor:SetStylingEx(int length, string styles)\n Set the styles for a segment of the document.
-editor:SetText(string text)\n Replace the contents of the document with the argument text.
-editor:SetVisiblePolicy(int visiblePolicy, int visibleSlop)\n Constants for use with SetVisiblePolicy, similar to SetCaretPolicy.\n Set the way the display area is determined when a particular line is to be moved to by Find, FindNext, GotoLine, etc.
-editor:SetWhitespaceBack(bool useSetting, colour back)\n Set the background colour of all whitespace and whether to use this setting.
-editor:SetWhitespaceFore(bool useSetting, colour fore)\n Set the foreground colour of all whitespace and whether to use this setting.
-editor:SetXCaretPolicy(int caretPolicy, int caretSlop)\n Set the way the caret is kept visible when going sideway. The exclusion zone is given in pixels.
-editor:SetYCaretPolicy(int caretPolicy, int caretSlop)\n Set the way the line the caret is on is kept visible. The exclusion zone is given in lines.
-editor:ShowLines(int lineStart, int lineEnd)\n Make a range of lines visible.
-editor:StartRecord()\n Start notifying the container of all key presses and commands.
-editor:StartStyling(int posStart, int mask)\n Set the current styling position to pos and the styling mask to mask. The styling mask can be used to protect some bits in each styling byte from modification. (mask sample: INDICS_MASK)\n
-editor:StopRecord()\n Stop notifying the container of all key presses and commands.
-editor:StutteredPageDown()\n Move caret to bottom of page, or one page down if already at bottom of page.
-editor:StutteredPageDownExtend()\n Move caret to bottom of page, or one page down if already at bottom of page, extending selection to new caret position.
-editor:StutteredPageUp()\n Move caret to top of page, or one page up if already at top of page.
-editor:StutteredPageUpExtend()\n Move caret to top of page, or one page up if already at top of page, extending selection to new caret position.
-editor:StyleClearAll()
-editor:StyleResetDefault()\n Reset the default style to its state at startup
-editor:Tab()\n If selection is empty or all on one line replace the selection with a tab character. If more than one line selected, indent the lines.
-editor:TargetAsUTF8() = string text
-editor:TargetFromSelection()\n Make the target range start and end be the same as the selection range start and end.
-editor:TextHeight(int line) = int\n Retrieve the height of a particular line of text in pixels.
-editor:TextWidth(int style, string text) = int\n Measure the pixel width of some text in a particular style. NUL terminated text argument. Does not handle tab or control characters.
-editor:ToggleCaretSticky()
-editor:ToggleFold(int line)\n Switch a header line between expanded and contracted.
-editor:Undo()\n Undo one action in the undo history.
-editor:UpperCase()\n Transform the selection to upper case.
-editor:UsePopUp(bool allowPopUp)\n Set whether a pop up menu is displayed automatically when the user presses the wrong mouse button.
-editor:UserListShow(int listType, string itemList)\n Display a list of strings and send notification when user chooses one.
-editor:VCHome()\n Move caret to before first visible character on line. If already there move to first character on line.
-editor:VCHomeExtend()\n Like VCHome but extending selection to new caret position.
-editor:VCHomeRectExtend()\n Move caret to before first visible character on line. If already there move to first character on line.\n In either case, extend rectangular selection to new caret position.
-editor:VCHomeWrap()
-editor:VCHomeWrapExtend()
-editor:VisibleFromDocLine(int line) = int\n Find the display line of a document line taking hidden lines into account.
-editor:WordEndPosition(int pos, bool onlyWordCharacters) = int\n Get position of end of word.
-editor:WordLeft()\n Move caret left one word.
-editor:WordLeftEnd()\n Move caret left one word, position cursor at end of word.
-editor:WordLeftEndExtend()\n Move caret left one word, position cursor at end of word, extending selection to new caret position.
-editor:WordLeftExtend()\n Move caret left one word extending selection to new caret position.
-editor:WordPartLeft()\n Move to the previous change in capitalisation.
-editor:WordPartLeftExtend()\n Move to the previous change in capitalisation. Move to the previous change in capitalisation extending selection to new caret position.
-editor:WordPartRight()\n Move to the previous change in capitalisation.\n Move to the previous change in capitalisation extending selection to new caret position.\n Move to the change next in capitalisation.
-editor:WordPartRightExtend()\n Move to the previous change in capitalisation.\n Move to the previous change in capitalisation extending selection to new caret position.\n Move to the change next in capitalisation.\n Move to the next change in capitalisation extending selection to new caret position.
-editor:WordRight()\n Move caret right one word.
-editor:WordRightEnd()\n Move caret right one word, position cursor at end of word.
-editor:WordRightEndExtend()\n Move caret right one word, position cursor at end of word, extending selection to new caret position.
-editor:WordRightExtend()\n Move caret right one word extending selection to new caret position.
-editor:WordStartPosition(int pos, bool) = int
-editor:WordStartPosition(int pos, bool onlyWordCharacters) = int\n Get position of start of word.
-editor:WrapCount(int) = int
-editor:ZoomIn()\n Magnify the displayed text by increasing the sizes by 1 point.
-editor:ZoomOut()\n Make the displayed text smaller by decreasing the sizes by 1 point.
+editor:AddRefDocument
+editor:AddStyledText
+editor:AddText
+editor:Allocate
+editor:AppendText
+editor:AssignCmdKey
+editor:AutoCActive
+editor:AutoCCancel
+editor:AutoCComplete
+editor:AutoCGetCurrent
+editor:AutoCPosStart
+editor:AutoCSelect
+editor:AutoCShow
+editor:AutoCStops
+editor:BackTab
+editor:BeginUndoAction
+editor:BraceBadLight
+editor:BraceHighlight
+editor:BraceMatch
+editor:CallTipActive
+editor:CallTipCancel
+editor:CallTipPosStart
+editor:CallTipSetHlt
+editor:CallTipShow
+editor:CanPaste
+editor:CanRedo
+editor:CanUndo
+editor:Cancel
+editor:CharLeft
+editor:CharLeftExtend
+editor:CharLeftRectExtend
+editor:CharRight
+editor:CharRightExtend
+editor:CharRightRectExtend
+editor:ChooseCaretX
+editor:Clear
+editor:ClearAll
+editor:ClearAllCmdKeys
+editor:ClearCmdKey
+editor:ClearDocumentStyle
+editor:ClearRegisteredImages
+editor:Colourise
+editor:ConvertEOLs
+editor:Copy
+editor:CopyRange
+editor:CopyText
+editor:CreateDocument
+editor:Cut
+editor:DelLineLeft
+editor:DelLineRight
+editor:DelWordLeft
+editor:DelWordRight
+editor:DeleteBack
+editor:DeleteBackNotLine
+editor:DocLineFromVisible
+editor:DocumentEnd
+editor:DocumentEndExtend
+editor:DocumentStart
+editor:DocumentStartExtend
+editor:EditToggleOvertype
+editor:EmptyUndoBuffer
+editor:EncodedFromUTF8
+editor:EndUndoAction
+editor:EnsureVisible
+editor:EnsureVisibleEnforcePolicy
+editor:FindColumn
+editor:FindText
+editor:FormFeed
+editor:FormatRange
+editor:GetCurLine
+editor:GetLastChild
+editor:GetLine
+editor:GetLineSelEndPosition
+editor:GetLineSelStartPosition
+editor:GetProperty
+editor:GetPropertyExpanded
+editor:GetSelText
+editor:GetStyledText
+editor:GetText
+editor:GetTextRange
+editor:GotoLine
+editor:GotoPos
+editor:GrabFocus
+editor:HideLines
+editor:HideSelection
+editor:Home
+editor:HomeDisplay
+editor:HomeDisplayExtend
+editor:HomeExtend
+editor:HomeRectExtend
+editor:HomeWrap
+editor:HomeWrapExtend
+editor:InsertText
+editor:LineCopy
+editor:LineCut
+editor:LineDelete
+editor:LineDown
+editor:LineDownExtend
+editor:LineDownRectExtend
+editor:LineDuplicate
+editor:LineEnd
+editor:LineEndDisplay
+editor:LineEndDisplayExtend
+editor:LineEndExtend
+editor:LineEndRectExtend
+editor:LineEndWrap
+editor:LineEndWrapExtend
+editor:LineFromPosition
+editor:LineLength
+editor:LineScroll
+editor:LineScrollDown
+editor:LineScrollUp
+editor:LineTranspose
+editor:LineUp
+editor:LineUpExtend
+editor:LineUpRectExtend
+editor:LinesJoin
+editor:LinesSplit
+editor:LoadLexerLibrary
+editor:LowerCase
+editor:MarkerAdd
+editor:MarkerAddSet
+editor:MarkerDefine
+editor:MarkerDefinePixmap
+editor:MarkerDelete
+editor:MarkerDeleteAll
+editor:MarkerDeleteHandle
+editor:MarkerGet
+editor:MarkerLineFromHandle
+editor:MarkerNext
+editor:MarkerPrevious
+editor:MarkerSetAlpha
+editor:MarkerSetBack
+editor:MarkerSetFore
+editor:MoveCaretInsideView
+editor:NewLine
+editor:Null
+editor:PageDown
+editor:PageDownExtend
+editor:PageDownRectExtend
+editor:PageUp
+editor:PageUpExtend
+editor:PageUpRectExtend
+editor:ParaDown
+editor:ParaDownExtend
+editor:ParaUp
+editor:ParaUpExtend
+editor:Paste
+editor:PointXFromPosition
+editor:PointYFromPosition
+editor:PositionAfter
+editor:PositionBefore
+editor:PositionFromLine
+editor:PositionFromPoint
+editor:PositionFromPointClose
+editor:Redo
+editor:RegisterImage
+editor:ReleaseDocument
+editor:ReplaceSel
+editor:ReplaceTarget
+editor:ReplaceTargetRE
+editor:ScrollCaret
+editor:SearchAnchor
+editor:SearchInTarget
+editor:SearchNext
+editor:SearchPrev
+editor:SelectAll
+editor:SelectionDuplicate
+editor:SetCaretPolicy
+editor:SetCharsDefault
+editor:SetFoldFlags
+editor:SetFoldMarginColour
+editor:SetFoldMarginHiColour
+editor:SetLengthForEncode
+editor:SetSavePoint
+editor:SetSel
+editor:SetSelBack
+editor:SetSelFore
+editor:SetStyling
+editor:SetStylingEx
+editor:SetText
+editor:SetVisiblePolicy
+editor:SetWhitespaceBack
+editor:SetWhitespaceFore
+editor:SetXCaretPolicy
+editor:SetYCaretPolicy
+editor:ShowLines
+editor:StartRecord
+editor:StartStyling
+editor:StopRecord
+editor:StutteredPageDown
+editor:StutteredPageDownExtend
+editor:StutteredPageUp
+editor:StutteredPageUpExtend
+editor:StyleClearAll
+editor:StyleResetDefault
+editor:Tab
+editor:TargetAsUTF8
+editor:TargetFromSelection
+editor:TextHeight
+editor:TextWidth
+editor:ToggleCaretSticky
+editor:ToggleFold
+editor:Undo
+editor:UpperCase
+editor:UsePopUp
+editor:UserListShow
+editor:VCHome
+editor:VCHomeExtend
+editor:VCHomeRectExtend
+editor:VCHomeWrap
+editor:VCHomeWrapExtend
+editor:VisibleFromDocLine
+editor:WordEndPosition
+editor:WordLeft
+editor:WordLeftEnd
+editor:WordLeftEndExtend
+editor:WordLeftExtend
+editor:WordPartLeft
+editor:WordPartLeftExtend
+editor:WordPartRight
+editor:WordPartRightExtend
+editor:WordRight
+editor:WordRightEnd
+editor:WordRightEndExtend
+editor:WordRightExtend
+editor:WordStartPosition
+editor:WordStartPosition
+editor:WrapCount
+editor:ZoomIn
+editor:ZoomOut
 
-editor.Anchor = position
-editor.AutoCAutoHide = bool
-editor.AutoCCancelAtStart = bool
-editor.AutoCChooseSingle = bool
-editor.AutoCDropRestOfWord = bool
-editor.AutoCFillUps = string
-editor.AutoCIgnoreCase = bool
-editor.AutoCMaxHeight = int
-editor.AutoCMaxWidth = int
-editor.AutoCSeparator = int
-editor.AutoCTypeSeparator = int
-editor.BackSpaceUnIndents = bool
-editor.BufferedDraw = bool
-editor.CallTipBack = colour
-editor.CallTipFore = colour
-editor.CallTipForeHlt = colour
-editor.CallTipUseStyle = int
-editor.CaretFore = colour
-editor.CaretLineBack = colour
-editor.CaretLineBackAlpha = int
-editor.CaretLineVisible = bool
-editor.CaretPeriod = int
-editor.CaretSticky = bool
-editor.CaretWidth = int
-editor.CharAt [position] = int
-editor.CodePage = int
-editor.Column [position] = int
-editor.ControlCharSymbol = int
-editor.CurrentPos = position
-editor.Cursor = int
-editor.DirectFunction = int
-editor.DirectPointer = int
-editor.DocPointer = int
-editor.EOLMode = int
-editor.EdgeColour = colour
-editor.EdgeColumn = int
-editor.EdgeMode = int
-editor.EndAtLastLine = bool
-editor.EndStyled = position
-editor.FirstVisibleLine = int
-editor.Focus = bool
-editor.FoldExpanded [line_number] = bool
-editor.FoldLevel [line_number] = int
-editor.FoldParent [line_number] = int
-editor.HScrollBar = bool
-editor.HighlightGuide = int
-editor.HotspotActiveBack [bool] = colour
-editor.HotspotActiveFore [bool] = colour
-editor.HotspotActiveUnderline = bool
-editor.HotspotSingleLine = bool
-editor.Indent = int
-editor.IndentationGuides = bool
-editor.IndicFore [int] = colour
-editor.IndicStyle [int] = int
-editor.KeyWords [int] = string
-editor.LayoutCache = int
-editor.Length = int
-editor.Lexer = int
-editor.LexerLanguage = string
-editor.LineCount = int
-editor.LineEndPosition [line_number] = int
-editor.LineIndentPosition [line_number] = position
-editor.LineIndentation [line_number] = int
-editor.LineState [line_number] = int
-editor.LineVisible [line_number] = bool
-editor.LinesOnScreen = int
-editor.MarginLeft = int
-editor.MarginMaskN [int] = int
-editor.MarginRight = int
-editor.MarginSensitiveN [int] = bool
-editor.MarginTypeN [int] = int
-editor.MarginWidthN [int] = int
-editor.MaxLineState = int
-editor.ModEventMask = int
-editor.Modify = bool
-editor.MouseDownCaptures = bool
-editor.MouseDwellTime = int
-editor.Overtype = bool
-editor.PasteConvertEndings = bool
-editor.PrintColourMode = int
-editor.PrintMagnification = int
-editor.PrintWrapMode = int
-editor.Property [string] = string
-editor.PropertyInt [string] = int
-editor.ReadOnly = bool
-editor.ScrollWidth = int
-editor.SearchFlags = int
-editor.SelAlpha = int
-editor.SelectionEnd = position
-editor.SelectionIsRectangle = bool
-editor.SelectionMode = int
-editor.SelectionStart = position
-editor.Status = int
-editor.StyleAt [position] = int
-editor.StyleBack [style_number] = colour
-editor.StyleBits = int
-editor.StyleBitsNeeded = int
-editor.StyleBold [style_number] = bool
-editor.StyleCase [style_number] = int
-editor.StyleChangeable [style_number] = bool
-editor.StyleCharacterSet [style_number] = int
-editor.StyleEOLFilled [style_number] = bool
-editor.StyleFont [style_number] = string
-editor.StyleFore [style_number] = colour
-editor.StyleHotSpot [style_number] = bool
-editor.StyleItalic [style_number] = bool
-editor.StyleSize [style_number] = int
-editor.StyleUnderline [style_number] = bool
-editor.StyleVisible [style_number] = bool
-editor.TabIndents = bool
-editor.TabWidth = int
-editor.TargetEnd = position
-editor.TargetStart = position
-editor.TextLength = int
-editor.TwoPhaseDraw = bool
-editor.UndoCollection = bool
-editor.UsePalette = bool
-editor.UseTabs = bool
-editor.VScrollBar = bool
-editor.ViewEOL = bool
-editor.ViewWS = int
-editor.WhitespaceChars = string
-editor.WordChars = string
-editor.WrapMode = int
-editor.WrapStartIndent = int
-editor.WrapVisualFlags = int
-editor.WrapVisualFlagsLocation = int
-editor.XOffset = int
-editor.Zoom = int
+output:AddRefDocument
+output:AddStyledText
+output:AddText
+output:Allocate
+output:AppendText
+output:AssignCmdKey
+output:AutoCActive
+output:AutoCCancel
+output:AutoCComplete
+output:AutoCGetCurrent
+output:AutoCPosStart
+output:AutoCSelect
+output:AutoCShow
+output:AutoCStops
+output:BackTab
+output:BeginUndoAction
+output:BraceBadLight
+output:BraceHighlight
+output:BraceMatch
+output:CallTipActive
+output:CallTipCancel
+output:CallTipPosStart
+output:CallTipSetHlt
+output:CallTipShow
+output:CanPaste
+output:CanRedo
+output:CanUndo
+output:Cancel
+output:CharLeft
+output:CharLeftExtend
+output:CharLeftRectExtend
+output:CharRight
+output:CharRightExtend
+output:CharRightRectExtend
+output:ChooseCaretX
+output:Clear
+output:ClearAll
+output:ClearAllCmdKeys
+output:ClearCmdKey
+output:ClearDocumentStyle
+output:ClearRegisteredImages
+output:Colourise
+output:ConvertEOLs
+output:Copy
+output:CopyRange
+output:CopyText
+output:CreateDocument
+output:Cut
+output:DelLineLeft
+output:DelLineRight
+output:DelWordLeft
+output:DelWordRight
+output:DeleteBack
+output:DeleteBackNotLine
+output:DocLineFromVisible
+output:DocumentEnd
+output:DocumentEndExtend
+output:DocumentStart
+output:DocumentStartExtend
+output:EditToggleOvertype
+output:EmptyUndoBuffer
+output:EncodedFromUTF8
+output:EndUndoAction
+output:EnsureVisible
+output:EnsureVisibleEnforcePolicy
+output:FindColumn
+output:FindText
+output:FormFeed
+output:FormatRange
+output:GetCurLine
+output:GetLastChild
+output:GetLine
+output:GetLineSelEndPosition
+output:GetLineSelStartPosition
+output:GetProperty
+output:GetPropertyExpanded
+output:GetSelText
+output:GetStyledText
+output:GetText
+output:GetTextRange
+output:GotoLine
+output:GotoPos
+output:GrabFocus
+output:HideLines
+output:HideSelection
+output:Home
+output:HomeDisplay
+output:HomeDisplayExtend
+output:HomeExtend
+output:HomeRectExtend
+output:HomeWrap
+output:HomeWrapExtend
+output:InsertText
+output:LineCopy
+output:LineCut
+output:LineDelete
+output:LineDown
+output:LineDownExtend
+output:LineDownRectExtend
+output:LineDuplicate
+output:LineEnd
+output:LineEndDisplay
+output:LineEndDisplayExtend
+output:LineEndExtend
+output:LineEndRectExtend
+output:LineEndWrap
+output:LineEndWrapExtend
+output:LineFromPosition
+output:LineLength
+output:LineScroll
+output:LineScrollDown
+output:LineScrollUp
+output:LineTranspose
+output:LineUp
+output:LineUpExtend
+output:LineUpRectExtend
+output:LinesJoin
+output:LinesSplit
+output:LoadLexerLibrary
+output:LowerCase
+output:MarkerAdd
+output:MarkerAddSet
+output:MarkerDefine
+output:MarkerDefinePixmap
+output:MarkerDelete
+output:MarkerDeleteAll
+output:MarkerDeleteHandle
+output:MarkerGet
+output:MarkerLineFromHandle
+output:MarkerNext
+output:MarkerPrevious
+output:MarkerSetAlpha
+output:MarkerSetBack
+output:MarkerSetFore
+output:MoveCaretInsideView
+output:NewLine
+output:Null
+output:PageDown
+output:PageDownExtend
+output:PageDownRectExtend
+output:PageUp
+output:PageUpExtend
+output:PageUpRectExtend
+output:ParaDown
+output:ParaDownExtend
+output:ParaUp
+output:ParaUpExtend
+output:Paste
+output:PointXFromPosition
+output:PointYFromPosition
+output:PositionAfter
+output:PositionBefore
+output:PositionFromLine
+output:PositionFromPoint
+output:PositionFromPointClose
+output:Redo
+output:RegisterImage
+output:ReleaseDocument
+output:ReplaceSel
+output:ReplaceTarget
+output:ReplaceTargetRE
+output:ScrollCaret
+output:SearchAnchor
+output:SearchInTarget
+output:SearchNext
+output:SearchPrev
+output:SelectAll
+output:SelectionDuplicate
+output:SetCaretPolicy
+output:SetCharsDefault
+output:SetFoldFlags
+output:SetFoldMarginColour
+output:SetFoldMarginHiColour
+output:SetLengthForEncode
+output:SetSavePoint
+output:SetSel
+output:SetSelBack
+output:SetSelFore
+output:SetStyling
+output:SetStylingEx
+output:SetText
+output:SetVisiblePolicy
+output:SetWhitespaceBack
+output:SetWhitespaceFore
+output:SetXCaretPolicy
+output:SetYCaretPolicy
+output:ShowLines
+output:StartRecord
+output:StartStyling
+output:StopRecord
+output:StutteredPageDown
+output:StutteredPageDownExtend
+output:StutteredPageUp
+output:StutteredPageUpExtend
+output:StyleClearAll
+output:StyleResetDefault
+output:Tab
+output:TargetAsUTF8
+output:TargetFromSelection
+output:TextHeight
+output:TextWidth
+output:ToggleCaretSticky
+output:ToggleFold
+output:Undo
+output:UpperCase
+output:UsePopUp
+output:UserListShow
+output:VCHome
+output:VCHomeExtend
+output:VCHomeRectExtend
+output:VCHomeWrap
+output:VCHomeWrapExtend
+output:VisibleFromDocLine
+output:WordEndPosition
+output:WordLeft
+output:WordLeftEnd
+output:WordLeftEndExtend
+output:WordLeftExtend
+output:WordPartLeft
+output:WordPartLeftExtend
+output:WordPartRight
+output:WordPartRightExtend
+output:WordRight
+output:WordRightEnd
+output:WordRightEndExtend
+output:WordRightExtend
+output:WordStartPosition
+output:WordStartPosition
+output:WrapCount
+output:ZoomIn
+output:ZoomOut
 
-output:AddRefDocument(int doc)\n Create a new document object. Starts with reference count of 1 and not selected into output. Extend life of document.
-output:AddStyledText(int length, cells c)\n Add array of cells to document.
-output:AddText(int length, string text)\n Add text to the document at current position.
-output:Allocate(int bytes)\n Enlarge the document to a particular size of text bytes.
-output:AppendText(int length, string text)\n Append a string to the end of the document without changing the selection.
-output:AssignCmdKey(keymod km, int msg)\n When key+modifier combination km is pressed perform msg.
-output:AutoCActive() = bool\n Is there an auto-completion list visible?
-output:AutoCCancel()\n Remove the auto-completion list from the screen.
-output:AutoCComplete()\n User has selected an item so remove the list and insert the selection.
-output:AutoCGetCurrent() = int\n Get currently selected item position in the auto-completion list
-output:AutoCPosStart() = int pos\n Retrieve the position of the caret when the auto-completion list was displayed.
-output:AutoCSelect(string text)\n Select the item in the auto-completion list that starts with a string.
-output:AutoCShow(int lenEntered, string itemList)\n Display a auto-completion list. The lenEntered parameter indicates how many characters before the caret should be used to provide context.
-output:AutoCStops(string characterSet)\n Define a set of character that when typed cancel the auto-completion list.
-output:BackTab()\n Dedent the selected lines.
-output:BeginUndoAction()\n Start a sequence of actions that is undone and redone as a unit. May be nested.
-output:BraceBadLight(position pos)\n Highlight the character at a position indicating there is no matching brace.
-output:BraceHighlight(int posStart, int posEnd)\n Highlight the characters at two positions.
-output:BraceMatch(int pos) = int pos\n Find the position of a matching brace or INVALID_POSITION if no match.
-output:CallTipActive() = bool\n Is there an active call tip?
-output:CallTipCancel()\n Remove the call tip from the screen.
-output:CallTipPosStart() = int pos\n Retrieve the position where the caret was before displaying the call tip.
-output:CallTipSetHlt(int start, int end)\n Highlight a segment of the definition.
-output:CallTipShow(int pos, string definition)\n Show a call tip containing a definition near position pos.
-output:CanPaste() = bool\n Will a paste succeed?
-output:CanRedo() = bool\n Are there any redoable actions in the undo history?
-output:CanUndo() = bool\n Are there any undoable actions in the undo history?
-output:Cancel()\n Cancel any modes such as call tip or auto-completion list display.
-output:CharLeft()\n Move caret left one character.
-output:CharLeftExtend()\n Move caret left one character extending selection to new caret position.
-output:CharLeftRectExtend()\n Move caret left one character, extending rectangular selection to new caret position.
-output:CharRight()\n Move caret right one character.
-output:CharRightExtend()\n Move caret right one character extending selection to new caret position.
-output:CharRightRectExtend()\n Move caret right one character, extending rectangular selection to new caret position.
-output:ChooseCaretX()\n Set the last x chosen value to be the caret x position.
-output:Clear()\n Clear the selection.
-output:ClearAll()\n Delete all text in the document.
-output:ClearAllCmdKeys()\n Drop all key mappings.
-output:ClearCmdKey(int keymod)\n When key+modifier combination km is pressed do nothing.
-output:ClearDocumentStyle()\n Set all style bytes to 0, remove all folding information.
-output:ClearRegisteredImages()\n Clear all the registered XPM images.
-output:Colourise(int posStart, int posEnd)\n Colourise a segment of the document using the current lexing language.
-output:ConvertEOLs(int eolMode)\n Convert all line endings in the document to one mode.
-output:Copy()\n Copy the selection to the clipboard.
-output:CopyRange(int posStart, int posEnd)\n Copy a range of text to the clipboard. Positions are clipped into the document.
-output:CopyText(int length, string text)\n Copy argument text to the clipboard.
-output:CreateDocument() = int\n Create a new document object. Starts with reference count of 1 and not selected into output.
-output:Cut()\n Cut the selection to the clipboard.
-output:DelLineLeft()\n Delete back from the current position to the start of the line.
-output:DelLineRight()\n Delete forwards from the current position to the end of the line.
-output:DelWordLeft()\n Delete the word to the left of the caret.
-output:DelWordRight()\n Delete the word to the right of the caret.
-output:DeleteBack()\n Delete the selection or if no selection, the character before the caret.
-output:DeleteBackNotLine()\n Delete the selection or if no selection, the character before the caret. Will not delete the character before at the start of a line.
-output:DocLineFromVisible(int lineDisplay) = int\n Find the document line of a display line taking hidden lines into account.
-output:DocumentEnd()\n Move caret to last position in document.
-output:DocumentEndExtend()\n Move caret to last position in document extending selection to new caret position.
-output:DocumentStart()\n Move caret to first position in document.
-output:DocumentStartExtend()\n Move caret to first position in document extending selection to new caret position.
-output:EditToggleOvertype()\n Switch from insert to overtype mode or the reverse.
-output:EmptyUndoBuffer()\n Delete the undo history.
-output:EncodedFromUTF8(string text)\n = string text
-output:EndUndoAction()\n End a sequence of actions that is undone and redone as a unit.
-output:EnsureVisible(int line)\n Ensure a particular line is visible by expanding any header line hiding it.
-output:EnsureVisibleEnforcePolicy(int line)\n Ensure a particular line is visible by expanding any header line hiding it. Use the currently set visibility policy to determine which range to display.
-output:FindColumn(int, int) = int
-output:FindText(int flags, findtext ft) = int pos\n Find some text in the document.
-output:FormFeed()\n Insert a Form Feed character.
-output:FormatRange(bool draw, formatrange fr) = int pos\n On Windows, will draw the document into a display context such as a printer.
-output:GetCurLine(int length, stringresult text) = string text\n Retrieve the text of the line containing the caret. Returns the index of the caret on the line.
-output:GetLastChild(int, int) = int
-output:GetLine(int line, stringresult text) = string text\n Retrieve the contents of a line. Returns the length of the line.
-output:GetLineSelEndPosition(int line) = int pos\n Retrieve the position of the end of the selection at the given line (INVALID_POSITION if no selection on this line)\n.
-output:GetLineSelStartPosition(int line) = int pos\n Retrieve the position of the start of the selection at the given line (INVALID_POSITION if no selection on this line).
-output:GetProperty(string text) = string text
-output:GetPropertyExpanded(string text) = string text
-output:GetSelText(stringresult text) = string text\n Retrieve the selected text. Return the length of the text.
-output:GetStyledText(textrange tr) = int\n Retrieve a buffer of cells. Returns the number of bytes in the buffer not including terminating NULs.
-output:GetText(int length, stringresult text) = string text\n Retrieve all the text in the document. Returns number of characters retrieved.
-output:GetTextRange(textrange tr) = int\n Retrieve a range of text. Return the length of the text.
-output:GotoLine(int line)\n Set caret to start of a line and ensure it is visible.
-output:GotoPos(int pos)\n Set caret to a position and ensure it is visible.
-output:GrabFocus()\n Set the focus to this Scintilla widget. GTK+ Specific.
-output:HideLines(int lineStart, int lineEnd)\n Make a range of lines invisible.
-output:HideSelection(bool normal)\n Draw the selection in normal style or with selection highlighted.
-output:Home()\n Move caret to first position on line.
-output:HomeDisplay()\n Move caret to first position on display line.
-output:HomeDisplayExtend()\n Move caret to first position on display line extending selection to new caret position.
-output:HomeExtend()\n Move caret to first position on line extending selection to new caret position.
-output:HomeRectExtend()\n Move caret to first position on line, extending rectangular selection to new caret position.
-output:HomeWrap()
-output:HomeWrapExtend()
-output:InsertText(int pos, string text)\n Insert string at a position. (position=-1 -> current position)
-output:LineCopy()\n Copy the line containing the caret.
-output:LineCut()\n Cut the line containing the caret.
-output:LineDelete()\n Delete the line containing the caret.
-output:LineDown()\n# Start of key messages Move caret down one line.
-output:LineDownExtend()\n Move caret down one line extending selection to new caret position.
-output:LineDownRectExtend()\n# RectExtended rectangular selection moves Move caret down one line, extending rectangular selection to new caret position.
-output:LineDuplicate()\n Duplicate the current line.
-output:LineEnd()\n Move caret to last position on line.
-output:LineEndDisplay()\n Move caret to last position on display line.
-output:LineEndDisplayExtend()\n Move caret to last position on display line extending selection to new caret position.
-output:LineEndExtend()\n Move caret to last position on line extending selection to new caret position.
-output:LineEndRectExtend()\n Move caret to last position on line, extending rectangular selection to new caret position.
-output:LineEndWrap()
-output:LineEndWrapExtend()
-output:LineFromPosition(int pos) = int line\n Retrieve the line containing a position.
-output:LineLength(int line) = int length\n How many characters are on a line, not including end of line characters?
-output:LineScroll(int columns, int lines)\n Scroll horizontally and vertically.
-output:LineScrollDown()\n Scroll the document down, keeping the caret visible.
-output:LineScrollUp()\n Scroll the document up, keeping the caret visible.
-output:LineTranspose()\n Switch the current line with the previous.
-output:LineUp()\n Move caret up one line.
-output:LineUpExtend()\n Move caret up one line extending selection to new caret position.
-output:LineUpRectExtend()\n Move caret up one line, extending rectangular selection to new caret position.
-output:LinesJoin()\n Join the lines in the target.
-output:LinesSplit(int pixelWidth,)\n Split the lines in the target into lines that are less wide than pixelWidth where possible.
-output:LoadLexerLibrary(string path)\n Load a lexer library (dll / so).
-output:LowerCase()\n Transform the selection to lower case.
-output:MarkerAdd(int line, int markerNumber) = int\n Add a marker to a line, returning an ID which can be used to find or delete the marker.
-output:MarkerAddSet(int line, int markerNumber)
-output:MarkerDefine(int markerNumber, int markerSymbol)\n Set the symbol used for a particular marker number.
-output:MarkerDefinePixmap(int markerNumber, string pixmap)\n Define a marker from a pixmap.
-output:MarkerDelete(int line, int markerNumber)\n Delete a marker from a line.
-output:MarkerDeleteAll(int markerNumber)\n Delete all markers with a particular number from all lines.
-output:MarkerDeleteHandle(int handle)\n Delete a marker.
-output:MarkerGet(int line) = int\n Get a bit mask of all the markers set on a line.
-output:MarkerLineFromHandle(int handle) = int\n Retrieve the line number at which a particular marker is located.
-output:MarkerNext(int lineStart, int markerMask) = int\n Find the next line after lineStart that includes a marker in mask.
-output:MarkerPrevious(int lineStart, int markerMask) = int\n Find the previous line before lineStart that includes a marker in mask.
-output:MarkerSetAlpha(int markerNumber, int colour)
-output:MarkerSetBack(int markerNumber, colour back)\n Set the background colour used for a particular marker number.
-output:MarkerSetFore(int markerNumber, colour fore)\n Set the foreground colour used for a particular marker number.
-output:MoveCaretInsideView()\n Move the caret inside current view if it's not there already.
-output:NewLine()\n Insert a new line, may use a CRLF, CR or LF depending on EOL mode.
-output:Null()\n Null operation.
-output:PageDown()\n Move caret one page down.
-output:PageDownExtend()\n Move caret one page down extending selection to new caret position.
-output:PageDownRectExtend()\n Move caret one page down, extending rectangular selection to new caret position.
-output:PageUp()\n Move caret one page up.
-output:PageUpExtend()\n Move caret one page up extending selection to new caret position.
-output:PageUpRectExtend()\n Move caret one page up, extending rectangular selection to new caret position.
-output:ParaDown()\n Move caret between paragraphs (delimited by empty lines).
-output:ParaDownExtend()\n Move caret between paragraphs (delimited by empty lines).
-output:ParaUp()\n Move caret between paragraphs (delimited by empty lines).
-output:ParaUpExtend()\n Move caret between paragraphs (delimited by empty lines).
-output:Paste()\n Paste the contents of the clipboard into the document replacing the selection.
-output:PointXFromPosition(int pos) = int\n Retrieve the x value of the point in the window where a position is displayed.
-output:PointYFromPosition(int pos) = int\n Retrieve the y value of the point in the window where a position is displayed.
-output:PositionAfter(int pos) = int pos\n Given a valid document position, return the next position taking code page into account. Maximum value returned is the last position in the document.
-output:PositionBefore(int pos) = int pos\n Given a valid document position, return the previous position taking code page into account. Returns 0 if passed 0.
-output:PositionFromLine(int line) = int pos\n Retrieve the position at the start of a line.
-output:PositionFromPoint(int x, int y) = int pos\n Find the position from a point within the window.
-output:PositionFromPointClose(int x, int y) = int pos\n Find the position from a point within the window but return INVALID_POSITION if not close to text.
-output:Redo()\n Redoes the next action on the undo history.
-output:RegisterImage(int type, string xpmData)\n Register an XPM image for use in autocompletion lists.
-output:ReleaseDocument(int doc)\n Create a new document object. Starts with reference count of 1 and not selected into output.\n Extend life of document. Release a reference to the document, deleting document if it fades to black.
-output:ReplaceSel(string text)\n Replace the selected text with the argument text.
-output:ReplaceTarget(int length, string text) = int\n Replace the target text with the argument text. Text is counted so it can contain NULs. Returns the length of the replacement text.
-output:ReplaceTargetRE(int length, string text) = int\n Replace the target text with the argument text after \d processing. Text is counted so it can contain NULs.\n Looks for \d where d is between 1 and 9 and replaces these with the strings matched in the last search operation which were surrounded by \( and \).\n Returns the length of the replacement text including any change caused by processing the \d patterns.
-output:ScrollCaret()\n Ensure the caret is visible.
-output:SearchAnchor()\n Sets the current caret position to be the search anchor.
-output:SearchInTarget(int length, string text) = int\n Search for a counted string in the target and set the target to the found range. Text is counted so it can contain NULs.\n Returns length of range or -1 for failure in which case target is not moved.
-output:SearchNext(int flags, string text) = int\n Find some text starting at the search anchor. Does not ensure the selection is visible.
-output:SearchPrev(int flags, string text) = int\n Find some text starting at the search anchor and moving backwards. Does not ensure the selection is visible.
-output:SelectAll()\n Select all the text in the document.
-output:SelectionDuplicate()
-output:SetCaretPolicy(int caretPolicy, int caretSlop)\n CARET_POLICY changed in 1.47
-output:SetCharsDefault()\n Reset the set of characters for whitespace and word characters to the defaults.
-output:SetFoldFlags(int flags)\n Set some style options for folding.
-output:SetFoldMarginColour(bool useSetting, colour back)\n Set the colours used as a chequerboard pattern in the fold margin
-output:SetFoldMarginHiColour(bool useSetting, colour fore)\n Set the colours used as a chequerboard pattern in the fold margin
-output:SetLengthForEncode(int)
-output:SetSavePoint()\n Remember the current position in the undo history as the position at which the document was saved.
-output:SetSel(int posStart, int posEnd)\n Select a range of text.
-output:SetSelBack(bool useSetting, colour back)\n Set the background colour of the selection and whether to use this setting.
-output:SetSelFore(bool useSetting, colour fore)\n Set the foreground colour of the selection and whether to use this setting.
-output:SetStyling(int length, int style)\n Change style from current styling position for length characters to a style and move the current styling position to after this newly styled segment.\n (style sample: INDIC1_MASK)
-output:SetStylingEx(int length, string styles)\n Set the styles for a segment of the document.
-output:SetText(string text)\n Replace the contents of the document with the argument text.
-output:SetVisiblePolicy(int visiblePolicy, int visibleSlop)\n Constants for use with SetVisiblePolicy, similar to SetCaretPolicy.\n Set the way the display area is determined when a particular line is to be moved to by Find, FindNext, GotoLine, etc.
-output:SetWhitespaceBack(bool useSetting, colour back)\n Set the background colour of all whitespace and whether to use this setting.
-output:SetWhitespaceFore(bool useSetting, colour fore)\n Set the foreground colour of all whitespace and whether to use this setting.
-output:SetXCaretPolicy(int caretPolicy, int caretSlop)\n Set the way the caret is kept visible when going sideway. The exclusion zone is given in pixels.
-output:SetYCaretPolicy(int caretPolicy, int caretSlop)\n Set the way the line the caret is on is kept visible. The exclusion zone is given in lines.
-output:ShowLines(int lineStart, int lineEnd)\n Make a range of lines visible.
-output:StartRecord()\n Start notifying the container of all key presses and commands.
-output:StartStyling(int posStart, int mask)\n Set the current styling position to pos and the styling mask to mask. The styling mask can be used to protect some bits in each styling byte from modification. (mask sample: INDICS_MASK)\n
-output:StopRecord()\n Stop notifying the container of all key presses and commands.
-output:StutteredPageDown()\n Move caret to bottom of page, or one page down if already at bottom of page.
-output:StutteredPageDownExtend()\n Move caret to bottom of page, or one page down if already at bottom of page, extending selection to new caret position.
-output:StutteredPageUp()\n Move caret to top of page, or one page up if already at top of page.
-output:StutteredPageUpExtend()\n Move caret to top of page, or one page up if already at top of page, extending selection to new caret position.
-output:StyleClearAll()
-output:StyleResetDefault()\n Reset the default style to its state at startup
-output:Tab()\n If selection is empty or all on one line replace the selection with a tab character. If more than one line selected, indent the lines.
-output:TargetAsUTF8() = string text
-output:TargetFromSelection()\n Make the target range start and end be the same as the selection range start and end.
-output:TextHeight(int line) = int\n Retrieve the height of a particular line of text in pixels.
-output:TextWidth(int style, string text) = int\n Measure the pixel width of some text in a particular style. NUL terminated text argument. Does not handle tab or control characters.
-output:ToggleCaretSticky()
-output:ToggleFold(int line)\n Switch a header line between expanded and contracted.
-output:Undo()\n Undo one action in the undo history.
-output:UpperCase()\n Transform the selection to upper case.
-output:UsePopUp(bool allowPopUp)\n Set whether a pop up menu is displayed automatically when the user presses the wrong mouse button.
-output:UserListShow(int listType, string itemList)\n Display a list of strings and send notification when user chooses one.
-output:VCHome()\n Move caret to before first visible character on line. If already there move to first character on line.
-output:VCHomeExtend()\n Like VCHome but extending selection to new caret position.
-output:VCHomeRectExtend()\n Move caret to before first visible character on line. If already there move to first character on line.\n In either case, extend rectangular selection to new caret position.
-output:VCHomeWrap()
-output:VCHomeWrapExtend()
-output:VisibleFromDocLine(int line) = int\n Find the display line of a document line taking hidden lines into account.
-output:WordEndPosition(int pos, bool onlyWordCharacters) = int\n Get position of end of word.
-output:WordLeft()\n Move caret left one word.
-output:WordLeftEnd()\n Move caret left one word, position cursor at end of word.
-output:WordLeftEndExtend()\n Move caret left one word, position cursor at end of word, extending selection to new caret position.
-output:WordLeftExtend()\n Move caret left one word extending selection to new caret position.
-output:WordPartLeft()\n Move to the previous change in capitalisation.
-output:WordPartLeftExtend()\n Move to the previous change in capitalisation. Move to the previous change in capitalisation extending selection to new caret position.
-output:WordPartRight()\n Move to the previous change in capitalisation.\n Move to the previous change in capitalisation extending selection to new caret position.\n Move to the change next in capitalisation.
-output:WordPartRightExtend()\n Move to the previous change in capitalisation.\n Move to the previous change in capitalisation extending selection to new caret position.\n Move to the change next in capitalisation.\n Move to the next change in capitalisation extending selection to new caret position.
-output:WordRight()\n Move caret right one word.
-output:WordRightEnd()\n Move caret right one word, position cursor at end of word.
-output:WordRightEndExtend()\n Move caret right one word, position cursor at end of word, extending selection to new caret position.
-output:WordRightExtend()\n Move caret right one word extending selection to new caret position.
-output:WordStartPosition(int pos, bool) = int
-output:WordStartPosition(int pos, bool onlyWordCharacters) = int\n Get position of start of word.
-output:WrapCount(int) = int
-output:ZoomIn()\n Magnify the displayed text by increasing the sizes by 1 point.
-output:ZoomOut()\n Make the displayed text smaller by decreasing the sizes by 1 point.
+AddRefDocument(int doc)\n Create a new document object. Starts with reference count of 1 and not selected into editor. Extend life of document.
+AddStyledText(int length, cells c)\n Add array of cells to document.
+AddText(int length, string text)\n Add text to the document at current position.
+Allocate(int bytes)\n Enlarge the document to a particular size of text bytes.
+AppendText(int length, string text)\n Append a string to the end of the document without changing the selection.
+AssignCmdKey(keymod km, int msg)\n When key+modifier combination km is pressed perform msg.
+AutoCActive() = bool\n Is there an auto-completion list visible?
+AutoCCancel()\n Remove the auto-completion list from the screen.
+AutoCComplete()\n User has selected an item so remove the list and insert the selection.
+AutoCGetCurrent() = int\n Get currently selected item position in the auto-completion list
+AutoCPosStart() = int pos\n Retrieve the position of the caret when the auto-completion list was displayed.
+AutoCSelect(string text)\n Select the item in the auto-completion list that starts with a string.
+AutoCShow(int lenEntered, string itemList)\n Display a auto-completion list. The lenEntered parameter indicates how many characters before the caret should be used to provide context.
+AutoCStops(string characterSet)\n Define a set of character that when typed cancel the auto-completion list.
+BackTab()\n Dedent the selected lines.
+BeginUndoAction()\n Start a sequence of actions that is undone and redone as a unit. May be nested.
+BraceBadLight(position pos)\n Highlight the character at a position indicating there is no matching brace.
+BraceHighlight(int posStart, int posEnd)\n Highlight the characters at two positions.
+BraceMatch(int pos) = int pos\n Find the position of a matching brace or INVALID_POSITION if no match.
+CallTipActive() = bool\n Is there an active call tip?
+CallTipCancel()\n Remove the call tip from the screen.
+CallTipPosStart() = int pos\n Retrieve the position where the caret was before displaying the call tip.
+CallTipSetHlt(int start, int end)\n Highlight a segment of the definition.
+CallTipShow(int pos, string definition)\n Show a call tip containing a definition near position pos.
+CanPaste() = bool\n Will a paste succeed?
+CanRedo() = bool\n Are there any redoable actions in the undo history?
+CanUndo() = bool\n Are there any undoable actions in the undo history?
+Cancel()\n Cancel any modes such as call tip or auto-completion list display.
+CharLeft()\n Move caret left one character.
+CharLeftExtend()\n Move caret left one character extending selection to new caret position.
+CharLeftRectExtend()\n Move caret left one character, extending rectangular selection to new caret position.
+CharRight()\n Move caret right one character.
+CharRightExtend()\n Move caret right one character extending selection to new caret position.
+CharRightRectExtend()\n Move caret right one character, extending rectangular selection to new caret position.
+ChooseCaretX()\n Set the last x chosen value to be the caret x position.
+Clear()\n Clear the selection.
+ClearAll()\n Delete all text in the document.
+ClearAllCmdKeys()\n Drop all key mappings.
+ClearCmdKey(int keymod)\n When key+modifier combination km is pressed do nothing.
+ClearDocumentStyle()\n Set all style bytes to 0, remove all folding information.
+ClearRegisteredImages()\n Clear all the registered XPM images.
+Colourise(int posStart, int posEnd)\n Colourise a segment of the document using the current lexing language.
+ConvertEOLs(int eolMode)\n Convert all line endings in the document to one mode.
+Copy()\n Copy the selection to the clipboard.
+CopyRange(int posStart, int posEnd)\n Copy a range of text to the clipboard. Positions are clipped into the document.
+CopyText(int length, string text)\n Copy argument text to the clipboard.
+CreateDocument() = int\n Create a new document object. Starts with reference count of 1 and not selected into editor.
+Cut()\n Cut the selection to the clipboard.
+DelLineLeft()\n Delete back from the current position to the start of the line.
+DelLineRight()\n Delete forwards from the current position to the end of the line.
+DelWordLeft()\n Delete the word to the left of the caret.
+DelWordRight()\n Delete the word to the right of the caret.
+DeleteBack()\n Delete the selection or if no selection, the character before the caret.
+DeleteBackNotLine()\n Delete the selection or if no selection, the character before the caret. Will not delete the character before at the start of a line.
+DocLineFromVisible(int lineDisplay) = int\n Find the document line of a display line taking hidden lines into account.
+DocumentEnd()\n Move caret to last position in document.
+DocumentEndExtend()\n Move caret to last position in document extending selection to new caret position.
+DocumentStart()\n Move caret to first position in document.
+DocumentStartExtend()\n Move caret to first position in document extending selection to new caret position.
+EditToggleOvertype()\n Switch from insert to overtype mode or the reverse.
+EmptyUndoBuffer()\n Delete the undo history.
+EncodedFromUTF8(string text)\n = string text
+EndUndoAction()\n End a sequence of actions that is undone and redone as a unit.
+EnsureVisible(int line)\n Ensure a particular line is visible by expanding any header line hiding it.
+EnsureVisibleEnforcePolicy(int line)\n Ensure a particular line is visible by expanding any header line hiding it. Use the currently set visibility policy to determine which range to display.
+FindColumn(int, int) = int
+FindText(int flags, findtext ft) = int pos\n Find some text in the document.
+FormFeed()\n Insert a Form Feed character.
+FormatRange(bool draw, formatrange fr) = int pos\n On Windows, will draw the document into a display context such as a printer.
+GetCurLine(int length, stringresult text) = string text\n Retrieve the text of the line containing the caret. Returns the index of the caret on the line.
+GetLastChild(int, int) = int
+GetLine(int line, stringresult text) = string text\n Retrieve the contents of a line. Returns the length of the line.
+GetLineSelEndPosition(int line) = int pos\n Retrieve the position of the end of the selection at the given line (INVALID_POSITION if no selection on this line)\n.
+GetLineSelStartPosition(int line) = int pos\n Retrieve the position of the start of the selection at the given line (INVALID_POSITION if no selection on this line).
+GetProperty(string text) = string text
+GetPropertyExpanded(string text) = string text
+GetSelText(stringresult text) = string text\n Retrieve the selected text. Return the length of the text.
+GetStyledText(textrange tr) = int\n Retrieve a buffer of cells. Returns the number of bytes in the buffer not including terminating NULs.
+GetText(int length, stringresult text) = string text\n Retrieve all the text in the document. Returns number of characters retrieved.
+GetTextRange(textrange tr) = int\n Retrieve a range of text. Return the length of the text.
+GotoLine(int line)\n Set caret to start of a line and ensure it is visible.
+GotoPos(int pos)\n Set caret to a position and ensure it is visible.
+GrabFocus()\n Set the focus to this Scintilla widget. GTK+ Specific.
+HideLines(int lineStart, int lineEnd)\n Make a range of lines invisible.
+HideSelection(bool normal)\n Draw the selection in normal style or with selection highlighted.
+Home()\n Move caret to first position on line.
+HomeDisplay()\n Move caret to first position on display line.
+HomeDisplayExtend()\n Move caret to first position on display line extending selection to new caret position.
+HomeExtend()\n Move caret to first position on line extending selection to new caret position.
+HomeRectExtend()\n Move caret to first position on line, extending rectangular selection to new caret position.
+HomeWrap()
+HomeWrapExtend()
+InsertText(int pos, string text)\n Insert string at a position. (position=-1 -> current position)
+LineCopy()\n Copy the line containing the caret.
+LineCut()\n Cut the line containing the caret.
+LineDelete()\n Delete the line containing the caret.
+LineDown()\n# Start of key messages Move caret down one line.
+LineDownExtend()\n Move caret down one line extending selection to new caret position.
+LineDownRectExtend()\n# RectExtended rectangular selection moves Move caret down one line, extending rectangular selection to new caret position.
+LineDuplicate()\n Duplicate the current line.
+LineEnd()\n Move caret to last position on line.
+LineEndDisplay()\n Move caret to last position on display line.
+LineEndDisplayExtend()\n Move caret to last position on display line extending selection to new caret position.
+LineEndExtend()\n Move caret to last position on line extending selection to new caret position.
+LineEndRectExtend()\n Move caret to last position on line, extending rectangular selection to new caret position.
+LineEndWrap()
+LineEndWrapExtend()
+LineFromPosition(int pos) = int line\n Retrieve the line containing a position.
+LineLength(int line) = int length\n How many characters are on a line, not including end of line characters?
+LineScroll(int columns, int lines)\n Scroll horizontally and vertically.
+LineScrollDown()\n Scroll the document down, keeping the caret visible.
+LineScrollUp()\n Scroll the document up, keeping the caret visible.
+LineTranspose()\n Switch the current line with the previous.
+LineUp()\n Move caret up one line.
+LineUpExtend()\n Move caret up one line extending selection to new caret position.
+LineUpRectExtend()\n Move caret up one line, extending rectangular selection to new caret position.
+LinesJoin()\n Join the lines in the target.
+LinesSplit(int pixelWidth)\n Split the lines in the target into lines that are less wide than pixelWidth where possible.
+LoadLexerLibrary(string path)\n Load a lexer library (dll / so).
+LowerCase()\n Transform the selection to lower case.
+MarkerAdd(int line, int markerNumber) = int\n Add a marker to a line, returning an ID which can be used to find or delete the marker.
+MarkerAddSet(int line, int markerNumber)
+MarkerDefine(int markerNumber, int markerSymbol)\n Set the symbol used for a particular marker number.
+MarkerDefinePixmap(int markerNumber, string pixmap)\n Define a marker from a pixmap.
+MarkerDelete(int line, int markerNumber)\n Delete a marker from a line.
+MarkerDeleteAll(int markerNumber)\n Delete all markers with a particular number from all lines.
+MarkerDeleteHandle(int handle)\n Delete a marker.
+MarkerGet(int line) = int\n Get a bit mask of all the markers set on a line.
+MarkerLineFromHandle(int handle) = int\n Retrieve the line number at which a particular marker is located.
+MarkerNext(int lineStart, int markerMask) = int\n Find the next line after lineStart that includes a marker in mask.
+MarkerPrevious(int lineStart, int markerMask) = int\n Find the previous line before lineStart that includes a marker in mask.
+MarkerSetAlpha(int markerNumber, int colour)
+MarkerSetBack(int markerNumber, colour back)\n Set the background colour used for a particular marker number.
+MarkerSetFore(int markerNumber, colour fore)\n Set the foreground colour used for a particular marker number.
+MoveCaretInsideView()\n Move the caret inside current view if it's not there already.
+NewLine()\n Insert a new line, may use a CRLF, CR or LF depending on EOL mode.
+Null()\n Null operation.
+PageDown()\n Move caret one page down.
+PageDownExtend()\n Move caret one page down extending selection to new caret position.
+PageDownRectExtend()\n Move caret one page down, extending rectangular selection to new caret position.
+PageUp()\n Move caret one page up.
+PageUpExtend()\n Move caret one page up extending selection to new caret position.
+PageUpRectExtend()\n Move caret one page up, extending rectangular selection to new caret position.
+ParaDown()\n Move caret between paragraphs (delimited by empty lines).
+ParaDownExtend()\n Move caret between paragraphs (delimited by empty lines).
+ParaUp()\n Move caret between paragraphs (delimited by empty lines).
+ParaUpExtend()\n Move caret between paragraphs (delimited by empty lines).
+Paste()\n Paste the contents of the clipboard into the document replacing the selection.
+PointXFromPosition(int pos) = int\n Retrieve the x value of the point in the window where a position is displayed.
+PointYFromPosition(int pos) = int\n Retrieve the y value of the point in the window where a position is displayed.
+PositionAfter(int pos) = int pos\n Given a valid document position, return the next position taking code page into account. Maximum value returned is the last position in the document.
+PositionBefore(int pos) = int pos\n Given a valid document position, return the previous position taking code page into account. Returns 0 if passed 0.
+PositionFromLine(int line) = int pos\n Retrieve the position at the start of a line.
+PositionFromPoint(int x, int y) = int pos\n Find the position from a point within the window.
+PositionFromPointClose(int x, int y) = int pos\n Find the position from a point within the window but return INVALID_POSITION if not close to text.
+Redo()\n Redoes the next action on the undo history.
+RegisterImage(int type, string xpmData)\n Register an XPM image for use in autocompletion lists.
+ReleaseDocument(int doc)\n Create a new document object. Starts with reference count of 1 and not selected into editor.\n Extend life of document. Release a reference to the document, deleting document if it fades to black.
+ReplaceSel(string text)\n Replace the selected text with the argument text.
+ReplaceTarget(int length, string text) = int\n Replace the target text with the argument text. Text is counted so it can contain NULs. Returns the length of the replacement text.
+ReplaceTargetRE(int length, string text) = int\n Replace the target text with the argument text after \d processing. Text is counted so it can contain NULs.\n Looks for \d where d is between 1 and 9 and replaces these with the strings matched in the last search operation which were surrounded by \( and \).\n Returns the length of the replacement text including any change caused by processing the \d patterns.
+ScrollCaret()\n Ensure the caret is visible.
+SearchAnchor()\n Sets the current caret position to be the search anchor.
+SearchInTarget(int length, string text) = int\n Search for a counted string in the target and set the target to the found range. Text is counted so it can contain NULs.\n Returns length of range or -1 for failure in which case target is not moved.
+SearchNext(int flags, string text) = int\n Find some text starting at the search anchor. Does not ensure the selection is visible.
+SearchPrev(int flags, string text) = int\n Find some text starting at the search anchor and moving backwards. Does not ensure the selection is visible.
+SelectAll()\n Select all the text in the document.
+SelectionDuplicate()
+SetCaretPolicy(int caretPolicy, int caretSlop)\n CARET_POLICY changed in 1.47
+SetCharsDefault()\n Reset the set of characters for whitespace and word characters to the defaults.
+SetFoldFlags(int flags)\n Set some style options for folding.
+SetFoldMarginColour(bool useSetting, colour back)\n Set the colours used as a chequerboard pattern in the fold margin
+SetFoldMarginHiColour(bool useSetting, colour fore)\n Set the colours used as a chequerboard pattern in the fold margin
+SetLengthForEncode(int)
+SetSavePoint()\n Remember the current position in the undo history as the position at which the document was saved.
+SetSel(int posStart, int posEnd)\n Select a range of text.
+SetSelBack(bool useSetting, colour back)\n Set the background colour of the selection and whether to use this setting.
+SetSelFore(bool useSetting, colour fore)\n Set the foreground colour of the selection and whether to use this setting.
+SetStyling(int length, int style)\n Change style from current styling position for length characters to a style and move the current styling position to after this newly styled segment.\n (style sample: INDIC1_MASK)
+SetStylingEx(int length, string styles)\n Set the styles for a segment of the document.
+SetText(string text)\n Replace the contents of the document with the argument text.
+SetVisiblePolicy(int visiblePolicy, int visibleSlop)\n Constants for use with SetVisiblePolicy, similar to SetCaretPolicy.\n Set the way the display area is determined when a particular line is to be moved to by Find, FindNext, GotoLine, etc.
+SetWhitespaceBack(bool useSetting, colour back)\n Set the background colour of all whitespace and whether to use this setting.
+SetWhitespaceFore(bool useSetting, colour fore)\n Set the foreground colour of all whitespace and whether to use this setting.
+SetXCaretPolicy(int caretPolicy, int caretSlop)\n Set the way the caret is kept visible when going sideway. The exclusion zone is given in pixels.
+SetYCaretPolicy(int caretPolicy, int caretSlop)\n Set the way the line the caret is on is kept visible. The exclusion zone is given in lines.
+ShowLines(int lineStart, int lineEnd)\n Make a range of lines visible.
+StartRecord()\n Start notifying the container of all key presses and commands.
+StartStyling(int posStart, int mask)\n Set the current styling position to pos and the styling mask to mask. The styling mask can be used to protect some bits in each styling byte from modification. (mask sample: INDICS_MASK)\n
+StopRecord()\n Stop notifying the container of all key presses and commands.
+StutteredPageDown()\n Move caret to bottom of page, or one page down if already at bottom of page.
+StutteredPageDownExtend()\n Move caret to bottom of page, or one page down if already at bottom of page, extending selection to new caret position.
+StutteredPageUp()\n Move caret to top of page, or one page up if already at top of page.
+StutteredPageUpExtend()\n Move caret to top of page, or one page up if already at top of page, extending selection to new caret position.
+StyleClearAll()
+StyleResetDefault()\n Reset the default style to its state at startup
+Tab()\n If selection is empty or all on one line replace the selection with a tab character. If more than one line selected, indent the lines.
+TargetAsUTF8() = string text
+TargetFromSelection()\n Make the target range start and end be the same as the selection range start and end.
+TextHeight(int line) = int\n Retrieve the height of a particular line of text in pixels.
+TextWidth(int style, string text) = int\n Measure the pixel width of some text in a particular style. NUL terminated text argument. Does not handle tab or control characters.
+ToggleCaretSticky()
+ToggleFold(int line)\n Switch a header line between expanded and contracted.
+Undo()\n Undo one action in the undo history.
+UpperCase()\n Transform the selection to upper case.
+UsePopUp(bool allowPopUp)\n Set whether a pop up menu is displayed automatically when the user presses the wrong mouse button.
+UserListShow(int listType, string itemList)\n Display a list of strings and send notification when user chooses one.
+VCHome()\n Move caret to before first visible character on line. If already there move to first character on line.
+VCHomeExtend()\n Like VCHome but extending selection to new caret position.
+VCHomeRectExtend()\n Move caret to before first visible character on line. If already there move to first character on line.\n In either case, extend rectangular selection to new caret position.
+VCHomeWrap()
+VCHomeWrapExtend()
+VisibleFromDocLine(int line) = int\n Find the display line of a document line taking hidden lines into account.
+WordEndPosition(int pos, bool onlyWordCharacters) = int\n Get position of end of word.
+WordLeft()\n Move caret left one word.
+WordLeftEnd()\n Move caret left one word, position cursor at end of word.
+WordLeftEndExtend()\n Move caret left one word, position cursor at end of word, extending selection to new caret position.
+WordLeftExtend()\n Move caret left one word extending selection to new caret position.
+WordPartLeft()\n Move to the previous change in capitalisation.
+WordPartLeftExtend()\n Move to the previous change in capitalisation. Move to the previous change in capitalisation extending selection to new caret position.
+WordPartRight()\n Move to the previous change in capitalisation.\n Move to the previous change in capitalisation extending selection to new caret position.\n Move to the change next in capitalisation.
+WordPartRightExtend()\n Move to the previous change in capitalisation.\n Move to the previous change in capitalisation extending selection to new caret position.\n Move to the change next in capitalisation.\n Move to the next change in capitalisation extending selection to new caret position.
+WordRight()\n Move caret right one word.
+WordRightEnd()\n Move caret right one word, position cursor at end of word.
+WordRightEndExtend()\n Move caret right one word, position cursor at end of word, extending selection to new caret position.
+WordRightExtend()\n Move caret right one word extending selection to new caret position.
+WordStartPosition(int pos, bool) = int
+WordStartPosition(int pos, bool onlyWordCharacters) = int\n Get position of start of word.
+WrapCount(int) = int
+ZoomIn()\n Magnify the displayed text by increasing the sizes by 1 point.
+ZoomOut()\n Make the displayed text smaller by decreasing the sizes by 1 point.
 
-output.Anchor = position
-output.AutoCAutoHide = bool
-output.AutoCCancelAtStart = bool
-output.AutoCChooseSingle = bool
-output.AutoCDropRestOfWord = bool
-output.AutoCFillUps = string
-output.AutoCIgnoreCase = bool
-output.AutoCMaxHeight = int
-output.AutoCMaxWidth = int
-output.AutoCSeparator = int
-output.AutoCTypeSeparator = int
-output.BackSpaceUnIndents = bool
-output.BufferedDraw = bool
-output.CallTipBack = colour
-output.CallTipFore = colour
-output.CallTipForeHlt = colour
-output.CallTipUseStyle = int
-output.CaretFore = colour
-output.CaretLineBack = colour
-output.CaretLineBackAlpha = int
-output.CaretLineVisible = bool
-output.CaretPeriod = int
-output.CaretSticky = bool
-output.CaretWidth = int
-output.CharAt [position] = int
-output.CodePage = int
-output.Column [position] = int
-output.ControlCharSymbol = int
-output.CurrentPos = position
-output.Cursor = int
-output.DirectFunction = int
-output.DirectPointer = int
-output.DocPointer = int
-output.EOLMode = int
-output.EdgeColour = colour
-output.EdgeColumn = int
-output.EdgeMode = int
-output.EndAtLastLine = bool
-output.EndStyled = position
-output.FirstVisibleLine = int
-output.Focus = bool
-output.FoldExpanded [line_number] = bool
-output.FoldLevel [line_number] = int
-output.FoldParent [line_number] = int
-output.HScrollBar = bool
-output.HighlightGuide = int
-output.HotspotActiveBack [bool] = colour
-output.HotspotActiveFore [bool] = colour
-output.HotspotActiveUnderline = bool
-output.HotspotSingleLine = bool
-output.Indent = int
-output.IndentationGuides = bool
-output.IndicFore [int] = colour
-output.IndicStyle [int] = int
-output.KeyWords [int] = string
-output.LayoutCache = int
-output.Length = int
-output.Lexer = int
-output.LexerLanguage = string
-output.LineCount = int
-output.LineEndPosition [line_number] = int
-output.LineIndentPosition [line_number] = position
-output.LineIndentation [line_number] = int
-output.LineState [line_number] = int
-output.LineVisible [line_number] = bool
-output.LinesOnScreen = int
-output.MarginLeft = int
-output.MarginMaskN [int] = int
-output.MarginRight = int
-output.MarginSensitiveN [int] = bool
-output.MarginTypeN [int] = int
-output.MarginWidthN [int] = int
-output.MaxLineState = int
-output.ModEventMask = int
-output.Modify = bool
-output.MouseDownCaptures = bool
-output.MouseDwellTime = int
-output.Overtype = bool
-output.PasteConvertEndings = bool
-output.PrintColourMode = int
-output.PrintMagnification = int
-output.PrintWrapMode = int
-output.Property [string] = string
-output.PropertyInt [string] = int
-output.ReadOnly = bool
-output.ScrollWidth = int
-output.SearchFlags = int
-output.SelAlpha = int
-output.SelectionEnd = position
-output.SelectionIsRectangle = bool
-output.SelectionMode = int
-output.SelectionStart = position
-output.Status = int
-output.StyleAt [position] = int
-output.StyleBack [style_number] = colour
-output.StyleBits = int
-output.StyleBitsNeeded = int
-output.StyleBold [style_number] = bool
-output.StyleCase [style_number] = int
-output.StyleChangeable [style_number] = bool
-output.StyleCharacterSet [style_number] = int
-output.StyleEOLFilled [style_number] = bool
-output.StyleFont [style_number] = string
-output.StyleFore [style_number] = colour
-output.StyleHotSpot [style_number] = bool
-output.StyleItalic [style_number] = bool
-output.StyleSize [style_number] = int
-output.StyleUnderline [style_number] = bool
-output.StyleVisible [style_number] = bool
-output.TabIndents = bool
-output.TabWidth = int
-output.TargetEnd = position
-output.TargetStart = position
-output.TextLength = int
-output.TwoPhaseDraw = bool
-output.UndoCollection = bool
-output.UsePalette = bool
-output.UseTabs = bool
-output.VScrollBar = bool
-output.ViewEOL = bool
-output.ViewWS = int
-output.WhitespaceChars = string
-output.WordChars = string
-output.WrapMode = int
-output.WrapStartIndent = int
-output.WrapVisualFlags = int
-output.WrapVisualFlagsLocation = int
-output.XOffset = int
-output.Zoom = int
+editor.Anchor
+editor.AutoCAutoHide
+editor.AutoCCancelAtStart
+editor.AutoCChooseSingle
+editor.AutoCDropRestOfWord
+editor.AutoCFillUps
+editor.AutoCIgnoreCase
+editor.AutoCMaxHeight
+editor.AutoCMaxWidth
+editor.AutoCSeparator
+editor.AutoCTypeSeparator
+editor.BackSpaceUnIndents
+editor.BufferedDraw
+editor.CallTipBack
+editor.CallTipFore
+editor.CallTipForeHlt
+editor.CallTipUseStyle
+editor.CaretFore
+editor.CaretLineBack
+editor.CaretLineBackAlpha
+editor.CaretLineVisible
+editor.CaretPeriod
+editor.CaretSticky
+editor.CaretWidth
+editor.CharAt
+editor.CodePage
+editor.Column
+editor.ControlCharSymbol
+editor.CurrentPos
+editor.Cursor
+editor.DirectFunction
+editor.DirectPointer
+editor.DocPointer
+editor.EOLMode
+editor.EdgeColour
+editor.EdgeColumn
+editor.EdgeMode
+editor.EndAtLastLine
+editor.EndStyled
+editor.FirstVisibleLine
+editor.Focus
+editor.FoldExpanded
+editor.FoldLevel
+editor.FoldParent
+editor.HScrollBar
+editor.HighlightGuide
+editor.HotspotActiveBack
+editor.HotspotActiveFore
+editor.HotspotActiveUnderline
+editor.HotspotSingleLine
+editor.Indent
+editor.IndentationGuides
+editor.IndicFore
+editor.IndicStyle
+editor.KeyWords
+editor.LayoutCache
+editor.Length
+editor.Lexer
+editor.LexerLanguage
+editor.LineCount
+editor.LineEndPosition
+editor.LineIndentPosition
+editor.LineIndentation
+editor.LineState
+editor.LineVisible
+editor.LinesOnScreen
+editor.MarginLeft
+editor.MarginMaskN
+editor.MarginRight
+editor.MarginSensitiveN
+editor.MarginTypeN
+editor.MarginWidthN
+editor.MaxLineState
+editor.ModEventMask
+editor.Modify
+editor.MouseDownCaptures
+editor.MouseDwellTime
+editor.Overtype
+editor.PasteConvertEndings
+editor.PrintColourMode
+editor.PrintMagnification
+editor.PrintWrapMode
+editor.Property
+editor.PropertyInt
+editor.ReadOnly
+editor.ScrollWidth
+editor.SearchFlags
+editor.SelAlpha
+editor.SelectionEnd
+editor.SelectionIsRectangle
+editor.SelectionMode
+editor.SelectionStart
+editor.Status
+editor.StyleAt
+editor.StyleBack
+editor.StyleBits
+editor.StyleBitsNeeded
+editor.StyleBold
+editor.StyleCase
+editor.StyleChangeable
+editor.StyleCharacterSet
+editor.StyleEOLFilled
+editor.StyleFont
+editor.StyleFore
+editor.StyleHotSpot
+editor.StyleItalic
+editor.StyleSize
+editor.StyleUnderline
+editor.StyleVisible
+editor.TabIndents
+editor.TabWidth
+editor.TargetEnd
+editor.TargetStart
+editor.TextLength
+editor.TwoPhaseDraw
+editor.UndoCollection
+editor.UsePalette
+editor.UseTabs
+editor.VScrollBar
+editor.ViewEOL
+editor.ViewWS
+editor.WhitespaceChars
+editor.WordChars
+editor.WrapMode
+editor.WrapStartIndent
+editor.WrapVisualFlags
+editor.WrapVisualFlagsLocation
+editor.XOffset
+editor.Zoom
+
+output.Anchor
+output.AutoCAutoHide
+output.AutoCCancelAtStart
+output.AutoCChooseSingle
+output.AutoCDropRestOfWord
+output.AutoCFillUps
+output.AutoCIgnoreCase
+output.AutoCMaxHeight
+output.AutoCMaxWidth
+output.AutoCSeparator
+output.AutoCTypeSeparator
+output.BackSpaceUnIndents
+output.BufferedDraw
+output.CallTipBack
+output.CallTipFore
+output.CallTipForeHlt
+output.CallTipUseStyle
+output.CaretFore
+output.CaretLineBack
+output.CaretLineBackAlpha
+output.CaretLineVisible
+output.CaretPeriod
+output.CaretSticky
+output.CaretWidth
+output.CharAt
+output.CodePage
+output.Column
+output.ControlCharSymbol
+output.CurrentPos
+output.Cursor
+output.DirectFunction
+output.DirectPointer
+output.DocPointer
+output.EOLMode
+output.EdgeColour
+output.EdgeColumn
+output.EdgeMode
+output.EndAtLastLine
+output.EndStyled
+output.FirstVisibleLine
+output.Focus
+output.FoldExpanded
+output.FoldLevel
+output.FoldParent
+output.HScrollBar
+output.HighlightGuide
+output.HotspotActiveBack
+output.HotspotActiveFore
+output.HotspotActiveUnderline
+output.HotspotSingleLine
+output.Indent
+output.IndentationGuides
+output.IndicFore
+output.IndicStyle
+output.KeyWords
+output.LayoutCache
+output.Length
+output.Lexer
+output.LexerLanguage
+output.LineCount
+output.LineEndPosition
+output.LineIndentPosition
+output.LineIndentation
+output.LineState
+output.LineVisible
+output.LinesOnScreen
+output.MarginLeft
+output.MarginMaskN
+output.MarginRight
+output.MarginSensitiveN
+output.MarginTypeN
+output.MarginWidthN
+output.MaxLineState
+output.ModEventMask
+output.Modify
+output.MouseDownCaptures
+output.MouseDwellTime
+output.Overtype
+output.PasteConvertEndings
+output.PrintColourMode
+output.PrintMagnification
+output.PrintWrapMode
+output.Property
+output.PropertyInt
+output.ReadOnly
+output.ScrollWidth
+output.SearchFlags
+output.SelAlpha
+output.SelectionEnd
+output.SelectionIsRectangle
+output.SelectionMode
+output.SelectionStart
+output.Status
+output.StyleAt
+output.StyleBack
+output.StyleBits
+output.StyleBitsNeeded
+output.StyleBold
+output.StyleCase
+output.StyleChangeable
+output.StyleCharacterSet
+output.StyleEOLFilled
+output.StyleFont
+output.StyleFore
+output.StyleHotSpot
+output.StyleItalic
+output.StyleSize
+output.StyleUnderline
+output.StyleVisible
+output.TabIndents
+output.TabWidth
+output.TargetEnd
+output.TargetStart
+output.TextLength
+output.TwoPhaseDraw
+output.UndoCollection
+output.UsePalette
+output.UseTabs
+output.VScrollBar
+output.ViewEOL
+output.ViewWS
+output.WhitespaceChars
+output.WordChars
+output.WrapMode
+output.WrapStartIndent
+output.WrapVisualFlags
+output.WrapVisualFlagsLocation
+output.XOffset
+output.Zoom
+
+Anchor = position
+AutoCAutoHide = bool
+AutoCCancelAtStart = bool
+AutoCChooseSingle = bool
+AutoCDropRestOfWord = bool
+AutoCFillUps = string
+AutoCIgnoreCase = bool
+AutoCMaxHeight = int
+AutoCMaxWidth = int
+AutoCSeparator = int
+AutoCTypeSeparator = int
+BackSpaceUnIndents = bool
+BufferedDraw = bool
+CallTipBack = colour
+CallTipFore = colour
+CallTipForeHlt = colour
+CallTipUseStyle = int
+CaretFore = colour
+CaretLineBack = colour
+CaretLineBackAlpha = int
+CaretLineVisible = bool
+CaretPeriod = int
+CaretSticky = bool
+CaretWidth = int
+CharAt [position] = int
+CodePage = int
+Column [position] = int
+ControlCharSymbol = int
+CurrentPos = position
+Cursor = int
+DirectFunction = int
+DirectPointer = int
+DocPointer = int
+EOLMode = int
+EdgeColour = colour
+EdgeColumn = int
+EdgeMode = int
+EndAtLastLine = bool
+EndStyled = position
+FirstVisibleLine = int
+Focus = bool
+FoldExpanded [line_number] = bool
+FoldLevel [line_number] = int
+FoldParent [line_number] = int
+HScrollBar = bool
+HighlightGuide = int
+HotspotActiveBack [bool] = colour
+HotspotActiveFore [bool] = colour
+HotspotActiveUnderline = bool
+HotspotSingleLine = bool
+Indent = int
+IndentationGuides = bool
+IndicFore [int] = colour
+IndicStyle [int] = int
+KeyWords [int] = string
+LayoutCache = int
+Length = int
+Lexer = int
+LexerLanguage = string
+LineCount = int
+LineEndPosition [line_number] = int
+LineIndentPosition [line_number] = position
+LineIndentation [line_number] = int
+LineState [line_number] = int
+LineVisible [line_number] = bool
+LinesOnScreen = int
+MarginLeft = int
+MarginMaskN [int] = int
+MarginRight = int
+MarginSensitiveN [int] = bool
+MarginTypeN [int] = int
+MarginWidthN [int] = int
+MaxLineState = int
+ModEventMask = int
+Modify = bool
+MouseDownCaptures = bool
+MouseDwellTime = int
+Overtype = bool
+PasteConvertEndings = bool
+PrintColourMode = int
+PrintMagnification = int
+PrintWrapMode = int
+Property [string] = string
+PropertyInt [string] = int
+ReadOnly = bool
+ScrollWidth = int
+SearchFlags = int
+SelAlpha = int
+SelectionEnd = position
+SelectionIsRectangle = bool
+SelectionMode = int
+SelectionStart = position
+Status = int
+StyleAt [position] = int
+StyleBack [style_number] = colour
+StyleBits = int
+StyleBitsNeeded = int
+StyleBold [style_number] = bool
+StyleCase [style_number] = int
+StyleChangeable [style_number] = bool
+StyleCharacterSet [style_number] = int
+StyleEOLFilled [style_number] = bool
+StyleFont [style_number] = string
+StyleFore [style_number] = colour
+StyleHotSpot [style_number] = bool
+StyleItalic [style_number] = bool
+StyleSize [style_number] = int
+StyleUnderline [style_number] = bool
+StyleVisible [style_number] = bool
+TabIndents = bool
+TabWidth = int
+TargetEnd = position
+TargetStart = position
+TextLength = int
+TwoPhaseDraw = bool
+UndoCollection = bool
+UsePalette = bool
+UseTabs = bool
+VScrollBar = bool
+ViewEOL = bool
+ViewWS = int
+WhitespaceChars = string
+WordChars = string
+WrapMode = int
+WrapStartIndent = int
+WrapVisualFlags = int
+WrapVisualFlagsLocation = int
+XOffset = int
+Zoom = int
 
 INVALID_POSITION = -1
 SCI_START = 2000
