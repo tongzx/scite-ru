@@ -1,5 +1,5 @@
 -- Save SciTE Settings
--- Version: 1.3
+-- Version: 1.4
 -- Autor: mozersЩ, Dmitry Maslov
 ---------------------------------------------------
 -- —охран€ет текущие установки SciTE
@@ -40,6 +40,9 @@ function SaveSetting()
 	text = SaveKey(text, 'split.vertical')
 	text = SaveKey(text, 'wrap')
 	text = SaveKey(text, 'output.wrap')
+	text = SaveKey(text, 'magnification') -- параметр измен€етс€ в Zoom.lua
+	text = SaveKey(text, 'output.magnification') -- параметр измен€етс€ в Zoom.lua
+	text = SaveKey(text, 'print.magnification') -- параметр измен€етс€ в Zoom.lua
 	io.output(file)
 	io.write(text)
 	io.close()

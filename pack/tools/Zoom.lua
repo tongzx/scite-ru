@@ -1,17 +1,23 @@
+-- Zoom.lua
+-- Version: 1.1
+-- Autor: Дмитрий Маслов
+---------------------------------------------------
 -- Обработка стандартной команды Zoom
 -- Вместе с отображаемыми шрифтами, масштабируется и выводимый на принтер шрифт
 -- Изменяет значение пользовательской переменной font.current.size, используемой для отображения текщего размера шрифта в строке состояния
--- Автор: Дмитрий Маслов
--------------------------------------------------------------------------
+---------------------------------------------------
 -- Для подключения добавьте в файл .properties:
 --   statusbar.text.1=$(font.current.size)px
 -- в файл SciTEStartup.lua:
 --   dofile (props["SciteDefaultHome"].."\\tools\\Zoom.lua")
--------------------------------------------------------------------------
+---------------------------------------------------
 
-function ChangeFontSize(zoom)
+local function ChangeFontSize(zoom)
+	props["magnification"] = zoom
 	props["print.magnification"] = zoom
-	props["font.current.size"] = editor.StyleSize[STYLE_DEFAULT] + zoom -- Used in statusbar
+	props["output.magnification"] = zoom -- правильней было бы менять по SCI_SETZOOM в окне консоли, но как отловить это событие?
+	local _, _, font_current_size = string.find(props["style.*.32"], "size:(%d+)")
+	props["font.current.size"] = font_current_size + zoom -- Used in statusbar
 	scite.UpdateStatusBar()
 end
 
