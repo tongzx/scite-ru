@@ -47,7 +47,7 @@ if (str == '') then
 end
 
 if (string.len(str) > 2) then
-  if string.find(str,'http://(.*)') then
+  if string.find(str,'https?://(.*)') then
     local browser = ('explorer "' .. str .. '"')
     os.run (browser, 0, false)
     --~ os.execute (browser)
