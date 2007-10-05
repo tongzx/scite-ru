@@ -1,9 +1,11 @@
 <html>
 <head>
-<meta http-equiv=Content-Type Content="text-html; charset=windows-1251">
-<meta http-equiv=MSThemeCompatible Content=Yes>
+<meta http-equiv=Content-Type content="text-html; charset=windows-1251">
+<meta http-equiv=MSThemeCompatible content=yes>
+<meta name=author content=mozers™>
+<meta name=generator content=SciTE-Ru>
 <hta:application
-id=HELP
+id=HTA
 applicationName=html_HELP
 icon=winhlp32.exe
 maximizeButton=yes
@@ -12,16 +14,16 @@ scroll=no
 selection=yes
 contextMenu=yes
 singleinstance=yes
-version=1.0
+version=1.1
 >
 <script language=JavaScript>
-function Shortcuts(key, pane){
+function Shortcuts(evnt, pane){
 	if (pane == 0){
 		var pane = self;
 	} else {
 		var pane = parent;
 	}
-	switch(key){
+	switch(evnt.keyCode){
 		case 116:  // F5 - отменяем рефреш
 			pane.event.cancelBubble = true;
 			pane.event.returnValue = false;
@@ -31,34 +33,50 @@ function Shortcuts(key, pane){
 			pane.window.close(true);
 			break;
 		case 114: //F3 - следующее вхождение
-			pane.Search(pane.sSearch.value);
+			pane.FindNext();
+			break;
+		case 107: // серый +
+		case 187: // +
+			pane.Zoom(5);
+			break;
+		case 109: // серый -
+		case 189: // -
+			pane.Zoom(-5);
 			break;
 	}
 	return;
 }
 
-document.onkeydown = function(){Shortcuts(event.keyCode, 0)}
+document.onkeydown = function(){Shortcuts(event, 0)}
 
 function html_doc_onkeydown(){
-	Shortcuts(html_doc.event.keyCode, 1);
+	Shortcuts(html_doc.event, 1);
 }
 </script>
 <style type="text/css">
-body, table {font-family:MS Sans Serif; font-size:8px; background-color:threedface; cursor:default; margin:0px;}
-input {font-family:MS Sans Serif; font-size:8px;}
+body, table {font:bold 8px "MS Sans Serif"; color:#000080; background-color:threedface; cursor:default; margin:0px;}
+input {font-family:"MS Sans Serif"; font-size:8px;}
+input.p {font:bold 8px "Courier New"; color:#000080; width:15pt; text-align:center;}
 </style>
 <title>html HELP</title>
 </head><body>
 <table width="100%" cellpadding="0" cellspacing="0" border="0">
 	<tr>
+		<td>
+			&nbsp;&nbsp;Zoom:
+			&nbsp;<INPUT class="p" TYPE="button" Value="-" onClick="Zoom(-5);" title="ZoomIn [-]">
+			&nbsp;<INPUT name="txtZoom" TYPE=text value="100%" style="width:40px; text-align:center;" DISABLED>
+			&nbsp;<INPUT class="p" TYPE="button" Value="+" onClick="Zoom(5);" title="ZoomOut [+]">
+		</td>
 		<td align="right">
-			<font color="#000080">Find:</font>&nbsp;&nbsp;<INPUT name=sSearch TYPE=text value="" style="width:30%" onClick="SearchReset();">&nbsp;&nbsp;<INPUT style="color:#000080" NAME="btnSearch" TYPE="button" Value="Search" onClick="Search(sSearch.value)" title="Find Next [F3]">&nbsp;&nbsp;
+			Find:&nbsp;&nbsp;<INPUT name=sText TYPE=text value="" style="width:30%" onClick="SearchReset();">
+			&nbsp;&nbsp;<INPUT style="color:#000080" NAME="btnSearch" TYPE="button" Value="Search" onClick="Find();" title="Find Next [F3]">&nbsp;&nbsp;&nbsp;
 		</td>
 	</tr>
 </table>
 <script language=JavaScript>
 // Читаем аргументы ком.строки
-var cmd = HELP.commandLine;
+var cmd = HTA.commandLine;
 var re=/"(.*?)"/g;
 var Arr_cmd = re.exec(cmd);
 Arr_cmd = re.exec(cmd);
@@ -68,7 +86,7 @@ if (Arr_cmd) {
 	Arr_cmd = re.exec(cmd);
 	if (Arr_cmd) {
 		text_find = Arr_cmd[1];
-		sSearch.value = text_find;
+		sText.value = text_find;
 	}
 } else {
 	alert ('Command line:\n html_HELP.hta "c:\\path\\doc.html" "find_string"');
@@ -77,51 +95,64 @@ if (Arr_cmd) {
 
 var find_num=0;
 var find_num_max=0;
-var r;
+var TextRange;
+var zoom = 100;
 
-function Search(s){
-//.Поиск в IFRAME
-	if (s!='') {
-		var sgoto = 'Go to ';
-		if (btnSearch.value=='Search'){
-			var i;
-			r = html_doc.document.body.createTextRange();
-			r.execCommand('BackColor','','');
-			for(i=0;r.findText(s);i++){
-				r.execCommand('BackColor','','yellow');
-				r.execCommand('CreateBookmark','','bmk'+i);
-				r.collapse(false);
-			}
-			if (i==0) {btnSearch.value='Not Found';btnSearch.style.color="red";}
-			else {btnSearch.value=sgoto + (find_num+1) + ' (in '+ i +')'; find_num_max=i;}
-		} else {
-			if (find_num_max != 0){
-				if (find_num==0){
-					r = html_doc.document.body.createTextRange();
-				}
-				r.findText(s);
-				r.select();
-				r.collapse(false);
-				find_num++;
-				if (find_num>=find_num_max){find_num=0}
-				btnSearch.value=sgoto + (find_num+1) + ' (in '+ find_num_max +')';
-			}
+function FindStart(){
+	TextRange.execCommand('BackColor', '', '');
+	for(var i = 0; TextRange.findText(sText.value); i++){
+		TextRange.execCommand('BackColor','','yellow');
+		TextRange.collapse(false);
+	}
+	return i;
+}
+
+function FindNext(){
+	if (find_num == 0) {TextRange = html_doc.document.body.createTextRange();}
+	TextRange.findText(sText.value);
+	TextRange.select();
+	TextRange.collapse(false);
+	find_num++;
+	if (find_num >= find_num_max){find_num = 0}
+	btnSearch.value='Go to ' + (find_num+1) + ' (in '+ find_num_max +')';
+}
+
+function Find(){
+	if (sText.value == ""){return;}
+	if (find_num_max == 0){
+		TextRange = html_doc.document.body.createTextRange();
+		find_num_max = FindStart();
+		if (find_num_max == 0) {
+			btnSearch.value = 'Not Found';
+			btnSearch.disabled = true;
+			sText.style.backgroundColor = "#FF9999";
+		}else{
+			btnSearch.value = 'Go to 1 (in ' + find_num_max +')';
 		}
+	}else{
+		FindNext();
 	}
 }
 
 function SearchReset(){
-	//.Сброс поиска
-	sSearch.value='';
-	btnSearch.value='Search';
-	btnSearch.style.color="#000080";
+	sText.value = '';
+	btnSearch.value = 'Search';
+	btnSearch.disabled = false;
+	sText.style.backgroundColor = "window";
+	find_num_max = 0;
+}
+
+function Zoom(i){
+	zoom = zoom + i;
+	html_doc.document.body.style.zoom = zoom + "%";
+	txtZoom.value = zoom + "%";
 }
 
 function on_load() {
 	html_doc.document.onkeydown = function() {parent.html_doc_onkeydown()};
-	document.title = html_doc.document.title + " - " + HELP.applicationName.replace(/_/g,' ') + ' ' + HELP.version;
-	Search(sSearch.value);
-	Search(sSearch.value);
+	document.title = html_doc.document.title + " - " + HTA.applicationName.replace(/_/g,' ') + ' ' + HTA.version;
+	Find();
+	if (find_num_max>0){FindNext();}
 }
 
 document.write('<div style="width:100%; height:100%;"><IFRAME onLoad="on_load();" id="html_doc" src="'+help_path+'" width="100%" height="100%" style="padding-bottom:20px;"><\/IFRAME><\/div>');
