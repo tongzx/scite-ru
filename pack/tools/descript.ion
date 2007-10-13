@@ -2,7 +2,6 @@ Calculator SciTE Calculator
 Helper SciTE Helper. COM-сервер для управления SciTE
 HexEdit SciTE HexEdit - A Self-Contained Primitive Hex Editor for SciTE
 SessionManager Менеджер сессий
-xcode Перекодировщик xcode
 ASCIITable.lua ASCII Table for SciTE
 AutocompleteObject.lua Автодополнение объектов их методами и свойствами
 ChangeCase.lua Перевод текста в ВЕРХНИЙ/нижний регистр, инвертирование регистра символов

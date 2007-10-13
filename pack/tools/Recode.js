@@ -12,6 +12,8 @@
 //    command.name.25.*=Преобразовать открытый файл из кодировки DOS866 в WIN-1251
 //    command.25.*=WSCRIPT "$(SciteDefaultHome)\tools\Recode.js" cp866
 //    command.mode.25.*=subsystem:windows,savebefore:no,quiet:yes
+//
+// Доступные для данной ОС кодировки перечислены в системном реестре HKEY_CLASSES_ROOT\MIME\Database\Charset
 // ------------------------------------------------
 var WshShell = new ActiveXObject("WScript.Shell");
 var fso = new ActiveXObject("Scripting.FileSystemObject");
