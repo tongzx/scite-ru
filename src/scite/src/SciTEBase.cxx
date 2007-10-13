@@ -5170,20 +5170,23 @@ void SciTEBase::GenerateMenu(MenuEx *subMenu, const char *&userContextItem,
 		userContextItem += strlen(userContextItem) + 1;
 		if (userContextItem < endDefinition) {
 			if ( strcmp(userContextItem,"POPUPBEGIN") == 0 ) {
-				item++;
-				subMenu[item].CreatePopUp();
-				subMenu[parent].AddSubMenu(localiser.Text(caption).c_str(), subMenu[item]);
 				userContextItem += strlen(userContextItem) + 1;
-				GenerateMenu(subMenu, userContextItem, 
-					endDefinition, item, isAdded, item);
+				if ( caption[0] != '#') {
+					item++;
+					subMenu[item].CreatePopUp();
+					subMenu[parent].AddSubMenu(localiser.Text(caption).c_str(), subMenu[item]);
+					GenerateMenu(subMenu, userContextItem, endDefinition, item, isAdded, item);
+				}
 			} else if ( strcmp(userContextItem,"POPUPEND") == 0 ) {
 				userContextItem += strlen(userContextItem) + 1;
-				break;
+				if ( caption[0] != '#') break;
 			} else {	
 				int cmd = GetMenuCommandAsInt(userContextItem);
 				userContextItem += strlen(userContextItem) + 1;
-				subMenu[parent].Add(localiser.Text(caption).c_str(), cmd, IsMenuItemEnabled(cmd));
-				isAdded = true;
+				if ( caption[0] != '#') {
+					subMenu[parent].Add(localiser.Text(caption).c_str(), cmd, IsMenuItemEnabled(cmd));
+					isAdded = true;
+				}
 			}
 		}
 	}

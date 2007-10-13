@@ -466,11 +466,14 @@ void SciTEWin::SetToolBar() {
 		const char *command = userContextItem;
 		userContextItem += strlen(userContextItem) + 1;
 		if (userContextItem < endDefinition) {
-			barbuttons.Add(
-				BarButtonIn(strlen(userContextItem)?atoi(userContextItem):-1, 
-				GetMenuCommandAsInt(command)));
+			if ( tips[0] != '#') {
+				barbuttons.Add(
+					BarButtonIn(strlen(userContextItem)?atoi(userContextItem):-1, 
+					GetMenuCommandAsInt(command)));
+				ToolBarTips[GetMenuCommandAsInt(command)]=tips;
+			}
 			userContextItem += strlen(userContextItem) + 1;
-			ToolBarTips[GetMenuCommandAsInt(command)]=tips;
+			
 		}
 	}
 	
