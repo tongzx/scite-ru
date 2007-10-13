@@ -3527,6 +3527,18 @@ void Editor::NotifyDoubleClick(Point pt, bool shift, bool ctrl, bool alt) {
 	NotifyParent(scn);
 }
 
+//-start-[OnClick]
+void Editor::NotifyClick(Point pt, bool shift, bool ctrl, bool alt) {
+	SCNotification scn = {0};
+	scn.nmhdr.code = SCN_CLICK;
+	scn.line = LineFromLocation(pt);
+	scn.position = PositionFromLocationClose(pt);
+	scn.modifiers = (shift ? SCI_SHIFT : 0) | (ctrl ? SCI_CTRL : 0) |
+		(alt ? SCI_ALT : 0);
+	NotifyParent(scn);
+}
+//-end-[OnClick]
+
 void Editor::NotifyHotSpotDoubleClicked(int position, bool shift, bool ctrl, bool alt) {
 	SCNotification scn = {0};
 	scn.nmhdr.code = SCN_HOTSPOTDOUBLECLICK;
@@ -5094,6 +5106,7 @@ void Editor::ButtonDown(Point pt, unsigned int curTime, bool shift, bool ctrl, b
 			SetMouseCapture(true);
 			selectionType = selLine;
 		} else {
+			NotifyClick(pt, shift, ctrl, alt); //-add-[OnClick]
 			if (PointIsHotspot(pt)) {
 				NotifyHotSpotClicked(newPos, shift, ctrl, alt);
 			}

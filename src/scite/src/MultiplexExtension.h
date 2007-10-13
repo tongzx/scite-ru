@@ -64,6 +64,7 @@ public:
 	virtual bool OnStyle(unsigned int, int, int, Accessor *);
 //!	virtual bool OnDoubleClick();
 	virtual bool OnDoubleClick(int); //!-add-[OnDoubleClick]
+	virtual bool OnClick(int); //!-add-[OnClick]
 	virtual bool OnUpdateUI();
 	virtual bool OnMarginClick();
 	virtual bool OnMacro(const char *, const char *);

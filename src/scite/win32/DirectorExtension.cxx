@@ -237,6 +237,12 @@ bool DirectorExtension::OnDoubleClick(int){ //!-changed-[OnDoubleClick]
 	return false;
 }
 
+//!-start-[OnClick]
+bool DirectorExtension::OnClick(int){ 
+	return false;
+}
+//!-end-[OnClick]
+
 bool DirectorExtension::OnUpdateUI() {
 	return false;
 }

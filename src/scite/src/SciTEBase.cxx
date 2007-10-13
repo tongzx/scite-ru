@@ -4808,6 +4808,16 @@ void SciTEBase::Notify(SCNotification *notification) {
 		}
 		break;
 
+	//!-begin-[OnClick]
+	case SCN_CLICK:
+		if (extender)
+			handled = extender->OnClick(notification->modifiers);
+		if (!handled && notification->nmhdr.idFrom == IDM_RUNWIN) {
+			GoMessage(0);
+		}
+		break;
+	//!-end-[OnClick]
+
 	case SCN_UPDATEUI:
 		if (extender)
 			handled = extender->OnUpdateUI();
