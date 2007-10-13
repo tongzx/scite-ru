@@ -1,10 +1,14 @@
 -- SciTE Smart comment
--- Version: 2.5
+-- Version: 2.6
 -- Autor: Dmitry Maslov
 ---------------------------------------------------
 -- Веделяем текст нажимаем на клавиатуре символ 
 -- с которого начинается комментарий и строка комментируется
 -- пример: выделить строку в cpp, нажать на клавишу * или /
+---------------------------------------------------
+-- Версия 2.6
+-- Исправлена ошибка с выходом из границ
+-- Автозакрытие скобок если впереди открывающаяся ей пара (во как загнул %) )
 ---------------------------------------------------
 -- Версия 2.5
 -- Добавлена совместимость автозакрытия скобок с всплывающей подсказкой
@@ -86,7 +90,7 @@ end
 local function IsInLineEnd(num_line, text)
 	local endpos = editor.LineEndPosition[num_line];
 	if endpos>=string.len(text) and 
-		string.find(editor:textrange(endpos-string.len(text), endpos), makefind(text)) then
+		string.find(editor:textrange(editor:PositionBefore(endpos-string.len(text)+1), endpos), makefind(text)) then
 		return true
 	end
 	return false
@@ -94,7 +98,7 @@ end
 
 -- предыдущий символ позиции конец строки?
 local function prevIsEOL(pos)
-	if (string.find(editor:textrange(pos-string.len(GetEOL()), pos),GetEOL())) then
+	if (string.find(editor:textrange(editor:PositionBefore(pos-string.len(GetEOL())+1), pos),GetEOL())) then
 		return true
 	end
 	return false
@@ -102,7 +106,16 @@ end
 
 -- следующий символ позиции конец строки?
 local function nextIsEOL(pos)
-	if (string.find(editor:textrange(pos, pos+string.len(GetEOL())),GetEOL())) then
+	if (pos==editor.Length) or
+			(string.find(editor:textrange(pos, editor:PositionAfter(pos+string.len(GetEOL())-1)),GetEOL())) then
+		return true
+	end
+	return false
+end
+
+-- следующий за посицией текст == text ?
+local function nextIs(pos, text)
+	if (string.find(editor:textrange(pos, editor:PositionAfter(pos+string.len(text)-1)),makefind(text))) then
 		return true
 	end
 	return false
@@ -234,7 +247,25 @@ local function GetCharInProps(value, index)
 	return string.sub(props[value],index,index)
 end
 
+-- вернуть скобку - пару
+local function GetBracePair(char)
+	local symE=''
+	local brIdx = GetIndexFindCharInProps('braces.open', char)
+	if (brIdx~=nil) then
+		symE = GetCharInProps('braces.close',brIdx)
+		if (symE==nil) then symE='' end
+	else
+		brIdx = GetIndexFindCharInProps('braces.close', char)
+		if (brIdx~=nil) then
+			symE = GetCharInProps('braces.open',brIdx)
+			if (symE==nil) then symE='' end
+		end
+	end
+	return symE
+end
+
 local function SmartComment(char)
+	local brClose = GetBracePair(char)
 	if (editor.SelectionStart~=editor.SelectionEnd) then
 		-- делаем проверку на блочный комментарий
 		if GetIndexFindCharInProps('comment.block.'..editor.LexerLanguage, char) == 1 then
@@ -249,12 +280,8 @@ local function SmartComment(char)
 		end
 		-- делаем обработку по автозакрытию текста скобками
 		if (props['braces.autoclose']=='1') then
-			local brIdx = GetIndexFindCharInProps('braces.open', char)
-			if (brIdx~=nil) then
-				local brClose = GetCharInProps('braces.close', brIdx)
-				if (brClose~=nil) then
-					return BlockBraces(char, brClose)
-				end
+			if ( GetIndexFindCharInProps('braces.close', brClose)~=nil ) then
+				return BlockBraces(char, brClose)
 			end
 		end
 	-- автозакрытие скобок
@@ -267,10 +294,11 @@ local function SmartComment(char)
 			editor:CharRight()
 			return true
 		end
+		
 		-- если следующий символ конец строки
 		-- и мы ставим открывающуюся скобку
 		-- то сразу вставляем закрывающуюся скобку
-		if (editor.CurrentPos==editor.Length) or nextIsEOL(editor.CurrentPos) then
+		if (editor.CurrentPos==editor.Length) or (nextIs(editor.CurrentPos, brClose)) then
 			local brIdx = GetIndexFindCharInProps('braces.open', char)
 			if (brIdx~=nil) then
 				editor:BeginUndoAction()
