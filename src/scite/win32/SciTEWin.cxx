@@ -1584,7 +1584,7 @@ LRESULT SciTEWin::KeyDown(WPARAM wParam) {
 		unsigned short ch[2] = {0,0};
 		unsigned char mas[256];
 		::GetKeyboardState(mas);
-		if (::ToAscii(wParam, ::MapVirtualKeyA(wParam,0), mas, ch, 1) != 1)
+		if (::ToAscii(wParam, ::MapVirtualKeyA(wParam,0), mas, ch, 0) != 1)
 			ch[0]=0;
 		if (extender->OnKey((int)wParam, modifiers, (char)ch[0]))
 			return 1l;
