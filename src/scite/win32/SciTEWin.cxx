@@ -2179,7 +2179,7 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpszCmdLine, int) {
 }
 
 //!-start-[ExtendedContextMenu]
-void MenuEx::Add(const char * label, int cmd, bool enabled, const char *mnemonic, int position) {
+void MenuEx::Add(const char * label, int cmd, int enabled, const char *mnemonic, int position) {
 	HMENU menu = reinterpret_cast<HMENU>(GetID());
 	SString sTextMnemonic = label?label:"";
 	long keycode = 0;
@@ -2192,10 +2192,21 @@ void MenuEx::Add(const char * label, int cmd, bool enabled, const char *mnemonic
 	UINT flags;
 	if ( sTextMnemonic.length()==0 ) 
 		flags = MF_BYPOSITION | MF_SEPARATOR;
-	else if (enabled) 
-		flags = MF_BYPOSITION | MF_STRING;
-	else
-		flags = MF_BYPOSITION | MF_STRING | MF_DISABLED | MF_GRAYED;
+	else  {
+		switch(enabled)
+		{
+		case 1:
+			flags = MF_BYPOSITION | MF_STRING;
+			break;
+		case 2:
+			flags = MF_BYPOSITION | MF_STRING | MF_CHECKED;
+		    break;
+		default:
+			flags = MF_BYPOSITION | MF_STRING | MF_DISABLED | MF_GRAYED;
+		    break;
+		}
+	}
+
 	::InsertMenu(menu, (UINT)position, flags, cmd, sTextMnemonic.c_str());
 	
 	if (cmd >= IDM_TOOLS && cmd < IDM_TOOLSMAX) {

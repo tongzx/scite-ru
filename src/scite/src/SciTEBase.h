@@ -29,7 +29,7 @@ extern const char menuAccessIndicator[];
 class MenuEx : public Menu {
 public:
 	MenuEx(MenuID _id = 0) : Menu(_id) {};
-	void Add(const char * label = 0, int cmd = 0, bool enabled = true, const char *mnemonic = 0, int position = -1);
+	void Add(const char * label = 0, int cmd = 0, int enabled = 1, const char *mnemonic = 0, int position = -1);
 	void AddSubMenu(const char *label, Menu &subMenu, int position = -1);
 	void RemoveItems(int fromID = 0, int toID = -1);
 	void RemoveItem(int itemID, bool byPos = false);
