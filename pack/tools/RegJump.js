@@ -1,5 +1,5 @@
 // Registry Jump
-// Version: 1.0
+// Version: 1.1
 // Autor: mozersЩ
 // ------------------------------------------------
 // ќткрывает выделенную ветвь в редакторе реестра
@@ -12,11 +12,12 @@
 // command.78.*=wscript "$(SciteDefaultHome)\tools\RegJump.js"
 // command.input.78.*=$(CurrentSelection)
 // command.mode.78.*=subsystem:windows,replaceselection:no,savebefore:no,quiet:yes
+// command.shortcut.78.*=Ctrl+Alt+J
 // ------------------------------------------------
 
 var key = WScript.StdIn.ReadAll();
 if (key == "") {
-    WScript.Quit();
+	WScript.Quit();
 }
 
 key = key.replace(/^HKLM\\/,'HKEY_LOCAL_MACHINE\\');
@@ -25,6 +26,18 @@ key = key.replace(/^HKCU\\/,'HKEY_CURRENT_USER\\');
 key = key.replace(/\\\\/g,'\\');
 key = "My Computer\\" + key
 
+TaskKill ("regedit.exe");
+
 var WshShell = new ActiveXObject("WScript.Shell");
 WshShell.RegWrite ('HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Applets\\Regedit\\Lastkey',key,'REG_SZ');
 WshShell.Run('regedit', 1, false);
+WScript.Quit();
+
+function TaskKill (process_name){
+	var objWMIService = GetObject("winmgmts:\\\\.\\root\\CIMV2");
+	var colProcessList = objWMIService.ExecQuery ('SELECT * FROM Win32_Process WHERE NAME = "' + process_name + '"');
+	var enumItems = new Enumerator(colProcessList);
+	for (; !enumItems.atEnd(); enumItems.moveNext()){
+		enumItems.item().Terminate()
+	}
+}
