@@ -1,7 +1,21 @@
+-- MakeAbbrev.lua
+-- Version: 1.1
+-- Autor: frs
+-- http://forum.ru-board.com/topic.cgi?forum=5&topic=3215&start=1940#15
+---------------------------------------------------
 -- add selected text to SciTE Abbreviation, enter the abbreviature in a dialog
 -- добавляем выделенный текст в аббревиатуры данного языка, задать аббревиатуру можно в диалоговом окне
--- Version: 1.01
--- Autor: frs
+---------------------------------------------------
+-- Для подключения добавьте в свой файл .properties следующие строки:
+--  command.parent.96=9
+--  command.name.96.*=Add to Abbreviation
+--  command.96.*=dofile $(SciteDefaultHome)\tools\MakeAbbrev.lua
+--  command.mode.96.*=subsystem:lua,savebefore:no
+---------------------------------------------------
+-- Важное замечание:
+-- Файл аббревиатуры создается с именем текущего лексера и расширением .abbrev в подкаталоге \abbrev.
+-- Для работы с ним его необходимо корректно подключить. Например, так:
+--   abbreviations.*.html;*.htm;*.asp;*.shtml=$(SciteDefaultHome)\abbrev\hypertext.abbrev
 ---------------------------------------------------
 local function MakeAbbrev()
     local sel_text = editor:GetSelText()
