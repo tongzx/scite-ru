@@ -1,6 +1,6 @@
 # VB Script
 
-1=' Script Name\n' Version: 1.0\n' Autor: \n' ------------------------------------------------\n' Description: \n' ------------------------------------------------\nOption Explicit\nDim WshShell, FSO, SciTE\nSet WshShell = CreateObject("WScript.Shell")\nSet FSO = CreateObject("Scripting.FileSystemObject")\nConst ForReading = 1, ForWriting = 2, ForAppending = 8\nSet SciTE = CreateObject("SciTE.Helper")|
+1=' Script Name\n' Version: 1.0\n' Author: \n' ------------------------------------------------\n' Description: \n' ------------------------------------------------\nOption Explicit\nDim WshShell, FSO, SciTE\nSet WshShell = CreateObject("WScript.Shell")\nSet FSO = CreateObject("Scripting.FileSystemObject")\nConst ForReading = 1, ForWriting = 2, ForAppending = 8\nSet SciTE = CreateObject("SciTE.Helper")|
 
 #Object References
 wsh=Set WshShell = CreateObject("WScript.Shell")\n|

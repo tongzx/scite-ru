@@ -1,6 +1,6 @@
 -- SciTE Abbreviation in UserList
 -- Version: 1.1
--- Autor: Dmitry Maslov, frs
+-- Author: Dmitry Maslov, frs
 ---------------------------------------------------
 -- При вводе слова, если это сокращение то вызывается список аббревиатур
 -- Примечание:

@@ -1,6 +1,6 @@
 -- Save SciTE Settings
 -- Version: 1.4
--- Autor: mozers™, Dmitry Maslov
+-- Author: mozers™, Dmitry Maslov
 ---------------------------------------------------
 -- Сохраняет текущие установки SciTE
 -- Подключение:

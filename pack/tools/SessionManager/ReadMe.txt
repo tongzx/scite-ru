@@ -1,5 +1,5 @@
 SciTE Session Manager
-Autor: mozers™
+Author: mozers™
 
 Установка:
 ----------

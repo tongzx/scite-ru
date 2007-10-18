@@ -1,6 +1,6 @@
 // SciTE Restarter
 // Version: 1.1
-// Autor: mozers™
+// Author: mozers™
 // ------------------------------------------------
 // Description:
 //   Перезапускает SciTE (требуется SciTE.Helper)

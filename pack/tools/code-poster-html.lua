@@ -1,6 +1,6 @@
 -- Code Poster HTML
 -- Version: 1.4.4
--- Autor: VladVRO
+-- Author: VladVRO
 ---------------------------------------------------
 -- Description:
 -- конвертирует выделенный текст или весь файл в HTML текст, использу€

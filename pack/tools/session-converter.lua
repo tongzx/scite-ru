@@ -1,7 +1,7 @@
 --[[
 SciTE Session file converter
 Version: 2.0
-Autor: VladVRO
+Author: VladVRO
 ---------------------------------------------------
 Description:
   конвертирует содержимое открытого в редакторе файла сессии SciTE из старого

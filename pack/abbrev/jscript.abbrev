@@ -1,6 +1,6 @@
 # JScript
 
-1=// Script Name\n// Version: 1.0\n// Autor: \n// ------------------------------------------------\n// Description: \n// ------------------------------------------------\nvar WshShell = new ActiveXObject("WScript.Shell");\nvar fso = new ActiveXObject("Scripting.FileSystemObject");\nvar ForReading = 1, ForWriting = 2, ForAppending = 8;\nvar SciTE=new ActiveXObject("SciTE.Helper");|
+1=// Script Name\n// Version: 1.0\n// Author: \n// ------------------------------------------------\n// Description: \n// ------------------------------------------------\nvar WshShell = new ActiveXObject("WScript.Shell");\nvar fso = new ActiveXObject("Scripting.FileSystemObject");\nvar ForReading = 1, ForWriting = 2, ForAppending = 8;\nvar SciTE=new ActiveXObject("SciTE.Helper");|
 
 #Object References
 wsh=var WshShell = new ActiveXObject("WScript.Shell");\n|

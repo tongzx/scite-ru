@@ -1,6 +1,6 @@
 -- MakeAbbrev.lua
 -- Version: 1.1
--- Autor: frs
+-- Author: frs
 -- http://forum.ru-board.com/topic.cgi?forum=5&topic=3215&start=1940#15
 ---------------------------------------------------
 -- add selected text to SciTE Abbreviation, enter the abbreviature in a dialog
