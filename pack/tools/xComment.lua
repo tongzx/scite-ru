@@ -1,5 +1,5 @@
 -- xComment
--- Version: 1.0 beta
+-- Version: 1.01 beta
 -- Autor: mozers™
 ---------------------------------------------------
 -- C блеском заменяет стандартную комбинацию Ctrl+Q (комментирование/снятие комментария)
@@ -76,9 +76,6 @@ end
 ---------------------------------------------
 local function FirstLetterFromBlock()
 -- Поиск начала текста в блоке
-	-- local start_pos = editor:PositionFromLine(line_sel_start)
-	-- local first_letter, _, _ = string.find(editor:GetLine(line_sel_start), "[^%s]", 1)
-	-- first_letter = start_pos + first_letter - 1
 	local text_line = sel_text
 	if sel_text == "" then 
 		text_line = editor:GetLine(line_sel_start)
@@ -133,7 +130,7 @@ local function BlockComment()
 			if comment_block_at_line_start == 1 then
 				editor:GotoPos(editor:PositionFromLine(line_sel_start))
 			else
-				--~ editor:GotoPos(FirstLetterFromBlock())
+-- 				editor:GotoPos(FirstLetterFromBlock())
 				editor:VCHome()
 			end
 			editor:ReplaceSel(comment_block)
@@ -141,10 +138,11 @@ local function BlockComment()
 			-- несколько строк
 			local text_comment = ""
 			for i = line_sel_start, line_sel_end-1 do
+				local text_line = editor:GetLine(i)
 				if comment_block_at_line_start == 1 then
-					text_comment = text_comment..comment_block..editor:GetLine(i)
+					text_comment = text_comment..comment_block..text_line
 				else
-					text_comment = text_comment..string.gsub(editor:GetLine(i),"([^%s])",comment_block.."%1",1)
+					text_comment = text_comment..string.gsub(text_line,"([^%s])",comment_block.."%1",1)
 				end
 				sel_end = sel_end + string.len(comment_block)
 			end
@@ -164,8 +162,8 @@ local function BlockUnComment()
 	else
 		if sel_text == "" then
 			-- одна невыделенная строка
-			local line = editor:GetCurLine()
-			local text_uncomment = string.gsub(line,Pattern(comment_block).."~? ?","",1)
+			local text_line = editor:GetCurLine()
+			local text_uncomment = string.gsub(text_line,Pattern(comment_block).."~? ?","",1)
 			editor:LineDelete()
 			editor:ReplaceSel(text_uncomment)
 			editor:LineUp()
@@ -173,11 +171,11 @@ local function BlockUnComment()
 			-- несколько строк
 			local text_uncomment = ""
 			for i = line_sel_start, line_sel_end-1 do
-				local line = editor:GetLine(i)
-				local line_uncomment = string.gsub(line,Pattern(comment_block).."~? ?","",1)
+				local text_line = editor:GetLine(i)
+				local line_uncomment = string.gsub(text_line,Pattern(comment_block).."~? ?","",1)
 				text_uncomment = text_uncomment..line_uncomment
-				if line_uncomment ~= line then
-					sel_end = sel_end - string.len(comment_block) - comment_block_use_space
+				if line_uncomment ~= text_line then
+					sel_end = sel_end - string.len(text_line) + string.len(line_uncomment)
 				end
 			end
 			editor:ReplaceSel(text_uncomment)
@@ -262,7 +260,7 @@ local old_OnMenuCommand = OnMenuCommand
 function OnMenuCommand (msg, source)
 	local result
 	if old_OnMenuCommand then result = old_OnMenuCommand(msg, source) end
-	if msg == 243 then --IDM_comment_block
+	if msg == 243 then --IDM_BLOCK_COMMENT
 		if xComment() then return true end
 	end
 	return result
