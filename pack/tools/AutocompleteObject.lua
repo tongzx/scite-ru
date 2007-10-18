@@ -1,6 +1,6 @@
 -- AutocompleteObject.lua
 -- mozersЩ
--- version 1.5
+-- version 1.5.1
 ------------------------------------------------
 -- ¬вод разделител€, заданного в autocomplete.[lexer].start.characters
 -- вызывает список свойств и медодов объекта из соответствующего api файла
@@ -27,22 +27,24 @@
 --   autocomplete.lua.start.characters=.:
 ------------------------------------------------
 local function IsComment(pos)
+-- ќпределение соответствует ли стиль символа стилю комментари€
 	local style = editor.StyleAt[pos]
 	local lexer = editor.LexerLanguage
-	local comment = ""
-	if     lexer == 'cpp' then comment = "1,2,3"
-	elseif lexer == 'lua' then comment = "1,2,3"
-	elseif lexer == 'sql' then comment = "1,2,3"
-	elseif lexer == 'pascal' then comment = "1,2,3"
-	elseif lexer == 'ruby' then comment = "2"
-	elseif lexer == 'perl' then comment = "2"
-	elseif lexer == 'hypertext' then comment = "9,42,43,44,57,58,59,72,82,92,107,124,125"
-	elseif lexer == 'xml' then comment = "9,29"
-	elseif lexer == 'css' then comment = "9"
-	else comment = "1"
+	local comment = {}
+	if     lexer == 'cpp' then comment = {1,2,3}
+	elseif lexer == 'lua' then comment = {1,2,3}
+	elseif lexer == 'sql' then comment = {1,2,3}
+	elseif lexer == 'pascal' then comment = {1,2,3}
+	elseif lexer == 'ruby' then comment = {2}
+	elseif lexer == 'perl' then comment = {2}
+	elseif lexer == 'hypertext' then comment = {9,42,43,44,57,58,59,72,82,92,107,124,125}
+	elseif lexer == 'xml' then comment = {9,29}
+	elseif lexer == 'css' then comment = {9}
+	else comment = {1}
 	end
-	if string.find(comment, '[^%d]'..style..'[^%d]') ~= nil then return true end
-	return false
+	local is_comment = false
+	table.foreach (comment, function(i,c) if c==style then is_comment = true end end)
+	return is_comment
 end
 
 local function GetWordLeft()
