@@ -1,6 +1,6 @@
 -- AutocompleteObject.lua
 -- mozersЩ
--- version 1.5.1
+-- version 1.5.2
 ------------------------------------------------
 -- ¬вод разделител€, заданного в autocomplete.[lexer].start.characters
 -- вызывает список свойств и медодов объекта из соответствующего api файла
@@ -26,6 +26,8 @@
 --   api.lua=$(SciteDefaultHome)\api\SciTELua.api
 --   autocomplete.lua.start.characters=.:
 ------------------------------------------------
+local prop_autocompleteword_automatic = 0
+
 local function IsComment(pos)
 -- ќпределение соответствует ли стиль символа стилю комментари€
 	local style = editor.StyleAt[pos]
@@ -67,6 +69,7 @@ local function InsertProp(sel_value)
 	pos = pos + string.len(sel_value)
 	editor.CurrentPos = pos
 	editor:CharRight()
+	props["autocompleteword.automatic"] = prop_autocompleteword_automatic
 	return true
 end
 
@@ -126,6 +129,8 @@ local function AutocompleteObject(char)
 		table.sort(user_list)
 		local s = table.concat(user_list, " ")
 		if s ~= '' then
+			prop_autocompleteword_automatic = props["autocompleteword.automatic"]
+			props["autocompleteword.automatic"] = 0
 			editor:UserListShow(10, s)
 			return true
 		else
