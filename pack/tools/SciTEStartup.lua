@@ -83,6 +83,9 @@ dofile (props["SciteDefaultHome"].."\\tools\\save_settings.lua")
 -- —оздает в контекстном меню таба (закладки) подменю дл€ команд SVN
 --~ dofile (props["SciteDefaultHome"].."\\tools\\svn_menu.lua")
 
+-- ”ниверсальное комментирование и сн€тие комментариев с кода
+dofile (props["SciteDefaultHome"].."\\tools\\xComment.lua")
+
 -- ”становка размера символа табул€ции в окне консоли
 local tab_width = tonumber(props['output.tabsize'])
 if tab_width ~= nil then
