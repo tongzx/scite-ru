@@ -13,6 +13,7 @@
 --   comment.stream.start.lexer
 --   comment.stream.end.lexer
 -- И забудьте навсегда про этот атваизм "~". Тильда вам больше никогда не понадобится!
+-- Внимание: В скрипте используется функция IsComment (обязательно подключение COMMON.lua)
 ---------------------------------------------------
 
 -- local iDEBUG = true
@@ -47,30 +48,6 @@ local function Pattern(text)
 		pat = pat.."%"..string.sub(text,i,i)
 	end
 	return pat
-end
-
----------------------------------------------
-local function IsComment(pos)
--- Определение соответствует ли стиль символа стилю комментария
-	if pos == -1 then return false end
-	local style = editor.StyleAt[pos]
-	local lexer = editor.LexerLanguage
-	local comment = {}
-	if     lexer == 'cpp' then comment = {1,2,3}
-	elseif lexer == 'lua' then comment = {1,2,3}
-	elseif lexer == 'sql' then comment = {1,2,3}
-	elseif lexer == 'pascal' then comment = {1,2,3}
-	elseif lexer == 'ruby' then comment = {2}
-	elseif lexer == 'perl' then comment = {2}
-	elseif lexer == 'hypertext' then comment = {9,42,43,44,57,58,59,72,82,92,107,124,125}
-	elseif lexer == 'xml' then comment = {9,29}
-	elseif lexer == 'css' then comment = {9}
-	else comment = {1}
-	end
-	local is_comment = false
-	table.foreach (comment, function(i,c) if c==style then is_comment = true end end)
-	if iDEBUG then if is_comment then print("Сhar "..pos.." is Comment") else print("Char "..pos.." is NOT Comment") end end
-	return is_comment
 end
 
 ---------------------------------------------

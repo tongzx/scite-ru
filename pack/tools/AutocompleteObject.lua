@@ -6,10 +6,12 @@
 -- вызывает список свойств и медодов объекта из соответствующего api файла
 -- Ввод пробела или разделителя изменяют регистр символов в имени объекта в соответствии с записью в api файле
 -- (например "ucase" при вводе автоматически заменяется на "UCase")
+-- Внимание: В скрипте используется функция IsComment (обязательно подключение COMMON.lua)
 ------------------------------------------------
 -- Inputting of the symbol set in autocomplete.[lexer].start.characters causes the popup list of properties and methods of object. They undertake from corresponding api-file.
 -- In the same case inputting of a space or a separator changes the case of symbols in object's name according to a api-file.
 -- (for example "ucase" is automatically replaced on "UCase".)
+-- Warning: This script needed function IsComment (COMMON.lua)
 ------------------------------------------------
 -- Подключение:
 -- В файл SciTEStartup.lua добавьте строку:
@@ -27,27 +29,6 @@
 --   autocomplete.lua.start.characters=.:
 ------------------------------------------------
 local prop_autocompleteword_automatic = 0
-
-local function IsComment(pos)
--- Определение соответствует ли стиль символа стилю комментария
-	local style = editor.StyleAt[pos]
-	local lexer = editor.LexerLanguage
-	local comment = {}
-	if     lexer == 'cpp' then comment = {1,2,3}
-	elseif lexer == 'lua' then comment = {1,2,3}
-	elseif lexer == 'sql' then comment = {1,2,3}
-	elseif lexer == 'pascal' then comment = {1,2,3}
-	elseif lexer == 'ruby' then comment = {2}
-	elseif lexer == 'perl' then comment = {2}
-	elseif lexer == 'hypertext' then comment = {9,42,43,44,57,58,59,72,82,92,107,124,125}
-	elseif lexer == 'xml' then comment = {9,29}
-	elseif lexer == 'css' then comment = {9}
-	else comment = {1}
-	end
-	local is_comment = false
-	table.foreach (comment, function(i,c) if c==style then is_comment = true end end)
-	return is_comment
-end
 
 local function GetWordLeft()
 	pos = editor.CurrentPos

@@ -9,28 +9,8 @@
 --   command.17.*=dofile $(SciteDefaultHome)\tools\FuncProcList.lua 
 --   command.mode.17.*=subsystem:lua,savebefore:no
 --   command.shortcut.17.*=Alt+Shift+F
+-- Внимание: В скрипте используется функция IsComment (обязательно подключение COMMON.lua)
 ---------------------------------------------------
-
-local function IsComment(pos)
--- Определение соответствует ли стиль символа стилю комментария
-	local style = editor.StyleAt[pos]
-	local lexer = editor.LexerLanguage
-	local comment = {}
-	if     lexer == 'cpp' then comment = {1,2,3}
-	elseif lexer == 'lua' then comment = {1,2,3}
-	elseif lexer == 'sql' then comment = {1,2,3}
-	elseif lexer == 'pascal' then comment = {1,2,3}
-	elseif lexer == 'ruby' then comment = {2}
-	elseif lexer == 'perl' then comment = {2}
-	elseif lexer == 'hypertext' then comment = {9,42,43,44,57,58,59,72,82,92,107,124,125}
-	elseif lexer == 'xml' then comment = {9,29}
-	elseif lexer == 'css' then comment = {9}
-	else comment = {1}
-	end
-	local is_comment = false
-	table.foreach (comment, function(i,c) if c==style then is_comment = true end end)
-	return is_comment
-end
 
 -- паттерны для разных языков программирования (корректируйте, дополняйте)
 -- шлите ваши варианты на <mozers@mail.ru>
