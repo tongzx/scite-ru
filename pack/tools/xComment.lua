@@ -1,5 +1,5 @@
 -- xComment
--- Version: 1.01 beta
+-- Version: 1.02 beta
 -- Author: mozers™
 ---------------------------------------------------
 -- C блеском заменяет стандартную комбинацию Ctrl+Q (комментирование/снятие комментария)
@@ -12,7 +12,7 @@
 --   comment.block.at.line.start.lexer
 --   comment.stream.start.lexer
 --   comment.stream.end.lexer
--- И забудьте навсегда про этот атваизм "~". Тильда вам больше никогда не понадобится!
+-- И забудьте навсегда про этот атавизм "~". Тильда вам больше никогда не понадобится!
 -- Внимание: В скрипте используется функция IsComment (обязательно подключение COMMON.lua)
 ---------------------------------------------------
 
@@ -116,12 +116,16 @@ local function BlockComment()
 			local text_comment = ""
 			for i = line_sel_start, line_sel_end-1 do
 				local text_line = editor:GetLine(i)
-				if comment_block_at_line_start == 1 then
-					text_comment = text_comment..comment_block..text_line
+				if string.find(text_line,"[^%s]") then
+					if comment_block_at_line_start == 1 then
+						text_comment = text_comment..comment_block..text_line
+					else
+						text_comment = text_comment..string.gsub(text_line,"([^%s])",comment_block.."%1",1)
+					end
+					sel_end = sel_end + string.len(comment_block)
 				else
-					text_comment = text_comment..string.gsub(text_line,"([^%s])",comment_block.."%1",1)
+					text_comment = text_comment..text_line
 				end
-				sel_end = sel_end + string.len(comment_block)
 			end
 			editor:ReplaceSel(text_comment)
 			-- восстанавливаем выделение
