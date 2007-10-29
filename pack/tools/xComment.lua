@@ -1,5 +1,5 @@
 -- xComment
--- Version: 1.02 beta
+-- Version: 1.03 beta
 -- Author: mozersЩ
 ---------------------------------------------------
 -- C блеском замен€ет стандартную комбинацию Ctrl+Q (комментирование/сн€тие комментари€)
@@ -104,6 +104,7 @@ local function BlockComment()
 		comment_block = comment_block..spaces(comment_block_use_space)
 		if sel_text == "" then
 			-- одна невыделенна€ строка
+			local cur_pos = editor.CurrentPos
 			if comment_block_at_line_start == 1 then
 				editor:GotoPos(editor:PositionFromLine(line_sel_start))
 			else
@@ -111,6 +112,7 @@ local function BlockComment()
 				editor:VCHome()
 			end
 			editor:ReplaceSel(comment_block)
+			editor:GotoPos(cur_pos + string.len(comment_block))
 		else
 			-- несколько строк
 			local text_comment = ""
@@ -143,11 +145,15 @@ local function BlockUnComment()
 	else
 		if sel_text == "" then
 			-- одна невыделенна€ строка
+			local cur_pos = editor.CurrentPos
 			local text_line = editor:GetCurLine()
 			local text_uncomment = string.gsub(text_line,Pattern(comment_block).."~? ?","",1)
+			editor:BeginUndoAction()
 			editor:LineDelete()
 			editor:ReplaceSel(text_uncomment)
 			editor:LineUp()
+			editor:EndUndoAction()
+			editor:GotoPos(cur_pos - string.len(comment_block) - 1)
 		else
 			-- несколько строк
 			local text_uncomment = ""
