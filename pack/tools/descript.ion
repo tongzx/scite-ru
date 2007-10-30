@@ -2,6 +2,7 @@ Calculator SciTE Calculator
 Helper SciTE Helper. COM-сервер для управления SciTE
 HexEdit SciTE HexEdit - A Self-Contained Primitive Hex Editor for SciTE
 SessionManager Менеджер сессий
+COMMON.lua Общие функции, использующиеся во многих скриптах
 ASCIITable.lua ASCII Table for SciTE
 AutocompleteObject.lua Автодополнение объектов их методами и свойствами
 ChangeCase.lua Перевод текста в ВЕРХНИЙ/нижний регистр, инвертирование регистра символов
@@ -11,13 +12,14 @@ FindText.lua Поиск выделенного в окне редактора (или консоли) текста с выводом с
 FontChanger.lua Смена текущих установок шрифта
 FuncProcList.lua Вывод списка функций / процедур, имеющихся в коде
 HTMLFormatPainter.lua "Формат по образцу" для HTML
-html_HELP.hta Вызывает HTML справку и производит поиск по ней
+HTML_help.js Вызывает HTML справку и производит поиск по ней
 IndentTabToSpace.lua Замена отступов в виде табуляторов на пробелы и наоборот
 InsertSpecialChar.lua Вставка спецсимволов (©,®,§,±,…) из раскрывающегося списка (для HTML вставляются их обозначения)
-MakeAbbrev.lua Выделенный текст - в аббревиатуры данного языка
+MakeAbbrev.lua Автоматическое добавление текста в файл аббревиатур
 MarkerToggle.lua Установка / снятие закладок на строку (Bookmark) (то же что и Ctrl+F2) с помощью двойного клика мыши при нажатой клавише Ctrl
 MoveLines.lua Перемещение выделенных строк (или 1 строки) вверх, вниз, вправо, влево
 MoveMenuItem.lua Изменение номера выделенных параметров меню Tools
+OpenFindFiles.lua Открытие файлов, найденных через диалог "Поиск в файлах"
 Open_Selected_Filename.lua Замена стандартной команды SciTE "Открыть выделенный файл"
 ROCheck.lua Автоустановка ReadOnly для файлов с аттр. RHS
 ROWrite.lua Cохранение RO/Hidden/System файлов
@@ -42,9 +44,11 @@ codepage.lua Показ текущей кодировки в статусной строке
 descript.ion В этом файле хранятся комментарии
 display_com_object_in_ole_viewer.vbs Display COM object in OLE Viewer
 exec.lua Расчет выделенного текста как математического выражения или открытие URL
+html_HELP.hta Оболочка для просмотра/поиска в HTML файлах справки
 html_tags_autoclose.lua Автозакрытие тегов в HTML файлах
 lexer_name.lua Показ имени текущего лексера в строке статуса
 macro_support.lua Поддержка записи и воспроизведения макросов
+open_session.js Открытие файлов сохраненных сессий (*.session) (Этот файл создается автоматически с помощью SciTE_WinIntegrator.hta)
 palette.hta "Цветочник" - выбор цвета из нескольких доступных палитр
 rename.vbs Переименовывает текущий файл
 save_settings.lua Сохранение текущих установок SciTE
@@ -52,8 +56,9 @@ session-converter.lua Конвертор файлов сессий SciTE из старого в новый формат
 set_html.lua Включает HTML подсветку для файлов без расширения, открываемых из меню "просмотр HTML-кода" Internet Explorer
 smartcomment.lua Быстрое комментирование кода
 style_changer.lua Быстрая смена стиля оформления файлов на С
-svn_menu.lua Меню для команд SVN
+svn_menu.lua Подменю для команд SVN
 translit.lua Транслитерация английских букв в русские
 tree.lua Построение дерева документа на базе function или|и sub
 value.lua Показывает действующее значение переменных $(название_переменной)
 win2dos.lua Переключатель кодировки текущего ввода и отображения win1251/dos866
+xComment.lua Замена Ctrl+Q (комментирование/снятие комментария) 
