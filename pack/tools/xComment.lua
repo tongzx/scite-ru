@@ -1,5 +1,5 @@
 -- xComment
--- Version: 1.03 beta
+-- Version: 1.2
 -- Author: mozers™
 ---------------------------------------------------
 -- C блеском заменяет стандартную комбинацию Ctrl+Q (комментирование/снятие комментария)
@@ -31,7 +31,7 @@ local comment_stream_end = ""
 local PatternStream = ""
 
 --------------------------------------------------
-function spaces(count)
+local function spaces(count)
 -- Получение заданного количества пробелов
 	local s = ""
 	for i = 1, count do
@@ -52,7 +52,7 @@ end
 
 ---------------------------------------------
 local function FirstLetterFromBlock()
--- Поиск начала текста в блоке
+-- Возвращает позицию первого не пробельного символа в блоке
 	local text_line = sel_text
 	if sel_text == "" then 
 		text_line = editor:GetLine(line_sel_start)
@@ -108,7 +108,6 @@ local function BlockComment()
 			if comment_block_at_line_start == 1 then
 				editor:GotoPos(editor:PositionFromLine(line_sel_start))
 			else
--- 				editor:GotoPos(FirstLetterFromBlock())
 				editor:VCHome()
 			end
 			editor:ReplaceSel(comment_block)
@@ -148,12 +147,11 @@ local function BlockUnComment()
 			local cur_pos = editor.CurrentPos
 			local text_line = editor:GetCurLine()
 			local text_uncomment = string.gsub(text_line,Pattern(comment_block).."~? ?","",1)
-			editor:BeginUndoAction()
-			editor:LineDelete()
+			local line_pos_start = editor:PositionFromLine(line_sel_start)
+			local line_pos_end = line_pos_start + string.len(text_line)
+			editor:SetSel(line_pos_start, line_pos_end)
 			editor:ReplaceSel(text_uncomment)
-			editor:LineUp()
-			editor:EndUndoAction()
-			editor:GotoPos(cur_pos - string.len(comment_block) - 1)
+			editor:GotoPos(cur_pos - string.len(comment_block) - comment_block_use_space)
 		else
 			-- несколько строк
 			local text_uncomment = ""
@@ -205,7 +203,7 @@ local function StreamUnComment()
 end
 
 ---------------------------------------------
-function xComment()
+local function xComment()
 -- Обработка нажатия на Ctrl+Q
 	lexer = editor.LexerLanguage
 	sel_text = editor:GetSelText()
@@ -247,10 +245,8 @@ local old_OnMenuCommand = OnMenuCommand
 function OnMenuCommand (msg, source)
 	local result
 	if old_OnMenuCommand then result = old_OnMenuCommand(msg, source) end
-	if msg == 243 then --IDM_BLOCK_COMMENT
+	if msg == 243 then --IDM_BLOCK_COMMENT (Ctrl+Q)
 		if xComment() then return true end
 	end
 	return result
 end
-
---~ xComment()
