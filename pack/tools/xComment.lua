@@ -1,5 +1,5 @@
 -- xComment
--- Version: 1.2
+-- Version: 1.2.1
 -- Author: mozersЩ
 ---------------------------------------------------
 -- C блеском замен€ет стандартную комбинацию Ctrl+Q (комментирование/сн€тие комментари€)
@@ -25,20 +25,10 @@ local line_sel_start = 0
 local line_sel_end = 0
 local comment_block = ""
 local comment_block_at_line_start = 0
-local comment_block_use_space = 1
+local comment_block_use_space = 1 -- можно задать кол-во пробелов, отдел€ющих коммент от кода
 local comment_stream_start = ""
 local comment_stream_end = ""
 local PatternStream = ""
-
---------------------------------------------------
-local function spaces(count)
--- ѕолучение заданного количества пробелов
-	local s = ""
-	for i = 1, count do
-		s = s.." "
-	end
-	return s
-end
 
 --------------------------------------------------
 local function Pattern(text)
@@ -101,7 +91,7 @@ local function BlockComment()
 	if comment_block == "" then
 		print("! ќтсутствует параметр ".."comment.block."..lexer)
 	else
-		comment_block = comment_block..spaces(comment_block_use_space)
+		comment_block = comment_block..string.rep(" ", comment_block_use_space)
 		if sel_text == "" then
 			-- одна невыделенна€ строка
 			local cur_pos = editor.CurrentPos
