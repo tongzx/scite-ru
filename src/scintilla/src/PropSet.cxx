@@ -994,6 +994,81 @@ bool WordList::InListAbbreviated(const char *s, const char marker) {
 	return false;
 }
 
+//!-start-[PropsKeysSets]
+/** similar to InList, but keyword can be a substring of word s.
+ * eg. the keyword define is defined as def~ or def~e. This means the word must
+ * start with def and finished with e to be a keyword, but also may have any
+ * symbols instead of marker.
+ * The marker is ~ in this case.
+ * Returns in mainLen - the length of starting part and in finLen - final part.
+ */
+bool WordList::InListPartly(const char *s, const char marker, int &mainLen, int &finLen) {
+	if (0 == words || !*s) {
+		mainLen = finLen = 0;
+		return false;
+	}
+	if (!sorted) {
+		sorted = true;
+		SortWordList(words, len);
+		for (unsigned int k = 0; k < (sizeof(starts) / sizeof(starts[0])); k++)
+			starts[k] = -1;
+		for (int l = len - 1; l >= 0; l--) {
+			unsigned char indexChar = words[l][0];
+			starts[indexChar] = l;
+		}
+	}
+	unsigned char firstChar = s[0];
+	int j = starts[firstChar];
+	if (j >= 0) {
+		while ((unsigned char)words[j][0] == firstChar) {
+			if (s[1] == words[j][1]) {
+				const char *a = words[j] + 1;
+				const char *b = s + 1;
+				mainLen = finLen = 0;
+				while (*a && *a != marker && *a == *b) {
+					a++;
+					b++;
+					mainLen++;
+				}
+				if (!*a && !*b)
+					return true;
+				if (*a == marker) {
+					while (*a) a++;
+					while (*b) b++;
+					finLen = -1;
+					while (*a != marker && *a == *b) {
+						a--;
+						b--;
+						finLen++;
+					}
+					if (*a == marker)
+						return true;
+				}
+			}
+			j++;
+		}
+	}
+	j = starts['^'];
+	if (j >= 0) {
+		while (words[j][0] == '^') {
+			const char *a = words[j] + 1;
+			const char *b = s;
+			mainLen = finLen = 0;
+			while (*a && *a == *b) {
+				a++;
+				b++;
+				mainLen++;
+			}
+			if (!*a)
+				return true;
+			j++;
+		}
+	}
+	mainLen = finLen = 0;
+	return false;
+}
+//!-end-[PropsKeysSets]
+
 /**
  * Returns an element (complete) of the wordlist array which has
  * the same beginning as the passed string.

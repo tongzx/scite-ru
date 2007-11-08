@@ -588,6 +588,7 @@ static void ColourisePropsLine(
     unsigned int lengthLine,
     unsigned int startLine,
     unsigned int endPos,
+    WordList *keywordlists[], //!-add-[PropsKeysSets]
     Accessor &styler) {
 
 	unsigned int i = 0;
@@ -608,7 +609,32 @@ static void ColourisePropsLine(
 			while ((i < lengthLine) && (lineBuffer[i] != '='))
 				i++;
 			if ((i < lengthLine) && (lineBuffer[i] == '=')) {
-				styler.ColourTo(startLine + i - 1, SCE_PROPS_KEY);
+				//!styler.ColourTo(startLine + i - 1, SCE_PROPS_KEY);
+				//!-start-[PropsKeysSets]
+				int chAttr;
+				lineBuffer[i] = '\0';
+				// remove trailing spaces
+				int indent = 0;
+				while (lineBuffer[0] == ' ' || lineBuffer[0] == '\t') {
+					lineBuffer++;
+					indent++;
+				}
+				int len, fin;
+				if (keywordlists[0]->InListPartly(lineBuffer, '~', len, fin)) {
+					chAttr = SCE_PROPS_KEYSSET0;
+				} else if (keywordlists[1]->InListPartly(lineBuffer, '~', len, fin)) {
+					chAttr = SCE_PROPS_KEYSSET1;
+				} else if (keywordlists[2]->InListPartly(lineBuffer, '~', len, fin)) {
+					chAttr = SCE_PROPS_KEYSSET2;
+				} else if (keywordlists[3]->InListPartly(lineBuffer, '~', len, fin)) {
+					chAttr = SCE_PROPS_KEYSSET3;
+				} else {
+					chAttr = SCE_PROPS_KEY;
+				}
+				styler.ColourTo(startLine + indent + len, chAttr);
+				styler.ColourTo(startLine + i - 1 - fin, SCE_PROPS_KEY);
+				styler.ColourTo(startLine + i - 1, chAttr);
+				//!-end-[PropsKeysSets]
 				styler.ColourTo(startLine + i, SCE_PROPS_ASSIGNMENT);
 				styler.ColourTo(endPos, SCE_PROPS_DEFAULT);
 			} else {
@@ -620,7 +646,8 @@ static void ColourisePropsLine(
 	}
 }
 
-static void ColourisePropsDoc(unsigned int startPos, int length, int, WordList *[], Accessor &styler) {
+//!static void ColourisePropsDoc(unsigned int startPos, int length, int, WordList *[], Accessor &styler) {
+static void ColourisePropsDoc(unsigned int startPos, int length, int, WordList *keywordlists[], Accessor &styler) { //!-change-[PropsKeysSets]
 	char lineBuffer[1024];
 	styler.StartAt(startPos);
 	styler.StartSegment(startPos);
@@ -631,13 +658,15 @@ static void ColourisePropsDoc(unsigned int startPos, int length, int, WordList *
 		if (AtEOL(styler, i) || (linePos >= sizeof(lineBuffer) - 1)) {
 			// End of line (or of line buffer) met, colourise it
 			lineBuffer[linePos] = '\0';
-			ColourisePropsLine(lineBuffer, linePos, startLine, i, styler);
+//!			ColourisePropsLine(lineBuffer, linePos, startLine, i, styler);
+			ColourisePropsLine(lineBuffer, linePos, startLine, i, keywordlists, styler); //!-change-[PropsKeysSets]
 			linePos = 0;
 			startLine = i + 1;
 		}
 	}
 	if (linePos > 0) {	// Last line does not have ending characters
-		ColourisePropsLine(lineBuffer, linePos, startLine, startPos + length - 1, styler);
+//!		ColourisePropsLine(lineBuffer, linePos, startLine, startPos + length - 1, styler);
+		ColourisePropsLine(lineBuffer, linePos, startLine, startPos + length - 1, keywordlists, styler); //!-change-[PropsKeysSets]
 	}
 }
 
@@ -1210,6 +1239,16 @@ static const char * const batchWordListDesc[] = {
 	0
 };
 
+//!-start-[PropsKeysSets]
+static const char * const propsWordListDesc[] = {
+	"Keys set 0",
+	"Keys set 1",
+	"Keys set 2",
+	"Keys set 3",
+	0
+};
+//!-end-[PropsKeysSets]
+
 static const char * const emptyWordListDesc[] = {
 	0
 };
@@ -1226,7 +1265,8 @@ static void ColouriseNullDoc(unsigned int startPos, int length, int, WordList *[
 
 LexerModule lmBatch(SCLEX_BATCH, ColouriseBatchDoc, "batch", 0, batchWordListDesc);
 LexerModule lmDiff(SCLEX_DIFF, ColouriseDiffDoc, "diff", FoldDiffDoc, emptyWordListDesc);
-LexerModule lmProps(SCLEX_PROPERTIES, ColourisePropsDoc, "props", FoldPropsDoc, emptyWordListDesc);
+//!LexerModule lmProps(SCLEX_PROPERTIES, ColourisePropsDoc, "props", FoldPropsDoc, emptyWordListDesc);
+LexerModule lmProps(SCLEX_PROPERTIES, ColourisePropsDoc, "props", FoldPropsDoc, propsWordListDesc); //!-change-[PropsKeysSets]
 LexerModule lmMake(SCLEX_MAKEFILE, ColouriseMakeDoc, "makefile", 0, emptyWordListDesc);
 LexerModule lmErrorList(SCLEX_ERRORLIST, ColouriseErrorListDoc, "errorlist", 0, emptyWordListDesc);
 LexerModule lmLatex(SCLEX_LATEX, ColouriseLatexDoc, "latex", 0, emptyWordListDesc);

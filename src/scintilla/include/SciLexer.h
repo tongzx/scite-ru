@@ -381,6 +381,12 @@
 #define SCE_PROPS_ASSIGNMENT 3
 #define SCE_PROPS_DEFVAL 4
 #define SCE_PROPS_KEY 5
+//!-start-[PropsKeysSets]
+#define SCE_PROPS_KEYSSET0 6
+#define SCE_PROPS_KEYSSET1 7
+#define SCE_PROPS_KEYSSET2 8
+#define SCE_PROPS_KEYSSET3 9
+//!-end-[PropsKeysSets]
 #define SCE_L_DEFAULT 0
 #define SCE_L_COMMAND 1
 #define SCE_L_TAG 2
