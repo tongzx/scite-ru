@@ -604,6 +604,14 @@ static void ColourisePropsLine(
 			if (lineBuffer[++i] == '=')
 				styler.ColourTo(startLine + i, SCE_PROPS_ASSIGNMENT);
 			styler.ColourTo(endPos, SCE_PROPS_DEFAULT);
+//!-start-[PropsKeywords]
+		} else if (isprefix(lineBuffer, "import ")) {
+			styler.ColourTo(startLine + 6, SCE_PROPS_KEYWORD);
+			styler.ColourTo(endPos, SCE_PROPS_DEFAULT);
+		} else if (isprefix(lineBuffer, "if ")) {
+			styler.ColourTo(startLine + 2, SCE_PROPS_KEYWORD);
+			styler.ColourTo(endPos, SCE_PROPS_DEFAULT);
+//!-end-[PropsKeywords]
 		} else {
 			// Search for the '=' character
 			while ((i < lengthLine) && (lineBuffer[i] != '='))

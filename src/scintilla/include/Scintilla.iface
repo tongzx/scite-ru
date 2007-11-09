@@ -2324,6 +2324,9 @@ val SCE_PROPS_KEYSSET1=7
 val SCE_PROPS_KEYSSET2=8
 val SCE_PROPS_KEYSSET3=9
 #!-end-[PropsKeysSets]
+#!-start-[PropsKeywords]
+val SCE_PROPS_KEYWORD=10
+#!-end-[PropsKeywords]
 # Lexical states for SCLEX_LATEX
 lex LaTeX=SCLEX_LATEX SCE_L_
 val SCE_L_DEFAULT=0
