@@ -873,6 +873,10 @@ void SciTEBase::ReadProperties() {
 		ReadAbbrevPropFile();
 	}
 
+//!-start-[GetAbbrevPath]
+	props.Set("AbbrevPath", pathAbbreviations.AsFileSystem());
+//!-end-[GetAbbrevPath]
+	
 	if (!props.GetInt("eol.auto")) {
 		SetEol();
 	}
