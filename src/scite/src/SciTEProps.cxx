@@ -864,6 +864,11 @@ void SciTEBase::ReadProperties() {
 		ReadAPI(fileNameForExtension);
 		apisFileNames = props.GetNewExpand("api.", fileNameForExtension.c_str());
 	}
+
+//!-start-[GetAPIPath]
+	props.Set("APIPath", apisFileNames.c_str());
+//!-end-[GetAPIPath]
+
 	FilePath fileAbbrev = props.GetNewExpand("abbreviations.", fileNameForExtension.c_str()).c_str();
 	if (!fileAbbrev.IsSet())
 		fileAbbrev = GetAbbrevPropertiesFileName();
