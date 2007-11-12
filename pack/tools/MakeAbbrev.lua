@@ -1,5 +1,5 @@
 -- MakeAbbrev.lua
--- Version: 1.1
+-- Version: 1.2
 -- Author: frs
 -- http://forum.ru-board.com/topic.cgi?forum=5&topic=3215&start=1940#15
 ---------------------------------------------------
@@ -11,11 +11,6 @@
 --  command.name.96.*=Add to Abbreviation
 --  command.96.*=dofile $(SciteDefaultHome)\tools\MakeAbbrev.lua
 --  command.mode.96.*=subsystem:lua,savebefore:no
----------------------------------------------------
--- Важное замечание:
--- Файл аббревиатуры создается с именем текущего лексера и расширением .abbrev в подкаталоге \abbrev.
--- Для работы с ним его необходимо корректно подключить. Например, так:
---   abbreviations.*.html;*.htm;*.asp;*.shtml=$(SciteDefaultHome)\abbrev\hypertext.abbrev
 ---------------------------------------------------
 local function MakeAbbrev()
     local sel_text = editor:GetSelText()
@@ -34,7 +29,7 @@ local function MakeAbbrev()
             sel_text=string.gsub(sel_text,"\n","\\n")
             sel_text=string.gsub(sel_text,"\r","\\r")
             sel_text=string.gsub(sel_text,"\t","\\t")
-            local file=(props["SciteDefaultHome"].."\\abbrev\\"..editor.LexerLanguage..".abbrev")
+            local file=props["AbbrevPath"]
             local abb_file =io.open(file)
             if abb_file~=nil then
                 abb_file:close()
