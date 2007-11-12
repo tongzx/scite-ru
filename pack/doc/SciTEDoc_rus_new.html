@@ -26,8 +26,12 @@
     code  {font-size:small; color:#333399;}
     cite  {color:#333399; FONT-STYLE:normal; font-weight:bold; white-space:nowrap;}
     em    {background-color:#F0FFF0;}
+    .cursor {color:red;}
 
     .windowsonly {background: #EBF3FF;}
+    .gtkonly     {background: #FFFFE7;}
+    .ruboardonly {background: #FFECFF;}
+
     DIV.example {
     background: #F7FCF7;
     border: 1px solid #C0D7C0;
@@ -78,10 +82,10 @@
   <LI><A HREF="#buffers">Вкладки</A>
   <LI><A HREF="#sessions">Сессии</A>
   <LI><A HREF="#languages">Языки, поддерживаемые SciTE</A>
-  <LI><A HREF="#find">Find and Replace</A>
-  <LI><A HREF="#kbdcmd">Keyboard commands</A>
-  <LI><A HREF="#abbrev">Abbreviations</A>
-  <LI><A HREF="#folding">Folding</A>
+  <LI><A HREF="#find">Поиск и замена</A>
+  <LI><A HREF="#kbdcmd">Клавиатурные команды</A>
+  <LI><A HREF="#abbrev">Аббревиатуры</A>
+  <LI><A HREF="#folding">Свертка кода</A>
   <LI><A HREF="#props">Properties file</A>
   <LI><A HREF="#import">Importing properties files and conditional logic</A>
   <LI><A HREF="#cmdparam">Command parameters and prompting</A>
@@ -99,10 +103,12 @@
   <p>Перевод данного документа выполнен с многочисленными авторскими правками.<br>
   Текст содержит элементы, выделенные форматированием, например:<br>
   <cite>Настройки | Консоль – сбоку</cite> - команда меню SciTE<br>
-  <dfn>command.subsystem:</dfn> - параметр (перемеменная) из файла настроек SciTE<br>
+  <dfn>command.subsystem:</dfn> - параметр (переменная) из файла настроек SciTE<br>
   <var>windows</var> - значение параметра<br>
   <code>&quot;-open:my file.txt&quot;</code>  - примеры кода<br>
   <span class="windowsonly">Данная возможность...</span> - функции, работающие только в Windows<br>
+  <span class="gtkonly">Данная возможность...</span> - функции, работающие только в GTK+<br>
+  <span class="ruboardonly">Данная возможность...</span> - функции, имеющиеся только в SciTE-Ru<br>
   [<em>т.е. команда будет выполнена...</em>] - примечания переводчика</p>
 
   <p>Дадим определения некоторым специфическим терминам, часто встречающимся в тексте документации:<br>
@@ -161,30 +167,32 @@ NameError: mistake
 
   <p>Если исполнение команды оказалось неудачным и занимает слишком много времени, для её завершения можно воспользоваться командой <cite>Tools | Остановить выполнение</cite> (Tools | Stop Executing).</p>
 
-  <p>В Windows редактор SciTE по умолчанию запускает программу как консольную. При исполнении в этом режиме GUI-программы окно не отображается. Для настройки запуска в режиме GUI можно использовать опцию <dfn>command.subsystem</dfn> [<em>эта опция используется для запуска комманд в различных режимах</em>].
+  <div class="windowsonly"><p><b>Под Windows</b>:<br>
+  <p>В Windows редактор SciTE по умолчанию запускает программу как консольную. При исполнении в этом режиме GUI-программы окно не отображается. Для настройки запуска в режиме GUI можно использовать опцию <dfn>command.subsystem</dfn> [<em>эта опция используется для запуска команд в различных режимах</em>].
 
   <p>Значение по умолчанию равно <var>console</var> или <var>0</var> и предназначено для консольных программ [<em>в результате запуска системное окно консоли не появляется, а весь вывод программы перенаправляется во встроенную консоль SciTE</em>].</p>
 
-  <p><span class="windowsonly">Значение <dfn>command.subsystem:<var>windows</var></dfn> или <b>1</b> предназначено для программ, создающих свои окна. [<em>при этом значении окно программы (или консольное окошко) не скрывается.</em>]</span></p>
+  <p>Значение <dfn>command.subsystem:<var>windows</var></dfn> или <b>1</b> предназначено для программ, создающих свои окна. [<em>при этом значении окно программы (или консольное окошко) не скрывается.</em>]</p>
 
   <p>Значение <var>shellexec</var> или <var>2</var> предназначено для вызова функции ShellExecute. Функция ShellExecute является хорошим способом для открытия HTML и подобных файлов, поскольку обрабатывает их так же, как если бы они были открыты пользователем из ОС [<em>т.е. команда будет выполнена в соответствии с назначенными Windows на это расширение ассоциациями</em>].</p>
 
-  <p><span class="windowsonly">Значение <var>lua</var> или <var>3</var> предназначено для вызова встроенного в SciTE обработчика LUA-скриптов.</span></p>
+  <p>Значение <var>lua</var> или <var>3</var> предназначено для вызова встроенного в SciTE обработчика LUA-скриптов.</p>
 
-  <p><span class="windowsonly">Значение <var>htmlhelp</var> или <var>4</var> предназначено для вызова характерной для Windows программы HtmlHelp [<em>с помощью этой опции можно на нужной позиции открыть справку в формате CHM</em>].</span></p>
+  <p>Значение <var>htmlhelp</var> или <var>4</var> предназначено для вызова характерной для Windows программы HtmlHelp [<em>с помощью этой опции можно на нужной позиции открыть справку в формате CHM</em>].</p>
 
-  <p><span class="windowsonly">Значение <var>winhelp</var> или <var>5</var> предназначено для вызова функции WinHelp, также характерной для Windows [<em>с помощью этой опции можно на нужной позиции открыть справку в формате HLP</em>].</span></p>
+  <p>Значение <var>winhelp</var> или <var>5</var> предназначено для вызова функции WinHelp, также характерной для Windows [<em>с помощью этой опции можно на нужной позиции открыть справку в формате HLP</em>].</p>
+  </div>
 
-  <p>[<em>все вышеуказанные параметры работают только в Windows.</em>]</p>
-
+  <div class="gtkonly"><p><b>Под GTK+</b>:<br>
   <p>В GTK+ значение по умолчанию <var>0</var> исполняет программу и ожидает ее завершения, перенаправляя результат в панель вывода, а значение <var>2</var> исполняет программу в фоновом режиме.</p>
+  </div>
 
-  <a name="cmdline"><h3>Command line arguments</h3></a>
+  <a name="cmdline"><h3>Параметры командной строки</h3></a>
 
   <p>Параметры командной строки для запуска SciTE включают имена файлов, команды и значения, которые будут присвоены свойствам SciTE. Команды и свойства начинаются с символа <code>&quot;-&quot;</code>. В свойствах используется тот же синтаксис, что и в файлах настроек. Кроме того, значения свойств, заданные в командной строке, перекрывают соответствующие значения в файлах настроек. Если свойству не было присвоено никакого значения, то по умолчанию оно равняется <var>1</var>. Параметры, значения которых содержат пробелы, необходимо заключать в двойные кавычки, однако кавычки должны обрамлять весь параметр, а не только значение. Поэтому параметр в таком виде: <code>&quot;-open:my file.txt&quot;</code> будет работать, а в таком: <code>open:&quot;my file.txt&quot;</code> - нет. В Linux доступно стандартное использование кавычек в оболочке. Параметр <code>&quot;-p&quot;</code> заставляет SciTE печатать файл, а затем завершать работу.
 </p>
 
-<p><span class="windowsonly">Под Windows</span>:<br>
+<div class="windowsonly"><p><b>Под Windows:</b><br>
 Функция параметров командной строки <code>"-"</code> и <code>"--"</code> (без кавычек) заключается в том, чтобы считывать поток <code>stdin</code> в последний буфер (<code>"-"</code>) или в панель консоли (<code>"--"</code>) SciTE.<br>
 C помощью параметра командной строки <code>"-@"</code> (без кавычек) можно считывать имена файлов из <code>stdin</code> и открывать эти файлы.<br>
 <b>Примечание:</b> Если при считывании потока <code>stdin</code> в панель вывода значение свойства <dfn>split.vertical</dfn> равно <var>0</var>, высота панели вывода увеличивается до максимального размера. Если значение свойства <dfn>split.vertical</dfn> равно <var>1</var>, панель вывода увеличивается примерно до половины ширины экрана.<br>
@@ -195,8 +203,8 @@ C помощью параметра командной строки <code>"-@"</code> (без кавычек) можно считы
 <div class="example">TYPE test.txt|SciTE.exe --</div>
 
 <p>SciTE открывает все файлы, указанные в списке <code>filelist.txt</code>:
-<div class="example">TYPE filelist.txt|SciTE.exe -@</div>
-
+<div class="example">TYPE filelist.txt|SciTE.exe -@</div><br>
+</div>
 <p>Такой пример:
 <div class="example">SciTE "-font.base=font:MS Gothic,size:11" -save.recent ScintillaGTK.cxx</div>
 <p>запускает SciTE, открывает файл <code>ScintillaGTK.cxx</code>, присваивает параметру <dfn>save.recent</dfn> значение <var>1</var>, а в качестве основного шрифта использует <var>MS Gothic</var> размером <var>11</var>.
@@ -262,10 +270,10 @@ C помощью параметра командной строки <code>"-@"</code> (без кавычек) можно считы
       <td>имя файла</td>
     </tr>
   </table><br>
-  [<em>Кроме указанных, в командной строке можно использовать любую из многогисленных команд <a href="SciTEDirector_rus.html">SciTE Director Interface</a>.</em>]
+  [<em>Кроме указанных, в командной строке можно использовать любую из многочисленных команд <a href="SciTEDirector_rus.html">SciTE Director Interface</a>.</em>]
   <p>В командах можно использовать <code>escape</code>-последовательности в стиле C:
 
-  <table cellpadding="0" cellspacing="0" border="1" summary="Command line escape sequences">
+  <a name="escseq"></a><table cellpadding="0" cellspacing="0" border="1" summary="Command line escape sequences">
     <thead>
       <tr>
         <th>Escape-последовательность</th>
@@ -348,7 +356,7 @@ C помощью параметра командной строки <code>"-@"</code> (без кавычек) можно считы
 
   <p>Таким образом, если есть необходимость применить к файлу, к примеру, команду <code>find:</code> или <code>goto:</code>, нужно поместить ее после имени файла, и SciTE откроет файл перед тем, как выполнить команду</p>
 
-  <p><span class="windowsonly">Под Windows</span>:<br>
+  <div class="windowsonly"><p><b>Под Windows</b>:<br>
   Если какое-нибудь имя файла в командной строке совпадает с названием каталога, появляется диалог "<cite>Открыть файл</cite>" (появление диалога зависит от значения свойства "<dfn>open.dialog.in.file.directory</dfn>").<br>
   <br>
   Если значение свойства "<dfn>buffers</dfn>" больше единицы, а имя файла совпадает либо с существующим файлом, либо, посредством поиска по групповому символу, с одним или более файлами, количество загружаемых совпадающих файлов не может быть больше заданного в свойствах "<dfn>buffers</dfn>" значения. Каталоги в этом случае совпадением не считаются.<br>
@@ -356,6 +364,7 @@ C помощью параметра командной строки <code>"-@"</code> (без кавычек) можно считы
   Если имя файла содержит расширение, перед которым опционально указан путь к этому файлу, и ни один файл не удовлетворяет этому условию, появляется диалог "<cite>Открыть файл</cite>", в котором заданное расширение использовано в качестве фильтра.<br>
   <br>
   Если имя файла не содержит расширения, то для того, чтобы найти существующий файл, этому файлу при помощи свойства "<dfn>source.default.extensions</dfn>" присваивается расширение по умолчанию.</p>
+  </div>
 
   <a name="buffers"><h3>Вкладки</h3></a>
 
@@ -371,7 +380,9 @@ C помощью параметра командной строки <code>"-@"</code> (без кавычек) можно считы
 
   <p>Для загрузки/сохранения сессий используются команды меню "<cite>Файл</cite> – <cite>Загрузить сессию</cite>" (File - Load Session) и "<cite>Файл</cite> – <cite>Сохранить сессию</cite>" (File - Save Session). При помощи свойства SciTE <dfn>save.session</dfn> можно включить/отключить автозагрузку последней сессии.</p>
 
-  <p>При установке <dfn>save.session=1</dfn> SciTE при закрытии автоматически сохраняет список открытых в текущей сессии файлов в файле SciTE.session, расположенном по умолчанию в каталоге, определяемом переменной окружения <code>%USERPROFILE%</code> (т.е. в <code>c:\Documents and Settings\username\SciTE.session</code>). В русской сборке SciTE путь для сохранения можно изменять параметром <dfn>save.settings.path</dfn>. По этому же пути SciTE и загружает сессию при следующем старте (при <dfn>save.session=1</dfn>).</p>
+  <p>При установке <dfn>save.session=1</dfn> SciTE при закрытии автоматически сохраняет список открытых в текущей сессии файлов в файле SciTE.session, расположенном по умолчанию в каталоге, определяемом переменной окружения <code>%USERPROFILE%</code> (т.е. в <code>c:\Documents and Settings\username\SciTE.session</code>).<br>
+  <span class="ruboardonly">В SciTE-Ru путь для сохранения можно изменять параметром <dfn>save.settings.path</dfn>.</span><br>
+  По этому же пути SciTE и загружает сессию при следующем старте (при <dfn>save.session=1</dfn>).</p>
 
   <p>Файл сессии хранит информацию об имени файла и позиции курсора, а также (при <dfn>session.bookmarks=1</dfn>) о расположении закладок и (<dfn>session.folds=1</dfn>) о состоянии фолдинга (сворачивания кода).</p>
 
@@ -535,281 +546,89 @@ C помощью параметра командной строки <code>"-@"</code> (без кавычек) можно считы
 
   <p>Язык файла определяется по расширению этого файла, однако с помощью меню "<cite>Подсветка</cite>" (Language) можно установить другой язык. В свою очередь, меню "<cite>Подсветка</cite>" (Language) можно изменить с помощью свойства <dfn>menu.language</dfn>.</p>
 
-  <a name="find"><h3>Find and Replace</h3></a>
+  <a name="find"><h3>Поиск и замена</h3></a>
 
-  <p>SciTE has options to allow searching for words, regular expressions, matching case, in the reverse direction, wrapping around the end of the document. C style backslash escapes which are listed in the command line arguments section, may be used to search and replace control characters. Replacements can be made individually, over the current selection or over the whole file. When regular expressions are used tagged subexpressions can be used in the replacement text. Regular expressions will not match across a line end.</p>
+  <p>В SciTE возможен поиск и замена текста как в текущем, так и во всех открытых документах. Есть возможность выбрать направление поиска, учитывать регистр, использовать регулярные выражения.<br>
+  Переход по результатам поиска можно осуществлять с помощью клавиши F3 (Shift+F3 - в обратном направлении). При достижении конца документа поиск автоматически продолжится с его начала (и наоборот - в зависимости от направления).
 
-  <p>SciTE supports <a href="SciTERegEx.html">basic regular expressions</a> with tagging.</p>
+  <p>Для поиска и замены управляющих символов можно использовать <a href="#escseq">си-подобные escape-последовательности</a>.<br>
+  При использовании <a href="SciTERegEx_rus.html">регулярных выражений</a> можно использовать нумерованные подстроки, которые в шаблоне поиска выделяются с помощью круглых скобок, а в шаблоне замены подставляются в виде <code>\0..\9</code>.<br>
+  <a href="SciTERegEx_rus.html">Регулярные выражения</a> в SciTE поддерживают все основные метасимволы, но не поддерживают символ новой строки <code>\n</code> [<em>решение для выхода из этой ситуации описано в <a href="SciTEFAQ_rus.html#NewlineInRegEx">FAQ</a></em>].
 
-  <a name="kbdcmd"><h3>Keyboard commands</h3></a>
+  <a name="kbdcmd"><h3>Клавиатурные команды</h3></a>
 
-  <p>SciTE uses the default key bindings defined in Scintilla, so keyboard commands in SciTE mostly follow common Windows and GTK+ conventions. All move keys (arrows, page up/down, home and end) allows to extend or reduce the stream selection when holding the Shift key, and the rectangular selection when holding the Shift and Alt keys. Some keys may not be available with some national keyboards or because they are taken by the system such as by a window manager on GTK+. The user.shortcuts setting may be used to assign a key to a function. Note that Home key behaviour is changed by the vc.home.key option. Keyboard equivalents of menu commands are listed in the menus. Some less common commands with no menu equivalent are:</p>
+  <p>SciTE использует как собственные, так и заданные в движке Scintilla клавиатурные команды. Полный список команд и соответствующих им шорткатов вы можете увидеть в <a href="CommandValuesExt_rus.html">этом документе</a>.<br>
+  SciTE по большей части придерживается установленных в Windows и GTK+ стандартов. Клавиши навигации (стрелки, page up/down, home и end) поддерживают расширение или сужение области выделения при удержании Shift, а также выделение прямоугольных областей при удержании Shift и Alt. Некоторые клавиши могут быть недоступны в ряде национальных раскладок или в том случае, когда они контролируются системой (например, менеджером окон в GTK+).<br>
+  Для задания собственной клавиатурной комбинации можно использовать параметр <dfn>user.shortcuts</dfn>, параметры <dfn>command.shortcut</dfn> (для назначения шортката на пункт меню <cite>Tools</cite>) или параметр <dfn>menu.language</dfn> (для назначения шортката на пункт меню <cite>Подсветка</cite>). Обратите внимание, что функции клавиши Home настраиваются при помощи опции <dfn>vc.home.key</dfn>.<br>
+  Клавиатурные эквиваленты команд меню указаны в самом меню. Далее перечислены команды, не имеющие эквивалента в меню:</p>
 
   <table cellpadding="0" cellspacing="0" border="1" summary="Keyboard commands">
-    <tr>
-      <td>Magnify text size.</td>
-
-      <td>Ctrl+Keypad+</td>
-    </tr>
-
-    <tr>
-      <td>Reduce text size.</td>
-
-      <td>Ctrl+Keypad-</td>
-    </tr>
-
-    <tr>
-      <td>Restore text size to normal.</td>
-
-      <td>Ctrl+Keypad/</td>
-    </tr>
-
-    <tr>
-      <td>Cycle through recent files.</td>
-
-      <td>Ctrl+Tab</td>
-    </tr>
-
-    <tr>
-      <td>Indent block.</td>
-
-      <td>Tab</td>
-    </tr>
-
-    <tr>
-      <td>Dedent block.</td>
-
-      <td>Shift+Tab</td>
-    </tr>
-
-    <tr>
-      <td>Delete to start of word.</td>
-
-      <td>Ctrl+BackSpace</td>
-    </tr>
-
-    <tr>
-      <td>Delete to end of word.</td>
-
-      <td>Ctrl+Delete</td>
-    </tr>
-
-    <tr>
-      <td>Delete to start of line.</td>
-
-      <td>Ctrl+Shift+BackSpace</td>
-    </tr>
-
-    <tr>
-      <td>Delete to end of line.</td>
-
-      <td>Ctrl+Shift+Delete</td>
-    </tr>
-
-    <tr>
-      <td>Go to start of document.</td>
-
-      <td>Ctrl+Home</td>
-    </tr>
-
-    <tr>
-      <td>Extend selection to start of document.</td>
-
-      <td>Ctrl+Shift+Home</td>
-    </tr>
-
-    <tr>
-      <td>Go to start of display line.</td>
-
-      <td>Alt+Home</td>
-    </tr>
-
-    <tr>
-      <td>Extend selection to start of display line.</td>
-
-      <td>Alt+Shift+Home</td>
-    </tr>
-
-    <tr>
-      <td>Go to end of document.</td>
-
-      <td>Ctrl+End</td>
-    </tr>
-
-    <tr>
-      <td>Extend selection to end of document.</td>
-
-      <td>Ctrl+Shift+End</td>
-    </tr>
-
-    <tr>
-      <td>Go to end of display line.</td>
-
-      <td>Alt+End</td>
-    </tr>
-
-    <tr>
-      <td>Extend selection to end of display line.</td>
-
-      <td>Alt+Shift+End</td>
-    </tr>
-
-    <tr>
-      <td>Expand or contract a fold point.</td>
-
-      <td>Ctrl+Keypad*</td>
-    </tr>
-
-    <tr>
-      <td>Create or delete a bookmark.</td>
-
-      <td>Ctrl+F2</td>
-    </tr>
-
-    <tr>
-      <td>Go to next bookmark.</td>
-
-      <td>F2</td>
-    </tr>
-
-    <tr>
-      <td>Select to next bookmark.</td>
-
-      <td>Alt+F2</td>
-    </tr>
-
-    <tr>
-      <td>Find selection.</td>
-
-      <td>Ctrl+F3</td>
-    </tr>
-
-    <tr>
-      <td>Find selection backwards.</td>
-
-      <td>Ctrl+Shift+F3</td>
-    </tr>
-
-    <tr>
-      <td>Scroll up.</td>
-
-      <td>Ctrl+Up</td>
-    </tr>
-
-    <tr>
-      <td>Scroll down.</td>
-
-      <td>Ctrl+Down</td>
-    </tr>
-
-    <tr>
-      <td>Line cut.</td>
-
-      <td>Ctrl+L</td>
-    </tr>
-
-    <tr>
-      <td>Line copy.</td>
-
-      <td>Ctrl+Shift+T</td>
-    </tr>
-
-    <tr>
-      <td>Line delete.</td>
-
-      <td>Ctrl+Shift+L</td>
-    </tr>
-
-    <tr>
-      <td>Line transpose with previous.</td>
-
-      <td>Ctrl+T</td>
-    </tr>
-
-    <tr>
-      <td>Selection duplicate.</td>
-
-      <td>Ctrl+D</td>
-    </tr>
-
-    <tr>
-      <td>Find matching preprocessor conditional, skipping nested ones.</td>
-
-      <td>Ctrl+K</td>
-    </tr>
-
-    <tr>
-      <td>Select to matching preprocessor conditional.</td>
-
-      <td>Ctrl+Shift+K</td>
-    </tr>
-
-    <tr>
-      <td>Find matching preprocessor conditional backwards, skipping nested ones.</td>
-
-      <td>Ctrl+J</td>
-    </tr>
-
-    <tr>
-      <td>Select to matching preprocessor conditional backwards.</td>
-
-      <td>Ctrl+Shift+J</td>
-    </tr>
-
-    <tr>
-      <td>Previous paragraph. Shift extends selection.</td>
-
-      <td>Ctrl+[</td>
-    </tr>
-
-    <tr>
-      <td>Next paragraph. Shift extends selection.</td>
-
-      <td>Ctrl+]</td>
-    </tr>
-
-    <tr>
-      <td>Previous word. Shift extends selection.</td>
-
-      <td>Ctrl+Left</td>
-    </tr>
-
-    <tr>
-      <td>Next word. Shift extends selection.</td>
-
-      <td>Ctrl+Right</td>
-    </tr>
-
-    <tr>
-      <td>Previous word part. Shift extends selection</td>
-
-      <td>Ctrl+/</td>
-    </tr>
-
-    <tr>
-      <td>Next word part. Shift extends selection.</td>
-
-      <td>Ctrl+\</td>
-    </tr>
+    <tr><td>Увеличить размер текста</td><td>Ctrl+Keypad+</td></tr>
+    <tr><td>Уменьшить размер текста</td><td>Ctrl+Keypad-</td></tr>
+    <tr><td>Восстановить размер текста по умолчанию</td><td>Ctrl+Keypad/</td></tr>
+    <tr><td>Цикличное переключение между открытими файлами</td><td>Ctrl+Tab</td></tr>
+    <tr><td>Добавить отступ</td><td>Tab</td></tr>
+    <tr><td>Убрать отступ</td><td>Shift+Tab</td></tr>
+    <tr><td>Удалить слово слева от курсора</td><td>Ctrl+BackSpace</td></tr>
+    <tr><td>Удалить слово справа от курсора</td><td>Ctrl+Delete</td></tr>
+    <tr><td>Удалить строку слева от курсора</td><td>Ctrl+Shift+BackSpace</td></tr>
+    <tr><td>Удалить строку справа от курсора</td><td>Ctrl+Shift+Delete</td></tr>
+    <tr><td>Перейти к началу документа</td><td>Ctrl+Home</td></tr>
+    <tr><td>Выделить фрагмент от курсора до начала документа</td><td>Ctrl+Shift+Home</td></tr>
+    <tr><td>Перейти к началу строки</td><td>Alt+Home</td></tr>
+    <tr><td>Выделить фрагмент текста до начала строки</td><td>Alt+Shift+Home</td></tr>
+    <tr><td>Перейти к концу документа</td><td>Ctrl+End</td></tr>
+    <tr><td>Выделить фрагмент от курсора до конца документа</td><td>Ctrl+Shift+End</td></tr>
+    <tr><td>Перейти к концу строки</td><td>Alt+End</td></tr>
+    <tr><td>Выделить фрагмент текста до конца строки</td><td>Alt+Shift+End</td></tr>
+    <tr><td>Свернуть/Развернуть код</td><td>Ctrl+Keypad*</td></tr>
+    <tr><td>Установить/Удалить закладку</td><td>Ctrl+F2</td></tr>
+    <tr><td>Перейти к следующей закладке</td><td>F2</td></tr>
+    <tr><td>Выделить до следующей закладки</td><td>Alt+F2</td></tr>
+    <tr><td>Найти выделенное</td><td>Ctrl+F3</td></tr>
+    <tr><td>Найти выделенное в обратном порядке</td><td>Ctrl+Shift+F3</td></tr>
+    <tr><td>Прокрутить вверх</td><td>Ctrl+Up</td></tr>
+    <tr><td>Прокрутить вниз</td><td>Ctrl+Down</td></tr>
+    <tr><td>Вырезать строку</td><td>Ctrl+L</td></tr>
+    <tr><td>Скопировать строку</td><td>Ctrl+Shift+T</td></tr>
+    <tr><td>Удалить строку</td><td>Ctrl+Shift+L</td></tr>
+    <tr><td>Поменять строки местами</td><td>Ctrl+T</td></tr>
+    <tr><td>Дублировать текущую строку или выделенный текст</td><td>Ctrl+D</td></tr>
+    <tr><td>Найти следующее вхождение директивы препроцессора, пропуская вложенные</td><td>Ctrl+K</td></tr>
+    <tr><td>Выделить содержимое до следующей директивы препроцессора</td><td>Ctrl+Shift+K</td></tr>
+    <tr><td>Найти предыдущее вхождение директивы препроцессора, пропуская вложенные</td><td>Ctrl+J</td></tr>
+    <tr><td>Выделить содержимое до предыдущей директивы препроцессора</td><td>Ctrl+Shift+J</td></tr>
+    <tr><td>Предыдущий абзац. Удерживание клавиши Shift активирует выделение</td><td>Ctrl+[</td></tr>
+    <tr><td>Следующий абзац. Удерживание клавиши Shift активирует выделение</td><td>Ctrl+]</td></tr>
+    <tr><td>Предыдущее слово. Удерживание клавиши Shift активирует выделение</td><td>Ctrl+Left</td></tr>
+    <tr><td>Следующее слово. Удерживание клавиши Shift активирует выделение</td><td>Ctrl+Right</td></tr>
+    <tr><td>Предыдущая часть слова. Удерживание клавиши Shift активирует выделение</td><td>Ctrl+/</td></tr>
+    <tr><td>Следующая часть слова. Удерживание клавиши Shift активирует выделение</td><td>Ctrl+\</td></tr>
   </table>
 
-  <a name="abbrev"><h3>Abbreviations</h3></a>
+  <a name="abbrev"><h3>Аббревиатуры</h3></a>
 
-  <p>To use an abbreviation, type it and use the Expand Abbreviation command or the Ctrl+B key. The abbreviation is replaced by an expansion defined in the Abbreviations file. You can open the Abbreviations file with a command in the Options menu and add abbreviations. There is a default abbreviations file but a different abbreviations file can be set for particular file extensions.</p>
+  <p>В SciTE можно осуществить быструю замену коротких сокращений (аббревиатур) на строку текста или даже на целый блок кода. Чтобы использовать аббревиатуру, надо набрать ее, а затем выполнить команду меню "<cite>Правка</cite>" - "<cite>Расшифровать сокращение</cite> (Ctrl+B)" (для моментальной замены) или "<cite>Вставить сокращение</cite>... (Ctrl+Shift+R)" (для выбора из раскрывающегося списка). Аббревиатура заменяется расшифровкой, заданной в файле аббревиатур <code>abbrev.properties</code>. Файл аббревиатур можно открыть с помощью команды меню "<cite>Настройки</cite>" - "<cite>Открыть файл настройки сокращений</cite>" и добавить туда свои аббревиатуры. Помимо файла аббревиатур, заданного по умолчанию, для определенных расширений файлов можно создать свои файлы аббревиатур.</p>
 
-  <p>Each line in the files looks like &quot;abbreviation=expansion&quot;.<br>
-  The abbreviations names can have any character (except perhaps control chars, surely for CR and LF), including high Ascii chars (accented chars).<br>
-  Names have properties files limits: they cannot start with sharp (#) or space or tab (but can have spaces inside); and they cannot have &#39;=&#39; character inside.<br>
-  Abbreviations names are limited to 32 characters. It is probably enough for <em>abbreviations</em>...<br></p>
+  <p>Каждая строка в файле аббревиатур выглядит следующим образом: "<code>аббревиатура=расшифровка</code>". Аббревиатуры могут содержать любые символы, включая символы верхней половины ASCII. Исключаются лишь управляющие символы и, конечно, символы возврата каретки (CR) и перевода строки (LF). У аббревиатур есть такие же ограничения, как и в файлах настроек: они не могут начинаться с решетки (<code>#</code>), пробела (хотя могут содержать пробелы внутри) и табуляции, а также не могут содержать внутри символ "<code>=</code>".<br>
+  Длина аббревиатур ограничена 32 символами, которых, надо полагать, вполне достаточно для аббревиатур. Длина расшифровок не ограничена.</p>
 
-  <p>An expansion may contain new line characters indicated by &#39;\n&#39; and a caret position indicated by the &#39;|&#39; character. To include a literal &#39;|&#39; character, use &#39;||&#39;.<br>
-  Some simple examples are included in the distributed Abbreviations file.<br>
-  When expanding, the names don&#39;t need to be separated from the previous text. Ie. if you define &#39;й&#39; as &#39;&amp;eacute;&#39;, you can expand it inside a word.<br>
-  If a name is the ending of another one, only the shorter will ever be expanded. Ie. if you define &#39;ring&#39; and &#39;gathering&#39;, the later will see only the &#39;ring&#39; part expanded.</p>
+  <p>Расшифровки могут содержать символы новой строки "<code>\n</code>" и позиции каретки "<span class="cursor">|</span>". Чтобы использовать буквальный символ "<code>|</code>", нужно набрать "<code>||</code>". Вместе со SciTE поставляется файл аббревиатур, в котором содержится несколько простых примеров. При расшифровке аббревиатуру не обязательно отделять от ранее набранного текста. Т.е. если вы в файле сокращений задали "<code>e=&amp;eacute;</code>", и в тексте "<code>eve<span class="cursor">|</span>nt</code>" нажали Ctrl+B (символ <span class="cursor">|</span> указывает позицию курсора), то "<code>event</code>" превратится в "<code>ev&amp;eacute;nt</code>".<br>
+  Если одна из аббревиатур является окончанием второй, расшифрована будет только более короткая последняя часть, т.е. если вы задали 2 сокращения "<code>text=TextFile</code>" и "<code>rtext=ReadingText</code>", то после набора слова "<code>rtext<span class="cursor">|</span></code>" (символ <span class="cursor">|</span> указывает позицию курсора) и нажатия на Ctrl+B "<code>rtext</code>" превратится в "<code>rTextFile</code>", а не в "<code>ReadingText</code>", как ожидалось.</p>
 
-  <a name="folding"><h3>Folding</h3></a>
+  <p class="ruboardonly">SciTE-Ru предоставляет пользователям на порядок больше возможностей по работе с аббревиатурами. В списки сокращений можно добавлять пользовательские переменные: <code>%SEL%</code> (выделенный текст), <code>%CLP%</code> (текст из буфера обмена), <code>%[имя_переменной]%</code> (значение внутренней переменной SciTE, например, <code>CurrentWord</code>, <code>FileNameExt</code>, <code>SciteDefaultHome</code> и т.п.), <code>%GUID%</code> (уникальный GUID нового объекта), что позволяет создавать высокоинтеллектуальные шаблоны замены. Подробное описание доработки можно прочесть на <a href="SciTE-Ru_Kernel_rus.html">этой странице</a>.</p>
 
-  <p>SciTE supports folding for many languages (see the list of languages understood by SciTE for more information.) Fold points are based upon indentation for Python and on counting braces for the other languages. The fold point markers can be clicked to expand and contract folds. Ctrl+Shift+Click in the fold margin will expand or contract all the top level folds. Ctrl+Click on a fold point to toggle it and perform the same operation on all children. Shift+Click on a fold point to show all children.</p>
+
+  <a name="folding"><h3>Свертка кода</h3></a>
+
+  <p>SciTE поддерживает свертку кода для многих языков (см. выше список языков, которые поддерживает SciTE). Свертка основывается на отступах в коде Питона и на операторных скобках в других языках. [<em>Операторные скобки - это буквальные скобки или команды, определяющие в языке программирования блок команд или составную инструкцию, воспринимаемую как единое целое, как одна команда. Например, <code>If</code> и <code>End If</code> в VBScript.</em>]</p>
+
+  <p>Для того чтобы свернуть или развернуть код, необходимо щелкнуть мышкой по маркеру в местах сворачивания:<ul>
+    <li>Ctrl+Shift+щелчок мышью между маркерами свертки (просто по колонке, где расположены маркеры свёртки), развернет или свернет все свертки.<br>
+    <li>Ctrl+щелчок мышью по маркеру свертки выполняет свертку или развертку не только самого маркера, но и всех его дочерних сверток.<br>
+    <li>Shift+щелчок мышью раскрывает не только сам маркер (если он свернут), но и все его дочерние свертки.<br>
+    <li>Ctrl+*(в правой части клавиатуры) сворачивает/разворачивает текущий маркер.
+</ul></p>
 
   <a name="props"><h3>Properties file</h3></a>
 
