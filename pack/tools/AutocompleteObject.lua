@@ -1,31 +1,31 @@
 -- AutocompleteObject.lua
 -- mozers™
--- version 1.5.2
+-- version 1.6.0
 ------------------------------------------------
 -- Ввод разделителя, заданного в autocomplete.[lexer].start.characters
 -- вызывает список свойств и медодов объекта из соответствующего api файла
 -- Ввод пробела или разделителя изменяют регистр символов в имени объекта в соответствии с записью в api файле
 -- (например "ucase" при вводе автоматически заменяется на "UCase")
 -- Внимание: В скрипте используется функция IsComment (обязательно подключение COMMON.lua)
+-- props["APIPath"] доступно только в SciTE-Ru
 ------------------------------------------------
 -- Inputting of the symbol set in autocomplete.[lexer].start.characters causes the popup list of properties and methods of object. They undertake from corresponding api-file.
 -- In the same case inputting of a space or a separator changes the case of symbols in object's name according to a api-file.
 -- (for example "ucase" is automatically replaced on "UCase".)
 -- Warning: This script needed function IsComment (COMMON.lua)
+-- props["APIPath"] available only in SciTE-Ru
 ------------------------------------------------
 -- Подключение:
 -- В файл SciTEStartup.lua добавьте строку:
 --   dofile (props["SciteDefaultHome"].."\\tools\\AutocompleteObject.lua")
--- задайте в файле .properties соответствующего языка путь к API файлу
---   api.lua=$(SciteDefaultHome)\api\SciTELua.api
--- и символ, после ввода которого, будет включатся автодополнение:
+-- задайте в файле .properties соответствующего языка
+-- символ, после ввода которого, будет включатся автодополнение:
 --   autocomplete.lua.start.characters=.:
 ------------------------------------------------
 -- Connection:
 -- In file SciTEStartup.lua add a line:
 --   dofile (props["SciteDefaultHome"].."\\tools\\AutocompleteObject.lua")
 -- Set in a file .properties:
---   api.lua=$(SciteDefaultHome)\api\SciTELua.api
 --   autocomplete.lua.start.characters=.:
 ------------------------------------------------
 local prop_autocompleteword_automatic = 0
@@ -64,7 +64,7 @@ local function AutocompleteObject(char)
 	end
 
 	-- Get api file
-	local api_filename = props['api.'..editor.LexerLanguage]
+	local api_filename = string.gsub(props["APIPath"],";.*","")
 	if api_filename == '' then return false end
 	local api_file = io.open(api_filename)
 	if not api_file then
