@@ -139,12 +139,6 @@ bool SingleThreadExtension::OnDoubleClick(int modifiers){
 }
 //!-end-[OnDoubleClick]
 
-//!-start-[OnClick]
-bool SingleThreadExtension::OnClick(int modifiers){
-	return ext->OnClick(modifiers);
-}
-//!-end-[OnClick]
-
 bool SingleThreadExtension::OnUpdateUI() {
 	return ext->OnUpdateUI();
 }

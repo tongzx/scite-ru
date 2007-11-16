@@ -196,16 +196,6 @@ bool MultiplexExtension::OnDoubleClick(int modifiers) {
 }
 //!-end-[OnDoubleClick]
 
-//!-start-[OnClick]
-bool MultiplexExtension::OnClick(int modifiers) {
-	bool handled = false;
-	for (int i=0; i<extensionCount && !handled; ++i)
-		if (extensions[i]->OnClick(modifiers))
-			handled = true;
-		return handled;
-}
-//!-end-[OnClick]
-
 bool MultiplexExtension::OnUpdateUI() {
 	bool handled = false;
 	for (int i = 0; i < extensionCount && !handled; ++i)
