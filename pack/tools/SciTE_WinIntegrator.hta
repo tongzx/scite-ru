@@ -56,7 +56,7 @@ function Set(){
 	}
 	if(form.openfor.checked){
 		WshShell.RegWrite('HKCR\\*\\shell\\Open with SciTE\\', 'Открыть в &SciTE');
-		WshShell.RegWrite('HKCR\\*\\shell\\Open with SciTE\\command\\', '"' + form.home.value + '\\SciTE.exe" "%1"');
+		WshShell.RegWrite('HKCR\\*\\shell\\Open with SciTE\\command\\', '"' + form.home.value + '\\SciTE.exe" -check.if.already.open=0 "%1"');
 	}
 	if(form.ses.checked){
 		var open_ses_file = 'open_session.js';
