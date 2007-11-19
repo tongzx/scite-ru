@@ -1,0 +1,115 @@
+<html><head>
+<meta http-equiv=Content-Type Content="text-html; charset=windows-1251">
+<meta http-equiv=MSThemeCompatible Content=Yes>
+<meta http-equiv=Author Content=mozers>
+<hta:application
+id=HTML_TB
+applicationName=HTML_Toolbar
+maximizeButton=no
+border=dialog
+innerBorder=yes
+borderStyle=raised
+scroll=no
+selection=no
+contextMenu=no
+caption=no
+showInTaskBar=no
+singleinstance=yes
+version=1.0
+>
+<title>html Toolbar</title>
+<style type="text/css">
+	body, table {font-family:MS Sans Serif; font-size:8px; background-color:threedface; cursor:default; margin:0px;}
+	button {font-family:MS Sans Serif; font-size:8px; font-weight:bold; color:#0000CC;}
+</style>
+<script language="JavaScript">
+try {
+	var SciTE=new ActiveXObject("SciTE.Helper");
+} catch(e) {
+	alert("Please install SciTE Helper before!");
+	self.close();
+}
+
+var filename = SciTE.Props ("SciteUserHome") + "\\HTML_toolbar.ini";
+
+var Arr_BTN=new Array;
+var buttons=readfile(filename);
+if (buttons){
+	var Arr_tmp=buttons.split("\r\n");
+	for (i=0;i<Arr_tmp.length;i++){
+		Arr_BTN[i] = /(.*?)=(.*)/.exec(Arr_tmp[i]);
+	}
+}
+
+var btn_html = ""
+for (i=0;i<Arr_BTN.length;i++){
+	if (Arr_BTN[i]) {
+		btn_html += "<button onClick=\"AddTag(" + i + ")\">" + Arr_BTN[i][1] + "</button>&nbsp;";
+	}else{
+		btn_html += "<font size='3' disabled>|</font>&nbsp;";
+	}
+}
+
+function readfile(filename) {
+	var fso = new ActiveXObject("Scripting.FileSystemObject");
+	if (fso.FileExists(filename)) {
+		if (fso.GetFile(filename).Size > 0) {
+			var file = fso.OpenTextFile(filename, 1);
+			var text = file.ReadAll();
+			file.Close();
+			return text;
+		}
+	}
+}
+
+function AddTag(i){
+	var text = SciTE.Props("CurrentSelection");
+	text = Arr_BTN[i][2].replace(/%SEL%/,text);
+	SciTE.ReplaceSel(text);
+}
+</script>
+</head><body onLoad="SciTE.onTop(document.title, true);">
+<table id="TB"><tr><td style="white-space:nowrap;">
+<span id="BTN"></span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button onClick="self.close();" style="font-family:Marlett; font-weight:normal; font-size:14px; color:red;">r</button>
+</td></tr></table>
+</body>
+<script language="JavaScript">
+BTN.innerHTML = btn_html;
+window.resizeTo(TB.offsetWidth+4, 31);
+window.moveTo(SciTE.Left+60, SciTE.Top+90);
+TB.focus();
+
+function cursor(c){
+	for (var i in document.all) {
+		try {document.all[i].style.cursor=c} catch(e) {}
+	}
+}
+
+var x0, y0;
+
+function WindowDragHandler() {
+	if (event.button!=1){
+		window.moveBy(event.x-x0, event.y-y0);
+	}
+}
+
+document.onmousedown=function () {
+	if (event.button!=1){
+		x0=event.x; y0=event.y;
+		document.onmousemove=WindowDragHandler;
+		cursor("move");
+	}
+}
+
+document.onmouseup=function () {
+	document.onmousemove=null;
+	cursor("auto");
+}
+
+document.mouseout=function () {
+	document.onmousemove=null;
+	cursor("auto");
+}
+</script>
+</html>
