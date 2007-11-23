@@ -11,7 +11,7 @@
 #include "Platform.h"
 
 #include "Scintilla.h"
-#include "SVector.h"
+#include "SVector.h" //!-add-[BetterCalltips]
 #include "CallTip.h"
 #include <stdio.h>
 
@@ -31,7 +31,7 @@ CallTip::CallTip() {
 	rectDown = PRectangle(0,0,0,0);
 	lineHeight = 1;
 /*!	startHighlight = 0;
-	endHighlight = 0;*/
+	endHighlight = 0;*/ //!-change-[BetterCalltips]
 	tabSize = 0;
 	useStyleCallTip = false;    // for backwards compatibility
 

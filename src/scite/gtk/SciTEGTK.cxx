@@ -27,6 +27,7 @@
 
 #include "SciTE.h"
 #include "PropSet.h"
+#include "StringList.h"
 #include "Accessor.h"
 #include "KeyWords.h"
 #include "Scintilla.h"
@@ -34,6 +35,8 @@
 #include "Extender.h"
 #include "FilePath.h"
 #include "PropSetFile.h"
+#include "Mutex.h"
+#include "JobQueue.h"
 #include "SciTEBase.h"
 #include "SciTEKeys.h"
 
@@ -444,7 +447,10 @@ protected:
 	virtual FilePath GetSciteUserHome();
 
 	virtual void SetStatusBarText(const char *s);
-	virtual void SetFileProperties(PropSet &ps);
+	virtual void TabInsert(int index, char *title);
+	virtual void TabSelect(int index);
+	virtual void RemoveAllTabs();
+	virtual void SetFileProperties(PropSetFile &ps);
 	virtual void UpdateStatusBar(bool bUpdateSlowData);
 
 	virtual void Notify(SCNotification *notification);
@@ -456,12 +462,13 @@ protected:
 
 	static void ReadPipe(gpointer data, gint source, GdkInputCondition condition);
 	void SendFileName(int sendPipe, const char* filename);
-	void CheckForRunningInstance(int argc, char* argv[]);
+	bool CheckForRunningInstance(int argc, char* argv[]);
 
 	// GTK+ Signal Handlers
 
 	void FindInFilesCmd();
 	void FindInFilesDotDot();
+	void FindInFilesBrowse();
 
 	void GotoCmd();
 	void TabSizeSet(int &tabSize, bool &useTabs);
@@ -566,7 +573,7 @@ SciTEGTK::SciTEGTK(Extension *ext) : SciTEBase(ext) {
 
 	pipeFD = -1;
 
-	PropSet::SetCaseSensitiveFilenames(true);
+	PropSetFile::SetCaseSensitiveFilenames(true);
 	propsEmbed.Set("PLAT_GTK", "1");
 
 	pathAbbreviations = GetAbbrevPropertiesFileName();
@@ -758,7 +765,36 @@ void SciTEGTK::SetStatusBarText(const char *s) {
 	gtk_statusbar_push(GTK_STATUSBAR(PWidget(wStatusBar)), sbContextID, s);
 }
 
-void SciTEGTK::SetFileProperties(PropSet &ps) {
+void SciTEGTK::TabInsert(int index, char *title) {
+	if (wTabBar.GetID()) {
+		GtkWidget *tablabel = gtk_label_new(title);
+		GtkWidget *tabcontent;
+		if (buffers.buffers[index].IsUntitled())
+			tabcontent = gtk_label_new(localiser.Text("Untitled").c_str());
+		else
+			tabcontent = gtk_label_new(buffers.buffers[index].AsInternal());
+
+		gtk_widget_show(tablabel);
+		gtk_widget_show(tabcontent);
+
+		gtk_notebook_append_page(GTK_NOTEBOOK(wTabBar.GetID()), tabcontent, tablabel);
+	}
+}
+
+void SciTEGTK::TabSelect(int index) {
+	if (wTabBar.GetID())
+		gtk_notebook_set_page(GTK_NOTEBOOK(wTabBar.GetID()), index);
+}
+
+void SciTEGTK::RemoveAllTabs() {
+	if (wTabBar.GetID()) {
+		GtkWidget *tab;
+		while ((tab = gtk_notebook_get_nth_page(GTK_NOTEBOOK(wTabBar.GetID()), 0)))
+			gtk_notebook_remove_page(GTK_NOTEBOOK(wTabBar.GetID()), 0);
+	}
+}
+
+void SciTEGTK::SetFileProperties(PropSetFile &ps) {
 	// Could use Unix standard calls here, someone less lazy than me (PL) should do it.
 	ps.Set("FileTime", "");
 	ps.Set("FileDate", "");
@@ -1021,9 +1057,9 @@ void SciTEGTK::CheckMenus() {
 	CheckAMenuItem(IDM_VIEWTABBAR, tabVisible);
 
 	if (btnBuild) {
-		gtk_widget_set_sensitive(btnBuild, !executing);
-		gtk_widget_set_sensitive(btnCompile, !executing);
-		gtk_widget_set_sensitive(btnStop, executing);
+		gtk_widget_set_sensitive(btnBuild, !jobQueue.IsExecuting());
+		gtk_widget_set_sensitive(btnCompile, !jobQueue.IsExecuting());
+		gtk_widget_set_sensitive(btnStop, jobQueue.IsExecuting());
 	}
 }
 
@@ -1117,17 +1153,21 @@ bool SciTEGTK::OpenDialog(FilePath directory, const char *filter) {
 					openFilter.remove(start, strlen(filterName));
 					openFilter.insert(start, localised.c_str());
 				}
-				GtkFileFilter *filter = gtk_file_filter_new();
-				gtk_file_filter_set_name(filter, openFilter.c_str() + start);
-				start += strlen(openFilter.c_str() + start) + 1;
-				SString oneSet(openFilter.c_str() + start);
-				oneSet.substitute(';', '\0');
-				size_t item = 0;
-				while (item < oneSet.length()) {
-					gtk_file_filter_add_pattern(filter, oneSet.c_str() + item);
-					item += strlen(oneSet.c_str() + item) + 1;
+				if (openFilter.c_str()[start] == '#') {
+					start += strlen(openFilter.c_str() + start) + 1;
+				} else {
+					GtkFileFilter *filter = gtk_file_filter_new();
+					gtk_file_filter_set_name(filter, openFilter.c_str() + start);
+					start += strlen(openFilter.c_str() + start) + 1;
+					SString oneSet(openFilter.c_str() + start);
+					oneSet.substitute(';', '\0');
+					size_t item = 0;
+					while (item < oneSet.length()) {
+						gtk_file_filter_add_pattern(filter, oneSet.c_str() + item);
+						item += strlen(oneSet.c_str() + item) + 1;
+					}
+					gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dlg), filter);
 				}
-				gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dlg), filter);
 				start += strlen(openFilter.c_str() + start) + 1;
 			}
 		}
@@ -1191,7 +1231,8 @@ bool SciTEGTK::SaveAsXXX(FileFormat fmt, const char *title, const char *ext) {
 	bool canceled = true;
 	saveFormat = fmt;
 	if (!dlgFileSelector.Created()) {
-		GtkWidget *dlg = gtk_file_chooser_dialog_new(localiser.Text(title).c_str(),
+		GtkWidget *dlg = gtk_file_chooser_dialog_new(
+					localiser.Text(title).c_str(),
 				      GTK_WINDOW(wSciTE.GetID()),
 				      GTK_FILE_CHOOSER_ACTION_SAVE,
 				      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
@@ -1202,6 +1243,8 @@ bool SciTEGTK::SaveAsXXX(FileFormat fmt, const char *title, const char *ext) {
 		if (ext) {
 			gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dlg), savePath.Directory().AsInternal());
 			gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dlg), savePath.Name().AsInternal());
+		} else if (savePath.IsUntitled()) { // saving 'untitled'
+			gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dlg), savePath.Directory().AsInternal());
 		} else {
 			gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(dlg), savePath.AsInternal());
 		}
@@ -1249,7 +1292,8 @@ void SciTEGTK::SaveAsXML() {
 void SciTEGTK::LoadSessionDialog() {
 	filePath.SetWorkingDirectory();
 	if (!dlgFileSelector.Created()) {
-		GtkWidget *dlg = gtk_file_chooser_dialog_new("Load Session",
+		GtkWidget *dlg = gtk_file_chooser_dialog_new(
+					localiser.Text("Load Session").c_str(),
 				      GTK_WINDOW(wSciTE.GetID()),
 				      GTK_FILE_CHOOSER_ACTION_OPEN,
 				      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
@@ -1270,7 +1314,8 @@ void SciTEGTK::LoadSessionDialog() {
 void SciTEGTK::SaveSessionDialog() {
 	filePath.SetWorkingDirectory();
 	if (!dlgFileSelector.Created()) {
-		GtkWidget *dlg = gtk_file_chooser_dialog_new("Save Session",
+		GtkWidget *dlg = gtk_file_chooser_dialog_new(
+					localiser.Text("Save Session").c_str(),
 				      GTK_WINDOW(wSciTE.GetID()),
 				      GTK_FILE_CHOOSER_ACTION_SAVE,
 				      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
@@ -1292,8 +1337,8 @@ void SciTEGTK::Print(bool) {
 	SelectionIntoProperties();
 	AddCommand(props.GetWild("command.print.", filePath.AsInternal()), "",
 	           SubsystemType("command.print.subsystem."));
-	if (commandCurrent > 0) {
-		isBuilding = true;
+	if (jobQueue.commandCurrent > 0) {
+		jobQueue.isBuilding = true;
 		Execute();
 	}
 }
@@ -1469,13 +1514,33 @@ void SciTEGTK::FindInFilesCmd() {
 		//~ fprintf(stderr, "%s\n", findCommand.c_str());
 	}
 	AddCommand(findCommand, props.Get("find.directory"), jobCLI);
-	if (commandCurrent > 0)
+	if (jobQueue.commandCurrent > 0)
 		Execute();
 }
 
 void SciTEGTK::FindInFilesDotDot() {
 	FilePath findInDir(gtk_entry_get_text(GTK_ENTRY(GTK_COMBO(comboDir)->entry)));
 	gtk_entry_set_text(GTK_ENTRY(GTK_COMBO(comboDir)->entry), findInDir.Directory().AsInternal());
+}
+
+void SciTEGTK::FindInFilesBrowse() {
+	FilePath findInDir(gtk_entry_get_text(GTK_ENTRY(GTK_COMBO(comboDir)->entry)));
+	GtkWidget *dialog = gtk_file_chooser_dialog_new(
+							localiser.Text("Select a folder to search from").c_str(),
+							GTK_WINDOW(dlgFindInFiles.GetID()), // parent_window,
+							GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
+							GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+							GTK_STOCK_OK, GTK_RESPONSE_ACCEPT,
+							NULL);
+	gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog), findInDir.AsInternal());
+
+	if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
+		char *filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
+		gtk_entry_set_text(GTK_ENTRY(GTK_COMBO(comboDir)->entry), filename);
+		g_free(filename);
+	}
+
+	gtk_widget_destroy(dialog);
 }
 
 class Table {
@@ -1526,7 +1591,7 @@ void SciTEGTK::FindInFiles() {
 
 	dlgFindInFiles.Create(this, "Find in Files", &localiser);
 
-	Table table(4,4);
+	Table table(4, 5);
 	table.PackInto(GTK_BOX(GTK_DIALOG(PWidget(dlgFindInFiles))->vbox));
 
 	static Signal<&SciTEGTK::FindInFilesCmd> sigFind;
@@ -1539,7 +1604,7 @@ void SciTEGTK::FindInFiles() {
 	gtk_combo_set_case_sensitive(GTK_COMBO(comboFindInFiles), TRUE);
 	gtk_combo_set_use_arrows_always(GTK_COMBO(comboFindInFiles), TRUE);
 
-	table.Add(comboFindInFiles, 3, true);
+	table.Add(comboFindInFiles, 4, true);
 
 	gtk_entry_set_text(GTK_ENTRY(GTK_COMBO(comboFindInFiles)->entry), findWhat.c_str());
 	gtk_entry_select_region(GTK_ENTRY(GTK_COMBO(comboFindInFiles)->entry), 0, findWhat.length());
@@ -1553,7 +1618,7 @@ void SciTEGTK::FindInFiles() {
 	gtk_combo_set_case_sensitive(GTK_COMBO(comboFiles), TRUE);
 	gtk_combo_set_use_arrows_always(GTK_COMBO(comboFiles), TRUE);
 
-	table.Add(comboFiles, 3, true);
+	table.Add(comboFiles, 4, true);
 	dlgFindInFiles.OnActivate(GTK_COMBO(comboFiles)->entry, sigFind.Function);
 	gtk_combo_disable_activate(GTK_COMBO(comboFiles));
 
@@ -1576,6 +1641,10 @@ void SciTEGTK::FindInFiles() {
 	static Signal<&SciTEGTK::FindInFilesDotDot> sigDotDot;
 	GtkWidget *btnDotDot = dlgFindInFiles.Button("_..", sigDotDot.Function);
 	table.Add(btnDotDot);
+
+	static Signal<&SciTEGTK::FindInFilesBrowse> sigBrowse;
+	GtkWidget *btnBrowse = dlgFindInFiles.Button("_Browse...", sigBrowse.Function);
+	table.Add(btnBrowse);
 
 	table.Add();	// Space
 
@@ -1608,11 +1677,11 @@ void SciTEGTK::Replace() {
 
 void SciTEGTK::ExecuteNext() {
 	icmd++;
-	if (icmd < commandCurrent && icmd < commandMax) {
+	if (icmd < jobQueue.commandCurrent && icmd < jobQueue.commandMax) {
 		Execute();
 	} else {
 		icmd = 0;
-		executing = false;
+		jobQueue.SetExecuting(false);
 		if (needReadProperties)
 			ReadProperties();
 		CheckReload();
@@ -1635,7 +1704,7 @@ void SciTEGTK::ContinueExecute(int fromPoll) {
 			sSignal.insert(0, " Signal: ");
 			sExitMessage += sSignal;
 		}
-		if (timeCommands) {
+		if (jobQueue.TimeCommands()) {
 			sExitMessage += "    Time: ";
 			sExitMessage += SString(commandTime.Duration(), 3);
 		}
@@ -1708,23 +1777,23 @@ void SciTEGTK::Execute() {
 	originalEnd = SendOutput(SCI_GETCURRENTPOS);
 
 	OutputAppendString(">");
-	OutputAppendString(jobQueue[icmd].command.c_str());
+	OutputAppendString(jobQueue.jobQueue[icmd].command.c_str());
 	OutputAppendString("\n");
 
 	unlink(resultsFile);
-	if (jobQueue[icmd].directory.IsSet()) {
-		jobQueue[icmd].directory.SetWorkingDirectory();
+	if (jobQueue.jobQueue[icmd].directory.IsSet()) {
+		jobQueue.jobQueue[icmd].directory.SetWorkingDirectory();
 	}
 
-	if (jobQueue[icmd].jobType == jobShell) {
+	if (jobQueue.jobQueue[icmd].jobType == jobShell) {
 		if (fork() == 0)
-			execlp("/bin/sh", "sh", "-c", jobQueue[icmd].command.c_str(),
+			execlp("/bin/sh", "sh", "-c", jobQueue.jobQueue[icmd].command.c_str(),
 				static_cast<char *>(NULL));
 		else
 			ExecuteNext();
-	} else if (jobQueue[icmd].jobType == jobExtension) {
+	} else if (jobQueue.jobQueue[icmd].jobType == jobExtension) {
 		if (extender)
-			extender->OnExecute(jobQueue[icmd].command.c_str());
+			extender->OnExecute(jobQueue.jobQueue[icmd].command.c_str());
 		ExecuteNext();
 	} else {
 		if (!MakePipe(resultsFile)) {
@@ -1733,7 +1802,7 @@ void SciTEGTK::Execute() {
 			return;
 		}
 
-		pidShell = xsystem(jobQueue[icmd].command.c_str(), resultsFile);
+		pidShell = xsystem(jobQueue.jobQueue[icmd].command.c_str(), resultsFile);
 		triedKill = false;
 		fdFIFO = open(resultsFile, O_RDONLY | O_NONBLOCK);
 		if (fdFIFO < 0) {
@@ -2115,22 +2184,13 @@ void SciTEGTK::AboutDialog() {
 
 void SciTEGTK::QuitProgram() {
 	if (SaveIfUnsureAll() != IDCANCEL) {
-
-#ifndef NO_FILER
-		int fdPipe = props.GetInt("scite.ipc_fdpipe");
-		if (fdPipe != -1) {
-			close(fdPipe);
-			unlink(props.Get("scite.ipc_name").c_str());
-		}
-#else
 		//clean up any pipes that are ours
 		if (pipeFD != -1) {
 			//printf("Cleaning up pipe\n");
 			close(pipeFD);
 			unlink(pipeName);
 		}
-#endif
-		gtk_exit(0);
+		gtk_main_quit();
 	}
 }
 
@@ -2141,19 +2201,7 @@ gint SciTEGTK::MoveResize(GtkWidget *, GtkAllocation * /*allocation*/, SciTEGTK 
 }
 
 gint SciTEGTK::QuitSignal(GtkWidget *, GdkEventAny *, SciTEGTK *scitew) {
-	if (scitew->SaveIfUnsureAll() != IDCANCEL) {
-
-		//clean up any pipes that are ours
-		if (scitew->pipeFD != -1) {
-			//printf("Cleaning up pipe\n");
-			close(scitew->pipeFD);
-			unlink(scitew->pipeName);
-
-		}
-		gtk_exit(0);
-	}
-	// No need to return FALSE for quit as gtk_exit will have been called
-	// if needed.
+	scitew->QuitProgram();
 	return TRUE;
 }
 
@@ -2706,8 +2754,6 @@ void SciTEGTK::CreateTranslatedMenu(int n, SciTEItemFactoryEntry items[],
 	delete[] userDefinedAccels;
 }
 
-#define ELEMENTS(a) (sizeof(a) / sizeof(a[0]))
-
 void SciTEGTK::CreateMenu() {
 
 	GtkItemFactoryCallback menuSig = GtkItemFactoryCallback(MenuSignal);
@@ -3132,7 +3178,7 @@ void SciTEGTK::CreateUI() {
 	sbVisible = false;
 
 	static const GtkTargetEntry dragtypes[] = { { "text/uri-list", 0, 0 } };
-	static const gint n_dragtypes = sizeof(dragtypes) / sizeof(dragtypes[0]);
+	static const gint n_dragtypes = ELEMENTS(dragtypes);
 
 	gtk_drag_dest_set(PWidget(wSciTE), GTK_DEST_DEFAULT_ALL, dragtypes,
 	                  n_dragtypes, GDK_ACTION_COPY);
@@ -3258,7 +3304,7 @@ void SciTEGTK::ReadPipe(gpointer data, gint source, GdkInputCondition condition)
 void SciTEGTK::SendFileName(int sendPipe, const char* filename) {
 
 	// Create the command to send thru the pipe.
-	char pipeData[CHAR_MAX];
+	char pipeData[MAX_PATH];
 
 	// Check to see if path is already absolute.  If it isn't then add the
 	// absolute path to the front of the command to send.
@@ -3269,13 +3315,14 @@ void SciTEGTK::SendFileName(int sendPipe, const char* filename) {
 		snprintf(pipeData, sizeof(pipeData) - 1, "%s/%s", currentPath, filename);
 		g_free(currentPath);
 	}
+	pipeData[sizeof(pipeData) - 1] = '\0';
 
 	// Send it.
 	if (write(sendPipe, pipeData, strlen(pipeData) + 1) == -1)
 		perror("Unable to write to pipe");
 }
 
-void SciTEGTK::CheckForRunningInstance(int argc, char *argv[]) {
+bool SciTEGTK::CheckForRunningInstance(int argc, char *argv[]) {
 
 	// Use ipc.scite.name for the pipe name if it exists.
 	const SString pipeFilename = props.Get("ipc.scite.name");
@@ -3297,7 +3344,7 @@ void SciTEGTK::CheckForRunningInstance(int argc, char *argv[]) {
 
 		// Force the SciTE instance to come to the front.
 		SendFileName(sendPipe, "");
-		gtk_exit(0);
+		return true;
 	}
 
 	// If pipe doesn't exist, create it.  If pipe exists without a
@@ -3306,7 +3353,7 @@ void SciTEGTK::CheckForRunningInstance(int argc, char *argv[]) {
 		MakePipe(pipeName);
 	else if (errno != ENXIO) {
 		perror("Unable to open pipe as writer");
-		gtk_exit(0);
+		return true;
 	}
 
 	// Now open it as a reader to receive data.
@@ -3314,11 +3361,12 @@ void SciTEGTK::CheckForRunningInstance(int argc, char *argv[]) {
 	if (pipeFD == -1) {
 		perror("Unable to open pipe as reader");
 		unlink(pipeName);
-		gtk_exit(0);
+		return true;
 	}
 
 	// Handler to read data.
 	gdk_input_add(pipeFD, GDK_INPUT_READ, ReadPipe, this);
+	return false;
 }
 
 void SciTEGTK::Run(int argc, char *argv[]) {
@@ -3343,9 +3391,13 @@ void SciTEGTK::Run(int argc, char *argv[]) {
 	// Process any initial switches
 	ProcessCommandLine(args, 0);
 
-	// Check if SciTE is already running.  This could exit the program.
-	if ((props.Get("ipc.director.name").size() == 0) && props.GetInt ("check.if.already.open"))
-		CheckForRunningInstance (argc, argv);
+	// Check if SciTE is already running.
+	if ((props.Get("ipc.director.name").size() == 0) && props.GetInt ("check.if.already.open")) {
+		if (CheckForRunningInstance (argc, argv)) {
+			// Returning from this function exits the program.
+			return;
+		}
+	}
 
 	CreateUI();
 

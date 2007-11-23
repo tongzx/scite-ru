@@ -195,6 +195,10 @@ SOURCE=..\lua\src\ldump.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\scintilla\src\LexAbaqus.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\scintilla\src\LexAda.cxx
 # End Source File
 # Begin Source File
@@ -208,6 +212,10 @@ SOURCE=..\..\scintilla\src\LexAsm.cxx
 # Begin Source File
 
 SOURCE=..\..\scintilla\src\LexAsn1.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\scintilla\src\LexASY.cxx
 # End Source File
 # Begin Source File
 
@@ -395,6 +403,10 @@ SOURCE=..\..\scintilla\src\LexPython.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\scintilla\src\LexR.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\scintilla\src\LexRebol.cxx
 # End Source File
 # Begin Source File
@@ -559,6 +571,10 @@ SOURCE=..\..\scintilla\Src\PropSet.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\Src\PropSetFile.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\scintilla\src\RESearch.cxx
 # End Source File
 # Begin Source File
@@ -611,6 +627,10 @@ SOURCE=..\win32\SingleThreadExtension.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\StringList.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\scintilla\src\Style.cxx
 # End Source File
 # Begin Source File
@@ -636,6 +656,10 @@ SOURCE=..\..\scintilla\src\ViewStyle.cxx
 # Begin Source File
 
 SOURCE=..\..\scintilla\Src\WindowAccessor.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\win32\WinMutex.cxx
 # End Source File
 # Begin Source File
 

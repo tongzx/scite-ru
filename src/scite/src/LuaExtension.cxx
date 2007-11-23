@@ -271,7 +271,6 @@ static int cf_scite_open(lua_State *L) {
 	return 0;
 }
 
-/*!
 static int cf_scite_menu_command(lua_State *L) {
 	int cmdID = luaL_checkint(L, 1);
 	if (cmdID) {
@@ -279,25 +278,6 @@ static int cf_scite_menu_command(lua_State *L) {
 	}
 	return 0;
 }
-*/
-//!-start-[MenuCommandString]
-static int cf_scite_menu_command(lua_State *L) {
-	if (lua_isnumber(L, 1)) {
-		host->DoMenuCommand((int)lua_tonumber(L, 1));
-	} else {
-		const char *s = luaL_checkstring(L, 1);
-		if (s) {
-			int cmdID = host->GetMenuCommandAsInt(s);
-			if (cmdID) {
-				host->DoMenuCommand(cmdID);
-			} else {
-				raise_error(L, "MenuCommand ID not found.");
-			}
-		}
-	}
-	return 0;
-}
-//!-end-[MenuCommandString]
 
 //!-start-[Perform]
 static int cf_scite_perform(lua_State *L) {

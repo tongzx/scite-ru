@@ -27,7 +27,10 @@
 #include "DirectorExtension.h"
 #include "SciTE.h"
 #include "FilePath.h"
+#include "StringList.h"
 #include "PropSetFile.h"
+#include "Mutex.h"
+#include "JobQueue.h"
 #include "SciTEBase.h"
 
 static ExtensionAPI *host = 0;
@@ -212,7 +215,7 @@ void DirectorExtension::HandleStringMessage(const char *message) {
 	// Message may contain multiple commands separated by '\n'
 	// Reentrance trouble - if this function is reentered, the fdCorrespondent may
 	// be set to zero before time.
-	WordList wlMessage(true);
+	StringList wlMessage(true);
 	wlMessage.Set(message);
 	//fprintf(fdDebug, "HandleStringMessage: got %s\n", message);
 	for (int i = 0; i < wlMessage.len; i++) {

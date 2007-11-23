@@ -11,7 +11,7 @@ local function ROCheck()
 -- Если среди аттрибутов ReadOnly/Hidden/System, и НЕ установлен режим R/O
 	if string.find(FileAttr, "[RHS]") and not editor.ReadOnly then
 	-- то установим режим R/O
-		scite.MenuCommand("IDM_READONLY")
+		scite.MenuCommand(IDM_READONLY)
 	end
 end
 

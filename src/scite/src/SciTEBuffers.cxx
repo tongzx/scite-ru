@@ -49,6 +49,7 @@
 
 #include "SciTE.h"
 #include "PropSet.h"
+#include "StringList.h"
 #include "Accessor.h"
 #include "WindowAccessor.h"
 #include "KeyWords.h"
@@ -57,34 +58,14 @@
 #include "Extender.h"
 #include "FilePath.h"
 #include "PropSetFile.h"
+#include "Mutex.h"
+#include "JobQueue.h"
 #include "SciTEBase.h"
 
 const char recentFileName[] = "SciTE.recent";
 const char defaultSessionFileName[] = "SciTE.session";
 
-Job::Job() {
-	Clear();
-}
-
-//!-start--[Tread.SmartExecute]
-Job::Job(const Job &jb) {
-	command.append(jb.command.c_str(), jb.command.size() );
-	directory = jb.directory;
-	input = jb.input;
-	jobType = jb.jobType;
-	flags = jb.flags;
-}
-//!-end--[Tread.SmartExecute]
-
-void Job::Clear() {
-	command = "";
-	directory.Init();
-	jobType = jobCLI;
-	input = "";
-	flags = 0;
-}
-
-BufferList::BufferList() : current(0), stackcurrent(0), buffers(0), size(0), length(0), initialised(false) {}
+BufferList::BufferList() : current(0), stackcurrent(0), stack(0), buffers(0), size(0), length(0), initialised(false) {}
 
 BufferList::~BufferList() {
 	delete []buffers;
@@ -138,7 +119,7 @@ int BufferList::GetDocumentByName(FilePath filename) {
 
 void BufferList::RemoveCurrent() {
 	// Delete and move up to fill gap but ensure doc pointer is saved.
-	int currentDoc = buffers[current].doc;
+	sptr_t currentDoc = buffers[current].doc;
 	for (int i = current;i < length - 1;i++) {
 		buffers[i] = buffers[i + 1];
 	}
@@ -220,32 +201,29 @@ void BufferList::CommitStackSelection() {
 	stackcurrent = 0;
 }
 
-//!-start-[TabsMoving] 
-void BufferList::ShiftTo(int index_from, int index_to) {
+void BufferList::ShiftTo(int indexFrom, int indexTo) {
 	// shift buffer to new place in buffers array
-	if (index_from == index_to ||
-		index_from < 0 || index_from >= length ||
-		index_to < 0 || index_to >= length) return;
-	int step = (index_from > index_to) ? -1 : 1;
-	Buffer tmp = buffers[index_from];
+	if (indexFrom == indexTo ||
+		indexFrom < 0 || indexFrom >= length ||
+		indexTo < 0 || indexTo >= length) return;
+	int step = (indexFrom > indexTo) ? -1 : 1;
+	Buffer tmp = buffers[indexFrom];
 	int i;
-	for (i = index_from; i != index_to; i += step) {
+	for (i = indexFrom; i != indexTo; i += step) {
 		buffers[i] = buffers[i+step];
 	}
-	buffers[index_to] = tmp;
+	buffers[indexTo] = tmp;
 	// update stack indexes
 	for (i = 0; i < length; i++) {
-		if (stack[i] == index_from) stack[i] = index_to;
-		else
-			if (step == 1) {
-				if (index_from < stack[i] && stack[i] <= index_to) stack[i] -= step;
-			}
-			else {
-				if (index_from > stack[i] && stack[i] >= index_to) stack[i] -= step;
-			}
+		if (stack[i] == indexFrom) {
+			stack[i] = indexTo;
+		} else if (step == 1) {
+			if (indexFrom < stack[i] && stack[i] <= indexTo) stack[i] -= step;
+		} else {
+			if (indexFrom > stack[i] && stack[i] >= indexTo) stack[i] -= step;
+		}
 	}
 }
-//!-end-[TabsMoving]
 
 sptr_t SciTEBase::GetDocumentAt(int index) {
 	if (index < 0 || index >= buffers.size) {
@@ -288,15 +266,7 @@ void SciTEBase::SetDocumentAt(int index, bool updateStack) {
 	SendEditor(SCI_SETDOCPOINTER, 0, GetDocumentAt(buffers.Current()));
 	RestoreState(bufferNext);
 
-#if PLAT_WIN
-	// Tab Bar
-	::SendMessage(reinterpret_cast<HWND>(wTabBar.GetID()), TCM_SETCURSEL, (WPARAM)index, (LPARAM)0);
-#endif
-#if PLAT_GTK
-
-	if (wTabBar.GetID())
-		gtk_notebook_set_page(GTK_NOTEBOOK(wTabBar.GetID()), index);
-#endif
+	TabSelect(index);
 
 	if (lineNumbers && lineNumbersExpand)
 		SetLineNumberWidth();
@@ -395,13 +365,10 @@ void SciTEBase::InitialiseBuffers() {
 		if (buffers.size == 1) {
 			// Single buffer mode, delete the Buffers main menu entry
 			DestroyMenuItem(menuBuffers, 0);
-#if PLAT_WIN
-			// Make previous change visible.
-			::DrawMenuBar(reinterpret_cast<HWND>(wSciTE.GetID()));
-#endif
 			// Destroy command "View Tab Bar" in the menu "View"
 			DestroyMenuItem(menuView, IDM_VIEWTABBAR);
-
+			// Make previous change visible.
+			RedrawMenu();
 		}
 	}
 }
@@ -675,8 +642,8 @@ void SciTEBase::New() {
 	filePath.Set(curDirectory, "");
 	SetFileName(filePath);
 	CurrentBuffer()->isDirty = false;
-	isBuilding = false;
-	isBuilt = false;
+	jobQueue.isBuilding = false;
+	jobQueue.isBuilt = false;
 	isReadOnly = false;	// No sense to create an empty, read-only buffer...
 
 	ClearDocument();
@@ -840,40 +807,31 @@ void SciTEBase::Prev() {
 	CheckReload();
 }
 
-//!-start-[TabsMoving]
-void SciTEBase::ShiftTab(int index_from, int index_to) {
-	buffers.ShiftTo(index_from, index_to);
-	buffers.SetCurrent(index_to);
+void SciTEBase::ShiftTab(int indexFrom, int indexTo) {
+	buffers.ShiftTo(indexFrom, indexTo);
+	buffers.SetCurrent(indexTo);
 	BuffersMenu();
 
-#if PLAT_WIN
-	// Tab Bar
-	::SendMessage(reinterpret_cast<HWND>(wTabBar.GetID()), TCM_SETCURSEL, (WPARAM)index_to, (LPARAM)0);
-#endif
-#if PLAT_GTK
-	if (wTabBar.GetID())
-	gtk_notebook_set_page(GTK_NOTEBOOK(wTabBar.GetID()), index_to);
-#endif
+	TabSelect(indexTo);
 
 	DisplayAround(buffers.buffers[buffers.Current()]);
 }
 
 void SciTEBase::MoveTabRight() {
 	if (buffers.length < 2) return;
-	int index_from = buffers.Current();
-	int index_to = index_from + 1;
-	if (index_to >= buffers.length) index_to = 0;
-	ShiftTab(index_from, index_to);
+	int indexFrom = buffers.Current();
+	int indexTo = indexFrom + 1;
+	if (indexTo >= buffers.length) indexTo = 0;
+	ShiftTab(indexFrom, indexTo);
 }
 
 void SciTEBase::MoveTabLeft() {
 	if (buffers.length < 2) return;
-	int index_from = buffers.Current();
-	int index_to = index_from - 1;
-	if (index_to < 0) index_to = buffers.length - 1;
-	ShiftTab(index_from, index_to);
+	int indexFrom = buffers.Current();
+	int indexTo = indexFrom - 1;
+	if (indexTo < 0) indexTo = buffers.length - 1;
+	ShiftTab(indexFrom, indexTo);
 }
-//!-end-[TabsMoving]
 
 void SciTEBase::NextInStack() {
 	SetDocumentAt(buffers.StackNext(), false);
@@ -892,20 +850,8 @@ void SciTEBase::EndStackedTabbing() {
 void SciTEBase::BuffersMenu() {
 	UpdateBuffersCurrent();
 	DestroyMenuItem(menuBuffers, IDM_BUFFERSEP);
-#if PLAT_WIN
+	RemoveAllTabs();
 
-	::SendMessage(reinterpret_cast<HWND>(wTabBar.GetID()), TCM_DELETEALLITEMS, (WPARAM)0, (LPARAM)0);
-#endif
-
-#if PLAT_GTK
-
-	if (wTabBar.GetID()) {
-		GtkWidget *tab;
-
-		while ((tab = gtk_notebook_get_nth_page(GTK_NOTEBOOK(wTabBar.GetID()), 0)))
-			gtk_notebook_remove_page(GTK_NOTEBOOK(wTabBar.GetID()), 0);
-	}
-#endif
 	int pos;
 	for (pos = 0; pos < bufferMax; pos++) {
 		DestroyMenuItem(menuBuffers, IDM_BUFFER + pos);
@@ -969,35 +915,7 @@ void SciTEBase::BuffersMenu() {
 			}
 
 			SetMenuItem(menuBuffers, menuStart + pos + 1, itemID, entry);
-#if PLAT_WIN
-			// Windows specific !
-			TCITEM tie;
-			tie.mask = TCIF_TEXT | TCIF_IMAGE;
-			tie.iImage = -1;
-
-			tie.pszText = titleTab;
-			::SendMessage(reinterpret_cast<HWND>(wTabBar.GetID()), TCM_INSERTITEM, (WPARAM)pos, (LPARAM)&tie);
-			//::SendMessage(wTabBar.GetID(), TCM_SETCURSEL, (WPARAM)pos, (LPARAM)0);
-#endif
-#if PLAT_GTK
-
-			if (wTabBar.GetID()) {
-				GtkWidget *tablabel, *tabcontent;
-
-				tablabel = gtk_label_new(titleTab);
-
-				if (buffers.buffers[pos].IsUntitled())
-					tabcontent = gtk_label_new(localiser.Text("Untitled").c_str());
-				else
-					tabcontent = gtk_label_new(buffers.buffers[pos].AsInternal());
-
-				gtk_widget_show(tablabel);
-				gtk_widget_show(tabcontent);
-
-				gtk_notebook_append_page(GTK_NOTEBOOK(wTabBar.GetID()), tabcontent, tablabel);
-			}
-#endif
-
+			TabInsert(pos, titleTab);
 		}
 	}
 	CheckMenus();
@@ -1503,7 +1421,7 @@ void SciTEBase::ToolsMenu(int item) {
 				flags |= jobGroupUndo;
 
 			AddCommand(command, "", jobType, input, flags);
-			if (commandCurrent > 0)
+			if (jobQueue.commandCurrent > 0)
 				Execute();
 		}
 	}
@@ -1632,7 +1550,7 @@ int DecodeMessage(const char *cdoc, char *sourcePath, int format, int &column) {
 			}
 		}
 	case SCE_ERR_LUA: {
-			// Lua error look like: last token read: `result' at line 40 in file `Test.lua'
+			// Lua 4 error looks like: last token read: `result' at line 40 in file `Test.lua'
 			const char *idLine = "at line ";
 			const char *idFile = "file ";
 			size_t lenLine = strlen(idLine);
@@ -1649,6 +1567,12 @@ int DecodeMessage(const char *cdoc, char *sourcePath, int format, int &column) {
 				}
 				line += lenLine;
 				return atoi(line) - 1;
+			} else {
+				// Lua 5.1 error looks like: lua.exe: test1.lua:3: syntax error
+				// reuse the GCC error parsing code above!
+				const char* colon = strstr(cdoc,": ");
+				if (cdoc)
+					return DecodeMessage(colon + 2,sourcePath,SCE_ERR_GCC,column);
 			}
 			break;
 		}

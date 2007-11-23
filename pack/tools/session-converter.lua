@@ -41,7 +41,7 @@ if scite.ShowParametersDialog("Сохранить файл как:") then
   io.output(path)
   io.write(new)
   io.close()
-  scite.MenuCommand("IDM_CLOSE")
+  scite.MenuCommand(IDM_CLOSE)
   scite.Open(path)
 else
   -- update text in editor

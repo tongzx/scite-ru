@@ -25,6 +25,8 @@ extern const char menuAccessIndicator[];
 #endif
 #endif
 
+#define ELEMENTS(a) (sizeof(a) / sizeof(a[0]))
+
 //!-start-[ExtendedContextMenu]
 class MenuEx : public Menu {
 public:
@@ -360,30 +362,9 @@ public:
 	int StackPrev();
 	void CommitStackSelection();
 	void MoveToStackTop(int index);
-	void ShiftTo(int index_from, int index_to); //!-add-[TabsMoving]
+	void ShiftTo(int indexFrom, int indexTo);
 private:
 	void PopStack();
-};
-
-enum JobSubsystem {
-    jobCLI = 0, jobGUI = 1, jobShell = 2, jobExtension = 3, jobHelp = 4, jobOtherHelp = 5, jobGrep = 6};
-
-enum JobFlags {
-    jobForceQueue = 1, jobHasInput = 2, jobQuiet = 4, // 8 reserved for jobVeryQuiet
-    jobRepSelMask = 48, jobRepSelYes = 16, jobRepSelAuto = 32,
-    jobGroupUndo = 64};
-
-class Job {
-public:
-	SString command;
-	FilePath directory;
-	SString input;
-	JobSubsystem jobType;
-	int flags;
-
-	Job();
-	Job(const Job &jb);//!-add--[Tread.SmartExecute]
-	void Clear();
 };
 
 // class to hold user defined keyboard short cuts
@@ -522,7 +503,7 @@ protected:
 	int characterSet;
 	SString language;
 	int lexLanguage;
-	WordList apis;
+	StringList apis;
 	SString apisFileNames;
 	SString functionDefinition;
 
@@ -531,14 +512,14 @@ protected:
 	bool indentMaintain;
 	int statementLookback;
 	StyleAndWords statementIndent;
-	StyleAndWords statementEnd; //!-add-[CVS]
+	StyleAndWords statementEnd;
 	StyleAndWords blockStart;
 	StyleAndWords blockEnd;
 	enum { noPPC, ppcStart, ppcMiddle, ppcEnd, ppcDummy };	///< Indicate the kind of preprocessor condition line
 	char preprocessorSymbol;	///< Preprocessor symbol (in C: #)
-	WordList preprocCondStart;	///< List of preprocessor conditional start keywords (in C: if ifdef ifndef)
-	WordList preprocCondMiddle;	///< List of preprocessor conditional middle keywords (in C: else elif)
-	WordList preprocCondEnd;	///< List of preprocessor conditional end keywords (in C: endif)
+	StringList preprocCondStart;	///< List of preprocessor conditional start keywords (in C: if ifdef ifndef)
+	StringList preprocCondMiddle;	///< List of preprocessor conditional middle keywords (in C: else elif)
+	StringList preprocCondEnd;	///< List of preprocessor conditional end keywords (in C: endif)
 
 	Window wSciTE;  ///< Contains wToolBar, wTabBar, wContent, and wStatusBar
 	Window wContent;    ///< Contains wEditor and wOutput
@@ -548,7 +529,7 @@ protected:
 	Window wToolBar;
 	Window wStatusBar;
 	Window wTabBar;
-//!	Menu popup;	//!-change-[ExtendedContextMenu]
+	Menu popup;
 	SciFnDirect fnEditor;
 	long ptrEditor;
 	SciFnDirect fnOutput;
@@ -595,6 +576,7 @@ protected:
 	int braceCount;
 
 	bool indentationWSVisible;
+	int indentExamine;
 
 	bool autoCompleteIgnoreCase;
 	bool callTipAutomatic; //!-add-[BetterCalltips]
@@ -630,19 +612,10 @@ protected:
 	bool lineNumbersExpand;
 
 	bool usePalette;
-	bool clearBeforeExecute;
 	bool allowMenuActions;
-	bool isBuilding;
-	bool isBuilt;
-	bool executing;
 	int scrollOutput;
 	bool returnOutputToCommand;
-	enum { commandMax = 2 };
-	int commandCurrent;
-	Job jobQueue[commandMax];
-	bool jobUsesOutputPane;
-	long cancelFlag;
-	bool timeCommands;
+	JobQueue jobQueue;
 
 	bool macrosEnabled;
 	SString currentMacro;
@@ -683,11 +656,12 @@ protected:
 	void PrevInStack();
 	void EndStackedTabbing();
 
-//!-start-[TabsMoving]
-	void ShiftTab(int index_from, int index_to);
+	virtual void TabInsert(int index, char *title) = 0;
+	virtual void TabSelect(int index) = 0;
+	virtual void RemoveAllTabs() = 0;
+	void ShiftTab(int indexFrom, int indexTo);
 	void MoveTabRight();
 	void MoveTabLeft();
-//!-end-[TabsMoving]
 
 	void ReadGlobalPropFile();
 	void ReadAbbrevPropFile();
@@ -788,7 +762,6 @@ protected:
 	FilePath GetAbbrevPropertiesFileName();
 	void OpenProperties(int propsFile);
 	int GetMenuCommandAsInt(SString commandName);
-	virtual int GetMenuCommandAsInt(const char *commandName) { return GetMenuCommandAsInt(SString(commandName)); }; //!-add-[MenuCommandString]
 	virtual void Print(bool) {};
 	virtual void PrintSetup() {};
 	CharacterRange GetSelection();
@@ -842,10 +815,8 @@ protected:
 	virtual void StopExecute() = 0;
 	void GoMessage(int dir);
 	virtual bool StartCallTip();
-//!-start-[CVS]
 	char *GetNearestWords(const char *wordStart, int searchLen,
 		const char *separators, bool ignoreCase=false, bool exactLen=false);
-//!-end-[CVS]
 	virtual void FillFunctionDefinition(int pos = -1);
 	void ContinueCallTip();
 	virtual void EliminateDuplicateWords(char *words);
@@ -870,7 +841,7 @@ protected:
 	void CharAdded(char ch);
 	void CharAddedOutput(int ch);
 	void SetTextProperties(PropSetFile &ps);
-	virtual void SetFileProperties(PropSet &ps) = 0;
+	virtual void SetFileProperties(PropSetFile &ps) = 0;
 	virtual void UpdateStatusBar(bool bUpdateSlowData);
 	int GetLineLength(int line);
 	int GetCurrentLineNumber();
@@ -917,6 +888,7 @@ protected:
 
 	virtual void SetMenuItem(int menuNumber, int position, int itemID,
 	        const char *text, const char *mnemonic = 0) = 0;
+	virtual void RedrawMenu() {}
 	virtual void DestroyMenuItem(int menuNumber, int itemID) = 0;
 	virtual void CheckAMenuItem(int wIDCheckItem, bool val) = 0;
 	virtual void EnableAMenuItem(int wIDCheckItem, bool val) = 0;
@@ -961,6 +933,7 @@ protected:
 	SString LocaliseMessage(const char *s, const char *param0 = 0,
 	        const char *param1 = 0, const char *param2 = 0);
 	virtual void ReadLocalization();
+	SString GetFileNameProperty(const char *name);
 	virtual void ReadPropertiesInitial();
 	void ReadFontProperties();
 	void SetOverrideLanguage(int cmdID);

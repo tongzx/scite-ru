@@ -855,8 +855,7 @@ static bool strstart(const char *haystack, const char *needle) {
 	return strncmp(haystack, needle, strlen(needle)) == 0;
 }
 
-//! static int RecogniseErrorListLine(const char *lineBuffer, unsigned int lengthLine) {
-static int RecogniseErrorListLine(const char *lineBuffer, unsigned int lengthLine, unsigned int &styleLength) { //!-change-[FindResultListStyle]
+static int RecogniseErrorListLine(const char *lineBuffer, unsigned int lengthLine, int &startValue) {
 	if (lineBuffer[0] == '>') {
 		// Command or return status
 		return SCE_ERR_CMD;
@@ -939,7 +938,9 @@ static int RecogniseErrorListLine(const char *lineBuffer, unsigned int lengthLin
 		// Microsoft: <filename>(<line>,<column>)<message>
 		// CTags: \t<message>
 		// Lua 5 traceback: \t<filename>:<line>:<message>
+		// Lua 5.1: <exe>: <filename>:<line>:<message>
 		bool initialTab = (lineBuffer[0] == '\t');
+		bool initialColonPart = false;
 		enum { stInitial,
 			stGccStart, stGccDigit, stGcc,
 			stMsStart, stMsDigit, stMsBracket, stMsVc, stMsDigitComma, stMsDotNet,
@@ -954,10 +955,12 @@ static int RecogniseErrorListLine(const char *lineBuffer, unsigned int lengthLin
 			if (state == stInitial) {
 				if (ch == ':') {
 					// May be GCC, or might be Lua 5 (Lua traceback same but with tab prefix)
-					if ((chNext != '\\') && (chNext != '/')) {
+					if ((chNext != '\\') && (chNext != '/') && (chNext != ' ')) {
 						// This check is not completely accurate as may be on
 						// GTK+ with a file name that includes ':'.
-						state = stGccStart;
+						state = stGccStart;						
+					} else if (chNext == ' ') { // indicates a Lua 5.1 error message
+						initialColonPart = true;
 					}
 				} else if ((ch == '(') && Is1To9(chNext) && (!initialTab)) {
 					// May be Microsoft
@@ -972,7 +975,7 @@ static int RecogniseErrorListLine(const char *lineBuffer, unsigned int lengthLin
 			} else if (state == stGccDigit) {	// <filename>:<line>
 				if (ch == ':') {
 					state = stGcc;	// :9.*: is GCC
-					styleLength = i; //!-add-[FindResultListStyle]
+					startValue = i + 1;
 					break;
 				} else if (!Is0To9(ch)) {
 					state = stUnrecognized;
@@ -1033,7 +1036,7 @@ static int RecogniseErrorListLine(const char *lineBuffer, unsigned int lengthLin
 			}
 		}
 		if (state == stGcc) {
-			return SCE_ERR_GCC;
+			return initialColonPart ? SCE_ERR_LUA : SCE_ERR_GCC;
 		} else if ((state == stMsVc) || (state == stMsDotNet)) {
 			return SCE_ERR_MS;
 		} else if ((state == stCtagsStringDollar) || (state == stCtags)) {
@@ -1070,13 +1073,13 @@ static void ColouriseFindListLine(
 	unsigned int p = 0;
 	while (p < lengthLine - len) {
 		if (0 == CompareNCaseInsensitive(lineBuffer + p, findValue, len)) {
-			styler.ColourTo(startPos + p, SCE_ERR_DEFAULT);
+			styler.ColourTo(startPos + p, SCE_ERR_VALUE);
 			styler.ColourTo(startPos + p + len, SCE_ERR_FIND_VALUE);
 			p += len - 1;
 		}
 		p++;
 	}
-	styler.ColourTo(endPos, SCE_ERR_DEFAULT);
+	styler.ColourTo(endPos, SCE_ERR_VALUE);
 }
 //!-end-[FindResultListStyle]
 
@@ -1086,30 +1089,30 @@ static void ColouriseErrorListLine(
     unsigned int startPos, //!-add-[FindResultListStyle]
     unsigned int endPos,
 //!-start-[FindResultListStyle]
-		bool isFindListStyle,
-		bool &isFindList,
-		char *findValue,
+    bool &isFindList,
+    char *findValue,
 //!-end-[FindResultListStyle]
-    Accessor &styler) {
-//!	styler.ColourTo(endPos, RecogniseErrorListLine(lineBuffer, lengthLine));
+    Accessor &styler,
+    bool valueSeparate) {
+	int startValue = -1;
+	int style = RecogniseErrorListLine(lineBuffer, lengthLine, startValue);
+	if (valueSeparate && (startValue >= 0)) {
+		styler.ColourTo(endPos - (lengthLine - startValue), style);
 //!-start-[FindResultListStyle]
-	unsigned int styleLength = 0;
-	int stl = RecogniseErrorListLine(lineBuffer, lengthLine, styleLength);
-	if (isFindListStyle && stl == SCE_ERR_GCC) {
-		styler.ColourTo(startPos + styleLength, stl);
 		if (isFindList) {
-			ColouriseFindListLine(lineBuffer + styleLength + 1, lengthLine - styleLength - 1, startPos + styleLength, endPos, findValue, styler);
-		} else {
-			styler.ColourTo(endPos, SCE_ERR_DEFAULT);
-		}
+			ColouriseFindListLine(lineBuffer + startValue, lengthLine - startValue, startPos + startValue - 1, endPos, findValue, styler);
+		} else
+//!-end-[FindResultListStyle]
+		styler.ColourTo(endPos, SCE_ERR_VALUE);
 	} else {
-		if (isFindListStyle && stl == SCE_ERR_CMD) {
+//!-start-[FindResultListStyle]
+		if (valueSeparate && style == SCE_ERR_CMD) {
 			isFindList = RecogniseFindListStart(lineBuffer, findValue);
 			if (!isFindList) findValue[0] = '\0';
 		}
-		styler.ColourTo(endPos, stl);
-	}
 //!-end-[FindResultListStyle]
+		styler.ColourTo(endPos, style);
+	}
 }
 
 static void ColouriseErrorListDoc(unsigned int startPos, int length, int, WordList *[], Accessor &styler) {
@@ -1117,9 +1120,10 @@ static void ColouriseErrorListDoc(unsigned int startPos, int length, int, WordLi
 	styler.StartAt(startPos);
 	styler.StartSegment(startPos);
 	unsigned int linePos = 0;
+//!	bool valueSeparate = styler.GetPropertyInt("lexer.errorlist.value.separate", 0) != 0;
 //!-start-[FindResultListStyle]
+	bool valueSeparate = styler.GetPropertyInt("lexer.errorlist.value.separate", 1) > 0;
 	unsigned int startLine = startPos;
-	bool isFindListStyle = styler.GetPropertyInt("lexer.errorlist.findliststyle", 1) > 0;
 	static bool isFindList;
 	static char findValue[1000];
 //!-end-[FindResultListStyle]
@@ -1128,15 +1132,14 @@ static void ColouriseErrorListDoc(unsigned int startPos, int length, int, WordLi
 		if (AtEOL(styler, i) || (linePos >= sizeof(lineBuffer) - 1)) {
 			// End of line (or of line buffer) met, colourise it
 			lineBuffer[linePos] = '\0';
-//!			ColouriseErrorListLine(lineBuffer, linePos, i, styler);
-			ColouriseErrorListLine(lineBuffer, linePos, startLine, i, isFindListStyle, isFindList, findValue, styler); //!-change-[FindResultListStyle]
+//!			ColouriseErrorListLine(lineBuffer, linePos, i, styler, valueSeparate);
+			ColouriseErrorListLine(lineBuffer, linePos, startLine, i, isFindList, findValue, styler, valueSeparate); //!-change-[FindResultListStyle]
 			linePos = 0;
-			startLine = i + 1; //!-add-[FindResultListStyle]
 		}
 	}
 	if (linePos > 0) {	// Last line does not have ending characters
-//!		ColouriseErrorListLine(lineBuffer, linePos, startPos + length - 1, styler);
-		ColouriseErrorListLine(lineBuffer, linePos, startLine, startPos + length - 1, isFindListStyle, isFindList, findValue, styler); //!-change-[FindResultListStyle]
+//!		ColouriseErrorListLine(lineBuffer, linePos, startPos + length - 1, styler, valueSeparate);
+		ColouriseErrorListLine(lineBuffer, linePos, startLine, startPos + length - 1, isFindList, findValue, styler, valueSeparate); //!-change-[FindResultListStyle]
 	}
 }
 

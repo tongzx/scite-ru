@@ -47,6 +47,7 @@
 
 #include "SciTE.h"
 #include "PropSet.h"
+#include "StringList.h"
 #include "Accessor.h"
 #include "WindowAccessor.h"
 #include "Scintilla.h"
@@ -54,6 +55,8 @@
 #include "Utf8_16.h"
 #include "FilePath.h"
 #include "PropSetFile.h"
+#include "Mutex.h"
+#include "JobQueue.h"
 #include "SciTEBase.h"
 
 #ifdef unix
@@ -379,7 +382,9 @@ void SciTEBase::OpenFile(int fileSize, bool suppressMessage) {
 		SString msg = LocaliseMessage("Could not open file '^0'.", filePath.AsFileSystem());
 		WindowMessageBox(wSciTE, msg, MB_OK | MB_ICONWARNING);
 	}
-	SendEditor(SCI_SETUNDOCOLLECTION, 1);
+	if (!SendEditor(SCI_GETUNDOCOLLECTION)) {
+		SendEditor(SCI_SETUNDOCOLLECTION, 1);
+	}
 	// Flick focus to the output window and back to
 	// ensure palette realised correctly.
 	WindowSetFocus(wOutput);
@@ -1110,7 +1115,7 @@ public:
 	int LineNumber() {
 		return lineNum;
 	}
-	char *Original() {
+	const char *Original() {
 //!		return lineToShow;
 		return const_cast<char *>(lineToShow.c_str()); //!-change-[FileReaderUnlimitedLen]
 	}
@@ -1232,7 +1237,7 @@ void SciTEBase::InternalGrep(GrepFlags gf, const char *directory, const char *fi
 	GrepRecursive(gf, FilePath(directory), searchString.c_str(), fileTypes, basePathLen); //!-change-[FindResultListStyle]
 	if (!(gf & grepStdOut)) {
 		SString sExitMessage(">");
-		if (timeCommands) {
+		if (jobQueue.TimeCommands()) {
 			sExitMessage += "    Time: ";
 			sExitMessage += SString(commandTime.Duration(), 3);
 		}

@@ -56,7 +56,7 @@ vpath %.cxx ../src
 
 #CXXFLAGS= -g -DGTK -DSCI_LEXER -DSYSCONF_PATH=\"$(SYSCONF_PATH)\" -Wwrite-strings
 INCLUDEDIRS=-I ../../scintilla/include -I ../src
-CXXBASEFLAGS=-W -Wall -pedantic -Os -DGTK -DSCI_LEXER -DPIXMAP_PATH=\"$(pixmapdir)\" -DSYSCONF_PATH=\"$(SYSCONF_PATH)\" $(INCLUDEDIRS)
+CXXBASEFLAGS=-W -Wall -Wno-char-subscripts -pedantic -Os -DGTK -DSCI_LEXER -DPIXMAP_PATH=\"$(pixmapdir)\" -DSYSCONF_PATH=\"$(SYSCONF_PATH)\" $(INCLUDEDIRS)
 
 ifdef DEBUG
 CXXTFLAGS=-DDEBUG -g $(CXXBASEFLAGS)
@@ -100,10 +100,10 @@ deps:
 # make should be run in ../../scintilla/gtk to compile all the lexers.
 COMPLIB=../../scintilla/bin/scintilla.a
 
-$(PROG): SciTEGTK.o FilePath.o SciTEBase.o SciTEBuffers.o SciTEIO.o Exporters.o \
-MultiplexExtension.o DirectorExtension.o SciTEProps.o Utf8_16.o \
-	$(COMPLIB) $(LUA_OBJS)
-	$(CC) `$(CONFIGTHREADS)` -DGTK $^ -o $@ $(CONFIGLIB)
+$(PROG): SciTEGTK.o FilePath.o SciTEBase.o SciTEBuffers.o SciTEIO.o StringList.o Exporters.o \
+PropSetFile.o MultiplexExtension.o DirectorExtension.o SciTEProps.o Utf8_16.o \
+	JobQueue.o GTKMutex.o $(COMPLIB) $(LUA_OBJS)
+	$(CC) `$(CONFIGTHREADS)` -rdynamic -Wl,--version-script lua.vers -DGTK $^ -o $@ $(CONFIGLIB)
 
 # Automatically generate header dependencies with "make deps"
 include deps.mak
@@ -134,6 +134,10 @@ uninstall:
 	rm -f $(DESTDIR)$(bindir)/SciTE
 	rm -rf $(DESTDIR)$(SYSCONF_PATH)
 ifdef gnomeprefix
+ifdef GTK2
+	rm -f $(DESTDIR)$(datadir)/applications/SciTE.desktop
+else
 	rm -f $(DESTDIR)$(datadir)/gnome/apps/Applications/SciTE.desktop
+endif
 	rm -f $(DESTDIR)$(pixmapdir)/Sci48M.png
 endif

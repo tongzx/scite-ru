@@ -1,5 +1,5 @@
 /*
-** $Id: loadlib.c,v 1.3 2007/06/15 00:37:58 nyamatongwe Exp $
+** $Id: loadlib.c,v 1.6 2007/11/04 06:35:12 nyamatongwe Exp $
 ** Dynamic library loader for Lua
 ** See Copyright Notice in lua.h
 **
@@ -21,6 +21,9 @@
 #include "lauxlib.h"
 #include "lualib.h"
 
+#ifndef _WIN32
+#define LUA_DL_DLOPEN
+#endif
 
 /* prefix for open functions in C libraries */
 #define LUA_POF		"luaopen_"
@@ -73,7 +76,7 @@ static void *ll_load (lua_State *L, const char *path) {
 
 
 static lua_CFunction ll_sym (lua_State *L, void *lib, const char *sym) {
-  lua_CFunction f = (lua_CFunction)dlsym(lib, sym);
+  lua_CFunction f = (lua_CFunction)(long)dlsym(lib, sym);
   if (f == NULL) lua_pushstring(L, dlerror());
   return f;
 }
@@ -502,7 +505,7 @@ static int ll_require (lua_State *L) {
 ** 'module' function
 ** =======================================================
 */
-  
+
 
 static void setfenv (lua_State *L) {
   lua_Debug ar;
@@ -630,7 +633,7 @@ LUALIB_API int luaopen_package (lua_State *L) {
   lua_setfield(L, -2, "__gc");
   /* create `package' table */
   luaL_register(L, LUA_LOADLIBNAME, pk_funcs);
-#if defined(LUA_COMPAT_LOADLIB) 
+#if defined(LUA_COMPAT_LOADLIB)
   lua_getfield(L, -1, "loadlib");
   lua_setfield(L, LUA_GLOBALSINDEX, "loadlib");
 #endif

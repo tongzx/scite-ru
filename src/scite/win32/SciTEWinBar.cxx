@@ -11,7 +11,7 @@
  * Set up properties for FileTime, FileDate, CurrentTime, CurrentDate and FileAttr.
  */
 void SciTEWin::SetFileProperties(
-    PropSet &ps) {			///< Property set to update.
+    PropSetFile &ps) {			///< Property set to update.
 
 	const int TEMP_LEN = 100;
 	char temp[TEMP_LEN];
@@ -70,6 +70,22 @@ void SciTEWin::SetFileProperties(
 void SciTEWin::SetStatusBarText(const char *s) {
 	::SendMessage(reinterpret_cast<HWND>(wStatusBar.GetID()),
 	              SB_SETTEXT, 0, reinterpret_cast<LPARAM>(s));
+}
+
+void SciTEWin::TabInsert(int index, char *title) {
+	TCITEM tie;
+	tie.mask = TCIF_TEXT | TCIF_IMAGE;
+	tie.iImage = -1;
+	tie.pszText = title;
+	::SendMessage(reinterpret_cast<HWND>(wTabBar.GetID()), TCM_INSERTITEM, (WPARAM)index, (LPARAM)&tie);
+}
+
+void SciTEWin::TabSelect(int index) {
+	::SendMessage(reinterpret_cast<HWND>(wTabBar.GetID()), TCM_SETCURSEL, (WPARAM)index, (LPARAM)0);
+}
+
+void SciTEWin::RemoveAllTabs() {
+	::SendMessage(reinterpret_cast<HWND>(wTabBar.GetID()), TCM_DELETEALLITEMS, (WPARAM)0, (LPARAM)0);
 }
 
 /**
@@ -212,7 +228,7 @@ void SciTEWin::Notify(SCNotification *notification) {
 		// Ask for tooltip text
 		{
 			static char ttt[MAX_PATH*2 + 1];
-//!			const char *ttext = 0;
+//!			const char *ttext = 0; //!-change-[user.toolbar]
 			NMTTDISPINFO *pDispInfo = (NMTTDISPINFO *)notification;
 			// Toolbar tooltips
 /*!
@@ -313,7 +329,7 @@ void SciTEWin::Notify(SCNotification *notification) {
 
 	case SCN_CHARADDED:
 		if ((notification->nmhdr.idFrom == IDM_RUNWIN) &&
-		        executing &&
+		        jobQueue.IsExecuting() &&
 		        hWriteSubProcess) {
 			char chToWrite = static_cast<char>(notification->ch);
 			if (chToWrite != '\r') {
@@ -566,6 +582,11 @@ void SciTEWin::SetMenuItem(int menuNumber, int position, int itemID,
 	}
 }
 
+void SciTEWin::RedrawMenu() {
+	// Make previous change visible.
+	::DrawMenuBar(reinterpret_cast<HWND>(wSciTE.GetID()));
+}
+
 void SciTEWin::DestroyMenuItem(int menuNumber, int itemID) {
 	// On Windows menu items are destroyed as they can not be hidden and they can be recreated in any position
 	HMENU hmenuBar = ::GetMenu(MainHWND());
@@ -798,8 +819,6 @@ void SciTEWin::LocaliseDialog(HWND wDialog) {
 #endif
 
 /*!-change-[user.toolbar]
-#define ELEMENTS(a)	(sizeof(a) / sizeof(a[0]))
-
 struct BarButton {
 	int id;
 	int cmd;

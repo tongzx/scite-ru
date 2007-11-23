@@ -29,7 +29,7 @@ function OnMenuCommand (msg, source)
 	if enable_idm==true and msg == 450 then --IDM_MONOFONT
 		FontChange()
 		enable_idm=false
-		scite.MenuCommand("IDM_MONOFONT")
+		scite.MenuCommand(IDM_MONOFONT)
 		enable_idm=true
 	end
 	return result

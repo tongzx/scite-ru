@@ -52,133 +52,17 @@ const char menuAccessIndicator[] = "&";
 
 #include "SciTE.h"
 #include "PropSet.h"
+#include "StringList.h"
 #include "Accessor.h"
 #include "Scintilla.h"
 #include "SciLexer.h"
 #include "Extender.h"
 #include "FilePath.h"
 #include "PropSetFile.h"
+#include "Mutex.h"
+#include "JobQueue.h"
 #include "SciTEBase.h"
-
-PropSetFile::PropSetFile(bool lowerKeys_) : lowerKeys(lowerKeys_) {}
-
-PropSetFile::~PropSetFile() {}
-
-/**
- * Get a line of input. If end of line escaped with '\\' then continue reading.
- */
-static bool GetFullLine(const char *&fpc, int &lenData, char *s, int len) {
-	bool continuation = true;
-	s[0] = '\0';
-	while ((len > 1) && lenData > 0) {
-		char ch = *fpc;
-		fpc++;
-		lenData--;
-		if ((ch == '\r') || (ch == '\n')) {
-			if (!continuation) {
-				if ((lenData > 0) && (ch == '\r') && ((*fpc) == '\n')) {
-					// munch the second half of a crlf
-					fpc++;
-					lenData--;
-				}
-				*s = '\0';
-				return true;
-			}
-		} else if ((ch == '\\') && (lenData > 0) && ((*fpc == '\r') || (*fpc == '\n'))) {
-			continuation = true;
-			if ((lenData > 1) && ((*fpc == '\r') && (*(fpc+1) == '\r') || (*fpc == '\n') && (*(fpc+1) == '\n')))
-				continuation = false;
-			else if ((lenData > 2) && ((*fpc == '\r') && (*(fpc+1) == '\n') && (*(fpc+2) == '\n' || *(fpc+2) == '\r')))
-				continuation = false;
-		} else {
-			continuation = false;
-			*s++ = ch;
-			*s = '\0';
-			len--;
-		}
-	}
-	return false;
-}
-
-static bool IsSpaceOrTab(char ch) {
-	return (ch == ' ') || (ch == '\t');
-}
-
-static bool IsCommentLine(const char *line) {
-	while (IsSpaceOrTab(*line)) ++line;
-	return (*line == '#');
-}
-
-bool PropSetFile::ReadLine(const char *lineBuffer, bool ifIsTrue, FilePath directoryForImports,
-                           FilePath imports[], int sizeImports) {
-	//UnSlash(lineBuffer);
-	if (!IsSpaceOrTab(lineBuffer[0]))    // If clause ends with first non-indented line
-		ifIsTrue = true;
-	if (isprefix(lineBuffer, "if ")) {
-		const char *expr = lineBuffer + strlen("if") + 1;
-		ifIsTrue = GetInt(expr);
-	} else if (isprefix(lineBuffer, "import ") && directoryForImports.IsSet()) {
-		SString importName(lineBuffer + strlen("import") + 1);
-		if(!importName.contains('.')) //!-add-[import]
-		importName += ".properties";
-		FilePath importPath(directoryForImports, FilePath(importName.c_str()));
-		if (Read(importPath, directoryForImports, imports, sizeImports)) {
-			if (imports) {
-				for (int i = 0; i < sizeImports; i++) {
-					if (!imports[i].IsSet()) {
-						imports[i] = importPath;
-						break;
-					}
-				}
-			}
-		}
-	} else if (ifIsTrue && !IsCommentLine(lineBuffer)) {
-		Set(lineBuffer);
-	}
-	return ifIsTrue;
-}
-
-void PropSetFile::ReadFromMemory(const char *data, int len, FilePath directoryForImports,
-                                 FilePath imports[], int sizeImports) {
-	const char *pd = data;
-	char lineBuffer[60000];
-	bool ifIsTrue = true;
-	while (len > 0) {
-		GetFullLine(pd, len, lineBuffer, sizeof(lineBuffer));
-		if (lowerKeys) {
-			for (int i=0; lineBuffer[i] && (lineBuffer[i] != '='); i++) {
-				if ((lineBuffer[i] >= 'A') && (lineBuffer[i] <= 'Z')) {
-					lineBuffer[i] = static_cast<char>(lineBuffer[i] - 'A' + 'a');
-				}
-			}
-		}
-		ifIsTrue = ReadLine(lineBuffer, ifIsTrue, directoryForImports, imports, sizeImports);
-	}
-}
-
-bool PropSetFile::Read(FilePath filename, FilePath directoryForImports,
-                       FilePath imports[], int sizeImports) {
-	FILE *rcfile = filename.Open(fileRead);
-	if (rcfile) {
-		char propsData[60000];
-		int lenFile = static_cast<int>(fread(propsData, 1, sizeof(propsData), rcfile));
-		fclose(rcfile);
-		const char *data = propsData;
-		if (memcmp(data, "\xef\xbb\xbf", 3) == 0) {
-			data += 3;
-			lenFile -= 3;
-		}
-		ReadFromMemory(data, lenFile, directoryForImports, imports, sizeImports);
-		return true;
-	}
-	return false;
-}
-
-void PropSetFile::SetInteger(const char *key, sptr_t i) {
-	char tmp[32];
-	sprintf(tmp, "%d", static_cast<int>(i));
-	Set(key, tmp);
-}
+#include "IFaceTable.h"
 
 void SciTEBase::SetImportMenu() {
 	for (int i = 0; i < importMax; i++) {
@@ -536,7 +420,9 @@ void SciTEBase::SetStyleFor(Window &win, const char *lang) {
 			char key[200];
 			sprintf(key, "style.%s.%0d", lang, style);
 			SString sval = props.GetExpanded(key);
-			SetOneStyle(win, style, sval.c_str());
+			if (sval.length()) {
+				SetOneStyle(win, style, sval.c_str());
+			}
 		}
 	}
 }
@@ -594,10 +480,8 @@ void SciTEBase::ForwardPropertyToEditor(const char *key) {
 	SString value = props.Get(key);
 	SendEditorString(SCI_SETPROPERTY,
 	                 reinterpret_cast<uptr_t>(key), value.c_str());
-//!-start-[FindResultListStyle]
 	SendOutputString(SCI_SETPROPERTY,
 	                 reinterpret_cast<uptr_t>(key), value.c_str());
-//!-end-[FindResultListStyle]
 }
 
 void SciTEBase::DefineMarker(int marker, int markerType, ColourDesired fore, ColourDesired back) {
@@ -708,7 +592,7 @@ static const char *propertiesToForward[] = {
 	"lexer.caml.magic",
 	"lexer.cpp.allow.dollars",
 	"lexer.d.fold.at.else",
-	"lexer.errorlist.findliststyle", //!-add-[FindResultListStyle]
+	"lexer.errorlist.value.separate",
 	"lexer.lua.wordchar.colon",	//!-add-[LuaWord]
 	"lexer.metapost.comment.process",
 	"lexer.metapost.interface.default",
@@ -817,6 +701,18 @@ static char *bookmarkBluegem[] = {
 "    1GdddG1    "
 };
 
+SString SciTEBase::GetFileNameProperty(const char *name) {
+	SString namePlusDot = name;
+	namePlusDot.append(".");
+	SString valueForFileName = props.GetNewExpand(namePlusDot.c_str(),
+	        ExtensionFileName().c_str());
+	if (valueForFileName.length() != 0) {
+		return valueForFileName;
+	} else {
+		return props.Get(name);
+	}
+}
+
 void SciTEBase::ReadProperties() {
 	if (extender)
 		extender->Clear();
@@ -916,7 +812,7 @@ void SciTEBase::ReadProperties() {
 		SendEditor(SCI_SETCARETFORE,ColourFromString(tmp_str));
 	else
 //!-end-[caret]
-	SendEditor(SCI_SETCARETFORE,
+	SendChildren(SCI_SETCARETFORE,
 	           ColourOfProperty(props, "caret.fore", ColourDesired(0, 0, 0)));
 
 	SendEditor(SCI_SETMOUSEDWELLTIME,
@@ -930,8 +826,8 @@ void SciTEBase::ReadProperties() {
 	}
 	else{
 //!-end-[caret]
-		SendEditor(SCI_SETCARETWIDTH, props.GetInt("caret.width", 1));
-		SendOutput(SCI_SETCARETWIDTH, props.GetInt("caret.width", 1));
+	SendEditor(SCI_SETCARETWIDTH, props.GetInt("caret.width", 1));
+	SendOutput(SCI_SETCARETWIDTH, props.GetInt("caret.width", 1));
 	}
 
 	SString caretLineBack = props.Get("caret.line.back");
@@ -1117,8 +1013,8 @@ void SciTEBase::ReadProperties() {
 	SendEditor(SCI_SETPRINTMAGNIFICATION, props.GetInt("print.magnification"));
 	SendEditor(SCI_SETPRINTCOLOURMODE, props.GetInt("print.colour.mode"));
 
-	clearBeforeExecute = props.GetInt("clear.before.execute");
-	timeCommands = props.GetInt("time.commands");
+	jobQueue.clearBeforeExecute = props.GetInt("clear.before.execute");
+	jobQueue.timeCommands = props.GetInt("time.commands");
 
 	int blankMarginLeft = props.GetInt("blank.margin.left", 1);
 	int blankMarginRight = props.GetInt("blank.margin.right", 1);
@@ -1162,6 +1058,11 @@ void SciTEBase::ReadProperties() {
 		SendEditorString(SCI_SETWHITESPACECHARS, 0, whitespaceCharacters.c_str());
 	}
 
+	SString viewIndentExamine = GetFileNameProperty("view.indentation.examine");
+	indentExamine = viewIndentExamine.length() ? viewIndentExamine.value() : SC_IV_REAL;
+	SendEditor(SCI_SETINDENTATIONGUIDES, props.GetInt("view.indentation.guides") ?
+		indentExamine : SC_IV_NONE);
+
 	SendEditor(SCI_SETTABINDENTS, props.GetInt("tab.indents", 1));
 	SendEditor(SCI_SETBACKSPACEUNINDENTS, props.GetInt("backspace.unindents", 1));
 
@@ -1174,7 +1075,7 @@ void SciTEBase::ReadProperties() {
 	SString lookback = props.GetNewExpand("statement.lookback.", fileNameForExtension.c_str());
 	statementLookback = lookback.value();
 	statementIndent = GetStyleAndWords("statement.indent.");
-	statementEnd = GetStyleAndWords("statement.end."); //!-add-[CVS]
+	statementEnd = GetStyleAndWords("statement.end.");
 	blockStart = GetStyleAndWords("block.start.");
 	blockEnd = GetStyleAndWords("block.end.");
 
@@ -1327,7 +1228,9 @@ void SciTEBase::ReadProperties() {
 	}
 
 	SendEditor(SCI_SETSCROLLWIDTH, props.GetInt("horizontal.scroll.width", 2000));
+	SendEditor(SCI_SETSCROLLWIDTHTRACKING, props.GetInt("horizontal.scroll.width.tracking", 1));
 	SendOutput(SCI_SETSCROLLWIDTH, props.GetInt("output.horizontal.scroll.width", 2000));
+	SendOutput(SCI_SETSCROLLWIDTHTRACKING, props.GetInt("output.horizontal.scroll.width.tracking", 1));
 
 	// Do these last as they force a style refresh
 	SendEditor(SCI_SETHSCROLLBAR, props.GetInt("horizontal.scrollbar", 1));
@@ -1548,7 +1451,9 @@ void SciTEBase::ReadPropertiesInitial() {
 		}
 	}
 	ViewWhitespace(props.GetInt("view.whitespace"));
-	SendEditor(SCI_SETINDENTATIONGUIDES, props.GetInt("view.indentation.guides"));
+	SendEditor(SCI_SETINDENTATIONGUIDES, props.GetInt("view.indentation.guides") ?
+		indentExamine : SC_IV_NONE);
+
 	SendEditor(SCI_SETVIEWEOL, props.GetInt("view.eol"));
 	SendEditor(SCI_SETZOOM, props.GetInt("magnification"));
 	SendOutput(SCI_SETZOOM, props.GetInt("output.magnification"));
@@ -1686,161 +1591,9 @@ void SciTEBase::OpenProperties(int propsFile) {
 
 // return the int value of the command name passed in.
 int SciTEBase::GetMenuCommandAsInt(SString commandName) {
-	struct {
-		const char *name;
-		int id;
-	} idmTable[] = {
-//++Autogenerated -- run ../scintilla/src/LexGen.py to regenerate
-//**1:\(\t\t{"\*",\t\*},\n\)
-		{"IDM_MRUFILE",	IDM_MRUFILE},
-		{"IDM_TOOLS",	IDM_TOOLS},
-		{"IDM_BUFFER",	IDM_BUFFER},
-		{"IDM_IMPORT",	IDM_IMPORT},
-		{"IDM_LANGUAGE",	IDM_LANGUAGE},
-		{"IDM_NEW",	IDM_NEW},
-		{"IDM_OPEN",	IDM_OPEN},
-		{"IDM_OPENSELECTED",	IDM_OPENSELECTED},
-		{"IDM_REVERT",	IDM_REVERT},
-		{"IDM_CLOSE",	IDM_CLOSE},
-		{"IDM_SAVE",	IDM_SAVE},
-		{"IDM_SAVEAS",	IDM_SAVEAS},
-		{"IDM_SAVEASHTML",	IDM_SAVEASHTML},
-		{"IDM_SAVEASRTF",	IDM_SAVEASRTF},
-		{"IDM_SAVEASPDF",	IDM_SAVEASPDF},
-		{"IDM_FILER",	IDM_FILER},
-		{"IDM_SAVEASTEX",	IDM_SAVEASTEX},
-		{"IDM_SAVEACOPY",	IDM_SAVEACOPY},
-		{"IDM_SAVEASXML",	IDM_SAVEASXML},
-		{"IDM_MRU_SEP",	IDM_MRU_SEP},
-		{"IDM_PRINTSETUP",	IDM_PRINTSETUP},
-		{"IDM_PRINT",	IDM_PRINT},
-		{"IDM_LOADSESSION",	IDM_LOADSESSION},
-		{"IDM_SAVESESSION",	IDM_SAVESESSION},
-		{"IDM_QUIT",	IDM_QUIT},
-		{"IDM_ENCODING_DEFAULT",	IDM_ENCODING_DEFAULT},
-		{"IDM_ENCODING_UCS2BE",	IDM_ENCODING_UCS2BE},
-		{"IDM_ENCODING_UCS2LE",	IDM_ENCODING_UCS2LE},
-		{"IDM_ENCODING_UTF8",	IDM_ENCODING_UTF8},
-		{"IDM_ENCODING_UCOOKIE",	IDM_ENCODING_UCOOKIE},
-		{"IDM_UNDO",	IDM_UNDO},
-		{"IDM_REDO",	IDM_REDO},
-		{"IDM_CUT",	IDM_CUT},
-		{"IDM_COPY",	IDM_COPY},
-		{"IDM_PASTE",	IDM_PASTE},
-		{"IDM_CLEAR",	IDM_CLEAR},
-		{"IDM_SELECTALL",	IDM_SELECTALL},
-		{"IDM_PASTEANDDOWN",	IDM_PASTEANDDOWN},
-		{"IDM_FIND",	IDM_FIND},
-		{"IDM_FINDNEXT",	IDM_FINDNEXT},
-		{"IDM_FINDNEXTBACK",	IDM_FINDNEXTBACK},
-		{"IDM_FINDNEXTSEL",	IDM_FINDNEXTSEL},
-		{"IDM_FINDNEXTBACKSEL",	IDM_FINDNEXTBACKSEL},
-		{"IDM_FINDINFILES",	IDM_FINDINFILES},
-		{"IDM_REPLACE",	IDM_REPLACE},
-		{"IDM_GOTO",	IDM_GOTO},
-		{"IDM_BOOKMARK_NEXT",	IDM_BOOKMARK_NEXT},
-		{"IDM_BOOKMARK_TOGGLE",	IDM_BOOKMARK_TOGGLE},
-		{"IDM_BOOKMARK_PREV",	IDM_BOOKMARK_PREV},
-		{"IDM_BOOKMARK_CLEARALL",	IDM_BOOKMARK_CLEARALL},
-		{"IDM_BOOKMARK_NEXT_SELECT",	IDM_BOOKMARK_NEXT_SELECT},
-		{"IDM_BOOKMARK_PREV_SELECT",	IDM_BOOKMARK_PREV_SELECT},
-		{"IDM_MATCHBRACE",	IDM_MATCHBRACE},
-		{"IDM_SELECTTOBRACE",	IDM_SELECTTOBRACE},
-		{"IDM_SHOWCALLTIP",	IDM_SHOWCALLTIP},
-		{"IDM_COMPLETE",	IDM_COMPLETE},
-		{"IDM_COMPLETEWORD",	IDM_COMPLETEWORD},
-		{"IDM_EXPAND",	IDM_EXPAND},
-		{"IDM_TOGGLE_FOLDALL",	IDM_TOGGLE_FOLDALL},
-		{"IDM_TOGGLE_FOLDRECURSIVE",	IDM_TOGGLE_FOLDRECURSIVE},
-		{"IDM_EXPAND_ENSURECHILDRENVISIBLE",	IDM_EXPAND_ENSURECHILDRENVISIBLE},
-		{"IDM_UPRCASE",	IDM_UPRCASE},
-		{"IDM_LWRCASE",	IDM_LWRCASE},
-		{"IDM_ABBREV",	IDM_ABBREV},
-		{"IDM_BLOCK_COMMENT",	IDM_BLOCK_COMMENT},
-		{"IDM_STREAM_COMMENT",	IDM_STREAM_COMMENT},
-		{"IDM_COPYASRTF",	IDM_COPYASRTF},
-		{"IDM_BOX_COMMENT",	IDM_BOX_COMMENT},
-		{"IDM_INS_ABBREV",	IDM_INS_ABBREV},
-		{"IDM_JOIN",	IDM_JOIN},
-		{"IDM_SPLIT",	IDM_SPLIT},
-		{"IDM_DUPLICATE",	IDM_DUPLICATE},
-		{"IDM_INCSEARCH",	IDM_INCSEARCH},
-		{"IDM_ENTERSELECTION",	IDM_ENTERSELECTION},
-		{"IDM_PREVMATCHPPC",	IDM_PREVMATCHPPC},
-		{"IDM_SELECTTOPREVMATCHPPC",	IDM_SELECTTOPREVMATCHPPC},
-		{"IDM_NEXTMATCHPPC",	IDM_NEXTMATCHPPC},
-		{"IDM_SELECTTONEXTMATCHPPC",	IDM_SELECTTONEXTMATCHPPC},
-		{"IDM_COMPILE",	IDM_COMPILE},
-		{"IDM_BUILD",	IDM_BUILD},
-		{"IDM_GO",	IDM_GO},
-		{"IDM_STOPEXECUTE",	IDM_STOPEXECUTE},
-		{"IDM_FINISHEDEXECUTE",	IDM_FINISHEDEXECUTE},
-		{"IDM_NEXTMSG",	IDM_NEXTMSG},
-		{"IDM_PREVMSG",	IDM_PREVMSG},
-		{"IDM_MACRO_SEP",	IDM_MACRO_SEP},
-		{"IDM_MACRORECORD",	IDM_MACRORECORD},
-		{"IDM_MACROSTOPRECORD",	IDM_MACROSTOPRECORD},
-		{"IDM_MACROPLAY",	IDM_MACROPLAY},
-		{"IDM_MACROLIST",	IDM_MACROLIST},
-		{"IDM_ACTIVATE",	IDM_ACTIVATE},
-		{"IDM_SRCWIN",	IDM_SRCWIN},
-		{"IDM_RUNWIN",	IDM_RUNWIN},
-		{"IDM_TOOLWIN",	IDM_TOOLWIN},
-		{"IDM_STATUSWIN",	IDM_STATUSWIN},
-		{"IDM_TABWIN",	IDM_TABWIN},
-		{"IDM_SPLITVERTICAL",	IDM_SPLITVERTICAL},
-		{"IDM_VIEWSPACE",	IDM_VIEWSPACE},
-		{"IDM_VIEWEOL",	IDM_VIEWEOL},
-		{"IDM_VIEWGUIDES",	IDM_VIEWGUIDES},
-		{"IDM_SELMARGIN",	IDM_SELMARGIN},
-		{"IDM_FOLDMARGIN",	IDM_FOLDMARGIN},
-		{"IDM_LINENUMBERMARGIN",	IDM_LINENUMBERMARGIN},
-		{"IDM_VIEWTOOLBAR",	IDM_VIEWTOOLBAR},
-		{"IDM_TOGGLEOUTPUT",	IDM_TOGGLEOUTPUT},
-		{"IDM_VIEWTABBAR",	IDM_VIEWTABBAR},
-		{"IDM_VIEWSTATUSBAR",	IDM_VIEWSTATUSBAR},
-		{"IDM_TOGGLEPARAMETERS",	IDM_TOGGLEPARAMETERS},
-		{"IDM_OPENFILESHERE",	IDM_OPENFILESHERE},
-		{"IDM_WRAP",	IDM_WRAP},
-		{"IDM_WRAPOUTPUT",	IDM_WRAPOUTPUT},
-		{"IDM_READONLY",	IDM_READONLY},
-		{"IDM_CLEAROUTPUT",	IDM_CLEAROUTPUT},
-		{"IDM_SWITCHPANE",	IDM_SWITCHPANE},
-		{"IDM_EOL_CRLF",	IDM_EOL_CRLF},
-		{"IDM_EOL_CR",	IDM_EOL_CR},
-		{"IDM_EOL_LF",	IDM_EOL_LF},
-		{"IDM_EOL_CONVERT",	IDM_EOL_CONVERT},
-		{"IDM_TABSIZE",	IDM_TABSIZE},
-		{"IDM_MONOFONT",	IDM_MONOFONT},
-		{"IDM_OPENLOCALPROPERTIES",	IDM_OPENLOCALPROPERTIES},
-		{"IDM_OPENUSERPROPERTIES",	IDM_OPENUSERPROPERTIES},
-		{"IDM_OPENGLOBALPROPERTIES",	IDM_OPENGLOBALPROPERTIES},
-		{"IDM_OPENABBREVPROPERTIES",	IDM_OPENABBREVPROPERTIES},
-		{"IDM_OPENLUAEXTERNALFILE",	IDM_OPENLUAEXTERNALFILE},
-		{"IDM_OPENDIRECTORYPROPERTIES",	IDM_OPENDIRECTORYPROPERTIES},
-		{"IDM_PREVFILE",	IDM_PREVFILE},
-		{"IDM_NEXTFILE",	IDM_NEXTFILE},
-		{"IDM_CLOSEALL",	IDM_CLOSEALL},
-		{"IDM_SAVEALL",	IDM_SAVEALL},
-		{"IDM_BUFFERSEP",	IDM_BUFFERSEP},
-		{"IDM_PREVFILESTACK",	IDM_PREVFILESTACK},
-		{"IDM_NEXTFILESTACK",	IDM_NEXTFILESTACK},
-		{"IDM_HELP",	IDM_HELP},
-		{"IDM_ABOUT",	IDM_ABOUT},
-		{"IDM_HELP_SCITE",	IDM_HELP_SCITE},
-		{"IDM_ONTOP",	IDM_ONTOP},
-		{"IDM_FULLSCREEN",	IDM_FULLSCREEN},
-		{"IDM_MOVETABRIGHT",	IDM_MOVETABRIGHT}, //!-add-[TabsMoving]
-		{"IDM_MOVETABLEFT",		IDM_MOVETABLEFT}, //!-add-[TabsMoving]
-
-//--Autogenerated -- end of automatically generated section
-		{0, 0},
-	};
-
-	for (int i=0; idmTable[i].id; i++) {
-		if (commandName == idmTable[i].name) {
-			return idmTable[i].id;
-		}
+	int i = IFaceTable::FindConstant(commandName.c_str());
+	if (i != -1) {
+		return IFaceTable::constants[i].value;
 	}
 	// Otherwise we might have entered a number as command to access a "SCI_" command
 	return commandName.value();

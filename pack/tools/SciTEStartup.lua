@@ -81,7 +81,7 @@ dofile (props["SciteDefaultHome"].."\\tools\\smartcomment.lua")
 dofile (props["SciteDefaultHome"].."\\tools\\save_settings.lua")
 
 -- Создает в контекстном меню таба (закладки) подменю для команд SVN
---~ dofile (props["SciteDefaultHome"].."\\tools\\svn_menu.lua")
+dofile (props["SciteDefaultHome"].."\\tools\\svn_menu.lua")
 
 -- Универсальное комментирование и снятие комментариев с кода
 dofile (props["SciteDefaultHome"].."\\tools\\xComment.lua")

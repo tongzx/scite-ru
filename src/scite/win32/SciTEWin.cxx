@@ -192,10 +192,12 @@ SciTEWin::SciTEWin(Extension *ext) : SciTEBase(ext) {
 	propsEmbed.Set("PLAT_WIN", "1");
 	OSVERSIONINFO osv = {sizeof(OSVERSIONINFO), 0, 0, 0, 0, ""};
 	::GetVersionEx(&osv);
+	isWindowsNT = osv.dwPlatformId == VER_PLATFORM_WIN32_NT;
 	if (osv.dwPlatformId == VER_PLATFORM_WIN32_NT)
 		propsEmbed.Set("PLAT_WINNT", "1");
 	else if (osv.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS)
 		propsEmbed.Set("PLAT_WIN95", "1");
+
 	HRSRC handProps = ::FindResource(hInstance, "Embedded", "Properties");
 	if (handProps) {
 		DWORD size = ::SizeofResource(hInstance, handProps);
@@ -499,22 +501,14 @@ void SciTEWin::Command(WPARAM wParam, LPARAM lParam) {
 		break;
 
 	case IDM_FINISHEDEXECUTE: {
-			executing = false;
+			jobQueue.SetExecuting(false);
 			if (needReadProperties)
 				ReadProperties();
 			CheckMenus();
-/*!
-			for (int icmd = 0; icmd < commandMax; icmd++) {
-				jobQueue[icmd].Clear();
+			for (int icmd = 0; icmd < jobQueue.commandMax; icmd++) {
+				jobQueue.jobQueue[icmd].Clear();
 			}
-			commandCurrent = 0;
-*/
-//!-start-[Tread.SmartExecute]
-			for (int ic = 0; ic < commandMax; ic++) {
-				TreadJobQueue[ic].Clear();
-			}
-			TreadCommandCurrent = 0;
-//!-end-[Tread.SmartExecute]
+			jobQueue.commandCurrent = 0;
 			CheckReload();
 		}
 		break;
@@ -733,11 +727,6 @@ DWORD SciTEWin::ExecuteOne(const Job &jobToRun, bool &seenOutput) {
 				// There is input to transmit to the process.  Do it in small blocks, interleaved
 				// with reads, so that our hRead buffer will not be overrun with results.
 
-				/*! size_t bytesToWrite = jobToRun.input.search("\n", writingPosition) + 1 - writingPosition;
-				if ((bytesToWrite <= 0) || (writingPosition + bytesToWrite >= totalBytesToWrite)) {
-					bytesToWrite = totalBytesToWrite - writingPosition;
-				}*/
-//!-start-[CVS]
 				size_t bytesToWrite;
 				int eol_pos = jobToRun.input.search("\n", writingPosition);
 				if (eol_pos == -1) {
@@ -745,7 +734,6 @@ DWORD SciTEWin::ExecuteOne(const Job &jobToRun, bool &seenOutput) {
 				} else {
 					bytesToWrite = eol_pos + 1 - writingPosition;
 				}
-//!-end-[CVS]
 				if (bytesToWrite > 250) {
 					bytesToWrite = 250;
 				}
@@ -832,7 +820,7 @@ DWORD SciTEWin::ExecuteOne(const Job &jobToRun, bool &seenOutput) {
 				}
 			}
 
-			if (::InterlockedExchange(&cancelFlag, 0)) {
+			if (jobQueue.SetCancelFlag(0)) {
 				if (WAIT_OBJECT_0 != ::WaitForSingleObject(pi.hProcess, 500)) {
 					// We should use it only if the GUI process is stuck and
 					// don't answer to a normal termination command.
@@ -853,7 +841,7 @@ DWORD SciTEWin::ExecuteOne(const Job &jobToRun, bool &seenOutput) {
 		::GetExitCodeProcess(pi.hProcess, &exitcode);
 		SString sExitMessage(exitcode);
 		sExitMessage.insert(0, ">Exit code: ");
-		if (timeCommands) {
+		if (jobQueue.TimeCommands()) {
 			sExitMessage += "    Time: ";
 			sExitMessage += SString(commandTime.Duration(), 3);
 		}
@@ -917,20 +905,14 @@ void SciTEWin::ProcessExecute() {
 	int originalEnd = SendOutputEx(SCI_GETCURRENTPOS, 0, 0, false);
 	bool seenOutput = false;
 
-/*!
-	for (int icmd = 0; icmd < commandCurrent && icmd < commandMax && exitcode == 0; icmd++) {
-		exitcode = ExecuteOne(jobQueue[icmd], seenOutput);
-*/
-//!-start--[Tread.SmartExecute]
-	for (int icmd = 0; icmd < TreadCommandCurrent && icmd < commandMax && exitcode == 0; icmd++) {
-		exitcode = ExecuteOne(TreadJobQueue[icmd], seenOutput);
-//!-end--[Tread.SmartExecute]
-		if (isBuilding) {
+	for (int icmd = 0; icmd < jobQueue.commandCurrent && icmd < jobQueue.commandMax && exitcode == 0; icmd++) {
+		exitcode = ExecuteOne(jobQueue.jobQueue[icmd], seenOutput);
+		if (jobQueue.isBuilding) {
 			// The build command is first command in a sequence so it is only built if
 			// that command succeeds not if a second returns after document is modified.
-			isBuilding = false;
+			jobQueue.isBuilding = false;
 			if (exitcode == 0)
-				isBuilt = true;
+				jobQueue.isBuilt = true;
 		}
 	}
 
@@ -944,29 +926,9 @@ void SciTEWin::ProcessExecute() {
 	::SendMessage(MainHWND(), WM_COMMAND, IDM_FINISHEDEXECUTE, 0);
 }
 
-//!-start--[Tread.SmartExecute]
-void SciTEWin::CopyJobQueue() {
-	for (int ic = 0; ic < commandMax; ic++) {
-		JobList.AddTail(jobQueue[ic]);
-	}
-	CommandCurrentList.AddTail(commandCurrent);
-	ClearJobQueue();
-}
-
-void SciTEWin::PasteJobQueue() {
-	TreadCommandCurrent = CommandCurrentList.RemoveHead();
-	for (int ic = 0; ic < commandMax; ic++) {
-		TreadJobQueue[ic] = JobList.RemoveHead();
-	}
-}
-//!-end--[Tread.SmartExecute]
-
 void ExecThread(void *ptw) {
 	SciTEWin *tw = reinterpret_cast<SciTEWin *>(ptw);
-	EnterCriticalSection(&tw->SciTECriticalSection);//!-add--[Tread.SmartExecute]
-	tw->PasteJobQueue();//!-add--[Tread.SmartExecute]
 	tw->ProcessExecute();
-	LeaveCriticalSection(&tw->SciTECriticalSection);//!-add--[Tread.SmartExecute]
 }
 
 struct ShellErr {
@@ -1088,16 +1050,7 @@ void SciTEWin::ShellExec(const SString &cmd, const char *dir) {
 }
 
 void SciTEWin::Execute() {
-//!-start--[Tread.SmartExecute]
-	// чтобы не очищалась консоль, когда не просят
-	bool cl = clearBeforeExecute;
-	if (CommandCurrentList.GetCount() || executing)
-		clearBeforeExecute = false;
-//!-end--[Tread.SmartExecute]
 	SciTEBase::Execute();
-
-	clearBeforeExecute = cl;//!-add--[Tread.SmartExecute]
-	CopyJobQueue();//!-add--[Tread.SmartExecute]
 
 	_beginthread(ExecThread, 1024 * 1024, reinterpret_cast<void *>(this));
 }
@@ -1125,7 +1078,7 @@ void SciTEWin::StopExecute() {
 	}
 #endif
 
-	::InterlockedExchange(&cancelFlag, 1L);
+	jobQueue.SetCancelFlag(1);
 }
 
 void SciTEWin::AddCommand(const SString &cmd, const SString &dir, JobSubsystem jobType, const SString &input, int flags) {
@@ -1154,7 +1107,6 @@ void SciTEWin::QuitProgram() {
 	if (SaveIfUnsureAll() != IDCANCEL) {
 		if (fullScreen)	// Ensure tray visible on exit
 			FullScreenToggle();
-
 //!-start-[position.autosave]
 		SString value = props.GetExpanded("save.settings.path");
 		if (value.length()) {
@@ -1173,8 +1125,6 @@ void SciTEWin::QuitProgram() {
 			file.Save();
 		}
 //!-end-[position.autosave]
-
-		DeleteCriticalSection(&SciTECriticalSection);//!-add--[Tread.SmartExecute]
 		::PostQuitMessage(0);
 		wSciTE.Destroy();
 	}
@@ -1317,7 +1267,6 @@ void SciTEWin::Run(const char *cmdLine) {
 		wSciTE.Destroy();
 		return;	// Don't do anything else
 	}
-	InitializeCriticalSection(&SciTECriticalSection);//!-add--[Tread.SmartExecute]
 
 	// OK, the instance will be displayed
 	SizeSubWindows();
@@ -2028,14 +1977,6 @@ LRESULT PASCAL SciTEWin::IWndProc(
 		return scite->WndProcI(iMessage, wParam, lParam);
 }
 
-// IsNT() did not work on my machine... :-(
-// I found that Platform_Initialise() was never called
-bool IsWindowsNT() {
-	OSVERSIONINFO osv = {sizeof(OSVERSIONINFO), 0, 0, 0, 0, ""};
-	::GetVersionEx(&osv);
-	return (osv.dwPlatformId == VER_PLATFORM_WIN32_NT);
-}
-
 // from ScintillaWin.cxx
 static UINT CodePageFromCharSet(DWORD characterSet, UINT documentCodePage) {
 	CHARSETINFO ci = { 0, 0, { { 0, 0, 0, 0 }, { 0, 0 } } };
@@ -2059,7 +2000,7 @@ static UINT CodePageFromCharSet(DWORD characterSet, UINT documentCodePage) {
 SString SciTEWin::EncodeString(const SString &s) {
 	//::MessageBox(GetFocus(),SString(s).c_str(),"EncodeString:in",0);
 
-	if (IsWindowsNT()) {
+	if (isWindowsNT) {
 		UINT codePage = SendEditor(SCI_GETCODEPAGE);
 
 		if (codePage != SC_CP_UTF8) {
@@ -2091,7 +2032,7 @@ SString SciTEWin::EncodeString(const SString &s) {
 SString SciTEWin::GetRangeInUIEncoding(Window &win, int selStart, int selEnd) {
 	SString s = SciTEBase::GetRangeInUIEncoding(win, selStart, selEnd);
 
-	if (IsWindowsNT()) {
+	if (isWindowsNT) {
 		UINT codePage = SendEditor(SCI_GETCODEPAGE);
 
 		if (codePage != SC_CP_UTF8) {
@@ -2116,6 +2057,27 @@ SString SciTEWin::GetRangeInUIEncoding(Window &win, int selStart, int selEnd) {
 		}
 	}
 	return s;
+}
+
+int SciTEWin::EventLoop() {
+	MSG msg;
+	msg.wParam = 0;
+	bool going = true;
+	while (going) {
+		going = isWindowsNT ? ::GetMessageW(&msg, NULL, 0, 0) : ::GetMessageA(&msg, NULL, 0, 0);
+		if (going) {
+			if (!ModelessHandler(&msg)) {
+				if (::TranslateAccelerator(reinterpret_cast<HWND>(GetID()), GetAcceleratorTable(), &msg) == 0) {
+					::TranslateMessage(&msg);
+					if (isWindowsNT)
+						::DispatchMessageW(&msg);
+					else
+						::DispatchMessageA(&msg);
+				}
+			}
+		}
+	}
+	return msg.wParam;
 }
 
 int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpszCmdLine, int) {
@@ -2149,23 +2111,11 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpszCmdLine, int) {
 		::MessageBox(NULL, "The Scintilla DLL could not be loaded.  SciTE will now close", "Error loading Scintilla", MB_OK | MB_ICONERROR);
 #endif
 
-	MSG msg;
-	msg.wParam = 0;
+	int result;
 	{
 		SciTEWin MainWind(extender);
 		MainWind.Run(lpszCmdLine);
-		bool going = true;
-		while (going) {
-			going = ::GetMessage(&msg, NULL, 0, 0);
-			if (going) {
-				if (!MainWind.ModelessHandler(&msg)) {
-					if (::TranslateAccelerator(reinterpret_cast<HWND>(MainWind.GetID()), MainWind.GetAcceleratorTable(), &msg) == 0) {
-						::TranslateMessage(&msg);
-						::DispatchMessage(&msg);
-					}
-				}
-			}
-		}
+		result = MainWind.EventLoop();
 	}
 
 #ifdef STATIC_BUILD
@@ -2175,7 +2125,7 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpszCmdLine, int) {
 	::FreeLibrary(hmod);
 #endif
 
-	return msg.wParam;
+	return result;
 }
 
 //!-start-[ExtendedContextMenu]

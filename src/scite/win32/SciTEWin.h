@@ -54,10 +54,13 @@
 #include "Extender.h"
 #include "FilePath.h"
 #include "PropSetFile.h"
+#include "StringList.h"
+#include "Mutex.h"
+#include "JobQueue.h"
 #include "SciTEBase.h"
 #include "SciTEKeys.h"
 #include "UniqueInstance.h"
-#include "Containers.h"//!-add--[Tread.SmartExecute]
+#include "Containers.h"//!-add--[Tread.SmartExecute][user.toolbar]
 
 const int SCITE_TRAY = WM_APP + 0;
 
@@ -85,6 +88,7 @@ protected:
 	int filterDefault;
 	bool staticBuild;
 	int menuSource;
+	bool isWindowsNT;
 
 	// Fields also used in tool execution thread
 	HANDLE hWriteSubProcess;
@@ -124,6 +128,7 @@ protected:
 
 	virtual void SetMenuItem(int menuNumber, int position, int itemID,
 	                         const char *text, const char *mnemonic = 0);
+	virtual void RedrawMenu();
 	virtual void DestroyMenuItem(int menuNumber, int itemID);
 	virtual void CheckAMenuItem(int wIDCheckItem, bool val);
 	virtual void EnableAMenuItem(int wIDCheckItem, bool val);
@@ -171,8 +176,12 @@ protected:
 	virtual FilePath GetSciteDefaultHome();
 	virtual FilePath GetSciteUserHome();
 
-	virtual void SetFileProperties(PropSet &ps);
+	virtual void SetFileProperties(PropSetFile &ps);
 	virtual void SetStatusBarText(const char *s);
+
+	virtual void TabInsert(int index, char *title);
+	virtual void TabSelect(int index);
+	virtual void RemoveAllTabs();
 
 	/// Warn the user, by means defined in its properties.
 //!	virtual void WarnUser(int warnID);
@@ -232,24 +241,17 @@ protected:
 	void MakeAccelerator(SString sKey, ACCEL &Accel);
 
 public:
-//!-start-[Tread.SmartExecute]
-	CRITICAL_SECTION SciTECriticalSection;
-	void CopyJobQueue();
-	void PasteJobQueue();
-	int TreadCommandCurrent;
-	Job TreadJobQueue[commandMax];
-	TList<Job,Job> JobList;
-	TList<int,int> CommandCurrentList;
-//!-end--[Tread.SmartExecute]
 
 	SciTEWin(Extension *ext = 0);
 	~SciTEWin();
 
+	bool DialogHandled(WindowID id, MSG *pmsg);
 	bool ModelessHandler(MSG *pmsg);
 
 	void CreateUI();
 	/// Management of the command line parameters.
 	void Run(const char *cmdLine);
+    int EventLoop();
 	DWORD ExecuteOne(const Job &jobToRun, bool &seenOutput);
 	void ProcessExecute();
 	void ShellExec(const SString &cmd, const char *dir);

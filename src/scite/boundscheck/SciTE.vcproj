@@ -229,6 +229,9 @@
 				RelativePath="..\lua\src\ldump.c">
 			</File>
 			<File
+				RelativePath="..\..\scintilla\src\LexAbaqus.cxx">
+			</File>
+			<File
 				RelativePath="..\..\scintilla\src\LexAda.cxx">
 			</File>
 			<File
@@ -239,6 +242,9 @@
 			</File>
 			<File
 				RelativePath="..\..\scintilla\src\LexAsn1.cxx">
+			</File>
+			<File
+				RelativePath="..\..\scintilla\src\LexASY.cxx">
 			</File>
 			<File
 				RelativePath="..\..\scintilla\src\LexAU3.cxx">
@@ -379,6 +385,9 @@
 				RelativePath="..\..\scintilla\src\LexPython.cxx">
 			</File>
 			<File
+				RelativePath="..\..\scintilla\src\LexR.cxx">
+			</File>
+			<File
 				RelativePath="..\..\scintilla\src\LexRebol.cxx">
 			</File>
 			<File
@@ -431,6 +440,9 @@
 				RelativePath="..\..\scintilla\src\LineMarker.cxx">
 			</File>
 			<File
+				RelativePath="..\lua\src\lib\linit.c">
+			</File>
+			<File
 				RelativePath="..\lua\src\lib\liolib.c">
 			</File>
 			<File
@@ -452,6 +464,9 @@
 				RelativePath="..\lua\src\lopcodes.c">
 			</File>
 			<File
+				RelativePath="..\lua\src\lib\loslib.c">
+			</File>
+			<File
 				RelativePath="..\lua\src\lparser.c">
 			</File>
 			<File
@@ -468,9 +483,6 @@
 			</File>
 			<File
 				RelativePath="..\lua\src\lib\ltablib.c">
-			</File>
-			<File
-				RelativePath="..\lua\src\ltests.c">
 			</File>
 			<File
 				RelativePath="..\lua\src\ltm.c">
@@ -495,6 +507,9 @@
 			</File>
 			<File
 				RelativePath="..\..\scintilla\Src\PropSet.cxx">
+			</File>
+			<File
+				RelativePath="..\Src\PropSetFile.cxx">
 			</File>
 			<File
 				RelativePath="..\..\scintilla\src\RESearch.cxx">
@@ -548,6 +563,9 @@
 				RelativePath="..\win32\SingleThreadExtension.cxx">
 			</File>
 			<File
+				RelativePath="..\src\StringList.cxx">
+			</File>
+			<File
 				RelativePath="..\..\scintilla\src\Style.cxx">
 			</File>
 			<File
@@ -567,6 +585,9 @@
 			</File>
 			<File
 				RelativePath="..\..\scintilla\Src\WindowAccessor.cxx">
+			</File>
+			<File
+				RelativePath="..\win32\WindowMutex.cxx">
 			</File>
 			<File
 				RelativePath="..\..\scintilla\Src\XPM.cxx">

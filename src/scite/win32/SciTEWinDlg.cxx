@@ -142,9 +142,11 @@ void SciTEWin::WarnUser(int warnID, const char *msg /* = NULL */, bool isCanBeAl
 //!-end-[WarningMessage]
 }
 
-bool DialogHandled(WindowID id, MSG *pmsg) {
+bool SciTEWin::DialogHandled(WindowID id, MSG *pmsg) {
 	if (id) {
-		if (::IsDialogMessage(reinterpret_cast<HWND>(id), pmsg))
+		if (isWindowsNT ?
+			::IsDialogMessageW(reinterpret_cast<HWND>(id), pmsg) :
+			::IsDialogMessageA(reinterpret_cast<HWND>(id), pmsg))
 			return true;
 	}
 	return false;
@@ -623,7 +625,7 @@ void SciTEWin::Print(
 	// Print each page
 	int pageNum = 1;
 	bool printPage;
-	PropSet propsPrint;
+	PropSetFile propsPrint;
 	propsPrint.superPS = &props;
 	SetFileProperties(propsPrint);
 
@@ -742,8 +744,6 @@ void SciTEWin::PrintSetup() {
 	hDevNames = pdlg.hDevNames;
 }
 
-extern bool IsWindowsNT();
-
 // This is a reasonable buffer size for dialog box text conversions
 #define CTL_TEXT_BUF 512
 
@@ -849,7 +849,7 @@ public:
 
 };
 
-static void FillComboFromProps(HWND combo, PropSet &props) {
+static void FillComboFromProps(HWND combo, PropSetFile &props) {
 	char *key;
 	char *val;
 	if (props.GetFirst(&key, &val)) {
@@ -1079,21 +1079,20 @@ BOOL SciTEWin::IncrementFindMessage(HWND hDlg, UINT message, WPARAM wParam) {
 		RegisterHotKey(hDlg,3,MOD_SHIFT,VK_RETURN);	//!-add-[IncrementalSearch.AddHotkeys]
 		wFindIncrement.SetPosition(aNewRect);
 
-
 		return TRUE;
 	}
 
 	case WM_SETFOCUS:
 		return 0;
 
+//!-start-[IncrementalSearch.AddHotkeys]
 	case WM_HOTKEY:
 		if (wParam == 1)
 			FindNext(false,false);
-//!		if (wParam == 2)
-		if (wParam == 2 || wParam == 3)	//!-add-[IncrementalSearch.AddHotkeys]
+		if (wParam == 2 || wParam == 3)
 			FindNext(true,false);
 		break;
-
+//!-end-[IncrementalSearch.AddHotkeys]
 	case WM_CLOSE:
 		UnregisterHotKey(hDlg,1);	//!-change-[IncrementalSearch.AddHotkeys]
 		UnregisterHotKey(hDlg,2);	//!-change-[IncrementalSearch.AddHotkeys]
@@ -1144,8 +1143,10 @@ BOOL CALLBACK SciTEWin::FindIncrementDlg(HWND hDlg, UINT message, WPARAM wParam,
 }
 
 void SciTEWin::FindIncrement() {
-	if (wFindIncrement.Created())
+	if (wFindIncrement.Created()) {
+		wFindIncrement.Destroy();
 		return;
+	}
 
 	memset(&fr, 0, sizeof(fr));
 	fr.lStructSize = sizeof(fr);
@@ -1159,20 +1160,20 @@ void SciTEWin::FindIncrement() {
 	fr.wFindWhatLen = static_cast<WORD>(findWhat.length() + 1);
 
 	replacing = false;
-	//DoDialog(hInstance,
-	//		 MAKEINTRESOURCE(IDD_FIND2),
-	//		 MainHWND(),
-	//		 reinterpret_cast<DLGPROC>(FindIncrementDlg));
-	if (IsWindowsNT()) {
-		::DialogBoxParamW(hInstance, (LPCWSTR)MAKEINTRESOURCE(IDD_FIND2),
-		                MainHWND(), reinterpret_cast<DLGPROC>(FindIncrementDlg),
-		                reinterpret_cast<LPARAM>(this));
+	if (isWindowsNT) {
+		::CreateDialogParamW(hInstance,
+		                                    (LPCWSTR)MAKEINTRESOURCE(IDD_FIND2),
+		                                    MainHWND(),
+		                                    reinterpret_cast<DLGPROC>(FindIncrementDlg),
+		                                    reinterpret_cast<LPARAM>(this));
 	} else {
-		::DialogBoxParamA(hInstance, MAKEINTRESOURCE(IDD_FIND2),
-		                MainHWND(), reinterpret_cast<DLGPROC>(FindIncrementDlg),
-		                reinterpret_cast<LPARAM>(this));
+		::CreateDialogParamA(hInstance,
+		                                    MAKEINTRESOURCE(IDD_FIND2),
+		                                    MainHWND(),
+		                                    reinterpret_cast<DLGPROC>(FindIncrementDlg),
+		                                    reinterpret_cast<LPARAM>(this));
 	}
-	WindowSetFocus(wEditor);
+	wFindIncrement.Show();
 }
 
 bool SciTEWin::FindReplaceAdvanced() {
@@ -1197,7 +1198,7 @@ void SciTEWin::Find() {
 	fr.wFindWhatLen = static_cast<WORD>(findWhat.length() + 1);
 	int dialog_id = FindReplaceAdvanced() ? IDD_FIND_ADV : IDD_FIND;
 
-	if (IsWindowsNT()) {
+	if (isWindowsNT) {
 		wFindReplace = ::CreateDialogParamW(hInstance,
 		                                    (LPCWSTR)MAKEINTRESOURCE(dialog_id),
 		                                    MainHWND(),
@@ -1255,7 +1256,7 @@ void SciTEWin::PerformGrep() {
 			   props.Get("find.directory"),
 			   jobCLI, findInput, flags);
 	}
-	if (commandCurrent > 0) {
+	if (jobQueue.commandCurrent > 0) {
 		Execute();
 	}
 }
@@ -1422,7 +1423,7 @@ void SciTEWin::Replace() {
 	fr.wReplaceWithLen = static_cast<WORD>(replaceWhat.length() + 1);
 	int dialog_id = (!props.GetInt("find.replace.advanced") ? IDD_REPLACE : IDD_REPLACE_ADV);
 
-	if (IsWindowsNT()) {
+	if (isWindowsNT) {
 		wFindReplace = ::CreateDialogParamW(hInstance,
 		                                    (LPCWSTR)MAKEINTRESOURCE(dialog_id),
 		                                    MainHWND(),
@@ -1730,7 +1731,7 @@ void SciTEWin::FindMessageBox(const SString &msg, const SString *findItem) {
 		SString msgBuf = LocaliseMessage(msg.c_str());
 		WindowMessageBox(wFindReplace.Created() ? wFindReplace : wSciTE, msgBuf, MB_OK | MB_ICONWARNING);
 	} else {
-		if (IsWindowsNT()) {
+		if (isWindowsNT) {
 
 			SString sFormat = localiser.Text(msg.c_str());
 			SString sPart1 = sFormat.substr(0, sFormat.search("^0", 0));

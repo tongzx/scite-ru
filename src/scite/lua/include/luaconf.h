@@ -1,5 +1,5 @@
 /*
-** $Id: luaconf.h,v 1.1 2007/06/15 00:42:50 nyamatongwe Exp $
+** $Id: luaconf.h,v 1.2 2007/07/14 11:23:09 nyamatongwe Exp $
 ** Configuration file for Lua
 ** See Copyright Notice in lua.h
 */
@@ -161,7 +161,11 @@
 
 #else
 
-#define LUA_API		extern
+#if defined(_WIN32)
+#define LUA_API __declspec(dllexport)
+#else
+#define LUA_API         extern
+#endif
 
 #endif
 

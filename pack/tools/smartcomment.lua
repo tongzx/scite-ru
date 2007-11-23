@@ -194,10 +194,10 @@ local function BlockComment()
 	local selbegin = editor.SelectionStart
 	editor:BeginUndoAction()
 	if (string.find(editor:textrange(selbegin-string.len(GetEOL()), selbegin),GetEOL())) then
-		scite.MenuCommand("IDM_BLOCK_COMMENT")
+		scite.MenuCommand(IDM_BLOCK_COMMENT)
 		editor:SetSel(selbegin, editor.SelectionEnd)
 	else
-		scite.MenuCommand("IDM_BLOCK_COMMENT")
+		scite.MenuCommand(IDM_BLOCK_COMMENT)
 		editor:SetSel(editor.SelectionStart, editor.SelectionEnd)
 	end
 	editor:EndUndoAction()

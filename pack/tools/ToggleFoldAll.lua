@@ -23,7 +23,7 @@ end
 
 local function ToggleFoldAll()
 	if IsSciteStarted and CheckExt() then
-		scite.MenuCommand ("IDM_TOGGLE_FOLDALL")
+		scite.MenuCommand (IDM_TOGGLE_FOLDALL)
 	end
 end
 

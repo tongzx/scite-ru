@@ -8,7 +8,7 @@
 -- 2005-10-27 (c) icq=2614215
 -------------------------------------------------
 function change_codepage_ru()
-	scite.MenuCommand("IDM_ENCODING_DEFAULT")
+	scite.MenuCommand(IDM_ENCODING_DEFAULT)
 	if props["character.set"]=='255' then
 		props["character.set"]='204'
 		props["code.page.name"]='WIN-1251'
