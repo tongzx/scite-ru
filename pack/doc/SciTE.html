@@ -9,7 +9,7 @@
     <meta name="keywords" content="Scintilla, SciTE, Editing Component, Text Editor" />
     <meta name="Description"
     content="www.scintilla.org is the home of the Scintilla editing component and SciTE text editor application." />
-    <meta name="Date.Modified" content="20070618" />
+    <meta name="Date.Modified" content="20071122" />
     <script>
    	function IsRemote() {
 		var loc = '' + window.location;
@@ -36,8 +36,8 @@
           X</font>
         </td>
         <td width="40%" align="right">
-          <span class="versionlist"> Release version 1.74<br />
-           Site last modified June 18 2007</span>
+          <span class="versionlist"> Release version 1.75<br />
+           Site last modified November 22 2007</span>
         </td>
         <td width="20%">
           &nbsp;
@@ -52,6 +52,12 @@
       </tr>
     </table>
     <table bgcolor="#000000" width="100%" cellspacing="0" cellpadding="6" border="0">
+      <tr>
+        <td width="100%">
+          <span class="versionlist">Version 1.75 displays invalid UTF-8 bytes as hexadecimal and
+	  can show indentation guides on completely empty lines..</span>
+        </td>
+      </tr>
       <tr>
         <td width="100%">
           <span class="versionlist">Version 1.74 includes Lua 5.1 and is faster for wide lines.
@@ -81,37 +87,6 @@
 	  for pasting and uses internationalised input at all times.</span>
         </td>
       </tr>
-      <tr>
-        <td width="100%">
-          <span class="versionlist">Version 1.69 supports z-order based
-          Ctrl+Tab buffer switching.</span>
-        </td>
-      </tr>
-      <tr>
-        <td width="100%">
-          <span class="versionlist">Version 1.68 can draw the caret line translucently,
-          recognizes the language from an initial #! line, and
-          has an accurate TCL lexer.</span>
-        </td>
-      </tr>
-      <tr>
-        <td width="100%">
-          <span class="versionlist"> Version 1.67 is faster on files with long lines,
-		  and has some bugs fixed. </span>
-        </td>
-      </tr>
-      <tr>
-        <td width="100%">
-          <span class="versionlist"> Version 1.66 fixes bugs affecting directories containing "."
-	  and enhances the inbuilt "Find in Files". </span>
-        </td>
-      </tr>
-      <tr>
-        <td width="100%">
-          <span class="versionlist"> Version 1.60 can be scripted using
-	the Lua programming language.</span>
-        </td>
-      </tr>
     </table>
     <table bgcolor="#CCCCCC" width="100%" cellspacing="0" cellpadding="8" border="0">
       <tr>
@@ -130,7 +105,7 @@ if (IsRemote()) {
     document.write('<a href="http://scintilla.sourceforge.net/index.html">Scintilla</a>&nbsp;&nbsp; ');
 }
 //--></script>
-	  <a href="http://scintilla.sourceforge.net/SciTEExtras.html">
+	  <a href="http://groups.google.com/group/scite-interest/web/extras">
           Extras</a>&nbsp;&nbsp;
 	  <a href="http://scintilla.sourceforge.net/SciTETranslation.html">
           Translations</a>&nbsp;&nbsp;
@@ -163,18 +138,20 @@ if (IsRemote()) {
 }
 //--></script>
     <p>
-       There are some <a href="http://scintilla.sourceforge.net/SciTEExtras.html">extra configuration files</a> that can
+       There are some <a href="http://groups.google.com/group/scite-interest/web/extras">extra configuration files</a> that can
        enhance SciTE for various languages and APIs.
     </p>
     <p>
+      The scite-interest mailing list has moved from lyra.org to Google Groups.
       Questions and comments about SciTE should be directed to the
-      <a href="http://mailman.lyra.org/mailman/listinfo/scite-interest">scite-interest</a>
+      <a href="http://groups.google.com/group/scite-interest">scite-interest</a>
       mailing list,
       which is for discussion of SciTE and related projects, their bugs and future features.
       This is a low traffic list, averaging less than 50 messages per week.
       To avoid spam, only list members can write to the list.
-      Announcements of new versions of SciTE go to both the scite-interest list and
-      <a href="http://mailman.lyra.org/mailman/listinfo/scite-announce">scite-announce</a>.
+      New versions of SciTE are announced on scite-interest and may also be received by SourceForge
+      members by clicking on the Monitor column icon for "scite" on
+      <a href="https://sourceforge.net/project/showfiles.php?group_id=2439">the downloads page</a>.
       Messages sent to my personal email address that could have been sent to the list
       may receive no response.
       <br />

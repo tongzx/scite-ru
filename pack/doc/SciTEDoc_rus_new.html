@@ -38,8 +38,8 @@
     margin: 0.3em 3em;
     padding: 0.3em 0.6em;
     font-family:Courier New;
-	font-weight:bold;
-	color:#333399;
+    font-weight:bold;
+    color:#333399;
     }
 
 
@@ -86,7 +86,7 @@
   <LI><A HREF="#kbdcmd">Клавиатурные команды</A>
   <LI><A HREF="#abbrev">Аббревиатуры</A>
   <LI><A HREF="#folding">Свертка кода</A>
-  <LI><A HREF="#props">Properties file</A>
+  <LI><A HREF="#props">Файлы настроек</A>
   <LI><A HREF="#import">Importing properties files and conditional logic</A>
   <LI><A HREF="#cmdparam">Command parameters and prompting</A>
   <LI><A HREF="#encodings">Encodings</A>
@@ -630,37 +630,33 @@ C помощью параметра командной строки <code>"-@"</code> (без кавычек) можно считы
     <li>Ctrl+*(в правой части клавиатуры) сворачивает/разворачивает текущий маркер.
 </ul></p>
 
-  <a name="props"><h3>Properties file</h3></a>
+  <a name="props"><h3>Файлы настроек</h3></a>
 
-  <p>Much of SciTE&#39;s behaviour can be changed by editing the properties files.</p>
-
-  <p>There are four properties files used:</p>
-
+  <p>Большую часть возможностей SciTE можно перенастроить посредством редактирования файлов настроек.<br>
+  Используется четыре файла настроек. В порядке убывания приоритета:
   <ul>
-    <li>Local properties file called &quot;SciTE.properties&quot; which may be present in the same directory as the file being edited.</li>
-
-    <li>Directory properties file called &quot;SciTEDirectory.properties&quot; which may be present in the same or in a parent directory as the file being edited.</li>
-
-    <li>User properties file called &quot;SciTEUser.properties&quot; on Windows and &quot;.SciTEUser.properties&quot; on GTK+</li>
-
-    <li>Global properties file called &quot;SciTEGlobal.properties&quot;</li>
+    <li> Локальный файл настроек под названием <code>SciTE.properties</code>. Этот файл может быть расположен в том же каталоге, что и редактируемый файл.
+    <li> Файл настроек каталога - <code>SciTEDirectory.properties</code>, который может находиться в том же каталоге, что и редактируемый файл, или в родительском каталоге.
+    <li> Файл пользовательских настроек <code>SciTEUser.properties</code> (под Windows) и <code>.SciTEUser.properties</code> (под GTK+).
+    <li> Глобальный файл настроек <code>SciTEGlobal.properties</code>.
   </ul>
 
-  <p>Settings in the local properties file override those in the directory properties file which overrides those in the user properties file which override those in the global properties files. Environment variables are also available as properties and these are overridden by an explicit setting in one of the properties files.</p>
+  <p>Настройки локального файла настроек имеют преимущество перед настройками файла каталога, которые, в свою очередь, перекрывают настройки, содержащиеся в пользовательском файле, а последние перекрывают настройки глобальных файлов.</p>
 
-  <p>The directory properties file can used as project options file where user commands and compile, build commands should work in the same manner in subdirectories of a project. The benefit is that local properties files in subdirectories can be replaced by one properties file which is located at the root of the project. The evalution of the directory properties file is disabled by default and must be enabled by setting the variable properties.directory.enable to 1 in the user or global properties file.</p>
+  <p>В Windows файл глобальных настроек расположен в папке, где находится исполняемый файл. Файл пользовательских настроек разыскивается в каталоге профиля пользователя, как задано в переменной окружения <code>USERPROFILE</code>. Если переменная <code>USERPROFILE</code> не задана, поиск ведется в каталоге, где расположен исполняемый файл. В GTK+ файл пользовательских настроек находится в домашнем каталоге пользователя, а глобальные настройки – в каталоге, заданном в момент сборки (обычно <code>/usr/share/scite</code>). Если задана переменная окружения <code>SciTE_HOME</code>, то и в Windows, и в GTK+ глобальный файл и файл пользовательских настроек находятся именно там.</p>
 
-  <p>The user properties file is intended for customisation by the user, leaving the global properties file to contain the default options distributed with SciTE. The main use of the local properties files is to change the effects of the Compile, Build and Go commands for the files in a directory. For example, I use the javac compiler from the Java Development Kit for most work, so SciTEGlobal.properties sets the command for compiling .java files to &quot;javac&quot;. If I want to use the jvc compiler for the files in one directory, then the SciTE.properties file in that directory contains an entry setting the command to &quot;jvc&quot;.</p>
+  <p>Файл настроек каталога можно использовать в качестве файла опций проекта там, где пользовательские команды и команды <dfn>compile</dfn> и <dfn>build</dfn> должны функционировать аналогичным образом как в корневом каталоге, так и в подкаталогах проекта. Преимущество такого решения состоит в том, что таким образом локальные файлы настроек в подкаталогах можно заменить всего лишь одним файлом настроек, расположив его в корне проекта. Анализ файла настроек каталога отключается по умолчанию. Для того чтобы им можно было пользоваться, необходимо в пользовательском или глобальном файле настроек установить переменную <dfn>properties.directory.enable</dfn> в <var>12</var>.</p>
 
-  <p>On Windows, the global properties file is located in the directory of the executable. The user properties file is looked for in the user profile directory as set in the USERPROFILE environment variable, or in the directory of the executable if USERPROFILE is not set. For GTK+ the user properties file is found in the user&#39;s home directory and the global properties in a directory set at build time - normally /usr/share/scite. If the &quot;SciTE_HOME&quot; environment variable is set on either Windows or GTK+ then it is where both the global and user properties files are found.</p>
+  <p>Настройки по умолчанию "зашиты" в код SciTE и редактор может работать вообще без единого файла настроек. В <code>SciTEGlobal.properties</code> находятся настройки, рекомендуемые распостранителем пакета для всех пользователей. Если пользователя не устраивают рекомендуемые настройки или он хочет их дополнить, то он может либо изменить их, либо создать файл <code>SciTEUser.properties</code> со своими настройками, которые автоматически перекроют одноименные параметры в <code>SciTEGlobal.properties</code>. Более подробно про файлы настроек можно прочитать <a href="http://scite.ruteam.ru/scite/faq/podumaite-zachem-vam-stolko-properties">здесь</a>. Основной функцией локальных файлов настроек является настройка команд <cite>Compile</cite>, <cite>Build</cite> и <cite>Go</cite> для работы с файлами каталога. К примеру, если в большинстве случаев пользователь использует компилятор <code>javac</code> из Java Development Kit, в файле <code>SciTEGlobal.properties</code> задается команда для компиляции файлов <code>.java</code> в <code>javac</code>. Если же для файлов одного из каталогов ему нужен компилятор <code>jvc</code>, тогда в файле <code>SciTE.properties</code>, расположенном в этом каталоге, задается компилятор <code>jvc</code>.</p>
 
-  <p>There are commands in the Options menu for opening each of the properties files.</p>
+  <p>В меню <cite>Настройки</cite> (Options) есть команды для открытия каждого файла настроек.</p>
 
-  <p>The files are in approximately the same format as Java properties files which have a simple text format. Lines that start with &#39;#&#39; or that are completely blank are comments. Other lines are of the form</p>
-
-  <p>variable=value</p>
+  <p>Файлы настроек имеют примерно тот же формат, что и файлы настроек языка Java, в которых используется простой текстовый формат. Строки, начинающиеся с символа '<code>#</code>' являются комментариями и игнорируются, также как и пустые строки. Остальные строки имеют форму<br />
+  <dfn>переменная</dfn><code>=</code><var>значение</var></p>
 
   <p>For long values, a &#39;\&#39; character at the end of the line continues that value on the next line. Space characters are significant so <span class="example">x =1</span> defines a variable called &quot;x &quot;. Values may include the values of other variables by using $(variablename). There are some variables set by the environment to access the name of the current file as well:</p>
+
+При длинных значениях в конце строки ставится символ '\', указывающий, что продолжение этого значения находится на следующей строке. Большое значение имеют пробелы. Так, x =1 задает переменную "x ". При помощи $(variablename) в значения можно включить значения других переменных. В качестве значений параметров в файлах настроек можно использовать переменные окружения, а также внутренние переменные SciTE:
 
   <table cellpadding="0" cellspacing="0" border="1" summary="Variables set by the environment for use in property files">
     <thead>

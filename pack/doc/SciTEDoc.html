@@ -25,9 +25,6 @@
         .windowsonly {
             background: #EBF3FF;
         }
-        .ruboardonly {
-            background: #FFECFF;
-        }
         .gtkonly {
             background: #FFFFE7;
         }
@@ -47,26 +44,39 @@
             background-color: #FFF7EE;
             padding: 2px 5px;
         }
+        .header{
+            border: 1px solid #CCCCCC;
+        }
+        .headerlinks {
+            padding: 7px;
+            background-color: #CCCCCC;
+	  border: 0px solid #FF0000;
+            font-size: 120%;
+        }
  </style>
   </head>
   <body bgcolor="#FFFFFF" text="#000000">
-    <table bgcolor="#000000" width="100%" cellspacing="0" cellpadding="0" border="0"  summary="banner">
+    <table bgcolor="#000000" width="100%" cellspacing="0" cellpadding="0" style="border:0px solid #FF0000" border="0"  summary="banner">
       <tr>
         <td>
           <img src="SciTEIco.png" border="3" height="64" width="64" alt="Scintilla icon" />
         </td>
         <td>
           <a href="index.html" style="color:white;text-decoration:none"><font size="5">
-          SciTE</font></a>
+          SciTE Documentation</font></a>
         </td>
       </tr>
     </table>
-    <h2>
-       SciTE Documentation
-    </h2>
-    <p>
-    <a href="SciTEFAQ.html">Frequently Asked Questions</a>
-    </p>
+    <table class="header" width="100%" summary="header">
+      <tr>
+        <td class="headerlinks">
+	  <a href="http://scintilla.sourceforge.net/SciTEFAQ.html">
+          Frequently Asked Questions</a>&nbsp;&nbsp;
+	  <a href="http://scintilla.sourceforge.net/SciTELua.html">
+          Scripting</a>&nbsp;&nbsp;
+        </td>
+      </tr>
+    </table>
     <h3>
        Standard Editing
     </h3>
@@ -167,17 +177,36 @@ NameError: mistake
        If command execution has failed and is taking too long to complete then the Tools | Stop
       Executing command can be used.
     </p>
+    <h3>
+       Command subsystem
+    </h3>
     <p>
-       On Windows, SciTE defaults to executing tools as command line programs. Executing a GUI
-      program in this mode results in that program being run without displaying a window. The
-      command.subsystem option can be used to define tools that run in GUI mode. The default
-      subsystem, 0, is for command line programs, 1 is for programs which create their own windows,
-      and 2 is for using the ShellExecute call. ShellExecute is a good way to open HTML files and
-      similar as it handles this similarly to a user opening the file from the shell. 3 is for calling an
-      internal extension or director extension, 4 is for calling the Windows specific HtmlHelp program
-      and 5 is for calling the Windows specific WinHelp function. On GTK+, the default subsystem 0
-      executes the tool and waits for it to finish, redirecting output to the output pane and
-      subsystem 2 executes the tool in the background.
+    Tools can be executed in various modes by SciTE which are called "subsystems". Different
+    subsystems are supported on Windows and GTK+. The default subsystem is 0.
+    </p>
+    <p>
+    <table class="windowsonly" cellpadding="0" cellspacing="0" border="1" summary="Command line commands">
+    <thead><td colspan="3">Windows</td></thead>
+    <tr><td>0</td><td>console</td><td>Command line programs<br/>Do not use for GUI programs as their windows will not be visible.</td></tr>
+    <tr><td>1</td><td>windows</td><td>Programs that create their own windows</td></tr>
+    <tr><td>2</td><td>shellexec</td><td>Run using ShellExecute<br />
+    A good way to open HTML files and
+      similar as it handles this similarly to a user opening the file from the shell.</td></tr>
+    <tr><td>3</td><td>lua<br />director</td><td>Internal extension or director extension</td></tr>
+    <tr><td>4</td><td>htmlhelp</td><td>Open in HtmlHelp program<br />
+	Two part command separated by ! with the first
+	part being the topic to search for and the second the name of the help file
+    </td></tr>
+    <tr><td>5</td><td>winhelp</td><td>Open with WinHelp function<br />
+    Two part command similar to subsystem 4</td></tr>
+    </table>
+    </p>
+    <p>
+    <table class="gtkonly" cellpadding="0" cellspacing="0" border="1" summary="Command line commands">
+    <thead><td colspan="3">GTK+</td></thead>
+    <tr><td>0</td><td>console</td><td>Execute tool and wait for it to finish</td></tr>
+    <tr><td>2</td><td>shellexec</td><td>Execute in background</td></tr>
+    </table>
     </p>
     <h3>
        Command line arguments
@@ -336,10 +365,12 @@ NameError: mistake
        support for folding):
     </p>
     <ul>
+        <li>Abaqus*</li>
         <li>Ada</li>
         <li>ANS.1 MIB definition files*</li>
         <li>APDL</li>
         <li>Assembler (NASM, MASM)</li>
+        <li>Asymptote*</li>
         <li>AutoIt*</li>
         <li>Avenue*</li>
         <li>Batch files (MS-DOS)</li>
@@ -349,6 +380,7 @@ NameError: mistake
         <li>Bullant*</li>
         <li>C/C++/C#*</li>
         <li>Clarion*</li>
+        <li>cmake*</li>
         <li>conf (Apache)*</li>
         <li>CSound*</li>
         <li>CSS*</li>
@@ -360,6 +392,7 @@ NameError: mistake
         <li>Flash (ActionScript)*</li>
         <li>Fortran*</li>
         <li>Forth*</li>
+        <li>GAP*</li>
         <li>Haskell</li>
         <li>HTML*</li>
         <li>HTML with embedded JavaScript, VBScript, PHP and ASP*</li>
@@ -375,7 +408,7 @@ NameError: mistake
         <li>Lua*</li>
         <li>Make</li>
         <li>Matlab*</li>
-        <li>Metapost</li>
+        <li>Metapost*</li>
         <li>MMIXAL</li>
         <li>MSSQL</li>
         <li>nnCron</li>
@@ -385,11 +418,14 @@ NameError: mistake
         <li>Octave*</li>
         <li>Pascal/Delphi*</li>
         <li>Perl, most of it except for some ambiguous cases*</li>
+        <li>PL/M*</li>
+        <li>Progress*</li>
         <li>PostScript*</li>
         <li>POV-Ray*</li>
         <li>PowerBasic*</li>
         <li>PureBasic*</li>
         <li>Python*</li>
+        <li>R*</li>
         <li>Rebol*</li>
         <li>Ruby*</li>
         <li>Scheme*</li>
@@ -649,7 +685,7 @@ NameError: mistake
       are overridden by an explicit setting in one of the properties files.
     </p>
 	<p>
-      The directory properties file can used as project options file where user commands and
+      The directory properties file can be used as project options file where user commands and
       compile, build commands should work in the same manner in subdirectories of a project. The
       benefit is that local properties files in subdirectories can be replaced by one properties file
       which is located at the root of the project.
@@ -728,6 +764,10 @@ NameError: mistake
       look like this:<br />
        <b>file.patterns.html=*.html;*.htm;*.asp;*.shtml</b><br />
        <b>command.go.$(file.patterns.html)=file://$(FilePath)</b>
+    </p>
+    <p>
+    Wildcard matching only works where the wildcard is at the start of a file specification, so "*.mak" will match "proj.mak" but
+    "Makefile*" will not match "Makefile.in".
     </p>
     <h3>
        Importing properties files and conditional logic
@@ -889,12 +929,17 @@ NameError: mistake
       </tr>
       <tr>
         <td>
-          view.indentation.guides
+          view.indentation.guides<br />
+          view.indentation.examine<br />
+          view.indentation.examine.<i>filepattern</i><br />
           highlight.indentation.guides
         </td>
         <td>
           Setting view.indentation.guides to 1 displays dotted vertical lines within indentation white
           space every indent.size columns.<br />
+          Setting view.indentation.examine to 1 to display guides within real indentation whitespace only,
+	  2 according to the next non-empty line (good for Python) or 3 according to both the next and
+	  previous non-empty lines (good for most languages).<br />
           Setting highlight.indentation.guides to 1 highlights the indentation guide associated with a
           brace when that brace is highlighted.
         </td>
@@ -999,10 +1044,7 @@ NameError: mistake
           The line.margin.width property controls how much space is reserved for the line
           numbers, in terms of the number of digits that can be displayed.  To specify that
           the margin should expand if needed to accomodate larger line numbers, add a '+'
-          after the number of digits, e.g. <span class="example">line.margin.width=3+</span>.<br />
-	  These properties replace the old <span class="example">line.numbers</span> property, which
-	  was overloaded to perform both of the actions described above.  The
-	  <span class="example">line.numbers</span> property is no longer available.
+          after the number of digits, e.g. <span class="example">line.margin.width=3+</span>.
         </td>
       </tr>
       <tr>
@@ -1584,43 +1626,6 @@ NameError: mistake
         The * form is used if there is no lexer specific setting.
         </td>
       </tr>
-      <TR class=ruboardonly>
-        <td>
-          calltip.<i>lexer</i>.automatic<br />
-          calltip.*.automatic
-        </td>
-        <td>
-        Setting this option to 0 disables automatic calltip popup display
-        but leaves user with possibility to invoke calltip manually.
-        The * form is used if there is no lexer specific setting.
-        (Only SciTE-Ru)
-        </td>
-      </tr>
-      <TR class=ruboardonly>
-        <td>
-          calltip.<i>lexer</i>.show.per.page<br />
-          calltip.*.show.per.page
-        </td>
-        <td>
-        This option specifies number of definitions displayed per page in calltip window (default 1).
-        Use arrow buttons to switch to next/previous page.
-        The * form is used if there is no lexer specific setting.
-        (Only SciTE-Ru)
-        </td>
-      </tr>
-      <TR class=ruboardonly>
-        <td>
-          calltip.<i>lexer</i>.word.wrap<br />
-          calltip.*.word.wrap
-        </td>
-        <td>
-        This option enables word wrapping of calltip lines.
-        Specify maximum number of characters allowed per line.
-        Specify 0 to disable this feature (default).
-        The * form is used if there is no lexer specific setting.
-        (Only SciTE-Ru)
-        </td>
-      </tr>
       <tr>
         <td>
           xml.auto.close.tags
@@ -1656,6 +1661,16 @@ NameError: mistake
         </td>
         <td>
           Set to 0 to disallow the '$' character in identifiers with the cpp lexer.
+        </td>
+      </tr>
+      <tr>
+        <td>
+          lexer.errorlist.value.separate
+        </td>
+        <td>
+          For lines in the output pane that are matches from Find in Files or GCC-style diagnostics,
+	  style the path and line number separately from the rest of the line with style 21 used for
+	  the rest of the line. This allows matched text to be more easily distinguished from its location.
         </td>
       </tr>
       <tr>
@@ -1768,8 +1783,10 @@ Prev File|IDM_PREVFILE|<br/>
         <td>
           horizontal.scrollbar<br />
         horizontal.scroll.width<br />
+        horizontal.scroll.width.tracking<br />
         output.horizontal.scrollbar<br />
         output.horizontal.scroll.width<br />
+        output.horizontal.scroll.width.tracking<br />
         output.scroll<br />
         end.at.last.line
         </td>
@@ -1778,6 +1795,8 @@ Prev File|IDM_PREVFILE|<br/>
           horizontal.scroll.width is the document width assumed for scrolling.<br />
           Similarly, output.horizontal.scrollbar and output.horizontal.scroll.width controls the
         horizontal scroll bar of the output pane.<br />
+          The horizontal scroll bar widths can automatically grow as needed to ensure all displayed lines can be fully
+        scrolled with horizontal.scroll.width.tracking and output.horizontal.scroll.width.tracking.<br />
         To stop the output pane from automatically scrolling, set output.scroll to 0.
         To have the output pane scroll and return back to the line of the executed command,
         set output.scroll to 1. If you want the output pane to scroll and remain at
@@ -1966,8 +1985,7 @@ Prev File|IDM_PREVFILE|<br/>
         find.replace.matchcase<br />
         find.replace.regexp<br />
         find.replace.wrap<br />
-        find.replace.escapes<br />
-        find.replacewith.focus
+        find.replace.escapes
         </td>
         <td>
           These properties define the initial conditions for find and replace commands.
@@ -1975,7 +1993,15 @@ Prev File|IDM_PREVFILE|<br/>
         find.replace.regexp the "Regular expression" option,
         find.replace.wrap the "Wrap around" option and
         find.replace.escapes the "Transform backslash expressions" option.<br />
-        If the find.replacewith.focus property is set, the Replace With input box is focused in Replace dialog if Find What is non-empty.
+        </td>
+      </tr>
+      <tr class="windowsonly">
+        <td>
+        find.replacewith.focus
+        </td>
+        <td>
+        If the find.replacewith.focus property is set, the Replace With input box is focused
+	in the Replace dialog if Find What is non-empty.
         </td>
       </tr>
       <tr>
@@ -2078,12 +2104,20 @@ c:\cygwin\bin\xargs -0 fgrep -G -n "$(find.what)"
         <td>
           To support a DBCS language such as Japanese, a code page can be set here. This ensures
           that double byte characters are always treated as a unit so the caret is never located
-          between the two bytes of a double byte character. On Windows, 0 (single byte character set) and
-	65001 (UTF-8) will work and settings that may work, depending on how Windows is set up, include
-          932 (Japanese Shift-JIS), 936 (Simplified Chinese GBK), 949 (Korean), 950 (Traditional Chinese
-          Big5), and 1361(Korean Johab).<br />
-          This option can only be 0 or 65001 on GTK+
-        where SciTE only supports single byte character sets and Unicode.<br />
+          between the two bytes of a double byte character.<br/><br/>
+  	  <table>
+	  <thead><th>Code page</th><th>Value</th></thead>
+	  <tr><td>Default (single byte character set)</td><td align="right">0</td></tr>
+	  <tr><td>UTF-8</td><td align="right">65001</td></tr>
+	  <tr class="windowsonly"><td>Japanese Shift-JIS</td><td align="right">932</td></tr>
+	  <tr class="windowsonly"><td>Simplified Chinese GBK</td><td align="right">936</td></tr>
+	  <tr class="windowsonly"><td>Traditional Chinese Big5</td><td align="right">950</td></tr>
+	  <tr class="windowsonly"><td>Korean</td><td align="right">949</td></tr>
+	  <tr class="windowsonly"><td>Korean Johab</td><td align="right">1361</td></tr>
+  	  </table>
+	  All of these may work on Windows.
+	  On GTK+, this option should only be 0 or 65001 where SciTE only supports single
+	  byte character sets and Unicode.<br />
         Setting code.page to 65001 starts Unicode mode and the document is treated as
         a sequence of characters expressed as UTF-8. Display is performed by converting to the
         platform's normal Unicode encoding first so characters from any language will be displayed.
@@ -2112,16 +2146,28 @@ c:\cygwin\bin\xargs -0 fgrep -G -n "$(find.what)"
         </td>
         <td>
           This setting allows changing the character set that is asked for when setting up fonts.
-        To use Japanese characters, set character.set to 128.
-        Other values that may work include Chinese (GB2312=134 or BIG5=136),
-        Korean (129), Greek (161),
-        Eastern European (238), Baltic (186),
-        Turkish (162), Hebrew (177), Arabic (178), or Thai (222).
-        All of these values may work on Windows, but on GTK+ Baltic, Turkish, Thai and Vietnamese
+	Not all of the values will work on all platforms.<br/><br/>
+	  <table>
+	  <thead><th>Character set</th><th>Value</th></thead>
+	  <tr><td>Default</td><td align="right">0</td></tr>
+	  <tr><td>Japanese</td><td align="right">128</td></tr>
+	  <tr><td>Chinese GB2312</td><td align="right">134</td></tr>
+	  <tr><td>Chinese BIG5</td><td align="right">136</td></tr>
+	  <tr><td>Korean</td><td align="right">129</td></tr>
+	  <tr><td>Greek</td><td align="right">161</td></tr>
+	  <tr><td>Eastern European</td><td align="right">238</td></tr>
+	  <tr class="windowsonly"><td>Baltic</td><td align="right">186</td></tr>
+	  <tr class="windowsonly"><td>Turkish</td><td align="right">162</td></tr>
+	  <tr><td>Hebrew</td><td align="right">177</td></tr>
+	  <tr><td>Arabic</td><td align="right">178</td></tr>
+	  <tr class="windowsonly"><td>Thai</td><td align="right">222</td></tr>
+	  <tr class="windowsonly"><td>Vietnamese</td><td align="right">163</td></tr>
+	  <tr><td>Cyrillic (CP1251 on Windows, KOI8-R on GTK+)</td><td align="right">204</td></tr>
+	  <tr class="gtkonly"><td>Cyrillic (CP1251 on GTK+)</td><td align="right">1251</td></tr>
+	  <tr class="gtkonly"><td>European with Euro (ISO 8859-15)</td><td align="right">1000</td></tr>
+	  </table>
+        All of these values except for 1251 and 1000 may work on Windows, but on GTK+ Baltic, Turkish, Thai and Vietnamese
         will probably not work.
-        To use Cyrillic characters on Windows, set character.set=204 (CP1251
-        encoding). To use Cyrillic characters on GTK+, set character.set=204 (KOI8-R
-        encoding) or character.set=1251 (CP1251 encoding).
         Please send email if you use one of these settings and it works or doesn't or if you
         have information on how to support other languages.
         </td>
@@ -2402,12 +2448,6 @@ c:\cygwin\bin\xargs -0 fgrep -G -n "$(find.what)"
           go commands. The optional command.is.filter property states that the command modifies the
           current file so it may need to be read in after performing the command if
           load.on.activate is set.<br />
-           The subsystem determines how the command is executed on Windows. 0, the default is for
-          command line programs, 1 for programs which create their own windows, 2 for running
-        by using ShellExecute, 3 for running in an internal extension or director extension,
-        4 for running HtmlHelp on Windows, and 5 for running WinHelp on Windows.
-        When using subsystem 4 or 5, the command has two parts separated by ! with the first
-        part being the topic to search for and the second the name of the help file.<br />
         If command.save.before is set to 1, SciTE automatically saves the file before execution.
         If it is set to 2, SciTE will not save the file, otherwise SciTE asks you.
 
@@ -2855,6 +2895,7 @@ groupundo - yes or no
       <tr>
         <td>
         statement.indent.<i>filepattern</i><br />
+        statement.end.<i>filepattern</i><br />
         statement.lookback.<i>filepattern</i><br />
         block.start.<i>filepattern</i><br />
         block.end.<i>filepattern</i>
@@ -2868,7 +2909,12 @@ groupundo - yes or no
                 statement.indent.$(file.patterns.cpp)=5 if else while
          </div>
           says that for C++ the words "if", "else", and "while" in keyword style, 5, start compound
-          statements which leads to the next line being indented if no other factors affect it. <br />
+          statements which leads to the next line being indented if no other factors affect it. However,
+          if a statement end is found on the same line then the next line is not indented. For C++ the
+          statement end is the semicolon in the operator style, so this is defined:
+         <div class="example">
+                statement.end.$(file.patterns.cpp)=10 ;
+         </div>
          The number of lines looked at to determine indentation can be set with statement.lookback.
          This can be used either to bound the amount of time spent on this task or to specify
          that only the last line be examined for indentation.<br />
@@ -2935,6 +2981,15 @@ groupundo - yes or no
         <td>
 		On GTK+ setting this to 1 makes the file selector dialog
 		invoked by the Open command show hidden files automatically.
+        </td>
+      </tr>
+      <tr>
+        <td>
+        locale.properties
+        </td>
+        <td>
+          Set the name of the localisation file. For a multi-user installation
+	this allows each user to set a preferred user interface language.
         </td>
       </tr>
       <tr>
@@ -3006,7 +3061,7 @@ groupundo - yes or no
         </td>
         <td>
           The ext.lua properties are specific to the <a href="SciTELua.html">
-          SciTE Lua Scripting Extension</a>.  The extension.<i>filepatten</i> property
+          SciTE Lua Scripting Extension</a>.  The extension.<i>filepattern</i> property
           is part of the generic <a href="SciTEExtension.html">SciTE Extension
           Interface</a> but is currently only used by the Lua Scripting Extension.
           <br />
@@ -3222,7 +3277,7 @@ groupundo - yes or no
     </h3>
     <p>
        The .api files can be generated by hand or by using a program.
-       There are also <a href="SciTEExtras.html">downloadable ready-to-use
+       There are also <a href="http://groups.google.com/group/scite-interest/web/extras">downloadable ready-to-use
        .api files.</a>
     </p>
     <p>
