@@ -2190,8 +2190,8 @@ void SciTEBase::ContinueCallTip() {
 		else if (braces == 1 && calltipParametersSeparators.contains(line[i]))
 			commas++;
 	}
-
-/*!	int startHighlight = 0;
+/*!
+	int startHighlight = 0;
 	while (functionDefinition[startHighlight] && !calltipParametersStart.contains(functionDefinition[startHighlight]))
 		startHighlight++;
 	if (calltipParametersStart.contains(functionDefinition[startHighlight]))
@@ -2212,7 +2212,8 @@ void SciTEBase::ContinueCallTip() {
 	while (functionDefinition[endHighlight] && !calltipParametersSeparators.contains(functionDefinition[endHighlight]) && !calltipParametersEnd.contains(functionDefinition[endHighlight]))
 		endHighlight++;
 
-	SendEditor(SCI_CALLTIPSETHLT, startHighlight, endHighlight);*/
+	SendEditor(SCI_CALLTIPSETHLT, startHighlight, endHighlight);
+*/
 //!-start-[BetterCalltips]
 	SendEditor(SCI_CALLTIPCLEARHLT);
 	int startHighlight = 0;
@@ -4739,10 +4740,12 @@ void SciTEBase::Notify(SCNotification *notification) {
 
 	case SCN_CALLTIPCLICK: {
 			if (notification->position == 1 && currentCallTip > 0) {
-/*!				currentCallTip--;
+/*!
+				currentCallTip--;
 				FillFunctionDefinition();
 			} else if (notification->position == 2 && currentCallTip + 1 < maxCallTips) {
-				currentCallTip++;*/
+				currentCallTip++;
+*/
 //!-start-[BetterCalltips]
 				if (currentCallTip >= calltipShowPerPage)
 					currentCallTip -= calltipShowPerPage;

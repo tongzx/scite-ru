@@ -1093,7 +1093,7 @@ static void ColouriseErrorListLine(
     char *findValue,
 //!-end-[FindResultListStyle]
     Accessor &styler,
-    bool valueSeparate) {
+	bool valueSeparate) {
 	int startValue = -1;
 	int style = RecogniseErrorListLine(lineBuffer, lengthLine, startValue);
 	if (valueSeparate && (startValue >= 0)) {
