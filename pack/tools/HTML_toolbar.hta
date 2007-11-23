@@ -19,8 +19,8 @@ version=1.0
 >
 <title>html Toolbar</title>
 <style type="text/css">
-	body, table {font-family:MS Sans Serif; font-size:8px; background-color:threedface; cursor:default; margin:0px;}
-	button {font-family:MS Sans Serif; font-size:8px; font-weight:bold; color:#0000CC;}
+	body, table {font-family:MS Sans Serif; font-size:8pt; background-color:threedface; cursor:default; margin:0px;}
+	button {font-family:MS Sans Serif; font-size:8pt; font-weight:bold; color:#0000CC;}
 </style>
 <script language="JavaScript">
 try {
@@ -31,7 +31,6 @@ try {
 }
 
 var filename = SciTE.Props ("SciteUserHome") + "\\HTML_toolbar.ini";
-
 var Arr_BTN=new Array;
 var buttons=readfile(filename);
 if (buttons){
@@ -63,15 +62,26 @@ function readfile(filename) {
 }
 
 function AddTag(i){
-	var text = SciTE.Props("CurrentSelection");
+	var text = SciTE.GetSelText;
 	text = Arr_BTN[i][2].replace(/%SEL%/,text);
+	var clp = window.clipboardData.getData('Text');
+	text = text.replace(/%CLP%/,clp);
+	var cursor = text.indexOf("|");
+	if (cursor!=-1) {
+		text = text.replace(/\|/,"");
+	} else {
+		cursor = text.length;
+	}
+	var pos = parseInt(SciTE.LUA ("editor.SelectionStart")) + cursor;
 	SciTE.ReplaceSel(text);
+	SciTE.LUA ("editor:GotoPos("+pos+")");
+	SciTE.Focus();
 }
 </script>
 </head><body onLoad="SciTE.onTop(document.title, true);">
 <table id="TB"><tr><td style="white-space:nowrap;">
 <span id="BTN"></span>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button onClick="self.close();" style="font-family:Marlett; font-weight:normal; font-size:14px; color:red;">r</button>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button onClick="self.close();" style="font: normal 10pt Marlett; color:red;">r</button>
 </td></tr></table>
 </body>
 <script language="JavaScript">
