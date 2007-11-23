@@ -1,5 +1,5 @@
 -- xComment
--- Version: 1.2.1
+-- Version: 1.3
 -- Author: mozers™
 ---------------------------------------------------
 -- C блеском заменяет стандартную комбинацию Ctrl+Q (комментирование/снятие комментария)
@@ -44,12 +44,13 @@ end
 local function FirstLetterFromBlock()
 -- Возвращает позицию первого не пробельного символа в блоке
 	local text_line = sel_text
-	if sel_text == "" then 
+	if sel_text == "" then
 		text_line = editor:GetLine(line_sel_start)
+		sel_start = editor:PositionFromLine(line_sel_start)
 	end
 	local first_letter, _, _ = string.find(text_line, "[^%s]", 1)
 	if first_letter ~= nil then
-		first_letter = sel_start + first_letter - 1
+			first_letter = sel_start + first_letter - 1
 	else
 		first_letter = -1
 	end
@@ -85,78 +86,94 @@ local function IsStreamComment()
 end
 
 --------------------------------------------------
+local function LineComment()
+-- Комментирование одной невыделенной строки
+	if iDEBUG then print ("Line Comment") end
+	if comment_block == "" then
+		print("! Отсутствует параметр ".."comment.block."..lexer)
+	else
+		comment_block = comment_block..string.rep(" ", comment_block_use_space)
+		local cur_pos = editor.CurrentPos
+		if comment_block_at_line_start == 1 then
+			editor:GotoPos(editor:PositionFromLine(line_sel_start))
+		else
+			editor:VCHome()
+		end
+		editor:ReplaceSel(comment_block)
+		editor:GotoPos(cur_pos + string.len(comment_block))
+	end
+end
+
+--------------------------------------------------
 local function BlockComment()
--- Комментирование строк
+-- Комментирование нескольких выделенных строк
 	if iDEBUG then print ("Block Comment") end
 	if comment_block == "" then
 		print("! Отсутствует параметр ".."comment.block."..lexer)
 	else
 		comment_block = comment_block..string.rep(" ", comment_block_use_space)
-		if sel_text == "" then
-			-- одна невыделенная строка
-			local cur_pos = editor.CurrentPos
-			if comment_block_at_line_start == 1 then
-				editor:GotoPos(editor:PositionFromLine(line_sel_start))
-			else
-				editor:VCHome()
-			end
-			editor:ReplaceSel(comment_block)
-			editor:GotoPos(cur_pos + string.len(comment_block))
-		else
-			-- несколько строк
-			local text_comment = ""
-			for i = line_sel_start, line_sel_end-1 do
-				local text_line = editor:GetLine(i)
-				if string.find(text_line,"[^%s]") then
-					if comment_block_at_line_start == 1 then
-						text_comment = text_comment..comment_block..text_line
-					else
-						text_comment = text_comment..string.gsub(text_line,"([^%s])",comment_block.."%1",1)
-					end
-					sel_end = sel_end + string.len(comment_block)
+		local text_comment = ""
+		for i = line_sel_start, line_sel_end-1 do
+			local text_line = editor:GetLine(i)
+			if string.find(text_line,"[^%s]") then
+				if comment_block_at_line_start == 1 then
+					text_comment = text_comment..comment_block..text_line
 				else
-					text_comment = text_comment..text_line
+					text_comment = text_comment..string.gsub(text_line,"([^%s])",comment_block.."%1",1)
 				end
+				sel_end = sel_end + string.len(comment_block)
+			else
+				text_comment = text_comment..text_line
 			end
-			editor:ReplaceSel(text_comment)
-			-- восстанавливаем выделение
-			editor:SetSel(sel_start, sel_end)
+		end
+		editor:ReplaceSel(text_comment)
+		-- восстанавливаем выделение
+		editor:SetSel(sel_start, sel_end)
+	end
+end
+
+--------------------------------------------------
+local function LineUnComment()
+-- Снятие комментария с одной невыделенной строки
+	if iDEBUG then print ("Line UnComment") end
+	if comment_block == "" then
+		print("! Отсутствует параметр ".."comment.block."..lexer)
+	else
+		local cur_pos = editor.CurrentPos
+		local text_line = editor:GetCurLine()
+		local comment_pos, _ = string.find(text_line,Pattern(comment_block).."~? ?", 1)
+		local line_uncomment = string.gsub(text_line,Pattern(comment_block).."~? ?","",1)
+		local line_pos_start = editor:PositionFromLine(line_sel_start)
+		local line_pos_end = line_pos_start + string.len(text_line)
+		editor:SetSel(line_pos_start, line_pos_end)
+		editor:ReplaceSel(line_uncomment)
+		if cur_pos > (line_pos_start+comment_pos) then
+			editor:GotoPos(cur_pos - string.len(text_line) + string.len(line_uncomment))
+		else
+			editor:GotoPos(cur_pos)
 		end
 	end
 end
 
 --------------------------------------------------
 local function BlockUnComment()
--- Снятие комментария со строк
+-- Снятие комментария с нескольких выделенных строк
 	if iDEBUG then print ("Block UnComment") end
 	if comment_block == "" then
 		print("! Отсутствует параметр ".."comment.block."..lexer)
 	else
-		if sel_text == "" then
-			-- одна невыделенная строка
-			local cur_pos = editor.CurrentPos
-			local text_line = editor:GetCurLine()
-			local text_uncomment = string.gsub(text_line,Pattern(comment_block).."~? ?","",1)
-			local line_pos_start = editor:PositionFromLine(line_sel_start)
-			local line_pos_end = line_pos_start + string.len(text_line)
-			editor:SetSel(line_pos_start, line_pos_end)
-			editor:ReplaceSel(text_uncomment)
-			editor:GotoPos(cur_pos - string.len(comment_block) - comment_block_use_space)
-		else
-			-- несколько строк
-			local text_uncomment = ""
-			for i = line_sel_start, line_sel_end-1 do
-				local text_line = editor:GetLine(i)
-				local line_uncomment = string.gsub(text_line,Pattern(comment_block).."~? ?","",1)
-				text_uncomment = text_uncomment..line_uncomment
-				if line_uncomment ~= text_line then
-					sel_end = sel_end - string.len(text_line) + string.len(line_uncomment)
-				end
+		local text_uncomment = ""
+		for i = line_sel_start, line_sel_end-1 do
+			local text_line = editor:GetLine(i)
+			local line_uncomment = string.gsub(text_line,Pattern(comment_block).."~? ?","",1)
+			text_uncomment = text_uncomment..line_uncomment
+			if line_uncomment ~= text_line then
+				sel_end = sel_end - string.len(text_line) + string.len(line_uncomment)
 			end
-			editor:ReplaceSel(text_uncomment)
-			-- восстанавливаем выделение
-			editor:SetSel(sel_start, sel_end)
 		end
+		editor:ReplaceSel(text_uncomment)
+		-- восстанавливаем выделение
+		editor:SetSel(sel_start, sel_end)
 	end
 end
 
@@ -206,6 +223,16 @@ local function xComment()
 	comment_block_at_line_start = tonumber(props["comment.block.at.line.start."..lexer])
 	comment_stream_start = props["comment.stream.start."..lexer]
 	comment_stream_end = props["comment.stream.end."..lexer]
+
+	if sel_text == "" then
+		-- This Line
+		if IsComment(FirstLetterFromBlock()) then
+			LineUnComment()
+		else
+			LineComment()
+		end
+		return true
+	end
 
 	if IsBlock() then
 	-- This Block
