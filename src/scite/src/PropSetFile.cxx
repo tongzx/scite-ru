@@ -93,6 +93,7 @@ bool PropSetFile::ReadLine(const char *lineBuffer, bool ifIsTrue, FilePath direc
 		ifIsTrue = GetInt(expr) != 0;
 	} else if (isprefix(lineBuffer, "import ") && directoryForImports.IsSet()) {
 		SString importName(lineBuffer + strlen("import") + 1);
+		if(!importName.contains('.')) //!-add-[import]
 		importName += ".properties";
 		FilePath importPath(directoryForImports, FilePath(importName.c_str()));
 		if (Read(importPath, directoryForImports, imports, sizeImports)) {
