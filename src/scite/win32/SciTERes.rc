@@ -576,7 +576,7 @@ BEGIN
 END
 
 //! IDR_CLOSEFILE BITMAP "closefile.bmp"
-IDR_BUTTONS BITMAP "buttons.bmp"	//!-add-[ToolbarButtons]
+IDR_BUTTONS BITMAP "buttons.bmp"	//!-add-[user.toolbar]
 
 //The embedded properties file is to allow a one file distribution of Sc1.EXE
 #ifdef STATIC_BUILD

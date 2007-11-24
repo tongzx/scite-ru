@@ -234,9 +234,6 @@ Now can to set up alert with warning message for each warning type:<br>
 <h5>[AutoComplete] <span class=desc>(Author: mimir)</span></h5>
 Autocomplete function (Ctrl+I) takes templates from both edited text and appropriate ".api" file.
 
-<h5>[CirillicKeywords] <span class=desc>(Author: VladVRO)</span></h5>
-Support national characters in operators
-
 <h5>[oem2ansi] <span class=desc>(Author: gansA)</span></h5>
 Parameter <span class="example">output.code.page.oem2ansi=1</span> turn on console output text encoding from OEM to ANSI.<br>
 It let to edit script in win1251 codepage and see it output in console in dos866 codepage without switching codepages.
@@ -293,11 +290,6 @@ Example of letter case changing macro:
 &nbsp;&nbsp;end<br>
 end</div>
 
-<h5>[MenuCommandString] <span class=desc>(Author: VladVRO)</span></h5>
-Added possibility to use command like that:<br>
-<span class="example">scite.MenuCommand("IDM_COMMAND")</span><br>
-where "IDM_COMMAND" is the name of some constant.
-
 <h5>[OnDoubleClick] <span class=desc>(Author: mimir, Dmitry Maslov)</span></h5>
 Function <span class="example">OnDoubleClick()</span> is expanded, now it is transferred to the state of key modifiers (Shift, Ctrl, Alt):<br>
 <span class="example">function OnDoubleClick(shift, ctrl, alt)</span>
@@ -326,11 +318,14 @@ In SciTE Lua Scripting Extension added new command<br>
 <span class="example">os.run(Command, [WindowStyle], [WaitOnReturn])</span><br>
 which allows to set windows appearance of started external command and pause script execution for time of command execution and get return code.
 
-<h5>[MSGBOX] <span class=desc>(Author: Midas, mimir)</span></h5>
+<h5>[MsgBox] <span class=desc>(Author: Midas, mimir)</span></h5>
+In SciTE Lua Scripting Extension added new command:<br>
+- <span class="example">os.msgbox (Text, [Title], [Options])</span> - Message Box. Return select button.
+
+<h5>[FileAttr] <span class=desc>(Author: Midas)</span></h5>
 In SciTE Lua Scripting Extension added new commands:<br>
-- <span class="example">os.msgbox (Text, [Title], [Options])</span> - Message Box. Return select button;<br>
 - <span class="example">os.getfileattr (FileName)</span> - return File Attribute as number;<br>
-- <span class="example">os.setfileattr (FileName, FileAttr)</span> - Set File Attribute;;
+- <span class="example">os.setfileattr (FileName, FileAttr)</span> - Set File Attribute.
 
 <h5>[ParametersDialogFromLua] <span class=desc>(Author: VladVRO)</span></h5>
 In SciTE Lua Scripting Extension added new command  for show "Parameters" dialog (Shift+F8)<br>
@@ -363,6 +358,11 @@ Add new lexer <a href="http://www.rapideuphoria.com">Euphoria</a>
 <h5>[C_Word] <span class=desc>(Author: mimir)</span></h5>
 Added 3 new classes for LexCpp's keywords (i.e. now you can set up to 4õ additional vocabularies with different highlight)
 
+<h5>[GetApplicationProps] <span class=desc>(Author: VladVRO)</span></h5>
+New function SciTEBase::GetProps() (for developers) allows to get access to properties of the editor in any place of a code of the editor.
+
+<h5>[Zoom] <span class=desc>(Author: Dmitry Maslov)</span></h5>
+Now OnSendEditor can trace event SCI_SETZOOM arising at change of the size of a font.
 
     <h3>
       <a name="3"></a>
@@ -410,6 +410,10 @@ Selected text inserted into FindInFiles dialog solely in the UTF-8, thus Russian
 
 <h5>[FileReaderUnlimitedLen] <span class=desc>(Author: VladVRO)</span></h5>
 Removed the restriction on the length of lines in the internal Find in Files. Earlier in long lines only to find worked 1,001 characters, the rest ignored.
+
+<h5>[AbbrevFixCaretPos] <span class=desc>(Author: VladVRO)</span></h5>
+Fixed positioning of caret in insert abbreviation action.<br>
+Bug was in case when abbreviation body has one simbol '|' and in action was not selection text.
 
 <h5>[no_wornings] <span class=desc>(Author: Dmitry Maslov)</span></h5>
 Added compatibility with the compiler Visual C++ 6.0<br>

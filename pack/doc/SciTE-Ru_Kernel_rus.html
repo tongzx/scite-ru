@@ -232,9 +232,6 @@ command.name.6.*=Date and Time</div>
 <h5>[AutoComplete] <span class=desc>(Автор: mimir)</span></h5>
 Функция автозавершения (Ctrl+I) берет шаблоны как из редактируемого текста, так и из соответствующего .api файла
 
-<h5>[CirillicKeywords] <span class=desc>(Автор: VladVRO)</span></h5>
-Поддержка русских операторов
-
 <h5>[oem2ansi] <span class=desc>(Автор: gansA)</span></h5>
 Параметр <span class="example">output.code.page.oem2ansi=1</span> включает перекодировку текста, выводимого в окно консоли, из OEM в ANSI.<br>
 Это позволяет редактировать скрипт в кодировке win1251 и видеть его вывод в консоли в кодировке dos866 не прибегая к переключению.
@@ -291,11 +288,6 @@ OnSendEditor вызывается для команд доступных для записи в макрос и для SCI_SETRE
 &nbsp;&nbsp;end<br>
 end</div>
 
-<h5>[MenuCommandString] <span class=desc>(Автор: VladVRO)</span></h5>
-Возможно так же использовать запись вида<br>
-<span class="example">scite.MenuCommand("IDM_COMMAND")</span><br>
-где "IDM_COMMAND" имя константы
-
 <h5>[OnDoubleClick] <span class=desc>(Автор: mimir, Дмитрий Маслов)</span></h5>
 Расширена функция луа <span class="example">OnDoubleClick()</span>, теперь в нее передается также состояние клавиш-модификаторов (Shift, Ctrl, Alt):<br>
 <span class="example">function OnDoubleClick(shift, ctrl, alt)</span>
@@ -325,11 +317,14 @@ end</div>
 <span class="example">os.run(Command, [WindowStyle], [WaitOnReturn])</span><br>
 позволяющая задать вид окна запускаемой внешней команды, приостановить выполнение скрипта на время ее выполнения и получить код завершения.
 
-<h5>[MSGBOX] <span class=desc>(Автор: Midas, mimir)</span></h5>
-В SciTE Lua Scripting Extension добавлена новые команды<br>
-- <span class="example">os.msgbox (Text, [Title], [Options])</span> - Окно с сообщением. Возвращает выбранную кнопку;<br>
+<h5>[MsgBox] <span class=desc>(Автор: Midas, mimir)</span></h5>
+В SciTE Lua Scripting Extension добавлена новая команда<br>
+- <span class="example">os.msgbox (Text, [Title], [Options])</span> - Окно с сообщением. Возвращает выбранную кнопку.
+
+<h5>[FileAttr] <span class=desc>(Автор: Midas)</span></h5>
+В SciTE Lua Scripting Extension добавлены новые команды<br>
 - <span class="example">os.getfileattr (FileName)</span> - возвращает атрибуты файла в виде числа;<br>
-- <span class="example">os.setfileattr (FileName, FileAttr)</span> - устанавливает атрибуты файла;
+- <span class="example">os.setfileattr (FileName, FileAttr)</span> - устанавливает атрибуты файла.
 
 <h5>[ParametersDialogFromLua] <span class=desc>(Автор: VladVRO)</span></h5>
 В SciTE Lua Scripting Extension добавлена новая команда для вызова диалогового окна "Параметры" (Shift+F8)<br>
@@ -362,6 +357,11 @@ end</div>
 <h5>[C_Word] <span class=desc>(Автор: mimir)</span></h5>
 Добавлено 3 новых класса ключевых слов для LexCpp (т.е. теперь можно задавать до 4х дополнительных наборов слов с разной подсветкой)
 
+<h5>[GetApplicationProps] <span class=desc>(Автор: VladVRO)</span></h5>
+Новая функция SciTEBase::GetProps() (для разработчиков) позволяет получить доступ к настройкам редактора в любом месте кода редактора.
+
+<h5>[Zoom] <span class=desc>(Автор: Дмитрий Маслов)</span></h5>
+Теперь эвент OnSendEditor может отслеживать событие SCI_SETZOOM, возникающее при изменении размера шрифта.
 
     <h3>
       <a name="3"></a>
@@ -409,6 +409,11 @@ command('CMD /C TIME /T', 'console')</div>
 
 <h5>[FileReaderUnlimitedLen] <span class=desc>(Автор: VladVRO)</span></h5>
 Убрано ограничение на длину строк во встроенном поиске по файлам. Раньше в длинных строках поиск работал только до 1001 символа, все остальное в строке игнорировалось.
+
+<h5>[AbbrevFixCaretPos] <span class=desc>(Автор: VladVRO, Дмитрий Маслов)</span></h5>
+Исправлено позиционирование курсора при вставке сокращения (insert abbreviation).<br>
+Ошибка возникала в случае если в теле сокращения был один символ '|' и не было выделенного текста во время вставки.<br>
+Если в сокращении имелся символ \t то курсор так же позиционировался не верно.
 
 <h5>[no_wornings] <span class=desc>(Автор: Дмитрий Маслов)</span></h5>
 Добавлена совместимость с компилятором Visual C++ 6.0<br>

@@ -246,5 +246,5 @@
 
 // Resource IDs
 //! #define IDR_CLOSEFILE 100
-#define IDR_BUTTONS			100	//!-change-[ToolbarButtons]
+#define IDR_BUTTONS			100	//!-change-[user.toolbar]
 #endif
