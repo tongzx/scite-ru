@@ -305,6 +305,12 @@ end</div>
 Добавлено сообщение к Scitilla позволяющее получить имя текущего лексера:<br>
 Теперь <span class="example">editor.LexerLanguage</span> - позволяет как установить лексер, так и получить текущий
 
+<h5> <sup>new</sup> [GetAPIPath] <span class=desc>(Автор: dB6)</span></h5>
+APIPath - новая внутренняя переменная SciTE. Cодержит путь к текущему api файлу.
+
+<h5> <sup>new</sup> [GetAbbrevPath] <span class=desc>(Автор: dB6)</span></h5>
+GetAbbrevPath - новая внутренняя переменная SciTE. Cодержит путь к текущему abbrev файлу.
+
 <h5>[AbbrevRefactoring] <span class=desc>(Автор: Дмитрий Маслов)</span></h5>
 В SciTE Lua Scripting Extension добавлена новая команда<br>
 <span class="example">InsertAbbreviation(string)</span><br>
@@ -356,6 +362,14 @@ end</div>
 
 <h5>[C_Word] <span class=desc>(Автор: mimir)</span></h5>
 Добавлено 3 новых класса ключевых слов для LexCpp (т.е. теперь можно задавать до 4х дополнительных наборов слов с разной подсветкой)
+
+<h5> <sup>new</sup> [PropsKeysSets] <span class=desc>(Автор: VladVRO)</span></h5>
+Добавлено 3 новых класса ключевых слов для лексера props.<br>
+Tеперь можно задавать до 4х дополнительных наборов слов с разной подсветкой, причем слова могут содержать символ ~, означающий произвольный набор символов, например block.start.~ или braces.~.style.<br>
+В результате постоянная часть переменной будет выделена одним цветом, а переменная часть - другим.
+
+<h5> <sup>new</sup> [PropsKeywords] <span class=desc>(Автор: VladVRO)</span></h5>
+Добавлена подсветка для ключевых слов "import" и "if" в файлах .properties.
 
 <h5>[GetApplicationProps] <span class=desc>(Автор: VladVRO)</span></h5>
 Новая функция SciTEBase::GetProps() (для разработчиков) позволяет получить доступ к настройкам редактора в любом месте кода редактора.
