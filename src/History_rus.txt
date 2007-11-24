@@ -1,4 +1,24 @@
 ==================
+SciTE v.1.74 .53Ru
+==================
+========================================================
+VladVRO 09.10.07
+-----------------------------
+[PropsKeywords]
+ - добавил подсветку для ключевых слов "import" и "if" в файле настроек.
+ - added colorizing for "import" and "if" keywords in properties file.
+
+VladVRO 08.10.07
+-----------------------------
+[PropsKeysSets]
+ - добавил подсветку для заданных наборов ключевых слов в файлах настроек.
+ можно задать четыре набора слов, причем слова могут содержать символ ~, означающий произвольный набор символов,
+ например block.start.~ или braces.~.style
+ - added colorizing sets of keys in properties file.
+ you can set up four sets of keys, and words can contain symbol ~, meaning a random set of characters.
+ for example block.start.~ or braces.~.style
+
+==================
 SciTE v.1.74 .51Ru
 ==================
 ========================================================
