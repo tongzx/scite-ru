@@ -18,10 +18,9 @@ class CallTip {
 /*!	int startHighlight;    // character offset to start and...
 	int endHighlight;      // ...end of highlighted text*/
 //!-start-[BetterCalltips]
-	SVector startHighlight;    // character offset to start and...
-	SVector endHighlight;      // ...end of highlighted text
-	SVector startHighlightOld;
-	SVector endHighlightOld;
+	bool highlightChanged;              // flag to indicate that highlight ranges were changed
+	SplitVector<int> startHighlight;    // character offset to start and...
+	SplitVector<int> endHighlight;      // ...end of highlighted text
 //!-end-[BetterCalltips]
 	char *val;
 	Font font;
@@ -46,7 +45,7 @@ class CallTip {
 
 	bool IsTabCharacter(char c);
 	int NextTabPos(int x);
-	void WrapLine(const char *text, int offset, int length, SVector &wrapPosList); //!-add-[BetterCalltips]
+	void WrapLine(const char *text, int offset, int length, SplitVector<int> &wrapPosList); //!-add-[BetterCalltips]
 
 public:
 	Window wCallTip;

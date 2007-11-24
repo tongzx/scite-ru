@@ -17,7 +17,6 @@
 #endif
 #include "Scintilla.h"
 
-#include "SVector.h" //!-add-[BetterCalltips]
 #include "SplitVector.h"
 #include "Partitioning.h"
 #include "RunStyles.h"

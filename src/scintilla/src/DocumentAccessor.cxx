@@ -13,7 +13,6 @@
 #include "Platform.h"
 
 #include "PropSet.h"
-#include "SVector.h" //!-add-[BetterCalltips]
 #include "Accessor.h"
 #include "DocumentAccessor.h"
 #include "SplitVector.h"

@@ -11,7 +11,7 @@
 #include "Platform.h"
 
 #include "Scintilla.h"
-#include "SVector.h" //!-add-[BetterCalltips]
+#include "SplitVector.h" //!-add-[BetterCalltips]
 #include "CallTip.h"
 #include <stdio.h>
 
@@ -31,7 +31,8 @@ CallTip::CallTip() {
 	rectDown = PRectangle(0,0,0,0);
 	lineHeight = 1;
 /*!	startHighlight = 0;
-	endHighlight = 0;*/ //!-change-[BetterCalltips]
+	endHighlight = 0;*/ 
+	highlightChanged = false; //!-change-[BetterCalltips]
 	tabSize = 0;
 	useStyleCallTip = false;    // for backwards compatibility
 
@@ -219,8 +220,8 @@ void CallTip::DrawChunk(Surface *surface, int &x, const char *s,
 
 //!-start-[BetterCalltips]
 #define IS_WS(ch) (((ch) == ' ') || ((ch) == '\t'))
-void CallTip::WrapLine(const char *text, int offset, int length, SVector &wrapPosList) {
-	wrapPosList.SetLength(0);
+void CallTip::WrapLine(const char *text, int offset, int length, SplitVector<int> &wrapPosList) {
+	wrapPosList.DeleteAll();
 	int lastWrapPos = -1;
 	int nextWrapBound = offset + wrapBound;
 	for (int i = offset; i < offset + length; i++) {
@@ -228,7 +229,7 @@ void CallTip::WrapLine(const char *text, int offset, int length, SVector &wrapPo
 			lastWrapPos = i;
 		}
 		if ((i >= nextWrapBound) && (lastWrapPos != -1)) {
-			wrapPosList[wrapPosList.Length()] = lastWrapPos;
+			wrapPosList.Insert(wrapPosList.Length(), lastWrapPos);
 			nextWrapBound = lastWrapPos + wrapBound;
 			lastWrapPos = -1;
 		}
@@ -250,7 +251,7 @@ PRectangle CallTip::PaintContents(Surface *surfaceWindow, bool draw) {
 	bool moreChunks = true;
 	int maxWidth = 0;
 	int numLines = 0;
-	SVector wrapPosList;
+	SplitVector<int> wrapPosList;
 	
 	while (moreChunks) {
 		char *chunkEnd = strchr(chunkVal, '\n');
@@ -487,45 +488,28 @@ void CallTip::AddHighlight(int start, int end) {
 			start = Platform::Minimum(start, startHighlight[i]);
 			end = Platform::Maximum(end, endHighlight[i]);
 			// delete old range
-			for (int j = i; j + 1 < startHighlight.Length(); j++) {
-				startHighlight[j] = startHighlight[j + 1];
-				endHighlight[j] = endHighlight[j + 1];
-			}
-			startHighlight.SetLength(startHighlight.Length() - 1);
-			endHighlight.SetLength(endHighlight.Length() - 1);
+			startHighlight.Delete(i);
+			endHighlight.Delete(i);
 		}
 		else {
 			i++;
 		}
 	}
-	startHighlight[startHighlight.Length()] = start;
-	endHighlight[endHighlight.Length()] = end;
+	startHighlight.Insert(startHighlight.Length(), start);
+	endHighlight.Insert(endHighlight.Length(), end);
+	highlightChanged = true;
 }
 
 void CallTip::ClearHighlight() {
-	startHighlightOld = startHighlight;
-	endHighlightOld = endHighlight;
-	startHighlight.Free();
-	endHighlight.Free();
+	if (startHighlight.Length() != 0) highlightChanged = true;
+	startHighlight.DeleteAll();
+	endHighlight.DeleteAll();
 }
 
 void CallTip::UpdateHighlight() {
 	// Avoid flashing by checking something has really changed
-	bool changed = (startHighlight.Length() != startHighlightOld.Length());
-	if (!changed) {
-		for (int i = 0; i < startHighlight.Length(); i++) {
-			int j;
-			for (j = 0; j < startHighlightOld.Length(); j++) {
-				if ((startHighlight[i] == startHighlightOld[j]) && (endHighlight[i] == endHighlightOld[j]))
-					break;
-			}
-			if (j == startHighlightOld.Length()) {
-				changed = true;
-				break;
-			}
-		}
-	}
-	if (changed && wCallTip.Created()) {
+	if (highlightChanged && wCallTip.Created()) {
+		highlightChanged = false;
 		wCallTip.InvalidateAll();
 	}
 }
