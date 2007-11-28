@@ -1533,7 +1533,10 @@ LRESULT SciTEWin::KeyDown(WPARAM wParam) {
 		unsigned short ch[2] = {0,0};
 		unsigned char mas[256];
 		::GetKeyboardState(mas);
-		if (::ToAscii(wParam, ::MapVirtualKeyA(wParam,0), mas, ch, 1) != 1)
+		UINT uFlags = 1;
+		if ( Platform::IsKeyDown(VK_MENU) && wParam>=VK_NUMPAD0 && wParam<=VK_NUMPAD9 )
+			uFlags = 0;
+		if (::ToAscii(wParam, ::MapVirtualKeyA(wParam,0), mas, ch, uFlags) != 1)
 			ch[0]=0;
 		if (extender->OnKey((int)wParam, modifiers, (char)ch[0]))
 			return 1l;
