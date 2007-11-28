@@ -4669,6 +4669,13 @@ void SciTEBase::Notify(SCNotification *notification) {
 		}
 		break;
 
+	//!-begin-[OnClick]
+	case SCN_CLICK:
+		if (extender)
+			handled = extender->OnClick(notification->modifiers);
+		break;
+	//!-end-[OnClick]
+
 	case SCN_UPDATEUI:
 		if (extender)
 			handled = extender->OnUpdateUI();

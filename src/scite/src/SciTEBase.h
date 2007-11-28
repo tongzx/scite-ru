@@ -529,7 +529,7 @@ protected:
 	Window wToolBar;
 	Window wStatusBar;
 	Window wTabBar;
-	Menu popup;
+//!	Menu popup;	//!-change-[ExtendedContextMenu]
 	SciFnDirect fnEditor;
 	long ptrEditor;
 	SciFnDirect fnOutput;

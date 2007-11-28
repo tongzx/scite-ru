@@ -60,7 +60,7 @@
 #include "SciTEBase.h"
 #include "SciTEKeys.h"
 #include "UniqueInstance.h"
-#include "Containers.h"//!-add--[Tread.SmartExecute][user.toolbar]
+#include "Containers.h"//!-add--[user.toolbar]
 
 const int SCITE_TRAY = WM_APP + 0;
 
