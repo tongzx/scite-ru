@@ -1,12 +1,19 @@
 @ECHO OFF
-IF "%1"=="" GOTO noparam
-"c:\Program Files\WinRAR\WinRAR.exe" SciTE.sfx %1 -Ztext.html -ISciBall3.ico
-IF NOT ERRORLELEL 1 goto error
-GOTO end
+SET cur_path=%~dp0
+SET RAR="%ProgramFiles%\WinRAR\WinRAR.exe"
+SET name=SciTE_Setup
+CD %cur_path%
 
-:noparam
-ECHO Not parameter! (RAR file)
-PAUSE
+PUSHD ..\pack
+%RAR% a -r -rr -s -m5 "%cur_path%%name%"
+IF ERRORLEVEL 1 GOTO error
+POPD
+
+%RAR% SSciTE.sfx %name%.rar -Ztext.html -ISciBall.ico
+IF ERRORLEVEL 1 GOTO error
+
+DEL %name%.rar
+
 GOTO end
 
 :error
