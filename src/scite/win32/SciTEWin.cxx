@@ -79,7 +79,17 @@ long SciTEKeys::ParseKeyCode(const char *mnemonic) {
 		}
 
 		if (sKey.length() == 1) {
-			keyval = VkKeyScan(sKey[0]) & 0xFF;
+			//! keyval = VkKeyScan(sKey[0]) & 0xFF;
+			//-start-[English_KeyCode]
+			keyval = VkKeyScan(sKey[0]);
+			if (keyval == -1 )
+			{
+				if (sKey[0] >= 'A' &&  sKey[0] <= 'Z')
+					keyval = sKey[0];
+			}
+			else
+				keyval &= 0xFF;
+			//-end-[English_KeyCode]
 		} else if (sKey.length() > 1) {
 			if ((sKey[0] == 'F') && (isdigit(sKey[1]))) {
 				sKey.remove("F");
