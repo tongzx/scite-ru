@@ -1086,7 +1086,6 @@ static void ColouriseFindListLine(
 static void ColouriseErrorListLine(
     char *lineBuffer,
     unsigned int lengthLine,
-    unsigned int startPos, //!-add-[FindResultListStyle]
     unsigned int endPos,
 //!-start-[FindResultListStyle]
     bool &isFindList,
@@ -1100,7 +1099,7 @@ static void ColouriseErrorListLine(
 		styler.ColourTo(endPos - (lengthLine - startValue), style);
 //!-start-[FindResultListStyle]
 		if (isFindList) {
-			ColouriseFindListLine(lineBuffer + startValue, lengthLine - startValue, startPos + startValue - 1, endPos, findValue, styler);
+			ColouriseFindListLine(lineBuffer + startValue, lengthLine - startValue + 1, endPos - lengthLine + startValue, endPos, findValue, styler);
 		} else
 //!-end-[FindResultListStyle]
 		styler.ColourTo(endPos, SCE_ERR_VALUE);
@@ -1123,7 +1122,6 @@ static void ColouriseErrorListDoc(unsigned int startPos, int length, int, WordLi
 //!	bool valueSeparate = styler.GetPropertyInt("lexer.errorlist.value.separate", 0) != 0;
 //!-start-[FindResultListStyle]
 	bool valueSeparate = styler.GetPropertyInt("lexer.errorlist.value.separate", 1) > 0;
-	unsigned int startLine = startPos;
 	static bool isFindList;
 	static char findValue[1000];
 //!-end-[FindResultListStyle]
@@ -1133,13 +1131,13 @@ static void ColouriseErrorListDoc(unsigned int startPos, int length, int, WordLi
 			// End of line (or of line buffer) met, colourise it
 			lineBuffer[linePos] = '\0';
 //!			ColouriseErrorListLine(lineBuffer, linePos, i, styler, valueSeparate);
-			ColouriseErrorListLine(lineBuffer, linePos, startLine, i, isFindList, findValue, styler, valueSeparate); //!-change-[FindResultListStyle]
+			ColouriseErrorListLine(lineBuffer, linePos, i, isFindList, findValue, styler, valueSeparate); //!-change-[FindResultListStyle]
 			linePos = 0;
 		}
 	}
 	if (linePos > 0) {	// Last line does not have ending characters
 //!		ColouriseErrorListLine(lineBuffer, linePos, startPos + length - 1, styler, valueSeparate);
-		ColouriseErrorListLine(lineBuffer, linePos, startLine, startPos + length - 1, isFindList, findValue, styler, valueSeparate); //!-change-[FindResultListStyle]
+		ColouriseErrorListLine(lineBuffer, linePos, startPos + length - 1, isFindList, findValue, styler, valueSeparate); //!-change-[FindResultListStyle]
 	}
 }
 
