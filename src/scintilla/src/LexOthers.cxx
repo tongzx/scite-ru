@@ -1070,14 +1070,16 @@ static void ColouriseFindListLine(
 		char *findValue,
 		Accessor &styler) {
 	int len = strlen(findValue);
-	unsigned int p = 0;
-	while (p < lengthLine - len) {
-		if (0 == CompareNCaseInsensitive(lineBuffer + p, findValue, len)) {
-			styler.ColourTo(startPos + p, SCE_ERR_VALUE);
-			styler.ColourTo(startPos + p + len, SCE_ERR_FIND_VALUE);
-			p += len - 1;
+	if (len > 0) {
+		unsigned int p = 0;
+		while (p < lengthLine - len) {
+			if (0 == CompareNCaseInsensitive(lineBuffer + p, findValue, len)) {
+				styler.ColourTo(startPos + p, SCE_ERR_VALUE);
+				styler.ColourTo(startPos + p + len, SCE_ERR_FIND_VALUE);
+				p += len - 1;
+			}
+			p++;
 		}
-		p++;
 	}
 	styler.ColourTo(endPos, SCE_ERR_VALUE);
 }
