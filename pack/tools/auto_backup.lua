@@ -1,17 +1,13 @@
 -- Создание резервной копии сохраняемого после редактирования файла
 -- mozers
--- version 1.4
-------------------------------------------------
--- Based by Frank Wunderlich
--- Mon, 27 Mar 2006 07:19:27 -0800
--- http://www.mail-archive.com/scite-interest@lyra.org/msg01677.html
+-- version 1.4.1
 ------------------------------------------------
 -- Подключение:
 -- В файл SciTEStartup.lua добавьте строку:
 --   dofile (props["SciteDefaultHome"].."\\tools\\auto_backup.lua")
 -- задайте в файле .properties кол-во сохраняемых вариантов и каталог для сохранения резервных копий:
 --   backup.files=1
---   backup.path=%TEMP%\SciTE
+--   backup.path=$(TEMP)\SciTE
 ------------------------------------------------
 -- Connection:
 -- In file SciTEStartup.lua add a line:
@@ -22,7 +18,7 @@
 -- backup.path can contain a absolute or relative (subdir of source-file) path
 -- e.g.
 --   backup.path=_bak_
---   backup.path=%TEMP%\SciTE
+--   backup.path=$(TEMP)\SciTE
 ------------------------------------------------
 
 local function FileExist(path)
@@ -35,13 +31,6 @@ end
 
 local function GetPath()
 	local path = props['backup.path']
-
--- 	if path include environment string
-	local pattern_env = '^[%%](.-)[%%]'
-	local _, _, os_env = string.find(path, pattern_env)
-	if os_env ~= nil then
-		path = string.gsub(path, pattern_env, os.getenv(os_env))
-	end
 
 -- 	if set relative path
 	if string.find(path, '^%a:\\') == nil then
