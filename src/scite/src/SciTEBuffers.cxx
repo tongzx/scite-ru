@@ -1181,12 +1181,12 @@ void SciTEBase::SetToolsMenu() {
 			if (items < 10 && sMnemonic.length() == 0) 
 				sMnemonic += "Ctrl+" + SString(items);
 			prefix = "command.separator." + SString(items);
-			int issep = props.GetInt(prefix.c_str());
+			int issep = props.GetNewExpand(prefix.c_str(), FileNameExt().AsInternal()).value();
 			prefix = "command.parent." + SString(items);
-			int toMenu = props.GetInt(prefix.c_str());
+			int toMenu = props.GetNewExpand(prefix.c_str(), FileNameExt().AsInternal()).value();
 			sMenuItem = localiser.Text(sMenuItem.c_str());
 			prefix = "command.checked." + SString(items);
-			int ischecked = props.GetInt(prefix.c_str());
+			int ischecked = props.GetNewExpand(prefix.c_str(), FileNameExt().AsInternal()).value();
 			if(toMenu > 0 && toMenu < toolMax) {
 				if (arrMenu[toMenu].GetID() == 0)
 					arrMenu[toMenu].CreatePopUp();
@@ -1196,8 +1196,8 @@ void SciTEBase::SetToolsMenu() {
 			}
 			else {
 				if (issep)
-					arrMenu[0].Add(0,IDM_TOOLSMAX,true, 0, menuPos++);
-				arrMenu[0].Add(sMenuItem.c_str(),itemID, 1 + ischecked, sMnemonic.c_str(), menuPos++);
+					arrMenu[0].Add(0, IDM_TOOLSMAX, true, 0, menuPos++);
+				arrMenu[0].Add(sMenuItem.c_str(), itemID, 1 + ischecked, sMnemonic.c_str(), menuPos++);
 			}
 		}
 	}
