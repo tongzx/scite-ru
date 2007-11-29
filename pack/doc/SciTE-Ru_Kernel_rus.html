@@ -61,18 +61,18 @@
 <h5> <sup>update</sup> [SubMenu] <span class=desc>(Автор: HSolo, Доработка: Дмитрий Маслов)</span></h5>
 Немного изменен вид меню Tools. Теперь встроенные команды отделены от пользовательских сепараторами.<br>
 В меню Tools теперь возможно вставлять разделители.<br>
-Например, <span class="example">command.separator.34=1</span> вставляет разделитель перед командой 34.<br>
+Например, <span class="example">command.separator.34.*=1</span> вставляет разделитель перед командой 34.<br>
 Так же возможна установка отметки перед выбранным пунктом меню.<br>
-Например, так: <span class="example">command.checked.34=1</span>.<br>
+Например, так: <span class="example">command.checked.34.*=1</span>.<br>
 <br>
 Добавлена возможность создания вложенных подменю в меню Tools.<br>
 Они создаются вначале меню и отделены от остальных пунктов разделителем.<br>
 Сначала задаются названия подменю:
 <div class="example">command.submenu.name.2.*=Insert from Text</div>
 если они вложены в другое подменю, то задается номер родительского меню:
-<div class="example">command.submenu.parent.2=4</div>
+<div class="example">command.submenu.parent.2.*=4</div>
 Затем для команд, входящих в подменю, задается номер родительского меню:
-<div class="example">command.parent.6=2<br>
+<div class="example">command.parent.6.*=2<br>
 command.name.6.*=Date and Time</div>
 <br>
 Текст всех пунктов меню и подменю Tools русифицируется так же как и основное меню - через файл locale.properties.
@@ -231,9 +231,6 @@ command.name.6.*=Date and Time</div>
 <span class="example">warning.executeko.message=текст сообщения</span><br>
 <span class="example">warning.nootherbookmark.message=текст сообщения</span>
 
-<h5>[AutoComplete] <span class=desc>(Автор: mimir)</span></h5>
-Функция автозавершения (Ctrl+I) берет шаблоны как из редактируемого текста, так и из соответствующего .api файла
-
 <h5>[oem2ansi] <span class=desc>(Автор: gansA)</span></h5>
 Параметр <span class="example">output.code.page.oem2ansi=1</span> включает перекодировку текста, выводимого в окно консоли, из OEM в ANSI.<br>
 Это позволяет редактировать скрипт в кодировке win1251 и видеть его вывод в консоли в кодировке dos866 не прибегая к переключению.
@@ -290,8 +287,13 @@ OnSendEditor вызывается для команд доступных для записи в макрос и для SCI_SETRE
 &nbsp;&nbsp;end<br>
 end</div>
 
+<h5>[OnClick] <span class=desc>(Автор: Дмитрий Маслов)</span></h5>
+Добавлено новое событие SciTE <span class="example">OnClick()</span>. Событие возникает при одиночном клике мыши в окне редактирования или в окне консоли.<br>
+Возвращает состояние клавиш-модификаторов (Shift, Ctrl, Alt):<br>
+<span class="example">function OnClick(shift, ctrl, alt)</span>
+
 <h5>[OnDoubleClick] <span class=desc>(Автор: mimir, Дмитрий Маслов)</span></h5>
-Расширена функция луа <span class="example">OnDoubleClick()</span>, теперь в нее передается также состояние клавиш-модификаторов (Shift, Ctrl, Alt):<br>
+Событие <span class="example">OnDoubleClick()</span>, теперь возвращает состояние клавиш-модификаторов (Shift, Ctrl, Alt):<br>
 <span class="example">function OnDoubleClick(shift, ctrl, alt)</span>
 
 <h5>[OnKey] <span class=desc>(Автор: Дмитрий Маслов)</span></h5>
@@ -383,6 +385,9 @@ Tеперь можно задавать до 4х дополнительных наборов слов с разной подсветкой, при
       <a name="3"></a>
       Устранение ошибок
     </h3>
+
+<h5> <sup>new</sup> [English_KeyCode] <span class=desc>(Автор: Дмитрий Маслов)</span></h5>
+Исправлена ошибка при которой назначенные шорткаты переставали работать после переключения раскладки клавиатуры. (<a href="http://code.google.com/p/scite-ru/issues/detail?id=43">подробности</a>)
 
 <h5>[InputErr] <span class=desc>(Автор: mimir)</span></h5>
 Исправлена ошибка зависания SciTE при использовании <span class="example">command.input</span>.<br>

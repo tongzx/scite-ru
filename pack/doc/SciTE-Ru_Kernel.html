@@ -60,18 +60,18 @@
 <h5> <sup>update</sup> [SubMenu] <span class=desc>(Author: HSolo, Updated by: Dmitry Maslov)</span></h5>
 User's commands in menu Tools separated from other commands now by line.<br>
 And you can insert separator between any new commands in menu Tools.<br>
-For example, <span class="example">command.separator.34=1</span> adding separator before command 34.<br>
+For example, <span class="example">command.separator.34.*=1</span> adding separator before command 34.<br>
 Added possibility of a set check before command item of the menu.<br>
-For example: <span class="example">command.checked.34=1</span>.<br>
+For example: <span class="example">command.checked.34.*=1</span>.<br>
 <br>
 Added possibility of creation submenu in Tools menu.<br>
 All submenu items located on top of menu and separated by line from other.<br>
 For define submenu you should set up name first:
 <div class="example">command.submenu.name.2.*=Insert from Text</div>
 If it is part of another menu then you should setup parent's menu number:
-<div class="example">command.submenu.parent.2=4</div>
+<div class="example">command.submenu.parent.2.*=4</div>
 And next for all subitems of this menu you should setup parent's menu number:
-<div class="example">command.parent.6=2<br>
+<div class="example">command.parent.6.*=2<br>
 command.name.6.*=Date and Time</div>
 <br>
 All menu items text can be localized same as other menu command by file locale.properties.
@@ -233,9 +233,6 @@ Now can to set up alert with warning message for each warning type:<br>
 <span class="example">warning.executeko.message=alert's text</span><br>
 <span class="example">warning.nootherbookmark.message=alert's text</span><br>
 
-<h5>[AutoComplete] <span class=desc>(Author: mimir)</span></h5>
-Autocomplete function (Ctrl+I) takes templates from both edited text and appropriate ".api" file.
-
 <h5>[oem2ansi] <span class=desc>(Author: gansA)</span></h5>
 Parameter <span class="example">output.code.page.oem2ansi=1</span> turn on console output text encoding from OEM to ANSI.<br>
 It let to edit script in win1251 codepage and see it output in console in dos866 codepage without switching codepages.
@@ -292,8 +289,13 @@ Example of letter case changing macro:
 &nbsp;&nbsp;end<br>
 end</div>
 
+<h5> <sup>new</sup> [OnClick] <span class=desc>(Автор: Dmitry Maslov)</span></h5>
+Added new event to SciTE <span class="example">OnClick()</span>. Event arises at single to a click of the mouse in a editing pane or the output pane.<br>
+Returned to the state of key modifiers (Shift, Ctrl, Alt):<br>
+<span class="example">function OnClick(shift, ctrl, alt)</span>
+
 <h5>[OnDoubleClick] <span class=desc>(Author: mimir, Dmitry Maslov)</span></h5>
-Function <span class="example">OnDoubleClick()</span> is expanded, now it is transferred to the state of key modifiers (Shift, Ctrl, Alt):<br>
+Event <span class="example">OnDoubleClick()</span> is expanded, now it is returned to the state of key modifiers (Shift, Ctrl, Alt):<br>
 <span class="example">function OnDoubleClick(shift, ctrl, alt)</span>
 
 <h5>[OnKey] <span class=desc>(Author: Dmitry Maslov)</span></h5>
@@ -383,6 +385,9 @@ Now OnSendEditor can trace event SCI_SETZOOM arising at change of the size of a 
       <a name="3"></a>
       Bug fix
     </h3>
+
+<h5> <sup>new</sup> [English_KeyCode] <span class=desc>(Author: Dmitry Maslov)</span></h5>
+Bug fixed at which keyboard shortcut ceased to work after switching keyboard layout. (<a href="http://code.google.com/p/scite-ru/issues/detail?id=43">details</a>)
 
 <h5>[InputErr] <span class=desc>(Author: mimir)</span></h5>
 Bug fixed in deadlock of SciTE on using <span class="example">command.input</span>.<br>

@@ -220,7 +220,14 @@
 	Снабдите подробными и понятными комментариями любой из файлов настроек, напишите полезный скрипт, придумайте оригинальную цветовую схему, переведите один их абзацев оригинального файла помощи и поделитесь результатом и ваше имя навсегда останется в памяти благодарных пользователей :)
 
 <h3>История версий</h3>
-<h5><span class=desc>[27.11.2007]</span> Сборка (ядро 1.75 .53Ru)</h5>
+<h5><span class=desc>[03.12.2007]</span> Сборка (ядро 1.75 .54Ru)</h5>
+277-fix: исправлено "Пропадают шорткаты при русской раскладке клавиатуры" (<a href="http://code.google.com/p/scite-ru/issues/detail?id=43">Issue 43</a>). Исправления в секции [English_KeyCode] [BioInfo]<br>
+276-chg: fix for [FindResultListStyle] - исправил подсветку искомой подстроки в результатах поиска [vladvro]<br>
+275-add: добавлено новое событие OnClick(shift, ctrl, alt) (<a href="http://code.google.com/p/scite-ru/issues/detail?id=4">Issue 4</a>) [BioInfo]<br>
+274-fix: исправлено "Не пашут комбинации, типа Alt+0169" (<a href="http://code.google.com/p/scite-ru/issues/detail?id=33">Issue 33</a>) [BioInfo]<br>
+273-chg: добавил под-параметр pattern в command.separator, command.parent, command.checked что позволяет использовать их для построения меню для конкретного расширения файлов [BioInfo]<br>
+271-chg: откорректирована расцветка для cmd bat файлов по предложению [<a href="http://forum.ru-board.com/topic.cgi?forum=5&topic=24956&start=120#5">kalkin5</a>]<br>
+270-chg: Откорректирован auto_backup.lua. Теперь раскрытием переменных окружения занимается сам SciTE [mozers]<br>
 263-chg: Добавлен перевод Scintilla History [ALeXkRU]<br>
 251-chg: Полностью переделан SciTE.Helper, поскольку в SciTE 1.75 (в отличии от 1.74) из окна по WM_GETTEXT ничего не сграбишь. Сейчас все методы используют SciTEDirectorInterface. Убрано ограничение на размер блока текста. Новый метод SciTE.Focus() активизирует окно SciTE. [mozers]<br>
 244-merge: merged with branches/merge with 1.75 [vladvro]<br>
