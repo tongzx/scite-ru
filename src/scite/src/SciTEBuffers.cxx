@@ -1180,12 +1180,12 @@ void SciTEBase::SetToolsMenu() {
 			SString sMnemonic = props.GetNewExpand(prefix.c_str(), FileNameExt().AsInternal());
 			if (items < 10 && sMnemonic.length() == 0) 
 				sMnemonic += "Ctrl+" + SString(items);
-			prefix = "command.separator." + SString(items);
+			prefix = "command.separator." + SString(items) + ".";
 			int issep = props.GetNewExpand(prefix.c_str(), FileNameExt().AsInternal()).value();
-			prefix = "command.parent." + SString(items);
+			prefix = "command.parent." + SString(items) + ".";
 			int toMenu = props.GetNewExpand(prefix.c_str(), FileNameExt().AsInternal()).value();
 			sMenuItem = localiser.Text(sMenuItem.c_str());
-			prefix = "command.checked." + SString(items);
+			prefix = "command.checked." + SString(items) + ".";
 			int ischecked = props.GetNewExpand(prefix.c_str(), FileNameExt().AsInternal()).value();
 			if(toMenu > 0 && toMenu < toolMax) {
 				if (arrMenu[toMenu].GetID() == 0)
@@ -1222,8 +1222,8 @@ void SciTEBase::SetToolsMenu() {
 			SString prefix = "command.submenu.name." + SString(items) + ".";
 			SString commandName = props.GetNewExpand(prefix.c_str(), filePath.AsInternal());
 			if (commandName.length()) {
-				prefix = "command.submenu.parent." + SString(items);
-				int toMenu = props.GetInt(prefix.c_str());
+				prefix = "command.submenu.parent." + SString(items) + ".";
+				int toMenu = props.GetNewExpand(prefix.c_str(), FileNameExt().AsInternal()).value();
 				commandName = localiser.Text(commandName.c_str());
 				if (toMenu > 0 && toMenu < toolMax) {
 					arrMenu[toMenu].AddSubMenu(commandName.c_str(), arrMenu[items], 0);
