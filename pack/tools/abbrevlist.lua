@@ -1,11 +1,11 @@
 -- SciTE Abbreviation in UserList
--- Version: 1.1
+-- Version: 1.2
 -- Author: Dmitry Maslov, frs
 ---------------------------------------------------
 -- При вводе слова, если это сокращение то вызывается список аббревиатур
--- Примечание:
--- 1. Использует выпадающий список № 11
--- 2. Полностью автономен (нужно подключить в SciTEStartup.lua)
+-- Подключение:
+-- В файл SciTEStartup.lua добавьте строку:
+--   dofile (props["SciteDefaultHome"].."\\tools\\abbrevlist.lua")
 ---------------------------------------------------
 
 local function GetWordLeft()
@@ -32,13 +32,8 @@ local function InsertProp(sel_value)
 end
 
 local function Abbrev()
-	local abb_file = io.open(props["SciteDefaultHome"].."\\abbrev\\"..editor.LexerLanguage..".abbrev")
-	if not abb_file then
-		abb_file = io.open(props["SciteDefaultHome"].."\\home\\abbrev.properties")
-		if not abb_file then
-			return false
-		end
-	end
+	local abb_file = io.open(props["AbbrevPath"])
+	if not abb_file then return false end
 
 	local currword = GetWordLeft()
 	local len_currword = string.len(currword)
