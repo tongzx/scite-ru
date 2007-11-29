@@ -1,6 +1,10 @@
+-- MarkerToggle.lua
+-- Version: 1.0
+-- Author: mozers™, mimir
+---------------------------------------------------
 -- Установка / снятие закладок на строку (Bookmark) (то же что и Ctrl+F2)
--- с помощью двойного клика мыши при нажатой клавише Ctrl
--- mozers™, mimir
+-- с помощью клика мыши при нажатой клавише Ctrl
+---------------------------------------------------
 
 local function MarkerToggle(shift, ctrl, alt)
 	if (ctrl) then
@@ -10,16 +14,15 @@ local function MarkerToggle(shift, ctrl, alt)
 		else
 			editor:MarkerDelete(i,1)
 		end
-		editor:CharRight() editor:CharLeft()
 	end
 	return false
 end
 
--- Добавляем свой обработчик события OnDoubleClick
-local old_OnDoubleClick = OnDoubleClick
-function OnDoubleClick(shift, ctrl, alt)
+-- Добавляем свой обработчик события OnClick
+local old_OnClick = OnClick
+function OnClick(shift, ctrl, alt)
 	local result
-	if old_OnDoubleClick then result = old_OnDoubleClick(shift, ctrl, alt) end
+	if old_OnClick then result = old_OnClick(shift, ctrl, alt) end
 	if MarkerToggle(shift, ctrl, alt) then return true end
 	return result
 end
