@@ -34,6 +34,9 @@ dofile (props["SciteDefaultHome"].."\\tools\\ReadOnly.lua")
 -- Замена стандартной команды SciTE "Открыть выделенный файл"
 dofile (props["SciteDefaultHome"].."\\tools\\Open_Selected_Filename.lua")
 
+-- Расширение стандартной команды SciTE "Открыть выделенный файл"
+dofile (props["SciteDefaultHome"].."\\tools\\Select_And_Open_Filename.lua")
+
 -- Смена кодировки Win1251/DOS866
 dofile (props["SciteDefaultHome"].."\\tools\\win2dos.lua")
 
