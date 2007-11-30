@@ -71,7 +71,7 @@ function OnChar(char)
 	if old_OnChar and old_OnChar(char) then 
 		return true
 	end
-	if char ~= ' ' and Abbrev() then return true end
+	if props['macro-recording'] ~= '1' and char ~= ' ' and Abbrev() then return true end
 	return false
 end
 

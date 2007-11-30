@@ -60,7 +60,7 @@ local old_OnChar = OnChar
 function OnChar(char)
     local result
     if old_OnChar then result = old_OnChar(char) end
-    if tonumber(props['tags.autoclose']) == 1 then
+    if props['macro-recording'] ~= '1' and tonumber(props['tags.autoclose']) == 1 then
         if XMLTagsAutoClose(char) then return true end
     end
     return result

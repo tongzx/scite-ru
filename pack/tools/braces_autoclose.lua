@@ -36,7 +36,7 @@ local old_OnChar = OnChar
 function OnChar(char)
 	local result
 	if old_OnChar then result = old_OnChar(char) end
-	if(props['braces.autoclose']=='1')then
+	if props['macro-recording'] ~= '1' and props['braces.autoclose']=='1' then
 		if BracesAutoClose(char) then return true end
 	end
 	return result

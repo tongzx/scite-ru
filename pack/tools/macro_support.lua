@@ -1,6 +1,6 @@
 --[[
 Macros support for SciTE
-Version 2.2.0
+Version 2.2.1
 Author: VladVRO
 ---------------------------------------------------
 Description:
@@ -91,6 +91,7 @@ function OnMacro(cmd, msg)
       table.insert(glb_macro_buf, {tonumber(c),lp,wp})
     end
   elseif cmd == "macro:startrecord" then
+    props['macro-recording'] = '1'
     table_clear(glb_macro_buf)
     -- visualization
     if props['style.*.33.normal'] == "" then props['style.*.33.normal'] = props['style.*.33'] end
@@ -99,6 +100,7 @@ function OnMacro(cmd, msg)
       scite.Perform("reloadproperties:")
     end
   elseif cmd == "macro:stoprecord" then
+    props['macro-recording'] = ''
     local name = MacroAddToList(glb_macro_buf, nil, macro_new_record_position())
     if name then
       scite.Perform("currentmacro:"..name)

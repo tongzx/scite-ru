@@ -127,7 +127,7 @@ local old_OnChar = OnChar
 function OnChar(char)
 	local result
 	if old_OnChar then result = old_OnChar(char) end
-	if AutocompleteObject(char) then return true end
+	if props['macro-recording'] ~= '1' and AutocompleteObject(char) then return true end
 	return result
 end
 
