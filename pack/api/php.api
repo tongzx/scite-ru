@@ -158,12 +158,12 @@ apache_request_sub_req_method_uri(string method, string uri)  Returns sub-reques
 apache_request_update_mtime([int dependency_mtime])  
 apache_response_headers(void)  Fetch all HTTP response headers  
 apache_setenv(string variable, string value [, bool walk_to_top])  Set an Apache subprocess_env variable  
-array Reflection_Class::getConstants()  Returns an associative array containing this class' constants and their values  
-array Reflection_Class::getDefaultProperties()  Returns an associative array containing copies of all default property values of the class  
-array Reflection_Class::getStaticProperties()  Returns an associative array containing all static property values of the class  
-array Reflection_Extension::getConstants()  Returns an associative array containing this extension's constants and their values  
-array Reflection_Extension::getINIEntries()  Returns an associative array containing this extension's INI entries and their values  
-array Reflection_Function::getStaticVariables()  Returns an associative array containing this function's static variables and their values  
+Reflection_Class::getConstants() =array  Returns an associative array containing this class' constants and their values  
+Reflection_Class::getDefaultProperties() =array  Returns an associative array containing copies of all default property values of the class  
+Reflection_Class::getStaticProperties() =array  Returns an associative array containing all static property values of the class  
+Reflection_Extension::getConstants() =array  Returns an associative array containing this extension's constants and their values  
+Reflection_Extension::getINIEntries() =array  Returns an associative array containing this extension's INI entries and their values  
+Reflection_Function::getStaticVariables() =array  Returns an associative array containing this function's static variables and their values  
 array_change_key_case(array input [, int case=CASE_LOWER])  Retuns an array with all string keys lowercased [or uppercased]  
 array_chunk(array input, int size [, bool preserve_keys])  Split array into chunks  
 array_combine(array keys, array values)  Creates an array by using the elements of the first parameter as keys and the elements of the second as correspoding keys  
@@ -245,34 +245,34 @@ birdstep_freeresult(int index)
 birdstep_off_autocommit(int index)  
 birdstep_result(int index, int col)  
 birdstep_rollback(int index)  
-bool Reflection_Class::implementsInterface(string|reflection_class interface_name)  Returns whether this class is a subclass of another class  
-bool Reflection_Class::isAbstract()  Returns whether this class is abstract  
-bool Reflection_Class::isFinal()  Returns whether this class is final  
-bool Reflection_Class::isInstance(stdclass object)  Returns whether the given object is an instance of this class  
-bool Reflection_Class::isInstantiable()  Returns whether this class is instantiable  
-bool Reflection_Class::isInterface()  Returns whether this is an interface or a class  
-bool Reflection_Class::isInternal()  Returns whether this class is an internal class  
-bool Reflection_Class::isIterateable()  Returns whether this class is iterateable (can be used inside foreach)  
-bool Reflection_Class::isSubclassOf(string|reflection_class class)  Returns whether this class is a subclass of another class  
-bool Reflection_Class::isUserDefined()  Returns whether this class is user-defined  
-bool Reflection_Function::isInternal()  Returns whether this is an internal function  
-bool Reflection_Function::isUserDefined()  Returns whether this is an user-defined function  
-bool Reflection_Function::returnsReference()  Gets whether this function returns a reference  
-bool Reflection_Method::isAbstract()  Returns whether this method is abstract  
-bool Reflection_Method::isConstructor()  Returns whether this method is the constructor  
-bool Reflection_Method::isDestructor()  Returns whether this method is static  
-bool Reflection_Method::isFinal()  Returns whether this method is final  
-bool Reflection_Method::isPrivate()  Returns whether this method is private  
-bool Reflection_Method::isProtected()  Returns whether this method is protected  
-bool Reflection_Method::isPublic()  Returns whether this method is public  
-bool Reflection_Method::isStatic()  Returns whether this method is static  
-bool Reflection_Parameter::allowsNull()  Returns whether NULL is allowed as this parameters's value  
-bool Reflection_Parameter::isPassedByReference()  Returns whether this parameters is passed to by reference  
-bool Reflection_Property::isDefault()  Returns whether this property is default (declared at compilation time).  
-bool Reflection_Property::isPrivate()  Returns whether this property is private  
-bool Reflection_Property::isProtected()  Returns whether this property is protected  
-bool Reflection_Property::isPublic()  Returns whether this property is public  
-bool Reflection_Property::isStatic()  Returns whether this property is static  
+Reflection_Class::implementsInterface(string|reflection_class interface_name) =bool  Returns whether this class is a subclass of another class  
+Reflection_Class::isAbstract() =bool  Returns whether this class is abstract  
+Reflection_Class::isFinal() =bool  Returns whether this class is final  
+Reflection_Class::isInstance(stdclass object) =bool  Returns whether the given object is an instance of this class  
+Reflection_Class::isInstantiable() =bool  Returns whether this class is instantiable  
+Reflection_Class::isInterface() =bool  Returns whether this is an interface or a class  
+Reflection_Class::isInternal() =bool  Returns whether this class is an internal class  
+Reflection_Class::isIterateable() =bool  Returns whether this class is iterateable (can be used inside foreach) =bool  
+Reflection_Class::isSubclassOf(string|reflection_class class) =bool  Returns whether this class is a subclass of another class  
+Reflection_Class::isUserDefined() =bool  Returns whether this class is user-defined  
+Reflection_Function::isInternal() =bool  Returns whether this is an internal function  
+Reflection_Function::isUserDefined() =bool  Returns whether this is an user-defined function  
+Reflection_Function::returnsReference() =bool  Gets whether this function returns a reference  
+Reflection_Method::isAbstract() =bool  Returns whether this method is abstract  
+Reflection_Method::isConstructor() =bool  Returns whether this method is the constructor  
+Reflection_Method::isDestructor() =bool  Returns whether this method is static  
+Reflection_Method::isFinal() =bool  Returns whether this method is final  
+Reflection_Method::isPrivate() =bool  Returns whether this method is private  
+Reflection_Method::isProtected() =bool  Returns whether this method is protected  
+Reflection_Method::isPublic() =bool  Returns whether this method is public  
+Reflection_Method::isStatic() =bool  Returns whether this method is static  
+Reflection_Parameter::allowsNull() =bool  Returns whether NULL is allowed as this parameters's value  
+Reflection_Parameter::isPassedByReference() =bool  Returns whether this parameters is passed to by reference  
+Reflection_Property::isDefault() =bool  Returns whether this property is default (declared at compilation time) =bool.  
+Reflection_Property::isPrivate() =bool  Returns whether this property is private  
+Reflection_Property::isProtected() =bool  Returns whether this property is protected  
+Reflection_Property::isPublic() =bool  Returns whether this property is public  
+Reflection_Property::isStatic() =bool  Returns whether this property is static  
 bzcompress(string source [, int blocksize100k [, int workfactor]])  Compresses a string into BZip2 encoded data  
 bzdecompress(string source [, int small])  Decompresses BZip2 compressed data  
 bzerrno(resource bz)  Returns the error number  
@@ -1195,13 +1195,13 @@ ini_get(string varname)  Get a configuration option
 ini_get_all([string extension])  Get all configuration options  
 ini_restore(string varname)  Restore the value of a configuration option specified by varname  
 ini_set(string varname, string newvalue)  Set a configuration option, returns false on error and the old value of the configuration option on success  
-int Reflection_Class::getEndLine()  Returns the line this class' declaration ends at  
-int Reflection_Class::getModifiers()  Returns a bitfield of the access modifiers for this class  
-int Reflection_Class::getStartLine()  Returns the line this class' declaration starts at  
-int Reflection_Function::getEndLine()  Returns the line this function's declaration ends at  
-int Reflection_Function::getStartLine()  Returns the line this function's declaration starts at  
-int Reflection_Method::getModifiers()  Returns a bitfield of the access modifiers for this method  
-int Reflection_Property::getModifiers()  Returns a bitfield of the access modifiers for this property  
+Reflection_Class::getEndLine() =int  Returns the line this class' declaration ends at  
+Reflection_Class::getModifiers() =int  Returns a bitfield of the access modifiers for this class  
+Reflection_Class::getStartLine() =int  Returns the line this class' declaration starts at  
+Reflection_Function::getEndLine() =int  Returns the line this function's declaration ends at  
+Reflection_Function::getStartLine() =int  Returns the line this function's declaration starts at  
+Reflection_Method::getModifiers() =int  Returns a bitfield of the access modifiers for this method  
+Reflection_Property::getModifiers() =int  Returns a bitfield of the access modifiers for this property  
 intval(mixed var [, int base])  Get the integer value of a variable using the optional base for the conversion  
 ip2long(string ip_address)  Converts a string containing an (IPv4) Internet Protocol dotted address into a proper address  
 iptcembed(string iptcdata, string jpeg_file_name [, int spool])  Embed binary IPTC data into a JPEG image.  
@@ -1508,10 +1508,10 @@ ming_setcubicthreshold (int threshold)  Set cubic threshold (?)
 ming_setscale(int scale)  Set scale (?)  
 ming_useconstants(int use)  Use constant pool (?)  
 ming_useswfversion(int version)  Use SWF version (?)  
-mixed Reflection_Class::getConstant(string name)  Returns the class' constant specified by its name  
-mixed Reflection_Function::invoke(mixed* args)  Invokes the function  
-mixed Reflection_Method::invoke(mixed object, mixed* args)  Invokes the function. Pass a   
-mixed Reflection_Property::getValue(stdclass object)  Returns this property's value  
+Reflection_Class::getConstant(string name) =mixed  Returns the class' constant specified by its name  
+Reflection_Function::invoke(mixed* args) =mixed  Invokes the function  
+Reflection_Method::invoke(mixed object, mixed* args) =mixed  Invokes the function. Pass a   
+Reflection_Property::getValue(stdclass object) =mixed  Returns this property's value  
 mkdir(string pathname [, int mode [, bool recursive [, resource context]]])  Create a directory  
 mktime(int hour, int min, int sec, int mon, int day, int year)  Get UNIX timestamp for a date  
 money_format(string format , float value)  Convert monetary value(s) to string  
@@ -2601,16 +2601,16 @@ sqrt(float number)  Returns the square root of the number
 srand([int seed])  Seeds random number generator  
 sscanf(string str, string format [, string ...])  Implements an ANSI C compatible sscanf  
 stat(string filename)  Give information about a file  
-static array Reflection::getModifierNames(int modifiers)  Returns an array of modifier names  
-static mixed Reflection::export(Reflector r [, bool return])  Exports a reflection object. Returns the output if TRUE is specified for return, printing it otherwise.  
-static mixed Reflection_Class::export(mixed argument, [, bool return]) throws Exception  Exports a reflection object. Returns the output if TRUE is specified for return, printing it otherwise.  
-static mixed Reflection_Extension::export(string name, [, bool return]) throws Exception  Exports a reflection object. Returns the output if TRUE is specified for return, printing it otherwise.  
-static mixed Reflection_Function::export(string name, [, bool return]) throws Exception  Exports a reflection object. Returns the output if TRUE is specified for return, printing it otherwise.  
-static mixed Reflection_Method::export(mixed class, string name, [, bool return]) throws Exception  Exports a reflection object. Returns the output if TRUE is specified for return, printing it otherwise.  
-static mixed Reflection_Object::export(mixed argument, [, bool return]) throws Exception  Exports a reflection object. Returns the output if TRUE is specified for return, printing it otherwise.  
-static mixed Reflection_Parameter::export(mixed function, mixed parameter, [, bool return]) throws Exception  Exports a reflection object. Returns the output if TRUE is specified for return, printing it otherwise.  
-static mixed Reflection_Property::export(mixed class, string name, [, bool return]) throws Exception  Exports a reflection object. Returns the output if TRUE is specified for return, printing it otherwise.  
-stdclass Reflection_Class::newInstance(mixed* args)  Returns an instance of this class  
+Reflection::getModifierNames(int modifiers) =static array  Returns an array of modifier names  
+Reflection::export(Reflector r [, bool return]) =static mixed  Exports a reflection object. Returns the output if TRUE is specified for return, printing it otherwise.  
+Reflection_Class::export(mixed argument, [, bool return]) =static mixed throws Exception  Exports a reflection object. Returns the output if TRUE is specified for return, printing it otherwise.  
+Reflection_Extension::export(string name, [, bool return]) =static mixed throws Exception  Exports a reflection object. Returns the output if TRUE is specified for return, printing it otherwise.  
+Reflection_Function::export(string name, [, bool return]) =static mixed throws Exception  Exports a reflection object. Returns the output if TRUE is specified for return, printing it otherwise.  
+Reflection_Method::export(mixed class, string name, [, bool return]) =static mixed throws Exception  Exports a reflection object. Returns the output if TRUE is specified for return, printing it otherwise.  
+Reflection_Object::export(mixed argument, [, bool return]) =static mixed throws Exception  Exports a reflection object. Returns the output if TRUE is specified for return, printing it otherwise.  
+Reflection_Parameter::export(mixed function, mixed parameter, [, bool return]) =static mixed throws Exception  Exports a reflection object. Returns the output if TRUE is specified for return, printing it otherwise.  
+Reflection_Property::export(mixed class, string name, [, bool return]) =static mixed throws Exception  Exports a reflection object. Returns the output if TRUE is specified for return, printing it otherwise.  
+Reflection_Class::newInstance(mixed* args) =stdclass  Returns an instance of this class  
 str_ireplace(mixed search, mixed replace, mixed subject [, int &replace_count])  Replaces all occurrences of search in haystack with replace / case-insensitive  
 str_pad(string input, int pad_length [, string pad_string [, int pad_type]])  Returns input string padded on the left or right to specified length with pad_string  
 str_repeat(string input, int mult)  Returns the input string repeat mult times  
@@ -2654,22 +2654,22 @@ stream_socket_sendto(resouce stream, string data [, long flags [, string target_
 stream_socket_server(string localaddress [, long &errcode, string &errstring, long flags, resource context])  Create a server socket bound to localaddress  
 stream_wrapper_register(string protocol, string classname)  Registers a custom URL protocol handler class  
 strftime(string format [, int timestamp])  Format a local time/date according to locale settings  
-string Reflection_Class::__toString()  Returns a string representation  
-string Reflection_Class::getDocComment()  Returns the doc comment for this class  
-string Reflection_Class::getFileName()  Returns the filename of the file this class was declared in  
-string Reflection_Class::getName()  Returns the class' name  
-string Reflection_Extension::__toString()  Returns a string representation  
-string Reflection_Extension::getName()  Returns this extension's name  
-string Reflection_Extension::getVersion()  Returns this extension's version  
-string Reflection_Function::__toString()  Returns a string representation  
-string Reflection_Function::getDocComment()  Returns the doc comment for this function  
-string Reflection_Function::getFileName()  Returns the filename of the file this function was declared in  
-string Reflection_Function::getName()  Returns this function's name  
-string Reflection_Method::__toString()  Returns a string representation  
-string Reflection_Parameter::__toString()  Returns a string representation  
-string Reflection_Parameter::getName()  Returns this parameters's name  
-string Reflection_Property::__toString()  Returns a string representation  
-string Reflection_Property::getName()  Returns the class' name  
+Reflection_Class::__toString() =string  Returns a string representation  
+Reflection_Class::getDocComment() =string  Returns the doc comment for this class  
+Reflection_Class::getFileName() =string  Returns the filename of the file this class was declared in  
+Reflection_Class::getName() =string  Returns the class' name  
+Reflection_Extension::__toString() =string  Returns a string representation  
+Reflection_Extension::getName() =string  Returns this extension's name  
+Reflection_Extension::getVersion() =string  Returns this extension's version  
+Reflection_Function::__toString() =string  Returns a string representation  
+Reflection_Function::getDocComment() =string  Returns the doc comment for this function  
+Reflection_Function::getFileName() =string  Returns the filename of the file this function was declared in  
+Reflection_Function::getName() =string  Returns this function's name  
+Reflection_Method::__toString() =string  Returns a string representation  
+Reflection_Parameter::__toString() =string  Returns a string representation  
+Reflection_Parameter::getName() =string  Returns this parameters's name  
+Reflection_Property::__toString() =string  Returns a string representation  
+Reflection_Property::getName() =string  Returns the class' name  
 strip_tags(string str [, string allowable_tags])  Strips HTML and PHP tags from a string  
 stripcslashes(string str)  Strips backslashes from a string. Uses C-style conventions  
 stripos(string haystack, string needle [, int offset])  Finds position of first occurrence of a string within another, case insensitive  
