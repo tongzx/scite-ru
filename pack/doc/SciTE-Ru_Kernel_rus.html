@@ -38,7 +38,7 @@
       </tr>
     </table>
     <h1>
-      Текстовый редактор SciTE RU-Board 1.74 .52
+      Текстовый редактор SciTE RU-Board 1.75 .54
     </h1>
     <p>Все модификации оригинального кода редактора <A href="http://www.scintilla.org">SciTE версии 1.74</A> выполнены энтузиастами <A href="http://forum.ru-board.com/topic.cgi?forum=5&topic=24956&glp">форума Ru-Board</A>.
 
@@ -396,24 +396,6 @@ Tеперь можно задавать до 4х дополнительных наборов слов с разной подсветкой, при
 <h5>[SelectionErr] <span class=desc>(Автор: mimir)</span></h5>
 Исправлена ошибка с выводом текста по <span class="example">command.input</span> и <span class="example">$(CurrentSelection)</span> исключительно в кодировке UTF-8.<br>
 Это не позволяло передать русский текст во внешний скрипт или программу.
-
-<h5>[Tread.SmartExecute] <span class=desc>(Автор: Дмитрий Маслов)</span></h5>
-Исправлен и дополнен оригинальный код редактора, чтобы поток не вызывал сам себя рекурсивно при определенных условиях. Пример:
-<div class="example">function command(cmd, mode)<br>
-&nbsp;&nbsp;local p0 = props["command.name.0.*"]<br>
-&nbsp;&nbsp;local p1 = props["command.0.*"]<br>
-&nbsp;&nbsp;local p2 = props["command.mode.0.*"]<br>
-&nbsp;&nbsp;props["command.name.0.*"] = 'tmp'<br>
-&nbsp;&nbsp;props["command.0.*"] = cmd<br>
-&nbsp;&nbsp;props["command.mode.0.*"] = 'subsystem:'..mode..',replaceselection:no,savebefore:no'<br>
-&nbsp;&nbsp;scite.MenuCommand(9000) -- для SciTE-Ru<br>
---&nbsp;&nbsp;scite.MenuCommand(1100) -- для оригинального SciTE<br>
-&nbsp;&nbsp;props["command.name.0.*"] = p0<br>
-&nbsp;&nbsp;props["command.0.*"] = p1<br>
-&nbsp;&nbsp;props["command.mode.0.*"] = p2<br>
-end<br>
-<br>
-command('CMD /C TIME /T', 'console')</div>
 
 <h5>[StyleDefault] <span class=desc>(Автор: VladVRO, Дмитрий Маслов)</span></h5>
 Убраны дефолтовые значения цвета символов (черный) и фона (белый), что позволяет не задавать их явно в файлах настройки во всех стилях для получения соответствующего фона при экспорте файла.<br>

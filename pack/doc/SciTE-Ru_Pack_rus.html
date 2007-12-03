@@ -221,11 +221,17 @@
 
 <h3>История версий</h3>
 <h5><span class=desc>[03.12.2007]</span> Сборка (ядро 1.75 .54Ru)</h5>
+291-chg: php.api исправил ошибочное задание типа функции первым словом, переместил после имени функции [vladvro]<br>
+289-chg: fix for macro - исправил ошибку возникающую при записи макроса из-за срабатывания различных автоматизирующих скриптов [vladvro]<br>
+288-add: скрипт Select_And_Open_Filename.lua Расширение команды "Открыть выделенный файл" для случая когда выделения нет. Скрипт выделяет подходящую область рядом с курсором в качестве искомого имени файла и пытается открыть этот файл. [vladvro]<br>
+287-chg: постарался сделать историю изменений для версии 1.75 более понятной [chupakabra]<br>
+286-chg: В документацию внесены доработки Дмитрия Маслова [SubMenu] [OnClick] [English_KeyCode]. Удалено упоминание о так и не реализованном [Tread.SmartExecute]<br>
+285-chg: Исправлен MarkerToggle.lua. Теперь он использует новое событие OnClick [mozers]<br>
+284-chg: Модернизирован style_changer.lua. Теперь отмечает чекбоксом в меню то, что опция включена. [mozers]<br>
+282-chg: добавлен под-параметр pattern в command.separator, command.parent, command.checked, command.submenu.parent что позволяет использовать их для построения меню для конкретного расширения файлов [BioInfo]<br>
 277-fix: исправлено "Пропадают шорткаты при русской раскладке клавиатуры" (<a href="http://code.google.com/p/scite-ru/issues/detail?id=43">Issue 43</a>). Исправления в секции [English_KeyCode] [BioInfo]<br>
-276-chg: fix for [FindResultListStyle] - исправил подсветку искомой подстроки в результатах поиска [vladvro]<br>
 275-add: добавлено новое событие OnClick(shift, ctrl, alt) (<a href="http://code.google.com/p/scite-ru/issues/detail?id=4">Issue 4</a>) [BioInfo]<br>
 274-fix: исправлено "Не пашут комбинации, типа Alt+0169" (<a href="http://code.google.com/p/scite-ru/issues/detail?id=33">Issue 33</a>) [BioInfo]<br>
-273-chg: добавил под-параметр pattern в command.separator, command.parent, command.checked что позволяет использовать их для построения меню для конкретного расширения файлов [BioInfo]<br>
 271-chg: откорректирована расцветка для cmd bat файлов по предложению [<a href="http://forum.ru-board.com/topic.cgi?forum=5&topic=24956&start=120#5">kalkin5</a>]<br>
 270-chg: Откорректирован auto_backup.lua. Теперь раскрытием переменных окружения занимается сам SciTE [mozers]<br>
 263-chg: Добавлен перевод Scintilla History [ALeXkRU]<br>

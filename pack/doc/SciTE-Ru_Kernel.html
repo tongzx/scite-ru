@@ -37,7 +37,7 @@
       </tr>
     </table>
     <h1>
-      Text editor SciTE RU-Board 1.74 .52
+      Text editor SciTE RU-Board 1.75 .54
     </h1>
     <p>All modifications of original <A href="http://www.scintilla.org">SciTE editor</A> version 1.74 has been developed by persons from <A href="http://forum.ru-board.com/topic.cgi?forum=5&topic=24956&glp">Ru-Board community</A>.
 
@@ -396,24 +396,6 @@ If user forget to select text before running script it cause deadlock.
 <h5>[SelectionErr] <span class=desc>(Author: mimir)</span></h5>
 Bug fixed in text output on <span class="example">command.input</span> and <span class="example">$(CurrentSelection)</span> in UTF-8 code page only.<br>
 It prevent from transfer Russian text into external script or program.
-
-<h5>[Tread.SmartExecute] <span class=desc>(Author: Dmitry Maslov)</span></h5>
-Stream caused itself recursively under certain conditions. For example:
-<div class="example">function command(cmd, mode)<br>
-&nbsp;&nbsp;local p0 = props["command.name.0.*"]<br>
-&nbsp;&nbsp;local p1 = props["command.0.*"]<br>
-&nbsp;&nbsp;local p2 = props["command.mode.0.*"]<br>
-&nbsp;&nbsp;props["command.name.0.*"] = 'tmp'<br>
-&nbsp;&nbsp;props["command.0.*"] = cmd<br>
-&nbsp;&nbsp;props["command.mode.0.*"] = 'subsystem:'..mode..',replaceselection:no,savebefore:no'<br>
-&nbsp;&nbsp;scite.MenuCommand(1100) -- for SciTE original<br>
---&nbsp;&nbsp;scite.MenuCommand(9000) -- for SciTE-Ru<br>
-&nbsp;&nbsp;props["command.name.0.*"] = p0<br>
-&nbsp;&nbsp;props["command.0.*"] = p1<br>
-&nbsp;&nbsp;props["command.mode.0.*"] = p2<br>
-end<br>
-<br>
-command('CMD /C TIME /T', 'console')</div>
 
 <h5>[StyleDefault] <span class=desc>(Authors: VladVRO, Dmitry Maslov)</span></h5>
 Are removed default values of symbols color (black) and a background (white), that allows to not set them obviously in files of adjustment in all styles for set of a corresponding background at export of a file.<br>

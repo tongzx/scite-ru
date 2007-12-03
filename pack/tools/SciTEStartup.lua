@@ -34,7 +34,7 @@ dofile (props["SciteDefaultHome"].."\\tools\\ReadOnly.lua")
 -- Замена стандартной команды SciTE "Открыть выделенный файл"
 dofile (props["SciteDefaultHome"].."\\tools\\Open_Selected_Filename.lua")
 
--- Расширение стандартной команды SciTE "Открыть выделенный файл"
+-- Расширение стандартной команды SciTE "Открыть выделенный файл" (открывает без предварительного выделения)
 dofile (props["SciteDefaultHome"].."\\tools\\Select_And_Open_Filename.lua")
 
 -- Смена кодировки Win1251/DOS866
@@ -86,7 +86,7 @@ dofile (props["SciteDefaultHome"].."\\tools\\save_settings.lua")
 -- Создает в контекстном меню таба (закладки) подменю для команд SVN
 --~ dofile (props["SciteDefaultHome"].."\\tools\\svn_menu.lua")
 
--- Универсальное комментирование и снятие комментариев с кода
+-- Универсальное комментирование и снятие комментариев (по Ctrl+Q)
 dofile (props["SciteDefaultHome"].."\\tools\\xComment.lua")
 
 -- После выполнения команды "Найти в файлах..." создает пункт в контекстном меню консоли - "Открыть найденные файлы"
