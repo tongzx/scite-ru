@@ -2290,6 +2290,7 @@ void SciTEBase::EliminateDuplicateWords(char *words) {
 	}
 }
 
+/*!
 bool SciTEBase::StartAutoComplete() {
 	SString line = GetLine();
 	int current = GetCaretInLine();
@@ -2314,6 +2315,103 @@ bool SciTEBase::StartAutoComplete() {
 	}
 	return true;
 }
+*/
+//!-start-[AutoComplete]
+bool SciTEBase::StartAutoComplete() {
+/* Собрано содержимое StartAutoComplete и StartAutoCompleteWord*/
+
+	SString line = GetLine();
+	int current = GetCaretInLine();//Текущая колонка
+	//~ if (current >= line.size())
+		//~ return false;
+
+	int startword = current;
+	// Autocompletion of pure numbers is mostly an annoyance
+	bool allNumber = true;
+	while (startword > 0 && wordCharacters.contains(line[startword - 1])) {
+		startword--;
+		if (line[startword] < '0' || line[startword] > '9') {
+			allNumber = false;
+		}
+	}
+	bool onlyOneWord=false;
+	if (startword == current || allNumber)
+		return true;
+	SString root = line.substr(startword, current - startword);
+	int doclen = LengthDocument();
+	TextToFind ft = {{0, 0}, 0, {0, 0}};
+	ft.lpstrText = const_cast<char*>(root.c_str());
+	ft.chrg.cpMin = 0;
+	ft.chrgText.cpMin = 0;
+	ft.chrgText.cpMax = 0;
+	int flags = SCFIND_WORDSTART | (autoCompleteIgnoreCase ? 0 : SCFIND_MATCHCASE);
+	int posCurrentWord = SendEditor(SCI_GETCURRENTPOS) - root.length();
+	unsigned int minWordLength = 0;
+	unsigned int nwords = 0;
+
+	// wordsNear contains a list of words separated by single spaces and with a space
+	// at the start and end. This makes it easy to search for words.
+	SString wordsNear;
+	wordsNear.setsizegrowth(1000);
+	wordsNear += " ";
+
+	for (;;) {	// search all the document
+		ft.chrg.cpMax = doclen;
+		int posFind = SendEditorString(SCI_FINDTEXT, flags, reinterpret_cast<char *>(&ft));
+		if (posFind == -1 || posFind >= doclen)
+			break;
+		if (posFind == posCurrentWord) {
+			ft.chrg.cpMin = posFind + root.length();
+			continue;
+		}
+		// Grab the word and put spaces around it
+		const unsigned int wordMaxSize = 800;
+		char wordstart[wordMaxSize];
+		wordstart[0] = ' ';
+		GetRange(wEditor, posFind, Platform::Minimum(posFind + wordMaxSize - 3, doclen), wordstart + 1);
+		char *wordend = wordstart + 1 + root.length();
+		while (iswordcharforsel(*wordend)) //Проверка на разделитель
+		wordend++;
+		*wordend++ = ' ';
+		*wordend = '\0';
+		unsigned int wordlen = wordend - wordstart - 2;
+		if (wordlen > root.length()) {
+			if (!wordsNear.contains(wordstart)) {	// add a new entry
+				wordsNear += wordstart + 1;
+				if (minWordLength < wordlen)
+					minWordLength = wordlen;
+					nwords++;
+				if (onlyOneWord && nwords > 1) {
+					return true;
+				}
+			}
+		}
+		ft.chrg.cpMin = posFind + wordlen;
+	}
+
+	if (apis) {
+		char *words = GetNearestWords(root.c_str(), root.length(),
+			calltipParametersStart.c_str(), autoCompleteIgnoreCase);
+		if (words) {
+			wordsNear += words;
+			delete []words;
+		}
+	}
+
+	size_t length = wordsNear.length();
+	if ((length > 2) && (!onlyOneWord || (minWordLength > root.length()))) {
+		StringList wl;
+		wl.Set(wordsNear.c_str());
+		char *words = wl.GetNearestWords("", 0, autoCompleteIgnoreCase);
+		EliminateDuplicateWords(words);
+		SendEditorString(SCI_AUTOCSHOW, root.length(), words);
+		delete []words;
+	} else {
+		SendEditor(SCI_AUTOCCANCEL);
+	}
+	return true;
+}
+//!-end-[AutoComplete]
 
 bool SciTEBase::StartAutoCompleteWord(bool onlyOneWord) {
 	SString line = GetLine();
