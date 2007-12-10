@@ -10,9 +10,9 @@ Attribute VB_Exposed = True
 '---------------------------------------------------------------------
 Option Explicit
 Private hSciteWind As Long
-Private SDI  As Long
 Private hScintillaWnd As Long
-Private hDirectorWnd   As Long
+Private hDirectorWnd As Long
+Private SDI As Long
 Dim rec As RECT
 '---------------------------------------------------------------------
 
@@ -60,7 +60,7 @@ End Sub
 
 Public Function Send(Data As String) As String
     Dim sString As String
-    Dim cds     As COPYDATASTRUCT
+    Dim cds As COPYDATASTRUCT
     Dim buf() As Byte
     Dim BufSize As Long
     Const SMTO_NORMAL = &H0
@@ -126,6 +126,17 @@ Public Property Let Props(Key As String, Value As String)
 End Property
 '---------------------------------------------------------------------
 
+Public Property Let WindowID(Value As Long)
+    hDirectorWnd = Value
+    RegisterSDI
+End Property
+'---------------------------------------------------------------------
+
+Public Property Get WindowID() As Long
+    WindowID = hDirectorWnd
+End Property
+'---------------------------------------------------------------------
+
 Public Property Get Props(Key As String) As String
     Dim ret As String
     ret = Send("askproperty:" & Key)
@@ -156,7 +167,18 @@ Private Function ClassName(hWind As Long) As String
 End Function
 '---------------------------------------------------------------------
 
-Private Function FindChildWindowByClassName(hScintillaWnd As Long, sClassName As String) As Long
+Private Sub RegisterSDI()
+    'Регистрируем SciTEDirectorInterface (для метода Send)
+    SDI = RegisterWindowMessage("SciTEDirectorInterface")
+   
+    ' Суб-классим форму, чтобы получать сообщения
+    SetWindowLongA Result.hwnd, -4, AddressOf Window_Proc
+    ' Объясняем SciTE какому окну слать ответы
+    Call Send("identity:" & Format(Result.hwnd))
+End Sub
+'---------------------------------------------------------------------
+
+Private Function FindScintillaWindow() As Long
     Dim cn As String
     Dim ChldWnd As Long
     Const GW_CHILD = 5
@@ -164,35 +186,50 @@ Private Function FindChildWindowByClassName(hScintillaWnd As Long, sClassName As
     Dim GW_CMD As Long
     GW_CMD = GW_CHILD
 
-    ChldWnd = GetWindow(hScintillaWnd, GW_CMD)
+    ChldWnd = GetWindow(hSciteWind, GW_CMD)
     Do
         ChldWnd = GetWindow(ChldWnd, GW_CMD)
         cn = ClassName(ChldWnd)
         GW_CMD = GW_HWNDNEXT
-    Loop While cn <> sClassName And ChldWnd <> 0
-    FindChildWindowByClassName = ChldWnd
+    Loop While cn <> "Scintilla" And ChldWnd <> 0
+    FindScintillaWindow = ChldWnd
+End Function
+'---------------------------------------------------------------------
+
+Private Function FindDirectorWindow() As Long
+    Dim cn As String
+    Dim ChldWnd As Long
+    Const GW_CHILD = 5
+    Const GW_HWNDNEXT = 2
+    Dim SciTEProcID As Long
+    Dim ChldProcID As Long
+    
+    Call GetWindowThreadProcessId(hSciteWind, SciTEProcID)
+    ChldWnd = GetWindow(GetDesktopWindow(), GW_CHILD)
+    Do
+        ChldWnd = GetWindow(ChldWnd, GW_HWNDNEXT)
+        cn = ClassName(ChldWnd)
+        Call GetWindowThreadProcessId(ChldWnd, ChldProcID)
+    Loop While (cn <> "DirectorExtension" Or ChldProcID <> SciTEProcID) And ChldWnd <> 0
+    FindDirectorWindow = ChldWnd
 End Function
 '---------------------------------------------------------------------
 
 Private Sub Class_Initialize()
     'Находим окно SciTE
     hSciteWind = FindWindow("SciTEWindow", vbNullString)
+'MsgBox "hSciteWind:" & hSciteWind
     
     'Находим размеры окна SciTE (для методов Left, Top, Width, Height)
     Call GetWindowRect(hSciteWind, rec)
     
     'Находим окно Scintilla (для метода Focus)
-    hScintillaWnd = FindChildWindowByClassName(hSciteWind, "Scintilla")
-    
-    'Регистрируем SciTEDirectorInterface (для метода Send)
-    SDI = RegisterWindowMessage("SciTEDirectorInterface")
-    hDirectorWnd = FindWindow("DirectorExtension", "DirectorExtension")
-   
-    ' Суб-классим форму, чтобы получать сообщения
-    SetWindowLongA Result.hwnd, -4, AddressOf Window_Proc
-    ' Объясняем SciTE какому окну слать ответы
-    Call Send("identity:" & Format(Result.hwnd))
+    hScintillaWnd = FindScintillaWindow()
+'MsgBox "hScintillaWnd:" & hScintillaWnd
 
+    hDirectorWnd = FindDirectorWindow()
+'MsgBox "hDirectorWnd:" & hDirectorWnd
+    RegisterSDI
 End Sub
 '---------------------------------------------------------------------
 
