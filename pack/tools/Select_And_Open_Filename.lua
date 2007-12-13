@@ -1,11 +1,12 @@
 --[[----------------------------------------------------------------------------
 Select_And_Open_Filename.lua
 Author: VladVRO
-version 1.0
+version 1.1
 
 Расширение команды "Открыть выделенный файл" для случая когда выделения нет.
 Скрипт выделяет подходящую область рядом с курсором в качестве искомого имени
 файла и пытается открыть этот файл.
+Добавлено срабатывание по клику мыши при зажатом Ctrl при опции .
 
 Подключение:
 Добавьте в SciTEStartup.lua строку
@@ -40,7 +41,6 @@ local function isFilenameChar(ch)
 	return false
 end
 
-
 local function Select_And_Open_File()
 	local sci
 	if editor.Focus then
@@ -49,7 +49,6 @@ local function Select_And_Open_File()
 		sci = output
 	end 
 	local filename = sci:GetSelText()
-	local foropen = nil
 	
 	if string.len(filename) == 0 then
 		-- try to select file name near current position
@@ -107,5 +106,43 @@ function OnMenuCommand (msg, source)
 	if not result and msg == 103 then --IDM_OPENSELECTED
 		if Select_And_Open_File() then return true end
 	end
+	return result
+end
+
+
+local clearSel = false
+
+-- Add user event handler OnClick
+local old_OnClick = OnClick
+function OnClick(shift, ctrl, alt)
+	local result
+	if ctrl and props["select.and.open.by.click"] == "1" then
+		local sci
+		if editor.Focus then
+			sci = editor
+		else
+			sci = output
+		end 
+		local s = sci.CurrentPos
+		sci:SetSel(s, s)
+		if Select_And_Open_File() then
+			clearSel = true
+			return true
+		end
+	end
+	if old_OnClick then result = old_OnClick(shift, ctrl, alt) end
+	return result
+end
+
+-- Add user event handler OnUpdateUI
+local old_OnUpdateUI = OnUpdateUI
+function OnUpdateUI ()
+	local result
+	if clearSel then
+		clearSel = false
+		s = editor.CurrentPos
+		editor:SetSel(s, s)
+	end
+	if old_OnUpdateUI then result = old_OnUpdateUI() end
 	return result
 end
