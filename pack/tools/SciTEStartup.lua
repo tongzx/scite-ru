@@ -92,6 +92,9 @@ dofile (props["SciteDefaultHome"].."\\tools\\xComment.lua")
 -- После выполнения команды "Найти в файлах..." создает пункт в контекстном меню консоли - "Открыть найденные файлы"
 dofile (props["SciteDefaultHome"].."\\tools\\OpenFindFiles.lua")
 
+-- Автоматическое переключение кодировки в UTF-8
+dofile (props["SciteDefaultHome"].."\\tools\\UTF8_check.lua")
+
 -- Установка размера символа табуляции в окне консоли
 local tab_width = tonumber(props['output.tabsize'])
 if tab_width ~= nil then
