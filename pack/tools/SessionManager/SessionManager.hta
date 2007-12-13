@@ -5,7 +5,7 @@
 <hta:application
 	id=SesMgr
 	applicationName=Session_Manager
-	version=0.7
+	version=0.8
 	maximizeButton=no
 	icon=sysedit.exe
 	innerBorder=no
@@ -51,17 +51,21 @@ document.title = SesMgr.applicationName.replace(/_/g,' ') + ' ' + SesMgr.version
 // Пути к SciTE и SciteUserHome относительно этого файла
 var scite = "..\\..\\SciTE.exe";
 var scite_sessions_path = "..\\..\\home";
-var sessions_ext = "session";
 var chrNewLine = '…';
 // ------------------------------------------------
-var script_path=window.document.URL.replace(/^.*(\w:\\.*\\).*?$/gi, '$1');
-
+try {
+	var SciTE=new ActiveXObject("SciTE.Helper");
+} catch(e) {
+	alert("Please install SciTE Helper before!");
+	self.close();
+}
 var WshShell = new ActiveXObject("WScript.Shell");
 var fso = new ActiveXObject("Scripting.FileSystemObject");
 var ForReading = 1, ForWriting = 2, ForAppending = 8;
 var Sessions_Arr = new Array;
 var save_description_edited = false;
 
+var script_path=unescape(window.document.URL).replace(/^.*(\w:\\.*\\).*?$/gi, '$1');
 scite=AbsolutePathName(scite);
 scite_sessions_path=AbsolutePathName(scite_sessions_path);
 
@@ -71,7 +75,7 @@ function Init(cmdline){
 	CreateSessionArray();
 	// Если в ком.строке запуска имеется параметр, то ...
 	if (CmdArg != ''){
-		// ...отображаем скрытый диалог сохранения сессии
+		// ...отображаем диалог сохранения сессии
 		self.save.style.display = "inline";
 		self.ses_name.value = CmdArg;
 		self.ses_name.select();
@@ -92,7 +96,7 @@ function CreateSessionArray(){
 	var the_files = new Enumerator(a_folder.Files);
 	for (;!the_files.atEnd();the_files.moveNext()) {
 		a_file = the_files.item();
-		if ((fso.GetExtensionName(a_file).toUpperCase()==sessions_ext.toUpperCase())&&(a_file.Name!="SciTE."+sessions_ext)) {
+		if ((fso.GetExtensionName(a_file).toUpperCase()=='SESSION')&&(a_file.Name!='SciTE.session')) {
 			var session_arr = DateString(a_file.DateLastModified).split("|")
 			session_arr.push (a_file.Name.replace(/[.]\w*?$/,''));
 			session_arr.push (GetDescript(a_file.Name));
@@ -118,16 +122,15 @@ function DialogLoad_SessionList(){
 // ------------------------------------------------
 // Открытие одной из сохраненных сессий
 function LoadSession(i){
-	var ses = (scite_sessions_path+'\\'+SesFileName(i)+'.'+sessions_ext).replace(/\\/g,"\\\\");
-	var cmd = '"' + scite + '" ' + '"-loadsession:' + ses + '"';
-	WshShell.Run(cmd, 1, false);
+	var ses = (scite_sessions_path+'\\'+SesFileName(i)+'.session').replace(/\\/g,"\\\\");
+	SciTE.Send('loadsession:' + ses);
 	self.close();
 }
 
 // ------------------------------------------------
 // Открытие одной из сохраненных сессий в новом окне
 function LoadSessionNewWindow(i){
-	var ses = (scite_sessions_path+'\\'+SesFileName(i)+'.'+sessions_ext).replace(/\\/g,"\\\\");
+	var ses = (scite_sessions_path+'\\'+SesFileName(i)+'.session').replace(/\\/g,"\\\\");
 	var cmd = '"' + scite + '" ' + '-property:check.if.already.open=0 "-loadsession:' + ses + '"';
 	WshShell.Run(cmd, 1, false);
 	self.close();
@@ -136,7 +139,7 @@ function LoadSessionNewWindow(i){
 // ------------------------------------------------
 // Удаление выбранной сессии
 function DeleteSession(i){
-	fso.DeleteFile(scite_sessions_path+'\\'+SesFileName(i)+'.'+sessions_ext, true);
+	fso.DeleteFile(scite_sessions_path+'\\'+SesFileName(i)+'.session', true);
 	Sessions_Arr.splice(i, 1);
 	DialogLoad_SessionList();
 }
@@ -144,14 +147,13 @@ function DeleteSession(i){
 // ------------------------------------------------
 // Действия при нажатии на кнопку "Save"
 function SaveSession(){
+	var ses_filename = scite_sessions_path + '\\' + ses_name.value + '.session';
 	if (!quit) {
 		// сохраняем текущую сессию
-		var cmd = '"' + scite + '" ' + '"-savesession:' + (scite_sessions_path + '\\SciTE.'+sessions_ext).replace(/\\/g,"\\\\") + '"';
-		WshShell.Run(cmd, 1, true);
+		SciTE.Send('savesession:' + ses_filename.replace(/\\/g,"\\\\"));
+	} else {
+		fso.CopyFile(scite_sessions_path + '\\SciTE.session', ses_filename, true);
 	}
-	// переименовываем ее
-	var ses_filename = scite_sessions_path + '\\' + ses_name.value + "." + sessions_ext;
-	fso.CopyFile(scite_sessions_path + '\\SciTE.'+sessions_ext, ses_filename, true);
 	// обновляем descript.ion
 	SaveDescriptIon();
 	self.close();
@@ -160,7 +162,7 @@ function SaveSession(){
 // ------------------------------------------------
 // Создает одну строку для добавления в descript.ion
 function OneLineDescript(file,descr){
-	file += "."+sessions_ext;
+	file += '.session';
 	if (!/^\w{1,8}\.\w{1,3}$/.test(file)) {
 		file = '"'+file+'"';
 	}
@@ -365,7 +367,7 @@ function autoComplete (field) {
 	}
 }
 </SCRIPT>
-<body onLoad="Init(SesMgr.commandLine)" onUnload="SaveSettings()">
+<body onLoad="Init(SesMgr.commandLine)">
 	<!--- Load Session Dialog --------------------------->
 	<div id="load" style="display:none">
 		<fieldset style="width:100%; height:99%"><legend>&nbsp;Please select saved session:&nbsp;</legend>
