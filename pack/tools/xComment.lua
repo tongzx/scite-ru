@@ -147,7 +147,7 @@ local function LineUnComment()
 		local line_pos_end = line_pos_start + string.len(text_line)
 		editor:SetSel(line_pos_start, line_pos_end)
 		editor:ReplaceSel(line_uncomment)
-		if cur_pos > (line_pos_start+comment_pos) then
+		if comment_pos and cur_pos > (line_pos_start + comment_pos) then
 			editor:GotoPos(cur_pos - string.len(text_line) + string.len(line_uncomment))
 		else
 			editor:GotoPos(cur_pos)
