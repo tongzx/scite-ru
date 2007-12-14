@@ -1350,6 +1350,8 @@ void PublishGlobalBufferData() {
 	lua_rawset(luaState, LUA_GLOBALSINDEX);
 }
 
+static int cf_editor_reload_startup_script(lua_State*); //!-add-[StartupScriptReload]
+
 static bool InitGlobalScope(bool checkProperties, bool forceReload = false) {
 	bool reload = forceReload;
 	if (checkProperties) {
@@ -1493,6 +1495,11 @@ static bool InitGlobalScope(bool checkProperties, bool forceReload = false) {
 	lua_pushcfunction(luaState, cf_scite_show_parameters_dialog);
 	lua_setfield(luaState, -2, "ShowParametersDialog");
 //!-end-[ParametersDialogFromLua]
+
+//!-start-[StartupScriptReloadv]
+	lua_pushcfunction(luaState, cf_editor_reload_startup_script);
+	lua_setfield(luaState, -2, "ReloadStartupScript");
+//!-end-[StartupScriptReload]
 
 	lua_setglobal(luaState, "scite");
 
@@ -1871,6 +1878,16 @@ const char *LuaExtension::OnSendEditor(unsigned int msg, unsigned int wp, const 
 	return CallNamedFunction("OnSendEditor", msg, wp, lp);
 }
 //!-end-[OnSendEditor]
+
+//!-start-[StartupScriptReload]
+static int cf_editor_reload_startup_script(lua_State*) {
+	InitGlobalScope(false, true);
+	if (extensionScript.length()) {
+		reinterpret_cast<LuaExtension*>(host)->Load(extensionScript.c_str());
+	}
+	return 0;
+}
+//!-end-[StartupScriptReload]
 
 #ifdef _MSC_VER
 // Unreferenced inline functions are OK
