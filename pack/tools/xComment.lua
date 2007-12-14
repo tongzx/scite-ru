@@ -62,9 +62,7 @@ end
 local function IsBlock()
 -- Определение что выделено - блок или поток
 	if sel_text == "" then return true end
-	local start_pos_line_sel_start = editor:PositionFromLine(line_sel_start)
-	local start_pos_line_sel_end = editor:GetLineSelStartPosition(line_sel_end)
-	if editor.SelectionStart == start_pos_line_sel_start and editor.CurrentPos == start_pos_line_sel_end then
+	if sel_end > 0 and editor.CharAt[sel_end - 1] == 10 then
 		if iDEBUG then print ("This Block") end
 		return true
 	end
