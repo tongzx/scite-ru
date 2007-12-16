@@ -77,6 +77,11 @@ function Init(cmdline){
 	if (CmdArg != ''){
 		// ...отображаем диалог сохранения сессии
 		self.save.style.display = "inline";
+		var opt = ""
+		for (var i=0; i<Sessions_Arr.length; i++) {
+			opt += '<OPTION>' + SesFileName(i) + '</OPTION>';
+		}
+		self.ListSessions.innerHTML = '<SELECT id="Sessions" onChange="self.ses_name.value=this.options[this.selectedIndex].innerText; save_description.value = Descript(this.selectedIndex)" style="width:100%">'+opt+'</SELECT>';
 		self.ses_name.value = CmdArg;
 		self.ses_name.select();
 		self.ses_name.focus();
@@ -343,8 +348,8 @@ function SaveOnKeyPress(){
 function autoComplete (field) {
 	var found = false;
 	if (field.value.length > 0) {
-		for (var i = 0; i < Sessions_Arr.length; i++) {
-			if (SesFileName(i).toUpperCase().indexOf(field.value.toUpperCase()) == 0) {
+		for (var i = 0; i < self.Sessions.options.length; i++) {
+			if (self.Sessions.options[i].innerText.toUpperCase().indexOf(field.value.toUpperCase()) == 0) {
 				found=true;
 				break;
 			}
@@ -361,12 +366,13 @@ function autoComplete (field) {
 		if (cursorKeys.indexOf(event.keyCode+";") == -1) {
 			var r1 = field.createTextRange();
 			var oldValue = r1.text;
-			var newValue = found ? SesFileName(i) : oldValue;
+			var newValue = found ? self.Sessions.options[i].innerText : oldValue;
 			if (newValue != field.value) {
 				field.value = newValue;
 				var rNew = field.createTextRange();
 				rNew.moveStart('character', oldValue.length) ;
 				rNew.select();
+				self.Sessions.options[i].selected="true";
 			}
 		}
 	}
@@ -430,9 +436,10 @@ function ExistSciTEWindow(){
 		<fieldset style="width:100%;height:100%;position:absolute;"><legend>&nbsp;Please save current session:&nbsp;</legend>
 			<TABLE width=100% height=94% cellpadding="0" cellspacing="4" border="0">
 			<TR><TD colspan="2" width=100%>
-				<TABLE width=100% cellpadding="0" cellspacing="0" border="0" style="margin:0px"><TR><TD>
-					Name:&nbsp;</TD><TD width=100%><INPUT id="ses_name" TYPE=text value="" style="width:100%" onkeypress="SaveOnKeyPress()" onkeyup="autoComplete(this)">
-				</TD></TR></TABLE>
+				<TABLE width=100% cellpadding="0" cellspacing="0" border="0" style="margin:0px">
+					<TR><TD>Name:&nbsp;</TD><TD width=100%><INPUT id="ses_name" TYPE=text value="" style="width:100%" onkeypress="SaveOnKeyPress()" onkeyup="autoComplete(this)"></TD></TR>
+					<TR><TD>&nbsp;</TD><td><span id="ListSessions"></span></TD></TR>
+				</TABLE>
 			</TD></TR>
 			<TR><TD colspan="2">Description:</TD></TR>
 			<TR height=100%><TD colspan="2"><textarea id="save_description" onkeypress="save_description_edited=true" style="width:100%;height:100%;overflow:hidden;position:absolute;"></textarea></TD></TR>
