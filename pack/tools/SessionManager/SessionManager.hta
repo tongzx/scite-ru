@@ -5,7 +5,7 @@
 <hta:application
 	id=SesMgr
 	applicationName=Session_Manager
-	version=0.8
+	version=0.9
 	maximizeButton=no
 	icon=sysedit.exe
 	innerBorder=no
@@ -123,7 +123,12 @@ function DialogLoad_SessionList(){
 // Открытие одной из сохраненных сессий
 function LoadSession(i){
 	var ses = (scite_sessions_path+'\\'+SesFileName(i)+'.session').replace(/\\/g,"\\\\");
-	SciTE.Send('loadsession:' + ses);
+	if (ExistSciTEWindow()) {
+		SciTE.Send('loadsession:' + ses);
+	} else {
+		var cmd = '"' + scite + '" ' + '-property:check.if.already.open=1 "-loadsession:' + ses + '"';
+		WshShell.Run(cmd, 1, false);
+	}
 	self.close();
 }
 
@@ -366,6 +371,20 @@ function autoComplete (field) {
 		}
 	}
 }
+
+// ------------------------------------------------
+// Определяет запущен SciTE или нет
+function ExistSciTEWindow(){
+	var objWMIService = GetObject("winmgmts:\\\\.\\root\\CIMV2");
+	var colItems = objWMIService.ExecQuery("SELECT * FROM Win32_Process");
+	var enumItems = new Enumerator(colItems);
+	for (; !enumItems.atEnd(); enumItems.moveNext()) {
+		var objItem = enumItems.item();
+		if (objItem.name == "SciTE.exe") {return true};
+	}
+	return false;
+}
+
 </SCRIPT>
 <body onLoad="Init(SesMgr.commandLine)">
 	<!--- Load Session Dialog --------------------------->
