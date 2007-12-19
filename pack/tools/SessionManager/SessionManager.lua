@@ -14,12 +14,23 @@ local function SaveSessionOnQuit()
 	os.run('mshta "'..props['SciteDefaultHome']..'\\tools\\SessionManager\\SessionManager.hta" '..'QUIT '..props['FileName'],1,false)
 end
 
+local function FileExist(path)
+	if (os.rename (path,path)) then
+		return true
+	else
+		return false
+	end
+end
+
 local function SaveSessionOnQuitAuto()
-	local filename = props['FileName']..'_'..os.date()
-	filename = string.gsub(filename,' ','_')
-	filename = string.gsub(filename,'/','.')
-	filename = string.gsub(filename,':','.')
-	local path = props['scite.userhome']..'\\'..filename..'.session'
+	local path = ""
+	local i = 0
+	repeat
+		local filename = props['FileName']..'_'..string.sub('0'..i, -2)
+		filename = string.gsub(filename,' ','_')
+		path = props['scite.userhome']..'\\'..filename..'.session'
+		i = i + 1
+	until not FileExist(path)
 	path = string.gsub(path, '\\', '\\\\')
 	scite.Perform('savesession:'..path)
 end

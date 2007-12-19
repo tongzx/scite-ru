@@ -5,7 +5,7 @@
 <hta:application
 	id=SesMgr
 	applicationName=Session_Manager
-	version=0.9
+	version=0.91
 	maximizeButton=no
 	icon=sysedit.exe
 	innerBorder=no
@@ -247,10 +247,10 @@ function compare(a, b) {
 
 // ------------------------------------------------
 // Преобразование даты создания файла к нужному нам виду
-function DateString (d){
-	var x = new Date(d);
+function DateString (file_date){
+	var x = new Date(file_date);
 	var d = format(x.getDate());
-	var m = format(x.getMonth());
+	var m = format(x.getMonth()+1);
 	var y = format(x.getYear());
 	var h = format(x.getHours());
 	var i = format(x.getMinutes());
