@@ -507,25 +507,25 @@ const char *RESearch::Compile(const char *pat, int length, bool caseSensitive, b
 
 			if (*p == '-') {	/* real dash */
 				i++;
-				prevChar = *p;
+				prevChar = static_cast<unsigned char>(*p); //!-change-[LowerUpperCase]
 				ChSet(*p++);
 			}
 			if (*p == ']') {	/* real brace */
 				i++;
-				prevChar = *p;
+				prevChar = static_cast<unsigned char>(*p); //!-change-[LowerUpperCase]
 				ChSet(*p++);
 			}
 			while (*p && *p != ']') {
 				if (*p == '-') {
 					if (prevChar < 0) {
 						// Previous def. was a char class like \d, take dash literally
-						prevChar = *p;
+						prevChar = static_cast<unsigned char>(*p); //!-change-[LowerUpperCase]
 						ChSet(*p);
 					} else if (*(p+1)) {
 						if (*(p+1) != ']') {
 							c1 = prevChar + 1;
 							i++;
-							c2 = *++p;
+							c2 = static_cast<unsigned char>(*++p); //!-change-[LowerUpperCase]
 							if (c2 == '\\') {
 								if (!*(p+1))	// End of RE
 									return badpat("Missing ]");
@@ -558,7 +558,7 @@ const char *RESearch::Compile(const char *pat, int length, bool caseSensitive, b
 							}
 						} else {
 							// Dash before the ], take it literally
-							prevChar = *p;
+							prevChar = static_cast<unsigned char>(*p); //!-change-[LowerUpperCase]
 							ChSet(*p);
 						}
 					} else {
@@ -580,7 +580,7 @@ const char *RESearch::Compile(const char *pat, int length, bool caseSensitive, b
 						prevChar = -1;
 					}
 				} else {
-					prevChar = *p;
+					prevChar = static_cast<unsigned char>(*p); //!-change-[LowerUpperCase]
 					ChSetWithCase(*p, caseSensitive);
 				}
 				i++;
@@ -985,4 +985,5 @@ int RESearch::Substitute(CharacterIndexer &ci, char *src, char *dst) {
 	*dst = '\0';
 	return 1;
 }
+
 
