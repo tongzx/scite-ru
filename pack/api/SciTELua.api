@@ -239,6 +239,7 @@ scite.SendOutput
 scite.ShowParametersDialog
 scite.Perform
 scite.UpdateStatusBar
+scite.ReloadStartupScript
 
 Open(filename) - opens a file in a new buffer
 ConstantName(number) returns the symbolic name of a Scintilla / SciTE constant
@@ -249,6 +250,7 @@ SendOutput(SCI_constant, ...) sends a message to the output pane
 ShowParametersDialog(text) show parametrs dialog with message (txt) and return result action (only SciTE-Ru)
 Perform("action") execute commands of SciTE Director Interface (only SciTE-Ru)
 UpdateStatusBar([bUpdateSlowData]) perform update status bar
+ReloadStartupScript() reload startup script
 
 props[string] = text_value
 

@@ -231,6 +231,9 @@ command.name.6.*=Date and Time</div>
 <span class="example">warning.executeko.message=текст сообщения</span><br>
 <span class="example">warning.nootherbookmark.message=текст сообщения</span>
 
+<h5> <sup>update</sup> [AutoComplete] <span class=desc>(Автор: mimir, VladVRO)</span></h5>
+Функция автозавершения (Ctrl+I, Ctrl+Space) берет варианты завершения слова не только из соответствующего .api файла (как в оригинальном SciTE), но и из редактируемого текста.
+
 <h5>[oem2ansi] <span class=desc>(Автор: gansA)</span></h5>
 Параметр <span class="example">output.code.page.oem2ansi=1</span> включает перекодировку текста, выводимого в окно консоли, из OEM в ANSI.<br>
 Это позволяет редактировать скрипт в кодировке win1251 и видеть его вывод в консоли в кодировке dos866 не прибегая к переключению.
@@ -304,6 +307,10 @@ end</div>
 В SciTE Lua Scripting Extension добавлена новая команда<br>
 <span class="example">scite.Perform(actionList)</span> - исполняет команды <a href="SciTEDirector_rus.html">SciTE Director Interface</a><br>
 где <span class="example">actionList</span> - одна или несколько команд разделенных символом новой строки.
+
+<h5> <sup>new</sup> [ReloadStartupScript] <span class=desc>(Автор: VladVRO)</span></h5>
+В SciTE Lua Scripting Extension добавлена новая команда<br>
+<span class="example">scite.ReloadStartupScript()</span> - которая позволяет перезагрузить стартовый Луа скрипт
 
 <h5>[GetLexerLanguage] <span class=desc>(Автор: Дмитрий Маслов)</span></h5>
 Добавлено сообщение к Scitilla позволяющее получить имя текущего лексера:<br>
@@ -401,7 +408,7 @@ Tеперь можно задавать до 4х дополнительных наборов слов с разной подсветкой, при
 Убраны дефолтовые значения цвета символов (черный) и фона (белый), что позволяет не задавать их явно в файлах настройки во всех стилях для получения соответствующего фона при экспорте файла.<br>
 Если в <span class="example">style.*.32</span> явно не задан цвет символов и фона, то эти параметры берутся из настроек Windows, т.е. равными системным Window Text/Background.
 
-<h5>[LowerUpperCase] <span class=desc>(Автор: Midas)</span></h5>
+<h5> <sup>update</sup> [LowerUpperCase] <span class=desc>(Автор: Midas, VladVRO)</span></h5>
 Корректная работа с русскими символами<br>
 - при переводе в нижний/верхний регистр,<br>
 - при поиске без учета регистра<br>

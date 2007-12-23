@@ -233,6 +233,9 @@ Now can to set up alert with warning message for each warning type:<br>
 <span class="example">warning.executeko.message=alert's text</span><br>
 <span class="example">warning.nootherbookmark.message=alert's text</span><br>
 
+<h5> <sup>update</sup> [AutoComplete] <span class=desc>(Author: mimir, VladVRO)</span></h5>
+Autocomplete function (Ctrl+I, Ctrl+Space) takes variants of end of a word not only from appropriate ".api" a file (as in original SciTE), but also from the edited text.
+
 <h5>[oem2ansi] <span class=desc>(Author: gansA)</span></h5>
 Parameter <span class="example">output.code.page.oem2ansi=1</span> turn on console output text encoding from OEM to ANSI.<br>
 It let to edit script in win1251 codepage and see it output in console in dos866 codepage without switching codepages.
@@ -306,6 +309,10 @@ Function <span class="example">OnKey</span> is expanded, now in it the pressed s
 In SciTE Lua Scripting Extension added new command<br>
 <span class="example">scite.Perform(actionList)</span> - execute commands <a href="http://scintilla.sourceforge.net/SciTEDirector.html">SciTE Director Interface</a><br>
 with <span class="example">actionList</span> - one or several commands separated by a symbol of a new line.
+
+<h5> <sup>new</sup> [ReloadStartupScript] <span class=desc>(Author: VladVRO)</span></h5>
+In SciTE Lua Scripting Extension added new command<br>
+<span class="example">scite.ReloadStartupScript()</span> - this function initializes Lua startup script reloading.
 
 <h5>[GetLexerLanguage] <span class=desc>(Author: Dmitry Maslov)</span></h5>
 Added Scitilla message allowing to receive a name current lexers:<br>
@@ -401,7 +408,7 @@ It prevent from transfer Russian text into external script or program.
 Are removed default values of symbols color (black) and a background (white), that allows to not set them obviously in files of adjustment in all styles for set of a corresponding background at export of a file.<br>
 If the <span class="example">style.*.32</span> do not raised characters and the background color, these parameters are collected from your Windows, i.e. equal system Window Text/Background.
 
-<h5>[LowerUpperCase] <span class=desc>(Author: Midas)</span></h5>
+<h5> <sup>update</sup> [LowerUpperCase] <span class=desc>(Author: Midas, VladVRO)</span></h5>
 Correct working with national characters<br>
 - for Make Lower / Upper Case,<br>
 - for Search without match case,<br>
