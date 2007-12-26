@@ -3352,6 +3352,9 @@ evt void IndicatorRelease=2024(int modifiers, int position)
 ##!-start-[OnClick]
 evt void Click=2025(int modifiers)
 ##!-end-[OnClick]
+##!-start-[OnMouseButtonUp]
+evt void MouseButtonUp=2026(int modifiers)
+##!-end-[OnMouseButtonUp]
 
 cat Deprecated
 

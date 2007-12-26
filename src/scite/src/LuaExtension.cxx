@@ -1818,6 +1818,22 @@ bool LuaExtension::OnClick(int modifiers) {
 }
 //!-end-[OnClick]
 
+//!-start-[OnMouseButtonUp]
+bool LuaExtension::OnMouseButtonUp(int modifiers) {
+	bool handled = false;
+	if (luaState) {
+		lua_getglobal(luaState, "OnMouseButtonUp");
+		if (lua_isfunction(luaState, -1)) {
+			lua_pushboolean(luaState, (SCMOD_CTRL  & modifiers) != 0 ? 1 : 0); // control
+			handled = call_function(luaState, 1);
+		} else {
+			lua_pop(luaState, 1);
+		}
+	}
+	return handled;
+}
+//!-end-[OnMouseButtonUp]
+
 bool LuaExtension::OnUpdateUI() {
 	return CallNamedFunction("OnUpdateUI");
 }

@@ -3674,6 +3674,17 @@ void Editor::NotifyClick(Point pt, bool shift, bool ctrl, bool alt) {
 }
 //-end-[OnClick]
 
+//!-start-[OnMouseButtonUp]
+void Editor::NotifyMouseButtonUp(Point pt, bool ctrl) {
+	SCNotification scn = {0};
+	scn.nmhdr.code = SCN_MOUSEBUTTONUP;
+	scn.line = LineFromLocation(pt);
+	scn.position = PositionFromLocationClose(pt);
+	scn.modifiers = (ctrl ? SCI_CTRL : 0);
+	NotifyParent(scn);
+}
+//!-end-[OnMouseButtonUp]
+
 void Editor::NotifyHotSpotDoubleClicked(int position, bool shift, bool ctrl, bool alt) {
 	SCNotification scn = {0};
 	scn.nmhdr.code = SCN_HOTSPOTDOUBLECLICK;
@@ -5500,6 +5511,7 @@ void Editor::ButtonUp(Point pt, unsigned int curTime, bool ctrl) {
 		inDragDrop = ddNone;
 		EnsureCaretVisible(false);
 	}
+	NotifyMouseButtonUp(pt, ctrl); //!-add-[OnMouseButtonUp]
 }
 
 // Called frequently to perform background UI including

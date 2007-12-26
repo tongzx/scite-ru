@@ -4789,6 +4789,13 @@ void SciTEBase::Notify(SCNotification *notification) {
 		break;
 //!-end-[OnClick][MouseClickHandled]
 
+//!-start-[OnMouseButtonUp]
+	case SCN_MOUSEBUTTONUP:
+		if (extender)
+			extender->OnMouseButtonUp(notification->modifiers);
+		break;
+//!-end-[OnMouseButtonUp]
+
 	case SCN_UPDATEUI:
 		if (extender)
 			handled = extender->OnUpdateUI();
