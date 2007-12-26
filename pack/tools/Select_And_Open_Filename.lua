@@ -109,9 +109,6 @@ function OnMenuCommand (msg, source)
 	return result
 end
 
-
-local clearSel = false
-
 -- Add user event handler OnClick
 local old_OnClick = OnClick
 function OnClick(shift, ctrl, alt)
@@ -125,24 +122,8 @@ function OnClick(shift, ctrl, alt)
 		end 
 		local s = sci.CurrentPos
 		sci:SetSel(s, s)
-		if Select_And_Open_File() then
-			clearSel = true
-			return true
-		end
+		if Select_And_Open_File() then return true end
 	end
 	if old_OnClick then result = old_OnClick(shift, ctrl, alt) end
-	return result
-end
-
--- Add user event handler OnUpdateUI
-local old_OnUpdateUI = OnUpdateUI
-function OnUpdateUI ()
-	local result
-	if clearSel then
-		clearSel = false
-		s = editor.CurrentPos
-		editor:SetSel(s, s)
-	end
-	if old_OnUpdateUI then result = old_OnUpdateUI() end
 	return result
 end
