@@ -560,6 +560,7 @@ protected:
 	enum { toolMax = 300 }; //!-change-[ToolsMax]
 	Extension *extender;
 	bool needReadProperties;
+	bool preserveFocusOnEditor; //!-add-[GoMessageImprovement]
 
 	int heightOutput;
 	int heightOutputStartDrag;
@@ -813,7 +814,8 @@ protected:
 	void ClearJobQueue();
 	virtual void Execute();
 	virtual void StopExecute() = 0;
-	void GoMessage(int dir);
+//!	void GoMessage(int dir);
+	bool GoMessage(int dir); //!-change-[GoMessageImprovement]
 	virtual bool StartCallTip();
 	char *GetNearestWords(const char *wordStart, int searchLen,
 		const char *separators, bool ignoreCase=false, bool exactLen=false);

@@ -427,6 +427,8 @@ SciTEBase::SciTEBase(Extension *ext) : apis(true), extender(ext) {
 	propsStatus.superPS = &props;
 
 	needReadProperties = false;
+	
+	preserveFocusOnEditor = false; //!-add-[GoMessageImprovement]
 
 	OnMenuCommandCallsCount = 0;	//!-add-[OnMenuCommand]
 	OnSendEditorCallsCount = 0;	//!-add-[OnSendEditor]
@@ -4763,7 +4765,12 @@ void SciTEBase::Notify(SCNotification *notification) {
 //!			handled = extender->OnDoubleClick();
 			handled = extender->OnDoubleClick(notification->modifiers); //!-add-[OnDoubleClick]
 		if (!handled && notification->nmhdr.idFrom == IDM_RUNWIN) {
-			GoMessage(0);
+//!			GoMessage(0);
+//!-start-[GoMessageImprovement]
+			handled = GoMessage(0);
+			if (handled)
+				preserveFocusOnEditor = true;
+//!-end-[GoMessageImprovement]
 		}
 //!-begin-[MouseClickHandled]
 		if (handled) {
@@ -4789,12 +4796,16 @@ void SciTEBase::Notify(SCNotification *notification) {
 		break;
 //!-end-[OnClick][MouseClickHandled]
 
-//!-start-[OnMouseButtonUp]
+//!-start-[OnMouseButtonUp][GoMessageImprovement]
 	case SCN_MOUSEBUTTONUP:
 		if (extender)
 			extender->OnMouseButtonUp(notification->modifiers);
+		if (preserveFocusOnEditor) {
+			preserveFocusOnEditor = false;
+			WindowSetFocus(wEditor);
+		}
 		break;
-//!-end-[OnMouseButtonUp]
+//!-end-[OnMouseButtonUp][GoMessageImprovement]
 
 	case SCN_UPDATEUI:
 		if (extender)

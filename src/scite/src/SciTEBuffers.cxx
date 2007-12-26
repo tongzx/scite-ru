@@ -1766,7 +1766,8 @@ int DecodeMessage(const char *cdoc, char *sourcePath, int format, int &column) {
 	return -1;
 }
 
-void SciTEBase::GoMessage(int dir) {
+//!void SciTEBase::GoMessage(int dir) {
+bool SciTEBase::GoMessage(int dir) { //!-change-[GoMessageImprovement]
 	CharacterRange crange;
 	crange.cpMin = SendOutput(SCI_GETSELECTIONSTART);
 	crange.cpMax = SendOutput(SCI_GETSELECTIONEND);
@@ -1856,7 +1857,7 @@ void SciTEBase::GoMessage(int dir) {
 					}
 					if (bExists) {
 						if (!Open(messagePath)) {
-							return;
+							return false; //!-change-[GoMessageImprovement]
 						}
 						CheckReload();
 					}
@@ -1907,8 +1908,9 @@ void SciTEBase::GoMessage(int dir) {
 				props.Set("CurrentMessage", message.c_str());
 				UpdateStatusBar(false);
 				WindowSetFocus(wEditor);
+				return true; //!-add-[GoMessageImprovement]
 			}
-			return;
+			return false; //!-change-[GoMessageImprovement]
 		}
 		lookLine += dir;
 		if (lookLine < 0)
@@ -1916,7 +1918,8 @@ void SciTEBase::GoMessage(int dir) {
 		else if (lookLine >= maxLine)
 			lookLine = 0;
 		if (dir == 0)
-			return;
+			return false; //!-change-[GoMessageImprovement]
 	}
+	return false; //!-add-[GoMessageImprovement]
 }
 
