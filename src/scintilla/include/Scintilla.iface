@@ -1011,6 +1011,11 @@ fun void CallTipUpdateHlt=4015(,)
 fun void CallTipSetWordWrap=4016(int wrapBnd,)
 ##!-end-[BetterCalltips]
 
+##!-start-[MouseClickHandled]
+# Set mouse capture status
+fun void SetMouseCapture=4017(bool on,)
+##!-end-[MouseClickHandled]
+
 # Find the display line of a document line taking hidden lines into account.
 fun int VisibleFromDocLine=2220(int line,)
 

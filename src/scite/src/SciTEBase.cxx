@@ -4765,14 +4765,29 @@ void SciTEBase::Notify(SCNotification *notification) {
 		if (!handled && notification->nmhdr.idFrom == IDM_RUNWIN) {
 			GoMessage(0);
 		}
+//!-begin-[MouseClickHandled]
+		if (handled) {
+			if (notification->nmhdr.idFrom == IDM_RUNWIN)
+				SendOutput(SCI_SETMOUSECAPTURE, 0);
+			else
+				SendEditor(SCI_SETMOUSECAPTURE, 0);
+		}
+//!-end-[MouseClickHandled]
 		break;
 
-	//!-begin-[OnClick]
+//!-begin-[OnClick][MouseClickHandled]
 	case SCN_CLICK:
-		if (extender)
+		if (extender) {
 			handled = extender->OnClick(notification->modifiers);
+			if (handled) {
+				if (notification->nmhdr.idFrom == IDM_RUNWIN)
+					SendOutput(SCI_SETMOUSECAPTURE, 0);
+				else
+					SendEditor(SCI_SETMOUSECAPTURE, 0);
+			}
+		}
 		break;
-	//!-end-[OnClick]
+//!-end-[OnClick][MouseClickHandled]
 
 	case SCN_UPDATEUI:
 		if (extender)

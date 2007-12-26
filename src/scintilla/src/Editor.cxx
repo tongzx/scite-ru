@@ -7551,6 +7551,12 @@ sptr_t Editor::WndProc(unsigned int iMessage, uptr_t wParam, sptr_t lParam) {
 	case SCI_GETPASTECONVERTENDINGS:
 		return convertPastes ? 1 : 0;
 
+//!-start-[MouseClickHandled]
+	case SCI_SETMOUSECAPTURE:
+		SetMouseCapture(wParam != 0);
+		break;
+//!-end-[MouseClickHandled]
+
 	default:
 		return DefWndProc(iMessage, wParam, lParam);
 	}

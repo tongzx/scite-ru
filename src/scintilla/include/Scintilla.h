@@ -687,6 +687,7 @@ typedef sptr_t (*SciFnDirect)(sptr_t ptr, unsigned int iMessage, uptr_t wParam, 
 #define SCI_CALLTIPUPDATEHLT 4015
 #define SCI_CALLTIPSETWORDWRAP 4016
 //!-end-[BetterCalltips]
+#define SCI_SETMOUSECAPTURE 4017 ///!-add-[MouseClickHandled]
 #define SC_MOD_INSERTTEXT 0x1
 #define SC_MOD_DELETETEXT 0x2
 #define SC_MOD_CHANGESTYLE 0x4
