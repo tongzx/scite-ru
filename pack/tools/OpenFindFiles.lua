@@ -58,7 +58,7 @@ end
 
 --------------------------------------------------
 local function MenuCommand(msg)
-	if msg == 215 then --IDM_FINDINFILES
+	if msg == IDM_FINDINFILES then
 		props["clear.before.execute"] = 0
 		CreateMenu()
 	end

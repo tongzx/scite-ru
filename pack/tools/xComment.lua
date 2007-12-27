@@ -260,7 +260,7 @@ local old_OnMenuCommand = OnMenuCommand
 function OnMenuCommand (msg, source)
 	local result
 	if old_OnMenuCommand then result = old_OnMenuCommand(msg, source) end
-	if msg == 243 then --IDM_BLOCK_COMMENT (Ctrl+Q)
+	if msg == IDM_BLOCK_COMMENT then -- (Ctrl+Q)
 		if xComment() then return true end
 	end
 	return result

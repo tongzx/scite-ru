@@ -41,7 +41,7 @@ function OnMenuCommand (msg, source)
 	local result
 	if old_OnMenuCommand then result = old_OnMenuCommand(msg, source) end
 	if tonumber(props['session.manager'])==1 then
-		if (msg == 140 --IDM_QUIT
+		if (msg == IDM_QUIT
 		and tonumber(props['save.session.manager.on.quit'])==1) then
 			if tonumber(props['save.session.on.quit.auto'])==1 then
 				SaveSessionOnQuitAuto()
@@ -49,10 +49,10 @@ function OnMenuCommand (msg, source)
 				SaveSessionOnQuit()
 			end
 			return false
-		elseif msg == 133 then --IDM_SAVESESSION
+		elseif msg == IDM_SAVESESSION then
 			SaveSession()
 			return true
-		elseif msg == 132 then --IDM_LOADSESSION
+		elseif msg == IDM_LOADSESSION then
 			LoadSession()
 			return true
 		end

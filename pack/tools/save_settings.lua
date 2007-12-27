@@ -62,27 +62,27 @@ local old_OnMenuCommand = OnMenuCommand
 function OnMenuCommand(cmd, source)
 	local result
 	if old_OnMenuCommand then result = old_OnMenuCommand(cmd, source) end
-	if cmd == 408 then -- IDM_VIEWTOOLBAR
+	if cmd == IDM_VIEWTOOLBAR then
 		props['toolbar.visible'] = fNOT(props['toolbar.visible'])
-	elseif cmd == 410 then -- IDM_VIEWTABBAR
+	elseif cmd == IDM_VIEWTABBAR then
 		props['tabbar.visible'] = fNOT(props['tabbar.visible'])
-	elseif cmd == 411 then -- IDM_VIEWSTATUSBAR
+	elseif cmd == IDM_VIEWSTATUSBAR then
 		props['statusbar.visible'] = fNOT(props['statusbar.visible'])
-	elseif cmd == 402 then -- IDM_VIEWSPACE
+	elseif cmd == IDM_VIEWSPACE then
 		props['view.whitespace'] = fNOT(props['view.whitespace'])
-	elseif cmd == 403 then -- IDM_VIEWEOL
+	elseif cmd == IDM_VIEWEOL then
 		props['view.eol'] = fNOT(props['view.eol'])
-	elseif cmd == 404 then -- IDM_VIEWGUIDES
+	elseif cmd == IDM_VIEWGUIDES then
 		props['view.indentation.guides'] = fNOT(props['view.indentation.guides'])
-	elseif cmd == 407 then -- IDM_LINENUMBERMARGIN
+	elseif cmd == IDM_LINENUMBERMARGIN then
 		props['line.margin.visible'] = fNOT(props['line.margin.visible'])
-	elseif cmd == 413 then -- IDM_OPENFILESHERE
+	elseif cmd == IDM_OPENFILESHERE then
 		props['check.if.already.open'] = fNOT(props['check.if.already.open'])
-	elseif cmd == 401 then -- IDM_SPLITVERTICAL
+	elseif cmd == IDM_SPLITVERTICAL then
 		props['split.vertical'] = fNOT(props['split.vertical'])
-	elseif cmd == 414 then -- IDM_WRAP
+	elseif cmd == IDM_WRAP then
 		props['wrap'] = fNOT(props['wrap'])
-	elseif cmd == 415 then -- IDM_WRAPOUTPUT
+	elseif cmd == IDM_WRAPOUTPUT then
 		props['output.wrap'] = fNOT(props['output.wrap'])
 	end
 	return result
@@ -95,7 +95,7 @@ function OnMenuCommand (msg, source)
 	local result
 	if old_OnMenuCommand then result = old_OnMenuCommand(msg, source) end
 	if props['save.settings.path']~=nil then
-		if msg == 140 then --IDM_QUIT
+		if msg == IDM_QUIT then
 			SaveSetting()
 		end
 	end

@@ -44,18 +44,18 @@ local old_OnMenuCommand = OnMenuCommand
 function OnMenuCommand(cmd, source)
 	local result
 	if old_OnMenuCommand then result = old_OnMenuCommand(cmd, source) end
-	if cmd == 150 then -- IDM_ENCODING_DEFAULT
+	if cmd == IDM_ENCODING_DEFAULT then
 		UpdateCodePage(tonumber(props["code.page"]))
-	elseif cmd == 151 then -- IDM_ENCODING_UCS2BE
+	elseif cmd == IDM_ENCODING_UCS2BE then
 		props["code.page.name"]='UCS-2 BE'
 		scite.UpdateStatusBar()
-	elseif cmd == 152 then -- IDM_ENCODING_UCS2LE
+	elseif cmd == IDM_ENCODING_UCS2LE then
 		props["code.page.name"]='UCS-2 LE'
 		scite.UpdateStatusBar()
-	elseif cmd == 153 then -- IDM_ENCODING_UTF8
+	elseif cmd == IDM_ENCODING_UTF8 then
 		props["code.page.name"]='UTF-8 BOM'
 		scite.UpdateStatusBar()
-	elseif cmd == 154 then -- IDM_ENCODING_UCOOKIE
+	elseif cmd == IDM_ENCODING_UCOOKIE then
 		props["code.page.name"]='UTF-8'
 		scite.UpdateStatusBar()
 	end

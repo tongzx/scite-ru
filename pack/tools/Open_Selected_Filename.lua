@@ -59,7 +59,7 @@ local old_OnMenuCommand = OnMenuCommand
 function OnMenuCommand (msg, source)
 	local result
 	if old_OnMenuCommand then result = old_OnMenuCommand(msg, source) end
-	if msg == 103 then --IDM_OPENSELECTED
+	if msg == IDM_OPENSELECTED then
 		if Open_Selected_Filename() then return true end
 	end
 	return result

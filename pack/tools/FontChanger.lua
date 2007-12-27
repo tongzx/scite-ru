@@ -26,7 +26,7 @@ local old_OnMenuCommand = OnMenuCommand
 function OnMenuCommand (msg, source)
 	local result=false
 	if old_OnMenuCommand then result = old_OnMenuCommand(msg, source) end
-	if enable_idm==true and msg == 450 then --IDM_MONOFONT
+	if enable_idm==true and msg == IDM_MONOFONT then
 		FontChange()
 		enable_idm=false
 		scite.MenuCommand(IDM_MONOFONT)
