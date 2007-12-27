@@ -292,16 +292,27 @@ end</div>
 
 <h5>[OnClick] <span class=desc>(Автор: Дмитрий Маслов)</span></h5>
 Добавлено новое событие SciTE <span class="example">OnClick()</span>. Событие возникает при одиночном клике мыши в окне редактирования или в окне консоли.<br>
-Возвращает состояние клавиш-модификаторов (Shift, Ctrl, Alt):<br>
+Получает в строке параметров состояния клавиш-модификаторов (Shift, Ctrl, Alt):<br>
 <span class="example">function OnClick(shift, ctrl, alt)</span>
 
 <h5>[OnDoubleClick] <span class=desc>(Автор: mimir, Дмитрий Маслов)</span></h5>
-Событие <span class="example">OnDoubleClick()</span>, теперь возвращает состояние клавиш-модификаторов (Shift, Ctrl, Alt):<br>
+Событие <span class="example">OnDoubleClick()</span>, теперь получает состояния клавиш-модификаторов (Shift, Ctrl, Alt):<br>
 <span class="example">function OnDoubleClick(shift, ctrl, alt)</span>
 
 <h5>[OnKey] <span class=desc>(Автор: Дмитрий Маслов)</span></h5>
 Расширена функция луа <span class="example">OnKey</span>, теперь в нее передается также нажатый символ:<br>
 <span class="example">function OnKey(key, shift, ctrl, alt, char)</span>
+
+<h5> <sup>new</sup> [OnMouseButtonUp] <span class=desc>(Автор: VladVRO)</span></h5>
+Добавлено новое событие SciTE <span class="example">OnMouseButtonUp()</span>. Событие возникает при отжатии кнопки мыши в окне редактирования или в окне консоли.<br>
+Получает в строке параметров состояние клавиши-модификатора Ctrl:<br>
+<span class="example">function OnMouseButtonUp(ctrl)</span>
+
+<h5> <sup>new</sup> [MouseClickHandled] <span class=desc>(Автор: VladVRO)</span></h5>
+Добавлено новое сообщение <span class="example">SCI_SETMOUSECAPTURE</span> для ядра Scintilla, позволяющее менять реакцию на события от мыши.<br>
+С его помощью можно сообщить ядру, что нажатие кнопки мыши обработано.<br>
+Пример: <span class="example">SendEditor(SCI_SETMOUSECAPTURE, 0)</span> <br>
+Такое сообщение теперь отправляется, если <span class="example">OnClick()</span> или <span class="example">OnDoubleClick()</span> возвращает <span class="example"><i>true</i></span>.
 
 <h5>[Perform] <span class=desc>(Автор: VladVRO)</span></h5>
 В SciTE Lua Scripting Extension добавлена новая команда<br>
@@ -392,6 +403,10 @@ Tеперь можно задавать до 4х дополнительных наборов слов с разной подсветкой, при
       <a name="3"></a>
       Устранение ошибок
     </h3>
+
+<h5> <sup>new</sup> [GoMessageImprovement] <span class=desc>(Автор: VladVRO)</span></h5>
+Сделано перемещение фокуса в окно редактора после позиционирования на строке при клике мышкой в окне консоли на строке с ошибкой или результатом поиска.<br>
+Использована доработка <span class="example">[OnMouseButtonUp]</span>.
 
 <h5> <sup>new</sup> [English_KeyCode] <span class=desc>(Автор: Дмитрий Маслов)</span></h5>
 Исправлена ошибка при которой назначенные шорткаты переставали работать после переключения раскладки клавиатуры. (<a href="http://code.google.com/p/scite-ru/issues/detail?id=43">подробности</a>)

@@ -292,9 +292,9 @@ Example of letter case changing macro:
 &nbsp;&nbsp;end<br>
 end</div>
 
-<h5> <sup>new</sup> [OnClick] <span class=desc>(Автор: Dmitry Maslov)</span></h5>
-Added new event to SciTE <span class="example">OnClick()</span>. Event arises at single to a click of the mouse in a editing pane or the output pane.<br>
-Returned to the state of key modifiers (Shift, Ctrl, Alt):<br>
+<h5> <sup>new</sup> [OnClick] <span class=desc>(Author: Dmitry Maslov)</span></h5>
+Added new event to SciTE <span class="example">OnClick()</span>. Event arises from a single click on the mouse left button in the editing pane or the output pane.<br>
+Receives the state of key modifiers (Shift, Ctrl, Alt):<br>
 <span class="example">function OnClick(shift, ctrl, alt)</span>
 
 <h5>[OnDoubleClick] <span class=desc>(Author: mimir, Dmitry Maslov)</span></h5>
@@ -304,6 +304,17 @@ Event <span class="example">OnDoubleClick()</span> is expanded, now it is return
 <h5>[OnKey] <span class=desc>(Author: Dmitry Maslov)</span></h5>
 Function <span class="example">OnKey</span> is expanded, now in it the pressed symbol is passed also:<br>
 <span class="example">function OnKey(key, shift, ctrl, alt, char)</span>
+
+<h5> <sup>new</sup> [OnMouseButtonUp] <span class=desc>(Author: VladVRO)</span></h5>
+Added new event to SciTE <span class="example">OnMouseButtonUp()</span>. Event arises from a mouse button up in the editing pane or the output pane.<br>
+Receives the state of Ctrl:<br>
+<span class="example">function OnMouseButtonUp(ctrl)</span>
+
+<h5> <sup>new</sup> [MouseClickHandled] <span class=desc>(Author: VladVRO)</span></h5>
+Added new message <span class="example">SCI_SETMOUSECAPTURE</span> to the Scintilla for change mouse cuptured state.<br>
+This message let to inform the Scintilla that mouse click handled.<br>
+Example: <span class="example">SendEditor(SCI_SETMOUSECAPTURE, 0)</span> <br>
+And this message will be sent if <span class="example">OnClick()</span> or <span class="example">OnDoubleClick()</span> returns <span class="example"><i>true</i></span>.
 
 <h5>[Perform] <span class=desc>(Author: VladVRO)</span></h5>
 In SciTE Lua Scripting Extension added new command<br>
@@ -392,6 +403,10 @@ Now OnSendEditor can trace event SCI_SETZOOM arising at change of the size of a 
       <a name="3"></a>
       Bug fix
     </h3>
+
+<h5> <sup>new</sup> [GoMessageImprovement] <span class=desc>(Author: VladVRO)</span></h5>
+Made the editor window focused after uses double-click in console on message with file name and line number.<br>
+For implementation used <span class="example">[OnMouseButtonUp]</span> improvement.
 
 <h5> <sup>new</sup> [English_KeyCode] <span class=desc>(Author: Dmitry Maslov)</span></h5>
 Bug fixed at which keyboard shortcut ceased to work after switching keyboard layout. (<a href="http://code.google.com/p/scite-ru/issues/detail?id=43">details</a>)
