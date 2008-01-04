@@ -1,5 +1,5 @@
 -- SciTE Smart braces
--- Version: 1.0
+-- Version: 1.1
 -- Author: Dmitry Maslov
 ---------------------------------------------------
 -- Работает, если:
@@ -7,26 +7,48 @@
 --  Подключен в автозагрузку
 --  В настройках установлено braces.autoclose = 1 
 --  В настройках установлено braces.open = открывающиеся скобки
---  В настройках установлено braces.close = закрывающаеся скобки
---  Используется только в  русской сборке из-зи расширенной функции OnKey
+--  В настройках установлено braces.close = закрывающиеся скобки
+--  Используется только в русской сборке из-за расширенной функции OnKey
 --
 ---------------------------------------------------
 -- Функционал:
 --
---   Автозакрытие скобок 
---   Автозакрытие выделенного текста в скобки
---   Особая обработка { и } в cpp: автоматом делает отступ
+--  Автозакрытие скобок
+--  Автозакрытие выделенного текста в скобки
+--  Особая обработка { и } в cpp: автоматом делает отступ
 --
 ---------------------------------------------------
--- Нужно доделать:
+-- Логика работы:
 --
---  Если мы только что вставили скобку автоматом, то после того 
---  как нажимаем BACK_SPASE удаляется втавленная скопка, т.е.
+--  Скрипт срабатывает только если braces.autoclose = 1
+--
+--  Если мы вводим символ из braces.open, то автоматически вставляется
+--  ему пара из braces.close, таким образом, курсор оказывается между скобок
+--
+--  Если мы вводим закрывающуюся скобку из braces.close и следующий символ
+--  этаже закрывающаяся скобка, то ввод проглатывается и лишняя закрывающаяся
+--  скобка не печатается
+--
+--  Если у нас выделен текст и мы вводим символ из braces.open
+--  то текст обрамляется кавычками braces.open - braces.close
+--  если он уже был обрамлен кавычками, то они снимаются,
+--  при этом учитывается символ переноса строки, т.е. если выделенный
+--  текст оканчивается переводом строки, то скобки вставляются до переноса
+--  строки
+--
+--  Если мы вводим символ { при редактировании файла cpp, то автоматически
+--  вставляется перенос строки два раза, а после } - курсор при этом оказывается
+--  в середине, т.е. после первого переноса строки, все отступы сохраняются
+--
+--  Если мы вставляем символ } при редактировании файла cpp, то отступ
+--  автоматически уменьшается на один
+--
+--  Если мы только что вставили скобку автоматом, то после того
+--  как нажимаем BACK_SPASE удаляется вставленная скобка, т.е.
 --  срабатывает как DEL, а не как BACK_SPASE
 --
---  Нужно сделать вставку ковычек умнее, добавить проверку, 
---  является ли ковычка завершающей, т.е. есть ли ей пара
---  это нужно сделать для тех "ковычек" где braceOpen == braceClose
+--  Если вставляем скобку у которой braces.open == braces.close
+--  то вставляется пара только если таких скобок четно в строке
 --
 ---------------------------------------------------
 
@@ -77,6 +99,15 @@ local function MakeFind( text )
 		strres = strres..simbol
 	end
 	return strres
+end
+
+local function FindCount( text, textToFind )
+	local count = 0;
+	for w in string.gmatch( text, MakeFind( textToFind ) )
+	do
+		count = count + 1
+	end
+	return count
 end
 
 -- позиция это начало строки (учитывая отступ)
@@ -142,7 +173,7 @@ local function nextIsEOL(pos)
 	return false
 end
 
-local function BlockBraces(bracebegin, braceend)
+local function BlockBraces( bracebegin, braceend )
 	local text, lenght = editor:GetSelText()
 	local selbegin = editor.SelectionStart
 	local selend = editor.SelectionEnd
@@ -171,7 +202,7 @@ local function BlockBraces(bracebegin, braceend)
 	return true
 end
 
-local function GetIndexFindCharInProps(value, findchar)
+local function GetIndexFindCharInProps( value, findchar )
 	if findchar then
 		local resIndex = string.find( props[value], MakeFind( findchar ), 1 )
 		if 
@@ -218,6 +249,8 @@ local function GetBraces( char )
 	end
 	return braceOpen, braceClose
 end
+
+local g_isPastedBraceClose = false
 
 -- "умные скобки/ковычки" 
 -- возвращает true когда обрабатывать дальше символ не нужно
@@ -284,10 +317,16 @@ local function SmartBraces( char )
 						editor:EndUndoAction()
 						return true
 					end
+					-- если вставляем скобку с одинаковыми правой и левой, то смотрим есть ли уже открытая в строке
+					if ( braceOpen == braceClose ) and ( math.fmod( FindCount( editor:GetCurLine(), braceOpen ), 2 ) == 1 )
+					then
+						return false
+					end
 					-- вставляем закрывающуюся скобку
 					editor:BeginUndoAction()
 					editor:InsertText( editor.CurrentPos, braceClose )
 					editor:EndUndoAction()
+					g_isPastedBraceClose = true
 				end
 				-- если мы ставим закрывающуяся скобку
 				if ( char == braceClose ) then
@@ -314,8 +353,21 @@ function OnKey( key, shift, ctrl, alt, char )
 		return true
 	end
 	
-	if ( editor.Focus and char ~= '' ) then
-		return SmartBraces( char )
+	if ( editor.Focus ) then
+		if ( key == 8 and g_isPastedBraceClose == true ) then -- VK_BACK (08)
+			g_isPastedBraceClose = false
+			editor:BeginUndoAction()
+			editor:CharRight()
+			editor:DeleteBack()
+			editor:EndUndoAction()
+			return true
+		end
+		
+		g_isPastedBraceClose = false
+		
+		if ( char ~= '' ) then
+			return SmartBraces( char )
+		end
 	end
 	
 	return false
