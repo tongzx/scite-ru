@@ -1312,7 +1312,7 @@ void SciTEBase::ToolsMenu(int item) {
 						jobType = jobGUI;
 					else if (colon[0] == '2' || 0 == strcmp(colon, "shellexec"))
 						jobType = jobShell;
-					else if (colon[0] == '3' || 0 == strcmp(colon, "lua") || strcmp(colon, "director"))
+					else if (colon[0] == '3' || 0 == strcmp(colon, "lua") || 0 == strcmp(colon, "director"))
 						jobType = jobExtension;
 					else if (colon[0] == '4' || 0 == strcmp(colon, "winhelp"))
 						jobType = jobHelp;
