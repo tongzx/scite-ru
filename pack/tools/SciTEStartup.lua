@@ -21,7 +21,7 @@ dofile (props["SciteDefaultHome"].."\\tools\\set_html.lua")
 dofile (props["SciteDefaultHome"].."\\tools\\auto_backup.lua")
 
 -- Установка / снятие закладок на строку (Bookmark) (то же что и Ctrl+F2)
--- с помощью двойного клика мыши при нажатой клавише Ctrl
+-- с помощью клика мыши при нажатой клавише Ctrl
 dofile (props["SciteDefaultHome"].."\\tools\\MarkerToggle.lua")
 
 -- Показ имени текущего лексера в статусной строке
@@ -35,6 +35,7 @@ dofile (props["SciteDefaultHome"].."\\tools\\ReadOnly.lua")
 dofile (props["SciteDefaultHome"].."\\tools\\Open_Selected_Filename.lua")
 
 -- Расширение стандартной команды SciTE "Открыть выделенный файл" (открывает без предварительного выделения)
+-- А также возможность открыть файл по клику мыши на его имени при нажатой клавише Ctrl.
 dofile (props["SciteDefaultHome"].."\\tools\\Select_And_Open_Filename.lua")
 
 -- Смена кодировки Win1251/DOS866

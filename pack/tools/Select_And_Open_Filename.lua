@@ -1,17 +1,23 @@
 --[[----------------------------------------------------------------------------
 Select_And_Open_Filename.lua
 Author: VladVRO
-version 1.1
+version 1.2
 
 Расширение команды "Открыть выделенный файл" для случая когда выделения нет.
-Скрипт выделяет подходящую область рядом с курсором в качестве искомого имени
-файла и пытается открыть этот файл.
-Добавлено срабатывание по клику мыши при зажатом Ctrl при опции .
+А также возможность открыть файл по клику мыши на его имени при нажатой
+клавише Ctrl.
+Скрипт выделяет подходящую область рядом с курсором в качестве имени искомого
+файла и пытается открыть его в текущей папке, если файл не найден, то скрипт
+пытается расширить выделение до имени + путь и повторяет попытку открыть, в
+случае неудачи попытки расширить выделение продолжаются до тех пор, пока не
+будет выделен весь путь до файла, и если файл все еще не найден, то поиск
+продолжается в папке на уровень выше и т.д. до корня.
 
 Подключение:
-Добавьте в SciTEStartup.lua строку
-dofile (props["SciteDefaultHome"].."\\tools\\Select_And_Open_Filename.lua")
-
+Добавить в SciTEStartup.lua строку:
+  dofile (props["SciteDefaultHome"].."\\tools\\Select_And_Open_Filename.lua")
+Для срабатывания по клику мыши добавить в файл настроек:
+  select.and.open.by.click=1
 --]]----------------------------------------------------------------------------
 
 local function isFileExists(filename)
@@ -52,7 +58,8 @@ local function Select_And_Open_File()
 	
 	if string.len(filename) == 0 then
 		-- try to select file name near current position
-		local s = sci.CurrentPos
+		local cursor = sci.CurrentPos
+		local s = cursor
 		local e = s
 		while isFilenameChar(sci.CharAt[s-1]) do -- find start
 			s = s - 1
@@ -92,6 +99,8 @@ local function Select_And_Open_File()
 			if isFile then
 				scite.Open(foropen)
 				return true
+			else
+				sci:SetSel(cursor,cursor)
 			end
 		end
 	
