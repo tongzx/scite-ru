@@ -1,7 +1,7 @@
 --[[----------------------------------------------------------------------------
 UTF8_check.lua
 Author: VladVRO
-version 1.0
+version 1.1
 
 Автоматическое переключение кодировки в UTF-8
 для html файлов содержащих "Content-Type: text/html; charset=UTF-8"
@@ -56,7 +56,9 @@ function OnOpen (filename)
 	local result
 	if old_OnOpen then result = old_OnOpen(filename) end
 	
-	utf8_check()
+	if editor.CodePage ~= SC_CP_UTF8 then
+		utf8_check()
+	end
 	
 	return result
 end
