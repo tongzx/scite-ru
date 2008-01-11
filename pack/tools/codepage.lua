@@ -1,16 +1,33 @@
--- Показ текущей кодировки в статусной строке
--- author: VladVRO
+--[[----------------------------------------------------------------------------
+codepage.lua
+Author: VladVRO
+version 1.1
 
--- Подключение:
--- В файл SciTEStartup.lua добавьте строку:
---   dofile ("codepage.lua")
--- включите code.page.name в статусную строку:
---   statusbar.text.1= [$(code.page.name)]
----------------------------------------------
+Показ текущей кодировки в статусной строке.
+(Сконфигурировано для работы в сборке SciTE-Ru)
+
+Подключение:
+В файл SciTEStartup.lua добавить строку:
+  dofile ("codepage.lua")
+И включить code.page.name в статусную строку:
+  statusbar.text.1= [$(code.page.name)]
+--]]----------------------------------------------------------------------------
+
 
 local function UpdateCodePage(codepage)
 	if codepage == SC_CP_UTF8 then
-		props["code.page.name"]='UTF-8 ?'
+		mode = tonumber(props["editor.unicode.mode"])
+		if mode == IDM_ENCODING_UCS2BE then
+			props["code.page.name"]='UCS-2 BE'
+		elseif mode == IDM_ENCODING_UCS2LE then
+			props["code.page.name"]='UCS-2 LE'
+		elseif mode == IDM_ENCODING_UTF8 then
+			props["code.page.name"]='UTF-8 BOM'
+		elseif mode == IDM_ENCODING_UCOOKIE then
+			props["code.page.name"]='UTF-8'
+		else
+			props["code.page.name"]='UTF-8 ?'
+		end
 	else
 		if props["character.set"]=='255' then
 			props["code.page.name"]='DOS-866'

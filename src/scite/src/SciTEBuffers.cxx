@@ -661,6 +661,7 @@ void SciTEBase::RestoreState(const Buffer &buffer) {
 		codePage = SC_CP_UTF8;
 		SendEditor(SCI_SETCODEPAGE, codePage);
 	}
+	props.SetInteger("editor.unicode.mode", CurrentBuffer()->unicodeMode + IDM_ENCODING_DEFAULT); //!-add-[EditorUnicodeMode]
 	isReadOnly = SendEditor(SCI_GETREADONLY);
 
 	// check to see whether there is saved fold state, restore

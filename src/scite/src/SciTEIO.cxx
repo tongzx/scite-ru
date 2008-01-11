@@ -368,6 +368,7 @@ void SciTEBase::OpenFile(int fileSize, bool suppressMessage) {
 		} else {
 			codePage = props.GetInt("code.page");
 		}
+		props.SetInteger("editor.unicode.mode", CurrentBuffer()->unicodeMode + IDM_ENCODING_DEFAULT); //!-add-[EditorUnicodeMode]
 		SendEditor(SCI_SETCODEPAGE, codePage);
 
 		if (props.GetInt("eol.auto")) {
@@ -941,6 +942,7 @@ void SciTEBase::OpenFromStdin(bool UseOutputPane) {
 	if (UseOutputPane) {
 		SendOutput(SCI_SETSEL, 0, 0);
 	} else {
+		props.SetInteger("editor.unicode.mode", CurrentBuffer()->unicodeMode + IDM_ENCODING_DEFAULT); //!-add-[EditorUnicodeMode]
 		SendEditor(SCI_SETCODEPAGE, codePage);
 
 		// Zero all the style bytes
