@@ -26,7 +26,6 @@ ROWrite.lua Cохранение RO/Hidden/System файлов
 ReadOnly.lua Наглядная установка/снятие режима "только для чтения"
 Recode.js Перекодировщик текста
 RegJump.js Открывает выделенную ветвь в редакторе реестра
-Restart.js Перезапуск SciTE
 SciTEStartup.lua Содержит скрипты, стартующие при загрузке SciTE, а так же обрабатывающие события редактора.
 SciTE_WinIntegrator.hta Интегрирование SciTE в Windows
 SortText.lua Сортировка выделенных строк по алфавиту и наоборот
