@@ -40,7 +40,7 @@ if (Args.length > 1){
 	WriteFile(filename, out);
 }else{
 	var out = Recode(all_text, encode, "windows-1251");
-	SciTE.Send("menucommand:207");
+	SciTE.Send("menucommand:207"); //IDM_SELECTALL
 	SciTE.ReplaceSel(out);
 }
 
