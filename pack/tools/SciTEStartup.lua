@@ -72,7 +72,7 @@ dofile (props["SciteDefaultHome"].."\\tools\\html_tags_autoclose.lua")
 -- Универсальное комментирование и снятие комментариев (по Ctrl+Q)
 dofile (props["SciteDefaultHome"].."\\tools\\xComment.lua")
 
-----[[ ОТКРЫТЬ ВЫДЕЛЕННЫЙ ФАЙЛ ]]--------------------------------------------
+----[[ О Т К Р Ы Т Ь  Ф А Й Л ]]----------------------------------------------
 
 -- Замена стандартной команды SciTE "Открыть выделенный файл"
 dofile (props["SciteDefaultHome"].."\\tools\\Open_Selected_Filename.lua")
@@ -89,39 +89,41 @@ dofile (props["SciteDefaultHome"].."\\tools\\set_html.lua")
 -- Автоматическое сворачивание всех секций при открытии файлов заданного типа
 dofile (props["SciteDefaultHome"].."\\tools\\ToggleFoldAll.lua")
 
--- Установка / снятие закладок на строку (Bookmark) (то же что и Ctrl+F2)
--- с помощью клика мыши при нажатой клавише Ctrl
-dofile (props["SciteDefaultHome"].."\\tools\\MarkerToggle.lua")
-
--- Вставка спецсимволов (©,®,§,±,…) из раскрывающегося списка (для HTML вставляются их обозначения)
-dofile (props["SciteDefaultHome"].."\\tools\\InsertSpecialChar.lua")
-
--- Установка размера символа табуляции в окне консоли
-local tab_width = tonumber(props['output.tabsize'])
-if tab_width ~= nil then
-	scite.SendOutput(SCI_SETTABWIDTH, tab_width)
-end
-
--- После выполнения команды "Найти в файлах..." создает пункт в контекстном меню консоли - "Открыть найденные файлы"
-dofile (props["SciteDefaultHome"].."\\tools\\OpenFindFiles.lua")
-
-----[[ А В Т О М А Т И З А Ц И Я ]]-------------------------------------------
-
 -- Автодополнение объектов их методами и свойствами
 dofile (props["SciteDefaultHome"].."\\tools\\AutocompleteObject.lua")
 
 -- При вводе слова, если это сокращение то вызывается список аббревиатур
 --~ dofile (props["SciteDefaultHome"].."\\tools\\abbrevlist.lua")
 
+----[[ Д О П О Л Н И Т Е Л Ь Н Ы Е  М Е Н Ю ]]--------------------------------
+
+-- После выполнения команды "Найти в файлах..." создает пункт в контекстном меню консоли - "Открыть найденные файлы"
+dofile (props["SciteDefaultHome"].."\\tools\\OpenFindFiles.lua")
+
 -- Создает в контекстном меню таба (закладки) подменю для команд SVN
 --~ dofile (props["SciteDefaultHome"].."\\tools\\svn_menu.lua")
 
-----[[ У Т И Л И Т Ы ]]--------------------------------------------------------
+----[[ У Т И Л И Т Ы  И  И Н С Т Р У М Е Н Т Ы ]]-----------------------------
 
 -- SciTE_HexEdit: A Self-Contained Primitive Hex Editor for SciTE
 dofile (props["SciteDefaultHome"].."\\tools\\HexEdit\\SciTEHexEdit.lua")
 
 -- SciTE Calculator
 dofile (props["SciteDefaultHome"].."\\tools\\Calculator\\SciTECalculatorPD.lua")
+
+-- Вставка спецсимволов (©,®,§,±,…) из раскрывающегося списка (для HTML вставляются их обозначения)
+dofile (props["SciteDefaultHome"].."\\tools\\InsertSpecialChar.lua")
+
+-- Установка / снятие закладок на строку (Bookmark) (то же что и Ctrl+F2)
+-- с помощью клика мыши при нажатой клавише Ctrl
+--~ dofile (props["SciteDefaultHome"].."\\tools\\MarkerToggle.lua")
+
+----[[ Н А С Т Р О Й К И   И Н Т Е Р Ф Е Й С А ]]-----------------------------
+
+-- Установка размера символа табуляции в окне консоли
+local tab_width = tonumber(props['output.tabsize'])
+if tab_width ~= nil then
+	scite.SendOutput(SCI_SETTABWIDTH, tab_width)
+end
 
 ----------------------------------------------------------------------------
