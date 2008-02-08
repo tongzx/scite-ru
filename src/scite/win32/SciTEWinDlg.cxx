@@ -880,6 +880,7 @@ BOOL SciTEWin::FindMessage(HWND hDlg, UINT message, WPARAM wParam) {
 		dlg.SetCheck(IDUNSLASH, unSlash);
 		dlg.SetCheck(reverseFind ? IDDIRECTIONUP : IDDIRECTIONDOWN, true);
 		if (FindReplaceAdvanced()) {
+			dlg.SetCheck(IDFINDCLOSE, closeFind); //!-add-[close.find.window]
 			dlg.SetCheck(IDFINDSTYLE, findInStyle);
 			dlg.Enable(IDFINDSTYLE, findInStyle);
 			::SendMessage(dlg.Item(IDFINDSTYLE), EM_LIMITTEXT, 3, 1);
@@ -893,8 +894,9 @@ BOOL SciTEWin::FindMessage(HWND hDlg, UINT message, WPARAM wParam) {
 
 	case WM_COMMAND:
 		if (ControlIDOfCommand(wParam) == IDCANCEL) {
-			::EndDialog(hDlg, IDCANCEL);
-			wFindReplace.Destroy();
+			//! ::EndDialog(hDlg, IDCANCEL); //!-change-[close.find.window]
+			//! wFindReplace.Destroy(); //!-change-[close.find.window]
+			DestroyFindReplace(); //!-add-[close.find.window]
 			return FALSE;
 		} else if ( (ControlIDOfCommand(wParam) == IDOK) ||
 		            (ControlIDOfCommand(wParam) == IDMARKALL) ) {
@@ -907,12 +909,13 @@ BOOL SciTEWin::FindMessage(HWND hDlg, UINT message, WPARAM wParam) {
 			wrapFind = dlg.Checked(IDWRAP);
 			unSlash = dlg.Checked(IDUNSLASH);
 			if (FindReplaceAdvanced()) {
+				replacing = !dlg.Checked(IDFINDCLOSE); //!-add-[close.find.window]
 				findInStyle = dlg.Checked(IDFINDINSTYLE);
 				findStyle = atoi(dlg.ItemTextU(IDFINDSTYLE).c_str());
 			}
 			reverseFind = dlg.Checked(IDDIRECTIONUP);
-			::EndDialog(hDlg, IDOK);
-			wFindReplace.Destroy();
+			//! ::EndDialog(hDlg, IDOK); //!-change-[close.find.window]
+			//! wFindReplace.Destroy(); //!-change-[close.find.window]
 			if (ControlIDOfCommand(wParam) == IDMARKALL){
 				MarkAll();
 			}
@@ -1027,8 +1030,9 @@ BOOL SciTEWin::ReplaceMessage(HWND hDlg, UINT message, WPARAM wParam) {
 		if (ControlIDOfCommand(wParam) == IDCANCEL) {
 			props.Set("Replacements", "");
 			UpdateStatusBar(false);
-			::EndDialog(hDlg, IDCANCEL);
-			wFindReplace.Destroy();
+			//! ::EndDialog(hDlg, IDCANCEL); //!-change-[close.find.window]
+			//! wFindReplace.Destroy(); //!-change-[close.find.window]
+			DestroyFindReplace(); //!-add-[close.find.window]
 			return FALSE;
 		} else if (ControlIDOfCommand(wParam) == IDFINDINSTYLE) {
 			if (FindReplaceAdvanced()) {
@@ -1451,6 +1455,7 @@ void SciTEWin::DestroyFindReplace() {
 		::EndDialog(reinterpret_cast<HWND>(wFindReplace.GetID()), IDCANCEL);
 		wFindReplace.Destroy();
 	}
+	replacing = false; //!-add-[close.find.window]
 }
 
 BOOL SciTEWin::GoLineMessage(HWND hDlg, UINT message, WPARAM wParam) {

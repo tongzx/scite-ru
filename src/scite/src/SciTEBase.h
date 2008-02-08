@@ -482,6 +482,7 @@ protected:
 	bool wrapFind;
 	bool unSlash;
 	bool findInStyle;
+	bool closeFind; //!-add-[close.find.window]
 	int findStyle;
 	ComboMemory memFinds;
 	ComboMemory memReplaces;

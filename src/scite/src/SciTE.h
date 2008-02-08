@@ -192,6 +192,7 @@
 #define IDM_FULLSCREEN		961
 
 // Dialog control IDs
+#define IDFINDCLOSE			219 //!-add-[close.find.window]
 #define IDGOLINE			220
 #define IDABOUTSCINTILLA	221
 #define IDFINDWHAT			222

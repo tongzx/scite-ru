@@ -407,6 +407,7 @@ SciTEBase::SciTEBase(Extension *ext) : apis(true), extender(ext) {
 	wrapFind = true;
 	unSlash = false;
 	findInStyle = false;
+	closeFind = true; //!-add-[close.find.window]
 	findStyle = 0;
 
 	languageMenu = 0;

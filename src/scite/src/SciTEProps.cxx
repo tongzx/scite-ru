@@ -1374,6 +1374,7 @@ void SciTEBase::SetPropertiesInitial() {
 	regExp = props.GetInt("find.replace.regexp");
 	unSlash = props.GetInt("find.replace.escapes");
 	wrapFind = props.GetInt("find.replace.wrap", 1);
+	closeFind = props.GetInt("find.replace.closefind", 1); //!-add-[close.find.window]
 }
 
 SString Localization::Text(const char *s, bool retainIfNotFound) {
