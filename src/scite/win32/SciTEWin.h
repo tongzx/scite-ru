@@ -5,6 +5,7 @@
 // Copyright 1998-2003 by Neil Hodgson <neilh@scintilla.org>
 // The License.txt file describes the conditions under which this software may be distributed.
 
+#include <time.h> //!-change-[close_on_dbl_clk]
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
@@ -71,6 +72,9 @@ class Dialog;
 class SciTEWin : public SciTEBase {
 
 protected:
+	int lbclk_x; //!-add-[close_on_dbl_clk]
+	int lbclk_y; //!-add-[close_on_dbl_clk]
+	clock_t lbclk_t; //!-add-[close_on_dbl_clk]
 	int tabclick; //!-add-[TabsMoving]
 	void SetToolBar();	//!-add-[user.toolbar]
 	TMap<int,int, SString, const char *> ToolBarTips; //!-add-[user.toolbar]

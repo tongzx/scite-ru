@@ -5,7 +5,7 @@
 // Copyright 1998-2003 by Neil Hodgson <neilh@scintilla.org>
 // The License.txt file describes the conditions under which this software may be distributed.
 
-#include <time.h>
+//! #include <time.h> //!-change-[close_on_dbl_clk]
 
 #include "SciTEWin.h"
 
@@ -181,6 +181,10 @@ SciTEWin::SciTEWin(Extension *ext) : SciTEBase(ext) {
 	wFocus = 0;
 
 	winPlace.length = 0;
+
+	lbclk_x = 0; //!-add-[close_on_dbl_clk]
+	lbclk_y = 0; //!-add-[close_on_dbl_clk]
+	lbclk_t = 0; //!-add-[close_on_dbl_clk]
 
 	openWhat[0] = '\0';
 	memset(&fr, 0, sizeof(fr));
@@ -1752,7 +1756,7 @@ LRESULT SciTEWin::WndProc(UINT iMessage, WPARAM wParam, LPARAM lParam) {
 			WindowSetFocus(wEditor);
 		}
 */
-//!-start-[TabsMoving]
+//!-start-[TabsMoving] [close_on_dbl_clk]
 		switch (LOWORD(wParam)) {
 		case WM_MBUTTONDOWN: {
 				// Check if on tab bar
@@ -1774,17 +1778,32 @@ LRESULT SciTEWin::WndProc(UINT iMessage, WPARAM wParam, LPARAM lParam) {
 				TCHITTESTINFO thti;
 				thti.pt.x = pt.x;
 				thti.pt.y = pt.y;
+				clock_t t = clock();
 				::MapWindowPoints(MainHWND(), reinterpret_cast<HWND>(wTabBar.GetID()), &thti.pt, 1);
 				thti.flags = 0;
 				tabclick = ::SendMessage(reinterpret_cast<HWND>(wTabBar.GetID()), TCM_HITTEST, (WPARAM)0, (LPARAM)&thti);
-				if (tabclick > -1 ) {
-					::SetCapture(reinterpret_cast<HWND>(wTabBar.GetID()));
-					wTabBar.SetCursor(Window::cursorReverseArrow);
+				if (   thti.pt.x == lbclk_x 
+					&& thti.pt.y == lbclk_y
+					&& (UINT)(t - lbclk_t) <= GetDoubleClickTime() ) { // simulate DBL CLK
+					if (tabclick >= 0)
+						CloseTab( tabclick );
+					lbclk_x = 0;
+					lbclk_y = 0;
+					lbclk_t = 0;
+				}
+				else {
+					lbclk_x = thti.pt.x;
+					lbclk_y = thti.pt.y;
+					lbclk_t = t;
+					if (tabclick >= 0 ) {
+						::SetCapture(reinterpret_cast<HWND>(wTabBar.GetID()));
+						wTabBar.SetCursor(Window::cursorReverseArrow);
+					}
 				}
 			}
 			break;
 		}
-//!-end-[TabsMoving]
+//!-end-[TabsMoving] [close_on_dbl_clk]
 		break;
 
 	case WM_CLOSE:
