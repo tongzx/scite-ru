@@ -1,6 +1,6 @@
 --[[--------------------------------------------------
 Highlighting Paired Tags
-Version: 1.0
+Version: 1.1
 Author: mozers™
 ------------------------------
 Подсветка парных тегов в HTML
@@ -15,84 +15,24 @@ Author: mozers™
 Код нуждается в доработке:
 1. editor:findtext("<\(/*\)"... ничего не находит :( Почему ??? (Поэтому пришлось дополнительно анализировать найденную строку)
 2. Так и не придумал как заставить искать editor:findtext со всеми 4мя параметрами, но в прямом направлении (поэтому пришлось влепить 2 строки с editor:findtext вместо одной)
-3. Процедуры для маркировки текста очевидно надо перебросить в COMMON.lua
+3. Так и не разобрался до конца как задать произвольный цвет для маркеров (существующую процедуру подглядел у Moon_aka_Sun)
+4. Процедуры для маркировки текста очевидно надо перебросить в COMMON.lua
 
-Я был бы очень благодарен, если бы мне кто то помог разрешить первые 2 вопроса (3й проблем не вызывает :)
+Я был бы очень благодарен, если бы кто то смог разрешить первые 3 вопроса (4й проблем не вызывает :)
 --]]----------------------------------------------------
 
-local old_current_pos, current_pos
-
-local function ClearMarks()
-	scite.SendEditor(SCI_INDICATORCLEARRANGE, 0, editor.Length)
-end
+------[[ T E X T   M A R K S ]]-------------------------
 
 local function MarkText(start, length, color)
 	scite.SendEditor(SCI_SETINDICATORCURRENT, color)
 	scite.SendEditor(SCI_INDICATORFILLRANGE, start, length)
 end
 
-local function MarkTags()
-	ClearMarks()
-	current_pos = editor.CurrentPos
-	local style = editor.StyleAt[current_pos]
-	local tag_start = editor:WordStartPosition(current_pos, true)
-	local tag_end = editor:WordEndPosition(current_pos, true)
-	local tag = editor:textrange(tag_start, tag_end)
-	local tag_length = tag_end - tag_start
-	local count = 1
-	if (style == 1) and (tag_length > 0) then
-		MarkText(tag_start, tag_length, 1)
-		local tag_paired_start, tag_paired_end, dec
-		if editor.CharAt[tag_start-1] == 47 then
-			dec = -1 else dec = 1
-		end
-
-		-- Find paired tag
-		local find_flags = SCFIND_WHOLEWORD and SCFIND_REGEXP
-		local find_start = tag_start
-		repeat
-			if dec == 1 then
-				tag_paired_start,tag_paired_end = editor:findtext("</*"..tag,find_flags,find_start)
-			else
-				tag_paired_start,tag_paired_end = editor:findtext("</*"..tag,find_flags,find_start,-1)
-			end
-			if tag_paired_start == nil then break end
-			if editor.CharAt[tag_paired_start+1] == 47 then
-				count = count - dec
-			else
-				count = count + dec
-			end
-			if count == 0 then break end
-			find_start = tag_paired_start + dec
-		until false
-
-		if tag_paired_start ~= nil then
-			MarkText(tag_paired_start+((3+dec)/2), tag_paired_end-tag_paired_start-((3+dec)/2), 1)
-		else
-			ClearMarks()
-			MarkText(tag_start, tag_length, 2)
-		end
-	end
-	old_current_pos = current_pos
+local function ClearMarks()
+	scite.SendEditor(SCI_INDICATORCLEARRANGE, 0, editor.Length)
 end
 
--- Add user event handler OnUpdateUI
-local old_OnUpdateUI = OnUpdateUI
-function OnUpdateUI ()
-	local result
-	if old_OnUpdateUI then result = old_OnUpdateUI() end
-	if tonumber(props["hypertext.highlighting.paired.tags"]) == 1 then
-		if editor.LexerLanguage == "hypertext" then
-			current_pos = editor.CurrentPos
-			if current_pos ~= old_current_pos then
-				if MarkTags() then return true end
-			end
-		end
-	end
-	return result
-end
-
-local function InitMarkStyle()
+local function InitMarkStyles()
 	editor.IndicStyle[0] = INDIC_ROUNDBOX
 	editor.IndicStyle[1] = INDIC_ROUNDBOX
 	editor.IndicStyle[2] = INDIC_ROUNDBOX
@@ -106,6 +46,73 @@ local old_OnOpen = OnOpen
 function OnOpen(file)
 	local result
 	if old_OnOpen then result = old_OnOpen(file) end
-	if InitMarkStyle() then return true end
+	if InitMarkStyles() then return true end
+	return result
+end
+
+------[[ F I N D   P A I R E D   T A G S ]]-------------
+
+local function PairedTagsFinder()
+	ClearMarks()
+	current_pos = editor.CurrentPos
+	local tag_start = editor:WordStartPosition(current_pos, true)
+	local tag_end = editor:WordEndPosition(current_pos, true)
+	local tag = editor:textrange(tag_start, tag_end)
+	local tag_length = tag_end - tag_start
+	if tag_length > 0 then
+		local style = editor.StyleAt[tag_start]
+		if style == 1 then
+			local count = 1
+			MarkText(tag_start, tag_length, 1)
+			local tag_paired_start, tag_paired_end, dec
+			if editor.CharAt[tag_start-1] == 47 then
+				dec = -1 else dec = 1
+			end
+
+			-- Find paired tag
+			local find_flags = SCFIND_WHOLEWORD and SCFIND_REGEXP
+			local find_start = tag_start
+			repeat
+				if dec == 1 then
+					tag_paired_start,tag_paired_end = editor:findtext("</*"..tag,find_flags,find_start)
+				else
+					tag_paired_start,tag_paired_end = editor:findtext("</*"..tag,find_flags,find_start,-1)
+				end
+				if tag_paired_start == nil then break end
+				if editor.CharAt[tag_paired_start+1] == 47 then
+					count = count - dec
+				else
+					count = count + dec
+				end
+				if count == 0 then break end
+				find_start = tag_paired_start + dec
+			until false
+
+			if tag_paired_start ~= nil then
+				MarkText(tag_paired_start+((3+dec)/2), tag_paired_end-tag_paired_start-((3+dec)/2), 1)
+			else
+				ClearMarks()
+				MarkText(tag_start, tag_length, 2)
+			end
+		end
+	end
+	old_current_pos = current_pos
+end
+
+local old_current_pos, current_pos
+
+-- Add user event handler OnUpdateUI
+local old_OnUpdateUI = OnUpdateUI
+function OnUpdateUI ()
+	local result
+	if old_OnUpdateUI then result = old_OnUpdateUI() end
+	if tonumber(props["hypertext.highlighting.paired.tags"]) == 1 then
+		if editor.LexerLanguage == "hypertext" then
+			current_pos = editor.CurrentPos
+			if current_pos ~= old_current_pos then
+				if PairedTagsFinder() then return true end
+			end
+		end
+	end
 	return result
 end
