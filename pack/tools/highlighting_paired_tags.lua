@@ -14,11 +14,10 @@ Author: mozers™
 ------------------------------
 Код нуждается в доработке:
 1. editor:findtext("<\(/*\)"... ничего не находит :( Почему ??? (Поэтому пришлось дополнительно анализировать найденную строку)
-2. Так и не придумал как заставить искать editor:findtext со всеми 4мя параметрами, но в прямом направлении (поэтому пришлось влепить 2 строки с editor:findtext вместо одной)
-3. Так и не разобрался до конца как задать произвольный цвет для маркеров (существующую процедуру подглядел у Moon_aka_Sun)
-4. Процедуры для маркировки текста очевидно надо перебросить в COMMON.lua
+2. Так и не разобрался до конца как задать произвольный цвет для маркеров (существующую процедуру подглядел у Moon_aka_Sun)
+3. Процедуры для маркировки текста очевидно надо перебросить в COMMON.lua
 
-Я был бы очень благодарен, если бы кто то смог разрешить первые 3 вопроса (4й проблем не вызывает :)
+Я был бы очень благодарен, если бы кто то смог разрешить первые 2 вопроса (3й проблем не вызывает :)
 --]]----------------------------------------------------
 
 ------[[ T E X T   M A R K S ]]-------------------------
@@ -64,20 +63,20 @@ local function PairedTagsFinder()
 		if style == 1 then
 			local count = 1
 			MarkText(tag_start, tag_length, 1)
-			local tag_paired_start, tag_paired_end, dec
+			local tag_paired_start, tag_paired_end, dec, find_end
 			if editor.CharAt[tag_start-1] == 47 then
-				dec = -1 else dec = 1
+				dec = -1
+				find_end = 1
+			else
+				dec = 1
+				find_end = editor.Length
 			end
 
 			-- Find paired tag
 			local find_flags = SCFIND_WHOLEWORD and SCFIND_REGEXP
 			local find_start = tag_start
 			repeat
-				if dec == 1 then
-					tag_paired_start,tag_paired_end = editor:findtext("</*"..tag,find_flags,find_start)
-				else
-					tag_paired_start,tag_paired_end = editor:findtext("</*"..tag,find_flags,find_start,-1)
-				end
+				tag_paired_start,tag_paired_end = editor:findtext("</*"..tag,find_flags,find_start,find_end)
 				if tag_paired_start == nil then break end
 				if editor.CharAt[tag_paired_start+1] == 47 then
 					count = count - dec
