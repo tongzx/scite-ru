@@ -113,7 +113,7 @@ function OnUpdateUI ()
 	local result
 	if old_OnUpdateUI then result = old_OnUpdateUI() end
 	if tonumber(props["hypertext.highlighting.paired.tags"]) == 1 then
-		if editor.LexerLanguage == "hypertext" then
+		if editor.LexerLanguage == "hypertext" or editor.LexerLanguage == "xml" then
 			if PairedTagsFinder() then return true end
 		end
 	end
