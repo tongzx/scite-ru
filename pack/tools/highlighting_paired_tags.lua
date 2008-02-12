@@ -1,6 +1,6 @@
 --[[--------------------------------------------------
 Highlighting Paired Tags
-Version: 1.2
+Version: 1.3
 Author: mozers™
 ------------------------------
 Подсветка парных тегов в HTML
@@ -51,24 +51,32 @@ end
 
 ------[[ F I N D   P A I R E D   T A G S ]]-------------
 
-local current_pos, old_current_pos
+local old_current_pos
 
 local function PairedTagsFinder()
-	ClearMarks()
+	local current_pos = editor.CurrentPos
+	if current_pos == old_current_pos then return end
+	old_current_pos = current_pos
+	if editor.CharAt[current_pos] == 47 then
+		current_pos = current_pos + 1
+	end
 	local tag_start = editor:WordStartPosition(current_pos, true)
 	local tag_end = editor:WordEndPosition(current_pos, true)
 	local tag_length = tag_end - tag_start
+	ClearMarks()
 	if tag_length > 0 then
 		if editor.StyleAt[tag_start] == 1 then
-			MarkText(tag_start, tag_length, 1) -- Start tag to paint in Blue
-			local tag_paired_start, tag_paired_end, dec, find_end
+			local tag_paired_start, tag_paired_end, dec, find_end, dt
 			if editor.CharAt[tag_start-1] == 47 then
 				dec = -1
 				find_end = 0
+				dt = 1
 			else
 				dec = 1
 				find_end = editor.Length
+				dt = 0
 			end
+			MarkText(tag_start-dt, tag_length+dt, 1) -- Start tag to paint in Blue
 
 			-- Find paired tag
 			local tag = editor:textrange(tag_start, tag_end)
@@ -89,10 +97,10 @@ local function PairedTagsFinder()
 
 			if tag_paired_start ~= nil then
 				-- Paired tag to paint in Blue
-				MarkText(tag_paired_start+((3+dec)/2), tag_paired_end-tag_paired_start-((3+dec)/2), 1)
+				MarkText(tag_paired_start+1, tag_paired_end-tag_paired_start-1, 1)
 			else
 				ClearMarks()
-				MarkText(tag_start, tag_length, 2) -- Start tag to paint in Red
+				MarkText(tag_start-dt, tag_length+dt, 2) -- Start tag to paint in Red
 			end
 		end
 	end
@@ -106,10 +114,7 @@ function OnUpdateUI ()
 	if old_OnUpdateUI then result = old_OnUpdateUI() end
 	if tonumber(props["hypertext.highlighting.paired.tags"]) == 1 then
 		if editor.LexerLanguage == "hypertext" then
-			current_pos = editor.CurrentPos
-			if current_pos ~= old_current_pos then
-				if PairedTagsFinder() then return true end
-			end
+			if PairedTagsFinder() then return true end
 		end
 	end
 	return result
