@@ -101,7 +101,7 @@ bool PropSetFile::ReadLine(const char *lineBuffer, bool ifIsTrue, FilePath direc
 			loaded = true;
 		} else {
 			importName += ".properties";
-			FilePath importPath(directoryForImports, FilePath(importName.c_str()));
+			importPath.Set(directoryForImports, FilePath(importName.c_str()));
 			if (Read(importPath, directoryForImports, imports, sizeImports)) {
 				loaded = true;
 			}
