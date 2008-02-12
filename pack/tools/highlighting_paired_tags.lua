@@ -1,6 +1,6 @@
 --[[--------------------------------------------------
 Highlighting Paired Tags
-Version: 1.1
+Version: 1.2
 Author: mozers™
 ------------------------------
 Ïîäñâåòêà ïàðíûõ òåãîâ â HTML
@@ -22,8 +22,8 @@ Author: mozers™
 
 ------[[ T E X T   M A R K S ]]-------------------------
 
-local function MarkText(start, length, color)
-	scite.SendEditor(SCI_SETINDICATORCURRENT, color)
+local function MarkText(start, length, style_number)
+	scite.SendEditor(SCI_SETINDICATORCURRENT, style_number)
 	scite.SendEditor(SCI_INDICATORFILLRANGE, start, length)
 end
 
@@ -51,32 +51,32 @@ end
 
 ------[[ F I N D   P A I R E D   T A G S ]]-------------
 
+local current_pos, old_current_pos
+
 local function PairedTagsFinder()
 	ClearMarks()
-	current_pos = editor.CurrentPos
 	local tag_start = editor:WordStartPosition(current_pos, true)
 	local tag_end = editor:WordEndPosition(current_pos, true)
-	local tag = editor:textrange(tag_start, tag_end)
 	local tag_length = tag_end - tag_start
 	if tag_length > 0 then
-		local style = editor.StyleAt[tag_start]
-		if style == 1 then
-			local count = 1
-			MarkText(tag_start, tag_length, 1)
+		if editor.StyleAt[tag_start] == 1 then
+			MarkText(tag_start, tag_length, 1) -- Start tag to paint in Blue
 			local tag_paired_start, tag_paired_end, dec, find_end
 			if editor.CharAt[tag_start-1] == 47 then
 				dec = -1
-				find_end = 1
+				find_end = 0
 			else
 				dec = 1
 				find_end = editor.Length
 			end
 
 			-- Find paired tag
+			local tag = editor:textrange(tag_start, tag_end)
 			local find_flags = SCFIND_WHOLEWORD and SCFIND_REGEXP
 			local find_start = tag_start
+			local count = 1
 			repeat
-				tag_paired_start,tag_paired_end = editor:findtext("</*"..tag,find_flags,find_start,find_end)
+				tag_paired_start, tag_paired_end = editor:findtext("</*"..tag, find_flags, find_start, find_end)
 				if tag_paired_start == nil then break end
 				if editor.CharAt[tag_paired_start+1] == 47 then
 					count = count - dec
@@ -88,17 +88,16 @@ local function PairedTagsFinder()
 			until false
 
 			if tag_paired_start ~= nil then
+				-- Paired tag to paint in Blue
 				MarkText(tag_paired_start+((3+dec)/2), tag_paired_end-tag_paired_start-((3+dec)/2), 1)
 			else
 				ClearMarks()
-				MarkText(tag_start, tag_length, 2)
+				MarkText(tag_start, tag_length, 2) -- Start tag to paint in Red
 			end
 		end
 	end
 	old_current_pos = current_pos
 end
-
-local old_current_pos, current_pos
 
 -- Add user event handler OnUpdateUI
 local old_OnUpdateUI = OnUpdateUI
