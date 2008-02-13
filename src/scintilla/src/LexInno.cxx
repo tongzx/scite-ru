@@ -24,6 +24,148 @@
 using namespace Scintilla;
 #endif
 
+//!-start-[update.inno]
+static bool stylerMatchIgnoreCase(Accessor &styler, int pos,  const char *s) {
+	for (int iChar=0; *s; iChar++) {
+		if (*s != static_cast<char>(tolower(styler.SafeGetCharAt(pos+iChar))))
+			return false;
+		s++;
+	}
+	return true;
+}
+
+static int findCode(Accessor &styler, int length) {
+	for (int i = 0; i < length; i++) {
+		if (stylerMatchIgnoreCase(styler, i, "[code]")) 
+			return i + 6; // 6 - lenght of [code] string
+	}
+	return -1;
+}
+
+static int findNextSection(Accessor &styler, int posstart, int posend) {
+	int state = SCE_INNO_DEFAULT;
+	char chPrev;
+	char ch = 0;
+	char chNext = styler[posstart];
+	bool isBOL, isEOL, isWS, isBOLWS = 0;
+
+	for (int i = posstart; i < posend; i++) {
+		chPrev = ch;
+		ch = chNext;
+		chNext = styler.SafeGetCharAt(i + 1);
+
+		if (styler.IsLeadByte(ch)) {
+			chNext = styler.SafeGetCharAt(i + 2);
+			i++;
+			continue;
+		}
+
+		isBOL = (chPrev == 0) || (chPrev == '\n') || (chPrev == '\r' && ch != '\n');
+		isBOLWS = (isBOL) ? 1 : (isBOLWS && (chPrev == ' ' || chPrev == '\t'));
+		isEOL = (ch == '\n' || ch == '\r');
+		isWS = (ch == ' ' || ch == '\t');
+
+		switch(state) {
+			case SCE_INNO_DEFAULT:
+				if (ch == ';' && isBOLWS) {
+					// Start of a comment
+					state = SCE_INNO_COMMENT;
+				} else if (ch == '[' && isBOLWS) {
+					// Start of a section name
+					state = SCE_INNO_SECTION;
+				} else if (ch == '#' && isBOLWS) {
+					// Start of a preprocessor directive
+					state = SCE_INNO_PREPROC;
+				} else if (ch == '{' && chNext == '#') {
+					// Start of a preprocessor inline directive
+					state = SCE_INNO_PREPROC_INLINE;
+				} else if ((ch == '{' && (chNext == ' ' || chNext == '\t'))
+					   || (ch == '(' && chNext == '*')) {
+					// Start of a Pascal comment
+					state = SCE_INNO_COMMENT_PASCAL;
+				} else if (ch == '"') {
+					// Start of a double-quote string
+					state = SCE_INNO_STRING_DOUBLE;
+				} else if (ch == '\'') {
+					// Start of a single-quote string
+					state = SCE_INNO_STRING_SINGLE;
+				} else if (isascii(ch) && (isalpha(ch) || (ch == '_'))) {
+					// Start of an identifier
+					state = SCE_INNO_IDENTIFIER;
+				}
+				break;
+
+			case SCE_INNO_COMMENT:
+				if (isEOL) {
+					state = SCE_INNO_DEFAULT;
+				}
+				break;
+
+			case SCE_INNO_IDENTIFIER:
+				if (isascii(ch) && (isalnum(ch) || (ch == '_'))) {
+				} else {
+					state = SCE_INNO_DEFAULT;
+					// Push back the faulty character
+					chNext = styler[i--];
+					ch = chPrev;
+				}
+				break;
+
+			case SCE_INNO_SECTION:
+				if (ch == ']') {
+					state = SCE_INNO_DEFAULT;
+					// section found
+					return i;
+				} else if (isascii(ch) && (isalnum(ch) || (ch == '_'))) {
+				} else {
+					state = SCE_INNO_DEFAULT;
+				}
+				break;
+
+			case SCE_INNO_PREPROC:
+				if (isWS || isEOL) {
+					if (isascii(chPrev) && isalpha(chPrev)) {
+						state = SCE_INNO_DEFAULT;
+						// Push back the faulty character
+						chNext = styler[i--];
+						ch = chPrev;
+					}
+				}
+				break;
+
+			case SCE_INNO_STRING_DOUBLE:
+				if (ch == '"' || isEOL) {
+					state = SCE_INNO_DEFAULT;
+				}
+				break;
+
+			case SCE_INNO_STRING_SINGLE:
+				if (ch == '\'' || isEOL) {
+					state = SCE_INNO_DEFAULT;
+				}
+				break;
+
+			case SCE_INNO_PREPROC_INLINE:
+				if (ch == '}') {
+					state = SCE_INNO_DEFAULT;
+				} else if (isEOL) {
+					state = SCE_INNO_DEFAULT;
+				}
+				break;
+
+			case SCE_INNO_COMMENT_PASCAL:
+				if (ch == '}' || (ch == ')' && chPrev == '*')) {
+					state = SCE_INNO_DEFAULT;
+				} else if (isEOL) {
+					state = SCE_INNO_DEFAULT;
+				}
+				break;
+		}
+	}
+	return -1;
+}
+//!-end-[update.inno]
+
 static void ColouriseInnoDoc(unsigned int startPos, int length, int, WordList *keywordLists[], Accessor &styler) {
 	int state = SCE_INNO_DEFAULT;
 	char chPrev;
@@ -33,6 +175,7 @@ static void ColouriseInnoDoc(unsigned int startPos, int length, int, WordList *k
 	char *buffer = new char[length];
 	int bufferCount = 0;
 	bool isBOL, isEOL, isWS, isBOLWS = 0;
+	bool isCode, wasSectionAfterCode = 0; //!-add-[update.inno]
 
 	WordList &sectionKeywords = *keywordLists[0];
 	WordList &standardKeywords = *keywordLists[1];
@@ -40,6 +183,11 @@ static void ColouriseInnoDoc(unsigned int startPos, int length, int, WordList *k
 	WordList &preprocessorKeywords = *keywordLists[3];
 	WordList &pascalKeywords = *keywordLists[4];
 	WordList &userKeywords = *keywordLists[5];
+
+	//!-start-[update.inno]
+	int codePos = findCode(styler, lengthDoc);
+	int sectionPosAfterCode = findNextSection(styler, codePos, lengthDoc);
+	//!-end-[update.inno]
 
 	// Go through all provided text segment
 	// using the hand-written state machine shown below
@@ -60,10 +208,12 @@ static void ColouriseInnoDoc(unsigned int startPos, int length, int, WordList *k
 		isBOLWS = (isBOL) ? 1 : (isBOLWS && (chPrev == ' ' || chPrev == '\t'));
 		isEOL = (ch == '\n' || ch == '\r');
 		isWS = (ch == ' ' || ch == '\t');
+		isCode = (codePos >= 0) && (codePos < i) && (sectionPosAfterCode == -1 || sectionPosAfterCode > i); //!-add-[update.inno]
 
 		switch(state) {
 			case SCE_INNO_DEFAULT:
-				if (ch == ';' && isBOLWS) {
+				//! if (ch == ';' && isBOLWS) {
+				if ((ch == ';' && isBOLWS) || (ch == '/' && chNext == '/' && isCode)) { //!-add-[update.inno]
 					// Start of a comment
 					state = SCE_INNO_COMMENT;
 				} else if (ch == '[' && isBOLWS) {
