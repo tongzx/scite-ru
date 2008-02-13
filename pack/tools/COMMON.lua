@@ -1,5 +1,5 @@
 -- COMMON.lua
--- Version: 1.0
+-- Version: 1.1
 ---------------------------------------------------
 -- Общие функции, использующиеся во многих скриптах
 ---------------------------------------------------
@@ -64,4 +64,30 @@ function IsComment(pos)
 	-- asn1, ave, blitzbasic, cmake, conf, eiffel, eiffelkw, erlang, euphoria, fortran, f77, freebasic, kix, lisp, lout, octave, matlab, metapost, nncrontab, props, batch, makefile, diff, purebasic, vb, yaml
 	if style == 1 then return true end
 	return false
+end
+
+
+------[[ T E X T   M A R K S ]]-------------------------
+
+-- Translate color from RGB to win
+function encodeRGB2WIN(color)
+	if string.sub(color,1,1)=="#" and string.len(color)>6 then
+		return tonumber(string.sub(color,6,7)..string.sub(color,4,5)..string.sub(color,2,3), 16)
+	else
+		return color
+	end
+end
+
+function EditorInitMarkStyle(style_number, indic_style, color)
+	editor.IndicStyle[style_number] = indic_style
+	editor.IndicFore[style_number] = encodeRGB2WIN(color)
+end
+
+function EditorMarkText(start, length, style_number)
+	scite.SendEditor(SCI_SETINDICATORCURRENT, style_number)
+	scite.SendEditor(SCI_INDICATORFILLRANGE, start, length)
+end
+
+function EditorClearMarks(start, length)
+	scite.SendEditor(SCI_INDICATORCLEARRANGE, start, length)
 end
