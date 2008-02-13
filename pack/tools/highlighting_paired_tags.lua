@@ -1,26 +1,36 @@
 --[[--------------------------------------------------
 Highlighting Paired Tags
-Version: 1.3
-Author: mozers™
+Version: 1.4
+Author: mozers™, VladVRO
 ------------------------------
-Подсветка парных тегов в HTML
-Если пара находится, то подсвечивается синим выделением, если нет - красным
+Подсветка парных тегов в HTML и XML
+В файле настроек задается цвет подсветки парных и непарных тегов
 ------------------------------
 Подключение:
 Добавить в SciTEStartup.lua строку:
   dofile (props["SciteDefaultHome"].."\\tools\\highlighting_paired_tags.lua")
 Добавить в файл настроек параметр:
   hypertext.highlighting.paired.tags=1
+Дополнительно можно задать в файле настроек:
+  style.marker.pairtags=<цвет> (где <цвет> например #0099FF, по умолчанию #0000FF)
+  style.marker.unpairedtag=<цвет> (если не задан, то непарные теги не подсвечиваются)
 ------------------------------
 Код нуждается в доработке:
 1. editor:findtext("<\(/*\)"... ничего не находит :( Почему ??? (Поэтому пришлось дополнительно анализировать найденную строку)
-2. Так и не разобрался до конца как задать произвольный цвет для маркеров (существующую процедуру подглядел у Moon_aka_Sun)
-3. Процедуры для маркировки текста очевидно надо перебросить в COMMON.lua
+2. Процедуры для маркировки текста очевидно надо перебросить в COMMON.lua
 
-Я был бы очень благодарен, если бы кто то смог разрешить первые 2 вопроса (3й проблем не вызывает :)
+Я был бы очень благодарен, если бы кто то смог разрешить первый вопрос (2й проблем не вызывает :)
 --]]----------------------------------------------------
 
 ------[[ T E X T   M A R K S ]]-------------------------
+-- Translate color from RGB to win
+local function encodeRGB(color)
+	if string.sub(color,1,1)=="#" and string.len(color)>6 then
+		return tonumber(string.sub(color,6,7)..string.sub(color,4,5)..string.sub(color,2,3), 16)
+	else
+		return color
+	end
+end
 
 local function MarkText(start, length, style_number)
 	scite.SendEditor(SCI_SETINDICATORCURRENT, style_number)
@@ -31,13 +41,18 @@ local function ClearMarks()
 	scite.SendEditor(SCI_INDICATORCLEARRANGE, 0, editor.Length)
 end
 
+local color1, color2
+
 local function InitMarkStyles()
-	editor.IndicStyle[0] = INDIC_ROUNDBOX
+	color1 = props['style.marker.pairtags']
+	if color1 == '' then color1 = '#0000FF' end
 	editor.IndicStyle[1] = INDIC_ROUNDBOX
-	editor.IndicStyle[2] = INDIC_ROUNDBOX
-	editor.IndicFore[0] = 255*257   -- YELLOW
-	editor.IndicFore[1] = 255*65536 -- BLUE
-	editor.IndicFore[2] = 255       -- RED
+	editor.IndicFore[1] = encodeRGB(color1)
+	color2 = props['style.marker.unpairedtag']
+	if color2 ~= '' then
+		editor.IndicStyle[2] = INDIC_ROUNDBOX
+		editor.IndicFore[2] = encodeRGB(color2)
+	end
 end
 
 -- Add user event handler OnOpen
@@ -45,6 +60,15 @@ local old_OnOpen = OnOpen
 function OnOpen(file)
 	local result
 	if old_OnOpen then result = old_OnOpen(file) end
+	if InitMarkStyles() then return true end
+	return result
+end
+
+-- Add user event handler OnSwitchFile
+local old_OnSwitchFile = OnSwitchFile
+function OnSwitchFile(file)
+	local result
+	if old_OnSwitchFile then result = old_OnSwitchFile(file) end
 	if InitMarkStyles() then return true end
 	return result
 end
@@ -100,7 +124,9 @@ local function PairedTagsFinder()
 				MarkText(tag_paired_start+1, tag_paired_end-tag_paired_start-1, 1)
 			else
 				ClearMarks()
-				MarkText(tag_start-dt, tag_length+dt, 2) -- Start tag to paint in Red
+				if color2 ~= '' then
+					MarkText(tag_start-dt, tag_length+dt, 2) -- Start tag to paint in Red
+				end
 			end
 		end
 	end
