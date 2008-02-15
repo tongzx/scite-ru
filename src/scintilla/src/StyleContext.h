@@ -70,6 +70,29 @@ public:
 	bool More() {
 		return currentPos < endPos;
 	}
+//!-start-[LuaLexerImprovement]
+	void MoveTo(unsigned int pos) {
+		if (pos < endPos) {
+			pos--;
+			currentPos = pos;
+			chPrev = 0;
+			ch = static_cast<unsigned char>(styler.SafeGetCharAt(pos));
+			if (styler.IsLeadByte(static_cast<char>(ch))) {
+				pos++;
+				ch = ch << 8;
+				ch |= static_cast<unsigned char>(styler.SafeGetCharAt(pos));
+			}
+			GetNextChar(pos);
+			Forward();
+		} else {
+			atLineStart = false;
+			chPrev = ' ';
+			ch = ' ';
+			chNext = ' ';
+			atLineEnd = true;
+		}
+	}
+//!-end-[LuaLexerImprovement]
 	void Forward() {
 		if (currentPos < endPos) {
 			atLineStart = atLineEnd;

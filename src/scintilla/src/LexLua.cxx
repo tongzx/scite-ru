@@ -29,7 +29,8 @@ using namespace Scintilla;
 // Extended to accept accented characters
 static inline bool IsAWordChar(int ch) {
 	return ch >= 0x80 ||
-	       (isalnum(ch) || ch == '.' || ch == '_');
+//!	       (isalnum(ch) || ch == '.' || ch == '_');
+	       (isalnum(ch) || ch == '_'); //!-change-[LuaLexerImprovement]
 }
 
 static inline bool IsAWordStart(int ch) {
@@ -91,6 +92,19 @@ static void ColouriseLuaDoc(
 	WordList &keywords7 = *keywordlists[6];
 	WordList &keywords8 = *keywordlists[7];
 
+//!-start-[LuaLexerImprovement]
+	// if stay on identifier or operator then go back to start of object
+	while (startPos > 1 && (
+		initStyle == SCE_LUA_WORD ||
+		initStyle == SCE_LUA_OPERATOR ||
+		initStyle == SCE_LUA_IDENTIFIER ||
+		(initStyle >= SCE_LUA_WORD2 && initStyle <= SCE_LUA_WORD8)))
+	{
+		startPos--;
+		initStyle = styler.StyleAt(startPos-1);
+	}
+//!-end-[LuaLexerImprovement]
+
 	int currentLine = styler.GetLine(startPos);
 	// Initialize long string [[ ... ]] or block comment --[[ ... ]] nesting level,
 	// if we are inside such a string. Block comment was introduced in Lua 5.0,
@@ -108,6 +122,11 @@ static void ColouriseLuaDoc(
 		initStyle = SCE_LUA_DEFAULT;
 	}
 
+//!-start-[LuaLexerImprovement]
+	unsigned int objectPartEndPos = 0;
+	bool isObject = false;
+	bool isObjectStart = false;
+//!-end-[LuaLexerImprovement]
 	StyleContext sc(startPos, length, initStyle, styler);
 	if (startPos == 0 && sc.ch == '#') {
 		// shbang line: # is a comment only if first char of the script
@@ -159,7 +178,22 @@ static void ColouriseLuaDoc(
                         }
 		} else if (sc.state == SCE_LUA_IDENTIFIER) {
 //!			if (!IsAWordChar(sc.ch) || sc.Match('.', '.')) {
-			if (!(IsAWordChar(sc.ch)||(sc.ch==':')) || sc.Match('.', '.')) { //!-add-[LuaWord]
+//!-start-[LuaLexerImprovement]
+			if (!IsAWordChar(sc.ch)) {
+				bool isFin;
+				if ((sc.ch == ':' || sc.ch == '.') && IsAWordStart(sc.chNext)) {
+					// continue with object fields
+					if (!isObject) {
+						isObject = true;
+						isObjectStart = true;
+						objectPartEndPos = sc.currentPos;
+						continue;
+					}
+					isFin = false;
+				} else {
+					isFin = true;
+				}
+//!-end-[LuaLexerImprovement]
 				char s[100];
 				sc.GetCurrent(s, sizeof(s));
 				if (keywords.InList(s)) {
@@ -178,8 +212,64 @@ static void ColouriseLuaDoc(
 					sc.ChangeState(SCE_LUA_WORD7);
 				} else if (keywords8.InList(s)) {
 					sc.ChangeState(SCE_LUA_WORD8);
+//!-start-[LuaLexerImprovement]
+				} else if (isObject) {
+					// colourise objects part separately
+					int currPos = sc.currentPos;
+					sc.MoveTo(objectPartEndPos);
+					if (isObjectStart) {
+						sc.GetCurrent(s, sizeof(s));
+						if (keywords.InList(s)) {
+							sc.ChangeState(SCE_LUA_WORD);
+						} else if (keywords2.InList(s)) {
+							sc.ChangeState(SCE_LUA_WORD2);
+						} else if (keywords3.InList(s)) {
+							sc.ChangeState(SCE_LUA_WORD3);
+						} else if (keywords4.InList(s)) {
+							sc.ChangeState(SCE_LUA_WORD4);
+						} else if (keywords5.InList(s)) {
+							sc.ChangeState(SCE_LUA_WORD5);
+						} else if (keywords6.InList(s)) {
+							sc.ChangeState(SCE_LUA_WORD6);
+						} else if (keywords7.InList(s)) {
+							sc.ChangeState(SCE_LUA_WORD7);
+						} else if (keywords8.InList(s)) {
+							sc.ChangeState(SCE_LUA_WORD8);
+						}
+						isObjectStart = false;
+					}
+					sc.SetState(SCE_LUA_OPERATOR);
+					s[0] = sc.ch;
+					sc.Forward();
+					sc.SetState(SCE_LUA_IDENTIFIER);
+					sc.MoveTo(currPos);
+					sc.GetCurrent(s + 1, sizeof(s) - 1);
+					if (keywords.InList(s)) {
+						sc.ChangeState(SCE_LUA_WORD);
+					} else if (keywords2.InList(s)) {
+						sc.ChangeState(SCE_LUA_WORD2);
+					} else if (keywords3.InList(s)) {
+						sc.ChangeState(SCE_LUA_WORD3);
+					} else if (keywords4.InList(s)) {
+						sc.ChangeState(SCE_LUA_WORD4);
+					} else if (keywords5.InList(s)) {
+						sc.ChangeState(SCE_LUA_WORD5);
+					} else if (keywords6.InList(s)) {
+						sc.ChangeState(SCE_LUA_WORD6);
+					} else if (keywords7.InList(s)) {
+						sc.ChangeState(SCE_LUA_WORD7);
+					} else if (keywords8.InList(s)) {
+						sc.ChangeState(SCE_LUA_WORD8);
+					}
+					objectPartEndPos = sc.currentPos;
+//!-end-[LuaLexerImprovement]
 				}
-				sc.SetState(SCE_LUA_DEFAULT);
+//!-start-[LuaLexerImprovement]
+				if (isFin) {
+					isObject = false;
+//!-end-[LuaLexerImprovement]
+					sc.SetState(SCE_LUA_DEFAULT);
+				}//!-add-[LuaLexerImprovement]
 			}
 		} else if (sc.state == SCE_LUA_COMMENTLINE || sc.state == SCE_LUA_PREPROCESSOR) {
 			if (sc.atLineEnd) {
