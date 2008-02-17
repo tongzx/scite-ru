@@ -1,21 +1,24 @@
--- FindText v6.0
--- Автор: неизвесен <http://forum.ruteam.ru/index.php?action=vthread&forum=22&topic=175>
--- Корректировки: mozers™, mimir, Алексей
--- Поиск выделенного в окне редактора (или консоли) текста с выводом содержащих его строк в консоль
-
--- Для подключения добавьте в свой файл .properties следующие строки:
---    command.name.22.*=Поиск текста
---    command.22.*=dofile $(SciteDefaultHome)\tools\FindText.lua
---    command.mode.22.*=subsystem:lua,savebefore:no
+--[[--------------------------------------------------
+FindText v6.1
+Автор: неизвесен <http://forum.ruteam.ru/index.php?action=vthread&forum=22&topic=175>
+Корректировки: mozers™, mimir, Алексей
+Поиск выделенного в окне редактора (или консоли) текста с выводом содержащих его строк в консоль
+Внимание:
+В скрипте используются функции из COMMON.lua (обязательно подключение COMMON.lua)
 -----------------------------------------------
+Для подключения добавьте в свой файл .properties следующие строки:
+   command.name.22.*=Поиск текста
+   command.22.*=dofile $(SciteDefaultHome)\tools\FindText.lua
+   command.mode.22.*=subsystem:lua,savebefore:no
+Дополнительно можно задать в файле настроек цвет маркера:
+   find.mark.text=#CC00FF
+--]]----------------------------------------------------
 
-local function RemoveFindMarks()
-	scite.SendEditor(SCI_SETINDICATORCURRENT, INDIC_CONTAINER)
-	scite.SendEditor(SCI_INDICATORCLEARRANGE, 0, editor.Length)
-end
-
-local function MarkText(start, length)
-	scite.SendEditor(SCI_INDICATORFILLRANGE, start, length)
+local function InitMarkStyles()
+	local color = props['find.mark.text']
+	if color == '' then color = props['find.mark'] end
+	if color == '' then color = '#0F0F0F' end
+	EditorInitMarkStyle(31, INDIC_ROUNDBOX, color)
 end
 
 local sText = props['CurrentSelection']
@@ -25,20 +28,21 @@ if (sText == '') then
 	flag = SCFIND_WHOLEWORD
 end
 if string.len(sText) > 0 then
+	InitMarkStyles()
 	editor:MarkerDeleteAll(1)
-	RemoveFindMarks()
+	EditorClearMarks(0, editor.Length)
 	if flag == SCFIND_WHOLEWORD then
 		print('> Поиск слова: "'..sText..'"')
 	else
 		print('> Поиск текста: "'..sText..'"')
 	end
-	local s,e = editor:findtext(sText,flag,0)
+	local s,e = editor:findtext(sText,flag,1)
 	local count = 0
 	if(s~=nil)then
 		local m = editor:LineFromPosition(s) - 1
 		while s do
 			local l = editor:LineFromPosition(s)
-			MarkText(s, e-s)
+			EditorMarkText(s, e-s, 31)
 			count = count + 1
 			if l ~= m then
 				local str = string.gsub(' '..editor:GetLine(l),'%s+',' ')
@@ -54,7 +58,7 @@ if string.len(sText) > 0 then
 	end
 else
 	editor:MarkerDeleteAll(1)
-	RemoveFindMarks()
+	EditorClearMarks(0, editor.Length)
 	print('> Сначала выделите в редакторе текст, который необходимо найти! (поиск текста)\n> Можно просто установить курсор на нужное слово (поиск слова)\n> Так же можно выделить текст в окне консоли')
 end
 --~ editor:CharRight() editor:CharLeft() --Снимает выделение с исходного текста
