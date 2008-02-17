@@ -70,7 +70,7 @@ end
 ------[[ T E X T   M A R K S ]]-------------------------
 
 -- Translate color from RGB to win
-function encodeRGB2WIN(color)
+local function encodeRGB2WIN(color)
 	if string.sub(color,1,1)=="#" and string.len(color)>6 then
 		return tonumber(string.sub(color,6,7)..string.sub(color,4,5)..string.sub(color,2,3), 16)
 	else
@@ -78,16 +78,19 @@ function encodeRGB2WIN(color)
 	end
 end
 
+-- Задание стиля для маркеров (затем эти маркеры можно будет использовать, задавая номер стиля)
 function EditorInitMarkStyle(style_number, indic_style, color)
 	editor.IndicStyle[style_number] = indic_style
 	editor.IndicFore[style_number] = encodeRGB2WIN(color)
 end
 
+-- Выделение текста маркером определенного стиля
 function EditorMarkText(start, length, style_number)
 	scite.SendEditor(SCI_SETINDICATORCURRENT, style_number)
 	scite.SendEditor(SCI_INDICATORFILLRANGE, start, length)
 end
 
+-- Очистка текста от выделения
 function EditorClearMarks(start, length)
 	scite.SendEditor(SCI_INDICATORCLEARRANGE, start, length)
 end
