@@ -1,5 +1,5 @@
 -- Code Poster 2
--- Version: 2.0
+-- Version: 2.1
 -- Author: mozers™  (Идея и первая реализация: VladVRO)
 ---------------------------------------------------
 -- Description:
@@ -38,6 +38,18 @@ local function GetAttr(style_string, attr)
 	end
 end
 
+local function ReplaceForumTag(pos)
+	local tag = editor:textrange(pos+1, pos+3)
+	if string.sub(tag, 1, 1) == "/" then
+		tag = editor:textrange(pos+2, pos+4)
+	end
+	if tag == "b]" or tag == "i]" or tag == "s]" or tag == "u]" or tag == "st" or tag == "c]" or tag == "ce" or tag == "su" or tag == "si" or tag == "co" or tag == "fo" or tag == "qu" or tag == "q]" or tag == "no" or tag == "hr" or tag == "ur" or tag == "em" or tag == "im" or tag == "li" or tag == "*]" or tag == "ta" or tag == "tr" or tag == "br" or tag == "#]" or tag == "mo" then
+		return "[no][[/no]"
+	else
+		return "["
+	end
+end
+
 -----------------------------------
 
 local sel_start = editor.SelectionStart
@@ -61,6 +73,7 @@ local forum_text =""
 for i = sel_start, sel_end-1 do
 	local char = editor:textrange(i,i+1)
 	if char == "\t" then char = string.rep(" ", props["tabsize"]) end
+	if char == "[" then char = ReplaceForumTag(i) end
 	if not string.find(char,"%s") then
 		local style_string = GetStyleString(i)
 		--------------------------------------------
@@ -111,6 +124,13 @@ local header = "[b][color=Blue]"..props["FileNameExt"].."[/color][/b]"
 if line_start ~= 0 then
 	header = header.." [s][[b]строка "..line_start.."[/b]][/s]"
 end
-forum_text = header.." : [code]"..forum_text.."[/code]"
+local more = ""
+local more_end = ""
+if editor:LineFromPosition(sel_end) - line_start > 10 then
+	more = "[more]"
+	more_end = "[/more]"
+end
+
+forum_text = header.." : "..more.."[code]"..forum_text.."[/code]"..more_end
 editor:CopyText(forum_text)
 os.msgbox ("Код для форума успешно сформирован\n и помещен в буфер обмена", "Формирование кода для форума")
