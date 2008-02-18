@@ -1543,34 +1543,17 @@ LRESULT SciTEWin::KeyDown(WPARAM wParam) {
 		return 1l;
 */
 //!-start-[OnKey]
-	if ( extender ) {
-		char ch[4] = { 0 };
-		unsigned char masKS[256] = { 0 };
-		::GetKeyboardState( masKS );
-			
-		UINT uFlags = 0;
-		if ( Platform::IsKeyDown( VK_MENU ) && wParam >= VK_NUMPAD0 && wParam <= VK_NUMPAD9 ) {
-			uFlags = 1;
-		}
-
-		static bool sPrevIsDeadKey = false;
-
-		bool bIsDeadKey = ::MapVirtualKeyA( wParam, 2 ) & 0x80008000;
-		if ( bIsDeadKey ) {
-			sPrevIsDeadKey == true ? sPrevIsDeadKey = false : sPrevIsDeadKey = true;
-		}
-
-		if ( !bIsDeadKey ) {
-			if (   sPrevIsDeadKey == false
-				&& ::ToAscii(wParam, ::MapVirtualKeyA(wParam,0), masKS, (LPWORD)ch, uFlags ) != 1 ) {
-				ch[0] = 0;
-			}
-			sPrevIsDeadKey = false;
-		} 
-
-		if ( extender->OnKey( (int)wParam, modifiers, ch[0] ) ) {
-		  return 1l;
-		}
+	if (extender) {
+		unsigned short ch[2] = {0,0};
+		unsigned char mas[256];
+		::GetKeyboardState(mas);
+		UINT uFlags = 1;
+		if ( Platform::IsKeyDown(VK_MENU) && wParam>=VK_NUMPAD0 && wParam<=VK_NUMPAD9 )
+			uFlags = 0;
+		if (::ToAscii(wParam, ::MapVirtualKeyA(wParam,0), mas, ch, uFlags) != 1)
+			ch[0]=0;
+		if (extender->OnKey((int)wParam, modifiers, (char)ch[0]))
+			return 1l;
 	}
 //!-end-[OnKey]
 
