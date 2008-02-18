@@ -131,10 +131,11 @@ void SciTEWin::WarnUser(int warnID, const char *msg /* = NULL */, bool isCanBeAl
 	PlayThisSound(sound, atoi(soundDuration), hMM);
 //!-start-[WarningMessage]
 	if (warning_msg.length() > 0 && isCanBeAlerted) {
+		warning_msg = localiser.Text(warning_msg.c_str());
 		warning_msg += "     ";
 		if (msg != NULL) {
 			warning_msg += "\n";
-			warning_msg += msg;
+			warning_msg += localiser.Text(msg);
 			warning_msg += "     ";
 		}
 		WindowMessageBox(wEditor, warning_msg, MB_OK | MB_ICONWARNING);
