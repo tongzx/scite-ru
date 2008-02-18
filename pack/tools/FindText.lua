@@ -1,25 +1,20 @@
 --[[--------------------------------------------------
-FindText v6.1
+FindText v6.2
 Автор: неизвесен <http://forum.ruteam.ru/index.php?action=vthread&forum=22&topic=175>
 Корректировки: mozers™, mimir, Алексей
 Поиск выделенного в окне редактора (или консоли) текста с выводом содержащих его строк в консоль
 Внимание:
-В скрипте используются функции из COMMON.lua (обязательно подключение COMMON.lua)
+В скрипте используются функции из COMMON.lua (EditorMarkText, EditorClearMarks)
+и функция инициализации маркеров из SciTEStartup.lua
 -----------------------------------------------
 Для подключения добавьте в свой файл .properties следующие строки:
    command.name.22.*=Поиск текста
    command.22.*=dofile $(SciteDefaultHome)\tools\FindText.lua
    command.mode.22.*=subsystem:lua,savebefore:no
-Дополнительно можно задать в файле настроек цвет маркера:
-   find.mark.text=#CC00FF
+Дополнительно можно задать в файле настроек стиль используемого маркера
+(в этом скрипте используется 31 маркер) например, так:
+   find.mark.31=#FF0000, plain
 --]]----------------------------------------------------
-
-local function InitMarkStyles()
-	local color = props['find.mark.text']
-	if color == '' then color = props['find.mark'] end
-	if color == '' then color = '#0F0F0F' end
-	EditorInitMarkStyle(31, INDIC_ROUNDBOX, color)
-end
 
 local sText = props['CurrentSelection']
 local flag = 0
@@ -28,7 +23,6 @@ if (sText == '') then
 	flag = SCFIND_WHOLEWORD
 end
 if string.len(sText) > 0 then
-	InitMarkStyles()
 	editor:MarkerDeleteAll(1)
 	EditorClearMarks(0, editor.Length)
 	if flag == SCFIND_WHOLEWORD then

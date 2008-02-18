@@ -1,38 +1,23 @@
 --[[--------------------------------------------------
 Highlighting Paired Tags
-Version: 1.5
+Version: 1.6
 Author: mozers™, VladVRO
 ------------------------------
 Подсветка парных и непарных тегов в HTML и XML
 В файле настроек задается цвет подсветки парных и непарных тегов
 Внимание:
-В скрипте используются функции из COMMON.lua (обязательно подключение COMMON.lua)
+В скрипте используются функции из COMMON.lua (EditorMarkText, EditorClearMarks)
+и функция инициализации маркеров из SciTEStartup.lua
 ------------------------------
 Подключение:
 Добавить в SciTEStartup.lua строку:
   dofile (props["SciteDefaultHome"].."\\tools\\highlighting_paired_tags.lua")
 Добавить в файл настроек параметр:
   hypertext.highlighting.paired.tags=1
-Дополнительно можно задать в файле настроек:
-  style.marker.pairtags=<цвет> (где <цвет> например #0099FF, по умолчанию #0000FF)
-  style.marker.unpairedtag=<цвет> (если не задан, то непарные теги не подсвечиваются)
+Дополнительно можно задать в файле стили используемых маркеров (1 и 2):
+  find.mark.1=#0099FF
+  find.mark.2=#FF0000 (если этот параметр не задан, то непарные теги не подсвечиваются)
 --]]----------------------------------------------------
-
-------[[ I N I T   M A R K S ]]-------------------------
-
-local color1, color2
-
-local function InitMarkStyles()
-	color1 = props['style.marker.pairtags']
-	if color1 == '' then color1 = '#0000FF' end
-	EditorInitMarkStyle(1, INDIC_ROUNDBOX, color1)
-	color2 = props['style.marker.unpairedtag']
-	if color2 ~= '' then
-		EditorInitMarkStyle(2, INDIC_ROUNDBOX, color2)
-	end
-end
-
-------[[ F I N D   P A I R E D   T A G S ]]-------------
 
 local old_current_pos
 
@@ -91,8 +76,6 @@ local function PairedTagsFinder()
 	end
 end
 
-------[[ H A N D L E R S ]]-------------
-
 -- Add user event handler OnUpdateUI
 local old_OnUpdateUI = OnUpdateUI
 function OnUpdateUI ()
@@ -103,24 +86,5 @@ function OnUpdateUI ()
 			PairedTagsFinder()
 		end
 	end
-	return result
-end
-
--- Add user event handler OnOpen
-local old_OnOpen = OnOpen
-function OnOpen(file)
-	local result
-	if old_OnOpen then result = old_OnOpen(file) end
-	InitMarkStyles()
-	return result
-end
-
--- Add user event handler OnSwitchFile
-local old_OnSwitchFile = OnSwitchFile
-function OnSwitchFile(file)
-	local result
-	if old_OnSwitchFile then result = old_OnSwitchFile(file) end
-	InitMarkStyles()
-	PairedTagsFinder()
 	return result
 end

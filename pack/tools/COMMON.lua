@@ -69,21 +69,6 @@ end
 
 ------[[ T E X T   M A R K S ]]-------------------------
 
--- Translate color from RGB to win
-local function encodeRGB2WIN(color)
-	if string.sub(color,1,1)=="#" and string.len(color)>6 then
-		return tonumber(string.sub(color,6,7)..string.sub(color,4,5)..string.sub(color,2,3), 16)
-	else
-		return color
-	end
-end
-
--- «адание стил€ дл€ маркеров (затем эти маркеры можно будет использовать, задава€ номер стил€)
-function EditorInitMarkStyle(style_number, indic_style, color)
-	editor.IndicStyle[style_number] = indic_style
-	editor.IndicFore[style_number] = encodeRGB2WIN(color)
-end
-
 -- ¬ыделение текста маркером определенного стил€
 function EditorMarkText(start, length, style_number)
 	scite.SendEditor(SCI_SETINDICATORCURRENT, style_number)

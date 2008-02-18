@@ -130,3 +130,59 @@ if tab_width ~= nil then
 end
 
 ----------------------------------------------------------------------------
+-- Задание стиля для маркеров (затем эти маркеры можно будет использовать в скриптах, вызывая их по номеру)
+
+-- Translate color from RGB to win
+local function encodeRGB2WIN(color)
+	if string.sub(color,1,1)=="#" and string.len(color)>6 then
+		return tonumber(string.sub(color,6,7)..string.sub(color,4,5)..string.sub(color,2,3), 16)
+	else
+		return color
+	end
+end
+
+local function InitMarkStyle(style_number, indic_style, color)
+	editor.IndicStyle[style_number] = indic_style
+	editor.IndicFore[style_number] = encodeRGB2WIN(color)
+end
+
+local function style(mark_string)
+	local mark_style_table = {
+	plain    = INDIC_PLAIN,    squiggle = INDIC_SQUIGGLE,
+	tt       = INDIC_TT,       diagonal = INDIC_DIAGONAL,
+	strike   = INDIC_STRIKE,   hidden   = INDIC_HIDDEN,
+	roundbox = INDIC_ROUNDBOX, box      = INDIC_BOX
+	}
+	for st,st_num in pairs(mark_style_table) do
+		if string.match(mark_string, st) ~= nil then
+			return st_num
+		end
+	end
+end
+
+local function EditorInitMarkStyles()
+	for i = 0, 31 do
+		local mark = props["find.mark."..i]
+		if mark ~= "" then
+			local mark_color = string.match(mark, "#%x%x%x%x%x%x")
+			if mark_color == nil then mark_color = props["find.mark"] end
+			if mark_color == "" then mark_color = "#0F0F0F" end
+			local mark_style = style(mark)
+			if mark_style == nil then mark_style = INDIC_ROUNDBOX end
+			InitMarkStyle(i, mark_style, mark_color)
+		end
+	end
+end
+
+-- Add user event handler OnOpen
+local old_OnOpen = OnOpen
+function OnOpen(file)
+	local result
+	if old_OnOpen then result = old_OnOpen(file) end
+	if props["mark.styles.ready"]=="" then
+		EditorInitMarkStyles()
+		props["mark.styles.ready"] = "yes"
+	end
+	return result
+end
+----------------------------------------------------------------------------
