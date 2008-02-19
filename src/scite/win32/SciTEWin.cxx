@@ -1797,7 +1797,11 @@ LRESULT SciTEWin::WndProc(UINT iMessage, WPARAM wParam, LPARAM lParam) {
 					lbclk_t = t;
 					if (tabclick >= 0 ) {
 						::SetCapture(reinterpret_cast<HWND>(wTabBar.GetID()));
-						wTabBar.SetCursor(Window::cursorReverseArrow);
+						HCURSOR hcursor = ::LoadCursor(::GetModuleHandle(NULL), MAKEINTRESOURCE(IDC_DRAGDROP));
+						if (hcursor)
+							::SetCursor(hcursor);
+						else
+							wTabBar.SetCursor(Window::cursorReverseArrow);
 					}
 				}
 			}

@@ -248,4 +248,5 @@
 // Resource IDs
 //! #define IDR_CLOSEFILE 100
 #define IDR_BUTTONS			100	//!-change-[user.toolbar]
+#define IDC_DRAGDROP        401 //!-add-[TabsMoving]
 #endif
