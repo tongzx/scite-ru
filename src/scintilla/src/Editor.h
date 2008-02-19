@@ -422,6 +422,7 @@ protected:	// ScintillaBase subclass needs access to much of Editor
 	int PositionInSelection(int pos);
 	bool PointInSelection(Point pt);
 	bool PointInSelMargin(Point pt);
+	bool PointInMargin(Point pt); //!-add-[TrueTextSelMargin]
 	void LineSelection(int lineCurrent_, int lineAnchor_);
 	void DwellEnd(bool mouseMoved);
 	virtual void ButtonDown(Point pt, unsigned int curTime, bool shift, bool ctrl, bool alt);

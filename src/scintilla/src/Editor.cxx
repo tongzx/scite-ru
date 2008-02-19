@@ -5146,6 +5146,21 @@ bool Editor::PointInSelection(Point pt) {
 }
 
 bool Editor::PointInSelMargin(Point pt) {
+//!-start-[TrueTextSelMargin]
+	// Really means: "Point in a number margin"
+	if (vs.fixedColumnWidth > 0) {	// There is a margin
+		PRectangle rcSelMargin = GetClientRectangle();
+		rcSelMargin.right = vs.ms[0].width;
+		if (!vs.ms[1].sensitive)
+			rcSelMargin.right += vs.ms[1].width;
+		return rcSelMargin.Contains(pt);
+	} else {
+		return false;
+	}
+}
+
+bool Editor::PointInMargin(Point pt) {
+//!-end-[TrueTextSelMargin]
 	// Really means: "Point in a margin"
 	if (vs.fixedColumnWidth > 0) {	// There is a margin
 		PRectangle rcSelMargin = GetClientRectangle();
@@ -5196,7 +5211,8 @@ void Editor::ButtonDown(Point pt, unsigned int curTime, bool shift, bool ctrl, b
 
 	NotifyIndicatorClick(true, newPos, shift, ctrl, alt);
 
-	bool inSelMargin = PointInSelMargin(pt);
+//!	bool inSelMargin = PointInSelMargin(pt);
+	bool inSelMargin = PointInMargin(pt); //!-change-[TrueTextSelMargin]
 	if (shift & !inSelMargin) {
 		SetSelection(newPos);
 	}
@@ -5434,6 +5450,11 @@ void Editor::ButtonMove(Point pt) {
 			if (PointInSelMargin(pt)) {
 				DisplayCursor(Window::cursorReverseArrow);
 				return; 	// No need to test for selection
+//!-start-[TrueTextSelMargin]
+			} else if (PointInMargin(pt)) {
+				DisplayCursor(Window::cursorArrow);
+				return;
+//!-end-[TrueTextSelMargin]
 			}
 		}
 		// Display regular (drag) cursor over selection
@@ -5460,6 +5481,10 @@ void Editor::ButtonUp(Point pt, unsigned int curTime, bool ctrl) {
 	if (HaveMouseCapture()) {
 		if (PointInSelMargin(pt)) {
 			DisplayCursor(Window::cursorReverseArrow);
+//!-start-[TrueTextSelMargin]
+		} else if (PointInMargin(pt)) {
+			DisplayCursor(Window::cursorArrow);
+//!-end-[TrueTextSelMargin]
 		} else {
 			DisplayCursor(Window::cursorText);
 			SetHotSpotRange(NULL);
