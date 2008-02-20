@@ -7,7 +7,6 @@ Author: mozers™, VladVRO
 В файле настроек задается цвет подсветки парных и непарных тегов
 Внимание:
 В скрипте используются функции из COMMON.lua (EditorMarkText, EditorClearMarks)
-и функция инициализации маркеров из SciTEStartup.lua
 ------------------------------
 Подключение:
 Добавить в SciTEStartup.lua строку:
@@ -68,7 +67,7 @@ local function PairedTagsFinder()
 				EditorMarkText(tag_paired_start+1, tag_paired_end-tag_paired_start-1, 1)
 			else
 				EditorClearMarks(0, editor.Length)
-				if color2 ~= '' then
+				if props["find.mark.2"] ~= '' then
 					EditorMarkText(tag_start-dt, tag_length+dt, 2) -- Start tag to paint in Red
 				end
 			end
