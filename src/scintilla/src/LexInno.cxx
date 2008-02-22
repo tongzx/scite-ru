@@ -175,7 +175,7 @@ static void ColouriseInnoDoc(unsigned int startPos, int length, int, WordList *k
 	char *buffer = new char[length];
 	int bufferCount = 0;
 	bool isBOL, isEOL, isWS, isBOLWS = 0;
-	bool isCode, wasSectionAfterCode = 0; //!-add-[update.inno]
+	bool isCode = 0; //!-add-[update.inno]
 
 	WordList &sectionKeywords = *keywordLists[0];
 	WordList &standardKeywords = *keywordLists[1];
