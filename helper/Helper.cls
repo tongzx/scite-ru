@@ -53,8 +53,7 @@ End Sub
 '---------------------------------------------------------------------
 
 Public Sub Focus()
-    Const WM_SETFOCUS = &H7
-    SendMessage hScintillaWnd, WM_SETFOCUS, 0&, 0&
+    SetForegroundWindow hSciteWind
 End Sub
 '=====================================================================
 

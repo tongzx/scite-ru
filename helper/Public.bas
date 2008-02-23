@@ -14,6 +14,7 @@ Public Declare Function GetWindowRect Lib "user32" (ByVal hwnd As Long, lpRect A
 Public Declare Function SetWindowPos Lib "user32" (ByVal hwnd As Long, ByVal hWndInsertAfter As Long, ByVal x As Long, ByVal y As Long, ByVal cx As Long, ByVal cy As Long, ByVal wFlags As Long) As Long
 Public Declare Function GetDesktopWindow& Lib "user32" ()
 Public Declare Function GetWindowThreadProcessId Lib "user32" (ByVal hwnd As Long, lpdwProcessId As Long) As Long
+Public Declare Function SetForegroundWindow Lib "user32" (ByVal hwnd As Long) As Long
 '---------------------------------------------------------------------
 Public Const WM_COPYDATA = &H4A
 Public Const GW_CHILD = 5
