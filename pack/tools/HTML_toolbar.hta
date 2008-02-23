@@ -15,7 +15,7 @@ contextMenu=no
 caption=no
 showInTaskBar=no
 singleinstance=yes
-version=1.0
+version=1.1
 >
 <title>html Toolbar</title>
 <style type="text/css">
@@ -62,13 +62,17 @@ function readfile(filename) {
 }
 
 function AddTag(i){
+	var pattern = Arr_BTN[i][2].replace(/\|/, "¦");
+
 	var text = SciTE.GetSelText;
-	text = Arr_BTN[i][2].replace(/%SEL%/,text);
+	text = pattern.replace(/%SEL%/g,text);
+
 	var clp = window.clipboardData.getData('Text');
-	text = text.replace(/%CLP%/,clp);
-	var cursor = text.indexOf("|");
+	text = text.replace(/%CLP%/g,clp);
+
+	var cursor = text.indexOf("¦");
 	if (cursor!=-1) {
-		text = text.replace(/\|/,"");
+		text = text.replace(/¦/,"");
 	} else {
 		cursor = text.length;
 	}
@@ -79,10 +83,11 @@ function AddTag(i){
 }
 </script>
 </head><body onLoad="SciTE.onTop(document.title, true);">
-<table id="TB"><tr><td style="white-space:nowrap;">
-<span id="BTN"></span>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button onClick="self.close();" style="font: normal 10pt Marlett; color:red;">r</button>
-</td></tr></table>
+<table id="TB"><tr>
+<td style="white-space:nowrap;"><span id="BTN"></span></td>
+<td style="white-space:nowrap;" onClick="window.location.reload();" title="левая кнопка мыши - Обновить
+правая - Перетащить">&nbsp;&nbsp;<button onClick="SciTE.Send('open:' + filename);" style="font: normal 10pt Marlett; color:green;" title="Настройка">s</button>&nbsp;<button onClick="self.close();" style="font: normal 10pt Marlett; color:red;" title="Закрыть">r</button></td>
+</tr></table>
 </body>
 <script language="JavaScript">
 BTN.innerHTML = btn_html;
