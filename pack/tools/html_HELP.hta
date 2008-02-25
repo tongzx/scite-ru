@@ -14,7 +14,7 @@ scroll=no
 selection=yes
 contextMenu=yes
 singleinstance=yes
-version=1.1
+version=1.2
 >
 <script language=JavaScript>
 function Shortcuts(evnt, pane){
@@ -64,12 +64,13 @@ input.p {font:bold 8px "Courier New"; color:#000080; width:15pt; text-align:cent
 	<tr>
 		<td>
 			&nbsp;&nbsp;Zoom:
-			&nbsp;<INPUT class="p" TYPE="button" Value="-" onClick="Zoom(-5);" title="ZoomIn [-]">
+			&nbsp;<INPUT class="p" TYPE="button" Value="-" onClick="Zoom(-5);" title="ZoomIn [Gray-]">
 			&nbsp;<INPUT name="txtZoom" TYPE=text value="100%" style="width:40px; text-align:center;" DISABLED>
-			&nbsp;<INPUT class="p" TYPE="button" Value="+" onClick="Zoom(5);" title="ZoomOut [+]">
+			&nbsp;<INPUT class="p" TYPE="button" Value="+" onClick="Zoom(5);" title="ZoomOut [Gray+]">
 		</td>
 		<td align="right">
-			Find:&nbsp;&nbsp;<INPUT name=sText TYPE=text value="" style="width:30%" onClick="SearchReset();">
+			Find:&nbsp;&nbsp;<INPUT name=sText TYPE=text value="" style="width:30%" onClick="SearchReset();" onkeydown="if (event.keyCode==13){Find()};" title="Start Search [Enter]
+New Search  [Click]">
 			&nbsp;&nbsp;<INPUT style="color:#000080" NAME="btnSearch" TYPE="button" Value="Search" onClick="Find();" title="Find Next [F3]">&nbsp;&nbsp;&nbsp;
 		</td>
 	</tr>
