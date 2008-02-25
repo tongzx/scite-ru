@@ -1,6 +1,6 @@
 -- AutocompleteObject.lua
 -- mozersЩ
--- version 1.6.0
+-- version 1.6.1
 ------------------------------------------------
 -- ¬вод разделител€, заданного в autocomplete.[lexer].start.characters
 -- вызывает список свойств и медодов объекта из соответствующего api файла
@@ -107,7 +107,7 @@ local function AutocompleteObject(char)
 	-- Show UserList
 	local list_count = table.getn(user_list)
 	if list_count > 0 then
-		table.sort(user_list)
+		table.sort(user_list, function(a, b) return string.upper(a) < string.upper(b) end)
 		local s = table.concat(user_list, " ")
 		if s ~= '' then
 			prop_autocompleteword_automatic = props["autocompleteword.automatic"]
