@@ -189,7 +189,7 @@ NameError: mistake
 
   <p>В большинстве случаев SciTE обрабатывает как имя файла, так и номер строки в сообщении об ошибке, поэтому, если ошибки произошли в другом файле (например, в заголовочном файле), он может открыть и его. Эта функция не работает, если в имени файла содержатся пробелы или &quot;..&quot;.</p>
 
-  <p>Если исполнение команды оказалось неудачным и занимает слишком много времени, для её завершения можно воспользоваться командой &quot;<cite>Tools | Остановить выполнение</cite>&quot; (Tools | Stop Executing - Ctrl+Break).</p><a name="command.subsystem"></a>
+  <p>Если исполнение команды оказалось неудачным и занимает слишком много времени, для её завершения можно воспользоваться командой &quot;<cite>Tools | Остановить выполнение</cite>&quot; (Tools | Stop Executing - Ctrl+Break).</p>
 
   <h3><a name="command.subsystem">command.subsystem</a></h3>
 
@@ -203,7 +203,7 @@ NameError: mistake
     </tr>
     <tr>
       <td align="center"><dfn>0</dfn></td>
-      <td><dfn>console</dfn></d>
+      <td><dfn>console</dfn></td>
       <td>Это - <i>значение по умолчанию</i> и предназначено для запуска консольных программ.<br>
           В результате запуска системное окно консоли не появляется, а весь вывод программы перенаправляется во встроенную консоль (панель вывода) SciTE.<br>
           Возможно, что для отдельных приложений вам потребуется перенаправить весь ввод в программу, и добавить к выводу в консоль SciTE сообщения об ошибках. Это можно осуществить с помощью перенаправления стандартных потоков <code>StdIn</code> и <code>StdErr</code>:
@@ -211,33 +211,33 @@ NameError: mistake
     </tr>
     <tr class="windowsonly">
       <td align="center"><dfn>1</dfn></td>
-      <td><dfn>windows</dfn></d>
+      <td><dfn>windows</dfn></td>
       <td>Запуск приложений в этом режиме приводит к открытию их собственного окна (или открытию системного окна консоли для консольных приложений).<br>
       Если вы хотите анализировать вывод консольного приложения, то вам необходимо что-то предпринять для предотвращения автоматического закрытия окна при завершении работы команды (Обычно это осуществляется коррекцией <code>pif</code>-файла или добавлением команды <code>pause</code> в конец пакетного файла).</td>
     </tr>
     <tr>
       <td align="center"><dfn>2</dfn></td>
-      <td><dfn>shellexec</dfn></d>
+      <td><dfn>shellexec</dfn></td>
       <td>Запуск программы осуществляется с помощью функции Windows <code>ShellExecute</code> (т.е. с помощью программы, ассоциированной с заданным расширением).<br>
       Функция <code>ShellExecute</code> является хорошим способом для открытия <code>HTML</code> и подобных файлов, поскольку обрабатывает их так же, как если бы они были открыты пользователем из ОС (т.е. использует именну ту программу, которую назначил для открытия этих файлов пользователь).</td>
     </tr>
     <tr>
       <td align="center"><dfn>3</dfn></td>
-      <td><dfn>lua<br>director</dfn></d>
+      <td><dfn>lua<br>director</dfn></td>
       <td>В данном случае, строка запуска трактуется как команда <code>Lua</code> и ее запуск осуществляется посредством вызова встроенного в SciTE обработчика LUA-скриптов.
       <p>Параметр <dfn>sybsystem:director</dfn> предназначен для отправки комманд <a href="SciTEDirector_rus.html">SciTE Director Interface</a>.<br>
       Данная функция действует весьма оригинально (мягко говоря). Так, например такая конструкция:
-      <div class="example">command.5.*=quit:<br>command.mode.5.*=subsystem:director</div>не вызовет закрытие SciTE, как ожидалось.<br>
+      <div class="example">command.5.*=quit:<br>command.mode.5.*=subsystem:director</div> не вызовет закрытие SciTE, как ожидалось.<br>
       Ee выполнение вызовет появление строки с ошибкой в окне консоли "Lua: error checking global scope for command". Однако SciTE всетаки отправит команду "<code>quit:</code>", которую сможет прочесть любая программа, понимающая <a href="SciTEDirector_rus.html">SciTE Director Interface</a>.</p></td>
     </tr>
     <tr>
       <td align="center"><dfn>4</dfn></td>
-      <td><dfn>htmlhelp</dfn></d>
+      <td><dfn>htmlhelp</dfn></td>
       <td>Строка запуска обрабатывается подобно тому, как это осуществляет программа <code>HtmlHelp</code> (<code>hh.exe</code>), служащая для запуска справочных файлов в формате CHM (<cite>*</cite>).</td>
     </tr>
     <tr>
       <td align="center"><dfn>5</dfn></td>
-      <td><dfn>winhelp</dfn></d>
+      <td><dfn>winhelp</dfn></td>
       <td>Строка запуска обрабатывается подобно тому, как это осуществляет программа <code>WinHelp</code> (<code>winhlp32.exe</code>), служащая для запуска справочных файлов в формате HLP (<cite>*</cite>).</td>
     </tr>
     <tr>
@@ -247,14 +247,12 @@ NameError: mistake
       </td>
     </tr>
   </table>
-
-  <p>
+  &nbsp;
   <table class="gtkonly" cellpadding="0" cellspacing="0" border="1" summary="Command line commands">
-  <thead><td colspan="3">GTK+</td></thead>
+  <tr><th colspan="3">GTK+</th></tr>
   <tr><td><dfn>0</dfn></td><td><dfn>console</dfn></td><td>Исполняет программу и ожидает ее завершения, перенаправляя результат в панель вывода.</td></tr>
   <tr><td><dfn>2</dfn></td><td><dfn>shellexec</dfn></td><td>Выполняет программу в фоновом режиме.</td></tr>
   </table>
-  </p>
 
   <h3><a name="cmdline">Параметры командной строки</a></h3>
 
@@ -1471,9 +1469,11 @@ NameError: mistake
     <tr>
       <td><dfn><a name="error.select.line">error.select.line</a></dfn></td>
 
-      <td>Если при исполнении кода выводится сообщение об ошибке и производится нажатие на <code>F4</code> (или двойной клик на строке с ошибкой), данная опция выделяет строку с ошибкой. Удобнее всего использовать эту опцию в тех случаях, когда сообщение об ошибке содержит и колонку с ошибкой, поскольку в этом случае выделение начинается с колонки с ошибкой. Сообщение об ошибке должно содержать колонку и быть понятным для SciTE (в настоящее время это поддерживается только для <a href="http://tidy.sourceforge.net">HTML Tidy</a> - консольной утилиты для проверки корректности синтаксиса и автоматического форматирования HTML кода).<br>
-      Для корректного определения позиции ширина символа табуляции, используемая внешней утилитой, должна совпадать с шириной символа табуляции в вашем файле. [<em>Речь идёт об утилите, которая при своей работе выводит в консоль ошибки, сопровождая каждую из них не только номером строки, но и номером столбца, где эта ошибка найдена (например, HTML Tidy)</em>].</td>
-    </tr>
+      <td>Если при исполнении кода в окно консоли выводится сообщение об ошибке и производится нажатие на <code>F4</code> (или двойной клик на строке с ошибкой), то курсор в окне редактора перемещается на строку с ошибкой.<br>
+      Установка <span class="example">error.select.line=1</span> кроме этого, дополнительно выделяет строку с ошибкой.<br>
+      В тех случаях, когда сообщение об ошибке дополнительно содержит позицию ошибки в строке, выделение начинается с этой позиции.<br>
+      Сообщение, содержащее позицию ошибки в строке, должно быть понятным для SciTE (в настоящее время это поддерживается только для <a href="http://tidy.sourceforge.net">HTML Tidy</a> - консольной утилиты для проверки корректности синтаксиса и автоматического форматирования HTML кода).<br>
+      Для корректного определения позиции ширина символа табуляции, используемая внешней утилитой, должна совпадать с шириной символа табуляции в вашем файле.</td>
 
     <tr>
       <td><dfn><a name="openpath">openpath.<i>filepattern</i></a></dfn></td>
@@ -2611,7 +2611,7 @@ NameError: mistake
     </tr>
   </table>
 
-  <p><dfn><a name="caret.policy.table"><a href="#caret.policy">caret.policy.{x|y}&lt;param&gt;</a></a></dfn> взаимодействие:</p>
+  <p><a name="caret.policy.table"></a><a href="#caret.policy"><dfn>caret.policy.{x|y}&lt;param&gt;</dfn></a> взаимодействие:</p>
 
   <table cellpadding="1" cellspacing="0" border="1" summary="Caret policy">
     <tr>
@@ -2860,7 +2860,7 @@ NameError: mistake
   <ul>
     <li>Перевод на русский язык: <b><a href="http://forum.script-coding.info/profile.php?id=6">Gourmet</a></b> и <b><a href="http://forum.ru-board.com/profile.cgi?action=show&amp;member=s_mart" target="_blank">s_mart</a></b></li>
 
-    <li>Смысловая правка и дополнения: <b><a href="http://forum.script-coding.info/profile.php?id=2">The gray Cardinal</a></b>, <b><a href="http://forum.ru-board.com/profile.cgi?action=show&amp;member=mozers" target="_blank">mozers™</a></b>, <b><a href="http://forum.ru-board.com/profile.cgi?action=show&amp;member=vladvro" target="_blank">VladVRO</a></b></li>, <b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=dB6" target=_blank>dB6</a></b>
+    <li>Смысловая правка и дополнения: <b><a href="http://forum.script-coding.info/profile.php?id=2">The gray Cardinal</a></b>, <b><a href="http://forum.ru-board.com/profile.cgi?action=show&amp;member=mozers" target="_blank">mozers™</a></b>, <b><a href="http://forum.ru-board.com/profile.cgi?action=show&amp;member=vladvro" target="_blank">VladVRO</a></b>, <b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=dB6" target=_blank>dB6</a></b>
   </ul>
 </body>
 </html>
