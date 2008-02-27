@@ -955,115 +955,108 @@ NameError: mistake
 
   <p>При длинных значениях в конце строки ставится символ &#39;\&#39;, указывающий, что продолжение этого значения находится на следующей строке. Необходимо обращать внимание на пробелы. Так, <span class="example">x =1</span> задает переменную из двух символов &quot;x &quot;. При помощи конструкции <span class="example">$(variablename)</span>, где <code>variablename</code> - имя переменной, в значение можно включить значение другой переменной. В качестве переменных в этой конструкции помимо заданных ранее в файле(-ах) можно использовать переменные окружения, а также внутренние переменные SciTE:</p>
 
+  <a name="SciteVar"></a>
   <table cellpadding="0" cellspacing="0" border="1" summary="Внутренние переменные SciTE, используемые в файлах .properties">
     <thead>
       <tr>
         <th>Имя</th>
-
         <th>Значение</th>
       </tr>
     </thead>
 
     <tr>
       <td>FilePath</td>
-
       <td>полный путь к текущему файлу</td>
     </tr>
 
     <tr>
       <td>FileDir</td>
-
       <td>папка текущего файла без замыкающего слеша</td>
     </tr>
 
     <tr>
       <td>FileName</td>
-
       <td>базовое имя (без расширения) текущего файла</td>
     </tr>
 
     <tr>
       <td>FileExt</td>
-
       <td>расширение текущего файла</td>
     </tr>
 
     <tr>
       <td>FileNameExt</td>
-
       <td>$(FileName).$(FileExt)</td>
     </tr>
 
     <tr>
       <td>SessionPath</td>
-
       <td>полный путь к текущей сессии</td>
     </tr>
 
     <tr>
       <td>CurrentSelection</td>
-
       <td>выделенный текст</td>
     </tr>
 
     <tr>
       <td>CurrentWord</td>
-
       <td>слово с кареткой внутри слова или около него</td>
     </tr>
 
     <tr>
       <td>Replacements</td>
-
       <td>количество замен, сделанное последней командой Replace</td>
     </tr>
 
     <tr>
       <td>SelectionStartColumn</td>
-
       <td>столбец, с которого начато выделение</td>
     </tr>
 
     <tr>
       <td>SelectionStartLine</td>
-
       <td>строка, с которой начато выделение</td>
     </tr>
 
     <tr>
       <td>SelectionEndColumn</td>
-
       <td>столбец, где завершается выделение</td>
     </tr>
 
     <tr>
       <td>SelectionEndLine</td>
-
       <td>строка, где завершается выделение</td>
     </tr>
 
     <tr>
       <td>CurrentMessage</td>
-
       <td>последнее выделенное выходное сообщение</td>
     </tr>
 
     <tr>
       <td>SciteDefaultHome</td>
-
-      <td>папка с файлом глобальных настроек (и местоположением scite.exe)</td>
+      <td>папка с файлом глобальных настроек и файлом локализации интерфейса<br>(обычно совпадает с местоположением scite.exe)</td>
     </tr>
 
     <tr>
       <td>SciteUserHome</td>
-
       <td>папка с файлом пользовательских настроек</td>
     </tr>
 
     <tr>
       <td>SciteDirectoryHome</td>
-
       <td>папка с файлом настроек каталога</td>
+    </tr>
+
+    <tr class="ruboardonly">
+      <td>APIPath</td>
+      <td>путь к текущему api файлу</td>
+    </tr>
+
+    <tr class="ruboardonly">
+      <td>AbbrevPath</td>
+      <td>путь к текущему файлу сокращений</td>
     </tr>
   </table>
 
@@ -2838,7 +2831,7 @@ NameError: mistake
 
   <h3><a name="otherlng">SciTE на других языках</a></h3>
 
-  <p>Если в каталоге, где размещен <code>scite.exe</code> присутствует файл <code>locale.properties</code>, с записями в формате:
+  <p>Если в каталоге, определяемом переменной <a href="#SciteVar"><code>SciteDefaultHome</code></a> присутствует файл <code>locale.properties</code>, с записями в формате:
   <div class="example">Menu Item=Перевод данного пункта</div> то имеющиеся пункты интерфейса будут отображены SciTE на языке переводчика.<br>
     Различные локализации SciTE можно найти на <a href="http://scintilla.sourceforge.net/SciTETranslation.html">этой странице</a>.</p>
 
