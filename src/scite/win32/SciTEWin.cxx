@@ -1803,8 +1803,10 @@ LRESULT SciTEWin::WndProc(UINT iMessage, WPARAM wParam, LPARAM lParam) {
 				if (   thti.pt.x == lbclk_x 
 					&& thti.pt.y == lbclk_y
 					&& (UINT)(t - lbclk_t) <= GetDoubleClickTime() ) { // simulate DBL CLK
-					if (tabclick >= 0)
+					if (tabclick >= 0) {
 						CloseTab( tabclick );
+						tabclick = -1;
+					}
 					lbclk_x = 0;
 					lbclk_y = 0;
 					lbclk_t = 0;
