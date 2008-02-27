@@ -57,6 +57,19 @@
       <a name="1"></a>
       Interface
     </h3>
+
+<h5> <sup>new</sup>
+[HighlightCurrFolder] <span class=desc>(Author: VladVRO)</span></h5>
+Added current text fold highlighting on fold margin.<br>
+New property for setup highlight color:<br>
+<div class="example">fold.highlight.colour=#0099FF</div>
+if color is not set then highlighting is off.
+
+<h5> <sup>new</sup>
+[TrueTextSelMargin] <span class=desc>(Author: VladVRO)</span></h5>
+Changed cursor image over left margin (line number, marker and fold margins).<br>
+Cursor is set as inverse arrow when we realy can to select text otherwise used default cursor.
+
 <h5> <sup>update</sup> [SubMenu] <span class=desc>(Author: HSolo, Updated by: Dmitry Maslov)</span></h5>
 User's commands in menu Tools separated from other commands now by line.<br>
 And you can insert separator between any new commands in menu Tools.<br>
@@ -211,7 +224,9 @@ New variable in properties files<br>
 <span class="example">abbrev.maximum.length=[value]</span><br>
 Set value of length limit for expand abbreviation by Ctrl+B, in other words it is the maximum length of text for comparing with abbreviations set
 
-<h5>[import] <span class=desc>(Author: mimir)</span></h5>
+<h5> <sup>update</sup>
+[import] <span class=desc>(Author: mimir, VladVRO)</span></h5>
+Changed rules for import file in properties files. In first case trying to load file with name as is, if file not found then adding extension ".properties" and repeat trying to open file.<br>
 It is possible to use <span class="example">import</span> instruction in *.abbrev files.
 
 <h5>[selection.hide.on.deactivate] <span class=desc>(Author: mozers)</span></h5>
@@ -271,6 +286,11 @@ New Scintilla commands to support several highlight regions inside calltip windo
       <a name="2"></a>
       Extensions
     </h3>
+
+<h5> <sup>new</sup>
+[EditorUnicodeMode] <span class=desc>(Author: VladVRO)</span></h5>
+Added new property <span class="example">editor.unicode.mode</span> for editor unicode mode which has been assigned by editor and can be one from next states:
+<span class="example">IDM_ENCODING_DEFAULT, IDM_ENCODING_UCS2BE, IDM_ENCODING_UCS2LE, IDM_ENCODING_UTF8, IDM_ENCODING_UCOOKIE</span>.
 
 <h5>[macro] <span class=desc>(Author: VladVRO)</span></h5>
 Support of record and play macro using LUA.
@@ -408,6 +428,11 @@ Now OnSendEditor can trace event SCI_SETZOOM arising at change of the size of a 
       <a name="3"></a>
       Bug fix
     </h3>
+
+<h5> <sup>new</sup>
+[LuaLexerImprovement] <span class=desc>(Author: VladVRO)</span></h5>
+Changed lexer for language Lua.<br>
+Simbols ":" and "." processed as separator for object now. You can setup lexer keywords as <span class="example">string.sub</span> or <span class="example">editor:append</span> as before and you can setup object function or property as <span class="example">:GetText</span> or <span class="example">.Cursor</span> now.
 
 <h5> <sup>new</sup> [GoMessageImprovement] <span class=desc>(Author: VladVRO)</span></h5>
 Made the editor window focused after uses double-click in console on message with file name and line number.<br>

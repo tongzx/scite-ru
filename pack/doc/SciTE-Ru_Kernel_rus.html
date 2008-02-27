@@ -58,6 +58,19 @@
       <a name="1"></a>
       Интерфейс
     </h3>
+
+<h5> <sup>new</sup>
+[HighlightCurrFolder] <span class=desc>(Автор: VladVRO)</span></h5>
+Добавлена подсветка текущего блока текста в поле фолдинга.<br>
+Новый параметр в настройках для задания цвета подсветки:<br>
+<div class="example">fold.highlight.colour=#0099FF</div>
+если цвет не задан, подсветка выключается.
+
+<h5> <sup>new</sup>
+[TrueTextSelMargin] <span class=desc>(Автор: VladVRO)</span></h5>
+Изменено отображение курсора над левым полем, там где отображаются номера строк, метки и фолдинг.<br>
+Курсор меняется на перевернутый указатель только тогда, когда доступна функция выделения текста, иначе курсор принимает свой обычный вид.
+
 <h5> <sup>update</sup> [SubMenu] <span class=desc>(Автор: HSolo, Доработка: Дмитрий Маслов)</span></h5>
 Немного изменен вид меню Tools. Теперь встроенные команды отделены от пользовательских разделителями.<br>
 В меню Tools теперь возможно вставлять разделители.<br>
@@ -210,7 +223,9 @@ command.name.6.*=Date and Time</div>
 <span class="example">abbrev.maximum.length=[число]</span><br>
 Задает максимальную длину сокращения, обрабатываемого по Ctrl+B, иначе говоря, максимальную длину текста который будет сравниваться с набором сокращений.
 
-<h5>[import] <span class=desc>(Автор: mimir)</span></h5>
+<h5> <sup>update</sup>
+[import] <span class=desc>(Автор: mimir, VladVRO)</span></h5>
+Переделан механизм импорта в файлах настроек, теперь редактор сперва делает попытку загрузить файл с явно указанным именем, если не находит, то добавляет расширение ".properties" и повторяет попытку.<br>
 Возможно использование директивы <span class="example">import</span> в файлах *.abbrev
 
 <h5>[selection.hide.on.deactivate] <span class=desc>(Автор: mozers)</span></h5>
@@ -269,6 +284,11 @@ calltip.*.word.wrap</div>
       <a name="2"></a>
       Расширения
     </h3>
+
+<h5> <sup>new</sup>
+[EditorUnicodeMode] <span class=desc>(Автор: VladVRO)</span></h5>
+Добавлен новый параметр <span class="example">editor.unicode.mode</span> в который редактор сохраняет текущее значение режима двухбитной кодировки, заданного одним из следующего множества значений:
+<span class="example">IDM_ENCODING_DEFAULT, IDM_ENCODING_UCS2BE, IDM_ENCODING_UCS2LE, IDM_ENCODING_UTF8, IDM_ENCODING_UCOOKIE</span>.
 
 <h5>[macro] <span class=desc>(Автор: VladVRO)</span></h5>
 Поддержка записи и воспроизведения макросов с помощью LUA
@@ -409,6 +429,11 @@ Tеперь можно задавать до 4х дополнительных наборов слов с разной подсветкой, при
       Устранение ошибок
     </h3>
 
+<h5> <sup>new</sup>
+[LuaLexerImprovement] <span class=desc>(Автор: VladVRO)</span></h5>
+Переделан лексер для языка Lua.<br>
+Теперь символы ":" и "." обрабатываются в качестве разделителя сложного объекта. В настройках ключевых слов лексера как и ранее можно указывать слова вида <span class="example">string.sub</span> или <span class="example">editor:append</span>, и кроме того можно задать функции или поля объекта, например <span class="example">:GetText</span> или <span class="example">.Cursor</span>.
+
 <h5> <sup>new</sup> [GoMessageImprovement] <span class=desc>(Автор: VladVRO)</span></h5>
 Сделано перемещение фокуса в окно редактора после позиционирования на строке при клике мышкой в окне консоли на строке с ошибкой или результатом поиска.<br>
 Использована доработка <span class="example">[OnMouseButtonUp]</span>.
@@ -452,9 +477,6 @@ Tеперь можно задавать до 4х дополнительных наборов слов с разной подсветкой, при
 
 <h5>[SQLcase] <span class=desc>(Автор: mimir)</span></h5>
 В LexSQL добавлено слово "case" для начала фолдинга
-
-<h5>[LuaWord] <span class=desc>(Автор: mimir)</span></h5>
-Лексер для LUA воспринимает разделитель ":" так же как и "."
 
 <p><hr>
 <small>О найденных неточностях в описании прошу сообщать по адресу mozers(@)mail.ru</small>
