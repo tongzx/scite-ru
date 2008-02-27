@@ -102,6 +102,10 @@ ViewStyle::ViewStyle(const ViewStyle &source) {
 	foldmarginColour.desired = source.foldmarginColour.desired;
 	foldmarginHighlightColourSet = source.foldmarginHighlightColourSet;
 	foldmarginHighlightColour.desired = source.foldmarginHighlightColour.desired;
+//!-start-[HighlightCurrFolder]
+	foldHighlightSet = source.foldHighlightSet;
+	foldHighlightColour.desired = source.foldHighlightColour.desired;
+//!-end-[HighlightCurrFolder]
 
 	hotspotForegroundSet = source.hotspotForegroundSet;
 	hotspotForeground.desired = source.hotspotForeground.desired;
@@ -181,6 +185,10 @@ void ViewStyle::Init(size_t stylesSize_) {
 	foldmarginColour.desired = ColourDesired(0xff, 0, 0);
 	foldmarginHighlightColourSet = false;
 	foldmarginHighlightColour.desired = ColourDesired(0xc0, 0xc0, 0xc0);
+//!-start-[HighlightCurrFolder]
+	foldHighlightSet = false;
+	foldHighlightColour.desired = ColourDesired(0, 0, 0);
+//!-end-[HighlightCurrFolder]
 
 	whitespaceForegroundSet = false;
 	whitespaceForeground.desired = ColourDesired(0, 0, 0);
@@ -253,6 +261,7 @@ void ViewStyle::RefreshColourPalette(Palette &pal, bool want) {
 
 	pal.WantFind(foldmarginColour, want);
 	pal.WantFind(foldmarginHighlightColour, want);
+	pal.WantFind(foldHighlightColour, want); //!-add-[HighlightCurrFolder]
 
 	pal.WantFind(whitespaceForeground, want);
 	pal.WantFind(whitespaceBackground, want);

@@ -745,6 +745,7 @@ void Editor::SetSelection(int currentPos_, int anchor_) {
 		InvalidateSelection(currentPos_, anchor_);
 		currentPos = currentPos_;
 		anchor = anchor_;
+		if (vs.foldHighlightSet) RedrawSelMargin(); //!-add-[HighlightCurrFolder]
 	}
 	SetRectangularRange();
 	ClaimSelection();
@@ -755,6 +756,7 @@ void Editor::SetSelection(int currentPos_) {
 	if (currentPos != currentPos_) {
 		InvalidateSelection(currentPos_, currentPos_);
 		currentPos = currentPos_;
+		if (vs.foldHighlightSet) RedrawSelMargin(); //!-add-[HighlightCurrFolder]
 	}
 	SetRectangularRange();
 	ClaimSelection();
@@ -1513,7 +1515,12 @@ void Editor::PaintSelMargin(Surface *surfWindow, PRectangle &rc) {
 			// lessening of fold level which implies a 'fold tail' but which should not
 			// be displayed until the last of a sequence of whitespace.
 			bool needWhiteClosure = false;
-			int level = pdoc->GetLevel(cs.DocFromDisplay(topLine));
+//!			int level = pdoc->GetLevel(cs.DocFromDisplay(topLine));
+//!-start-[HighlightCurrFolder]
+			int level = -1;
+			if (vs.ms[margin].mask & SC_MASK_FOLDERS) { //!-add-[HighlightCurrFolder]
+			level = pdoc->GetLevel(cs.DocFromDisplay(topLine));
+//!-end-[HighlightCurrFolder]
 			if (level & SC_FOLDLEVELWHITEFLAG) {
 				int lineBack = cs.DocFromDisplay(topLine);
 				int levelPrev = level;
@@ -1526,6 +1533,20 @@ void Editor::PaintSelMargin(Surface *surfWindow, PRectangle &rc) {
 						needWhiteClosure = true;
 				}
 			}
+			} //!-add-[HighlightCurrFolder]
+
+//!-start-[HighlightCurrFolder]
+			int hlFirstLine = -1, hlLastLine = -1;
+			if (vs.ms[margin].mask & SC_MASK_FOLDERS) {
+				int currLine = pdoc->LineFromPosition(currentPos);
+				if (pdoc->GetLevel(currLine) & SC_FOLDLEVELHEADERFLAG) {
+					hlFirstLine = currLine;
+				} else {
+					hlFirstLine = pdoc->GetFoldParent(currLine);
+				}
+				hlLastLine = pdoc->GetFoldEnd(currLine);
+			}
+//!-end-[HighlightCurrFolder]
 
 			// Old code does not know about new markers needed to distinguish all cases
 			int folderOpenMid = SubstituteMarkerIfEmpty(SC_MARKNUM_FOLDEROPENMID,
@@ -1541,12 +1562,21 @@ void Editor::PaintSelMargin(Surface *surfWindow, PRectangle &rc) {
 				PLATFORM_ASSERT(cs.GetVisible(lineDoc));
 				bool firstSubLine = visibleLine == cs.DisplayFromDoc(lineDoc);
 
+//!-start-[HighlightCurrFolder]
+				int levelNext = -1;
+				if (vs.ms[margin].mask & SC_MASK_FOLDERS) {
+//!-end-[HighlightCurrFolder]
 				// Decide which fold indicator should be displayed
 				level = pdoc->GetLevel(lineDoc);
-				int levelNext = pdoc->GetLevel(lineDoc + 1);
+//!				int levelNext = pdoc->GetLevel(lineDoc + 1);
+//!-start-[HighlightCurrFolder]
+				levelNext = pdoc->GetLevel(lineDoc + 1);
+				}
+//!-end-[HighlightCurrFolder]
 				int marks = pdoc->GetMark(lineDoc);
 				if (!firstSubLine)
 					marks = 0;
+				if (vs.ms[margin].mask & SC_MASK_FOLDERS) { //!-add-[HighlightCurrFolder]
 				int levelNum = level & SC_FOLDLEVELNUMBERMASK;
 				int levelNextNum = levelNext & SC_FOLDLEVELNUMBERMASK;
 				if (level & SC_FOLDLEVELHEADERFLAG) {
@@ -1603,6 +1633,28 @@ void Editor::PaintSelMargin(Surface *surfWindow, PRectangle &rc) {
 						marks |= 1 << SC_MARKNUM_FOLDERSUB;
 					}
 				}
+				} //!-add-[HighlightCurrFolder]
+
+//!-start-[HighlightCurrFolder]
+				int hilitemark = 0;
+				if (vs.foldHighlightSet && vs.ms[margin].mask & SC_MASK_FOLDERS &&
+					lineDoc >= hlFirstLine && lineDoc <= hlLastLine)
+					if (level & SC_FOLDLEVELHEADERFLAG) {
+						if (firstSubLine) {
+							if (cs.GetExpanded(lineDoc)) {
+								if (lineDoc == hlFirstLine)
+									hilitemark = SC_MARKNUM_FOLDEROPEN;
+							} else {
+								if (lineDoc == hlFirstLine)
+									hilitemark = SC_MARKNUM_FOLDER;
+							}
+						}
+					} else if (lineDoc == hlLastLine) {
+						hilitemark = SC_MARKNUM_FOLDERTAIL;
+					} else {
+						hilitemark = SC_MARKNUM_FOLDERSUB;
+					}
+//!-end-[HighlightCurrFolder]
 
 				marks &= vs.ms[margin].mask;
 				PRectangle rcMarker = rcSelMargin;
@@ -1641,6 +1693,12 @@ void Editor::PaintSelMargin(Surface *surfWindow, PRectangle &rc) {
 						marks >>= 1;
 					}
 				}
+//!-start-[HighlightCurrFolder]
+				if (hilitemark) {
+					vs.markers[hilitemark].Draw(surface, rcMarker, vs.styles[STYLE_LINENUMBER].font,
+						vs.markers[hilitemark].fore.allocated, vs.foldHighlightColour.allocated);
+				}
+//!-end-[HighlightCurrFolder]
 
 				visibleLine++;
 				yposScreen += vs.lineHeight;
@@ -3783,6 +3841,7 @@ void Editor::NotifyMove(int position) {
 	scn.nmhdr.code = SCN_POSCHANGED;
 	scn.position = position;
 	NotifyParent(scn);
+	if (vs.foldHighlightSet) RedrawSelMargin(); //!-add-[HighlightCurrFolder]
 }
 
 void Editor::NotifySavePoint(Document*, void *, bool atSavePoint) {
@@ -7546,6 +7605,14 @@ sptr_t Editor::WndProc(unsigned int iMessage, uptr_t wParam, sptr_t lParam) {
 		vs.foldmarginHighlightColour.desired = ColourDesired(lParam);
 		InvalidateStyleRedraw();
 		break;
+
+//!-start-[HighlightCurrFolder]
+	case SCI_SETFOLDHIGHLIGHTCOLOUR:
+		vs.foldHighlightSet = wParam != 0;
+		vs.foldHighlightColour.desired = ColourDesired(lParam);
+		InvalidateStyleRedraw();
+		break;
+//!-end-[HighlightCurrFolder]
 
 	case SCI_SETHOTSPOTACTIVEFORE:
 		vs.hotspotForegroundSet = wParam != 0;

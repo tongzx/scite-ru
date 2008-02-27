@@ -199,6 +199,7 @@ public:
 	void ClearLevels() { cb.ClearLevels(); }
 	int GetLastChild(int lineParent, int level=-1);
 	int GetFoldParent(int line);
+	int GetFoldEnd(int line); //!-add-[HighlightCurrFolder]
 
 	void Indent(bool forwards);
 	int ExtendWordSelect(int pos, int delta, bool onlyWordCharacters=false);

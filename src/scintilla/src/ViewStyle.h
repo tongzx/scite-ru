@@ -73,6 +73,10 @@ public:
 	ColourPair foldmarginColour;
 	bool foldmarginHighlightColourSet;
 	ColourPair foldmarginHighlightColour;
+//!-start-[HighlightCurrFolder]
+	bool foldHighlightSet;
+	ColourPair foldHighlightColour;
+//!-end-[HighlightCurrFolder]
 	bool hotspotForegroundSet;
 	ColourPair hotspotForeground;
 	bool hotspotBackgroundSet;

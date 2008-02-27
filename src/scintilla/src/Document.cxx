@@ -253,6 +253,27 @@ int Document::GetFoldParent(int line) {
 	}
 }
 
+//!-start-[HighlightCurrFolder]
+int Document::GetFoldEnd(int line) {
+	int level = GetLevel(line);
+	int levelNum = level & SC_FOLDLEVELNUMBERMASK;
+	if (level & SC_FOLDLEVELHEADERFLAG) levelNum++;
+	if (levelNum == SC_FOLDLEVELBASE) return -1;
+	int lastLine = LineFromPosition(Length());
+	int lineLook = line + 1;
+	while (lineLook <= lastLine) {
+		level = GetLevel(lineLook);
+		if (!(level & SC_FOLDLEVELWHITEFLAG) &&
+		    (level & SC_FOLDLEVELNUMBERMASK) < levelNum )
+		{
+			return lineLook - 1;
+		}
+		lineLook++;
+	}
+	return lastLine + 1;
+}
+//!-end-[HighlightCurrFolder]
+
 int Document::ClampPositionIntoDocument(int pos) {
 	return Platform::Clamp(pos, 0, Length());
 }

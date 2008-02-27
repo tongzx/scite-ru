@@ -926,6 +926,14 @@ void SciTEBase::ReadProperties() {
 	} else {
 		SendChildren(SCI_SETFOLDMARGINHICOLOUR, 0, 0);
 	}
+//!-start-[HighlightCurrFolder]
+	SString foldHighlightColour = props.Get("fold.highlight.colour");
+	if (foldHighlightColour.length()) {
+		SendChildren(SCI_SETFOLDHIGHLIGHTCOLOUR, 1, ColourFromString(foldHighlightColour));
+	} else {
+		SendChildren(SCI_SETFOLDHIGHLIGHTCOLOUR, 0, 0);
+	}
+//!-end-[HighlightCurrFolder]
 
 	SString whitespaceFore = props.Get("whitespace.fore");
 	if (whitespaceFore.length()) {
