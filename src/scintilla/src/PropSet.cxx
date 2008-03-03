@@ -863,3 +863,47 @@ bool WordList::InListPartly(const char *s, const char marker, int &mainLen, int 
 	return false;
 }
 //!-end-[PropsKeysSets]
+
+//!-start-[ABAP]
+/** like InList, but string can be a part of multi words keyword expresion.
+ * eg. the keyword "begin of" is defined as "begin~of". If input string is
+ * "begin of" then return true, eq = true and begin = false, if input string
+ * is "begin" then return true, eq = false and begin = true.
+ * The marker is ~ in this case.
+ */
+bool WordList::InMultiWordsList(const char *s, const char marker, bool &eq, bool &begin) {
+	eq = begin = false;
+	if (0 == words || !*s) {
+		return false;
+	}
+	if (!sorted) {
+		sorted = true;
+		SortWordList(words, len);
+		for (unsigned int k = 0; k < (sizeof(starts) / sizeof(starts[0])); k++)
+			starts[k] = -1;
+		for (int l = len - 1; l >= 0; l--) {
+			unsigned char indexChar = words[l][0];
+			starts[indexChar] = l;
+		}
+	}
+	unsigned char firstChar = s[0];
+	int j = starts[firstChar];
+	if (j >= 0) {
+		while ((unsigned char)words[j][0] == firstChar && (!eq || !begin)) {
+			if (s[1] == words[j][1]) {
+				const char *a = words[j] + 1;
+				const char *b = s + 1;
+				while (*a && ((*a == *b) || (*a == marker && *b == ' '))) {
+					a++;
+					b++;
+				}
+				if (!*b)
+					if (!*a) eq = true;
+					else if (*a == marker) begin = true;
+			}
+			j++;
+		}
+	}
+	return (eq || begin);
+}
+//!-end-[ABAP]

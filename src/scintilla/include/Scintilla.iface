@@ -2023,6 +2023,9 @@ val SCLEX_R=86
 ##!-start-[Euphoria]
 val SCLEX_EUPHORIA=89
 ##!-end-[Euphoria]
+##!-start-[ABAP]
+val SCLEX_ABAP=87
+##!-end-[ABAP]
 
 # When a lexer specifies its language as SCLEX_AUTOMATIC it receives a
 # value assigned in sequence from SCLEX_AUTOMATIC+1.
@@ -3326,6 +3329,23 @@ val SCE_EUPHORIA_WORD6=15
 val SCE_EUPHORIA_WORD7=16
 val SCE_EUPHORIA_WORD8=17
 ##!-end-[Euphoria]
+##!-start-[ABAP]
+# Lexical states for SCLEX_ABAP
+lex ABAP=SCLEX_ABAP SCE_ABAP_
+val SCE_ABAP_DEFAULT=0
+val SCE_ABAP_COMMENT=1
+val SCE_ABAP_COMMENTLINE=2
+val SCE_ABAP_NUMBER=3
+val SCE_ABAP_STRING=4
+val SCE_ABAP_OPERATOR=5
+val SCE_ABAP_IDENTIFIER=6
+val SCE_ABAP_WORD=7
+val SCE_ABAP_TYPE=8
+val SCE_ABAP_USER1=9
+val SCE_ABAP_USER2=10
+val SCE_ABAP_USER3=11
+val SCE_ABAP_USER4=12
+##!-end-[ABAP]
 
 # Events
 

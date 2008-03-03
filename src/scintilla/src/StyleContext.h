@@ -70,7 +70,7 @@ public:
 	bool More() {
 		return currentPos < endPos;
 	}
-//!-start-[LuaLexerImprovement]
+//!-start-[LuaLexerImprovement][ABAP]
 	void MoveTo(unsigned int pos) {
 		if (pos < endPos) {
 			pos--;
@@ -92,7 +92,7 @@ public:
 			atLineEnd = true;
 		}
 	}
-//!-end-[LuaLexerImprovement]
+//!-end-[LuaLexerImprovement][ABAP]
 	void Forward() {
 		if (currentPos < endPos) {
 			atLineStart = atLineEnd;
