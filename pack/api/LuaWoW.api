@@ -351,7 +351,7 @@ GetInventoryItemQuality ("unit", invSlot)  /WoW API/\n  Return the quality of an
 GetInventoryItemTexture ("unit", invSlot)  /WoW API/\n  Return the texture for an inventory item
 GetInventorySlotInfo (invSlotName)  /WoW API/\n  Get the info for a named inventory slot (slot ID and texture)
 GetItemCooldown (itemid or "name" or itemLink)  /WoW API/\n  Returns startTime, duration, enable
-GetItemCount(itemID|"itemLink")\n  returns how many of specified item you have in your inventory
+GetItemCount(itemID|"itemLink")  /WoW API/\n  returns how many of specified item you have in your inventory
 GetItemInfo (itemId or "itemString")  /WoW API/\n  Returns information about an item
 GetItemQualityColor (quality)  /WoW API/\n  Returns the RGB color codes for a quality
 GetItemSpell (item)  /WoW API/\n  Returns name, rank
@@ -370,7 +370,7 @@ GetLootThreshold ()  /WoW API/\n  Return the current loot threshold (for group/m
 GetLotteryPrizeInfo ()  /WoW API/\n  ?   - Added in 1.12
 GetMacroIconInfo (index)  /WoW API/\n  Returns texture of the icons provided by Blizzard
 GetMacroIndexByName ("name")  /WoW API/\n  Returns macro index
-GetMacroInfo(id|"name")\n  Returns "name", iconTextureID, "body", local
+GetMacroInfo(id|"name")  /WoW API/\n  Returns "name", iconTextureID, "body", local
 GetMapContinents ()  /WoW API/\n  Returns the continent names
 GetMapInfo ()  /WoW API/\n  Returns the name and size of the current world map
 GetMapLandmarkInfo (landmarkIndex)  /WoW API/\n  Returns information about a landmark on the current world map
@@ -483,7 +483,7 @@ GetPlayerTradeMoney ()  /WoW API/\n  Returns the amount of money the player has 
 GetProgressText ()  /WoW API/\n  Returns quest progress text, displayed by the NPC before the player pressed "Continue"
 GetQuestBackgroundMaterial ()  /WoW API/\n  Returns the material string associated with the particular quest
 GetQuestGreenRange ()  /WoW API/\n  Return for how many levels below you quests and mobs remain "green" (i.e. yield xp)
-GetQuestIndexForTimer
+GetQuestIndexForTimer ()  /WoW API/
 GetQuestIndexForWatch (watchIndx)  /WoW API/\n  Return the quest index for the specified watch
 GetQuestItemInfo ()  /WoW API/\n  Returns basic information about the reward/choice/required item for quest currently in gossip window
 GetQuestItemLink ("type", index)  /WoW API/\n  Returns an itemLink for a quest reward item
@@ -703,7 +703,7 @@ IsShiftKeyDown ()  /WoW API/\n  Returns true if the shift key is currently depre
 IsSpellInRange (spellID, "bookType", [unit])  /WoW API/\n  Is nil for no valid target, 0 for out of range, 1 for in range
 IsStealthed ()  /WoW API/\n  Returns 1 if stealthed or shadowmeld, otherwise nil
 IsSwimming ()  /WoW API/
-IsTalentTrainer
+IsTalentTrainer ()  /WoW API/
 IsTradeskillTrainer ()  /WoW API/\n  Returns 1 if trainer is for a tradeskill
 IsTrainerServiceLearnSpell (index)  /WoW API/
 IsTrainerServiceSkillStep ()  /WoW API/
@@ -855,7 +855,7 @@ RetrieveCorpse ()  /WoW API/\n  Resurrects when near corpse. e.g., The "Accept" 
 ReturnInboxItem (index)  /WoW API/\n  Returns to the sender the attached item in the mail message at the specified index
 RollOnLoot (rollId[, roll])  /WoW API/\n  Roll or pass on a loot event started by the game engine
 RunBinding ("command"[, "up"])  /WoW API/\n  Executes the key binding named "command"
-RunMacro(id|"name") PROTECTED\n  Run the macro
+RunMacro (id|"name")  /WoW API/ PROTECTED\n  Run the macro
 RunMacroText ("macro")  /WoW API/ PROTECTED\n  Interpret the given string as a macro and run it
 RunScript ("script")  /WoW API/\n  Execute "script" as a block of LUA code
 SaveBindings (which)  /WoW API/\n  Saves account or character specific key bindings from memory to disk
@@ -871,7 +871,7 @@ SelectPackage (index)  /WoW API/\n  Not yet fully implemented. It does nothing v
 SelectQuestLogEntry ()  /WoW API/\n  Sets the selected quest, required for most GetQuest functions
 SelectStationery (index)  /WoW API/\n  Not yet fully implemented. It does nothing visible
 SelectTradeSkill (index)  /WoW API/\n  Select a specific trade skill in the list
-SelectTrainerService
+SelectTrainerService ()  /WoW API/
 SendAddonMessage ("prefix", "text", "type")  /WoW API/\n  Sends a message to hidden AddOn channels.   - Added in 1.12
 SendChatMessage ("msg",[ "chatType",[ "language",[ "channel"]]])  /WoW API/\n  Sends a chat message
 SendMail ("target", "subject", "body")  /WoW API/\n  If the mailbox is open, this sends mail. --Buttahcup 4 Feb 2005
@@ -879,7 +879,7 @@ SendWho ("filter")  /WoW API/\n  Send a who request to the server
 SetAbandonQuest ()  /WoW API/\n  Called before AbandonQuest
 SetActionBarToggles (show1,show2,show3,show4[, alwaysShow])  /WoW API/\n  Set show toggle for each action bar   - 'alwaysShow' added in 1.12
 SetActionSelfCastKey ("SHIFT" or "CTRL" or "ALT")  /WoW API/
-SetAutoLootDefault(true/false)
+SetAutoLootDefault (true/false)  /WoW API/
 SetAutoLootToggleKey ("SHIFT" or "CTRL" or "ALT")  /WoW API/
 SetBagPortaitTexture (texture, slot)  /WoW API/
 SetBaseMip (value)  /WoW API/\n  Set the world appearance Texture Detail (0,1)
@@ -887,7 +887,7 @@ SetBattlefieldScoreFaction ([faction])  /WoW API/\n  Set the faction to show on 
 SetBinding ("key"[, "command"])  /WoW API/\n  Sets or unsets key bindings. (2.0 - Can not be used in combat.)
 SetBindingClick ("KEY", "ButtonName" [,"mouseButton"])  /WoW API/\n  Set a key binding directly to a Button object. The click sends a mouse down when the key is pressed, and a mouse up when it is released
 SetBindingItem ("KEY", "itemname")  /WoW API/
-SetBindingMacro("KEY", "macroname"|macroid)
+SetBindingMacro ("KEY", "macroname"|macroid)  /WoW API/
 SetBindingSpell ("KEY", "Spell Name")  /WoW API/\n  Set a key binding directly to a spell, uses the same spell name syntax as /cast
 SetCVar ("cvar", value[, "scriptCVar"])  /WoW API/\n  Set the value of a variable in config.wtf
 SetChannelOwner ("channel", "name")  /WoW API/\n  Sets the channel owner
@@ -924,7 +924,7 @@ SetMultisampleFormat (index)  /WoW API/\n  Set the multi-sample (antialias) form
 SetOverrideBinding (owner, isPriority, "KEY" [,"COMMAND"])  /WoW API/\n  Set (or clear) an override key binding
 SetOverrideBindingClick (owner, isPriority, "KEY", "ButtoName"[,"mouseButton"])  /WoW API/
 SetOverrideBindingItem (owner, isPriority, "KEY", "itemname")  /WoW API/
-SetOverrideBindingMacro(owner, isPriority, "KEY", "macroname"|macroid)
+SetOverrideBindingMacro (owner, isPriority, "KEY", "macroname"|macroid)  /WoW API/
 SetOverrideBindingSpell (owner, isPriority, "KEY", "spellname")  /WoW API/
 SetPartyAssignment ("assignment", player)  /WoW API/
 SetPetStablePaperdoll (modelObject)  /WoW API/
@@ -1127,7 +1127,7 @@ getglobal ("object")  /WoW API/\n  Given an object name will return the object i
 hooksecurefunc ([table,] "functionName", hookfunc)  /WoW API/\n  Creates a secure 'post hook' for the named function. The hookfunc is invoked after the original function, and receives the same parameters.\n  Return values from hookfunc are discarded. This is the only safe way to hook functions that execute protected functionality
 issecure ()  /WoW API/\n  Determine if the current environment is secure
 issecurevariable ([table,] "name")  /WoW API/\n  Determine if the specified variable is secure
-securecall(function or "functionName", ...)\n  Call a function from a secure environment without risking secure status
+securecall (function or "functionName", ...)  /WoW API/\n  Call a function from a secure environment without risking secure status
 setglobal ("object", value)  /WoW API/\n  Set the global "object" to the given value
 
 SetTooltipMoney (tooltip, amount)  /WoW API/ UI\n  Set tooltip money value
@@ -1163,7 +1163,7 @@ ToggleSpellBook ("bookType")  /WoW API/ UI\n  Shows the spellbook. Can show your
 ToggleTalentFrame ()  /WoW API/ UI\n  Opens the Talent frame
 ToggleWorldMap ()  /WoW API/ UI\n  Turns the world map on/off
 UIFrameFadeIn (frame, fadeTime, startAlpha, endAlpha)  /WoW API/ UI
-UIFrameFlash(...) UI
+UIFrameFlash (...)  /WoW API/ UI
 UIParentLoadAddOn ("AddOnName")  /WoW API/ UI\n  Loads or Reloads the specified AddOn, and pops up an error message if it fails to load for any reason
 _ERRORMESSAGE (value)  /WoW API/ UI\n  Displays the script error dialog with optional text
 geterrorhandler ()  /WoW API/ UI
@@ -1184,7 +1184,7 @@ SendMailRadioButton_OnClick (index)  /WoW API/ UI\n  An index of 1 sets the mail
 ##### These are custom string functions available in WoW but not normal Lua.
 strtrim (string)  /WoW API/\n   - Trim leading and trailing spaces from string. 
 strsplit (delimiter, string)  /WoW API/\n   - Return a list of substrings separated by occurrences of the delimiter. 
-strjoin(delimiter, string[, ...])\n   - Join string arguments into a single string using delimiter as join symbol.
+strjoin (delimiter, string[, ...])  /WoW API/\n   - Join string arguments into a single string using delimiter as join symbol.
 
 ##### World of Warcraft includes the Lua BitLib library. They provide access to C-style bitwise manipulation operators. Implemented in WoW with patch 1.9
 bit.bnot (a)  /WoW API/\n   - returns the one's complement of a 
@@ -1440,8 +1440,8 @@ Raise ()  /WoW API/  method of Frame\n  Raise this frame above other frames.
 RefreshUnit ()  /WoW API/  method of PlayerModel
 RegisterAllEvents ()  /WoW API/  method of Frame\n  Register this frame to receive all events (For debugging purposes only!) - New in 1.11.
 RegisterEvent ("event")  /WoW API/  method of Frame\n  Indicate that this frame should be notified when event occurs.
-RegisterForClicks("clickType"[,"clickType"...])  method of Button\n  Specify which mouse button up/down actions cause this button to receive an OnClick notification.
-RegisterForDrag("buttonType"[,"buttonType"...])  method of Frame\n  Inidicate that this frame should be notified of drag events for the specified buttons.
+RegisterForClicks ("clickType"[,"clickType"...])  /WoW API/  method of Button\n  Specify which mouse button up/down actions cause this button to receive an OnClick notification.
+RegisterForDrag ("buttonType"[,"buttonType"...])  /WoW API/  method of Frame\n  Inidicate that this frame should be notified of drag events for the specified buttons.
 ReplaceIconTexture ("texture")  /WoW API/  method of Model
 Save ()  /WoW API/  method of TabardModel\n  Save the tabard.
 ScrollDown ()  /WoW API/  method of ScrollingMessageFrame
@@ -1546,7 +1546,7 @@ SetNumber (number)  /WoW API/  method of EditBox
 SetNumeric (state)  /WoW API/  method of EditBox\n  Set if the EditBox only accepts numeric input - New in 1.11.
 SetOrientation ("orientation")  /WoW API/  method of Slider\n  "HORIZONTAL" or "VERTICAL".
 SetOrientation ()  /WoW API/  method of StatusBar
-SetOwner(owner, "anchor"[, +x, +y])  method of GameTooltip
+SetOwner (owner, "anchor"[, +x, +y])  /WoW API/  method of GameTooltip
 SetPadding ()  /WoW API/  method of GameTooltip
 SetParent (parent or "parentName")  /WoW API/  method of Region\n  Set the parent for this frame - Moved in 1.10.
 SetPassword (state)  /WoW API/  method of EditBox\n  Set the EditBox's password masking state - New in 1.11.
