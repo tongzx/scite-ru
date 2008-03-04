@@ -310,6 +310,7 @@ class Buffer : public RecentFile {
 public:
 	sptr_t doc;
 	bool isDirty;
+	char *ROMarker; //!-add-[ReadOnlyTabMarker]
 	bool useMonoFont;
 	UniMode unicodeMode;
 	time_t fileModTime;
@@ -324,6 +325,7 @@ public:
 	void Init() {
 		RecentFile::Init();
 		isDirty = false;
+		ROMarker = NULL; //!-add-[ReadOnlyTabMarker]
 		useMonoFont = false;
 		unicodeMode = uni8Bit;
 		fileModTime = 0;

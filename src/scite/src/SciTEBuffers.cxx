@@ -914,6 +914,12 @@ void SciTEBase::BuffersMenu() {
 				strcat(entry, " *");
 				strcat(titleTab, " *");
 			}
+//!-start-[ReadOnlyTabMarker]
+			if (buffers.buffers[pos].ROMarker != NULL) {
+				strcat(entry, buffers.buffers[pos].ROMarker);
+				strcat(titleTab, buffers.buffers[pos].ROMarker);
+			}
+//!-end-[ReadOnlyTabMarker]
 
 			SetMenuItem(menuBuffers, menuStart + pos + 1, itemID, entry);
 			TabInsert(pos, titleTab);

@@ -578,6 +578,19 @@ sptr_t SciTEBase::SendEditor(unsigned int msg, uptr_t wParam, sptr_t lParam) {
 		}
 		return reinterpret_cast<sptr_t>(result);
 	} else {
+//!-start-[ReadOnlyTabMarker]
+		if (msg == SCI_SETREADONLY) {
+			if (buffers.buffers[buffers.Current()].ROMarker != NULL) {
+				delete[] buffers.buffers[buffers.Current()].ROMarker;
+				buffers.buffers[buffers.Current()].ROMarker = NULL;
+			}
+			if (wParam) {
+				SString mark = props.Get("tabbar.readonly.marker");
+				if (mark.length())
+					buffers.buffers[buffers.Current()].ROMarker = mark.detach();
+			}
+		}
+//!-end-[ReadOnlyTabMarker]
 		return fnEditor(ptrEditor, msg, wParam, lParam);
 	}
 }
@@ -4264,6 +4277,7 @@ void SciTEBase::MenuCommand(int cmdID, int source) {
 		SendEditor(SCI_SETREADONLY, isReadOnly);
 		UpdateStatusBar(true);
 		CheckMenus();
+		BuffersMenu(); //!-add-[ReadOnlyTabMarker]
 		break;
 
 	case IDM_VIEWTABBAR:
