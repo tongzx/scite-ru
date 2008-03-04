@@ -9,6 +9,7 @@ function IsComment(pos)
 	local style = editor.StyleAt[pos]
 	local lexer = editor.LexerLanguage
 	local comment = {
+		abap = {1, 2},
 		ada = {10},
 		asm = {1, 11},
 		au3 = {1, 2},
