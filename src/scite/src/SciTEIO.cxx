@@ -380,8 +380,10 @@ void SciTEBase::OpenFile(int fileSize, bool suppressMessage) {
 		}
 
 	} else if (!suppressMessage) {
-		SString msg = LocaliseMessage("Could not open file '^0'.", filePath.AsFileSystem());
-		WindowMessageBox(wSciTE, msg, MB_OK | MB_ICONWARNING);
+		if (props.GetInt("warning.couldnotopenfile.disable") != 1) { //!-add-[warning.couldnotopenfile.disable]
+			SString msg = LocaliseMessage("Could not open file '^0'.", filePath.AsFileSystem());
+			WindowMessageBox(wSciTE, msg, MB_OK | MB_ICONWARNING);
+		}
 	}
 	if (!SendEditor(SCI_GETUNDOCOLLECTION)) {
 		SendEditor(SCI_SETUNDOCOLLECTION, 1);
