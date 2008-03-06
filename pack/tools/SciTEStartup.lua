@@ -83,6 +83,9 @@ dofile (props["SciteDefaultHome"].."\\tools\\Select_And_Open_Filename.lua")
 
 ----[[ А В Т О М А Т И З А Ц И Я ]]-------------------------------------------
 
+-- Заменяет стандартную команду SciTE "File|New" (Ctrl+N). Создает новый буфер в текущем каталоге с расширением текущего файла
+dofile (props["SciteDefaultHome"].."\\tools\\new_file.lua")
+
 -- Включает HTML подсветку для файлов без расширения, открываемых из меню "просмотр HTML-кода" Internet Explorer
 dofile (props["SciteDefaultHome"].."\\tools\\set_html.lua")
 
