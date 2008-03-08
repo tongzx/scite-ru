@@ -1,6 +1,6 @@
 -- AutocompleteObject.lua
 -- mozersЩ
--- version 1.6.1
+-- version 1.7
 ------------------------------------------------
 -- ¬вод разделител€, заданного в autocomplete.[lexer].start.characters
 -- вызывает список свойств и медодов объекта из соответствующего api файла
@@ -54,6 +54,16 @@ local function InsertProp(sel_value)
 	return true
 end
 
+local function TableSort(table_name)
+	table.sort(table_name, function(a, b) return string.upper(a) < string.upper(b) end)
+	-- remove duplicates
+	for i = table.maxn(table_name)-1, 0, -1 do
+		if table_name[i] == table_name[i+1] then
+			table.remove (table_name, i+1)
+		end
+	end
+end
+
 local function AutocompleteObject(char)
 	if IsComment(editor.CurrentPos-2) then return false end
 
@@ -87,7 +97,7 @@ local function AutocompleteObject(char)
 			object_api = string.sub(api_object,1,len_obj)
 			if not (char == " " or char == "(") then
 				local str_method = string.sub(line,len_obj+1)
-				local end_str = string.find(str_method,'[^a-zA-Z_]')
+				local end_str = string.find(str_method,'[^0-9a-zA-Z_]')
 				if end_str ~= nil then
 					str_method = string.sub(str_method, 1, end_str-1)
 				end
@@ -107,7 +117,7 @@ local function AutocompleteObject(char)
 	-- Show UserList
 	local list_count = table.getn(user_list)
 	if list_count > 0 then
-		table.sort(user_list, function(a, b) return string.upper(a) < string.upper(b) end)
+		TableSort(user_list)
 		local s = table.concat(user_list, " ")
 		if s ~= '' then
 			prop_autocompleteword_automatic = props["autocompleteword.automatic"]
