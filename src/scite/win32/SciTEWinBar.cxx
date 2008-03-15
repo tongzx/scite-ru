@@ -933,7 +933,7 @@ void SciTEWin::Creation() {
 */
 //!-start-[user.toolbar]
 	TBADDBITMAP addbmp = { hInstance, IDR_BUTTONS };
-	::SendMessage(hwndToolBar, TB_ADDBITMAP, 30, (LPARAM)&addbmp);
+	::SendMessage(hwndToolBar, TB_ADDBITMAP, 31, (LPARAM)&addbmp);
 //!-end-[user.toolbar]
 /*!
 	TBBUTTON tbb[ELEMENTS(bbs)];

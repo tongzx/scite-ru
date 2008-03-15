@@ -4965,6 +4965,16 @@ void SciTEBase::CheckMenusClipboard() {
 
 void SciTEBase::CheckMenus() {
 	CheckMenusClipboard();
+//!-start-[SaveAllEnabled]
+	bool bSaveAllEnabled = false;
+	for ( int i = 0; i < buffers.length; i++) {
+		if (buffers.buffers[i].isDirty) {
+			bSaveAllEnabled = true;
+			break;
+		}
+	}
+	EnableAMenuItem(IDM_SAVEALL, bSaveAllEnabled);
+//!-end-[SaveAllEnabled]
 	EnableAMenuItem(IDM_SAVE, CurrentBuffer()->isDirty);
 	EnableAMenuItem(IDM_UNDO, SendFocused(SCI_CANUNDO));
 	EnableAMenuItem(IDM_REDO, SendFocused(SCI_CANREDO));
@@ -5111,6 +5121,14 @@ void SciTEBase::ContextMenu(Window wSource, Point pt, Window wCmd) {
 bool SciTEBase::IsMenuItemEnabled(int cmd) {
 	switch (cmd)
 	{
+	case IDM_SAVEALL:
+		{
+			for ( int i = 0; i < buffers.length; i++) {
+				if (buffers.buffers[i].isDirty) return true;
+			}
+			return false;
+		}
+		break;
 	case IDM_SAVE:
 		return CurrentBuffer()->isDirty;
 		break;
