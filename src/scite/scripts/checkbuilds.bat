@@ -82,6 +82,10 @@ cd scintilla\win32
 nmake -f scintilla_vc6.mak QUIET=1
 if ERRORLEVEL 2 goto ERROR
 cd ..\..
+cd scite\win32
+nmake -f scite_vc6.mak QUIET=1
+if ERRORLEVEL 2 goto ERROR
+cd ..\..
 rem
 rem ************************************************************
 rem Target 7: Visual C++ using scintilla\vcbuild\SciLexer.dsp
