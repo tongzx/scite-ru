@@ -18,7 +18,9 @@
 #define _WIN32_IE	0x0400
 #endif
 
+#ifndef _WIN32_WINNT //!-add-[SubMenu]
 #define _WIN32_WINNT  0x0400
+#endif //!-add-[SubMenu]
 #ifdef _MSC_VER
 // windows.h, et al, use a lot of nameless struct/unions - can't fix it, so allow it
 #pragma warning(disable: 4201)
