@@ -71,6 +71,7 @@ dofile (props["SciteDefaultHome"].."\\tools\\html_tags_autoclose.lua")
 
 -- Универсальное комментирование и снятие комментариев (по Ctrl+Q)
 dofile (props["SciteDefaultHome"].."\\tools\\xComment.lua")
+--~ dofile (props["SciteDefaultHome"].."\\tools\\smartcomment.lua")
 
 ----[[ О Т К Р Ы Т Ь  Ф А Й Л ]]----------------------------------------------
 
