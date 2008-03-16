@@ -1,422 +1,189 @@
-Abs (number)
-Array (arglist)
-Asc (string)
-Atn (number)
-CBool (expression)
-CByte (expression)
-CCur (expression)
-CDate (date)
-CDbl (expression)
-Chr (charcode)
-CInt (expression)
-CLng (expression)
-Cos (number)
-CSng (expression)
-CStr (expression)
-DateAdd (interval,number,date)
-DateDiff (interval,date1,date2,firstdayofweek[],firstweekofyear[])
-DatePart (interval,date,firstdayofweek[],firstweekofyear[]) 
-DateSerial (year,month,day)
-DateValue (date)
-Day (date)
-Eval (expression)
-Exp (number)
-Filter (InputStrings,Value,Include[],Compare[])
-Fix (number)
-FormatCurrency (Expression,NumDigitsAfterDecimal[],IncludeLeadDigit[],UseParens[],GroupDigits[])
-FormatDateTime (Date,NamedFormat[])
-FormatNumber (Expression,NumDigitsAfterDecimal[],IncludeLeadDigit[],UseParens[],GroupDigits[])
-FormatPercent (Expression,NumDigitsAfterDecimal[],IncludeLeadDigit[],UseParens[],GroupDigits[])
-GetObject (pathname[],class[])
-GetRef (procname)
-Hex (number)
-Hour (time)
-InputBox (prompt,title[],default[],xpos[],helpfile[],context[])
-InStr (start[],string1,string2,compare[])
-InStrRev (string1,string2,start[],compare[])
-Int (number)
-IsArray (varname)
-IsDate (expression)
-IsEmpty (expression)
-IsNull (expression)
-IsNumeric (expression)
-IsObject (expression)
-Join (list,delimiter[])
-LBound (arrayname,dimension[])
-LCase (string)
-Left (string,length)
-Len (string|varname)
-LoadPicture (picturename)
-Log (number)
-LTrim (string)
-Mid (string,start,length[])
-Minute (time)
-Month (date)
-MonthName (month,abbreviate[])
-Oct (number)
-Replace (expression,find,replacewith,start[],count[],compare[])
-RGB (red,green,blue)
-Right (string,length)
-Rnd (number[])
-Round (expression,numdecimalplaces[])
-RTrim (string)
-Second (time)
-Sgn (number)
-Sin (number)
-Space (number)
-Split (expression,delimiter[],count,compare[])
-Sqr (number)
-StrComp (string1,string2,compare[])
-String (number,character)
-StrReverse (string1)
-Tan (number)
-TimeSerial (hour,minute,second)
-TimeValue (time)
-Trim (string)
-TypeName (varname)
-UBound (arrayname,dimension[])
-UCase (string)
-VarType (varname)
-Weekday (date,firstdayofweek[])
-WeekdayName (weekday,abbreviate,firstdayofweek)
-Year (date)
+### Источник: Справочник "Некоторые объекты Automation" <http://www.script-coding.info/wsh_chm.zip>
 
-If
-Then
-Else
-End
-Do
-Loop
-Sub
-Function
-MsgBox
-MsgBox (prompt,buttons[],title[],helpfile[],context[])
-MsgBox ("Message",vbCritical,"Title")
+# Строковые функции
+Asc(str)\n Возвращает ASCII-код первого символа в строке str.
+Chr(code)\n Возвращает символ с ASCII-кодом code.
+InStr([start,] str1, str2[, compare])\n Возвращает индекс символа, с которого начинается первое вхождение подстроки str2 в строку str1. Параметр start задаёт номер символа, с которого следует начинать поиск (если не задан, то с начала строки). Поиск производится слева направо. Параметр compare задаёт режим сравнения при обработке строк (0 - двоичное сравнение, 1 - текстовое сравнение).
+InStrRev(str1, str2[, start[, compare]])\n То же самое, что InStr, но поиск производится справа налево, т.е возвращается номер последнего символа, с которого начинается вхождение подстроки str2 в строку str1.
+Join(list[, delim])\n Возвращает строку, полученную в результате конкатенации подстрок, содержащихся в массиве list. Параметр delim задаёт символ разделителя (по умолчанию - пробел).
+Split(expr[, delim[, count[, compare]]])\n Возвращает массив строк, полученных в результате разбиения строки expr на подстроки. Параметр delim задаёт символ разделителя (по умолчанию - пробел). Параметр count определяет число подстрок (по умолчанию - все). Параметр compare задаёт режим сравнения при обработке строк (0 - двоичное сравнение, 1 - текстовое сравнение).
+LCase(str)\n Возвращает строку, в которой все символы преобразованы к нижнему регистру.
+UCase(str)\n Возвращает строку, в которой все символы преобразованы к верхнему регистру.
+Left(str, len)\n Возвращает len символов с начала строки str.
+Right(str, len)\n Возвращает len символов с конца строки str.
+Mid(str, start[, len]))\n Возвращает из строки str подстроку, которая начинается с позиции start и имеет длину len. Если параметр len не указан, возвращаются все символы до конца строки.
+Len(str)\n Возвращает число символов в строке str.
+LTrim(str)\n Возвращает строку, в которой удалены все начальные пробелы.
+RTrim(str)\n Возвращает строку, в которой удалены все конечные пробелы.
+Trim(str)\n Возвращает строку, в которой удалены все начальные и конечные пробелы.
+Replace(expr, find, replacewith[, start[, count[, compare]]])\n Возвращает строку, которая получается из строки expr путём замен входящих в неё подстрок find на подстроки replacewith. Параметр start определяет начальную позицию поиска. Параметр count определяет число замен (по умолчанию - все). Параметр compare задаёт режим сравнения при обработке строк (0 - двоичное сравнение, 1 - текстовое сравнение).
+Space(x)\n Возвращает строку, состоящую из х пробелов.
+String(number, char)\n Возвращает строку, состоящую из number символов char.
+StrComp(str1, str2[, compare])\n Сравнивает строки. Если str1<str2, возвращается -1, если str1=str2, возвращается 0, если str1>str2, возвращается 1. Параметр compare задаёт режим сравнения при обработке строк (0 - двоичное сравнение, 1 - текстовое сравнение).
+StrReverse(str)\n Возвращает строку, полученную из строки str путём изменения порядка символов в строке на обратный.
+FormatCurrency(expr[, numDigitsAfterDecimal[, includeLeadDigit[, useParens[, groupDigits]]]])\n Возвращает строку, отформатированную в денежном формате. Параметр expr задаёт значение для форматирования. Если необязательные параметры не заданы, значения берутся из региональных настроек. Параметр numDigitsAfterDecimal задаёт количество десятичных разрядов справа от точки. Параметр includeLeadDigit задаёт отображение лидирующих нулей для дробных значений (true или false). Параметр useParens задаёт отображение скобок для отрицательных значений (true или false). Параметр groupDigits задаёт группировку разрядов с использованием разделителя из региональных настроек (true или false).
+FormatDateTime(date[, namedFormat])\n Возвращает строку, отформатированную в формате даты-времени. Параметр date задаёт значение для форматирования. Параметр namedFormat задаёт способ форматирования (см. описание констант форматов даты и времени в разделе "Константы даты и времени").
+FormatNumber(expr[, numDigitsAfterDecimal[, includeLeadDigit[, useParens[, groupDigits]]]])\n Возвращает строку, отформатированную в числовом формате. Параметр expr задаёт значение для форматирования. Если необязательные параметры не заданы, значения берутся из региональных настроек. Параметр numDigitsAfterDecimal задаёт количество десятичных разрядов справа от точки. Параметр includeLeadDigit задаёт отображение лидирующих нулей для дробных значений (true или false). Параметр useParens задаёт отображение скобок для отрицательных значений (true или false). Параметр groupDigits задаёт группировку разрядов с использованием разделителя из региональных настроек (true или false).
+FormatPercent(expr[, numDigitsAfterDecimal[, includeLeadDigit[, useParens[, groupDigits]]]])\n Возвращает строку, отформатированную в процентном формате (аргумент умножается на 100). Параметр expr задаёт значение для форматирования. Если необязательные параметры не заданы, значения берутся из региональных настроек. Параметр numDigitsAfterDecimal задаёт количество десятичных разрядов справа от точки. Параметр includeLeadDigit задаёт отображение лидирующих нулей для дробных значений (true или false). Параметр useParens задаёт отображение скобок для отрицательных значений (true или false). Параметр groupDigits задаёт группировку разрядов с использованием разделителя из региональных настроек (true или false).
 
-Date
-Now
-ScriptEngine
-ScriptEngineBuildVersion
-ScriptEngineMajorVersion
-ScriptEngineMinorVersion
-Time
-Timer
-Terminate
-Status
+# Математические функции
+Abs(x)\n Возвращает абсолютное значение числа x.
+Int(x)\n Возвращает целую часть числа x. Если х - отрицательное число, функция вернёт ближайшее целое число, меньшее, чем х.
+Fix(x)\n Возвращает целую часть числа x. Если х - отрицательное число, функция вернёт ближайшее целое число, большее, чем х.
+Sgn(x)\n Знаковая функция числа x. Возвращает 1 для чисел больше нуля, 0 для нуля и -1 для чисел меньше нуля.
+Round(x, [numdecimal])\n Возвращает результат округления числа x с точностью до numdecimal знаков после запятой.
+Rnd([x])\n Возвращает случайное число от 0 до 1. Необязательный аргумент является начальным значением для генерации случайных чисел.
+Sqr(x)\n Возвращает квадратный корень числа x.
+Sin(x)\n Возвращает синус числа x.
+Cos(x)\n Возвращает косинус числа x.
+Tan(x)\n Возвращает тангенс числа x.
+Atn(x)\n Возвращает арктангенс числа x.
+Exp(x)\n Экспоненциальная функция, возвращает число е в степени x.
+Log(x)\n Возвращает натуральный логарифм числа x.
 
-StdIn.AtEndOfLine
-StdIn.AtEndOfStream
-StdIn.Column
-StdIn.Line
-StdIn.Close
-StdIn.Read
-Read (characters)
-StdIn.ReadAll
-StdIn.ReadLine
-StdIn.Skip
-Skip (characters)
-StdIn.SkipLine
-StdIn.Write
-Write (string)
-StdIn.WriteLine
-WriteLine ([string])
-StdIn.WriteBlankLines
-WriteBlankLines (lines)
-StdOut.AtEndOfLine
-StdOut.AtEndOfStream
-StdOut.Column
-StdOut.Line
-StdOut.Close
-StdOut.Read
-Read (characters)
-StdOut.ReadAll
-StdOut.ReadLine
-StdOut.Skip
-Skip (characters)
-StdOut.SkipLine
-StdOut.Write
-Write (string)
-StdOut.WriteLine
-WriteLine ([string])
-StdOut.WriteBlankLines
-WriteBlankLines (lines)
-StdErr.AtEndOfLine
-StdErr.AtEndOfStream
-StdErr.Column
-StdErr.Line
-StdErr.Close
-StdErr.Read
-Read (characters)
-StdErr.ReadAll
-StdErr.ReadLine
-StdErr.Skip
-Skip (characters)
-StdErr.SkipLine
-StdErr.Write
-Write (string)
-StdErr.WriteLine
-WriteLine ([string])
-StdErr.WriteBlankLines
-WriteBlankLines (lines)
+# Функции для работы с датой и временем
+Date\n Возвращает текущую системную дату.
+Now\n Возвращает текущие системные дату и время в виде, соответствующем региональным настройкам Windows.
+Time\n Возвращает текущее системное время.
+Timer\n Возвращает количество секунд, прошедших с полуночи.
+IsDate(expr)\n Возвращает true, если параметр expr задаёт корректную дату, и false в противном случае.
+Year(date)\n Выделяет год из даты, заданной параметром date, и возвращает это целое число.
+Month(date)\n Выделяет номер месяца из даты, заданной параметром date, и возвращает целое число от 1 до 12.
+Day(date)\n Выделяет номер дня месяца из даты, заданной параметром date, и возвращает целое число от 1 до 31.
+Weekday(date[, firstdayofweek])\n Возвращает целое число - день недели для даты, заданной параметром date. Параметр firstdayofweek - константа, показывающая, какой из дней недели считать первым.
+Hour(time)\n Выделяет номер часа из даты или момента времени, заданных параметром time, и возвращает целое число от 0 до 23.
+Minute(time)\n Выделяет количество минут из даты или момента времени, заданных параметром time, и возвращает целое число от 0 до 59.
+Second(time)\n Выделяет количество секунд из даты или момента времени, заданных параметром time, и возвращает целое число от 0 до 59.
+DateValue(date)\n Возвращает переменную подтипа Date, которая соответствует дате, заданной символьным параметром date.
+TimeValue(time)\n Возвращает переменную подтипа Date, которая соответствует времени, заданному символьным параметром time.
+DateSerial(year, month, day)\n Возвращает переменную подтипа Date, которая соответствует указанным году (параметр year), месяцу (параметр month) и дню (параметр day).
+TimeSerial(hour, minute, second)\n Возвращает переменную подтипа Date, которая соответствует указанным часу (параметр hour), минуте (параметр minute) и секунде (параметр second).
+MonthName(month[, abbr])\n Возвращает наименование для месяца с номером month. Если параметр abbr равен true, наименование месяца представляется в виде аббревиатуры, если false - в полном виде.
+WeekdayName(weekday[, abbr[, firstdayofweek]])\n Возвращает наименование дня недели с порядковым номером weekday. Если параметр abbr равен true, наименование дня недели представляется в виде аббревиатуры, если false - в полном виде. Параметр firstdayofweek - константа, показывающая, какой из дней недели считать первым.
+DateAdd(interval, number, date)\n Возвращает дату, отстоящую от даты date на number интервалов, заданных параметром interval, который может принимать значения:\n"yyyy" - год\n"q" - квартал\n"m" - месяц\n"y" - день года\n"d" - день\n"w" - день недели\n"ww" - неделя года\n"h" - час\n"n" - минута\n"s" - секунда
+DateDiff(interval, date1, date2[, firstdayofweek[, firstweekofyear]])\n Возвращает количество интервалов interval между датами date1 и date2. Возможные значения параметра interval - те же, что и в функции DateAdd. Параметр firstdayofweek - константа, показывающая, какой из дней недели считать первым. Параметр firstweekofyear - константа, показывающая, какую неделю считать первой в году.
+DatePart(interval, date[, firstdayofweek[, firstweekofyear]])\n Возвращает ту часть даты, которая соответствует параметру interval. Возможные значения параметра interval - те же, что и в функции DateAdd. Параметр firstdayofweek - константа, показывающая, какой из дней недели считать первым. Параметр firstweekofyear - константа, показывающая, какую неделю считать первой в году.
 
-Err.Description
-Err.HelpContext
-Err.HelpFile
-Err.Number
-Err.Source
-Err.Clear
-Err.Raise
-Raise (number,source,description,helpfile,helpcontext)
+# Прочие функции
+Array(arglist)\n Возвращает массив, составленный из элементов списка arglist. Элементы в списке arglist должны быть отделены друг от друга запятыми.
+LBound(arrayname[, dimension])\n Возвращает наименьшее значение, которое которое может принимать индекс в массиве arrayname в размерности dimension (по умолчанию параметр dimension равен 1).
+UBound(arrayname[, dimension])\n Возвращает наибольшее значение, которое которое может принимать индекс в массиве arrayname в размерности dimension (по умолчанию параметр dimension равен 1).
+Filter(inputStrings, value[, include[, compare]])\n Возвращает массив, созданный путём фильтрации переданного массива по заданным критериям. Параметр inputStrings - исходный одномерный массив строк. Параметр value - строка, критерий отбора. Параметр include - если задано true, в результат попадут только строки, которые содержат подстроку value, если задано false - в результат попадут только строки, которые не содержат подстроку value. Параметр compare - тип сравнения (0 - двоичный, 1 - текстовый).
+IsArray(varname)\n Возвращает true, если параметр varname является массивом, и false в противном случае.
+IsDate(varname)\n Возвращает true, если параметр varname задаёт корректную дату, и false в противном случае.
+IsEmpty(varname)\n Возвращает true, если переменная varname объявлена, но не инициализирована, и false в противном случае.
+IsNull(varname)\n Возвращает true, если переменная varname не содеоржит никаких корректных данных, и false в противном случае.
+IsNumeric(varname)\n Возвращает true, если переменная varname может быть рассмотрена в качестве числа, и false в противном случае.
+IsObject(varname)\n Возвращает true, если переменная varname является указателем на внешний объект, и false в противном случае.
+VarType(varname)\n Возвращает числовое значение, соответствующее подтипу переменной varname (см. описание констант подтипов данных в разделе "Прочие константы").
+TypeName(varname)\n Возвращает строку, содержащую тип переменной varname.
+Hex(number)\n Возвращает шестнадцатеричное представление (в символьном виде) числа number.
+Oct(number)\n Возвращает восьмеричное представление (в символьном виде) числа number.
+MsgBox(prompt[, buttons][, title][, helpfile, context])\n Выводит на экран диалоговое окно с сообщением и различными кнопками и возвращает результат нажатия на одну из кнопок. Возможные варианты возврата - см. описание констант нажатий на кнопки в разделе "Константы для диалоговых окон". Параметр prompt задаёт текст сообщения. Числовой параметр buttons определяет состав кнопок, значок, кнопку по умолчанию и режим модальности окна - см. описание констант в разделе "Константы для диалоговых окон" (значения необходимых констант для передачи в параметр buttons нужно просто сложить). Параметр title задаёт текст заголовка диалогового окна. Параметр helpfile задаёт путь к файлу помощи. Параметр context задаёт идентификатор содержания помощи.
+InputBox(prompt[, title][, default][, xpos][, ypos][, helpfile, context])\n Выводит на экран диалоговое окно со полем ввода и кнопками ОК, Отмена и возвращает введённую в этом окне символьную строку. Параметр prompt задаёт текст сообщения, которое выводится рядом с полем ввода. Параметр title задаёт текст заголовка диалогового окна. Параметр default задаёт значение по умолчанию для поля ввода. Параметры xpos и ypos определяют координаты левого верхнего угла окна. Параметр helpfile задаёт путь к файлу помощи. Параметр context задаёт идентификатор содержания помощи.
+CreateObject(servername.typename[, location])\n Создаёт экземпляр объекта автоматизации и возвращает ссылку на него. Здесь servername - имя приложения, являющегося сервером автоматизации, typename - тип или класс создаваемого объекта, location - сетевое имя компьютера, на котором будет создан объект.
+GetObject([pathname][, classname])\n Возвращает ссылку на объект класса classname, который хранится в отдельном файле, путь к которому задаётся параметром pathname.
+CBool(expr)\n Возвращает значение, полученное в результате преобразования выражения expr к подтипу данных boolean (true или false). Например, CBool(3=2) или CBool("-1").
+CByte(expr)\n Возвращает значение, полученное в результате преобразования выражения expr к подтипу данных byte (целое число от 0 до 255). Например, CByte(256) вызовет ошибку переполнения.
+CCur(expr)\n Возвращает значение, полученное в результате преобразования выражения expr к подтипу данных currency (специальный числовой формат для денежных величин).
+CDate(expr)\n Возвращает значение, полученное в результате преобразования выражения expr к подтипу данных date/time (даты от 1 января 100 года до 31 декабря 9999 года).
+CDbl(expr)\n Возвращает значение, полученное в результате преобразования выражения expr к подтипу данных double (числа с плавающей точкой двойной точности).
+CInt(expr)\n Возвращает значение, полученное в результате преобразования выражения expr к подтипу данных integer (целые числа в диапазоне от -32768 до 32768).
+CLng(expr)\n Возвращает значение, полученное в результате преобразования выражения expr к подтипу данных long (целые числа в диапазоне от -2 147 483 648 до 2 147 483 647).
+CSng(expr) Возвращает значение, полученное в результате преобразования выражения expr к подтипу данных single (числа с плавающей точкой одинарной точности).
+CStr(expr)\n Возвращает значение, полученное в результате преобразования выражения expr к подтипу данных string.
+Eval(expr)\n Вычисляет выражение и возвращает результат. Например, Eval(3=2).
+GetLocale\n Возвращает текущее значение (ID) настроек локализации (набор установок языка, региона, раскладки клавиатуры и т.д.). Возможные значения - см. MSDN статью "Locale ID (LCID) Chart".
+SetLocale(lcid)\n Возвращает текущее значение (ID) настроек локализации (набор установок языка, региона, раскладки клавиатуры и т.д.) и устанавливает новое. Возможные значения - см. MSDN статью "Locale ID (LCID) Chart".
+ScriptEngine\n Возвращает название текущего языка, например, "VBScript".
+ScriptEngineBuildVersion\n Возвращает номер сборки текущей среды исполнения скриптов.
+ScriptEngineMajorVersion\n Возвращает номер версии текущей среды исполнения скриптов.
+ScriptEngineMinorVersion\n Возвращает номер подверсии текущей среды исполнения скриптов.
+RGB(red, green, blue)\n Возвращает целочисленное значение, соответствующее цвету RGB, заданному с помощью трёх составляющих - красного, зелёного и синего цветов числами от 0 до 255.
 
-WScript.Application
-WScript.Arguments
-WScript.FullName
-WScript.Name
-WScript.Path
-WScript.ScriptFullName
-WScript.ScriptName
-WScript.StdErr
-WScript.StdIn
-WScript.StdOut
-WScript.Version
-WScript.ConnectObject
-ConnectObject (strObject,strPrefix)
-WScript.CreateObject
-CreateObject (servername.typename,location[])
-CreateObject (strProgID,strPrefix[])
-CreateObject ("WScript.Shell")
-InternetExplorer.Application
-Scripting.FileSystemObject
-WScript.DisconnectObject
-DisconnectObject (object)
-WScript.Echo
-Echo (Echostring)
-WScript.GetObject
-GetObject (strPathname,strProgId[],strPrefix[])
-WScript.Quit
-Quit (intErrorCode[])
-WScript.Sleep
-Sleep (intTime)
+# Константы для диалоговых окон
+vbOKOnly\n 0 Выводится кнопка ОК.
+vbOKCancel\n 1 Выводятся кнопки ОК и Отмена (Cancel).
+vbAbortRetryIgnore\n 2 Выводятся кнопки Стоп (Abort), Повтор (Retry) и Пропустить (Ignore).
+vbYesNoCancel\n 3 Выводятся кнопки Да (Yes), Нет (No) и Отмена (Cancel).
+vbYesNo\n 4 Выводятся кнопки Да (Yes) и Нет (No).
+vbRetryCancel\n 5 Выводятся кнопки Повтор (Retry) и Отмена (Cancel).
+vbCritical\n 16 Выводится значок Stop Mark.
+vbQuestion\n 32 Выводится значок Question Mark.
+vbExclamation\n 48 Выводится значок Exclamation Mark.
+vbInformation\n 64 Выводится значок Information Mark.
+vbDefaultButton1\n 0 По умолчанию в окне выбирается первая кнопка.
+vbDefaultButton2\n 256 По умолчанию в окне выбирается вторая кнопка.
+vbDefaultButton3\n 512 По умолчанию в окне выбирается третья кнопка.
+vbDefaultButton4\n 768 По умолчанию в окне выбирается четвёртая кнопка.
+vbApplicationModal\n 0 Диалоговое окно выводится в модальном режиме.
+vbSystemModal\n 4096 Диалоговое окно выводится в модальном режиме и располагается сверху всех запускаемых приложений.
+vbOK\n 1 Нажата кнопка ОК.
+vbCancel\n 2 Нажата кнопка Отмена (Cancel).
+vbAbort\n 3 Нажата кнопка Стоп (Abort).
+vbRetry\n 4 Нажата кнопка Повтор (Retry).
+vbIgnore\n 5 Нажата кнопка Пропустить (Ignore).
+vbYes\n 6 Нажата кнопка Да (Yes).
+vbNo\n 7 Нажата кнопка Нет (No).
 
-Arguments.Item
-Arguments.Count
-Arguments.Length
+# Строковые константы
+vbCr\n Chr(13) Возврат каретки.
+VbCrLf\n Chr(13) & Chr(10) Возврат каретки и перевод строки.
+vbFormFeed\n Chr(12) Перевод страницы.
+vbLf\n Chr(10) Перевод строки.
+vbNewLine\n Chr(13) & Chr(10) or Chr(10) Определяемый платформой (подходящий) символ новой строки.
+vbNullChar\n Chr(0) Символ с нулевым кодом.
+vbNullString\n Нулевая строка Не тоже самое, что строка нулевой длины ("").
+vbTab\n Chr(9) Символ табуляции.
+vbVerticalTab\n Chr(11) Символ вертикальной табуляции
 
-WScript.Shell
-WshShell.Environment
-Environment (strType[])
-WshShell.SpecialFolders
-SpecialFolders (strFolder)
-WshShell.AppActivate
-AppActivate (title)
-WshShell.CreateShortcut
-CreateShortcut (strPathName)
-WshShell.Exec
-Exec (strCommand)
-Exec ("calc.exe")
-WshShell.ExpandEnvironmentStrings
-ExpandEnvironmentStrings (strString)
-WshShell.LogEvent
-LogEvent (intType,strMessage,strTarget[])
-WshShell.Popup
-Popup (strtext,[natSecondstoWait],[strTitle],[natType])
-Popup ("Message",0,"Title",vbInformation+vbOKOnly)
-WshShell.RegDelete
-RegDelete (strName)
-WshShell.RegRead
-RegRead (strname)
-WshShell.RegWrite
-RegWrite (strname,anyvalue,[strType])
-WshShell.Run
-Run (strCommand,[intWindowType],[bWaitOnReturn])
-Run ("notepad.exe",1,true)
-WshShell.SendKeys
-SendKeys (string)
+# Константы даты и времени
+vbSunday\n 1 Воскресенье
+vbMonday\n 2 Понедельник
+vbTuesday\n 3 Вторник
+vbWednesday\n 4 Среда
+vbThursday\n 5 Четверг
+vbFriday\n 6 Пятница
+vbSaturday\n 7 Суббота
+vbUseSystemDayOfWeek\n 0 Использовать для определения первого дня недели региональные настройки системы.
+vbFirstJan1\n 1 Первой неделей в году считается та, в которой было 1 января.
+vbFirstFourDays\n 2 Первой неделей в году считается та, в которой было по крайней мере четыре дня нового года.
+vbFirstFullWeek\n 3 Первой неделей в году считается первая полная неделя.
+vbGeneralDate\n 0 Дата и время выводятся в формате, определяемом региональными настройками системы.
+vbLongDate\n 1 Выводить дату, используя полный формат.
+vbShortDate\n 2 Выводить дату, используя краткий формат.
+vbLongTime\n 3 Выводить время, используя полный формат.
+vbShortTime\n 4 Выводить время, используя краткий формат.
 
-SpecialFolders.Item
-Item (nIndex)
-SpecialFolders.Count
-SpecialFolders.length
-
-WScript.Network
-Network.ComputerName
-Network.UserDomain
-Network.UserName
-Network.AddPrinterConnection
-AddPrinterConnection (strLocalName,strRemoteName,[bUpdateProfile],[strUser],[strPassword])
-Network.AddWindowsPrinterConnection
-AddWindowsPrinterConnection (strPrinterPath,strDriverName[,strPort])
-Network.MapNetworkDrive
-MapNetworkDrive (strLocalName,strRemoteName,[bUpdateProfile],[strUser],[strPassword])
-Network.RemoveNetworkDrive
-RemoveNetworkDrive (strName,[bForce],[bUpdateProfile])
-Network.RemovePrinterConnection
-RemovePrinterConnection (strName,[bForce],[bUpdateProfile])
-Network.SetDefaultPrinter
-SetDefaultPrinter (strPrinterName)
-Network.EnumNetworkDrives
-EnumNetworkDrives.Item
-EnumNetworkDrives.Count
-EnumNetworkDrives.length
-Network.EnumPrinterConnections
-EnumPrinterConnections.Item
-EnumPrinterConnections.Count
-EnumPrinterConnections.length
-
-Environment.Item
-Environment.Count
-Environment.length
-Environment.Remove
-Remove (strName)
-
-Shortcut.Arguments
-Shortcut.Description
-Shortcut.FullName
-Shortcut.Hotkey
-Shortcut.IconLocation
-Shortcut.TargetPath
-Shortcut.WindowStyle
-Shortcut.WorkingDirectory
-Shortcut.Save
-
-Dictionary.CompareMode
-Dictionary.Count
-Dictionary.Item
-Dictionary.Key
-Dictionary.Add
-Add (key,item)
-Dictionary.Exists
-Exists (key)
-Dictionary.Items
-Dictionary.Keys
-Dictionary.Remove (key)
-Remove (key)
-Dictionary.RemoveAll
-
-fso.Drives
-fso.BuildPath
-BuildPath (path,name)
-fso.CopyFile
-CopyFile (source,destination,[overwrite])
-fso.CopyFolder
-CopyFolder (source,destination,[overwrite])
-fso.CreateFolder
-CreateFolder (foldername)
-fso.CreateTextFile
-CreateTextFile (filename,[overwrite,[unicode]])
-CreateTextFile ("c:\testfile.txt",true)
-fso.DeleteFile
-DeleteFile (filespec,[force])
-fso.DeleteFolder
-DeleteFolder (folderspec,[force])
-fso.DriveExists
-DriveExists (drivespec)
-fso.FileExists
-FileExists (filespec)
-fso.FolderExists
-FolderExists (folderspec)
-fso.GetAbsolutePathName
-GetAbsolutePathName (pathspec)
-fso.GetBaseName
-GetBaseName (path)
-fso.GetDrive
-GetDrive (drivespec)
-fso.GetDriveName
-GetDriveName (path)
-fso.GetExtensionName
-GetExtensionName (path)
-fso.GetFile
-GetFile (filespec)
-fso.GetFileName
-GetFileName (pathspec)
-fso.GetFolder
-GetFolder (folderspec)
-fso.GetParentFolderName
-GetParentFolderName (path)
-fso.GetSpecialFolder
-GetSpecialFolder (folderspec)
-fso.GetTempName
-fso.MoveFile
-MoveFile (source,destination)
-fso.MoveFolder
-MoveFolder (source,destination)
-fso.OpenTextFile
-OpenTextFile (filename,[iomode,[create,[format]]])
-OpenTextFile ("c:\testfile.txt",ForAppending,true)
-
-Drive.AvailableS
-Drive.DriveLette
-Drive.DriveType
-Drive.FileSystem
-Drive.FreeSpace
-Drive.IsReady
-Drive.Path
-Drive.RootFolder
-Drive.SerialNumb
-Drive.ShareName
-Drive.TotalSize
-Drive.VolumeName
-Drive.Drives
-Drives.Count
-Drives.Item
-
-file.Attributes
-file.DateCreated
-file.DateLastAccessed
-file.DateLastModified
-file.Drive
-file.Name
-file.ParentFolder
-file.Path
-file.ShortName
-file.ShortPath
-file.Size
-file.Type
-file.Copy
-Copy (destination,[overwrite])
-file.Delete
-Delete (force)
-file.Move
-Move (destination)
-file.OpenAsTextStream
-OpenAsTextStream ([iomode],[format])
-file.SubFolders
-
-file.AtEndOfLine
-file.AtEndOfStream
-file.Column
-file.Line
-file.Close
-file.Read
-file.ReadAll
-file.ReadLine
-file.Skip
-file.SkipLine
-file.Write
-file.WriteLine
-file.WriteBlankLines
-
-file.Files
-Files.Count
-Files.Item
-
-file.SubFolders
-SubFolders.Count
-SubFolders.Item
-SubFolders.Add
-Add (foldername)
-
-SciTE.About
-SciTE.GetSelText = String\n Get selected text
-SciTE.GetText = String\n Get all text in document
-SciTE.Height = Value
-SciTE.Left = Value
-SciTE.Top = Value
-SciTE.Width = Value
-SciTE.LUA (Command) = Result\n run command use SciTE Lua Scripting Extension
-SciTE.MenuCommand (IDM_Command)\n run specifed menu command
-SciTE.OnTop (WindowName, true|false)\n Set OnTop specifed window
-SciTE.Props (Key) = Value\n Return or set the value of a property
-SciTE.ReplaceSel (ReplaceText)\n Replace selected text
-SciTE.Send (String) = Result\n run String command SciTE Director Interface
-SciTE.Trace (String)\n in SciTE, writes String to the output pane (no prefix, no newlines)
+# Прочие константы
+vbBlack\n &h00 Чёрный цвет
+vbRed\n &hFF Красный цвет
+vbGreen\n &hFF00 Зелёный цвет
+vbYellow\n &hFFFF Жёлтый цвет
+vbBlue\n &hFF0000 Синий цвет
+vbMagenta\n &hFF00FF Фиолетовый цвет
+vbCyan\n &hFFFF00 Бирюзовый (голубой) цвет
+vbWhite\n &hFFFFFF Белый цвет
+vbBinaryCompare\n 0 Определяет двоичное сравнение.
+vbTextCompare\n 1 Определяет текстовое сравнение.
+vbObjectError\n -2147221504 Определяет минимальное значение для номеров ошибок, задаваемых пользователем.
+vbUseDefault\n -2 Использовать значения по умолчанию из региональных настроек системы.
+vbTrue\n -1 Логическое значение "Истина".
+vbFalse\n 0 Логическое значение "Ложь".
+vbEmpty\n 0 Переменная не инициализирована.
+vbNull\n 1 Переменная не содержит корректных данных.
+vbInteger\n 2 Переменная имеет подтип Integer.
+vbLong\n 3 Переменная имеет подтип Long.
+vbSingle\n 4 Переменная имеет подтип Single.
+vbDouble\n 5 Переменная имеет подтип Double.
+vbCurrency\n 6 Переменная имеет подтип Currency.
+vbDate\n 7 Переменная имеет подтип Date.
+vbString\n 8 Переменная имеет подтип String.
+vbObject\n 9 Переменная имеет подтип Object.
+vbError\n 10 Переменная имеет подтип Error.
+vbBoolean\n 11 Переменная имеет подтип Boolean.
+vbVariant\n 12 Переменная имеет подтип Variant (только для массивов переменных типа Variant).
+vbDataObject\n 13 Объект доступа к данным.
+vbDecimal\n 14 Переменная имеет подтип Decimal.
+vbByte\n 17 Переменная имеет подтип Byte.
+vbArray\n 8192 Переменная является массивом.

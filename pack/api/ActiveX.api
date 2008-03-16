@@ -1,0 +1,317 @@
+#~~ Формат записи для автоматического открытия списка методов объекта после ввода разделителя:
+#~~ [Объект][Символ разделителя][Метод], т.е.
+#~~ WshShell.AppActivate
+
+#~~ Формат записи синонимов (без них список методов будет открываться ТОЛЬКО при точном соответсвии имени объекта с записью в этом файле):
+#~~ [Символ # в начале строки и за ним без пробела][Имя объекта в этом файле]=[Стринг для его создания], т.е.
+#~~ #WshShell=WScript.Shell
+
+#~~ Всплывающие посказки:
+#~~ Неправильная запись (чтобы она сработала необходимо выполнение многих нехороших условий)
+#~~ WshShell.AppActivate(App as Variant[, Wait as Variant]) as Boolean
+#~~ Правильная запись (метод и содержимое подсказки записываются отдельной строкой)
+#~~ AppActivate(App as Variant[, Wait as Variant]) as Boolean
+
+WScript.Arguments
+WScript.ConnectObject
+WScript.CreateObject
+WScript.DisconnectObject
+WScript.Echo
+WScript.FullName
+WScript.GetObject
+WScript.Interactive
+WScript.Name
+WScript.Path
+WScript.Quit
+WScript.ScriptFullName
+WScript.ScriptName
+WScript.Sleep
+WScript.StdErr
+WScript.StdIn
+WScript.StdOut
+WScript.Version
+
+#WshShell=WScript.Shell
+WshShell.AppActivate(App as Variant[, Wait as Variant]) as Boolean
+AppActivate(App as Variant[, Wait as Variant]) as Boolean
+WshShell.CreateShortcut(PathLink as String) as Object
+CreateShortcut(PathLink as String) as Object
+WshShell.CurrentDirectory(Command as String) as String
+CurrentDirectory(Command as String) as String
+WshShell.Environment([Type as Variant])
+Environment([Type as Variant])
+WshShell.Exec(Command as String)
+Exec(Command as String)
+WshShell.ExpandEnvironmentStrings(Src as String) as String
+ExpandEnvironmentStrings(Src as String) as String
+WshShell.LogEvent(Type as Variant, Message as String[, Target as String]) as Boolean
+LogEvent(Type as Variant, Message as String[, Target as String]) as Boolean
+WshShell.Popup(Text as String[, SecondsToWait as Variant][, Title as Variant][, Type as Variant]) as Long
+Popup(Text as String[, SecondsToWait as Variant][, Title as Variant][, Type as Variant]) as Long
+WshShell.RegDelete(Name as String)
+RegDelete(Name as String)
+WshShell.RegRead(Name as String) as Variant
+RegRead(Name as String) as Variant
+WshShell.RegWrite(Name as String, Value as Variant[, Type as Variant])
+RegWrite(Name as String, Value as Variant[, Type as Variant])
+WshShell.Run(Command as String[, WindowStyle as Variant][, WaitOnReturn as Variant]) as Long
+Run(Command as String[, WindowStyle as Variant][, WaitOnReturn as Variant]) as Long
+WshShell.SendKeys(Keys as String[, Wait as Variant])
+SendKeys(Keys as String[, Wait as Variant])
+WshShell.SpecialFolders
+
+#WshShortcut=WshShell.CreateShortcut
+WshShortcut.Arguments as String
+WshShortcut.Description as String
+WshShortcut.FullName as String
+WshShortcut.Hotkey as String
+WshShortcut.IconLocation as String
+WshShortcut.RelativePath as String
+WshShortcut.Save
+WshShortcut.TargetPath as String
+WshShortcut.WindowStyle as Long
+WshShortcut.WorkingDirectory as String
+
+#WshURLShortcut=WshShell.CreateShortcut
+WshURLShortcut.FullName as String
+WshURLShortcut.Save
+WshURLShortcut.TargetPath as String
+WshURLShortcut.eee
+
+#WshEnvironment=WshShell.Environment
+WshEnvironment.Count(Name as String) as Long
+Count(Name as String) as Long
+WshEnvironment.Item(Name as String) as String
+Item(Name as String) as String
+WshEnvironment.Remove(Name as String)
+Remove(Name as String)
+WshEnvironment.length(Name as String) as Long
+length(Name as String) as Long
+
+#WshExec=WshShell.Exec
+WshExec.Terminate
+WshExec.StdOut
+WshExec.StdIn
+WshExec.StdErr
+WshExec.Status
+WshExec.ProcessID as Long
+WshExec.ExitCode as Long
+
+#WshNetwork=WScript.Network
+WshNetwork.AddPrinterConnection(LocalName as String, RemoteName as String[, UpdateProfile as Variant][, UserName as Variant][, Password as Variant])
+AddPrinterConnection(LocalName as String, RemoteName as String[, UpdateProfile as Variant][, UserName as Variant][, Password as Variant])
+WshNetwork.AddWindowsPrinterConnection(PrinterName as String[, DriverName as String][, Port as String])
+AddWindowsPrinterConnection(PrinterName as String[, DriverName as String][, Port as String])
+WshNetwork.ComputerName as String
+WshNetwork.EnumNetworkDrives(Name as String[, Force as Variant][, UpdateProfile as Variant])
+EnumNetworkDrives(Name as String[, Force as Variant][, UpdateProfile as Variant])
+WshNetwork.EnumPrinterConnections(Name as String[, Force as Variant][, UpdateProfile as Variant])
+EnumPrinterConnections(Name as String[, Force as Variant][, UpdateProfile as Variant])
+WshNetwork.MapNetworkDrive(LocalName as String, RemoteName as String[, UpdateProfile as Variant][, UserName as Variant][, Password as Variant])
+MapNetworkDrive(LocalName as String, RemoteName as String[, UpdateProfile as Variant][, UserName as Variant][, Password as Variant])
+WshNetwork.RemoveNetworkDrive(Name as String[, Force as Variant][, UpdateProfile as Variant])
+RemoveNetworkDrive(Name as String[, Force as Variant][, UpdateProfile as Variant])
+WshNetwork.RemovePrinterConnection(Name as String[, Force as Variant][, UpdateProfile as Variant])
+RemovePrinterConnection(Name as String[, Force as Variant][, UpdateProfile as Variant])
+WshNetwork.SetDefaultPrinter(Name as String)
+SetDefaultPrinter(Name as String)
+WshNetwork.UserDomain as String
+WshNetwork.UserName as String
+
+#WshCollection=WshNetwork.EnumPrinterConnections
+WshCollection.Count(Index as Variant) as Long
+Count(Index as Variant) as Long
+WshCollection.Item(Index as Variant) as Variant
+Item(Index as Variant) as Variant
+WshCollection.length(Index as Variant) as Long
+length(Index as Variant) as Long
+
+#FSO=Scripting.FileSystemObject
+FSO.BuildPath(Path as String, Name as String) as String
+BuildPath(Path as String, Name as String) as String
+FSO.CopyFile(Source as String, Destination as String[, OverWriteFiles as Boolean])
+CopyFile(Source as String, Destination as String[, OverWriteFiles as Boolean])
+FSO.CopyFolder(Source as String, Destination as String[, OverWriteFiles as Boolean])
+CopyFolder(Source as String, Destination as String[, OverWriteFiles as Boolean])
+FSO.CreateFolder(Path as String)
+CreateFolder(Path as String)
+FSO.CreateTextFile(FileName as String[, Overwrite as Boolean][, Unicode as Boolean])
+CreateTextFile(FileName as String[, Overwrite as Boolean][, Unicode as Boolean])
+FSO.DeleteFile(FileSpec as String[, Force as Boolean])
+DeleteFile(FileSpec as String[, Force as Boolean])
+FSO.DeleteFolder(FolderSpec as String[, Force as Boolean])
+DeleteFolder(FolderSpec as String[, Force as Boolean])
+FSO.DriveExists(DriveSpec as String) as Boolean
+DriveExists(DriveSpec as String) as Boolean
+FSO.Drives
+FSO.FileExists(FileSpec as String) as Boolean
+FileExists(FileSpec as String) as Boolean
+FSO.FolderExists(FolderSpec as String) as Boolean
+FolderExists(FolderSpec as String) as Boolean
+FSO.GetAbsolutePathName(Path as String) as String
+GetAbsolutePathName(Path as String) as String
+FSO.GetBaseName(Path as String) as String
+GetBaseName(Path as String) as String
+FSO.GetDrive(DriveSpec as String)
+GetDrive(DriveSpec as String)
+FSO.GetDriveName(Path as String) as String
+GetDriveName(Path as String) as String
+FSO.GetExtensionName(Path as String) as String
+GetExtensionName(Path as String) as String
+FSO.GetFile(FilePath as String)
+GetFile(FilePath as String)
+FSO.GetFileName(Path as String) as String
+GetFileName(Path as String) as String
+FSO.GetFileVersion(FileName as String) as String
+GetFileVersion(FileName as String) as String
+FSO.GetFolder(FolderPath as String)
+GetFolder(FolderPath as String)
+FSO.GetParentFolderName(Path as String) as String
+GetParentFolderName(Path as String) as String
+FSO.GetSpecialFolder(SpecialFolder)
+GetSpecialFolder(SpecialFolder)
+FSO.GetStandardStream(StandardStreamType[, Unicode as Boolean])
+GetStandardStream(StandardStreamType[, Unicode as Boolean])
+FSO.GetTempName(Path as String) as String
+GetTempName(Path as String) as String
+FSO.MoveFile(Source as String, Destination as String)
+MoveFile(Source as String, Destination as String)
+FSO.MoveFolder(Source as String, Destination as String)
+MoveFolder(Source as String, Destination as String)
+FSO.OpenTextFile(FileName as String[, IOMode][, Create as Boolean][, Format])
+OpenTextFile(FileName as String[, IOMode][, Create as Boolean][, Format])
+
+#Drive=FSO.GetDrive
+Drive.AvailableSpace as Variant
+Drive.DriveLetter as String
+Drive.DriveType
+Drive.FileSystem as String
+Drive.FreeSpace as Variant
+Drive.IsReady as Boolean
+Drive.Path as String
+Drive.RootFolder
+Drive.SerialNumber as Long
+Drive.ShareName as String
+Drive.TotalSize as Variant
+Drive.VolumeName as String
+
+#Drives=FSO.Drives
+Drives.Count(Key as Variant) as Long
+Drives.Item(Key as Variant)
+
+#Folder=FSO.GetFolder
+Folder.Attributes
+Folder.Copy(Destination as String[, OverWriteFiles as Boolean])
+Copy(Destination as String[, OverWriteFiles as Boolean])
+Folder.CreateTextFile(FileName as String[, Overwrite as Boolean][, Unicode as Boolean])
+CreateTextFile(FileName as String[, Overwrite as Boolean][, Unicode as Boolean])
+Folder.DateCreated as Date
+Folder.DateLastAccessed as Date
+Folder.DateLastModified as Date
+Folder.Delete([Force as Boolean])
+Delete([Force as Boolean])
+Folder.Drive
+Folder.Files(Destination as String)
+Files(Destination as String)
+Folder.IsRootFolder(Destination as String) as Boolean
+IsRootFolder(Destination as String) as Boolean
+Folder.Move(Destination as String)
+Move(Destination as String)
+Folder.Name as String
+Folder.ParentFolder
+Folder.Path as String
+Folder.ShortName as String
+Folder.ShortPath as String
+Folder.Size(Destination as String) as Variant
+Size(Destination as String) as Variant
+Folder.SubFolders(Destination as String)
+SubFolders(Destination as String)
+Folder.Type as String
+
+#Folders=Folder.SubFolders
+Folders.Add(Name as String)
+Add(Name as String)
+Folders.Count(Key as Variant) as Long
+Count(Key as Variant) as Long
+Folders.Item(Key as Variant)
+Item(Key as Variant)
+
+#File=FSO.GetFile
+File.Attributes
+File.Copy(Destination as String[, OverWriteFiles as Boolean])
+Copy(Destination as String[, OverWriteFiles as Boolean])
+File.DateCreated as Date
+File.DateLastAccessed as Date
+File.DateLastModified as Date
+File.Delete([Force as Boolean])
+Delete([Force as Boolean])
+File.Drive
+File.Move(Destination as String)
+Move(Destination as String)
+File.Name as String
+File.OpenAsTextStream([IOMode][, Format])
+OpenAsTextStream([IOMode][, Format])
+File.ParentFolder
+File.Path as String
+File.ShortName as String
+File.ShortPath as String
+File.Size as Variant
+File.Type as String
+
+#Files=Folder.Files
+Files.Count(Key as Variant) as Long
+Count(Key as Variant) as Long
+Files.Item(Key as Variant)
+
+#TextStream=FSO.OpenTextFile
+TextStream=File.OpenAsTextStream
+TextStream.AtEndOfLine as Boolean
+TextStream.AtEndOfStream as Boolean
+TextStream.Close(Characters as Long)
+Close(Characters as Long)
+TextStream.Column as Long
+TextStream.Line as Long
+TextStream.Read(Characters as Long) as String
+Read(Characters as Long) as String
+TextStream.ReadAll(Characters as Long) as String
+ReadAll(Characters as Long) as String
+TextStream.ReadLine(Characters as Long) as String
+ReadLine(Characters as Long) as String
+TextStream.Skip(Characters as Long)
+Skip(Characters as Long)
+TextStream.SkipLine(Characters as Long)
+SkipLine(Characters as Long)
+TextStream.Write(Text as String)
+Write(Text as String)
+TextStream.WriteBlankLines(Lines as Long)
+WriteBlankLines(Lines as Long)
+TextStream.WriteLine([Text as String])
+WriteLine([Text as String])
+
+SciTE.About
+SciTE.GetSelText
+GetSelText = String\n Get selected text
+SciTE.GetText
+GetText = String\n Get all text in document
+SciTE.Height
+Height = Value
+SciTE.Left
+Left = Value
+SciTE.Top
+Top = Value
+SciTE.Width
+Width = Value
+SciTE.LUA
+LUA (Command) = Result\n run command use SciTE Lua Scripting Extension
+SciTE.MenuCommand
+MenuCommand (IDM_Command)\n run specifed menu command
+SciTE.OnTop
+OnTop (WindowName, true|false)\n Set OnTop specifed window
+SciTE.Props
+Props (Key) = Value\n Return or set the value of a property
+SciTE.ReplaceSel
+ReplaceSel (ReplaceText)\n Replace selected text
+SciTE.Send
+Send (String) = Result\n run String command SciTE Director Interface
+SciTE.Trace
+Trace (String)\n in SciTE, writes String to the output pane (no prefix, no newlines)

@@ -48,6 +48,17 @@ io.read
 io.tmpfile
 io.type
 io.write
+#file=io.open
+file:close ([file]) closes file, or the default output file
+file:flush () flushes the default output file
+file:input ([file]) opens file in text mode, sets as default input file, or returns current default input file
+file:lines ([filename]) open file in read mode, returns iterator function to return lines, nil ends
+file:open (filename [, mode]) opens file in specified mode "[rawb+]", returns handle or nil
+file:output ([file]) opens file in text mode, sets as default output file, or returns current default output file
+file:read (format1, ...) reads file according to given formats, returns read values or nil
+file:tmpfile () returns a handle for a temporary file, opened in update mode
+file:type (obj) returns "file" if obj is an open file handle, "close file" if closed, or nil if not a file handle
+file:write (value1, ...) writes strings or numbers to file
 close ([file]) closes file, or the default output file
 flush () flushes the default output file
 input ([file]) opens file in text mode, sets as default input file, or returns current default input file
@@ -165,6 +176,8 @@ string.gfind
 string.gsub
 string.len
 string.lower
+string.match
+string.gmatch
 string.rep
 string.sub
 string.upper
@@ -178,6 +191,8 @@ gsub (s, pat, repl [, n]) returns copy of s with pat replaced by repl, and subst
 len (s) returns string length
 lower (s) returns string with letters in lower case
 rep (s, n) returns string with n copies of string s
+match (s, pattern [, init]) поиск первого вхождения шаблона pattern в строку s
+gmatch (s, pattern) возвращает итератор, который, при каждом вызове, возвращает следующее захваченное значение
 sub (s, i [, j]) returns substring from index i to j of s, default j=-1 (string length)
 upper (s) returns string with letters in upper case
 
