@@ -337,6 +337,9 @@
 				RelativePath="..\..\scintilla\src\LexLua.cxx">
 			</File>
 			<File
+				RelativePath="..\..\scintilla\src\LexMagik.cxx">
+			</File>
+			<File
 				RelativePath="..\..\scintilla\src\LexMatlab.cxx">
 			</File>
 			<File
@@ -374,6 +377,9 @@
 			</File>
 			<File
 				RelativePath="..\..\scintilla\src\LexPOV.cxx">
+			</File>
+			<File
+				RelativePath="..\..\scintilla\src\LexPowerShell.cxx">
 			</File>
 			<File
 				RelativePath="..\..\scintilla\src\LexProgress.cxx">
@@ -587,7 +593,7 @@
 				RelativePath="..\..\scintilla\Src\WindowAccessor.cxx">
 			</File>
 			<File
-				RelativePath="..\win32\WindowMutex.cxx">
+				RelativePath="..\win32\WinMutex.cxx">
 			</File>
 			<File
 				RelativePath="..\..\scintilla\Src\XPM.cxx">

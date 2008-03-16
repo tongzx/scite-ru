@@ -339,6 +339,10 @@ SOURCE=..\..\scintilla\src\LexLua.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\scintilla\src\LexMagik.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\scintilla\src\LexMatlab.cxx
 # End Source File
 # Begin Source File
@@ -388,6 +392,10 @@ SOURCE=..\..\scintilla\src\LexPLM.cxx
 # Begin Source File
 
 SOURCE=..\..\scintilla\src\LexPOV.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\scintilla\src\LexPowerShell.cxx
 # End Source File
 # Begin Source File
 

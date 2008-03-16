@@ -563,6 +563,7 @@ protected:
 	enum { toolMax = 300 }; //!-change-[ToolsMax]
 	Extension *extender;
 	bool needReadProperties;
+	bool allowAlpha;
 	bool preserveFocusOnEditor; //!-add-[GoMessageImprovement]
 
 	int heightOutput;
@@ -879,6 +880,7 @@ protected:
 	virtual void ShowToolBar() = 0;
 	virtual void ShowTabBar() = 0;
 	virtual void ShowStatusBar() = 0;
+	virtual void ActivateWindow(const char *timestamp) = 0;
 
 	void RemoveFindMarks();
 	int MarkAll();

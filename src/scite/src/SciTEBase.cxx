@@ -292,6 +292,9 @@ const char *contributors[] = {
             "Nick Treleaven",
             "Stephen Stagg",
             "Jean-Paul Iribarren",
+            "Tim Gerundt",
+            "Sam Harwell",
+            "Boris",
 //!-start-[SciTE-Ru]
             "HSolo",
             "Midas",
@@ -428,6 +431,7 @@ SciTEBase::SciTEBase(Extension *ext) : apis(true), extender(ext) {
 	propsStatus.superPS = &props;
 
 	needReadProperties = false;
+	allowAlpha = true;
 	
 	preserveFocusOnEditor = false; //!-add-[GoMessageImprovement]
 
@@ -755,18 +759,18 @@ void SciTEBase::SetAboutMessage(WindowID wsci, const char *appTitle) {
 		}
 #endif
 		AddStyledText(wsci, GetTranslationToAbout("Version").c_str(), trsSty);
-		AddStyledText(wsci, " 1.75 .55Ru\n", 1);
+		AddStyledText(wsci, " 1.76 .55Ru\n", 1);
 		AddStyledText(wsci, "    " __DATE__ " " __TIME__ "\n", 1);
 		SetAboutStyle(wsci, 4, ColourDesired(0, 0x7f, 0x7f)); //!-add-[SciTE-Ru]
 		AddStyledText(wsci, "http://scite.ruteam.ru\n", 4); //!-add-[SciTE-Ru]
 		SetAboutStyle(wsci, 2, ColourDesired(0, 0, 0));
 		Platform::SendScintilla(wsci, SCI_STYLESETITALIC, 2, 1);
 		AddStyledText(wsci, GetTranslationToAbout("Based on version").c_str(), trsSty); //!-add-[SciTE-Ru]
-		AddStyledText(wsci, " 1.75 ", 1); //!-add-[SciTE-Ru]
+		AddStyledText(wsci, " 1.76 ", 1); //!-add-[SciTE-Ru]
 		AddStyledText(wsci, GetTranslationToAbout("by").c_str(), trsSty);
 		AddStyledText(wsci, " Neil Hodgson.\n", 2);
 		SetAboutStyle(wsci, 3, ColourDesired(0, 0, 0));
-		AddStyledText(wsci, "December 1998-November 2007.\n", 3);
+		AddStyledText(wsci, "December 1998-March 2008.\n", 3);
 		SetAboutStyle(wsci, 4, ColourDesired(0, 0x7f, 0x7f));
 		AddStyledText(wsci, "http://www.scintilla.org\n", 4);
 		AddStyledText(wsci, "Lua scripting language by TeCGraf, PUC-Rio\n", 3);
@@ -5377,6 +5381,8 @@ void SciTEBase::PerformOne(char *action) {
 			}
 		} else if (isprefix(action, "extender:")) {
 			extender->OnExecute(arg);
+		} else if (isprefix(action, "focus:")) {
+			ActivateWindow(arg);
 		}
 	}
 }

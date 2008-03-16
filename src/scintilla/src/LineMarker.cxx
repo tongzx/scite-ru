@@ -344,6 +344,10 @@ void LineMarker::Draw(Surface *surface, PRectangle &rcWhole, Font &fontForCharac
 		surface->Polygon(pts, sizeof(pts) / sizeof(pts[0]),
 //!				fore.allocated, back.allocated);
 				foreCA, backCA); //!-change-[HighlightCurrFolder]
+	} else if (markType == SC_MARK_LEFTRECT) {
+		PRectangle rcLeft = rcWhole;
+		rcLeft.right = rcLeft.left + 4;
+		surface->FillRectangle(rcLeft, back.allocated);
 	} else { // SC_MARK_FULLRECT
 //!		surface->FillRectangle(rcWhole, back.allocated);
 		surface->FillRectangle(rcWhole, backCA); //!-change-[HighlightCurrFolder]

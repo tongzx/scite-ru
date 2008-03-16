@@ -207,6 +207,7 @@ SciTEWin::SciTEWin(Extension *ext) : SciTEBase(ext) {
 	OSVERSIONINFO osv = {sizeof(OSVERSIONINFO), 0, 0, 0, 0, ""};
 	::GetVersionEx(&osv);
 	isWindowsNT = osv.dwPlatformId == VER_PLATFORM_WIN32_NT;
+	allowAlpha = isWindowsNT;
 	if (osv.dwPlatformId == VER_PLATFORM_WIN32_NT)
 		propsEmbed.Set("PLAT_WINNT", "1");
 	else if (osv.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS)
@@ -2123,7 +2124,8 @@ int SciTEWin::EventLoop() {
 		going = isWindowsNT ? ::GetMessageW(&msg, NULL, 0, 0) : ::GetMessageA(&msg, NULL, 0, 0);
 		if (going) {
 			if (!ModelessHandler(&msg)) {
-				if (::TranslateAccelerator(reinterpret_cast<HWND>(GetID()), GetAcceleratorTable(), &msg) == 0) {
+				if (!GetID() ||
+					::TranslateAccelerator(reinterpret_cast<HWND>(GetID()), GetAcceleratorTable(), &msg) == 0) {
 					::TranslateMessage(&msg);
 					if (isWindowsNT)
 						::DispatchMessageW(&msg);

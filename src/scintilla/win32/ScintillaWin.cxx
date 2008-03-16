@@ -157,6 +157,7 @@ class ScintillaWin :
 	bool hasOKText;
 
 	CLIPFORMAT cfColumnSelect;
+	CLIPFORMAT cfLineSelect;
 
 	HRESULT hrOle;
 	DropSource ds;
@@ -205,6 +206,7 @@ class ScintillaWin :
 	virtual void NotifyParent(SCNotification scn);
 	virtual void NotifyDoubleClick(Point pt, bool shift, bool ctrl, bool alt);
 	virtual void Copy();
+	virtual void CopyAllowLine();
 	virtual bool CanPaste();
 	virtual void Paste();
 	virtual void CreateCallTipWindow(PRectangle rc);
@@ -231,7 +233,7 @@ class ScintillaWin :
 	virtual bool GetScrollInfo(int nBar, LPSCROLLINFO lpsi);
 	void ChangeScrollPos(int barType, int pos);
 
-	void InsertPasteText(const char *text, int len, int selStart, bool isRectangular);
+	void InsertPasteText(const char *text, int len, int selStart, bool isRectangular, bool isLine);
 
 public:
 	// Public for benefit of Scintilla_DirectFunction
@@ -297,6 +299,10 @@ ScintillaWin::ScintillaWin(HWND hwnd) {
 	// contains a rectangular selection, so copy Developer Studio.
 	cfColumnSelect = static_cast<CLIPFORMAT>(
 		::RegisterClipboardFormat(TEXT("MSDEVColumnSelect")));
+
+	// Likewise for line-copy (copies a full line when no text is selected)
+	cfLineSelect = static_cast<CLIPFORMAT>(
+		::RegisterClipboardFormat(TEXT("MSDEVLineSelect")));
 
 	hrOle = E_FAIL;
 
@@ -1253,6 +1259,12 @@ void ScintillaWin::Copy() {
 	}
 }
 
+void ScintillaWin::CopyAllowLine() {
+	SelectionText selectedText;
+	CopySelectionRange(&selectedText, true);
+	CopyToClipboard(selectedText);
+}
+
 bool ScintillaWin::CanPaste() {
 	if (!Editor::CanPaste())
 		return false;
@@ -1302,22 +1314,32 @@ public:
 	}
 };
 
-void ScintillaWin::InsertPasteText(const char *text, int len, int selStart, bool isRectangular) {
+void ScintillaWin::InsertPasteText(const char *text, int len, int selStart, bool isRectangular, bool isLine) {
 	if (isRectangular) {
 		PasteRectangular(selStart, text, len);
 	} else {
+		char *convertedText = 0;
 		if (convertPastes) {
 			// Convert line endings of the paste into our local line-endings mode
-			char *convertedString = Document::TransformLineEnds(&len, text, len, pdoc->eolMode);
-			if (pdoc->InsertString(currentPos, convertedString, len)) {
-				SetEmptySelection(currentPos + len);
-			}
-			delete []convertedString;
-		} else {
-			if (pdoc->InsertString(currentPos, text, len)) {
-				SetEmptySelection(currentPos + len);
-			}
+			convertedText = Document::TransformLineEnds(&len, text, len, pdoc->eolMode);
+			text = convertedText;
 		}
+		if (isLine) {
+			int insertPos = pdoc->LineStart(pdoc->LineFromPosition(currentPos));
+			pdoc->InsertString(insertPos, text, len);
+			// add the newline if necessary
+			if ((len > 0) && (text[len-1] != '\n' && text[len-1] != '\r')) {
+				const char *endline = StringFromEOLMode(pdoc->eolMode);
+				pdoc->InsertString(insertPos + len, endline, strlen(endline));
+				len += strlen(endline);
+			}
+			if (currentPos == insertPos) {
+				SetEmptySelection(currentPos + len);
+			}
+		} else if (pdoc->InsertString(currentPos, text, len)) {
+			SetEmptySelection(currentPos + len);
+		}
+		delete []convertedText;
 	}
 }
 
@@ -1325,6 +1347,7 @@ void ScintillaWin::Paste() {
 	if (!::OpenClipboard(MainHWND()))
 		return;
 	pdoc->BeginUndoAction();
+	bool isLine = SelectionEmpty() && (::IsClipboardFormatAvailable(cfLineSelect) != 0);
 	ClearSelection();
 	int selStart = SelectionStart();
 	bool isRectangular = ::IsClipboardFormatAvailable(cfColumnSelect) != 0;
@@ -1359,7 +1382,7 @@ void ScintillaWin::Paste() {
 			}
 
 			if (putf) {
-				InsertPasteText(putf, len, selStart, isRectangular);
+				InsertPasteText(putf, len, selStart, isRectangular, isLine);
 				delete []putf;
 			}
 		}
@@ -1394,11 +1417,11 @@ void ScintillaWin::Paste() {
 					delete []uptr;
 
 					if (putf) {
-						InsertPasteText(putf, mlen, selStart, isRectangular);
+						InsertPasteText(putf, mlen, selStart, isRectangular, isLine);
 						delete []putf;
 					}
 				} else {
-					InsertPasteText(ptr, len, selStart, isRectangular);
+					InsertPasteText(ptr, len, selStart, isRectangular, isLine);
 				}
 			}
 			memSelection.Unlock();
@@ -1890,6 +1913,10 @@ void ScintillaWin::CopyToClipboard(const SelectionText &selectedText) {
 		::SetClipboardData(cfColumnSelect, 0);
 	}
 
+	if (selectedText.lineCopy) {
+		::SetClipboardData(cfLineSelect, 0);
+	}
+
 	::CloseClipboard();
 }
 
@@ -1953,10 +1980,15 @@ void ScintillaWin::HorizontalScrollMessage(WPARAM wParam) {
 		xPos = scrollWidth;
 		break;
 	case SB_THUMBPOSITION:
-		xPos = HiWord(wParam);
-		break;
-	case SB_THUMBTRACK:
-		xPos = HiWord(wParam);
+	case SB_THUMBTRACK: {
+			// Do NOT use wParam, its 16 bit and not enough for very long lines. Its still possible to overflow the 32 bit but you have to try harder =]
+			SCROLLINFO si;
+			si.cbSize = sizeof(si);
+			si.fMask = SIF_TRACKPOS;
+			if (GetScrollInfo(SB_HORZ, &si)) {
+				xPos = si.nTrackPos;
+			}
+		}
 		break;
 	}
 	HorizontalScrollTo(xPos);

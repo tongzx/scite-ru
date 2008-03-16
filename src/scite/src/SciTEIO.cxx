@@ -987,7 +987,7 @@ class BufferedFile {
 	size_t valid;
 	void EnsureData() {
 		if (pos >= valid) {
-			if (readAll) {
+			if (readAll || !fp) {
 				exhausted = true;
 			} else {
 				valid = fread(buffer, 1, bufLen, fp);
