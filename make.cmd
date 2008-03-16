@@ -1,19 +1,27 @@
 @ECHO OFF
 MODE CON COLS=120 LINES=2000
 
-IF NOT EXIST C:\MinGW GOTO error_install
-IF NOT EXIST C:\MinGW\upx300w GOTO error_install
+:check_upx
+SET NO_UPX=0
+IF EXIST C:\MinGW\upx300w GOTO check_mingw
+SET NO_UPX=1
+:check_mingw
+IF EXIST C:\MinGW GOTO clear_pre
+:check_mingw_codeblocks
+IF EXIST "C:\Program Files\CodeBlocks\bin" GOTO clear_pre
+GOTO error_install
 
-IF NOT "%1"=="/rebuild" GOTO main
+:clear_pre
+IF "%1"=="/build" GOTO main
 
-:clear
 CD %~dp0\src\scintilla
 CALL delbin.bat
 CD %~dp0\src\scite
 CALL delbin.bat
+del /Q "%~dp0\src\scite\bin"\*.properties >NUL:
 
 :main
-SET PATH=C:\MinGW\bin\;C:\MinGW\upx300w\;%PATH%
+SET PATH=C:\MinGW\bin\;C:\Program Files\CodeBlocks\bin;C:\MinGW\upx300w\;%PATH%
 CD %~dp0\src\scintilla\win32
 TITLE SciTE-Ru make scintilla
 mingw32-make
@@ -26,31 +34,41 @@ IF ERRORLEVEL 1 GOTO error
 
 CD ..\bin
 IF NOT EXIST Sc1.exe PAUSE
+
+IF %NO_UPX%==1 GOTO copy_to_pack
 TITLE SciTE-Ru packing
 upx --best SciLexer.dll SciTE.exe
+
+:copy_to_pack
 COPY SciTE.exe ..\..\..\Pack\
 COPY SciLexer.dll ..\..\..\Pack\
 IF ERRORLEVEL 1 GOTO error
 
-CD %~dp0
-TITLE SciTE-Ru completed
-PAUSE
+:clear_after
+IF "%1"=="/build" GOTO completed
 
+CD %~dp0\src\scintilla
+CALL delbin.bat
+CD %~dp0\src\scite
+CALL delbin.bat
+del /Q "%~dp0\src\scite\bin"\*.properties >NUL:
+
+:completed
+ECHO __________________
+ECHO Building SciTE-Ru successfully completed!
+TITLE SciTE-Ru completed
 GOTO end
 
 :error
 ECHO __________________
 ECHO Errors were found!
-CD %~dp0
-PAUSE
-
 GOTO end
 
 :error_install
 ECHO Please install MinGW + UPX!
 ECHO For more information visit http://code.google.com/p/scite-ru/
-PAUSE
-
 GOTO end
 
 :end
+CD %~dp0
+PAUSE
