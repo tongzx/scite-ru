@@ -288,6 +288,80 @@ WriteBlankLines(Lines as Long)
 TextStream.WriteLine([Text as String])
 WriteLine([Text as String])
 
+#Shell=Shell.Application
+Shell.Application as Object\n Get Application object
+Shell.Parent as Object\n Get Parent object
+Shell.NameSpace(vDir as Variant)\n Get special folder from ShellSpecialFolderConstants
+Shell.BrowseForFolder(Hwnd as Long, Title as String, Options as Long[, RootFolder as Variant])\n Browse the name space for a Folder
+Shell.Windows(Hwnd as Long, Title as String, Options as Long[, RootFolder as Variant]) as Object\n The collection of open folder windows
+Shell.Open(vDir as Variant)\n Open a folder
+Shell.Explore(vDir as Variant)\n Explore a folder
+Shell.MinimizeAll(vDir as Variant)\n Minimize all windows
+Shell.UndoMinimizeALL(vDir as Variant)\n Undo Minimize All
+Shell.FileRun(vDir as Variant)\n Bring up the file run
+Shell.CascadeWindows(vDir as Variant)\n Cascade Windows
+Shell.TileVertically(vDir as Variant)\n Tile windows vertically
+Shell.TileHorizontally(vDir as Variant)\n Tile windows horizontally
+Shell.ShutdownWindows(vDir as Variant)\n Exit Windows
+Shell.Suspend(vDir as Variant)\n Suspend the pc
+Shell.EjectPC(vDir as Variant)\n Eject the pc
+Shell.SetTime(vDir as Variant)\n Bring up the Set time dialog
+Shell.TrayProperties(vDir as Variant)\n Handle Tray properties
+Shell.Help(vDir as Variant)\n Display shell help
+Shell.FindFiles(vDir as Variant)\n Find Files
+Shell.FindComputer(vDir as Variant)\n Find a computer
+Shell.RefreshMenu(vDir as Variant)\n Refresh the menu
+Shell.ControlPanelItem(szDir as String)\n Run a Control Panel Item
+
+#Folder=Shell.NameSpace
+Folder.Title as String\n Get the display name for the window
+Folder.Application as Object\n Get Application object
+Folder.Parent as Object\n Get Parent object
+Folder.ParentFolder\n Get Parent object
+Folder.Items\n The collection of Items in folder
+Folder.ParseName(bName as String)\n Parse the name to get an item.
+Folder.NewFolder(bName as String[, vOptions as Variant])\n Create a new sub folder in this folder.
+Folder.MoveHere(vItem as Variant[, vOptions as Variant])\n Move Items to this folder.
+Folder.CopyHere(vItem as Variant[, vOptions as Variant])\n Copy Items to this folder.
+Folder.GetDetailsOf(vItem as Variant, iColumn as Long) as String\n Get the details about an item.
+
+#FolderItems=Folder.Items
+FolderItems.Count as Long\n Get count of items in the folder
+FolderItems.Application as Object\n Get Application object
+FolderItems.Parent as Object\n Get Parent object
+FolderItems.Item([index as Variant])\n Return the figure for the given index
+
+#ShellFolderItem=FolderItems.Item
+ShellFolderItem.Application as Object\n Get Application object
+ShellFolderItem.Parent as Object\n Get Parent object
+ShellFolderItem.Name as String\n Get display name for item
+ShellFolderItem.Path as String\n Get the pathname to the item
+ShellFolderItem.GetLink as Object\n If item is link return link object
+ShellFolderItem.GetFolder as Object\n If item is a folder return folder object
+ShellFolderItem.IsLink as Boolean\n Is the item a link?
+ShellFolderItem.IsFolder as Boolean\n Is the item a Folder?
+ShellFolderItem.IsFileSystem as Boolean\n Is the item a file system object?
+ShellFolderItem.IsBrowsable as Boolean\n Is the item browsable?
+ShellFolderItem.ModifyDate as Date\n Modification Date?
+ShellFolderItem.Size as Long\n Size
+ShellFolderItem.Type as String\n Type
+ShellFolderItem.Verbs\n Get the list of verbs for the object
+ShellFolderItem.InvokeVerb([vVerb as Variant])\n Execute a command on the item
+ShellFolderItem.InvokeVerbEx([vVerb as Variant][, vArgs as Variant])\n Extended version of InvokeVerb
+ShellFolderItem.ExtendedProperty(bstrPropName as String) as Variant\n Access an extended property
+
+#ShellLinkObject=ShellFolderItem.GetLink
+ShellLinkObject.Path as String\n Get the path of the link
+ShellLinkObject.Description as String\n Get the description for the link
+ShellLinkObject.WorkingDirectory as String\n Get the working directory for the link
+ShellLinkObject.Arguments as String\n Get the arguments for the link
+ShellLinkObject.Hotkey as Long\n Get the Hotkey for the link
+ShellLinkObject.ShowCommand as Long\n Get the Show Command for the link
+ShellLinkObject.Resolve(fFlags as Long)\n Tell the link to resolve itself
+ShellLinkObject.GetIconLocation(pbs as String) as Long\n Get the IconLocation for the link
+ShellLinkObject.SetIconLocation(bs as String, iIcon as Long)\n Set the IconLocation for the link
+ShellLinkObject.Save([vWhere as Variant])\n Tell the link to save the changes
+
 SciTE.About
 SciTE.GetSelText
 GetSelText = String\n Get selected text
