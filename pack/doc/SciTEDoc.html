@@ -1723,6 +1723,8 @@ user.shortcuts=\<br/>
 Ctrl+Shift+I|IDM_OPEN|\<br/>
 Ctrl+Shift+Left|IDM_CLOSE|<br/>
         </div>
+	This property is only read at start up.
+        <br/>
         </td>
       </tr>
       <tr>
@@ -2857,6 +2859,8 @@ groupundo - yes or no
         indent.size.*.pas=3</div>
         If indent.auto is set then indent.size and use.tabs are set according to the contents
         of the opened document.<br />
+        The properties file settings apply to newly opened files but remain constant once the file is open
+	unless changed using the Change Indentation Settings dialog.<br />
         If tab.indents is set then pressing tab within indentation whitespace indents by indent.size
         rather than inserting a tab character. If backspace.unindents then pressing backspace
         within indentation whitespace unindents by indent.size rather than deleting the character
@@ -3317,7 +3321,7 @@ groupundo - yes or no
        SciTE in other languages
     </h3>
     <p>
-       SciTE can be and has been <a href="http://scintilla.sourceforge.net/SciTETranslation.html">translated into other languages</a>.
+       SciTE can be and has been <a href="http://groups.google.com/group/scite-interest/web/translations">translated into other languages</a>.
     </p>
     <h3>
        Building SciTE
