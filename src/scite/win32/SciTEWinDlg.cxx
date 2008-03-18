@@ -746,7 +746,7 @@ void SciTEWin::PrintSetup() {
 }
 
 // This is a reasonable buffer size for dialog box text conversions
-#define CTL_TEXT_BUF 512
+#define CTL_TEXT_BUF /* 512 */ 1024 //!-change-[Increased buffer size for dialog box text conversions]
 
 class Dialog {
 	HWND hDlg;
