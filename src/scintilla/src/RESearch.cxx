@@ -305,7 +305,7 @@ void RESearch::ChSetWithCase(unsigned char c, bool caseSensitive) {
 			ChSet(c);
 			ChSet(static_cast<unsigned char>(c - 'A' + 'a'));
 //!-start-[LowerUpperCase]
-		} else if ((c >= static_cast<unsigned char>('à')) && (c <= static_cast<unsigned char>('ÿ'))) {
+		} else if (c >= static_cast<unsigned char>('à')) { //&& (c <= static_cast<unsigned char>('ÿ')) - is always true due to limited range of data type
 			ChSet(c);
 			ChSet(static_cast<char>(c - 'à' + 'À'));
 		} else if ((c >= static_cast<unsigned char>('À')) && (c <= static_cast<unsigned char>('ß'))) {
