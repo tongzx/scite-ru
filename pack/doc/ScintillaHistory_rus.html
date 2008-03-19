@@ -315,11 +315,14 @@
 	<td><font color=#CC00CC>Dmitry Maslov</font></td>
 	<td><font color=#CC00CC>chupakabra</font></td>
 	<td>Juan Carlos Arevalo Baeza</td>
-    </tr>
       </tr><tr>
 	<td>Nick Treleaven</td>
 	<td>Stephen Stagg</td>
 	<td>Jean-Paul Iribarren</td>
+	<td>Tim Gerundt</td>
+      </tr><tr>
+	<td>Sam Harwell</td>
+	<td>Boris</td>
     </tr>
     </table>
 	<p>
@@ -332,6 +335,32 @@
 			Icons</a> Copyright(C) 1998 by Dean S. Jones<br />
 		</li>
 	</ul>
+
+	<h3>
+		<a href="http://prdownloads.sourceforge.net/scintilla/scite176.zip?download">Release 1.76</a>
+	</h3>
+	<ul>
+	<li>Версия 1.76 от 16 марта 2008 г.</li>
+	<li>добавлена поддержка PowerShell.
+	<li>добавлен лексер для Magik.
+	<li><a href="SciTEDirector_rus.html">SciTE Director Interface</a> теперь работает и в GTK+.
+	<li>С помощью сообщения SciTE Director Interface "focus:" стало возможным устанавливать фокус в GTK+.
+	<li>В C++ улучшена обработка фолдеров в последней строке (в некоторых случаях).
+	<li>добавлен флаг SCI_COPYALLOWLINE, который подобно флагу SCI_COPY, вызывает исключение, если ничего не выделено при копировании закрепленной строки под кареткой. В Windows в расширенном формате буфера обмена разрешается вставка при этом полной строки перед текущим выделением. Это поведение совместимо с Visual Studio.
+	<li>в Windows горизонтальная полоса прокрутки может обрабатывать более широкие файлы.
+	<li>в Windows исправлена утечка системной палитры. Это не должно заметно влиять, т.к. режим палитры редко используется.
+	<li>в GTK+ команда установки (Install) больше не пытается установить явного владельца.
+	<li>в лексере Perl исправлена обработка логического оператора "//" (defined-or).
+	<li>в лексере Octave исправлен оператор "!=".
+	<li>оптимизировано изменение отрисовки выделения: теперь без необходимости перерисовка не выполняется.
+	<li>SciTE в GTK+ больше не отражает команды Lua так же как в Windows.
+	<li>автоматическая вертикальная прокрутка ограничивается одной строкой при не слишком быстрой прокрутке.
+	<li>исправлена фатальная ошибка при установке состояния строки после конца положения строки. Это происходит когда лексеры не устанавливают состояние строки для каждой строки.
+	<li>в SciTE под Windows исправлена фатальная ошибка при неудачном поиске для 513 символа строки.
+	<li>в SciTE отключалась свойство полупрозрачности в Windows 9x в результате сообщения об аварийном отказе при использовании полупрозрачности.
+	<li>исправлена ошибка, при которой фон пробельного символа был не виден в свернутой/перенесенной строке.
+	</ul>
+	<li>Перевод: <b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=ALeXkRU" target=_blank>ALeXkRU</a></b>
 
 	<h3>
 		<a href="http://prdownloads.sourceforge.net/scintilla/scite175.zip?download">Release 1.75</a>
@@ -378,8 +407,8 @@
 	<li>Исправлены некоторые ошибки, приводящие к фатальным сбоям в 64-битной GTK+.
 	<li>В GTK+ улучшены возможности буфера обмена для инструментов копирования и вставки VMWare. В SciTE экспорт буфера обмена более согласован при завершении работы.
 	</ul>
-    <li>Перевод: <b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=ALeXkRU" target=_blank>ALeXkRU</a></b>
-    <li><font color=#CC00CC>Цветом выделены изменения, внесенные участниками команды Ru-Board</font>
+	<li>Перевод: <b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=ALeXkRU" target=_blank>ALeXkRU</a></b>
+	<li><font color=#CC00CC>Цветом выделены изменения, внесенные участниками команды Ru-Board</font>
 
 	<h3>
 		<a href="http://prdownloads.sourceforge.net/scintilla/scite174.zip?download">Release 1.74</a>
