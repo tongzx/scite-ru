@@ -138,4 +138,13 @@ function OnOpen(file)
 	end
 	return result
 end
+
 ----------------------------------------------------------------------------
+-- »нвертирование состо€ни€ заданного параметра (используетс€ дл€ сн€ти€/установки "галок" в меню)
+function CheckChange(prop_name)
+	if tonumber(props[prop_name]) == 1 then
+		props[prop_name] = 0
+	else
+		props[prop_name] = 1
+	end
+end
