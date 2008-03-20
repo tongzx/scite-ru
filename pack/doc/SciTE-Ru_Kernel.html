@@ -37,9 +37,9 @@
       </tr>
     </table>
     <h1>
-      Text editor SciTE RU-Board 1.75 .55
+      Text editor SciTE RU-Board 1.76 .56
     </h1>
-    <p>All modifications of original <A href="http://www.scintilla.org">SciTE editor</A> version 1.75 has been developed by persons from <A href="http://forum.ru-board.com/topic.cgi?forum=5&topic=24956&glp">Ru-Board community</A>.
+    <p>All modifications of original <A href="http://www.scintilla.org">SciTE editor</A> has been developed by persons from <A href="http://forum.ru-board.com/topic.cgi?forum=5&topic=24956&glp">Ru-Board community</A>.
 
     <br>This document described all changes and extensions from original version of editor.
     <br>All modifications in source code marked by special tags to allow apply it to original separately.
@@ -75,7 +75,7 @@ if color is not set then highlighting is off.
 Changed cursor image over left margin (line number, marker and fold margins).<br>
 Cursor is set as inverse arrow when we realy can to select text otherwise used default cursor.
 
-<h5> <sup>update</sup> [SubMenu] <span class=desc>(Author: HSolo, Updated by: Dmitry Maslov)</span></h5>
+<h5>[SubMenu] <span class=desc>(Author: HSolo, Updated by: Dmitry Maslov)</span></h5>
 User's commands in menu Tools separated from other commands now by line.<br>
 And you can insert separator between any new commands in menu Tools.<br>
 For example, <span class="example">command.separator.34.*=1</span> adding separator before command 34.<br>
@@ -129,7 +129,7 @@ Hint1|IDM_COMMAND1|icon&nbsp;number1|\<br>
 Hint2|IDM_COMMAND2|icon&nbsp;number2|...</div>
 If parameter absent or empty then toolbar will standard.
 
-<h5> <sup>update</sup> [FindResultListStyle] <span class=desc>(Authors: VladVRO, Dmitry Maslov)</span></h5>
+<h5>[FindResultListStyle] <span class=desc>(Authors: VladVRO, Dmitry Maslov)</span></h5>
 Internal search (Ctrl+Shift+F) result text looks more better now:<br>
 - each line colorized by two colors: file path and line number by one color and other by second color.<br>
 - all tabs in result replaced by spaces, start spaces removed, double spaces replaced by single.<br>
@@ -139,12 +139,14 @@ Internal search (Ctrl+Shift+F) result text looks more better now:<br>
 You can switch off this feature by setup new parameter in properties:<br>
 <span class="example">lexer.errorlist.findliststyle=0</span>
 
-<h5> <sup>new</sup> [close.find.window] <span class=desc>(Author: Dmitry Maslov)</span></h5>
+<h5> <sup>new</sup>
+[close.find.window] <span class=desc>(Author: Dmitry Maslov)</span></h5>
 New variable in properties files<br>
 <span class="example">find.replace.closefind=&lt;number value&gt;</span><br>
 Set to 0 to prevent the Find dialog from closing when "Find" pressed.
 
-<h5> <sup>update</sup> [TabsMoving] <span class=desc>(Authors: VladVRO, Dmitry Maslov)</span></h5>
+<h5> <sup>update</sup>
+[TabsMoving] <span class=desc>(Authors: VladVRO, Dmitry Maslov)</span></h5>
 You can move tabs now. In editor added two new commands <span class="example">IDM_MOVETABLEFT</span> and <span class="example">IDM_MOVETABRIGHT</span> for shift current tab left or right and added identical commands in menu Buffers.<br>
 And also you can move tab by mouse now.
 
@@ -158,7 +160,8 @@ New variable in properties files<br>
 <span class="example">buffers.new.position=&lt;number value&gt;</span><br>
 0 - new tab should be opened at last position in buffers list (default), 1 - next the current tab, 2 - first in list.
 
-<h5> <sup>new</sup> [warning.couldnotopenfile.disable] <span class=desc>(Author: mozers)</span></h5>
+<h5> <sup>new</sup>
+[warning.couldnotopenfile.disable] <span class=desc>(Author: mozers)</span></h5>
 New variable in properties files<br>
 <span class="example">warning.couldnotopenfile.disable=1</span><br>
 1 - removes warning "Could not open file", which is shown at opening a nonexistent file. The new buffer with the set name will be silently created.
@@ -171,7 +174,8 @@ if option is present then after closing buffer current buffer will be next in bu
 <h5>[new_on_dbl_clk] <span class=desc>(Author: Dmitry Maslov)</span></h5>
 You can open new buffer now by double click on empty space on right of tabs (a-la FireFox).
 
-<h5> <sup>new</sup> [close_on_dbl_clk] <span class=desc>(Author: Dmitry Maslov, Moon_aka_Sun, VladVRO)</span></h5>
+<h5> <sup>new</sup>
+[close_on_dbl_clk] <span class=desc>(Author: Dmitry Maslov, Moon_aka_Sun, VladVRO)</span></h5>
 You can close current buffer now by double click on tabs.
 
 <h5>[SetBookmark] <span class=desc>(Author: Midas)</span></h5>
@@ -279,7 +283,7 @@ Added possibility to customize the width and the color of cursor for every lexer
 caret.width.$(file.patterns.cpp)=3</div>
 It is not convenient when there are different colors and backgrounds for different languages but there is only one color for cursor.
 
-<h5> <sup>update</sup> [BetterCalltips] <span class=desc>(Author: chupakabra)</span></h5>
+<h5>[BetterCalltips] <span class=desc>(Author: chupakabra)</span></h5>
 New variable in properties files<br>
 <div class="example">calltip.lexer.automatic<br>
 calltip.*.automatic</div>
@@ -338,7 +342,8 @@ Example of letter case changing macro:
 &nbsp;&nbsp;end<br>
 end</div>
 
-<h5> <sup>new</sup> [OnClick] <span class=desc>(Author: Dmitry Maslov)</span></h5>
+<h5> <sup>new</sup>
+[OnClick] <span class=desc>(Author: Dmitry Maslov)</span></h5>
 Added new event to SciTE <span class="example">OnClick()</span>. Event arises from a single click on the mouse left button in the editing pane or the output pane.<br>
 Receives the state of key modifiers (Shift, Ctrl, Alt):<br>
 <span class="example">function OnClick(shift, ctrl, alt)</span>
@@ -351,12 +356,14 @@ Event <span class="example">OnDoubleClick()</span> is expanded, now it is return
 Function <span class="example">OnKey</span> is expanded, now in it the pressed symbol is passed also:<br>
 <span class="example">function OnKey(key, shift, ctrl, alt, char)</span>
 
-<h5> <sup>new</sup> [OnMouseButtonUp] <span class=desc>(Author: VladVRO)</span></h5>
+<h5> <sup>new</sup>
+[OnMouseButtonUp] <span class=desc>(Author: VladVRO)</span></h5>
 Added new event to SciTE <span class="example">OnMouseButtonUp()</span>. Event arises from a mouse button up in the editing pane or the output pane.<br>
 Receives the state of Ctrl:<br>
 <span class="example">function OnMouseButtonUp(ctrl)</span>
 
-<h5> <sup>new</sup> [MouseClickHandled] <span class=desc>(Author: VladVRO)</span></h5>
+<h5> <sup>new</sup>
+[MouseClickHandled] <span class=desc>(Author: VladVRO)</span></h5>
 Added new message <span class="example">SCI_SETMOUSECAPTURE</span> to the Scintilla for change mouse cuptured state.<br>
 This message let to inform the Scintilla that mouse click handled.<br>
 Example: <span class="example">SendEditor(SCI_SETMOUSECAPTURE, 0)</span> <br>
@@ -367,7 +374,8 @@ In SciTE Lua Scripting Extension added new command<br>
 <span class="example">scite.Perform(actionList)</span> - execute commands <a href="http://scintilla.sourceforge.net/SciTEDirector.html">SciTE Director Interface</a><br>
 with <span class="example">actionList</span> - one or several commands separated by a symbol of a new line.
 
-<h5> <sup>new</sup> [ReloadStartupScript] <span class=desc>(Author: VladVRO)</span></h5>
+<h5> <sup>new</sup>
+[ReloadStartupScript] <span class=desc>(Author: VladVRO)</span></h5>
 In SciTE Lua Scripting Extension added new command<br>
 <span class="example">scite.ReloadStartupScript()</span> - this function initializes Lua startup script reloading.
 
@@ -375,10 +383,10 @@ In SciTE Lua Scripting Extension added new command<br>
 Added Scitilla message allowing to receive a name current lexers:<br>
 Now <span class="example">editor.LexerLanguage</span> - allows both to set lexer, and to receive current
 
-<h5> <sup>new</sup> [GetAPIPath] <span class=desc>(Author: dB6)</span></h5>
+<h5>[GetAPIPath] <span class=desc>(Author: dB6)</span></h5>
 APIPath - new SciTE environment variable. Contains a meaning full path of the current api file.
 
-<h5> <sup>new</sup> [GetAbbrevPath] <span class=desc>(Author: dB6)</span></h5>
+<h5>[GetAbbrevPath] <span class=desc>(Author: dB6)</span></h5>
 AbbrevPath - new SciTE environment variable. Contains a meaning full path of the current abbrev file.
 
 <h5>[AbbrevRefactoring] <span class=desc>(Author: Dmitry Maslov)</span></h5>
@@ -432,11 +440,11 @@ Add new lexer <a href="http://www.rapideuphoria.com">Euphoria</a>
 <h5>[C_Word] <span class=desc>(Author: mimir)</span></h5>
 Added 3 new classes for LexCpp's keywords (i.e. now you can set up to 4 additional vocabularies with different highlight)
 
-<h5> <sup>new</sup> [PropsKeysSets] <span class=desc>(Author: VladVRO)</span></h5>
+<h5>[PropsKeysSets] <span class=desc>(Author: VladVRO)</span></h5>
 Added 4 classes for LexProps's keywords (i.e. now you can set up to 4 additional vocabularies with different highlight)<br>
 And words can contain symbol ~, meaning a random set of characters. For example <span class="example">block.start.~</span> or <span class="example">braces.~.style</span>
 
-<h5> <sup>new</sup> [PropsKeywords] <span class=desc>(Author: VladVRO)</span></h5>
+<h5>[PropsKeywords] <span class=desc>(Author: VladVRO)</span></h5>
 Added colorizing for "import" and "if" keywords in properties file.
 
 <h5>[GetApplicationProps] <span class=desc>(Author: VladVRO)</span></h5>
@@ -455,11 +463,12 @@ Now OnSendEditor can trace event SCI_SETZOOM arising at change of the size of a 
 Changed lexer for language Lua.<br>
 Simbols ":" and "." processed as separator for object now. You can setup lexer keywords as <span class="example">string.sub</span> or <span class="example">editor:append</span> as before and you can setup object function or property as <span class="example">:GetText</span> or <span class="example">.Cursor</span> now.
 
-<h5> <sup>new</sup> [GoMessageImprovement] <span class=desc>(Author: VladVRO)</span></h5>
+<h5> <sup>new</sup>
+[GoMessageImprovement] <span class=desc>(Author: VladVRO)</span></h5>
 Made the editor window focused after uses double-click in console on message with file name and line number.<br>
 For implementation used <span class="example">[OnMouseButtonUp]</span> improvement.
 
-<h5> <sup>new</sup> [English_KeyCode] <span class=desc>(Author: Dmitry Maslov)</span></h5>
+<h5>[English_KeyCode] <span class=desc>(Author: Dmitry Maslov)</span></h5>
 Bug fixed at which keyboard shortcut ceased to work after switching keyboard layout. (<a href="http://code.google.com/p/scite-ru/issues/detail?id=43">details</a>)
 
 <h5>[InputErr] <span class=desc>(Author: mimir)</span></h5>
@@ -474,7 +483,7 @@ It prevent from transfer Russian text into external script or program.
 Are removed default values of symbols color (black) and a background (white), that allows to not set them obviously in files of adjustment in all styles for set of a corresponding background at export of a file.<br>
 If the <span class="example">style.*.32</span> do not raised characters and the background color, these parameters are collected from your Windows, i.e. equal system Window Text/Background.
 
-<h5> <sup>update</sup> [LowerUpperCase] <span class=desc>(Author: Midas, VladVRO)</span></h5>
+<h5>[LowerUpperCase] <span class=desc>(Author: Midas, VladVRO)</span></h5>
 Correct working with national characters<br>
 - for Make Lower / Upper Case,<br>
 - for Search without match case,<br>

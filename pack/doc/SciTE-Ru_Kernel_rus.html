@@ -38,9 +38,9 @@
       </tr>
     </table>
     <h1>
-      Текстовый редактор SciTE RU-Board 1.75 .55
+      Текстовый редактор SciTE RU-Board 1.76 .56
     </h1>
-    <p>Все модификации оригинального кода редактора <A href="http://www.scintilla.org">SciTE версии 1.75</A> выполнены энтузиастами <A href="http://forum.ru-board.com/topic.cgi?forum=5&topic=24956&glp">форума Ru-Board</A>.
+    <p>Все модификации оригинального кода редактора <A href="http://www.scintilla.org">SciTE</A> выполнены энтузиастами <A href="http://forum.ru-board.com/topic.cgi?forum=5&topic=24956&glp">форума Ru-Board</A>.
 
     <br>Данный файл содержит полный список всех доработок кода относительно исходной версии редактора.
     <br>Все изменения, внесенные в код редактора, помечались характерными комментариями, что позволяет при желании применить к оригинальному коду любое из них по отдельности.
@@ -76,7 +76,7 @@
 Изменено отображение курсора над левым полем, там где отображаются номера строк, метки и фолдинг.<br>
 Курсор меняется на перевернутый указатель только тогда, когда доступна функция выделения текста, иначе курсор принимает свой обычный вид.
 
-<h5> <sup>update</sup> [SubMenu] <span class=desc>(Автор: HSolo, Доработка: Дмитрий Маслов)</span></h5>
+<h5>[SubMenu] <span class=desc>(Автор: HSolo, Доработка: Дмитрий Маслов)</span></h5>
 Немного изменен вид меню Tools. Теперь встроенные команды отделены от пользовательских разделителями.<br>
 В меню Tools теперь возможно вставлять разделители.<br>
 Например, <span class="example">command.separator.34.*=1</span> вставляет разделитель перед командой 34.<br>
@@ -130,7 +130,7 @@ command.name.6.*=Date and Time</div>
 Всплывающая&nbsp;подсказка2|IDM_COMMAND2|номер&nbsp;иконки2|...</div>
 Если параметр не задан в настройках, то отображается стандартный тулбар.
 
-<h5> <sup>update</sup> [FindResultListStyle] <span class=desc>(Автор: VladVRO, Дмитрий Маслов)</span></h5>
+<h5>[FindResultListStyle] <span class=desc>(Автор: VladVRO, Дмитрий Маслов)</span></h5>
 Улучшена наглядность строк, выводимых встроенным инструментом для поиска текста в файлах (Ctrl+Shift+F):<br>
 - строки результата поиска отображаются двумя цветами - путь до файла и номер строки - одним, найденная строка текста - другим цветом.<br>
 - в результирующем тексте табуляция заменяется на пробелы, вначале строки пробелы не выводятся, двойные пробелы заменяются одинарными.<br>
@@ -139,12 +139,14 @@ command.name.6.*=Date and Time</div>
 <br>
 Новый параметр в .properties <span class="example">lexer.errorlist.findliststyle=0</span> позволяет отключить эту возможность.
 
-<h5> <sup>new</sup> [close.find.window] <span class=desc>(Автор: Дмитрий Маслов)</span></h5>
+<h5> <sup>new</sup>
+[close.find.window] <span class=desc>(Автор: Дмитрий Маслов)</span></h5>
 Новый параметр в .properties<br>
 <span class="example">find.replace.closefind=число</span><br>
 0 - предотвращает закрытие окна поиска после нажатия на кнопку "Найти", 1 - закрыть окно (обычное поведение по умолчанию).
 
-<h5> <sup>update</sup> [TabsMoving] <span class=desc>(Автор: VladVRO и Дмитрий Маслов)</span></h5>
+<h5> <sup>update</sup>
+[TabsMoving] <span class=desc>(Автор: VladVRO и Дмитрий Маслов)</span></h5>
 В редактор добавлены две новых команды <span class="example">IDM_MOVETABLEFT</span> и <span class="example">IDM_MOVETABRIGHT</span> позволяющие перемещать текущую закладку. Они доступны в меню Вкладки.<br>
 Кроме того реализовано перемещение закладок с помощью мыши.
 
@@ -158,7 +160,8 @@ command.name.6.*=Date and Time</div>
 <span class="example">buffers.new.position=число</span><br>
 0 - открывать новую вкладку в конце списка (default), 1 - следующей за текущей, 2 - в начале списка.
 
-<h5> <sup>new</sup> [warning.couldnotopenfile.disable] <span class=desc>(Автор: mozers)</span></h5>
+<h5> <sup>new</sup>
+[warning.couldnotopenfile.disable] <span class=desc>(Автор: mozers)</span></h5>
 Новый параметр в .properties<br>
 <span class="example">warning.couldnotopenfile.disable=1</span><br>
 1 - убирает предупреждение "Не удается открыть файл", появляющееся при открытии несуществующего файла и новый файл с заданным именем создается молча.
@@ -171,7 +174,8 @@ command.name.6.*=Date and Time</div>
 <h5>[new_on_dbl_clk] <span class=desc>(Автор: Дмитрий Маслов)</span></h5>
 Добавлен функционал: На двойной клик по свободному месту справа от закладок открывается новый файл (а ля FireFox)
 
-<h5> <sup>new</sup> [close_on_dbl_clk] <span class=desc>(Автор: Дмитрий Маслов, Moon_aka_Sun, VladVRO)</span></h5>
+<h5> <sup>new</sup>
+[close_on_dbl_clk] <span class=desc>(Автор: Дмитрий Маслов, Moon_aka_Sun, VladVRO)</span></h5>
 Добавлен функционал: Закрытие активной вкладки по двойному клику мыши на ней
 
 <h5>[SetBookmark] <span class=desc>(Автор: Midas)</span></h5>
@@ -264,7 +268,8 @@ command.name.6.*=Date and Time</div>
 <span class="example">warning.executeko.message=текст сообщения</span><br>
 <span class="example">warning.nootherbookmark.message=текст сообщения</span>
 
-<h5> <sup>update</sup> [AutoComplete] <span class=desc>(Автор: mimir, VladVRO)</span></h5>
+<h5> <sup>update</sup>
+[AutoComplete] <span class=desc>(Автор: mimir, VladVRO)</span></h5>
 Функция автозавершения (Ctrl+I, Ctrl+Space) берет варианты завершения слова не только из соответствующего .api файла (как в оригинальном SciTE), но и из редактируемого текста.
 
 <h5>[oem2ansi] <span class=desc>(Автор: gansA)</span></h5>
@@ -277,7 +282,7 @@ command.name.6.*=Date and Time</div>
 caret.width.$(file.patterns.cpp)=3</div>
 Это акктуально для тех, у кого для разных языков заданы принципиально отличающиеся цветовые решения, например, с разным (светлым и темным) фоном.
 
-<h5> <sup>update</sup> [BetterCalltips] <span class=desc>(Автор: chupakabra)</span></h5>
+<h5>[BetterCalltips] <span class=desc>(Автор: chupakabra)</span></h5>
 Новые параметры в .properties<br>
 <div class="example">calltip.lexer.automatic<br>
 calltip.*.automatic</div>
@@ -349,7 +354,8 @@ end</div>
 Расширена функция луа <span class="example">OnKey</span>, теперь в нее передается также нажатый символ:<br>
 <span class="example">function OnKey(key, shift, ctrl, alt, char)</span>
 
-<h5> <sup>new</sup> [OnMouseButtonUp] <span class=desc>(Автор: VladVRO)</span></h5>
+<h5> <sup>new</sup>
+[OnMouseButtonUp] <span class=desc>(Автор: VladVRO)</span></h5>
 Добавлено новое событие SciTE <span class="example">OnMouseButtonUp()</span>. Событие возникает при отжатии кнопки мыши в окне редактирования или в окне консоли.<br>
 Получает в строке параметров состояние клавиши-модификатора Ctrl:<br>
 <span class="example">function OnMouseButtonUp(ctrl)</span>
@@ -373,10 +379,10 @@ end</div>
 Добавлено сообщение к Scitilla позволяющее получить имя текущего лексера:<br>
 Теперь <span class="example">editor.LexerLanguage</span> - позволяет как установить лексер, так и получить текущий
 
-<h5> <sup>new</sup> [GetAPIPath] <span class=desc>(Автор: dB6)</span></h5>
+<h5>[GetAPIPath] <span class=desc>(Автор: dB6)</span></h5>
 APIPath - новая внутренняя переменная SciTE. Cодержит путь к текущему api файлу.
 
-<h5> <sup>new</sup> [GetAbbrevPath] <span class=desc>(Автор: dB6)</span></h5>
+<h5>[GetAbbrevPath] <span class=desc>(Автор: dB6)</span></h5>
 AbbrevPath - новая внутренняя переменная SciTE. Cодержит путь к текущему abbrev файлу.
 
 <h5>[AbbrevRefactoring] <span class=desc>(Автор: Дмитрий Маслов)</span></h5>
@@ -431,12 +437,12 @@ AbbrevPath - новая внутренняя переменная SciTE. Cодержит путь к текущему abbrev 
 <h5>[C_Word] <span class=desc>(Автор: mimir)</span></h5>
 Добавлено 3 новых класса ключевых слов для LexCpp (т.е. теперь можно задавать до 4х дополнительных наборов слов с разной подсветкой)
 
-<h5> <sup>new</sup> [PropsKeysSets] <span class=desc>(Автор: VladVRO)</span></h5>
+<h5>[PropsKeysSets] <span class=desc>(Автор: VladVRO)</span></h5>
 Добавлено 4 класса ключевых слов для лексера props.<br>
 Tеперь можно задавать до 4х дополнительных наборов слов с разной подсветкой, причем слова могут содержать символ ~, означающий произвольный набор символов, например <span class="example">block.start.~</span> или <span class="example">braces.~.style</span>.<br>
 В результате постоянная часть переменной будет выделена одним цветом, а переменная часть - другим.
 
-<h5> <sup>new</sup> [PropsKeywords] <span class=desc>(Автор: VladVRO)</span></h5>
+<h5>[PropsKeywords] <span class=desc>(Автор: VladVRO)</span></h5>
 Добавлена подсветка для ключевых слов "import" и "if" в файлах .properties.
 
 <h5>[GetApplicationProps] <span class=desc>(Автор: VladVRO)</span></h5>
@@ -459,7 +465,7 @@ Tеперь можно задавать до 4х дополнительных наборов слов с разной подсветкой, при
 Сделано перемещение фокуса в окно редактора после позиционирования на строке при клике мышкой в окне консоли на строке с ошибкой или результатом поиска.<br>
 Использована доработка <span class="example">[OnMouseButtonUp]</span>.
 
-<h5> <sup>new</sup> [English_KeyCode] <span class=desc>(Автор: Дмитрий Маслов)</span></h5>
+<h5>[English_KeyCode] <span class=desc>(Автор: Дмитрий Маслов)</span></h5>
 Исправлена ошибка при которой назначенные шорткаты переставали работать после переключения раскладки клавиатуры. (<a href="http://code.google.com/p/scite-ru/issues/detail?id=43">подробности</a>)
 
 <h5>[InputErr] <span class=desc>(Автор: mimir)</span></h5>
@@ -474,7 +480,7 @@ Tеперь можно задавать до 4х дополнительных наборов слов с разной подсветкой, при
 Убраны дефолтовые значения цвета символов (черный) и фона (белый), что позволяет не задавать их явно в файлах настройки во всех стилях для получения соответствующего фона при экспорте файла.<br>
 Если в <span class="example">style.*.32</span> явно не задан цвет символов и фона, то эти параметры берутся из настроек Windows, т.е. равными системным Window Text/Background.
 
-<h5> <sup>update</sup> [LowerUpperCase] <span class=desc>(Автор: Midas, VladVRO)</span></h5>
+<h5>[LowerUpperCase] <span class=desc>(Автор: Midas, VladVRO)</span></h5>
 Корректная работа с русскими символами<br>
 - при переводе в нижний/верхний регистр,<br>
 - при поиске без учета регистра<br>
