@@ -661,18 +661,39 @@ static void ColourisePropsDoc(unsigned int startPos, int length, int, WordList *
 	styler.StartSegment(startPos);
 	unsigned int linePos = 0;
 	unsigned int startLine = startPos;
+//!-start-[PropsColouriseFix]
+	bool continuation = false;
+	if (startPos >= 3)
+		continuation = (styler[startPos-2] == '\\')
+			|| (styler[startPos-3] == '\\' && styler[startPos-2] == '\r');
+//!-end-[PropsColouriseFix]
 	for (unsigned int i = startPos; i < startPos + length; i++) {
 		lineBuffer[linePos++] = styler[i];
 		if (AtEOL(styler, i) || (linePos >= sizeof(lineBuffer) - 1)) {
 			// End of line (or of line buffer) met, colourise it
 			lineBuffer[linePos] = '\0';
+//!-start-[PropsColouriseFix]
+			if (continuation)
+				styler.ColourTo(i, SCE_PROPS_DEFAULT);
+			else
+//!-end-[PropsColouriseFix]
 //!			ColourisePropsLine(lineBuffer, linePos, startLine, i, styler);
 			ColourisePropsLine(lineBuffer, linePos, startLine, i, keywordlists, styler); //!-change-[PropsKeysSets]
+//!-start-[PropsColouriseFix]
+			// test: is next a continuation of line
+			continuation = (linePos >= sizeof(lineBuffer) - 1) || (lineBuffer[linePos-2] == '\\')
+				|| (lineBuffer[linePos-3] == '\\' && lineBuffer[linePos-2] == '\r');
+//!-end-[PropsColouriseFix]
 			linePos = 0;
 			startLine = i + 1;
 		}
 	}
 	if (linePos > 0) {	// Last line does not have ending characters
+//!-start-[PropsColouriseFix]
+		if (continuation)
+			styler.ColourTo(startPos + length - 1, SCE_PROPS_DEFAULT);
+		else
+//!-end-[PropsColouriseFix]
 //!		ColourisePropsLine(lineBuffer, linePos, startLine, startPos + length - 1, styler);
 		ColourisePropsLine(lineBuffer, linePos, startLine, startPos + length - 1, keywordlists, styler); //!-change-[PropsKeysSets]
 	}
