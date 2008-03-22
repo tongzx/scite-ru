@@ -1,13 +1,13 @@
 @ECHO off
-CHCP 1251>nul
-ECHO Êîïèðîâàíèå êàòàëîãà TRUNK â óêàçàííîå ìåñòî (áåç ñëóæåáíûõ ïîäêàòàëîãîâ .svn)
+ECHO Š®¯¨à®¢ ­¨¥ ª â «®£  TRUNK ¢ ãª § ­­®¥ ¬¥áâ® (¡¥§ á«ã¦¥¡­ëå ¯®¤ª â «®£®¢ .svn)
 ECHO ------------------------------------------------------------------------------
 ECHO .
 CD /D %~dp0
-SET /P dest=Êóäà ñêîïèðîâàòü? [Ïî óìîë÷àíèþ - â C:\TEMP\TRUNK\]:
+SET /P dest=Šã¤  áª®¯¨à®¢ âì? [® ã¬®«ç ­¨î - ¢ C:\TEMP\TRUNK\]:
 IF "%dest%"=="" SET dest=C:\TEMP\TRUNK\
 ECHO \.svn\>exlist
 ECHO exlist>>exlist
 ECHO copy_svn.cmd>>exlist
 XCOPY %~dp0*.* %dest% /S /H /K /EXCLUDE:exlist
 DEL exlist
+
