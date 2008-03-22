@@ -16,15 +16,70 @@ version=2.0
 >
 <meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
 <style type="text/css">
-	body, table {font-family:MS Sans Serif; font-size:8px; background-color:threedface; cursor:default; margin:0;}
-	input,button {font-family:MS Sans Serif; font-size:8px;}
+	body, table, td, input, button {
+		font:normal normal 8px MS Sans Serif;
+		white-space:nowrap;
+		margin:0;
+	}
+
+	body, table {
+		background-color:threedface;
+	}
+
 	button {width:95px;}
-	a {color:#000080; text-decoration:none;}
-	a:hover {color:red;}
-	fieldset{cursor:default;margin: 0px;text-align:left;padding:4px;padding-top:0px;}
-	legend{margin-bottom:2px; color:blue;}
-	label{cursor: hand; white-space:nowrap;}
-	tr,td{white-space:nowrap;}
+
+	fieldset{
+		cursor:default;
+		margin:0px;
+		text-align:left;
+		padding:4px;
+		padding-top:0px;
+	}
+
+	legend {
+		margin-bottom:2px;
+		color:blue;
+	}
+
+	label {
+		cursor:hand;
+		white-space:nowrap;
+	}
+
+	a.help {text-decoration:none}
+
+	a.help:hover {
+		position:relative;
+		cursor:help;
+	}
+
+	a.help span.help {
+		display:none;
+	}
+
+	a.help:hover span.help {
+		margin:2;
+		color:black;
+		display:block;
+		position:absolute;
+		top:20px;
+		left:20px;
+		background-color:white;
+		border:1px solid #999999;
+		padding:5px;
+		cursor:help;
+	}
+
+	em {
+		color:#CC3300;
+		text-decoration:underline;
+		font-style:normal;
+	}
+
+	cite {
+		color:#0033CC;
+		font-style:normal;
+	}
 </style>
 
 <script language="JavaScript">
@@ -323,46 +378,6 @@ function UnSetHelper(){
 }
 
 // =============================================================
-
-// Всплывающие подсказки
-function ShowPopup(p){
-	switch(p){
-		case "home":
-			text='Задает местоположение файлов настроек <span class=q>SciTEGlobal.properties<\/span>, <span class=q>SciTE.session<\/span>, <span class=q>SciTE.recent<\/span><br><br><span class=war>Если Вы установите это значение, то любой экземпляр <span class=q>SciTE.exe<\/span>, запущенный на этой машине,<br>будет искать файлы настроек не в своем каталоге, а по пути указанному в этой переменной!<\/span>';
-			break;
-		case "associations":
-			text='Позволяет открывать в SciTE файлы ассоциированных типов с помощью двойного клика мыши';
-			break;
-		case "openfor":
-			text='Позволяет открыть любой выбранный файл в SciTE';
-			break;
-		case "ses":
-			text='Позволяет открывать сохраненные ранее сессиии SciTE';
-			break;
-		case "html_def":
-			text='Выбор пункта меню Internet Explorer <span class=q>"Просмотр HTML кода"<\/span><br>откроет текущую страницу в SciTE';
-			break;
-		case "html":
-			text='На панели инструментов Internet Explorer можно установить кнопку <span class=q>"Правка".<\/span><br>Данная опция добавит в меню этой кнопки пункт <span class=q>"Править в SciTE"<\/span>';
-			break;
-		case "helper":
-			text='C помощью <span class=q>SciTE.Helper<\/span> внешние скрипты и программы<br>смогут управлять SciTE и получать из него данные';
-			break;
-		default:
-			if (oPopUp){oPopUp.hide()}
-			return;
-	}
-	var popup_html='<html><head><style>body {margin:2; background-color:white; overflow:auto; border-style: solid; border-width: 1px; border-color: #999999; font-size: 10px; font-family: MS Sans Serif, Verdana, Arial, Helvetica; white-space:nowrap} .war{color:#CC3300;} .q{color:#0033CC;}<\/style><\/head><body onmouseout=\"if ((event.clientX<0)||(event.clientY<0)) {parent.oPopUp.hide();}\">'+text+'<\/body><\/html>';
-	oPopUp=window.createPopup(); 
-	oPopUp.document.write(popup_html);
-	ev_obj=window.event.srcElement;
-	oPopUp.show(0,0,0,0,ev_obj);
-	popup_height=oPopUp.document.body.scrollHeight+2;
-	popup_width=oPopUp.document.body.scrollWidth+4;
-	oPopUp.hide();
-	setTimeout('oPopUp.show(60,-35,popup_width,popup_height,ev_obj)',600);
-}
-
 // Окно "О программе"
 function About() {
 	if(top.location=='about:blank') {alert('На пустой странице не работаю!')}
@@ -389,9 +404,15 @@ function About() {
 <table width=100%><tr><td>
 
 <fieldset><legend>&nbsp;Установка переменных окружения:&nbsp;</legend><table width=100%>
-	<tr onMouseOver=ShowPopup("home")>
+	<tr>
 		<td>
+			<a class="help" href="#" hidefocus>
 			<input name="chk" type="checkbox" id=chk_home hidefocus onClick="home.disabled=!chk_home.checked">
+			<span class="help">Задает местоположение файлов настроек<br>
+				<cite>SciTEGlobal.properties</cite>, <cite>SciTE.session</cite>, <cite>SciTE.recent</cite><br><br>
+				<em>ВНИМАНИЕ!</em> Если Вы установите это значение, то любой экземпляр<br>
+				<cite>SciTE</cite>, запущенный на этой машине, будет искать файлы настроек<br>
+				не в своем каталоге, а по пути указанному в этой переменной.</span></a>
 			<label for=chk_home>SCITE_HOME&nbsp;=</label>
 		</td>
 		<td style="width:100%">
@@ -401,39 +422,63 @@ function About() {
 </table></fieldset>
 &nbsp;
 
-<fieldset><legend>&nbsp;Интеграция в Проводник:&nbsp;</legend><table width=100%>
-	<tr onMouseOver=ShowPopup("associations")>
-		<td>
-			&nbsp;Связать файлы заданных расширений с SciTE:<br>
-			<input name="chk" type="checkbox" id=chk_associations hidefocus onClick="associations.disabled=!chk_associations.checked">&nbsp;
-			<input TYPE=text id="associations" style="width:93%">
+<fieldset><legend>&nbsp;Интеграция в Проводник:&nbsp;</legend>
+<table width=100%>
+	<tr>
+		<td colspan="2">
+			&nbsp;Связать файлы заданных расширений с SciTE:
 		</td>
 	</tr>
-	<tr onMouseOver=ShowPopup("openfor")>
+	<tr>
 		<td>
+			<a class="help" href="#" hidefocus>
+			<input name="chk" type="checkbox" id=chk_associations hidefocus onClick="associations.disabled=!chk_associations.checked">&nbsp;
+			<span class="help">Позволяет открывать в SciTE файлы ассоциированных типов<br>
+				с помощью двойного клика мыши</span></a>
+			<label for=chk_home>SCITE_HOME&nbsp;=</label>
+		</td>
+		<td style="width:100%">
+			<input TYPE=text id="associations" style="width:100%">
+		</td>
+	</tr>
+</table>
+<table width=100%>
+	<tr>
+		<td>
+			<a class="help" href="#" hidefocus>
 			<input name="chk" type="checkbox" id=chk_openfor hidefocus>
+			<span class="help">Позволяет открыть любой выбранный файл в SciTE</span></a>
 			<label for=chk_openfor>Добавить в контекстное меню всех файлов пункт "Открыть в SciTE"</label>
 		</td>
 	</tr>
-	<tr onMouseOver=ShowPopup("ses")>
+	<tr>
 		<td>
+			<a class="help" href="#" hidefocus>
 			<input name="chk" type="checkbox" id=chk_ses hidefocus>
+			<span class="help">Позволяет открывать сохраненные ранее сессиии SciTE</span></a>
 			<label for=chk_ses>Открывать файлы *.session как файлы сессий SciTE</label>
 		</td>
 	</tr>
-</table></fieldset>
+</table>
+</fieldset>
 &nbsp;
 
 <fieldset><legend>&nbsp;Интеграция в Internet Explorer:&nbsp;</legend><table width=100%>
-	<tr onMouseOver=ShowPopup("html_def")>
+	<tr>
 		<td>
+			<a class="help" href="#" hidefocus>
 			<input name="chk" type="checkbox" id=chk_html_def hidefocus>
+			<span class="help">Выбор пункта меню Internet Explorer '<cite>Просмотр HTML кода</cite>'<br>
+				откроет текущую страницу в SciTE</span></a>
 			<label for=chk_html_def>Установить SciTE в качестве дефолтового HTML редактора</label>
 		</td>
 	</tr>
-	<tr onMouseOver=ShowPopup("html")>
+	<tr>
 		<td>
+			<a class="help" href="#" hidefocus>
 			<input name="chk" type="checkbox" id=chk_html hidefocus>
+			<span class="help">На панели инструментов Internet Explorer можно установить кнопку '<cite>Правка</cite>'.<br>
+				Данная опция добавит в меню этой кнопки пункт '<cite>Править в SciTE</cite>'</span></a>
 			<label for=chk_html>SciTE в качестве одного из редакторов в меню кнопки "Правка"</label>
 		</td>
 	</tr>
@@ -441,9 +486,12 @@ function About() {
 &nbsp;
 
 <fieldset><legend>&nbsp;Интеграция в Windows:&nbsp;</legend><table width=100%>
-<tr onMouseOver=ShowPopup("helper")>
+<tr>
 	<td>
+		<a class="help" href="#" hidefocus>
 		<input name="chk" type="checkbox" id=chk_helper hidefocus>
+		<span class="help">C помощью <span class=q>SciTE.Helper</span> внешние скрипты и программы<br>
+			смогут управлять SciTE и получать из него данные</span></a>
 		<label for=chk_helper>Установить SciTE.Helper (COM-сервер для управления SciTE)</label>
 	</td>
 </tr>
@@ -465,22 +513,18 @@ function About() {
 <script language="JavaScript">
 function check_scite(scite_path){
 	if (fso.FileExists(scite_path + "\\SciTE.exe")){
-		//~ alert("True: "+scite_path + "\\SciTE.exe");
 		return true;
 	}else{
-		//~ alert("False: "+scite_path + "\\SciTE.exe");
 		return false;
 	}
 }
 
 function find_scite(){
 	var scite_path = script_path;
-	//~ alert(scite_path);
 	if (check_scite(scite_path)){
 		return scite_path;
 	}else{
 		scite_path = scite_path.replace(/\\[^\\]+$/,'');
-		//~ alert(scite_path);
 		if (check_scite(scite_path)){
 			return scite_path;
 		}else{
@@ -490,7 +534,7 @@ function find_scite(){
 }
 
 document.title = SWI.applicationName.replace(/_/g,' ') + ' ' + SWI.version;
-window.resizeTo(440,392);
+window.resizeTo(440,400);
 var scite_path = find_scite();
 if (scite_path == ""){
 	alert("SciTE не найден!\nЗапустите скрипт из каталога с установленным SciTE");
