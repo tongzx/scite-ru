@@ -416,7 +416,7 @@ function About() {
 			<label for=chk_home>SCITE_HOME&nbsp;=</label>
 		</td>
 		<td style="width:100%">
-			<input type=text id="home" value="" style="width:100%">
+			<input type=text id="home" value="" style="width:100%; font:normal normal 10pt Courier New;">
 		</td>
 	</tr>
 </table></fieldset>
@@ -435,10 +435,9 @@ function About() {
 			<input name="chk" type="checkbox" id=chk_associations hidefocus onClick="associations.disabled=!chk_associations.checked">&nbsp;
 			<span class="help">Позволяет открывать в SciTE файлы ассоциированных типов<br>
 				с помощью двойного клика мыши</span></a>
-			<label for=chk_home>SCITE_HOME&nbsp;=</label>
 		</td>
 		<td style="width:100%">
-			<input TYPE=text id="associations" style="width:100%">
+			<input TYPE=text id="associations" style="width:100%; font:normal normal 10pt Courier New;">
 		</td>
 	</tr>
 </table>
@@ -490,7 +489,7 @@ function About() {
 	<td>
 		<a class="help" href="#" hidefocus>
 		<input name="chk" type="checkbox" id=chk_helper hidefocus>
-		<span class="help">C помощью <span class=q>SciTE.Helper</span> внешние скрипты и программы<br>
+		<span class="help">C помощью <cite>SciTE.Helper</cite> внешние скрипты и программы<br>
 			смогут управлять SciTE и получать из него данные</span></a>
 		<label for=chk_helper>Установить SciTE.Helper (COM-сервер для управления SciTE)</label>
 	</td>
@@ -534,7 +533,7 @@ function find_scite(){
 }
 
 document.title = SWI.applicationName.replace(/_/g,' ') + ' ' + SWI.version;
-window.resizeTo(440,400);
+window.resizeTo(450,400);
 var scite_path = find_scite();
 if (scite_path == ""){
 	alert("SciTE не найден!\nЗапустите скрипт из каталога с установленным SciTE");

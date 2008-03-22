@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 AutocompleteObject.lua
 mozersЩ
-version 2.0
+version 2.01
 ------------------------------------------------------
 ¬вод разделител€, заданного в autocomplete.[lexer].start.characters
 вызывает список свойств и медодов объекта из соответствующего api файла
@@ -218,10 +218,6 @@ local function ShowUserList()
 		methods_table = TableSort(methods_table)
 		local s = table.concat(methods_table, " ")
 		if s ~= '' then
-			-- дл€ того, чтобы пользователь мог отменить свой неудачный выбор из списка одним нажатием на Ctrl+Z
-			editor:DeleteBack()
-			editor:BeginUndoAction()
-			editor:ReplaceSel(sep_char)
 			editor:UserListShow(7, s)
 			return true
 		else
@@ -236,7 +232,6 @@ end
 local function InsertMethod(str)
 	editor:SetSel(current_pos, editor.CurrentPos)
 	editor:ReplaceSel(str)
-	editor:EndUndoAction()
 end
 
 -- ќ—Ќќ¬Ќјя ѕ–ќ÷≈ƒ”–ј (обрабатываем нажати€ на клавиши)
