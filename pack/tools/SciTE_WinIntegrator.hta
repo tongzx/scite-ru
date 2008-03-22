@@ -1,4 +1,4 @@
-<html><HEAD>
+<html><head>
 <meta http-equiv=Content-Type Content="text-html; charset=windows-1251">
 <meta http-equiv=MSThemeCompatible Content=Yes>
 <hta:application
@@ -7,6 +7,7 @@ applicationName=SciTE_Windows_Integrator
 icon=regedit.exe
 maximizeButton=no
 innerBorder=no
+border=thin
 scroll=no
 selection=no
 contextMenu=no
@@ -15,14 +16,17 @@ version=2.0
 >
 <meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
 <style type="text/css">
-	body, table {font-family:MS Sans Serif; font-size:8px; background-color:threedface; cursor:default;}
+	body, table {font-family:MS Sans Serif; font-size:8px; background-color:threedface; cursor:default; margin:0;}
 	input,button {font-family:MS Sans Serif; font-size:8px;}
+	button {width:95px;}
 	a {color:#000080; text-decoration:none;}
 	a:hover {color:red;}
 	fieldset{cursor:default;margin: 0px;text-align:left;padding:4px;padding-top:0px;}
 	legend{margin-bottom:2px; color:blue;}
 	label{cursor: hand; white-space:nowrap;}
+	tr,td{white-space:nowrap;}
 </style>
+
 <script language="JavaScript">
 var WshShell = new ActiveXObject("WScript.Shell");
 var ForReading = 1, ForWriting = 2, ForAppending = 8;
@@ -379,48 +383,85 @@ function About() {
 	}
 }
 </script>
-</HEAD><body >
+
+</head><body>
 <form id="form">
-<TABLE width=100%><TR><TD>
-<fieldset>
-<legend>&nbsp;Установка переменных окружения:&nbsp;</legend>
-<TABLE width=100%>
-<TR onMouseOver=ShowPopup("home")><TD><nobr><INPUT name="chk" type="checkbox" id=chk_home hidefocus  onClick="home.disabled=!chk_home.checked"> <label for=chk_path>SCITE_HOME&nbsp;=</label></TD><TD style="width:100%"><INPUT TYPE=text id="home" value="" style="width:100%"></nobr></TD></TR>
-</TABLE>
-</fieldset>
+<table width=100%><tr><td>
+
+<fieldset><legend>&nbsp;Установка переменных окружения:&nbsp;</legend><table width=100%>
+	<tr onMouseOver=ShowPopup("home")>
+		<td>
+			<input name="chk" type="checkbox" id=chk_home hidefocus onClick="home.disabled=!chk_home.checked">
+			<label for=chk_home>SCITE_HOME&nbsp;=</label>
+		</td>
+		<td style="width:100%">
+			<input type=text id="home" value="" style="width:100%">
+		</td>
+	</tr>
+</table></fieldset>
 &nbsp;
-<fieldset>
-<legend>&nbsp;Интеграция в Проводник:&nbsp;</legend>
-<TABLE width=100%>
-<TR onMouseOver=ShowPopup("associations")><TD>&nbsp;Связать файлы заданных расширений с SciTE:<br><INPUT name="chk" type="checkbox" id=chk_associations hidefocus onClick="associations.disabled=!chk_associations.checked">&nbsp;<INPUT TYPE=text id="associations" style="width:94%"></TD></TR>
-<TR onMouseOver=ShowPopup("openfor")><TD><INPUT name="chk" type="checkbox" id=chk_openfor hidefocus> <label for=openfor>Добавить в контекстное меню всех файлов пункт "Открыть в SciTE"</label></TD></TR>
-<TR onMouseOver=ShowPopup("ses")><TD><INPUT name="chk" type="checkbox" id=chk_ses hidefocus> <label for=ses>Открывать файлы *.session как файлы сессий SciTE</label></TD></TR>
-</TABLE>
-</fieldset>
+
+<fieldset><legend>&nbsp;Интеграция в Проводник:&nbsp;</legend><table width=100%>
+	<tr onMouseOver=ShowPopup("associations")>
+		<td>
+			&nbsp;Связать файлы заданных расширений с SciTE:<br>
+			<input name="chk" type="checkbox" id=chk_associations hidefocus onClick="associations.disabled=!chk_associations.checked">&nbsp;
+			<input TYPE=text id="associations" style="width:93%">
+		</td>
+	</tr>
+	<tr onMouseOver=ShowPopup("openfor")>
+		<td>
+			<input name="chk" type="checkbox" id=chk_openfor hidefocus>
+			<label for=chk_openfor>Добавить в контекстное меню всех файлов пункт "Открыть в SciTE"</label>
+		</td>
+	</tr>
+	<tr onMouseOver=ShowPopup("ses")>
+		<td>
+			<input name="chk" type="checkbox" id=chk_ses hidefocus>
+			<label for=chk_ses>Открывать файлы *.session как файлы сессий SciTE</label>
+		</td>
+	</tr>
+</table></fieldset>
 &nbsp;
-<fieldset>
-<legend>&nbsp;Интеграция в Internet Explorer:&nbsp;</legend>
-<TABLE width=100%>
-<TR onMouseOver=ShowPopup("html_def")><TD><INPUT name="chk" type="checkbox" id=chk_html_def hidefocus> <label for=html_def>Установить SciTE в качестве дефолтового HTML редактора</label></TD></TR>
-<TR onMouseOver=ShowPopup("html")><TD><INPUT name="chk" type="checkbox" id=chk_html hidefocus> <label for=html>SciTE в качестве одного из редакторов в меню кнопки "Правка"</label></TD></TR>
-</TABLE>
-</fieldset>
+
+<fieldset><legend>&nbsp;Интеграция в Internet Explorer:&nbsp;</legend><table width=100%>
+	<tr onMouseOver=ShowPopup("html_def")>
+		<td>
+			<input name="chk" type="checkbox" id=chk_html_def hidefocus>
+			<label for=chk_html_def>Установить SciTE в качестве дефолтового HTML редактора</label>
+		</td>
+	</tr>
+	<tr onMouseOver=ShowPopup("html")>
+		<td>
+			<input name="chk" type="checkbox" id=chk_html hidefocus>
+			<label for=chk_html>SciTE в качестве одного из редакторов в меню кнопки "Правка"</label>
+		</td>
+	</tr>
+</table></fieldset>
 &nbsp;
-<fieldset>
-<legend>&nbsp;Интеграция в Windows:&nbsp;</legend>
-<TABLE width=100%>
-<TR onMouseOver=ShowPopup("helper")><TD><INPUT name="chk" type="checkbox" id=chk_helper hidefocus> <label for=helper>Установить SciTE.Helper (COM-сервер для управления SciTE)</label></TD></TR>
-</TABLE>
-</fieldset>
+
+<fieldset><legend>&nbsp;Интеграция в Windows:&nbsp;</legend><table width=100%>
+<tr onMouseOver=ShowPopup("helper")>
+	<td>
+		<input name="chk" type="checkbox" id=chk_helper hidefocus>
+		<label for=chk_helper>Установить SciTE.Helper (COM-сервер для управления SciTE)</label>
+	</td>
+</tr>
+</table></fieldset>
 &nbsp;
-<TABLE width=100%>
-<TR><TD align=center width=33%><button onClick="Set();">&nbsp;&nbsp;&nbsp;ОК&nbsp;&nbsp;&nbsp;</button></TD>
-<TD align=center width=33%><button onClick="self.close();">Отмена</button></TD>
-<TD align=center width=33%><button onClick="About();">О программе</button></TD></TR>
-</TABLE>
-</TD></TR>
-</TABLE>
+
+<table width=100%>
+	<tr>
+		<td align=center width=33%><button onClick="Set();">ОК</button></td>
+		<td align=center width=33%><button onClick="self.close();">Отмена</button></td>
+		<td align=center width=33%><button onClick="About();">О программе</button></td>
+	</tr>
+</table>
+
+</td></tr>
+</table>
 </form>
+
 <script language="JavaScript">
 function check_scite(scite_path){
 	if (fso.FileExists(scite_path + "\\SciTE.exe")){
@@ -449,7 +490,7 @@ function find_scite(){
 }
 
 document.title = SWI.applicationName.replace(/_/g,' ') + ' ' + SWI.version;
-window.resizeTo(440,410);
+window.resizeTo(440,392);
 var scite_path = find_scite();
 if (scite_path == ""){
 	alert("SciTE не найден!\nЗапустите скрипт из каталога с установленным SciTE");
@@ -458,5 +499,6 @@ if (scite_path == ""){
 
 Check();
 </script>
+
 </body>
-</HTML>
+</html>
