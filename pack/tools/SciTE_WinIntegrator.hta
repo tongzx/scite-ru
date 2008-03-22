@@ -11,7 +11,7 @@ scroll=no
 selection=no
 contextMenu=no
 singleinstance=yes
-version=1.3
+version=2.0
 >
 <meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
 <style type="text/css">
@@ -28,79 +28,303 @@ var WshShell = new ActiveXObject("WScript.Shell");
 var ForReading = 1, ForWriting = 2, ForAppending = 8;
 var fso = new ActiveXObject("Scripting.FileSystemObject");
 var script_path = unescape(self.location.href).replace(/file:\/\/\/([a-z]:.*)\/.*?$/i,'$1').replace(/\//g,'\\');
+var reg_backup = 'HKLM\\SOFTWARE\\SciTE\\Script\\WinIntegrator\\';
 
-function Del_from_Tools(){
-	var filename = form.home.value + '\\SciTEGlobal.properties';
-	var file = fso.OpenTextFile(filename, 1);
-	var text = file.ReadAll();
-	text = text.replace(/(command\.name\.\d+\.\*=Windows Integration)/,'# $1');
-	file = fso.OpenTextFile(filename, 2);
+// Проверка регистрации
+function Check(){
+	CheckHome()
+	CheckAssociations()
+	CheckOpenfor()
+	CheckSession()
+	CheckHTML_def()
+	CheckHTML()
+	CheckHelper()
+}
+
+// После нажатия на "ОК" проверяем, изменил ли пользователь установки
+// и выполняем только те позиции, в которых состояние чекбоксов изменилось
+function Set(){
+	var _alert = false;
+	for (i=0;i<form.chk.length;i++){
+		if (form.chk[i].checked.toString() != form.chk[i].value.toString()){
+			_alert = true;
+			if (form.chk[i].checked){
+				SetValue(form.chk[i].id);
+			}else{
+				UnSetValue(form.chk[i].id);
+			}
+		}
+	}
+	if (_alert){
+		alert("Изменения успешно внесены в реестр!");
+	}
+	self.close();
+}
+
+// Установка регистрации
+function SetValue(id){
+	switch(id){
+	case "chk_home":
+		SetHome();
+		break;
+	case "chk_associations":
+		SetAssociations();
+		break;
+	case "chk_openfor":
+		SetOpenfor();
+		break;
+	case "chk_ses":
+		SetSessions();
+		break;
+	case "chk_html_def":
+		SetHTML_def();
+		break;
+	case "chk_html":
+		SetHTML();
+		break;
+	case "chk_helper":
+		SetHelper();
+		break;
+	}
+}
+
+// Снятие регистрации
+function UnSetValue(id){
+	switch(id){
+	case "chk_home":
+		UnSetHome();
+		break;
+	case "chk_associations":
+		UnSetAssociations();
+		break;
+	case "chk_openfor":
+		UnSetOpenfor();
+		break;
+	case "chk_ses":
+		UnSetSessions();
+		break;
+	case "chk_html_def":
+		UnSetHTML_def();
+		break;
+	case "chk_html":
+		UnSetHTML();
+		break;
+	case "chk_helper":
+		UnSetHelper();
+		break;
+	}
+}
+
+// home ====================================================
+function CheckHome(){
+	form.chk_home.checked = false;
+	form.chk_home.value = false;
+	form.home.value = scite_path;
+	form.home.disabled = true;
+	try {
+		var home = WshShell.RegRead('HKCU\\Environment\\SCITE_HOME');
+		form.chk_home.checked = true;
+		form.chk_home.value = true;
+		form.home.value = home;
+		form.home.disabled = false;
+	} catch(e) {}
+}
+
+function SetHome(){
+	WshShell.RegWrite('HKCU\\Environment\\SCITE_HOME', form.home.value);
+}
+
+function UnSetHome(){
+	try {WshShell.RegDelete('HKCU\\Environment\\SCITE_HOME')}catch(e){};
+}
+
+// associations ============================================
+function CheckAssociations(){
+	form.chk_associations.checked = false;
+	form.chk_associations.value = false;
+	form.associations.value = "txt;php;h;cxx";
+	form.associations.disabled = true;
+	try {
+		var _associations = WshShell.RegRead(reg_backup+'associations');
+		form.chk_associations.checked = true;
+		form.chk_associations.value = true;
+		form.associations.value = _associations;
+		form.associations.disabled = false;
+	} catch(e) {}
+}
+
+function SetAssociations(){
+	var Arr_associations = form.associations.value.split(';');
+	for (var i=0;i<Arr_associations.length;i++){
+		var ext = Arr_associations[i];
+		if (ext != ''){
+			var current_association = "";
+			try {current_association = WshShell.RegRead('HKCR\\.'+ext+'\\')} catch(e) {}
+			WshShell.RegWrite(reg_backup+ext, current_association);
+			WshShell.RegWrite('HKCR\\.'+ext+'\\', 'SciTE.File');
+		}
+	}
+	WshShell.RegWrite(reg_backup+'associations', form.associations.value);
+	WshShell.RegWrite('HKCR\\SciTE.File\\', 'SciTE file');
+	WshShell.RegWrite('HKCR\\SciTE.File\\DefaultIcon\\', form.home.value + '\\SciTE.exe,1');
+	WshShell.RegWrite('HKCR\\SciTE.File\\shell\\open\\command\\', '"' + form.home.value + '\\SciTE.exe" "%1"');
+}
+
+function UnSetAssociations(){
+	var Arr_associations = WshShell.RegRead(reg_backup+'associations').split(';');
+	for (var i=0;i<Arr_associations.length;i++){
+		var ext = Arr_associations[i];
+		if (ext != ''){
+			var old_association = "";
+			try {
+				old_association = WshShell.RegRead(reg_backup+ext);
+				WshShell.RegDelete(reg_backup+ext);
+			} catch(e) {}
+			WshShell.RegWrite('HKCR\\.'+ext+'\\', old_association);
+		}
+	}
+	WshShell.RegDelete(reg_backup+'associations');
+}
+
+// openfor =================================================
+function CheckOpenfor(){
+	form.chk_openfor.checked = false;
+	form.chk_openfor.value = false;
+	try {
+		var _openfor = WshShell.RegRead('HKCR\\*\\shell\\Open with SciTE\\');
+		form.chk_openfor.checked = true;
+		form.chk_openfor.value = true;
+	} catch(e) {}
+}
+
+function SetOpenfor(){
+		WshShell.RegWrite('HKCR\\*\\shell\\Open with SciTE\\', 'Открыть в &SciTE');
+		WshShell.RegWrite('HKCR\\*\\shell\\Open with SciTE\\command\\', '"' + form.home.value + '\\SciTE.exe" -check.if.already.open=0 "%1"');
+}
+
+function UnSetOpenfor(){
+	try {
+		WshShell.RegDelete('HKCR\\*\\shell\\Open with SciTE\\command\\');
+		WshShell.RegDelete('HKCR\\*\\shell\\Open with SciTE\\');
+	}catch(e){}
+}
+
+// session =================================================
+function CheckSession(){
+	form.chk_ses.checked = false;
+	form.chk_ses.value = false;
+	try {
+		var _ses = WshShell.RegRead('HKCR\\.session\\');
+		form.chk_ses.checked = true;
+		form.chk_ses.value = true;
+	} catch(e) {}
+}
+
+function SetSessions(){
+	var open_ses_file = 'open_session.js';
+	WshShell.RegWrite('HKCR\\.session\\', 'SciTE.Session');
+	WshShell.RegWrite('HKCR\\SciTE.Session\\', 'SciTE session file');
+	WshShell.RegWrite('HKCR\\SciTE.Session\\DefaultIcon\\', form.home.value + '\\SciTE.exe,2');
+	WshShell.RegWrite('HKCR\\SciTE.Session\\shell\\open\\command\\', 'wscript "' + script_path + '\\' + open_ses_file + '" "%1"');
+	var text = 'var scite = "' + form.home.value.replace(/\\/g,'\\\\') + '\\\\SciTE.exe";\n';
+	text += 'var WshShell = new ActiveXObject("WScript.Shell");\n';
+	text += 'var filename = WScript.Arguments(0);\n';
+	text += 'var opt = \'\"-loadsession:\' + filename.replace(\/\\\\\/g,\"\\\\\\\\\") + \'\"\';\n'
+	text += 'var cmd = \'\"\' + scite + \'\" \' + opt;\nWshShell.Run(cmd, 0, false);\n\n';
+	var file = fso.OpenTextFile(script_path + '\\' + open_ses_file, 2, true);
 	file.Write(text);
 	file.Close();
 }
-function Set(){
-	if(form.chk_home.checked){
-		WshShell.RegWrite('HKCU\\Environment\\SCITE_HOME', form.home.value);
-	}
-	if(form.chk_associations.checked){
-		var Arr_associations = form.associations.value.split(';');
-		for (var i=0;i<Arr_associations.length;i++){
-			var ext = Arr_associations[i];
-			if (ext != ''){
-				WshShell.RegWrite('HKCR\\.'+ext+'\\', 'SciTE.File');
-			}
-		}
-		WshShell.RegWrite('HKCR\\SciTE.File\\', 'SciTE file');
-		WshShell.RegWrite('HKCR\\SciTE.File\\DefaultIcon\\', form.home.value + '\\SciTE.exe,1');
-		WshShell.RegWrite('HKCR\\SciTE.File\\shell\\open\\command\\', '"' + form.home.value + '\\SciTE.exe" "%1"');
-	}
-	if(form.openfor.checked){
-		WshShell.RegWrite('HKCR\\*\\shell\\Open with SciTE\\', 'Открыть в &SciTE');
-		WshShell.RegWrite('HKCR\\*\\shell\\Open with SciTE\\command\\', '"' + form.home.value + '\\SciTE.exe" -check.if.already.open=0 "%1"');
-	}
-	if(form.ses.checked){
-		var open_ses_file = 'open_session.js';
-		WshShell.RegWrite('HKCR\\.session\\', 'SciTE.Session');
-		WshShell.RegWrite('HKCR\\SciTE.Session\\', 'SciTE session file');
-		WshShell.RegWrite('HKCR\\SciTE.Session\\DefaultIcon\\', form.home.value + '\\SciTE.exe,2');
-		WshShell.RegWrite('HKCR\\SciTE.Session\\shell\\open\\command\\', 'wscript "' + script_path + '\\' + open_ses_file + '" "%1"');
-		var text = 'var scite = "' + form.home.value.replace(/\\/g,'\\\\') + '\\\\SciTE.exe";\n';
-		text += 'var WshShell = new ActiveXObject("WScript.Shell");\n';
-		text += 'var filename = WScript.Arguments(0);\n';
-		text += 'var opt = \'\"-loadsession:\' + filename.replace(\/\\\\\/g,\"\\\\\\\\\") + \'\"\';\n'
-		text += 'var cmd = \'\"\' + scite + \'\" \' + opt;\nWshShell.Run(cmd, 0, false);\n\n';
-		var file = fso.OpenTextFile(script_path + '\\' + open_ses_file, 2, true);
-		file.Write(text);
-		file.Close();
-	}
-	if(form.html_def.checked){
-		WshShell.RegWrite('HKLM\\SOFTWARE\\Microsoft\\Internet Explorer\\View Source Editor\\Editor Name\\', '"' + form.home.value + '\\SciTE.exe"');
-	}
-	if(form.html.checked){
-		WshShell.RegWrite('HKCR\\.htm\\OpenWithList\\SCITE.EXE\\', '');
-		WshShell.RegWrite('HKCR\\Applications\\SCITE.EXE\\shell\\edit\\command\\', form.home.value + '\\SciTE.exe "%1"');
-		try {WshShell.RegDelete('HKCU\\Software\\Microsoft\\Internet Explorer\\Default HTML Editor\\shell\\edit\\ddeexec\\');
-		} catch(e) {};
-		WshShell.RegWrite('HKCU\\Software\\Microsoft\\Internet Explorer\\Default HTML Editor\\shell\\edit\\command\\', form.home.value + '\\SciTE.exe "%1"');
-		WshShell.RegWrite('HKCU\\Software\\Microsoft\\Internet Explorer\\Default HTML Editor\\Description', 'SciTE - a Scintilla based Text Editor');
-		WshShell.RegWrite('HKCU\\Software\\Microsoft\\Shared\\HTML\\Default Editor\\shell\\edit\\command\\', form.home.value + '\\SciTE.exe "%1"');
-	}
-	if(form.helper.checked){
-		var file_dll = form.home.value + '\\tools\\Helper\\SciTE.dll';
-		if (fso.FileExists(file_dll)){
-			WshShell.Run('Regsvr32 "' + file_dll + '"',0,false);
-		}
-	}
-	if(form.del.checked){
-		Del_from_Tools();
-	}
-	alert("Выбранные параметры успешно внесены в реестр!");
-	self.close();
+
+function UnSetSessions(){
+	try{WshShell.RegDelete('HKCR\\.session\\')}catch(e){};
 }
+
+// html_def ================================================
+function CheckHTML_def(){
+	form.chk_html_def.checked = false;
+	form.chk_html_def.value = false;
+	try {
+		var _html_def = WshShell.RegRead('HKLM\\SOFTWARE\\Microsoft\\Internet Explorer\\View Source Editor\\Editor Name\\');
+		if (/scite/i.test(_html_def)){
+			form.chk_html_def.checked = true;
+			form.chk_html_def.value = true;
+		}
+	} catch(e) {}
+}
+
+function SetHTML_def(){
+	var current_htmldef = "";
+	try {var current_htmldef = WshShell.RegRead('HKLM\\SOFTWARE\\Microsoft\\Internet Explorer\\View Source Editor\\Editor Name\\')} catch(e) {}
+	WshShell.RegWrite(reg_backup+'Source Editor', current_htmldef);
+	WshShell.RegWrite('HKLM\\SOFTWARE\\Microsoft\\Internet Explorer\\View Source Editor\\Editor Name\\', '"' + form.home.value + '\\SciTE.exe"');
+}
+
+function UnSetHTML_def(){
+	var old_htmldef = "";
+	try {
+		var old_htmldef = WshShell.RegRead(reg_backup+'Source Editor');
+		WshShell.RegDelete(reg_backup+'Source Editor');
+	} catch(e) {}
+	WshShell.RegWrite('HKLM\\SOFTWARE\\Microsoft\\Internet Explorer\\View Source Editor\\Editor Name\\', old_htmldef);
+}
+
+// html ====================================================
+function CheckHTML(){
+	form.chk_html.checked = false;
+	form.chk_html.value = false;
+	try {
+		var _html = WshShell.RegRead('HKCR\\.htm\\OpenWithList\\SCITE.EXE\\');
+		form.chk_html.checked = true;
+		form.chk_html.value = true;
+	} catch(e) {}
+}
+
+function SetHTML(){
+	WshShell.RegWrite('HKCR\\.htm\\OpenWithList\\SCITE.EXE\\', '');
+	WshShell.RegWrite('HKCR\\Applications\\SCITE.EXE\\shell\\edit\\command\\', form.home.value + '\\SciTE.exe "%1"');
+	try {WshShell.RegDelete('HKCU\\Software\\Microsoft\\Internet Explorer\\Default HTML Editor\\shell\\edit\\ddeexec\\')} catch(e) {};
+	WshShell.RegWrite('HKCU\\Software\\Microsoft\\Internet Explorer\\Default HTML Editor\\shell\\edit\\command\\', form.home.value + '\\SciTE.exe "%1"');
+	WshShell.RegWrite('HKCU\\Software\\Microsoft\\Internet Explorer\\Default HTML Editor\\Description', 'SciTE - a Scintilla based Text Editor');
+	WshShell.RegWrite('HKCU\\Software\\Microsoft\\Shared\\HTML\\Default Editor\\shell\\edit\\command\\', form.home.value + '\\SciTE.exe "%1"');
+}
+
+function UnSetHTML(){
+	try{WshShell.RegDelete('HKCR\\.htm\\OpenWithList\\SCITE.EXE\\')}catch(e){};
+}
+
+// helper ==================================================
+function CheckHelper(){
+	form.chk_helper.checked = false;
+	form.chk_helper.value = false;
+	try {
+		var _helper = new ActiveXObject("SciTE.Helper");
+		form.chk_helper.checked = true;
+		form.chk_helper.value = true;
+	} catch(e) {}
+}
+
+function SetHelper(){
+	var file_dll = form.home.value + '\\tools\\Helper\\SciTE.dll';
+	if (fso.FileExists(file_dll)){
+		WshShell.Run('Regsvr32 "' + file_dll + '"',0,false);
+	}
+}
+
+function UnSetHelper(){
+	var file_dll = form.home.value + '\\tools\\Helper\\SciTE.dll';
+	if (fso.FileExists(file_dll)){
+		WshShell.Run('Regsvr32 /u "' + file_dll + '"',0,false);
+	}
+}
+
+// =============================================================
+
+// Всплывающие подсказки
 function ShowPopup(p){
 	switch(p){
 		case "home":
-			text='Задает местоположение ВСЕХ файлов настроек <span class=q>*.properties<\/span>, <span class=q>SciTE.session<\/span>, <span class=q>SciTE.recent<\/span><br><br><span class=war>Если Вы установите это значение, то любой экземпляр <span class=q>SciTE.exe<\/span>, запущенный на этой машине,<br>будет искать файлы настроек не в своем каталоге, а по пути указанному в этой переменной!<\/span>';
+			text='Задает местоположение файлов настроек <span class=q>SciTEGlobal.properties<\/span>, <span class=q>SciTE.session<\/span>, <span class=q>SciTE.recent<\/span><br><br><span class=war>Если Вы установите это значение, то любой экземпляр <span class=q>SciTE.exe<\/span>, запущенный на этой машине,<br>будет искать файлы настроек не в своем каталоге, а по пути указанному в этой переменной!<\/span>';
 			break;
 		case "associations":
 			text='Позволяет открывать в SciTE файлы ассоциированных типов с помощью двойного клика мыши';
@@ -134,6 +358,8 @@ function ShowPopup(p){
 	oPopUp.hide();
 	setTimeout('oPopUp.show(60,-35,popup_width,popup_height,ev_obj)',600);
 }
+
+// Окно "О программе"
 function About() {
 	if(top.location=='about:blank') {alert('На пустой странице не работаю!')}
 	else{
@@ -159,38 +385,31 @@ function About() {
 <fieldset>
 <legend>&nbsp;Установка переменных окружения:&nbsp;</legend>
 <TABLE width=100%>
-<TR onMouseOver=ShowPopup("home")><TD><nobr><INPUT type="checkbox" id=chk_home hidefocus> <label for=chk_path>SCITE_HOME&nbsp;=</label></TD><TD style="width:100%"><INPUT TYPE=text id="home" value="" style="width:100%"></nobr></TD></TR>
+<TR onMouseOver=ShowPopup("home")><TD><nobr><INPUT name="chk" type="checkbox" id=chk_home hidefocus  onClick="home.disabled=!chk_home.checked"> <label for=chk_path>SCITE_HOME&nbsp;=</label></TD><TD style="width:100%"><INPUT TYPE=text id="home" value="" style="width:100%"></nobr></TD></TR>
 </TABLE>
 </fieldset>
 &nbsp;
 <fieldset>
 <legend>&nbsp;Интеграция в Проводник:&nbsp;</legend>
 <TABLE width=100%>
-<TR onMouseOver=ShowPopup("associations")><TD>&nbsp;Связать файлы заданных расширений с SciTE:<br><INPUT type="checkbox" id=chk_associations hidefocus onClick="associations.disabled=!chk_associations.checked">&nbsp;<INPUT TYPE=text id="associations" value="txt;php;h;cxx" style="width:94%" disabled></TD></TR>
-<TR onMouseOver=ShowPopup("openfor")><TD><INPUT CHECKED type="checkbox" id=openfor hidefocus> <label for=openfor>Добавить в контекстное меню всех файлов пункт "Открыть в SciTE"</label></TD></TR>
-<TR onMouseOver=ShowPopup("ses")><TD><INPUT CHECKED type="checkbox" id=ses hidefocus> <label for=ses>Открывать файлы *.session как файлы сессий SciTE</label></TD></TR>
+<TR onMouseOver=ShowPopup("associations")><TD>&nbsp;Связать файлы заданных расширений с SciTE:<br><INPUT name="chk" type="checkbox" id=chk_associations hidefocus onClick="associations.disabled=!chk_associations.checked">&nbsp;<INPUT TYPE=text id="associations" style="width:94%"></TD></TR>
+<TR onMouseOver=ShowPopup("openfor")><TD><INPUT name="chk" type="checkbox" id=chk_openfor hidefocus> <label for=openfor>Добавить в контекстное меню всех файлов пункт "Открыть в SciTE"</label></TD></TR>
+<TR onMouseOver=ShowPopup("ses")><TD><INPUT name="chk" type="checkbox" id=chk_ses hidefocus> <label for=ses>Открывать файлы *.session как файлы сессий SciTE</label></TD></TR>
 </TABLE>
 </fieldset>
 &nbsp;
 <fieldset>
 <legend>&nbsp;Интеграция в Internet Explorer:&nbsp;</legend>
 <TABLE width=100%>
-<TR onMouseOver=ShowPopup("html_def")><TD><INPUT CHECKED type="checkbox" id=html_def hidefocus> <label for=html_def>Установить SciTE в качестве дефолтового HTML редактора</label></TD></TR>
-<TR onMouseOver=ShowPopup("html")><TD><INPUT CHECKED type="checkbox" id=html hidefocus> <label for=html>SciTE в качестве одного из редакторов в меню кнопки "Правка"</label></TD></TR>
+<TR onMouseOver=ShowPopup("html_def")><TD><INPUT name="chk" type="checkbox" id=chk_html_def hidefocus> <label for=html_def>Установить SciTE в качестве дефолтового HTML редактора</label></TD></TR>
+<TR onMouseOver=ShowPopup("html")><TD><INPUT name="chk" type="checkbox" id=chk_html hidefocus> <label for=html>SciTE в качестве одного из редакторов в меню кнопки "Правка"</label></TD></TR>
 </TABLE>
 </fieldset>
 &nbsp;
 <fieldset>
 <legend>&nbsp;Интеграция в Windows:&nbsp;</legend>
 <TABLE width=100%>
-<TR onMouseOver=ShowPopup("helper")><TD><INPUT CHECKED type="checkbox" id=helper hidefocus> <label for=helper>Установить SciTE.Helper (COM-сервер для управления SciTE)</label></TD></TR>
-</TABLE>
-</fieldset>
-&nbsp;
-<fieldset>
-<legend>&nbsp;Интеграция в SciTE:&nbsp;</legend>
-<TABLE width=100%>
-<TR><TD><INPUT CHECKED type="checkbox" id=del hidefocus> <label for=del>Удалить пункт вызова этой утилиты из меню Tools</label></TD></TR>
+<TR onMouseOver=ShowPopup("helper")><TD><INPUT name="chk" type="checkbox" id=chk_helper hidefocus> <label for=helper>Установить SciTE.Helper (COM-сервер для управления SciTE)</label></TD></TR>
 </TABLE>
 </fieldset>
 &nbsp;
@@ -212,6 +431,7 @@ function check_scite(scite_path){
 		return false;
 	}
 }
+
 function find_scite(){
 	var scite_path = script_path;
 	//~ alert(scite_path);
@@ -227,14 +447,16 @@ function find_scite(){
 		}
 	}
 }
+
 document.title = SWI.applicationName.replace(/_/g,' ') + ' ' + SWI.version;
-window.resizeTo(440,465);
+window.resizeTo(440,410);
 var scite_path = find_scite();
 if (scite_path == ""){
 	alert("SciTE не найден!\nЗапустите скрипт из каталога с установленным SciTE");
 	self.close();
 }
-form.home.value = scite_path;
+
+Check();
 </script>
 </body>
 </HTML>
