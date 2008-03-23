@@ -24,8 +24,8 @@
     pre   {font-size:small; background-color:#F0FFFF;}
     dfn   {color:#990099; font-weight:bold; white-space:nowrap;}
     var   {color:#333399; font-weight:bold; white-space:nowrap;}
-    code  {font-size:small; color:#333399;}
-    cite  {color:#333399; FONT-STYLE:normal; font-weight:bold; white-space:nowrap; font-family:MS Sans Serif;}
+    code  {font-size:small; color:#333399; white-space:nowrap;}
+    cite  {color:#333399; FONT-STYLE:normal; font-weight:bold; font-family:MS Sans Serif;}
     em    {background-color:#F0FFF0;}
     .cursor {color:red;}
 
@@ -896,16 +896,19 @@ NameError: mistake
 
   <p>В SciTE можно осуществить быструю замену коротких сокращений (аббревиатур) на строку текста или даже на целый блок кода. Чтобы использовать аббревиатуру, надо набрать ее, а затем выполнить команду меню &quot;<cite>Правка | Расшифровать сокращение</cite>&quot; (Ctrl+B) (для моментальной замены) или &quot;<cite>Вставить сокращение...</cite>&quot; (Ctrl+Shift+R) (для выбора из раскрывающегося списка). Аббревиатура заменяется расшифровкой, заданной в файле аббревиатур <code>abbrev.properties</code>. Файл аббревиатур можно открыть с помощью команды меню &quot;<cite>Настройки | Открыть файл настройки сокращений</cite>&quot; и добавить туда свои аббревиатуры. Помимо файла аббревиатур, заданного по умолчанию, для определенных расширений файлов можно создать свои файлы аббревиатур.</p>
 
-  <p>Каждая строка в файле аббревиатур выглядит следующим образом: &quot;<code>аббревиатура=расшифровка</code>&quot;. Аббревиатуры могут содержать любые символы, включая символы верхней половины ASCII. Исключаются лишь управляющие символы и, конечно, символы возврата каретки (CR) и перевода строки (LF). У аббревиатур есть такие же ограничения, как и в файлах настроек: они не могут начинаться с решетки (<code>#</code>), пробела (хотя могут содержать пробелы внутри) и табуляции, а также не могут содержать внутри символ &quot;<code>=</code>&quot;.<br>
+  <p>Каждая строка в файле аббревиатур выглядит следующим образом: &quot;<code>аббревиатура=расшифровка</code>&quot;.<br>
+  <code>Аббревиатуры</code> могут содержать любые символы, включая символы верхней половины ASCII. Исключаются лишь управляющие символы и, конечно, символы возврата каретки (CR) и перевода строки (LF). У аббревиатур есть такие же ограничения, как и в файлах настроек: они не могут начинаться с решетки <code>#</code> (т.к. такая строка будет истолкована как комментарий), пробела (хотя могут содержать пробелы внутри) и табуляции, а также не могут содержать внутри символ &quot;<code>=</code>&quot;.<br>
   Длина аббревиатур ограничена 32 символами, которых, надо полагать, вполне достаточно для аббревиатур. Длина расшифровок не ограничена.</p>
 
-  <p>Расшифровки могут содержать символы новой строки &quot;<code>\n</code>&quot; и позиции каретки &quot;<span class="cursor">|</span>&quot;. Чтобы использовать буквальный символ &quot;<code>|</code>&quot;, нужно набрать &quot;<code>||</code>&quot;. Вместе со SciTE поставляется файл аббревиатур, в котором содержится несколько простых примеров.</p>
+  <p><code>Расшифровки</code> могут содержать символы новой строки &quot;<code>\n</code>&quot; и позиции каретки &quot;<span class="cursor">|</span>&quot;. Чтобы использовать буквальный символ &quot;<code>|</code>&quot;, нужно набрать &quot;<code>||</code>&quot;. Вместе со SciTE поставляется файл аббревиатур, в котором содержится несколько простых примеров.</p>
   <p>При расшифровке аббревиатуру не обязательно отделять от ранее набранного текста.<br>
     Т.е. если вы в файле сокращений задали <span class="example">e=&amp;eacute;</span>, и в тексте &quot;<code>eve<span class="cursor">|</span>nt</code>&quot; нажали Ctrl+B (символ <span class="cursor">|</span> указывает позицию курсора), то &quot;<code>event</code>&quot; превратится в &quot;<code>ev&amp;eacute;nt</code>&quot;.<br>
   Если одна из аббревиатур является окончанием второй, то расшифрована будет только более короткая последняя часть.<br>
   Т.е. если вы задали 2 сокращения <span class="example">text=TextFile</span> и <span class="example">rtext=ReadingText</span>, то после набора слова &quot;<code>rtext<span class="cursor">|</span></code>&quot; (символ <span class="cursor">|</span> указывает позицию курсора) и нажатия на Ctrl+B &quot;<code>rtext</code>&quot; превратится в &quot;<code>rTextFile</code>&quot;, а не в &quot;<code>ReadingText</code>&quot;, как ожидалось.</p>
 
-  <p class="ruboardonly">SciTE-Ru предоставляет пользователям на порядок больше возможностей по работе с аббревиатурами. В списки сокращений можно добавлять пользовательские переменные: <code>%SEL%</code> (выделенный текст), <code>%CLP%</code> (текст из буфера обмена), <code>%[имя_переменной]%</code> (значение внутренней переменной SciTE, например, <code>CurrentWord</code>, <code>FileNameExt</code>, <code>SciteDefaultHome</code> и т.п.), <code>%GUID%</code> (уникальный GUID нового объекта), что позволяет создавать высокоинтеллектуальные шаблоны замены. Подробное описание доработки можно прочесть на <a href="SciTE-Ru_Kernel_rus.html">этой странице</a>.</p>
+  <p class="ruboardonly">SciTE-Ru предоставляет пользователям на порядок больше возможностей по работе с аббревиатурами. В списки сокращений можно добавлять пользовательские переменные: <code>%SEL%</code> (выделенный текст), <code>%CLP%</code> (текст из буфера обмена), <code>%[имя_переменной]%</code> (значение внутренней переменной SciTE, например, <code>CurrentWord</code>, <code>FileNameExt</code>, <code>SciteDefaultHome</code> и т.п.), <code>%GUID%</code> (уникальный GUID нового объекта), что позволяет создавать высокоинтеллектуальные шаблоны замены.<br>
+  Другая доработка позволяет использовать директиву <code>import</code> в файлах аббревиатур.<br>
+  Подробное описание этих доработок можно прочесть на <a href="SciTE-Ru_Kernel_rus.html">этой странице</a>.</p>
 
   <h3><a name="folding">Свертка кода</a></h3>
 
@@ -1302,7 +1305,7 @@ NameError: mistake
     <tr>
       <td><dfn><a name="buffered.draw">buffered.draw</a></dfn></td>
 
-      <td>Если задать этой переменной значение <var>0</var> (по умолчанию <var>1</var>), SciTE выводит выходные данные непосредственно на экран, в отличие от обычного режима, когда данные вначале помещаются в буфер матрицы (buffer bitmap) и только затем выводятся на экран. Буферизованный вывод предотвращает мерцание экрана, но работает медленнее.</td>
+      <td>Если задать этой переменной значение <var>0</var> (по умолчанию <var>1</var>), SciTE выводит выходные данные непосредственно на экран, в отличие от обычного режима, когда данные вначале помещаются в буфер и только затем выводятся на экран. Буферизованный вывод предотвращает мерцание экрана, но на слабых компьютерах работает медленнее.</td>
     </tr>
 
     <tr>
@@ -1696,7 +1699,7 @@ NameError: mistake
         - команду встроенного меню SciTE (использовав символьный идентификатор вида <code>IDM_*</code>)<br>
         - любую команду пользовательского меню <cite>Tools</cite>. (Для этого необходимо к номеру нужной команды из этого меню прибавить <var>1200</var> [<span class="ruboardonly">или <var>9000</var> для SciTE-Ru</span>] и полученную сумму вставить как числовой идентификатор.<br>
         Все доступные команды и их значения перечислены в документации (<a href="CommandValuesExt_rus.html">Command Values</a>).<br>
-        Модификаторами являются клавиши <code>Ctrl</code>, <code>Shift</code> и <code>Alt</code>, а в качестве именованных клавиш используются <code>Left, Right, Up, Down, Insert, End, Home, Enter, Space, Tab, KeypadPlus, KeypadMinus, KeypadMultiply, KeypadDivide, Escape, Delete, PageUp, PageDown, Slash, Question, Equal, Win</code>:
+        Модификаторами являются клавиши <code>Ctrl</code>, <code>Shift</code> и <code>Alt</code>, а в качестве именованных клавиш используются <code>Left</code>, <code>Right</code>, <code>Up</code>, <code>Down</code>, <code>Insert</code>, <code>End</code>, <code>Home</code>, <code>Enter</code>, <code>Space</code>, <code>Tab</code>, <code>KeypadPlus</code>, <code>KeypadMinus</code>, <code>KeypadMultiply</code>, <code>KeypadDivide</code>, <code>Escape</code>, <code>Delete</code>, <code>PageUp</code>, <code>PageDown</code>, <code>Slash</code>, <code>Question</code>, <code>Equal</code>, <code>Win</code>:
 
         <div class="example">
           user.shortcuts=\<br>
@@ -1727,7 +1730,9 @@ NameError: mistake
       <td><dfn><a name="magnification">magnification<br>
       output.magnification</a></dfn></td>
 
-      <td>Задает первоначальную кратность увеличения для панелей редактирования и вывода. Эта опция полезна, если необходимо изменить размер текста глобально, например, если нужно это сделать после изменения разрешения экрана, не трогая при этом настройки стилей. По умолчанию задано значение <var>0</var>. Отрицательные значения уменьшают размер, а положительные – увеличивают.</td>
+      <td>Данные параметры задают начальное значение (по умолчанию - <var>0</var>) на которое будет изменятся размер шрифта, заданный для каждого стиля, при его отображении в панели редактирования и вывода. Отрицательные значения уменьшают размер, а положительные – увеличивают.<br>
+  (<em>Именно эти параметры меняются при нажатии на <code>Ctrl+</code> и <code>Ctrl-</code></em>)
+      </td>
     </tr>
 
     <tr>
@@ -1945,7 +1950,7 @@ NameError: mistake
 
         <div class="example">
           LC_CTYPE=en_US.UTF-8
-        </div>В наборе шрифтов необходимо использовать шрифты с регистром &quot;<code>iso10646</code>&quot;. Набор шрифтов представляет собой список разделенных символом &#39;<code>|</code>&#39; частичных спецификаций шрифта, где каждая частичная спецификация может иметь форму <code>foundry-fontface-charsetregistry-encoding *OR* fontface-charsetregistry-encoding *OR* foundry-fontface *OR* fontface</code>. Например, <span class="example">misc-fixed-iso10646-1*</span>.<br>
+        </div>В наборе шрифтов необходимо использовать шрифты с регистром &quot;<code>iso10646</code>&quot;. Набор шрифтов представляет собой список разделенных символом &#39;<code>|</code>&#39; частичных спецификаций шрифта, где каждая частичная спецификация может иметь форму <span class="example">foundry-fontface-charsetregistry-encoding *OR* fontface-charsetregistry-encoding *OR* foundry-fontface *OR* fontface</span>. Например, <span class="example">misc-fixed-iso10646-1*</span>.<br>
         Переменная <dfn>output.code.page</dfn> используется в том случае, если настройки панели вывода отличаются от настроек панели редактора.
       </td>
     </tr>
@@ -2245,13 +2250,15 @@ NameError: mistake
     <tr>
       <td><dfn><a name="time.commands">time.commands</a></dfn></td>
 
-      <td>После завершения работы команды выводит в окне консоли время её выполнения в секундах.</td>
+      <td>При значении данного параметра <var>1</var>, команды, вывод которых перенаправляется в окно консоли, будут дополнительно выводить время выполнения в секундах.</td>
     </tr>
 
     <tr class="windowsonly">
       <td><dfn><a name="print.magnification">print.magnification</a></dfn></td>
 
-      <td>Печать обычно выполняется с теми же параметрами, которые заданы для экрана. Чтобы увеличить или уменьшить размер шрифта, задайте переменной <dfn>print.magnification</dfn> значение, которое при печати будет суммироваться с размером шрифта заданного для каждого стиля. Отрицательные значения будут уменьшать текст на указанное количество пунктов.</td>
+      <td>Размер шрифта, используемый для печати, соответствует заданному в параметрах каждого стиля. (При этом <em><code>Ctrl+</code> и <code>Ctrl-</code>, меняя размер шрифта на экране, не изменяют размера для печати</em>).<br>
+      Чтобы увеличить или уменьшить размер печатного шрифта, задайте переменной <dfn>print.magnification</dfn> значение, которое будет суммироваться с размером шрифта заданного для каждого стиля. Отрицательные значения будут уменьшать текст на указанное количество пунктов.<br>
+      <span class="ruboardonly">В SciTE-Ru использовано скриптовое решение, позволяющее изменять размер шрифта для печати одновременно с изменением экранного представления</span></td>
     </tr>
 
     <tr class="windowsonly">
@@ -2851,9 +2858,16 @@ NameError: mistake
   <hr>
 
   <ul>
-    <li>Перевод на русский язык: <b><a href="http://forum.script-coding.info/profile.php?id=6">Gourmet</a></b> и <b><a href="http://forum.ru-board.com/profile.cgi?action=show&amp;member=s_mart" target="_blank">s_mart</a></b></li>
+    <li>Перевод на русский язык: 
+    <b><a href="http://forum.script-coding.info/profile.php?id=6"><font color="#FF00CC">Gourmet</font></a></b> и 
+    <b><a href="http://forum.ru-board.com/profile.cgi?action=show&amp;member=s_mart" target="_blank">s_mart</a></b></li>
 
-    <li>Смысловая правка и дополнения: <b><a href="http://forum.script-coding.info/profile.php?id=2">The gray Cardinal</a></b>, <b><a href="http://forum.ru-board.com/profile.cgi?action=show&amp;member=mozers" target="_blank">mozers™</a></b>, <b><a href="http://forum.ru-board.com/profile.cgi?action=show&amp;member=vladvro" target="_blank">VladVRO</a></b>, <b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=dB6" target=_blank>dB6</a></b>
+    <li>Смысловая правка и дополнения: 
+    <b><a href="http://forum.script-coding.info/profile.php?id=2"><font color="#FF00CC">The gray Cardinal</font></a></b>,
+    <b><a href="http://forum.ru-board.com/profile.cgi?action=show&amp;member=mozers" target="_blank">mozers™</a></b>,
+    <b><a href="http://forum.ru-board.com/profile.cgi?action=show&amp;member=vladvro" target="_blank">VladVRO</a></b>,
+    <b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=dB6" target=_blank>dB6</a></b>,
+    <b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=BioInfo" target=_blank>BioInfo</a></b>
   </ul>
 </body>
 </html>
