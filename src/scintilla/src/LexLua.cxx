@@ -126,6 +126,8 @@ static void ColouriseLuaDoc(
 	unsigned int objectPartEndPos = 0;
 	bool isObject = false;
 	bool isObjectStart = false;
+	bool isSubObject = false;
+	char sChar = 0;
 //!-end-[LuaLexerImprovement]
 	StyleContext sc(startPos, length, initStyle, styler);
 	if (startPos == 0 && sc.ch == '#') {
@@ -176,9 +178,18 @@ static void ColouriseLuaDoc(
                                 if (sc.chPrev != 'E' && sc.chPrev != 'e')
                                         sc.SetState(SCE_LUA_DEFAULT);
                         }
-		} else if (sc.state == SCE_LUA_IDENTIFIER) {
+//!		} else if (sc.state == SCE_LUA_IDENTIFIER) {
 //!			if (!IsAWordChar(sc.ch) || sc.Match('.', '.')) {
 //!-start-[LuaLexerImprovement]
+		} else if (sc.state == SCE_LUA_IDENTIFIER
+				|| sc.state == SCE_LUA_WORD
+				|| sc.state == SCE_LUA_WORD2
+				|| sc.state == SCE_LUA_WORD3
+				|| sc.state == SCE_LUA_WORD4
+				|| sc.state == SCE_LUA_WORD5
+				|| sc.state == SCE_LUA_WORD6
+				|| sc.state == SCE_LUA_WORD7
+				|| sc.state == SCE_LUA_WORD8) {
 			if (!IsAWordChar(sc.ch)) {
 				bool isFin;
 				if ((sc.ch == ':' || sc.ch == '.') && IsAWordStart(sc.chNext)) {
@@ -213,36 +224,40 @@ static void ColouriseLuaDoc(
 				} else if (keywords8.InList(s)) {
 					sc.ChangeState(SCE_LUA_WORD8);
 //!-start-[LuaLexerImprovement]
-				} else if (isObject) {
+				} else if (isObject || isSubObject) {
 					// colourise objects part separately
-					int currPos = sc.currentPos;
-					sc.MoveTo(objectPartEndPos);
-					if (isObjectStart) {
-						sc.GetCurrent(s, sizeof(s));
-						if (keywords.InList(s)) {
-							sc.ChangeState(SCE_LUA_WORD);
-						} else if (keywords2.InList(s)) {
-							sc.ChangeState(SCE_LUA_WORD2);
-						} else if (keywords3.InList(s)) {
-							sc.ChangeState(SCE_LUA_WORD3);
-						} else if (keywords4.InList(s)) {
-							sc.ChangeState(SCE_LUA_WORD4);
-						} else if (keywords5.InList(s)) {
-							sc.ChangeState(SCE_LUA_WORD5);
-						} else if (keywords6.InList(s)) {
-							sc.ChangeState(SCE_LUA_WORD6);
-						} else if (keywords7.InList(s)) {
-							sc.ChangeState(SCE_LUA_WORD7);
-						} else if (keywords8.InList(s)) {
-							sc.ChangeState(SCE_LUA_WORD8);
+					if (isObject) {
+						int currPos = sc.currentPos;
+						sc.MoveTo(objectPartEndPos);
+						if (isObjectStart) {
+							sc.GetCurrent(s, sizeof(s));
+							if (keywords.InList(s)) {
+								sc.ChangeState(SCE_LUA_WORD);
+							} else if (keywords2.InList(s)) {
+								sc.ChangeState(SCE_LUA_WORD2);
+							} else if (keywords3.InList(s)) {
+								sc.ChangeState(SCE_LUA_WORD3);
+							} else if (keywords4.InList(s)) {
+								sc.ChangeState(SCE_LUA_WORD4);
+							} else if (keywords5.InList(s)) {
+								sc.ChangeState(SCE_LUA_WORD5);
+							} else if (keywords6.InList(s)) {
+								sc.ChangeState(SCE_LUA_WORD6);
+							} else if (keywords7.InList(s)) {
+								sc.ChangeState(SCE_LUA_WORD7);
+							} else if (keywords8.InList(s)) {
+								sc.ChangeState(SCE_LUA_WORD8);
+							}
+							isObjectStart = false;
 						}
-						isObjectStart = false;
+						sc.SetState(SCE_LUA_OPERATOR);
+						s[0] = sc.ch;
+						sc.Forward();
+						sc.SetState(SCE_LUA_IDENTIFIER);
+						sc.MoveTo(currPos);
+					} else {
+						s[0] = sChar;
 					}
-					sc.SetState(SCE_LUA_OPERATOR);
-					s[0] = sc.ch;
-					sc.Forward();
-					sc.SetState(SCE_LUA_IDENTIFIER);
-					sc.MoveTo(currPos);
 					sc.GetCurrent(s + 1, sizeof(s) - 1);
 					if (keywords.InList(s)) {
 						sc.ChangeState(SCE_LUA_WORD);
@@ -359,6 +374,16 @@ static void ColouriseLuaDoc(
 			} else if (IsLuaOperator(static_cast<char>(sc.ch))) {
 				sc.SetState(SCE_LUA_OPERATOR);
 			}
+//!-start-[LuaLexerImprovement]
+			if (sc.ch == ')')
+				isSubObject = true;
+			else
+			if (isSubObject && sc.state != SCE_LUA_IDENTIFIER)
+				if (IsAWordStart(sc.chNext) && (sc.ch == '.' || sc.ch == ':'))
+					sChar = sc.ch;
+				else
+					isSubObject = false;
+//!-end-[LuaLexerImprovement]
 		}
 	}
 	sc.Complete();
