@@ -43,7 +43,6 @@ Restart.js Перезапуск SciTE
 ROCheck.lua Автоустановка ReadOnly для файлов с аттр. RHS
 ROWrite.lua Cохранение RO/Hidden/System файлов
 save_settings.lua Сохранение текущих установок SciTE
-SciTE_WinIntegrator2.hta Интегрирование SciTE в Windows
 SciTE_WinIntegrator.hta Интегрирование SciTE в Windows
 SciTEStartup.lua Содержит скрипты, стартующие при загрузке SciTE, а так же обрабатывающие события редактора.
 Select_And_Open_Filename.lua Расширение команды "Открыть выделенный файл" для случая когда выделения нет

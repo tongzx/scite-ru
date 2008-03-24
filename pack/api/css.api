@@ -52,7 +52,8 @@ background-repeat:repeat-x
 background-repeat:repeat-y
 
 border \nСвойства рамки
-border:thick_solid_green [<размер-рамки> || <стиль-рамки> || <цвет>] | inherit
+border:thick_solid_green
+thick_solid_green \n[<размер-рамки> || <стиль-рамки> || <цвет>] | inherit
 border:inherit
 
 border-collapse \nЗадание типа рамок
