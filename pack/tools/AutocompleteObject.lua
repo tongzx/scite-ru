@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 AutocompleteObject.lua
 mozers™
-version 2.01
+version 2.02
 ------------------------------------------------------
 Ввод разделителя, заданного в autocomplete.[lexer].start.characters
 вызывает список свойств и медодов объекта из соответствующего api файла
@@ -72,13 +72,6 @@ local function fPattern(str)
 		str_out = '%'..string.sub(str, i, i+1)
 	end
 	return str_out
-end
-
--- Извлекает "объект" слева от курсора
-local function GetWordLeft(cur_pos)
-	local sel_text = editor:textrange(editor:PositionFromLine(editor:LineFromPosition(cur_pos)),cur_pos-1)
-	sel_text = string.gsub(sel_text,'^.*[%s%(%;]','')
-	return sel_text
 end
 
 -- Сортирует таблицу по алфавиту и удаляет дубликаты
@@ -258,7 +251,7 @@ local function AutocompleteObject(char)
 	-- prnTable(alias_table)
 
 	current_pos = editor.CurrentPos
-	local input_object = GetWordLeft(current_pos) -- Берем в качестве объекта слово слева от курсора
+	local input_object = editor:textrange(editor:WordStartPosition(current_pos-1),current_pos-1) -- Берем в качестве объекта слово слева от курсора
 	local object_len = string.len(input_object)
 	if object_len < 1 then return '' end
 	-- Если слева от курсора отсутствует слово, которое можно истолковать как имя объекта, то выходим
@@ -288,7 +281,9 @@ local old_OnUserListSelection = OnUserListSelection
 function OnUserListSelection(tp,sel_value)
 	local result
 	if old_OnUserListSelection then result = old_OnUserListSelection(tp,sel_value) end
-	if InsertMethod(sel_value) then return true end
+	if tp == 7 then
+		if InsertMethod(sel_value) then return true end
+	end
 	return result
 end
 
