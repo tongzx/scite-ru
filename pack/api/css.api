@@ -1,4 +1,6 @@
-azimuth \nгоризонтальный угол звука
+### Данные взяты с книги "Справочник Веб-разработчика" Ю.С.Лукач <http://scite-ru.googlecode.com/files/web-developer.zip>
+
+azimuth \nГоризонтальный угол звука
 azimuth:30deg
 azimuth:behind
 azimuth:center
@@ -14,10 +16,10 @@ azimuth:right
 azimuth:right-side
 azimuth:rightwards
 
-background \nфон
+background \nФон
 background:inherit
 
-background-attachment \nпрокрутка фонового образа
+background-attachment \nПрокрутка фонового образа
 background-attachment:inherit
 background-attachment:fixed
 background-attachment:scroll
