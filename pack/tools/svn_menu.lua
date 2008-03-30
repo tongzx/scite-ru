@@ -1,6 +1,6 @@
 --[[
 Eng: Creating SVN commands submenu in tab context menu
-Rus: Создает в контекстном меню таба (закладки) подменю для команд SVN
+Rus: Создает в контекстном меню таба (вкладки) подменю для команд SVN
 Version: 1.2
 Author: VladVRO
 

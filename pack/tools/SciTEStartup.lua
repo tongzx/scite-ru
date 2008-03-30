@@ -49,7 +49,7 @@ dofile (props["SciteDefaultHome"].."\\tools\\SessionManager\\SessionManager.lua"
 ----[[ R E A D   O N L Y ]]-------------------------------------------------
 
 -- Замена стандартной команды "Read-Only"
--- Красит фон закладки не доступной для редактирования и показывает сотояние в статусной строке
+-- Красит фон вкладки не доступной для редактирования и показывает сотояние в статусной строке
 dofile (props["SciteDefaultHome"].."\\tools\\ReadOnly.lua")
 
 -- При открытии ReadOnly, Hidden, System файлов включает режим ReadOnly в SciTE
@@ -107,7 +107,7 @@ dofile (props["SciteDefaultHome"].."\\tools\\highlighting_paired_tags.lua")
 -- После выполнения команды "Найти в файлах..." создает пункт в контекстном меню консоли - "Открыть найденные файлы"
 dofile (props["SciteDefaultHome"].."\\tools\\OpenFindFiles.lua")
 
--- Создает в контекстном меню таба (закладки) подменю для команд SVN
+-- Создает в контекстном меню таба (вкладки) подменю для команд SVN
 --~ dofile (props["SciteDefaultHome"].."\\tools\\svn_menu.lua")
 
 ----[[ У Т И Л И Т Ы  И  И Н С Т Р У М Е Н Т Ы ]]-----------------------------
@@ -121,9 +121,9 @@ dofile (props["SciteDefaultHome"].."\\tools\\Calculator\\SciTECalculatorPD.lua")
 -- Вставка спецсимволов (©,®,§,±,…) из раскрывающегося списка (для HTML вставляются их обозначения)
 dofile (props["SciteDefaultHome"].."\\tools\\InsertSpecialChar.lua")
 
--- Установка / снятие закладок на строку (Bookmark) (то же что и Ctrl+F2)
+-- Установка / снятие меток на строку (Bookmark) (то же что и Ctrl+F2)
 -- с помощью клика мыши при нажатой клавише Ctrl
---~ dofile (props["SciteDefaultHome"].."\\tools\\MarkerToggle.lua")
+--~ dofile (props["SciteDefaultHome"].."\\tools\\BookmarkToggle.lua")
 
 ----[[ Н А С Т Р О Й К И   И Н Т Е Р Ф Е Й С А ]]-----------------------------
 

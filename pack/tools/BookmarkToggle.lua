@@ -1,12 +1,12 @@
--- MarkerToggle.lua
+-- BookmarkToggle.lua
 -- Version: 1.0
 -- Author: mozersЩ, mimir
 ---------------------------------------------------
--- ”становка / сн€тие закладок на строку (Bookmark) (то же что и Ctrl+F2)
+-- ”становка / сн€тие меток на строку (Bookmark) (то же что и Ctrl+F2)
 -- с помощью клика мыши при нажатой клавише Ctrl
 ---------------------------------------------------
 
-local function MarkerToggle(shift, ctrl, alt)
+local function BookmarkToggle(shift, ctrl, alt)
 	if (ctrl) then
 		local i = editor:LineFromPosition(editor.CurrentPos)
 		if editor:MarkerGet(i) == 0 then
@@ -23,6 +23,6 @@ local old_OnClick = OnClick
 function OnClick(shift, ctrl, alt)
 	local result
 	if old_OnClick then result = old_OnClick(shift, ctrl, alt) end
-	if MarkerToggle(shift, ctrl, alt) then return true end
+	if BookmarkToggle(shift, ctrl, alt) then return true end
 	return result
 end
