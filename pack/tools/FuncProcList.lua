@@ -1,5 +1,5 @@
 -- FuncProcList.lua
--- Version: 1.2.1
+-- Version: 1.2.2
 -- mozersЩ , Maximka (выполн€€ пожелание ALeXkRU при активном тестировании mimir)
 -- »спользованы идеи: Grisper и gansA
 ---------------------------------------------------
@@ -21,7 +21,8 @@ local findRegExp = {
 	['js']="(\n[^,<>\n]-function[^(]-%b())[^{]-%b{}",
 	['vbs']="(\n[SsFf][Uu][BbNn][^\r]-)\r",
 	['css']="([%w.#-_]+)[%s}]-%b{}",
-	['pas']="\nprocedure[^ ]* ([^(]*%b());"
+	['pas']="\nprocedure[^ ]* ([^(]*%b());",
+	['py']="\n%s-([dc][el][fa]%s-.-):"
 }
 local findPattern = findRegExp [props["FileExt"]]
 if findPattern == nil then
