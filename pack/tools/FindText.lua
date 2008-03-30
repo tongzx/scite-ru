@@ -1,18 +1,35 @@
 --[[--------------------------------------------------
-FindText v6.2
-Автор: неизвесен <http://forum.ruteam.ru/index.php?action=vthread&forum=22&topic=175>
-Корректировки: mozers™, mimir, Алексей
-Поиск выделенного в окне редактора (или консоли) текста с выводом содержащих его строк в консоль
+FindText v6.6
+Авторы: mozers™, mimir, Алексей, codewarlock1101
+
+* Если текст выделен - ищется выделенная подстрока
+* Если текст не выделен - ищется текущее слово
+* Поиск возможен как в окне редактирования, так и в окне консоли
+* Строки, содержащие результаты поиска, выводятся в консоль
+* Перемещение по вхождениям - F3 (вперед), Shift+F3 (назад)
+* Каждый новый поиск оставляет маркеры своего цвета
+* Очистка от маркеров поиска - Ctrl+Alt+C
+
 Внимание:
 В скрипте используются функции из COMMON.lua (EditorMarkText, EditorClearMarks)
 -----------------------------------------------
 Для подключения добавьте в свой файл .properties следующие строки:
-   command.name.22.*=Поиск текста
-   command.22.*=dofile $(SciteDefaultHome)\tools\FindText.lua
-   command.mode.22.*=subsystem:lua,savebefore:no
-Дополнительно можно задать в файле настроек стиль используемого маркера
-(в этом скрипте используется 31 маркер) например, так:
-   find.mark.31=#FF0000, plain
+    command.name.130.*=Find String/Word
+    command.130.*=dofile $(SciteDefaultHome)\tools\FindText.lua
+    command.mode.130.*=subsystem:lua,savebefore:no
+    command.shortcut.130.*=Ctrl+Alt+F
+
+    command.name.131.*=Clear All Marks
+    command.131.*=dostring EditorClearMarks(0, editor.Length) props["current_mark_style"] = 27
+    command.mode.131.*=subsystem:lua,savebefore:no
+    command.shortcut.131.*=Ctrl+Alt+C
+
+Дополнительно необходимо задать в файле настроек стили используемых маркеров (в этом скрипте используется 5 маркеров):
+    find.mark.27=#CC00FF
+    find.mark.28=#0000FF
+    find.mark.29=#00CC66
+    find.mark.30=#CCCC00
+    find.mark.31=#336600
 --]]----------------------------------------------------
 
 local sText = props['CurrentSelection']
@@ -21,13 +38,14 @@ if (sText == '') then
 	sText = props['CurrentWord']
 	flag = SCFIND_WHOLEWORD
 end
+local current_mark_style = tonumber(props["current_mark_style"])
+if current_mark_style == nil then current_mark_style = 27 end
+if current_mark_style < 27 then current_mark_style = 27 end
 if string.len(sText) > 0 then
-	editor:MarkerDeleteAll(1)
-	EditorClearMarks(0, editor.Length)
 	if flag == SCFIND_WHOLEWORD then
-		print('> Поиск слова: "'..sText..'"')
+		print('> Поиск текущего слова: "'..sText..'"')
 	else
-		print('> Поиск текста: "'..sText..'"')
+		print('> Поиск выделенного текста: "'..sText..'"')
 	end
 	local s,e = editor:findtext(sText,flag,1)
 	local count = 0
@@ -35,23 +53,32 @@ if string.len(sText) > 0 then
 		local m = editor:LineFromPosition(s) - 1
 		while s do
 			local l = editor:LineFromPosition(s)
-			EditorMarkText(s, e-s, 31)
+			EditorMarkText(s, e-s, current_mark_style)
 			count = count + 1
 			if l ~= m then
 				local str = string.gsub(' '..editor:GetLine(l),'%s+',' ')
-				editor:MarkerAdd(l,1)
 				print(props['FileNameExt']..':'..(l + 1)..':\t'..str)
 				m = l
 			end
 			s,e = editor:findtext(sText,flag,e+1)
 		end
-		print('> Найдено: '..count..' вхождений\nДвойной щелчок на строке с результатом установит курсор на оригинальную строку')
+		print('> Найдено: '..count..' вхождений\nF3 (Shift+F3) - Переход по маркерам\nF4 (Shift+F4) - Переход по строкам\nCtrl+Alt+C - очистка всех маркеров')
 	else
 		print('> Вхождений ['..sText..'] не найдено!')
 	end
+	current_mark_style = current_mark_style + 1
+	if current_mark_style > 31 then current_mark_style = 27 end
+	props["current_mark_style"] = current_mark_style
+		-- обеспечиваем возможность перехода по вхождениям с помощью F3 (Shift+F3)
+		if flag == SCFIND_WHOLEWORD then
+			editor:GotoPos(editor:WordStartPosition(editor.CurrentPos))
+		else
+			editor:GotoPos(editor.SelectionStart)
+		end
+		scite.Perform('find:'..sText)
 else
-	editor:MarkerDeleteAll(1)
 	EditorClearMarks(0, editor.Length)
+	props["current_mark_style"] = 27
 	print('> Сначала выделите в редакторе текст, который необходимо найти! (поиск текста)\n> Можно просто установить курсор на нужное слово (поиск слова)\n> Так же можно выделить текст в окне консоли')
 end
 --~ editor:CharRight() editor:CharLeft() --Снимает выделение с исходного текста

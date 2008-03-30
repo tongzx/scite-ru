@@ -78,7 +78,10 @@ end
 
 -- Очистка текста от выделения
 function EditorClearMarks(start, length)
-	scite.SendEditor(SCI_INDICATORCLEARRANGE, start, length)
+	for style_number = 0, 31 do
+		scite.SendEditor(SCI_SETINDICATORCURRENT, style_number)
+		scite.SendEditor(SCI_INDICATORCLEARRANGE, start, length)
+	end
 end
 
 ----------------------------------------------------------------------------
@@ -113,15 +116,15 @@ local function style(mark_string)
 end
 
 local function EditorInitMarkStyles()
-	for i = 0, 31 do
-		local mark = props["find.mark."..i]
+	for style_number = 0, 31 do
+		local mark = props["find.mark."..style_number]
 		if mark ~= "" then
 			local mark_color = string.match(mark, "#%x%x%x%x%x%x")
 			if mark_color == nil then mark_color = props["find.mark"] end
 			if mark_color == "" then mark_color = "#0F0F0F" end
 			local mark_style = style(mark)
 			if mark_style == nil then mark_style = INDIC_ROUNDBOX end
-			InitMarkStyle(i, mark_style, mark_color)
+			InitMarkStyle(style_number, mark_style, mark_color)
 		end
 	end
 end
