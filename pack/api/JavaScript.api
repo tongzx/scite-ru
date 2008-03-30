@@ -116,6 +116,7 @@ document.lastModified \nСтрока, специфицирующая дату последнего изменения докуме
 document.layers \nМассив, содержащий вхождение каждого слоя документа.
 document.linkColor \nСтрока, специфицирующая атрибут LINK.
 document.links \nМассив, содержащий вхождение каждой гиперссылки документа.
+document.parentWindow \nРодительское окно
 document.plugins \nМассив, содержащий вхождение каждого plug-in документа.
 document.referrer \nСтрока, специфицирующая URL вызывающего документа.
 document.tags \nСоздаёт объект Style, который может специфицировать стили тэгов HTML.
@@ -512,6 +513,8 @@ textarea.handleEvent() \nВызывает обработчик для специфицированного события.
 textarea.select() \nВыделяет область ввода объекта.
 
 window.closed \nСпецифицирует, закрыто ли окно.
+window.clipboardData.getData("Text")
+window.clipboardData.setData("Text", set_text)
 window.crypto \nОбъект, дающий доступ к возможностям шифрования Navigator'а.
 window.defaultStatus \nОтражает сообщение по умолчанию, выводимое в статусной строке.
 window.document \nСодержит информацию о текущем документе и предоставляет методы для отображения вывода HTML пользователю.

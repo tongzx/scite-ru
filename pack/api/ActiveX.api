@@ -12,6 +12,9 @@
 #~~ ѕравильна€ запись (метод и содержимое подсказки записываютс€ отдельной строкой)
 #~~ AppActivate(App as Variant[, Wait as Variant]) as Boolean
 
+#~~ ¬ данном файле большинство подсказок будет работать только когда будет реализовано Issue 86 <http://code.google.com/p/scite-ru/issues/detail?id=86>
+#~~ (или переносите все их 2й строкой вручную)
+
 WScript.Arguments
 WScript.ConnectObject
 WScript.CreateObject
@@ -76,7 +79,6 @@ WshShortcut.WorkingDirectory as String
 WshURLShortcut.FullName as String
 WshURLShortcut.Save
 WshURLShortcut.TargetPath as String
-WshURLShortcut.eee
 
 #WshEnvironment=WshShell.Environment
 WshEnvironment.Count(Name as String) as Long
