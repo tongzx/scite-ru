@@ -29,7 +29,7 @@ dofile (props["SciteDefaultHome"].."\\tools\\lexer_name.lua")
 ----[[ Ш Р И Ф Т Ы ]]-------------------------------------------------------
 
 -- Смена текущих шрифтов (Ctrl+F11)
--- dofile (props["SciteDefaultHome"].."\\tools\\FontChanger.lua")
+dofile (props["SciteDefaultHome"].."\\tools\\FontChanger.lua")
 
 -- При изменении текущего размера шрифта (Ctrl+-), масштабируется и выводимый на принтер шрифт и показатель в строке состояния
 dofile (props["SciteDefaultHome"].."\\tools\\Zoom.lua")
