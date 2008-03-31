@@ -1638,12 +1638,20 @@ int SciTEBase::MarkAll() {
 		RemoveFindMarks();
 		CurrentBuffer()->findMarks = Buffer::fmMarked;
 	}
+
+	//-start-[find.bookmark.disable]
+	bool findBookmarkEnabled = props.GetInt("find.bookmark.disable") < 1;
+	//-end-[find.bookmark.disable]
+
 	if (posFirstFound != -1) {
 		int posFound = posFirstFound;
 		do {
 			marked++;
 			int line = SendEditor(SCI_LINEFROMPOSITION, posFound);
-			BookmarkAdd(line);
+			//-start-[find.bookmark.disable]
+			if ( findBookmarkEnabled )
+			//-end-[find.bookmark.disable]
+				BookmarkAdd(line);
 			if (findMark.length()) {
 				SendEditor(SCI_INDICATORFILLRANGE, posFound, SendEditor(SCI_GETTARGETEND) - posFound);
 			}
