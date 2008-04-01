@@ -1,6 +1,6 @@
 --[[--------------------------------------------------
 Highlighting Paired Tags
-Version: 1.6
+Version: 1.7
 Author: mozers™, VladVRO
 ------------------------------
 Подсветка парных и непарных тегов в HTML и XML
@@ -30,7 +30,9 @@ local function PairedTagsFinder()
 	local tag_start = editor:WordStartPosition(current_pos, true)
 	local tag_end = editor:WordEndPosition(current_pos, true)
 	local tag_length = tag_end - tag_start
-	EditorClearMarks(0, editor.Length)
+	local current_mark_number = scite.SendEditor(SCI_GETINDICATORCURRENT)
+	EditorClearMarks(1)
+	EditorClearMarks(2)
 	if tag_length > 0 then
 		if editor.StyleAt[tag_start] == 1 then
 			local tag_paired_start, tag_paired_end, dec, find_end, dt
@@ -66,13 +68,15 @@ local function PairedTagsFinder()
 				-- Paired tag to paint in Blue
 				EditorMarkText(tag_paired_start+1, tag_paired_end-tag_paired_start-1, 1)
 			else
-				EditorClearMarks(0, editor.Length)
+				EditorClearMarks(1)
+				EditorClearMarks(2)
 				if props["find.mark.2"] ~= '' then
 					EditorMarkText(tag_start-dt, tag_length+dt, 2) -- Start tag to paint in Red
 				end
 			end
 		end
 	end
+	scite.SendEditor(SCI_SETINDICATORCURRENT, current_mark_number)
 end
 
 -- Add user event handler OnUpdateUI

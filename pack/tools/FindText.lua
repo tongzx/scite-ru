@@ -20,7 +20,7 @@ FindText v6.7
     command.shortcut.130.*=Ctrl+Alt+F
 
     command.name.131.*=Clear All Marks
-    command.131.*=dostring EditorClearMarks(0, editor.Length) scite.SendEditor(SCI_SETINDICATORCURRENT, 27)
+    command.131.*=dostring EditorClearMarks() scite.SendEditor(SCI_SETINDICATORCURRENT, 27)
     command.mode.131.*=subsystem:lua,savebefore:no
     command.shortcut.131.*=Ctrl+Alt+C
 
@@ -38,8 +38,8 @@ if (sText == '') then
 	sText = props['CurrentWord']
 	flag = SCFIND_WHOLEWORD
 end
-local current_mark_style = scite.SendEditor(SCI_GETINDICATORCURRENT)
-if current_mark_style < 27 then current_mark_style = 27 end
+local current_mark_number = scite.SendEditor(SCI_GETINDICATORCURRENT)
+if current_mark_number < 27 then current_mark_number = 27 end
 if string.len(sText) > 0 then
 	if flag == SCFIND_WHOLEWORD then
 		print('> Поиск текущего слова: "'..sText..'"')
@@ -52,7 +52,7 @@ if string.len(sText) > 0 then
 		local m = editor:LineFromPosition(s) - 1
 		while s do
 			local l = editor:LineFromPosition(s)
-			EditorMarkText(s, e-s, current_mark_style)
+			EditorMarkText(s, e-s, current_mark_number)
 			count = count + 1
 			if l ~= m then
 				local str = string.gsub(' '..editor:GetLine(l),'%s+',' ')
@@ -65,9 +65,9 @@ if string.len(sText) > 0 then
 	else
 		print('> Вхождений ['..sText..'] не найдено!')
 	end
-	current_mark_style = current_mark_style + 1
-	if current_mark_style > 31 then current_mark_style = 27 end
-	scite.SendEditor(SCI_SETINDICATORCURRENT, current_mark_style)
+	current_mark_number = current_mark_number + 1
+	if current_mark_number > 31 then current_mark_number = 27 end
+	scite.SendEditor(SCI_SETINDICATORCURRENT, current_mark_number)
 		-- обеспечиваем возможность перехода по вхождениям с помощью F3 (Shift+F3)
 		if flag == SCFIND_WHOLEWORD then
 			editor:GotoPos(editor:WordStartPosition(editor.CurrentPos))
@@ -76,7 +76,7 @@ if string.len(sText) > 0 then
 		end
 		scite.Perform('find:'..sText)
 else
-	EditorClearMarks(0, editor.Length)
+	EditorClearMarks()
 	scite.SendEditor(SCI_SETINDICATORCURRENT, 27)
 	print('> Сначала выделите в редакторе текст, который необходимо найти! (поиск текста)\n> Можно просто установить курсор на нужное слово (поиск слова)\n> Так же можно выделить текст в окне консоли')
 end
