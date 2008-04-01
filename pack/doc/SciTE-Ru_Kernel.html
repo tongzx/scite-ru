@@ -145,6 +145,17 @@ New variable in properties files<br>
 <span class="example">find.replace.closefind=&lt;number value&gt;</span><br>
 Set to 0 to prevent the Find dialog from closing when "Find" pressed.
 
+<h5> <sup>new</sup>
+[find.bookmark.disable] <span class=desc>(Author: dB6)</span></h5>
+New variable in properties files<br>
+<span class="example">find.bookmark.disable=1</span><br>
+If 1, then pressing the button "Mark all" do not sets the bookmarks.
+
+<h5>[NewFind-MarkerDeleteAll] <span class=desc>(Author: Dmitry Maslov)</span></h5>
+New variable in properties files<br>
+<span class="example">find.mark.delete=1</span><br>
+If 1, then pressing the button "Mark all" removed any earlier bookmarks.
+
 <h5> <sup>update</sup>
 [TabsMoving] <span class=desc>(Authors: VladVRO, Dmitry Maslov)</span></h5>
 You can move tabs now. In editor added two new commands <span class="example">IDM_MOVETABLEFT</span> and <span class="example">IDM_MOVETABRIGHT</span> for shift current tab left or right and added identical commands in menu Buffers.<br>
@@ -186,11 +197,6 @@ And you can switch off this feature by setup new parameter in .properties:<br>
 <h5>[position.autosave] <span class=desc>(Author: Dmitry Maslov)</span></h5>
 New variable in properties files<br>
 <span class="example">save.settings.path=</span> set to file, which, at the close of SciTE will automatically save the current size and position of window.
-
-<h5>[NewFind-MarkerDeleteAll] <span class=desc>(Author: Dmitry Maslov)</span></h5>
-New variable in properties files<br>
-<span class="example">find.mark.delete=1</span><br>
-If 1, then pressing the button "Mark all" removed any earlier bookmarks.
 
 <h5>[output.caret] <span class=desc>(Author: VladVRO)</span></h5>
 New variables in properties files<br>
