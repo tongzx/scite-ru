@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 AutocompleteObject.lua
 mozersЩ
-version 2.02
+version 2.03
 ------------------------------------------------------
 ¬вод разделител€, заданного в autocomplete.[lexer].start.characters
 вызывает список свойств и медодов объекта из соответствующего api файла
@@ -135,6 +135,7 @@ local function FindDeclaration()
 						-- если действительно, такой "объект" существует, то добавл€ем его в таблицу сопоставлений "объект - синоним"
 						table.insert(alias_table, objects[i])
 						table.insert(alias_table, sVar)
+						break
 					end
 				end
 			end

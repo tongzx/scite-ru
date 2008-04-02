@@ -12,7 +12,7 @@ scroll=no
 selection=no
 contextMenu=no
 singleinstance=yes
-version=2.0
+version=2.01
 >
 <meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
 <style type="text/css">
@@ -269,18 +269,21 @@ function UnSetOpenfor(){
 }
 
 // session =================================================
+var open_ses_file = 'open_session.js';
+
 function CheckSession(){
 	form.chk_ses.checked = false;
 	form.chk_ses.value = false;
 	try {
 		var _ses = WshShell.RegRead('HKCR\\.session\\');
-		form.chk_ses.checked = true;
-		form.chk_ses.value = true;
+		if (fso.FileExists(script_path + '\\' + open_ses_file)){
+			form.chk_ses.checked = true;
+			form.chk_ses.value = true;
+		}
 	} catch(e) {}
 }
 
 function SetSessions(){
-	var open_ses_file = 'open_session.js';
 	WshShell.RegWrite('HKCR\\.session\\', 'SciTE.Session');
 	WshShell.RegWrite('HKCR\\SciTE.Session\\', 'SciTE session file');
 	WshShell.RegWrite('HKCR\\SciTE.Session\\DefaultIcon\\', form.home.value + '\\SciTE.exe,2');
