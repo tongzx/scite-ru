@@ -3994,6 +3994,12 @@ void SciTEBase::MenuCommand(int cmdID, int source) {
 		}
 		props.SetInteger("editor.unicode.mode", CurrentBuffer()->unicodeMode + IDM_ENCODING_DEFAULT); //!-add-[EditorUnicodeMode]
 		SendEditor(SCI_SETCODEPAGE, codePage);
+		//-start-[fix_invalid_codepage]
+		if ( SendEditor(SCI_GETCODEPAGE) != codePage ) {
+			codePage = 0;
+			SendEditor(SCI_SETCODEPAGE, codePage);
+		}
+		//!-end-[fix_invalid_codepage]
 		break;
 
 	case IDM_NEXTFILESTACK:
