@@ -125,6 +125,7 @@ protected:	// ScintillaBase subclass needs access to much of Editor
 	bool hasFocus;
 	bool hideSelection;
 	bool inOverstrike;
+	bool ignoreOverstrikeChange; //-add-[ignore_overstrike_change]
 	int errorStatus;
 	bool mouseDownCaptures;
 

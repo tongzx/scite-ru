@@ -784,6 +784,8 @@ void SciTEBase::ReadProperties() {
 		SetEol();
 	}
 
+	SendEditor(SCI_SETOVERTYPE, props.GetInt("change.overwrite.enable", 1) + 2); //-add-[ignore_overstrike_change]
+
 	codePage = props.GetInt("code.page");
 	if (CurrentBuffer()->unicodeMode != uni8Bit) {
 		// Override properties file to ensure Unicode displayed.

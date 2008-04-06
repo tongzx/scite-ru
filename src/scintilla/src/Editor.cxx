@@ -97,6 +97,7 @@ Editor::Editor() {
 	hasFocus = false;
 	hideSelection = false;
 	inOverstrike = false;
+	ignoreOverstrikeChange = false; //-add-[ignore_overstrike_change]
 	errorStatus = 0;
 	mouseDownCaptures = true;
 
@@ -4581,6 +4582,7 @@ int Editor::KeyCommand(unsigned int iMessage) {
 		PageMove(1, selRectangle);
 		break;
 	case SCI_EDITTOGGLEOVERTYPE:
+		if ( ignoreOverstrikeChange == true ) break; //-add-[ignore_overstrike_change]
 		inOverstrike = !inOverstrike;
 		DropCaret();
 		ShowCaretAtCurrentPosition();
@@ -7594,7 +7596,15 @@ sptr_t Editor::WndProc(unsigned int iMessage, uptr_t wParam, sptr_t lParam) {
 		}
 
 	case SCI_SETOVERTYPE:
-		inOverstrike = wParam != 0;
+		//! inOverstrike = wParam != 0;
+		//-start-[ignore_overstrike_change]
+		if ( wParam < 2 ) {
+			inOverstrike = wParam != 0;
+		}
+		else {
+			ignoreOverstrikeChange = wParam == 2;
+		}
+		//-end-[ignore_overstrike_change]
 		break;
 
 	case SCI_GETOVERTYPE:
