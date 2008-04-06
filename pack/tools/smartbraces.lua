@@ -70,29 +70,27 @@ local function MakeFind( text )
 	local simbol
 	for i = 1, string.len(text), 1 do
 		simbol = string.format( '%c', string.byte( text, i ) )
-		if	(
-				( simbol == "(" )
-				or
-				( simbol == "[" )
-				or
-				( simbol == "." )
-				or
-				( simbol == "%" )
-				or
-				( simbol == "*" )
-				or
-				( simbol == "/" )
-				or
-				( simbol == "-" )
-				or
-				( simbol == ")" )
-				or
-				( simbol == "]" )
-				or
-				( simbol == "?" )
-				or
-				( simbol == "+" )
-			) 
+		if	( simbol == "(" )
+			or
+			( simbol == "[" )
+			or
+			( simbol == "." )
+			or
+			( simbol == "%" )
+			or
+			( simbol == "*" )
+			or
+			( simbol == "/" )
+			or
+			( simbol == "-" )
+			or
+			( simbol == ")" )
+			or
+			( simbol == "]" )
+			or
+			( simbol == "?" )
+			or
+			( simbol == "+" )
 		then
 			simbol = string.format( "%%%s", simbol )
 		end
@@ -130,12 +128,9 @@ end
 -- последний в строке ?
 local function IsInLineEnd( num_line, text )
 	local endpos = editor.LineEndPosition[num_line]
-	if 
-		(
-			( endpos >= string.len( text ) ) 
-			and 
-			string.find( editor:textrange( editor:PositionBefore( endpos - string.len( text ) + 1 ), endpos ), MakeFind( text ) ) 
-		)
+	if	( endpos >= string.len( text ) )
+		and
+		string.find( editor:textrange( editor:PositionBefore( endpos - string.len( text ) + 1 ), endpos ), MakeFind( text ) )
 	then
 		return true
 	end
@@ -161,12 +156,9 @@ end
 
 -- следующий символ позиции конец строки?
 local function nextIsEOL(pos)
-	if
-		(
-			( pos == editor.Length ) 
-			or
-			( nextIs(  pos, GetEOL() ) ) 
-		)
+	if	( pos == editor.Length )
+		or
+		( nextIs( pos, GetEOL() ) )
 	then
 		return true
 	end
@@ -205,12 +197,9 @@ end
 local function GetIndexFindCharInProps( value, findchar )
 	if findchar then
 		local resIndex = string.find( props[value], MakeFind( findchar ), 1 )
-		if 
-			(
-				( resIndex ~= nil ) 
-				and 
-				( string.sub( props[value], resIndex,resIndex ) == findchar )
-			)
+		if	( resIndex ~= nil )
+			and
+			( string.sub( props[value], resIndex,resIndex ) == findchar )
 		then
 			return resIndex
 		end
@@ -256,23 +245,21 @@ local g_isPastedBraceClose = false
 -- возвращает true когда обрабатывать дальше символ не нужно
 local function SmartBraces( char )
 	if ( props['braces.autoclose'] == '1' ) then
+		local isSelection = editor.SelectionStart ~= editor.SelectionEnd
 		-- нахобим парный символ
 		local braceOpen, braceClose = GetBraces(char)
 		if ( braceOpen ~= '' and braceClose ~= '' ) then
 			-- проверяем у нас выделен какой либо текст
-			if ( editor.SelectionStart ~= editor.SelectionEnd ) then
+			if ( isSelection == true ) then
 				-- делаем обработку по автозакрытию текста скобками
 				return BlockBraces( braceOpen, braceClose )
 			else
 				-- если следующий символ закрывающаяся скобка
 				-- и мы ее вводим, то ввод проглатываем
 				local nextSimbol = string.format( "%c", editor.CharAt[editor.CurrentPos] )
-				if
-					(
-						( GetIndexFindCharInProps( 'braces.close', nextSimbol ) ~= nil ) 
-						and
-						( nextSimbol == char ) 
-					)
+				if	( GetIndexFindCharInProps( 'braces.close', nextSimbol ) ~= nil )
+					and
+					( nextSimbol == char )
 				then 
 					editor:CharRight()
 					return true
@@ -280,25 +267,19 @@ local function SmartBraces( char )
 				-- если мы ставим открывающуюся скобку и 
 				-- следующий символ конец строки или это парная закпывающаяся скобка
 				-- то сразу вставляем закрывающуюся скобку
-				if 
-					(
-						( char == braceOpen )
-						and
-						( nextIsEOL( editor.CurrentPos ) or nextIs( editor.CurrentPos, braceClose ) )
-					)
+				if	( char == braceOpen )
+					and
+					( nextIsEOL( editor.CurrentPos ) or nextIs( editor.CurrentPos, braceClose ) )
 				then
 					-- по волшебному обрабатываем скобку { в cpp
 					if ( char == '{' ) and ( editor.LexerLanguage == 'cpp' ) then
 						editor:BeginUndoAction()
 						local ln = GetCurrLineNumber()
-						if 
-							(
-								( ln > 0 and GetLineIndentation( ln ) > GetLineIndentation( ln - 1 ) )
-								and
-								IsLineStartPos( editor.CurrentPos ) 
-								and 
-								not IsInLineEnd( ln-1, '{' )
-							)
+						if	( ln > 0 and GetLineIndentation( ln ) > GetLineIndentation( ln - 1 ) )
+							and
+							( IsLineStartPos( editor.CurrentPos ) )
+							and 
+							( not IsInLineEnd( ln-1, '{' ) )
 						then
 							editor:BackTab()
 						end
@@ -318,7 +299,9 @@ local function SmartBraces( char )
 						return true
 					end
 					-- если вставляем скобку с одинаковыми правой и левой, то смотрим есть ли уже открытая в строке
-					if ( braceOpen == braceClose ) and ( math.fmod( FindCount( editor:GetCurLine(), braceOpen ), 2 ) == 1 )
+					if	( braceOpen == braceClose )
+						and
+						( math.fmod( FindCount( editor:GetCurLine(), braceOpen ), 2 ) == 1 )
 					then
 						return false
 					end
@@ -352,7 +335,7 @@ function OnKey( key, shift, ctrl, alt, char )
 	if ( old_OnKey and old_OnKey( key, shift, ctrl, alt, char ) ) then
 		return true
 	end
-	
+
 	if ( editor.Focus ) then
 		if ( key == 8 and g_isPastedBraceClose == true ) then -- VK_BACK (08)
 			g_isPastedBraceClose = false
@@ -369,6 +352,6 @@ function OnKey( key, shift, ctrl, alt, char )
 			return SmartBraces( char )
 		end
 	end
-	
+
 	return false
 end
