@@ -2348,12 +2348,12 @@ bool SciTEBase::StartAutoComplete() {
 */
 //!-start-[AutoComplete]
 bool SciTEBase::StartAutoComplete() {
-/* Собрано содержимое StartAutoComplete и StartAutoCompleteWord*/
+/* Собрано содержимое StartAutoComplete и StartAutoCompleteWord */
 
 	SString line = GetLine();
 	int current = GetCaretInLine();//Текущая колонка
-	//~ if (current >= line.size())
-		//~ return false;
+//	if (current >= line.size())
+//		return false;
 
 	int startword = current;
 	// Autocompletion of pure numbers is mostly an annoyance
@@ -2364,9 +2364,10 @@ bool SciTEBase::StartAutoComplete() {
 			allNumber = false;
 		}
 	}
-	bool onlyOneWord=false;
-	if (startword == current || allNumber)
+//	bool onlyOneWord=false;
+	if (startword == current || allNumber) {
 		return true;
+	}
 	SString root = line.substr(startword, current - startword);
 	int doclen = LengthDocument();
 	TextToFind ft = {{0, 0}, 0, {0, 0}};
@@ -2388,8 +2389,9 @@ bool SciTEBase::StartAutoComplete() {
 	for (;;) {	// search all the document
 		ft.chrg.cpMax = doclen;
 		int posFind = SendEditorString(SCI_FINDTEXT, flags, reinterpret_cast<char *>(&ft));
-		if (posFind == -1 || posFind >= doclen)
+		if (posFind == -1 || posFind >= doclen) {
 			break;
+		}
 		if (posFind == posCurrentWord) {
 			ft.chrg.cpMin = posFind + root.length();
 			continue;
@@ -2400,20 +2402,22 @@ bool SciTEBase::StartAutoComplete() {
 		wordstart[0] = ' ';
 		GetRange(wEditor, posFind, Platform::Minimum(posFind + wordMaxSize - 3, doclen), wordstart + 1);
 		char *wordend = wordstart + 1 + root.length();
-		while (iswordcharforsel(*wordend)) //Проверка на разделитель
-		wordend++;
+		while (iswordcharforsel(*wordend)) { //Проверка на разделитель
+			wordend++;
+		}
 		*wordend++ = ' ';
 		*wordend = '\0';
 		unsigned int wordlen = wordend - wordstart - 2;
 		if (wordlen > root.length()) {
 			if (!wordsNear.contains(wordstart)) {	// add a new entry
 				wordsNear += wordstart + 1;
-				if (minWordLength < wordlen)
+				if (minWordLength < wordlen) {
 					minWordLength = wordlen;
-					nwords++;
-				if (onlyOneWord && nwords > 1) {
-					return true;
 				}
+				nwords++;
+//				if (onlyOneWord && nwords > 1) {
+//					return true;
+//				}
 			}
 		}
 		ft.chrg.cpMin = posFind + wordlen;
@@ -2429,7 +2433,7 @@ bool SciTEBase::StartAutoComplete() {
 	}
 
 	size_t length = wordsNear.length();
-	if ((length > 2) && (!onlyOneWord || (minWordLength > root.length()))) {
+	if ((length > 2)/* && (!onlyOneWord || (minWordLength > root.length()))*/) {
 		StringList wl;
 		wl.Set(wordsNear.c_str());
 		char *words = wl.GetNearestWords("", 0, autoCompleteIgnoreCase);

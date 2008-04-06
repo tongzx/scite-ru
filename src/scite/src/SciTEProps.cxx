@@ -560,12 +560,13 @@ int SciTEBase::FindIntLanguageProperty(const char *pattern, int defaultValue /*=
 	SString key = pattern;
 	key.substitute("*", language.c_str());
 	SString val = props.GetExpanded(key.c_str());
-	if (val == "")
+	if (val == "") {
 		val = props.GetExpanded(pattern);
-	if (val == "")
+	}
+	if (val == "") {
 		return defaultValue;
-	else
-		return val.value();
+	}
+	return val.value();
 }
 //!-end-[BetterCalltips]
 
@@ -710,9 +711,10 @@ SString SciTEBase::GetFileNameProperty(const char *name) {
 	        ExtensionFileName().c_str());
 	if (valueForFileName.length() != 0) {
 		return valueForFileName;
-	} else {
+	} /*!else {
 		return props.Get(name);
-	}
+	}*/
+	return props.Get(name); //-add-[no_unreachable_code_worning]
 }
 
 void SciTEBase::ReadProperties() {
