@@ -44,6 +44,7 @@ io.input
 io.lines
 io.open
 io.output
+io.popen
 io.read
 io.tmpfile
 io.type
@@ -64,6 +65,7 @@ flush () flushes the default output file
 input ([file]) opens file in text mode, sets as default input file, or returns current default input file
 lines ([filename]) open file in read mode, returns iterator function to return lines, nil ends
 open (filename [, mode]) opens file in specified mode "[rawb+]", returns handle or nil
+popen (prog [, mode]) run program in specified mode "[rawb+]", returns handle or nil
 output ([file]) opens file in text mode, sets as default output file, or returns current default output file
 read (format1, ...) reads file according to given formats, returns read values or nil
 tmpfile () returns a handle for a temporary file, opened in update mode
