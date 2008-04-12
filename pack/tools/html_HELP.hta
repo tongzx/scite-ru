@@ -14,85 +14,35 @@ scroll=no
 selection=yes
 contextMenu=yes
 singleinstance=yes
-version=1.2
+version=1.3
 >
 <script language=JavaScript>
-function Shortcuts(evnt, pane){
-	if (pane == 0){
-		var pane = self;
-	} else {
-		var pane = parent;
-	}
-	switch(evnt.keyCode){
-		case 116:  // F5 - отменяем рефреш
-			pane.event.cancelBubble = true;
-			pane.event.returnValue = false;
-			return(false);
-			break;
+// === Shortcuts ==================================
+function Shortcuts(event, pane){
+	var src = self;
+	if (pane != 0){src = parent;}
+	switch(event.keyCode){
 		case 27: //Esc - выход
-			pane.window.close(true);
+			src.window.close(true);
 			break;
 		case 114: //F3 - следующее вхождение
-			pane.FindNext();
+			src.FindNext();
 			break;
 		case 107: // серый +
 		case 187: // +
-			pane.Zoom(5);
+			src.Zoom(5);
 			break;
 		case 109: // серый -
 		case 189: // -
-			pane.Zoom(-5);
+			src.Zoom(-5);
 			break;
 	}
 	return;
 }
 
-document.onkeydown = function(){Shortcuts(event, 0)}
+document.onkeydown = function(){Shortcuts(event, 0);};
 
-function html_doc_onkeydown(){
-	Shortcuts(html_doc.event, 1);
-}
-</script>
-<style type="text/css">
-body, table {font:bold 8px "MS Sans Serif"; color:#000080; background-color:threedface; cursor:default; margin:0px;}
-input {font-family:"MS Sans Serif"; font-size:8px;}
-input.p {font:bold 8px "Courier New"; color:#000080; width:15pt; text-align:center;}
-</style>
-<title>html HELP</title>
-</head><body>
-<table width="100%" cellpadding="0" cellspacing="0" border="0">
-	<tr>
-		<td>
-			&nbsp;&nbsp;Zoom:
-			&nbsp;<INPUT class="p" TYPE="button" Value="-" onClick="Zoom(-5);" title="ZoomIn [Gray-]">
-			&nbsp;<INPUT name="txtZoom" TYPE=text value="100%" style="width:40px; text-align:center;" DISABLED>
-			&nbsp;<INPUT class="p" TYPE="button" Value="+" onClick="Zoom(5);" title="ZoomOut [Gray+]">
-		</td>
-		<td align="right">
-			Find:&nbsp;&nbsp;<INPUT name=sText TYPE=text value="" style="width:30%" onClick="SearchReset();" onkeydown="if (event.keyCode==13){Find()};" title="Start Search [Enter]
-New Search  [Click]">
-			&nbsp;&nbsp;<INPUT style="color:#000080" NAME="btnSearch" TYPE="button" Value="Search" onClick="Find();" title="Find Next [F3]">&nbsp;&nbsp;&nbsp;
-		</td>
-	</tr>
-</table>
-<script language=JavaScript>
-// Читаем аргументы ком.строки
-var cmd = HTA.commandLine;
-var re=/"(.*?)"/g;
-var Arr_cmd = re.exec(cmd);
-Arr_cmd = re.exec(cmd);
-if (Arr_cmd) {
-	var help_path = Arr_cmd[1];
-	var text_find = "";
-	Arr_cmd = re.exec(cmd);
-	if (Arr_cmd) {
-		text_find = Arr_cmd[1];
-		sText.value = text_find;
-	}
-} else {
-	alert ('Command line:\n html_HELP.hta "c:\\path\\doc.html" "find_string"');
-	window.close(false);
-}
+// === Find =======================================
 
 var find_num=0;
 var find_num_max=0;
@@ -114,7 +64,7 @@ function FindNext(){
 	TextRange.select();
 	TextRange.collapse(false);
 	find_num++;
-	if (find_num >= find_num_max){find_num = 0}
+	if (find_num >= find_num_max){find_num = 0;}
 	btnSearch.value='Go to ' + (find_num+1) + ' (in '+ find_num_max +')';
 }
 
@@ -143,6 +93,8 @@ function SearchReset(){
 	find_num_max = 0;
 }
 
+// ================================================
+
 function Zoom(i){
 	zoom = zoom + i;
 	html_doc.document.body.style.zoom = zoom + "%";
@@ -150,13 +102,59 @@ function Zoom(i){
 }
 
 function on_load() {
-	html_doc.document.onkeydown = function() {parent.html_doc_onkeydown()};
-	document.title = html_doc.document.title + " - " + HTA.applicationName.replace(/_/g,' ') + ' ' + HTA.version;
-	Find();
-	if (find_num_max>0){FindNext();}
+	html_doc.document.onkeydown = function() {parent.Shortcuts(html_doc.event, 1);};
+	document.title = html_doc.document.title + " - [" + HTA.applicationName.replace(/_/g,' ') + ' ' + HTA.version + ']';
+	if (text_find != ''){
+		Find();
+		if (find_num_max>0){FindNext();}
+		text_find = '';
+	} else {
+		SearchReset();
+	}
+}
+</script>
+<style type="text/css">
+body, table {font:bold 8px "MS Sans Serif"; color:#000080; background-color:threedface; cursor:default; margin:0px;}
+input {font-family:"MS Sans Serif"; font-size:8px;}
+input.p {font:bold 8px "Courier New"; color:#000080; width:15pt; text-align:center;}
+</style>
+<title>html HELP</title>
+</head>
+<body>
+</body>
+<script language=JavaScript>
+function ParseCmdLine(cmd){
+	var Arr_cmd = cmd.match(/[^ "]+|"[^"]+"/g);
+	for (i=0; i<Arr_cmd.length; i++) {
+		Arr_cmd[i] = Arr_cmd[i].replace(/"/g,'');
+	}
+	return Arr_cmd;
 }
 
-document.write('<div style="width:100%; height:100%;"><IFRAME onLoad="on_load();" id="html_doc" src="'+help_path+'" width="100%" height="100%" style="padding-bottom:20px;"><\/IFRAME><\/div>');
+// Читаем аргументы ком.строки
+var Arr_cmd = ParseCmdLine(HTA.commandLine);
+len_cmd = Arr_cmd.length;
+if (len_cmd < 2) {
+	alert ('Command line:\n html_HELP.hta "c:\\full path\\doc.html" [ "find string"]');
+	window.close(false);
+}
+var help_path = Arr_cmd[1];
+var text_find = '';
+if (len_cmd > 2) {
+	text_find = Arr_cmd[2];
+}
+
+var html_text = '';
+html_text += '<table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td>&nbsp;&nbsp;Zoom:';
+html_text += '&nbsp;<INPUT class="p" TYPE="button" Value="-" onClick="Zoom(-5);" title="ZoomIn [Gray-]">';
+html_text += '&nbsp;<INPUT name="txtZoom" TYPE=text value="100%" style="width:40px; text-align:center;" DISABLED>';
+html_text += '&nbsp;<INPUT class="p" TYPE="button" Value="+" onClick="Zoom(5);" title="ZoomOut [Gray+]"><\/td>';
+html_text += '<td align="right">';
+html_text += 'Find:&nbsp;&nbsp;<INPUT name=sText TYPE=text value="' + text_find + '" style="width:30%" onClick="SearchReset();" onkeydown="if (event.keyCode==13){Find()};" title="Start Search [Enter]\nNew Search  [Click]">';
+html_text += '&nbsp;&nbsp;<INPUT style="color:#000080" NAME="btnSearch" TYPE="button" Value="Search" onClick="Find();" title="Find Next [F3]">&nbsp;&nbsp;&nbsp;';
+html_text += '<\/td><\/tr><\/table>';
+html_text += '<IFRAME onLoad="on_load();" id="html_doc" src="' + help_path + '" style="width:100%; height:100%;"><\/IFRAME>';
+
+document.body.innerHTML = html_text;
 </script>
-</body>
 </html>
