@@ -309,6 +309,17 @@ New Scintilla commands to support several highlight regions inside calltip windo
 [TextSizeMax for Dialog] <span class=desc>(Author: dB6)</span></h5>
 Increased buffer size for dialog box text conversions up to 1024.
 
+<h5> <sup>new</sup>
+[ignore_overstrike_change] <span class=desc>(Author: Dmitry Maslov)</span></h5>
+New variable in properties files<br>
+<span class="example">change.overwrite.enable=0</span> includes a mode of ignoring of switching of a mode INS/OVR.<br>
+At 1 or absence of this parameter the mode by default operates.<br>
+It is possible to set this parameter through SCI_SETOVERTYPE<br>
+0 - insert mode (default)<br>
+1 - overstrike mode<br>
+2 - ignoring of switching of a mode<br>
+3 - no ignoring of switching of a mode (default)
+
 <h3>
       <a name="2"></a>
       Extensions
@@ -477,6 +488,10 @@ Simbols ":" and "." processed as separator for object now. You can setup lexer k
 [GoMessageImprovement] <span class=desc>(Author: VladVRO)</span></h5>
 Made the editor window focused after uses double-click in console on message with file name and line number.<br>
 For implementation used <span class="example">[OnMouseButtonUp]</span> improvement.
+
+<h5> <sup>new</sup>
+[fix_invalid_codepage] <span class=desc>(Author: Dmitry Maslov)</span></h5>
+Bug fixed at which switching in the "Code Page Property" did not work if the props code.page has been set incorrectly. (<a href="http://code.google.com/p/scite-ru/issues/detail?id=49">details</a>)
 
 <h5>[English_KeyCode] <span class=desc>(Author: Dmitry Maslov)</span></h5>
 Bug fixed at which keyboard shortcut ceased to work after switching keyboard layout. (<a href="http://code.google.com/p/scite-ru/issues/detail?id=43">details</a>)

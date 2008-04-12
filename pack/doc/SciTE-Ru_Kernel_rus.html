@@ -303,6 +303,18 @@ calltip.*.word.wrap</div>
 [TextSizeMax for Dialog] <span class=desc>(Автор: dB6)</span></h5>
 Максимально допустимый размер строки в диалогах поиска и замены увеличен до 1024 байт.
 
+<h5> <sup>new</sup>
+[ignore_overstrike_change] <span class=desc>(Автор: Дмитрий Маслов)</span></h5>
+Новый параметр в .properties<br>
+<span class="example">change.overwrite.enable=0</span> включает режим игнорирования переключения режима вставка/замена.<br>
+При 1 или отсутствии этого параметра действует режим по умолчанию.<br>
+Добавлена возможность установить этот параметр через SCI_SETOVERTYPE<br>
+0 - режим вставки (дефолтный)<br>
+1 - режим заменты<br>
+2 - игнорировать переключение режима<br>
+3 - не игнорировать переключение режима (дефолтный)<br>
+(через SCI_SETOVERTYPE можно переключать режим независимо от установки игнорирования)
+
     <h3>
       <a name="2"></a>
       Расширения
@@ -466,9 +478,14 @@ Tеперь можно задавать до 4х дополнительных наборов слов с разной подсветкой, при
 Переделан лексер для языка Lua.<br>
 Теперь символы ":" и "." обрабатываются в качестве разделителя сложного объекта. В настройках ключевых слов лексера как и ранее можно указывать слова вида <span class="example">string.sub</span> или <span class="example">editor:append</span>, и кроме того можно задать функции или поля объекта, например <span class="example">:GetText</span> или <span class="example">.Cursor</span>.
 
-<h5> <sup>new</sup> [GoMessageImprovement] <span class=desc>(Автор: VladVRO)</span></h5>
+<h5> <sup>new</sup>
+[GoMessageImprovement] <span class=desc>(Автор: VladVRO)</span></h5>
 Сделано перемещение фокуса в окно редактора после позиционирования на строке при клике мышкой в окне консоли на строке с ошибкой или результатом поиска.<br>
 Использована доработка <span class="example">[OnMouseButtonUp]</span>.
+
+<h5> <sup>new</sup>
+[fix_invalid_codepage] <span class=desc>(Автор: Дмитрий Маслов)</span></h5>
+Исправлена ошибка при которой не работало переключение в кодировку по умолчанию, если параметр code.page был задан неверно. (<a href="http://code.google.com/p/scite-ru/issues/detail?id=49">подробности</a>)
 
 <h5>[English_KeyCode] <span class=desc>(Автор: Дмитрий Маслов)</span></h5>
 Исправлена ошибка при которой назначенные шорткаты переставали работать после переключения раскладки клавиатуры. (<a href="http://code.google.com/p/scite-ru/issues/detail?id=43">подробности</a>)
