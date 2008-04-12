@@ -1,3 +1,4 @@
+<?xml version="1.0"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -5,39 +6,36 @@
     <meta name="generator" content="SciTE" />
     <meta http-equiv="Content-Type" content="text/html; charset=windows-1251" />
     <title>
-      Интерфейс SciTE Director
+      SciTE Director Interface
     </title>
     <link rel="stylesheet" type="text/css" href="style.css" />
   </head>
-  <body bgcolor="#FFFFFF" text="#000000">
-    <table bgcolor="#000000" width="100%" cellspacing="0" cellpadding="0" border="0">
-      <tr>
-        <td>
-          <img src="SciTEIco.png" border="3" height="64" width="64" alt="Scintilla icon" />
-        </td>
-        <td>
-          <font size="5" color="white">
-	  SciTE Director Interface</font>
-        </td>
-      </tr>
-    </table>
-    <table bgcolor="#CCCCCC" width="100%" cellspacing="0" cellpadding="8" border="0">
-      <tr>
-        <td style="text-align:center; font-size:x-small">
-          <nobr><A href="SciTEDoc_rus.html">Документация</A></nobr>&nbsp;&nbsp;
-          <nobr><A href="SciTEFAQ_rus.html">FAQ</A></nobr>&nbsp;&nbsp;
-          <nobr><A href="SciTERegEx_rus.html">Регулярные выражения</A></nobr>&nbsp;&nbsp;
-          <nobr><A href="SciTELua_rus.html">LUA</A></nobr>&nbsp;&nbsp;
-          <nobr><A href="SciTEDirector_rus.html">SciTE Director</A></nobr>&nbsp;&nbsp;
-          <nobr><A href="CommandValuesExt_rus.html">Команды SciTE и Scintilla</A></nobr>&nbsp;&nbsp;
-          <nobr><A href="SciTE-Ru_Pack_rus.html">Сборка Ru-Board</A></nobr>&nbsp;&nbsp;
-          <nobr><A href="SciTE-Ru_Kernel_rus.html">Ядро SciTE-Ru</A></nobr>&nbsp;&nbsp;
-          <nobr><A href="ScintillaHistory_rus.html">История</A></nobr>&nbsp;&nbsp;
-        </td>
-      </tr>
-    </table>
+<body bgcolor="white">
+<table class="tmenu" width="100%"><tr><td>
+  <table bgcolor="#000000" width="100%" cellspacing="4" cellpadding="0" border="0" summary="banner">
+    <tr>
+      <td><img src="SciTEIco.png" height="64" width="64" alt="Scintilla icon"></td>
+      <td width="100%"><font size="5">SciTE Director Interface</font></td>
+    </tr>
+  </table>
+
+  <table bgcolor="#CCCCCC" width="100%" cellspacing="0" cellpadding="6" summary="tmenu">
+    <tr><td>
+      <a href="SciTEDoc_rus.html">Документация</a>&nbsp;&nbsp;
+      <a href="SciTEFAQ_rus.html">FAQ</a>&nbsp;&nbsp;
+      <a href="SciTERegEx_rus.html">Регулярные выражения</a>&nbsp;&nbsp;
+      <a href="SciTELua_rus.html">LUA</a>&nbsp;&nbsp;
+      <nobr>SciTE Director</nobr>&nbsp;&nbsp;
+      <a href="CommandValuesExt_rus.html">Команды SciTE и Scintilla</a>&nbsp;&nbsp;
+      <a href="SciTE-Ru_Pack_rus.html">Сборка Ru-Board</a>&nbsp;&nbsp;
+      <a href="SciTE-Ru_Kernel_rus.html">Ядро SciTE-Ru</a>&nbsp;&nbsp;
+      <a href="ScintillaHistory_rus.html">История</a>
+    </td></tr>
+  </table>
+</td></tr></table>
+
     <h3>
-       Назначение.
+       Назначение
     </h3>
 	<p>При разработке программ работают не с одним файлом. Разработчик будет работать с группой связанных файлов в рамках одного проекта. Функциональность менеджера проектов должна быть добавлена в SciTE, так другие редакторы имеют её, но это может налагать особое видение того как управлять проектами включая формат файлов проекта. Однако, SciTE имеет интерфейс который можно использовать для менеджеров проектов или подобных приложений для контороля SciTE. Однако, SciTE имеет интерфейс который можно использовать для менеджеров проектов или похожих приложений для конторля SciTE. Любые приложения которые контролируют SciTE называются "Директор".</p>
 	<p>Сейчас SciTE Director работает только под Windows. В будущем, если будет возможность заменить низкоуровневый интерфейс, он будет доступен для других платформ.</p>
@@ -45,12 +43,12 @@
 	<a href="http://llt.chez.tiscali.fr/">Filerx</a>.</p>
 	<p>Этот интерфейс реализован поверх <a href="SciTEExtension.html">интерфейса расширений SciTE</a>, в файле  scite\win32\DirectorExtension.cxx.</p>
     <h3>
-       Прямое соединение, широковещательная рассылка и точное указание адресов возврата.
+       Прямое соединение, широковещательная рассылка и точное указание адресов возврата
     </h3>
 	<p>В каждый момент времени только одно приложение может быть <i>директором</i> SciTE, управляя SciTE как пожелает. Для поддержки других способов взаимодействия, приложения могут рассылать сообщения всем активным интерфейсам директора. В этом случае каждое сообщение должно содержать точный адрес возврата куда быдет посылатся  ответ на данное широковещательное сообщение.
 	</p>
     <h3>
-       Низкоуровневый интерфейс под Windows.
+       Низкоуровневый интерфейс под Windows
     </h3>
 	<p>Сообщение Windows <b>WM_COPYDATA</b> используется для передачи данных между SciTE и Директором. Сообщения посылаются между окнами созданными двумя приложениями. Окно SciTE принимает только это сообщение.
 	Поля <b>lpData</b> и <b>cbData</b> в структуре <b>COPYDATASTRUCT</b> используются для передачи строки между двумя процессами, поле cbData содержит длину строки которая указана в <b>lpData</b>. Строка не должна заканчиваться '\0'. Поле <b>dwData</b> должно быть 0.</p>
@@ -98,12 +96,12 @@
 </SPAN><SPAN class=S10>}</SPAN><BR>
 </div>
     <h3>
-       Низкоуровневый интерфейс под GTK+.
+       Низкоуровневый интерфейс под GTK+
     </h3>
 	<p>Еще не внедрен.
 	Предлагаемое решение использует входной буфер fifo для каждого приложения поддерживающего интерфейс SciTe Director, расположенный в  /tmp с именем по шаблону "/tmp/SciTE&lt;PID&gt;.director". Это позволяет перечислять все активные интерфейсы директора и также открывать необходимый интерфейс когда буфер fifo общается каким-нибудь другим способом, таким как аргументы командной строки или командами identity:.</p>
     <h3>
-       Высокоуровневый интерфейс.
+       Высокоуровневый интерфейс
     </h3>
 	<p>Сообщения используют эскейп-символы в стиле C для представления управляющих символов. Передаются только видимые символы, команды разделяются '\n'.</p>
 	<p>Строка передаваемая через низкоуровневый интерфейс содержит: опционально адрес возврата окруженный символами ':', команду, символ ':' и опционально аргумент. Часто в качестве аргумента передается путь к файлу. Символ ':' должен быть даже если аргументов нет. Например, SciTE понимает сообщение</p>
