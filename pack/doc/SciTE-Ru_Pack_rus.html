@@ -216,110 +216,15 @@
 	Снабдите подробными и понятными комментариями любой из файлов настроек, напишите полезный скрипт, придумайте оригинальную цветовую схему, переведите один их абзацев оригинального файла помощи и поделитесь результатом и ваше имя навсегда останется в памяти благодарных пользователей :)
 
 <h3>История версий</h3>
+
+<h5><span class=desc>[14.04.2008]</span> Сборка (ядро 1.76 .57Ru)</h5>
+Ревизия: <a href="http://code.google.com/p/scite-ru/source/list?start=530" target="_blank">530</a>
+
 <h5><span class=desc>[24.03.2008]</span> Сборка (ядро 1.76 .56Ru)</h5>
-!*****!: В сборку внесено более 170 изменений. С полным их списком можно ознакомится <a href="http://code.google.com/p/scite-ru/source/list">здесь</a>. Наиболее существенные из них приведены ниже. Подробное их описание и примеры эффективного использования помещены в документацию. (См. <a href="SciTE-Ru_Kernel_rus.html">SciTE-Ru_Kernel_rus.html</a>)<br>
-473-chg: Полностью переписан "SciTE Windows Integrator" (Issue 87) [mozers]<br>
-472-add: [PropsColouriseFix] Исправлена подсветка синтаксиса в файлах настроек для длинных строк (более 1024 символов) и строк с символом переноса [VladVRO]<br>
-461-chg: (Issue 85) убрал причину варнинга [VladVRO]<br>
-459-chg: Максимально допустимый размер строки в диалогах поиска и замены увеличен до 1024 байт [dB6]<br>
-449-chg: обновлен скрипт smartcomment.lua (убраны части отвечающие за автозакрытие скобок) [BioInfo]<br>
-446-chg: AutocompleteObject.lua переписан заново. Сейчас он может показывать варианты дополнения даже если объект имеет имя, отличное от заданного в api файле. [mozers]<br>
-445-chg: Откорректированы vb и css.properties для корректной работы автодополнения и подсказок [mozers]<br>
-444-chg: Обновлены api файлы. ActiveX.api, vbscript.api, css.api - совершенно новые файлы. [mozers]<br>
-430-add: Новая команда в меню Tools - "Открыть API файл" [mozers]<br>
-428-add: новый скрипт new_file.lua. Заменяет стандартную команду SciTE "File|New" (Ctrl+N). Создает новый буфер в текущем каталоге с расширением текущего файла. [mozers]<br>
-427-chg: [warning.couldnotopenfile.disable] Новый параметр warning.couldnotopenfile.disable=1 убирает сообщение "Не удается открыть файл", возникающее при открытии несуществующего файла (Issue 83) [mozers]<br>
-422-add: [ReadOnlyTabMarker] добавил возможность отображать состояние только для чтения с помощью доп. символов в имени вкладки, которые задаются в настройках параметром tabbar.readonly.marker (автор первой реализации Midas) [VladVRO]<br>
-421-add: [ABAP] добавил поддержку языка ABAP/4 [VladVRO]<br>
-420-add: вернул и обновил WoW API [VladVRO]<br>
-415-chg: (Issue 81) [HighlightCurrFolder] добавил подсветку фолдинга, новый параметр в настройках для задания цвета подсветки fold.highlight.colour если цвет не задан, подсветка выключается [VladVRO]<br>
-410-chg: HTML Toolbar обновлен до версии 1.1 [mozers]<br>
-409-chg: SciTe.Helper обновлен до версии 1.3 (исправлена ошибка с метода Focus) [mozers]<br>
-403-chg: убран ворнинг в лексере инно сетап: [BioInfo]<br>
-402-fix: Исправлено: Не верная работа редактора с Dead keys из-за доработки OnKey (issue 54) [BioInfo]<br>
-398-chg: [TrueTextSelMargin] исправил отображение курсора над левым полем [VladVRO]<br>
-397-chg: [TabsMoving] заменил курсор на новый [VladVRO]<br>
-386-chg: Обновление скрипта FindText.lua (теперь можно выбирать цвет маркера) [mozers]<br>
-381-chg: Закончена НОВАЯ ДОКУМЕНТАЦИЯ по SciTE.<br>
-378-chg: (Issue 76) [LuaLexerImprovement] переделал лексер Луа, убрал доработку [LuaWord] [VladVRO]<br>
-372-add: добавил в лексер InnoSetup распознавание секции Code (исправления [update.inno]) [BioInfo]<br>
-369-chg: (Issue 74) Переделал механизм импорта в файлах настроек, теперь редактор сперва делает попытку загрузить файл по явно указаному имени, если не находит, то добавляет расширение .properties и повторяет попытку. [VladVRO]<br>
-362-add: Добавлен скрипт для подсветки парных тегов в HTML (highlighting_paired_tags.lua) [mozers]<br>
-361-add: (fix issue 56) добавлена возможность не закрывать окно поиска после начала поиска (секция [close.find.window]) [BioInfo]<br>
-360-add: Добавил закрытие табы двойным щелчком мыши (идея позаимствована у moon.aka.sun) [BioInfo]<br>
-359-add: Новый вариант скрипта code-poster.lua. Работает со всеми языками. Понимает color, bold, italics [mozers]<br>
-352-add: Добавлена опция в меню Tools -> "Окно консоли: Очищать перед командой" [mozers]<br>
-348-add: [EditorUnicodeMode] добавил новый параметр editor.unicode.mode в props в который редактор сохраняет текущее значение [VladVRO]<br>
-344-chg: fix for issue 36 and 45: исправил опечатку в проверке на subsystem:director [VladVRO]<br>
-342-add: Добавил новый скрипт (smartbraces.lua) для автозакрытия скобок, фактически выделил его из smartcomment.lua и малек структурнул, короче это кандидат на замены braces_autoclose.lua [BioInfo]<br>
-337-chg: [GoMessageImprovement] Issue 63, сделал перемещение фокуса в окно редактора, использована доработка [OnMouseButtonUp] [VladVRO]<br>
-336-add: [OnMouseButtonUp] Issue 64, добавил событие на отжатие кнопки мыши [VladVRO]<br>
-328-chg: fix on issue 59: исправил ошибку с русскими символами в регулярных выражениях [VladVRO]<br>
-326-chg: добавил подсветку для descript.ion файлов [VladVRO]<br>
-324-chg: SessionManager с опцией save.session.on.quit.auto=1 при закрытии SciTE автоматически создает новый файл "имя_дата_время.session" с содержимым текущей сессии. [mozers]<br>
-321-chg: [ReloadStartupScript] добавил новую функцию scite.ReloadStartupScript(), которая позволяет перезагрузить стартовый Луа скрипт. [VladVRO]<br>
-319-chg: SessionManager.hta научился работать с несколькими экземплярами SciTE (правда теперь требуется обязательное наличие SciTE.Helper) + исправлена ошибка определения пути к приложению, приводившая к полной неработоспособности на некоторых системах. [mozers]<br>
-312-chg: добавил возможность открыть файл по клику мышью на его имени с зажатой клавишей Ctrl [VladVRO]<br>
-310-add: добавил скрипт для автоматического переключения в UTF-8 [VladVRO]<br>
-301-chg: ActiveX SciTE.Helper теперь может раздельно управлять различными экземплярами SciTE. По умолчанию он будет работать с тем экземпляром из которого стартовал скрипт, его использующий. [mozers]<br>
-298-chg: восстановил функционал [AutoComplete] утраченный после слияния с 1.75 [VladVRO]<br>
-297-chg: FindText.lua обновлен. Закрыта проблема, изложенная в Issue 31 [mozers]<br>
+Ревизия: <a href="http://code.google.com/p/scite-ru/source/list?start=473" target="_blank">473</a>
 
 <h5><span class=desc>[03.12.2007]</span> Сборка (ядро 1.75 .54Ru)</h5>
-291-chg: php.api исправил ошибочное задание типа функции первым словом, переместил после имени функции [vladvro]<br>
-289-chg: fix for macro - исправил ошибку возникающую при записи макроса из-за срабатывания различных автоматизирующих скриптов [vladvro]<br>
-288-add: скрипт Select_And_Open_Filename.lua Расширение команды "Открыть выделенный файл" для случая когда выделения нет. Скрипт выделяет подходящую область рядом с курсором в качестве искомого имени файла и пытается открыть этот файл. [vladvro]<br>
-287-chg: постарался сделать историю изменений для версии 1.75 более понятной [chupakabra]<br>
-286-chg: В документацию внесены доработки Дмитрия Маслова [SubMenu] [OnClick] [English_KeyCode]. Удалено упоминание о так и не реализованном [Tread.SmartExecute]<br>
-285-chg: Исправлен BookmarkToggle.lua. Теперь он использует новое событие OnClick [mozers]<br>
-284-chg: Модернизирован style_changer.lua. Теперь отмечает чекбоксом в меню то, что опция включена. [mozers]<br>
-282-chg: добавлен под-параметр pattern в command.separator, command.parent, command.checked, command.submenu.parent что позволяет использовать их для построения меню для конкретного расширения файлов [BioInfo]<br>
-277-fix: исправлено "Пропадают шорткаты при русской раскладке клавиатуры" (<a href="http://code.google.com/p/scite-ru/issues/detail?id=43">Issue 43</a>). Исправления в секции [English_KeyCode] [BioInfo]<br>
-275-add: добавлено новое событие OnClick(shift, ctrl, alt) (<a href="http://code.google.com/p/scite-ru/issues/detail?id=4">Issue 4</a>) [BioInfo]<br>
-274-fix: исправлено "Не пашут комбинации, типа Alt+0169" (<a href="http://code.google.com/p/scite-ru/issues/detail?id=33">Issue 33</a>) [BioInfo]<br>
-271-chg: откорректирована расцветка для cmd bat файлов по предложению [<a href="http://forum.ru-board.com/topic.cgi?forum=5&topic=24956&start=120#5">kalkin5</a>]<br>
-270-chg: Откорректирован auto_backup.lua. Теперь раскрытием переменных окружения занимается сам SciTE [mozers]<br>
-263-chg: Добавлен перевод Scintilla History [ALeXkRU]<br>
-251-chg: Полностью переделан SciTE.Helper, поскольку в SciTE 1.75 (в отличии от 1.74) из окна по WM_GETTEXT ничего не сграбишь. Сейчас все методы используют SciTEDirectorInterface. Убрано ограничение на размер блока текста. Новый метод SciTE.Focus() активизирует окно SciTE. [mozers]<br>
-244-merge: merged with branches/merge with 1.75 [vladvro]<br>
-243-add: Новое приложение HTML_toolbar.hta - настраиваемый перемещаемый тулбар для быстрой вставки в текст тегов HTML [mozers]<br>
-223-chg: Благодаря реализации dB6 (define.byte) Issue 17, появилась возможность корректного подключения скрипта frs MakeAbbrev.lua<br>
-222-chg: Благодаря реализации dB6 (define.byte) Issue 17, появилась возможность избавится от неудобного и статичного параметра api.lexer, использованного для подключения скрипта AutocompleteObject.lua.<br>
-219-add: В props добавляется новый параметр APIPath. [define.byte]<br>
-218-add: В props добавляется новый параметр AbbrevPath. [define.byte]<br>
-216-add: добавил подсветку для import и if в файле настроек [vladvro]<br>
-210-chg: воспользовался последней доработкой VladVRO (реализация Issue 47) и набил (others.properties) keywordclass "Параметры SciTE-Ru", "Параметры скриптов SciTE-Ru", "Параметры SciTE". Открывайте любой файл .properties и наслаждайтесь наглядностью :) [mozers]<br>
-207-add: released Issue 47 (keys sets in props lexer) [vladvro]<br>
-201-add: OpenFindFiles.lua - После выполнения команды "Найти в файлах..." создает пункт в контекстном меню консоли - "Открыть найденные файлы" (удобно, если планируется произвести замену текста в найденных файлах). [mozers]<br>
-193-chg: Русская CHM справка по Lua 5.1. Наслаждайтесь :) [mozers]<br>
-189-chg: В ущерб дословности, более понятно назвал пункты меню Complete Symbol, Complete Word, Margin (locale.properties, CommandValuesExt_rus.html) [mozers]<br>
-178-add: Новый скрипт xComment.lua - замена Ctrl+Q (установка/снятие комментария). Убрал из файлов languages/*.properties ставшие никому не нужными тильды "~". Было бы удобно при отсутствии параметров comment.block или comment.stream предлагать пользователю тут же добавить их, но, к сожалению Issue 2 так и не реализовано :( [mozers]<br>
-177-chg: C помощью VladVRO переписал функцию IsComment (определение соответствует ли стиль символа стилю комментария). Сейчас она работает со всеми лексерами, имеющимися в SciTE. Поскольку данная функция используется уже в 3х скриптах, то посчитал рациональным вынести ее в отдельный файл - COMMON.lua (AutocompleteObject.lua, COMMON.lua, FuncProcList.lua, SciTEStartup.lua, xComment.lua) [mozers]<br>
-174-chg: Модифицировал скрипт "Selected text -> In a new file" (сейчас не обязательно снимать выделение в редакторе, если в новый файл отправляется текст из окна консоли) [mozers]<br>
-172-chg: AutocompleteObject.lua - Нашел и устранил причину при которой при autocompleteword.automatic=1 раскрывающийся список методов/свойств самопроизвольно схлопывался при попытке выбрать нужное значение с клавиатуры (приходилось прокручивать список мышью) [mozers]<br>
-168-chg: FindText.lua - Вновь найденный текст выделяется полупрозрачным прямоугольником, причем заданного цвета. Подробности проблемы и решения изложены в Issue 41. К сожалению, на составных документах (например html с js кодом) скрипт ведет себя не лучшим образом. Т.е. проблема, изложенная в Issue 31 так все ждет и ждет своего гениального исцелителя...<br>
-159-chg: Устранение ошибок, изложенных в Issue 46 (п.1 и п.2)(Изменено: locale.properties) [mozers]<br>
-157-add: Добавил команду в меню для включения/отключения перекодировки в окне консоли. И - удобно (раньше приходилось то и дело редактировать параметр в properties) [mozers]<br>
-154-chg: Удалил xcode за ненадобностью (все его функции с лихвой выполняет Recode.js) [mozers]<br>
-152-chg: Доработка скрипта RegJump.js [mozers]<br>
-150-fix: исправлено комментирования пунктов *context.menu и user.toolbar (issue 39) [BioInfo.SciTe]<br>
-149-add: в Tools меню добавлена возможность добавлять галочку (issue 37). Пример: command.checked.113=1 [BioInfo.SciTe]<br>
-148-fix: обновлен скрипт smartcomment.lua исправлены недоработки (issue 9 и issue 29) [BioInfo.SciTe]<br>
-146-add: HTML_help.js заменен на более функциональный html_HELP.hta. Теперь HELP по SciTE показывается в окне этого приложения [mozers]<br>
-141-chg: Маленький fix для понимания скриптом exec.lua так же и https урлов. [define.byte]<br>
-139-chg: Поставил backup.files равным нулю. Причина - если пользователь захочет данный функционал, он его включит. А плодить без разрешения файлы в темп - нельзя, имхо. [define.byte]<br>
-137-chg: Текущее состояние Zoom сохраняется в SciTEUser.properties при закрытии SciTE. Исправлена ошибка при отображении размера шрифта в строке состояния (до нажатия Ctrl+- показывалось неверное значение). (Zoom.lua, save_settings.lua) [mozers]<br>
-136-chg: ToggleFoldAll.lua теперь работает очень аккуратно. [mozers]<br>
-135-chg: Добавил отображение всплывающей подсказки для методов объекта в SciTELua (Issue 30). (SciTELua.api, lua.properties) [mozers]<br>
-134-chg: За размещение в файле языка глобальных параметров, файл <a href="http://forum.ru-board.com/topic.cgi?forum=5&topic=3215&start=680#12">asm.properties</a> от UsAr объявляется вредительским. Заменен на оригинальный из официальной версии. [mozers]<br>
-133-chg: Из user.shortcuts убрана команда Ctrl+J|IDM_DUPLICATE|\. Во-первых она заняла существующий шорткат IDM_PREVMATCHPPC. Во-вторых она дублирует имеющийся Сtrl+D [mozers]<br>
-132-chg: Заменил $(file.patterns.web) в html.properties на его фактическое значение. Иначе - не работает. ПОЧЕМУ ??? [mozers]<br>
-131-chg: Удалил хоткей для PHP-подсветки (Ctrl+F12), т.к. он используется для переключения режима "Перенос по словам" [define.byte]<br>
-130-chg: Упорядочены готовые шаблоны + поправлены несколько сокращений html.abbrev [define.byte]<br>
-129-chg: Подрехтованы настройки для LUA. Раньше функции SciTELua вообще не подсвечивались. (lua.properties, lua.keywords.properties) [mozers]<br>
-127-chg: Изменен php.abbrev [define.byte]<br>
-126-chg: Обновлено 2 скрипта: exec.lua, translit.lua [HSolo]<br>
-124-chg: Из файлов .properties убраны многочисленные бессмысленные, неработающие, а порой и вредные параметры, определяющие стиль оформления кода. [mozers]
+Ревизия: <a href="http://code.google.com/p/scite-ru/source/list?start=291" target="_blank">291</a>
 
 <h5><span class=desc>[20.09.2007]</span> Сборка (ядро 1.74 .52Ru)</h5>
 	Новое ядро - исправлены найденные ошибки, добавились новые возможности (<a href="SciTE.Ru_kernel_changes.txt">подробности</a>)
