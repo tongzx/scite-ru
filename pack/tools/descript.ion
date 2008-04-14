@@ -1,3 +1,7 @@
+Calculator SciTE Calculator - Калькулятор на Lua
+Helper SciTE Helper - ActiveX компонент для связи SciTE со скриптами и приложениями
+HexEdit SciTE HexEdit - Hex редактор на Lua
+SessionManager SciTE Session Manager - Менеджер сессий
 abbrevlist.lua При вводе слова, если это сокращение то вызывается список аббревиатур
 ascii.lua Трассировка выделенного текста в коды ASCII
 ASCIITable.lua ASCII Table for SciTE
