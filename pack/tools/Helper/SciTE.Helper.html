@@ -83,14 +83,10 @@
 
 <p>Freeware ActiveX component for the interaction between SciTE text editor and any scripts and applications supporting COM interface.</p>
 
-<p><u>Current version</u>: <var>1.3</var><br>
-<u>Authors</u>: <b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=mozers" target=_blank>mozers&trade;</a></b> &amp; <b><a href="http://www.databack4u.com/snc/" target=_blank>Alexander Asyabrik aka Shura</a></b></p>
-
-
 <h3>Install, Initialisation and Remove</h3>
 
-<p>For registration SciTE Helper in yours system please run <code>Setup.vbs</code>
-(He will execute the OS command <span class="example">regsvr32 SciTE.dll</span>)</p>
+<p>For registration SciTE Helper on your system please run <code>Setup.vbs</code>
+(it will execute the OS command <span class="example">regsvr32 SciTE.dll</span>)</p>
 
 <p>For job with SciTE Helper it is necessary to make initialization of object in your script:
 <div class="example">
@@ -103,8 +99,8 @@
   On Error GoTo 0
 </div></p>
 
-<p>For unregistration SciTE Helper in yours system please run <code>Setup.vbs</code> once again
-(He will execute the OS command <span class="example">regsvr32 /U SciTE.dll</span>)</p>
+<p>For unregistration SciTE Helper on your system please run <code>Setup.vbs</code> once again
+(it will execute the OS command <span class="example">regsvr32 /U SciTE.dll</span>)</p>
 
 <p class="ruboardonly">In SciTE-Ru registration and unregistration SciTE Helper occurs automatically at a choice of item of the menu
  '<cite>Tools</cite>' - '<cite>Windows Integration</cite>'</p>
@@ -122,7 +118,7 @@
 
     <td>
       <p>
-        Returns the sizes and a position of a SciTE window.<br>
+        Returns sizes and position of a SciTE window.<br>
         These properties are equivalent to SciTE propertys <var>position.left</var>, <var>position.top</var>, <var>position.width</var>, <var>position.height</var>
       </p>
       <p>Example:
@@ -255,7 +251,7 @@
 
     <td>
       <p>
-        Replace the selected text with the argument text. This works similarly to method of lua <var>editor:ReplaceSel(string)</var>. Returned value is absent.
+        Replace selected text with argument text. This works similarly to method of lua <var>editor:ReplaceSel(string)</var>. Returned value is absent.
       </p>
       <p>Example:
       <div class="example">
@@ -271,8 +267,8 @@
 
     <td>
       <p>
-        run specifed SciTE menu command. Returned value is absent.<br>
-        The list of all accessible commands see in a file <a href="../../doc/CommandValues.html">CommandValues.html</a>
+        Run specifed SciTE menu command. Returned value is absent.<br>
+        The list of all accessible commands see in a file <a href="../../doc/CommandValuesExt_rus.html">CommandValues.html</a>
       </p>
       <p>Example:
       <div class="example">
@@ -349,17 +345,19 @@
 </table>
 
 <h3>Download</h3>
-
-Last version of the given document is available on <a href="http://scite-ru.googlecode.com/svn/trunk/pack/tools/Helper/SciTE.Helper.html">this link</a><br>
-Source code available on <a href="http://scite-ru.googlecode.com/svn/trunk/helper/">this link</a><br>
-Last version SciTE Helper (include documentations) download available on <a href="http://code.google.com/p/scite-ru/downloads/detail?name=SciTE.Helper.zip">this link</a>
+<p><u>Current version SciTE Helper</u>: <var>1.3</var><br></p>
+<p>
+<a href="http://code.google.com/p/scite-ru/downloads/detail?name=SciTE.Helper.zip">SciTE.dll</a> (include documentations and sample scripts)<br>
+<a href="http://scite-ru.googlecode.com/svn/trunk/helper/">Source code</a>
+</p>
 
 <h3>Remarks</h3>
 
-<p><code>SciTE Helper</code> it is written on Visual Basic 5.0 and require run-time library <code>msvbvm50.dll</code>, which is present in all Windows versions, up to Windows XP SP1 inclusive. In later versions the given library is absent therefore it is necessary <a href="http://www.google.com/search?q=msvbvm50.dll">download</a> independently.<br>
-The offer under the decision of the given problem is stated in <a href="http://code.google.com/p/scite-ru/issues/detail?id=62">Issue 62</a></p>
+<p><code>SciTE Helper</code> is written on Visual Basic 5.0 and require run-time library <code>msvbvm50.dll</code>, which is present in all Windows versions, up to Windows XP SP1 inclusive. In later versions <code>msvbvm50.dll</code> library is absent therefore it is necessary to <a href="http://www.google.com/search?q=msvbvm50.dll">download</a> independently.<br>
+One of salvations of this problem is on <a href="http://code.google.com/p/scite-ru/issues/detail?id=62">Issue 62</a></p>
 
-<p><code>SciTE Helper</code> now does not catch SciTE events. Realization of the given opportunity is planned.</p>
-
+<p><code>SciTE Helper</code> now does not catch SciTE events. Realization of such opportunity is planned.</p>
+<hr size="1">
+<small>Design this page is borrowed from the <a href="http://scintilla.sourceforge.net/SciTE.html">Scintilla project</a>. Thanks.</small>
 </body>
 </html>
