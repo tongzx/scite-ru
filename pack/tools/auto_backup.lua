@@ -39,7 +39,7 @@ local function GetPath()
 
 -- 	if backup folder not exist
 	if not FileExist(path) then
-		os.run('CMD /C MD "'..path..'"',0,true) -- Silient window (only SciTE-Ru)
+		shell.run('CMD /C MD "'..path..'"',0,true) -- Silient window (only SciTE-Ru)
 --~ 		os.execute('CMD /C MD "'..path..'"')
 	end
 	return path

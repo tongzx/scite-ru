@@ -21,7 +21,7 @@ version 1.2
 --]]----------------------------------------------------------------------------
 
 local function isFileExists(filename)
-	if os.getfileattr(filename) then
+	if shell.getfileattr(filename) then
 		return true
 	else
 		return false

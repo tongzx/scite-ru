@@ -16,17 +16,17 @@ local function BSave(FN)
 	local FileAttr = props['FileAttr']
 	props['FileAttrNumber'] = 0
 	if string.find(FileAttr, '[RHS]') then --  Если в файл нельзя записать, то спросим
-		if os.msgbox("Файл доступен только для чтения. Все равно сохранить?\n"
+		if shell.msgbox("Файл доступен только для чтения. Все равно сохранить?\n"
 			.."Аттрибуты файла: "..FileAttr, "SciTE", 65)==1 then
 			-- сохраним текущии, затем снимем все аттрибуты
-			local FileAttrNumber, err = os.getfileattr(FN)
+			local FileAttrNumber, err = shell.getfileattr(FN)
 			if (FileAttrNumber == nil) then
 				print("> "..err)
 				props['FileAttrNumber'] = 32 + iif(string.find(FileAttr,'R'),1,0) + iif(string.find(FileAttr,'H'),2,0) + iif(string.find(FileAttr,'S'),4,0)
 			else
 				props['FileAttrNumber'] = FileAttrNumber
 			end
-			os.setfileattr(FN, 2080)
+			shell.setfileattr(FN, 2080)
 		end
 	end
 end
@@ -35,7 +35,7 @@ local function AfterSave(FN)
 	-- Если была сохранена строка с аттрибутами, то установим их
 	local FileAttrNumber = tonumber(props['FileAttrNumber'])
 	if FileAttrNumber ~= nil and FileAttrNumber > 0 then
-		os.setfileattr(FN, FileAttrNumber)
+		shell.setfileattr(FN, FileAttrNumber)
 	end
 end
 

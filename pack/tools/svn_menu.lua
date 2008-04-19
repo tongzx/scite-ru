@@ -45,10 +45,10 @@ local function update_svn_menu()
 	local isSVN = false
 	local svnSign
 	-- test SVN context
-	if os.getfileattr(filedir.."\\.svn") then
+	if shell.getfileattr(filedir.."\\.svn") then
 		isSVN = true
 		svnSign = "."
-	elseif os.getfileattr(filedir.."\\_svn") then
+	elseif shell.getfileattr(filedir.."\\_svn") then
 		isSVN = true
 		svnSign = "_"
 	end
@@ -80,7 +80,7 @@ local function update_svn_menu()
 				branchmenu = string.gsub(BranchMenuCommands, "trunk", branchname)
 			end
 			if parent then
-				if os.getfileattr(parent.."\\"..svnSign.."svn") then
+				if shell.getfileattr(parent.."\\"..svnSign.."svn") then
 					child = svnroot
 					svnroot = parent
 				else

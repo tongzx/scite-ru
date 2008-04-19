@@ -49,7 +49,7 @@ end
 if (string.len(str) > 2) then
   if string.find(str,'https?://(.*)') then
     local browser = ('explorer "' .. str .. '"')
-    os.run (browser, 0, false)
+    shell.run (browser, 0, false)
     --~ os.execute (browser)
   else
     if string.find(str, "(math\.%w+)") then  -- В случае сложных математических выражений форматирование оставляем на пользователя

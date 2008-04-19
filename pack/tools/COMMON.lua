@@ -1,11 +1,16 @@
 -- COMMON.lua
--- Version: 1.2
+-- Version: 1.3
 ---------------------------------------------------
 -- Общие функции, использующиеся во многих скриптах
 ---------------------------------------------------
 
-function IsComment(pos)
+-- Подключение библиотеки shell.dll
+package.cpath = props["SciteDefaultHome"].."\\tools\\LuaLib\\?.dll;"..package.cpath
+require 'shell'
+
+--------------------------------------------------------
 -- Определение соответствует ли стиль символа стилю комментария
+function IsComment(pos)
 	local style = editor.StyleAt[pos]
 	local lexer = editor.LexerLanguage
 	local comment = {

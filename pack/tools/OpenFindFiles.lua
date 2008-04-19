@@ -28,7 +28,7 @@ function OpenFindFiles()
 			if filename ~= filename_old then
 				local path_filename = string.gsub(path..filename,'\\','\\\\')
 				local cmd = '"'..props["SciteDefaultHome"]..'\\scite.exe" -check.if.already.open=1 "-open:'..path_filename..'" "-find:'..str..'"'
-				os.run (cmd)
+				shell.run (cmd)
 				filename_old = filename 
 			end
 		end
