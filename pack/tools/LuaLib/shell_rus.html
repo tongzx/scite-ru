@@ -127,24 +127,30 @@ end
 		<dfn>run (strCommand, [intWindowStyle], [bWaitOnReturn])</dfn>
 	</p>
 	<p>
-	<p>Запуск внешнего приложения.<br>
+	<p>
+	<b>Описание:</b><br>
+		&nbsp;&nbsp;Запуск внешнего приложения.<br>
+	<br>
+	<b>Параметры:</b><br>
 		&nbsp;&nbsp;<dfn>strCommand</dfn> - командная строка запуска<br>
-		&nbsp;&nbsp;<dfn>intWindowStyle</dfn> - стиль окна. Допустимые значения приведены в таблице.<br>
+		&nbsp;&nbsp;<dfn>intWindowStyle</dfn> - стиль окна. Допустимые значения приведены в таблице:<br>
 		<table style="margin-left:8pt">
-			<tr><th>intWindowStyle</th><th>Стиль окна</th></tr>
+			<tr><th>Значение</th><th>Описание</th></tr>
 			<tr><td align="center">0</td><td>Окно скрыто, и фокус передается скрытому окну</td></tr>
 			<tr><td align="center">1</td><td>Окно имеет фокус и восстанавливает свои стандартные размер и положение (значение по умолчанию)</td></tr>
 			<tr><td align="center">2</td><td>Окно отображается в виде значка с фокусом</td></tr>
 			<tr><td align="center">3</td><td>Окно развертывается на полный экран с фокусом</td></tr>
 			<tr><td align="center">4</td><td>Восстанавливаются предыдущие размер и положение окна. Активным остается текущее окно</td></tr>
 			<tr><td align="center">6</td><td>Окно отображается в виде значка. Активным остается текущее окно</td></tr>
-		</table>
+		</table><br>
 		&nbsp;&nbsp;<dfn>bWaitOnReturn</dfn> = <var>true</var> | <var>false</var> (значение по умолчанию) - приостанавливать или нет скрипт на время выполнения команды</p>
-		<p>Возвращаются 2 значения:<br>
+		<br>
+		<p>
+	<b>Возвращаемое значение:</b><br>
 		&nbsp;&nbsp;первое содержит код завершения вызываемого приложения,<br>
-		&nbsp;&nbsp;второе - текст, который приложение вывело в <code>StdOut</code> или <code>StdErr</code> (работает только при <code>intWindowStyle = 0</code>)<br>
+		&nbsp;&nbsp;второе - текст, который приложение вывело в <code>StdOut</code> или <code>StdErr</code> (работает только при <code>intWindowStyle = 0</code> и <code>bWaitOnReturn = true</code>)<br>
 	</p>
-		<p>Пример использования:
+		<p><b>Пример использования:</b>
 		<div class="example">
 		local err, output = shell.run('cmd /c DIR /b', 0, true)<br>
 		if err == 0 then<br>
@@ -159,12 +165,16 @@ end
 	<p class="head">
 		<dfn>msgbox (strMessageText, [strTitle], [intOptions])</dfn>
 	</p>
-	<p>Вывод текстового сообщения с кнопками.<br>
+	<p>
+		<b>Описание:</b><br>
+		&nbsp;&nbsp;Вывод текстового сообщения с кнопками.<br>
+	<br>
+	<b>Параметры:</b><br>
 		&nbsp;&nbsp;<dfn>strMessageText</dfn> - текст сообщения<br>
 		&nbsp;&nbsp;<dfn>strTitle</dfn> - текст заголовка сообщения<br>
 		&nbsp;&nbsp;<dfn>intOptions</dfn> - числовое выражение, представляющее собой сумму значений, перечисленных в таблице.
 		<table style="margin-left:8pt">
-		<tr><th>intOptions</th><th>Описание</th></tr>
+		<tr><th>Значение</th><th>Описание</th></tr>
 		<tr>
 		<td align="center">0</td>
 		<td>Выводится кнопка ОК (значение по умолчанию)</td>
@@ -232,39 +242,43 @@ end
 		</tr>
 		</table>
 	</p>
-	<p>Возвращает код нажатой кнопки. Значения перечисленны в таблице.
+	<br>
+	<p>
+	<b>Возвращаемое значение:</b><br>
+		&nbsp;&nbsp;Возвращает код нажатой кнопки. Значения перечисленны в таблице:
 		<table style="margin-left:8pt">
+		<tr><th>Значение</th><th>Описание</th></tr>
 		<tr>
-		<td>1</td>
+		<td align="center">1</td>
 		<td>Нажата кнопка ОК</td>
 		</tr>
 		<tr>
-		<td>2</td>
+		<td align="center">2</td>
 		<td>Нажата кнопка Отмена (Cancel)</td>
 		</tr>
 		<tr>
-		<td>3</td>
+		<td align="center">3</td>
 		<td>Нажата кнопка Стоп (Abort)</td>
 		</tr>
 		<tr>
-		<td>4</td>
+		<td align="center">4</td>
 		<td>Нажата кнопка Повтор (Retry)</td>
 		</tr>
 		<tr>
-		<td>5</td>
+		<td align="center">5</td>
 		<td>Нажата кнопка Пропустить (Ignore)</td>
 		</tr>
 		<tr>
-		<td>6</td>
+		<td align="center">6</td>
 		<td>Нажата кнопка Да (Yes)</td>
 		</tr>
 		<tr>
-		<td>7</td>
+		<td align="center">7</td>
 		<td>Нажата кнопка Нет (No)</td>
 		</tr>
 		</table>
 	</p>
-		<p>Пример использования:
+		<p><b>Пример использования:</b>
 		<div class="example">
 		if shell.msgbox("Вы уверены?", "SciTE", 65) == 1 then<br>
 		&nbsp;&nbsp;print("Yes")<br>
@@ -279,13 +293,17 @@ end
 		<dfn>getfileattr (strFileName)</dfn>
 	</p>
 	<p>
-		Получение атрибутов файла.<br>
+	<b>Описание:</b><br>
+		&nbsp;&nbsp;Получение атрибутов файла.<br>
+	<br>
+	<b>Параметры:</b><br>
 		&nbsp;&nbsp;<dfn>strFileName</dfn> - имя файла<br>
-		Возвращаются 2 значения:<br>
+		<br>
+	<b>Возвращаемое значение:</b><br>
 		&nbsp;&nbsp;первое содержит атрибуты файла в виде числа,<br>
 		&nbsp;&nbsp;второе содержит либо <var>nil</var> (при удачном завершении) либо текст сообщения об ошибке (при неудаче)
 	</p>
-		<p>Пример использования:
+		<p><b>Пример использования:</b>
 		<div class="example">
 		local attr, err = shell.getfileattr("c:\\MSDOS.SYS")<br>
 		if err == nil then<br>
@@ -295,7 +313,7 @@ end
 		end
 		</div>
 		</p>
-	<p class="author">Автор: Midas</p>
+	<p class="author">Авторы: Midas</p>
 </td></tr>
 
 <tr><td>
@@ -303,14 +321,18 @@ end
 		<dfn>setfileattr (strFileName, intFileAttr)</dfn>
 	</p>
 	<p>
-	Установка атрибутов файла.<br>
+	<b>Описание:</b><br>
+		&nbsp;&nbsp;Установка атрибутов файла.<br>
+	<br>
+	<b>Параметры:</b><br>
 		&nbsp;&nbsp;<dfn>strFileName</dfn> - имя файла<br>
 		&nbsp;&nbsp;<dfn>iFileAttr</dfn> - атрибуты файла в числовом виде<br>
-		Возвращаются 2 значения:<br>
+		<br>
+	<b>Возвращаемое значение:</b><br>
 		&nbsp;&nbsp;первое содержит либо <var>1</var> (при удачном завершении) либо <var>nil</var> (при неудаче),<br>
 		&nbsp;&nbsp;второе содержит либо <var>nil</var> (при удачном завершении) либо текст сообщения об ошибке (при неудаче)
 	</p>
-		<p>Пример использования:
+		<p><b>Пример использования:</b>
 		<div class="example">
 		local result, err = shell.setfileattr("c:\\MSDOS.SYS", 32)<br>
 		if result == 1 then<br>
@@ -320,7 +342,77 @@ end
 		end
 		</div>
 		</p>
-	<p class="author">Автор: Midas</p>
+	<p class="author">Авторы: Midas</p>
+</td></tr>
+
+<tr><td>
+	<p class="head">
+		<dfn>exec (strFileName, [strParameters], [boolNoShow], [strOperation])</dfn>
+	</p>
+	<p>
+	<b>Описание:</b><br>
+		&nbsp;&nbsp;Запуск файла зарегестрированным приложением. В отличии от run позволяет запускать файлы, документы и ссылки, а так же открывать каталоги.<br>
+	<br>
+	<b>Параметры:</b><br>
+		&nbsp;&nbsp;<dfn>strFileName</dfn> - имя файла или папки<br>
+		&nbsp;&nbsp;<dfn>strParameters</dfn> - строка параметров передаваемая загружаемому приложению или запуск без параметров (по умолчанию)<br>
+		&nbsp;&nbsp;<dfn>boolNoShow</dfn> - если <var>true</var>, то запускается в скрытом режиме, <var>false</var> - показать окно (по умолчанию) <br>
+		&nbsp;&nbsp;<dfn>strOperation</dfn> - исполняемая операция из перечисленных в таблице:<br>
+		<table style="margin-left:8pt">
+		<tr><th>Значение</th><th>Описание</th></tr>
+		<tr>
+		<td align="center">open</td>
+		<td>Открыть. strFileName может быть документом, приложением или папкой (параметр по умолчанию)</td>
+		</tr>
+		<tr>
+		<td align="center">edit</td>
+		<td>Изменить. Открывает файл на редактирование. strFileName должен быть документом.</td>
+		</tr>
+		<tr>
+		<td align="center">print</td>
+		<td>Печать. strFileName должен быть документом.</td>
+		</tr>
+		<tr>
+		<td align="center">explore</td>
+		<td>Открывает папку в проводнике Windows. strFileName должен указывать путь к папке</td>
+		</tr>
+		<tr>
+		<td align="center">find</td>
+		<td>Выводит диалоговое окно для поиска файлов по условиям, strFileName должен указывать путь к папке,<br>начиная с которой будет выполняться поиск</td>
+		</tr>
+		</table>
+		<br>
+	<b>Возвращаемое значение:</b><br>
+		&nbsp;&nbsp;Возвращает <var>true</var> (при удачном запуске) или <var>false</var> (при неудаче)<br>
+	</p>
+		<p><b>Пример использования:</b>
+		<div class="example">
+		-- запустить приложение<br>
+		shell.exec("c:\windows\calc.exe")<br>
+		shell.exec("cmd", "/c dir > out.txt")<br>
+		<br>
+		-- открыть каталог<br>
+		shell.exec("c:\windows")<br>
+		shell.exec("c:\windows", nil, false, "find")<br>
+		shell.exec("c:\windows", nil, false, "explore")<br>
+		<br>
+		-- открыть ссылку на сайт<br>
+		shell.exec("http://www.site.ru")<br>
+		<br>
+		-- послать E-mail<br>
+		shell.exec("mailto:support@mail.ru")<br>
+		<br>
+		-- открыть файл<br>
+		shell.exec("D:\file.doc")<br>
+		<br>
+		-- распечатать файл<br>
+		shell.exec("D:\file.doc", nil, true, "print")<br>
+		<br>
+		-- редактировать файл<br>
+		shell.exec("D:\shell_rus.html", nil, false, "edit")
+		</div>
+		</p>
+	<p class="author">Авторы: Стив Донован, Маслов Дмитрий</p>
 </td></tr>
 
 </table>
