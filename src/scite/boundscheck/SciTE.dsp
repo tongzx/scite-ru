@@ -731,7 +731,19 @@ SOURCE=..\..\scintilla\Include\WindowAccessor.h
 # PROP Default_Filter "ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
 # Begin Source File
 
+SOURCE=..\win32\DragDrop.cur
+# End Source File
+# Begin Source File
+
 SOURCE=..\Win32\SciBall.ico
+# End Source File
+# Begin Source File
+
+SOURCE="..\win32\SciTE-file.ico"
+# End Source File
+# Begin Source File
+
+SOURCE="..\win32\SciTE-ses.ico"
 # End Source File
 # End Group
 # End Target
