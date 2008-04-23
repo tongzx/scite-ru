@@ -2,6 +2,13 @@
 
 1=' Script Name\n' Version: 1.0\n' Author: \n' ------------------------------------------------\n' Description: \n' ------------------------------------------------\nOption Explicit\nDim WshShell, FSO, SciTE\nSet WshShell = CreateObject("WScript.Shell")\nSet FSO = CreateObject("Scripting.FileSystemObject")\nConst ForReading = 1, ForWriting = 2, ForAppending = 8\nSet SciTE = CreateObject("SciTE.Helper")|
 
+#Code Snippets
+do=Do While|||Until i < 9\r\n\t\r\n\tIf a = 5 Then Exit Do\r\n\t\r\nLoop\r\n\r\nDo\r\n\t\r\n\tIf a = 5 Then Exit Do\r\n\t\r\nLoop While||Until i < 9\r\n
+for=For i = 0 To 9 Step 2\r\n\t\r\n\tIf a = i Then Exit For\r\n\t\r\nNext\r\n
+each=For Each f In Folder.Files\r\n\t\r\nNext f\r\n
+sel=Select Case Var\r\n\tCase 1|\r\n\t\t\r\n\tCase 2\r\n\t\t\r\n\tCase Else\r\n\t\t\r\nEnd Select\r\n
+dyna=Dim aTmp()\nRedim aTmp(-1)\nRedim Preserve aTmp(UBound(aTmp) + 1)\naTmp(UBound(aTmp)) = |
+
 #Object References
 wsh=Set WshShell = CreateObject("WScript.Shell")\n|
 fso=Set FSO = CreateObject("Scripting.FileSystemObject")\nConst ForReading = 1, ForWriting = 2, ForAppending = 8\n|
@@ -12,9 +19,6 @@ ie=Set IE = CreateObject("InternetExplorer.Application")\n|
 tla=Set tla = CreateObject("TLI.TLIApplication")\n|
 sc=Set sc = CreateObject("MSScriptControl.ScriptControl")\n|
 xml=Set xml = CreateObject("Microsoft.XMLHTTP")\n|
-
-#Code Snippets
-dyna=Dim aTmp()\nRedim aTmp(-1)\nRedim Preserve aTmp(UBound(aTmp) + 1)\naTmp(UBound(aTmp)) = |
 
 #Wrapper Procedures
 
@@ -29,3 +33,4 @@ cmd=Function Cmd(cmdline)\n\t' Wrapper for getting StdOut from a console command
 
 #Get via XML
 GetXml=Function GetXml(sURL)\n\tDim Xml\n\tSet Xml = CreateObject("Microsoft.XMLHTTP")\n\tXml.open "GET", sURL, False\n\tOn Error Resume Next\n\tXml.send vbNull\n\tIf Err.Number = 0 Then\n\t\tDo : WScript.sleep 10 : Loop While Xml.ReadyState <> 4\n\t\tif Xml.status = 200 Then\n\t\t\tpage = Xml.responseText\n\t\t\tWScript.Echo "Page download!"\n\t\t\tfile.Write page\n\t\t\tfile.Close\n\t\tElse\n\t\t\tWScript.Echo "There was a problem retrieving the XML data: " & Xml.statusText\n\t\tEnd If\n\tElse\n\t\tWScript.Echo "Error load! " & sURL\n\tEnd If\nEnd Function\n|
+
