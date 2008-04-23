@@ -46,7 +46,8 @@ static bool IsBOperator(char ch) {
 // Tests for BATCH Separators
 static bool IsBSeparator(char ch) {
 	return (ch == '\\') || (ch == '.') || (ch == ';') ||
-		(ch == '\"') || (ch == '\'') || (ch == '/') || (ch == ')');
+//!		(ch == '\"') || (ch == '\'') || (ch == '/') || (ch == ')');
+		(ch == '\"') || (ch == '\'') || (ch == '/') || (ch == '(') || (ch == ')'); //!-change-[BatchLexerImprovement]
 }
 
 static void ColouriseBatchLine(
