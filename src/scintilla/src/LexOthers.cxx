@@ -485,6 +485,46 @@ static void ColouriseBatchDoc(
 	}
 }
 
+//!-start-[BatchLexerImprovement]
+static void FoldBatchDoc(unsigned int startPos, int length, int,
+    WordList *[], Accessor &styler)
+{
+	int line = styler.GetLine(startPos);
+	int level = styler.LevelAt(line);
+	int levelIndent = 0;
+	unsigned int endPos = startPos + length;
+	// Scan for ( and )
+	for (unsigned int i = startPos; i < endPos; i++) {
+		int c = styler.SafeGetCharAt(i, '\n');
+		int style = styler.StyleAt(i);
+		if (style == SCE_BAT_DEFAULT) {
+			// CheckFoldPoint
+			if (c == '(') {
+				levelIndent += 1;
+			} else
+			if (c == ')') {
+					levelIndent -= 1;
+			}
+		}
+		if (c == '\n') { // line end
+				if (levelIndent > 0) {
+						level |= SC_FOLDLEVELHEADERFLAG;
+				}
+				if (level != styler.LevelAt(line))
+						styler.SetLevel(line, level);
+				level += levelIndent;
+				if ((level & SC_FOLDLEVELNUMBERMASK) < SC_FOLDLEVELBASE)
+						level = SC_FOLDLEVELBASE;
+				line++;
+				// reset state
+				levelIndent = 0;
+				level &= ~SC_FOLDLEVELHEADERFLAG;
+				level &= ~SC_FOLDLEVELWHITEFLAG;
+		}
+	}
+}
+//!-end-[BatchLexerImprovement]
+
 static void ColouriseDiffLine(char *lineBuffer, int endLine, Accessor &styler) {
 	// It is needed to remember the current state to recognize starting
 	// comment lines before the first "diff " or "--- ". If a real
@@ -1296,7 +1336,8 @@ static void ColouriseNullDoc(unsigned int startPos, int length, int, WordList *[
 	}
 }
 
-LexerModule lmBatch(SCLEX_BATCH, ColouriseBatchDoc, "batch", 0, batchWordListDesc);
+//!LexerModule lmBatch(SCLEX_BATCH, ColouriseBatchDoc, "batch", 0, batchWordListDesc);
+LexerModule lmBatch(SCLEX_BATCH, ColouriseBatchDoc, "batch", FoldBatchDoc, batchWordListDesc); //!-change-[BatchLexerImprovement]
 LexerModule lmDiff(SCLEX_DIFF, ColouriseDiffDoc, "diff", FoldDiffDoc, emptyWordListDesc);
 //!LexerModule lmProps(SCLEX_PROPERTIES, ColourisePropsDoc, "props", FoldPropsDoc, emptyWordListDesc);
 LexerModule lmProps(SCLEX_PROPERTIES, ColourisePropsDoc, "props", FoldPropsDoc, propsWordListDesc); //!-change-[PropsKeysSets]
