@@ -1,11 +1,11 @@
-//build@ gcc -shared -o shell.dll -I shell.cpp scite.lib
+//build@ gcc -shared -o shell.dll -I shell.cpp scite.la -lstdc++
 
 #include <windows.h>
 
 extern "C" {
-	#include "..\src\scite\lua\include\lua.h"
-	#include "..\src\scite\lua\include\lauxlib.h"
-	#include "..\src\scite\lua\include\lualib.h"
+	#include "lua.h"
+	#include "lauxlib.h"
+	#include "lualib.h"
 }
 
 #pragma warning(push)

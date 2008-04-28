@@ -51,7 +51,13 @@ CD %~dp0\src\scintilla
 CALL delbin.bat
 CD %~dp0\src\scite
 CALL delbin.bat
-del /Q "%~dp0\src\scite\bin"\*.properties >NUL:
+DEL /Q "%~dp0\src\scite\bin"\*.properties >NUL:
+
+:laulib
+CD %~dp0\shell
+CALL make.bat
+COPY shell.dll ..\Pack\tools\LuaLib\
+DEL /Q shell.dll >NUL:
 
 :completed
 ECHO __________________
