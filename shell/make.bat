@@ -1,72 +1,47 @@
-ECHO OFF
-
-:: НАСТРОЙКИ БАТНИКА
+@ECHO OFF
 ::-----------------------------------------
 :: Путь к MinGW
-SET mingw=C:\MinGW\bin
-:: Путь исходникам Lua
-SET inc=..\src\scite\lua\include
+SET MINGW=C:\MinGW\bin
+:: Путь к исходникам Lua
+SET INC=..\src\scite\lua\include
 :: Путь к upx (если отсутствует не менять)
-SET upx300w=C:\MinGW\upx300w
+SET UPX3=C:\MinGW\upx300w
 ::-----------------------------------------
 
-ECHO Start building lualib
-ECHO _______________________________________
+ECHO Start building lualib ...
+ECHO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-:check_upx
-SET NO_UPX=0
-IF EXIST "%upx300w%" GOTO check_mingw
-SET NO_UPX=1
-:check_mingw
-IF EXIST "%mingw%" GOTO clear_pre
-:check_mingw_codeblocks
-IF EXIST "C:\Program Files\CodeBlocks\bin" GOTO clear_pre
-GOTO error_install
+IF NOT EXIST "%INC%" (
+	ECHO Error : Dir "%INC%" not exist!
+	GOTO error
+)
 
-:clear_pre
-DEL /S /Q resfile.o shell.dsw shell.plg >NUL:
-DEL /S /Q shell.ncb shell.opt shell.aps shell.positions shell.vskdb shell.vsksln >NUL:
-DEL /S /Q shell.res shell.bsc shell.exp shell.lib shell.obj shell.pch shell.sbr vc60.idb >NUL:
-RMDIR Release >NUL:
+IF NOT EXIST "%MINGW%" IF NOT EXIST "C:\Program Files\CodeBlocks\bin" (
+	ECHO Please install MinGW + UPX!
+	ECHO For more information visit: http://code.google.com/p/scite-ru/
+	GOTO error
+)
 
-:main
-SET SAVE_PATH=%PATH%
-SET PATH=%mingw%;%upx300w%;C:\Program Files\CodeBlocks\bin;%PATH%
+SET PATH=%MINGW%;C:\Program Files\CodeBlocks\bin;%PATH%
+
+CD /D "%~dp0"
 windres -o resfile.o shell.rc
-gcc -shared -o shell.dll -I%inc% shell.cpp resfile.o scite.la -lstdc++
+IF ERRORLEVEL 1 GOTO error
+gcc -shared -o shell.dll -I%INC% shell.cpp resfile.o scite.la -lstdc++
 IF ERRORLEVEL 1 GOTO error
 
-:upx
-IF %NO_UPX%==1 GOTO clear_after
-upx --best shell.dll
+IF EXIST "%UPX3%\upx.exe" (
+	"%UPX3%\upx.exe" --best shell.dll
+) ELSE (
+	ECHO  Warning: UPX not found! File shell.dll not packed.
+)
 
-:clear_after
-DEL /S /Q resfile.o shell.dsw shell.plg >NUL:
-DEL /S /Q shell.ncb shell.opt shell.aps shell.positions shell.vskdb shell.vsksln >NUL:
-DEL /S /Q shell.res shell.bsc shell.exp shell.lib shell.obj shell.pch shell.sbr vc60.idb >NUL:
-RMDIR Release >NUL:
+DEL resfile.o
 
-:completed
-ECHO _______________________________________
+ECHO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ECHO Building lualib successfully completed!
-GOTO end
+GOTO :EOF
 
 :error
-ECHO _______________________________________
-ECHO Errors were found (lualib)!
-GOTO end
-
-:error_install
-ECHO _______________________________________
-ECHO Please install MinGW + UPX!
-ECHO For more information visit http://code.google.com/p/scite-ru/
-GOTO end
-
-:end
-SET PATH=%SAVE_PATH%
-SET NO_UPX=
-SET SAVE_PATH=
-SET mingw=
-SET inc=
-SET upx300w=
-REM PAUSE
+ECHO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ECHO Compile errors were found!
