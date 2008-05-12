@@ -270,7 +270,7 @@ int Document::GetFoldEnd(int line) {
 		}
 		lineLook++;
 	}
-	return lastLine + 1;
+	return lastLine;
 }
 //!-end-[HighlightCurrFolder]
 
