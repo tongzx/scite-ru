@@ -40,14 +40,15 @@ static inline bool AtEOL(Accessor &styler, unsigned int i) {
 // Tests for BATCH Operators
 static bool IsBOperator(char ch) {
 	return (ch == '=') || (ch == '+') || (ch == '>') || (ch == '<') ||
-		(ch == '|') || (ch == '?') || (ch == '*');
+//!		(ch == '|') || (ch == '?') || (ch == '*');
+		(ch == '|') || (ch == '?') || (ch == '*') || (ch == '(') || (ch == ')'); //!-change-[BatchLexerImprovement]
 }
 
 // Tests for BATCH Separators
 static bool IsBSeparator(char ch) {
 	return (ch == '\\') || (ch == '.') || (ch == ';') ||
 //!		(ch == '\"') || (ch == '\'') || (ch == '/') || (ch == ')');
-		(ch == '\"') || (ch == '\'') || (ch == '/') || (ch == '(') || (ch == ')'); //!-change-[BatchLexerImprovement]
+		(ch == '\"') || (ch == '\'') || (ch == '/'); //!-change-[BatchLexerImprovement]
 }
 
 static void ColouriseBatchLine(
@@ -74,6 +75,7 @@ static void ColouriseBatchLine(
 	bool continueProcessing = true;	// Used to toggle Regular Keyword Checking
 	// Special Keywords are those that allow certain characters without whitespace after the command
 	// Examples are: cd. cd\ md. rd. dir| dir> echo: echo. path=
+	bool inString = false; // Used for processing while "" //!-add-[BatchLexerImprovement]
 	// Special Keyword Buffer used to determine if the first n characters is a Keyword
 	char sKeywordBuffer[10];	// Special Keyword Buffer
 	bool sKeywordFound;		// Exit Special Keyword for-loop if found
@@ -195,9 +197,14 @@ static void ColouriseBatchLine(
 				offset -= (wbl - 1);
 				// Colorize Default Text
 				styler.ColourTo(startLine + offset - 1, SCE_BAT_DEFAULT);
+//!-start-[BatchLexerImprovement]
+				if (wordBuffer[0] == '"')
+					inString = !inString;
+//!-end-[BatchLexerImprovement]
 			}
 		// Check for Regular Keyword in list
 		} else if ((keywords.InList(wordBuffer)) &&
+			(!inString) && //!-add-[BatchLexerImprovement]
 			(continueProcessing)) {
 			// ECHO, GOTO, PROMPT and SET require no further Regular Keyword Checking
 			if ((CompareCaseInsensitive(wordBuffer, "echo") == 0) ||
@@ -245,6 +252,7 @@ static void ColouriseBatchLine(
 		// Check for Special Keyword in list, External Command / Program, or Default Text
 		} else if ((wordBuffer[0] != '%') &&
 			(!IsBOperator(wordBuffer[0])) &&
+			(!inString) && //!-add-[BatchLexerImprovement]
 			(continueProcessing)) {
 			// Check for Special Keyword
 			//     Affected Commands are in Length range 2-6
@@ -428,6 +436,7 @@ static void ColouriseBatchLine(
 					continueProcessing = true;
 				}
 				// Colorize Other Operator
+				if (!inString || !(wordBuffer[0] == '(' || wordBuffer[0] == ')')) //!-add-[BatchLexerImprovement]
 				styler.ColourTo(startLine + offset - 1 - (wbl - 1), SCE_BAT_OPERATOR);
 				// Reset Offset to re-process remainder of word
 				offset -= (wbl - 1);
@@ -497,7 +506,7 @@ static void FoldBatchDoc(unsigned int startPos, int length, int,
 	for (unsigned int i = startPos; i < endPos; i++) {
 		int c = styler.SafeGetCharAt(i, '\n');
 		int style = styler.StyleAt(i);
-		if (style == SCE_BAT_DEFAULT) {
+		if (style == SCE_BAT_OPERATOR) {
 			// CheckFoldPoint
 			if (c == '(') {
 				levelIndent += 1;
