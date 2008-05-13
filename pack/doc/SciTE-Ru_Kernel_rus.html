@@ -55,6 +55,13 @@
       Интерфейс
     </h3>
 
+<h5> <sup>(.58)</sup>
+[session.close.buffers.onload] <span class=desc>(Автор: VladVRO)</span></h5>
+Новый параметр <span class="example">session.close.buffers.onload</span> в .properties позволяет задать закрывать или нет уже открытые файлы при загрузке сессии.<br>
+Например, для того что бы вкладки остались открытыми:
+<div class="example">session.close.buffers.onload=0</div>
+по умолчанию при загрузке сессии все открытые файлы закрываются.
+
 <h5> <sup>new</sup>
 [ReadOnlyTabMarker] <span class=desc>(Авторы: Midas, VladVRO)</span></h5>
 Добавлена возможность отображать состояние <i>"только для чтения"</i> с помощью доп. символов в имени вкладки, которые задаются в настройках параметром <span class="example">tabbar.readonly.marker</span>, например:

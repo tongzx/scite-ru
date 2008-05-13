@@ -439,6 +439,7 @@ void SciTEBase::LoadSession(const char *sessionName) {
 	if (!propsSession.Read(sessionPathName, sessionPathName.Directory(), NULL, 0))
 		return;
 
+	if (props.GetInt("session.close.buffers.onload", 1) == 1) //!-add-[session.close.buffers.onload]
 	// comment next line if you don't want to close all buffers before loading session
 	CloseAllBuffers(true);
 
