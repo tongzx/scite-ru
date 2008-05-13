@@ -633,7 +633,8 @@ static void FoldDiffDoc(unsigned int startPos, int length, int, WordList*[], Acc
 }
 
 
-static void ColourisePropsLine(
+//!static void ColourisePropsLine(
+static char ColourisePropsLine( // return last style //!-change-[PropsColouriseFix]
     char *lineBuffer,
     unsigned int lengthLine,
     unsigned int startLine,
@@ -647,8 +648,10 @@ static void ColourisePropsLine(
 	if (i < lengthLine) {
 		if (lineBuffer[i] == '#' || lineBuffer[i] == '!' || lineBuffer[i] == ';') {
 			styler.ColourTo(endPos, SCE_PROPS_COMMENT);
+			return SCE_PROPS_COMMENT; //!-add-[PropsColouriseFix]
 		} else if (lineBuffer[i] == '[') {
 			styler.ColourTo(endPos, SCE_PROPS_SECTION);
+			return SCE_PROPS_SECTION; //!-add-[PropsColouriseFix]
 		} else if (lineBuffer[i] == '@') {
 			styler.ColourTo(startLine + i, SCE_PROPS_DEFVAL);
 			if (lineBuffer[++i] == '=')
@@ -667,8 +670,8 @@ static void ColourisePropsLine(
 			while ((i < lengthLine) && (lineBuffer[i] != '='))
 				i++;
 			if ((i < lengthLine) && (lineBuffer[i] == '=')) {
-				//!styler.ColourTo(startLine + i - 1, SCE_PROPS_KEY);
-				//!-start-[PropsKeysSets]
+//!				styler.ColourTo(startLine + i - 1, SCE_PROPS_KEY);
+//!-start-[PropsKeysSets]
 				int chAttr;
 				lineBuffer[i] = '\0';
 				// remove trailing spaces
@@ -692,7 +695,7 @@ static void ColourisePropsLine(
 				styler.ColourTo(startLine + indent + len, chAttr);
 				styler.ColourTo(startLine + i - 1 - fin, SCE_PROPS_KEY);
 				styler.ColourTo(startLine + i - 1, chAttr);
-				//!-end-[PropsKeysSets]
+//!-end-[PropsKeysSets]
 				styler.ColourTo(startLine + i, SCE_PROPS_ASSIGNMENT);
 				styler.ColourTo(endPos, SCE_PROPS_DEFAULT);
 			} else {
@@ -702,6 +705,7 @@ static void ColourisePropsLine(
 	} else {
 		styler.ColourTo(endPos, SCE_PROPS_DEFAULT);
 	}
+	return SCE_PROPS_DEFAULT; //!-add-[PropsColouriseFix]
 }
 
 //!static void ColourisePropsDoc(unsigned int startPos, int length, int, WordList *[], Accessor &styler) {
@@ -712,10 +716,11 @@ static void ColourisePropsDoc(unsigned int startPos, int length, int, WordList *
 	unsigned int linePos = 0;
 	unsigned int startLine = startPos;
 //!-start-[PropsColouriseFix]
+	char style = 0;
 	bool continuation = false;
 	if (startPos >= 3)
-		continuation = (styler[startPos-2] == '\\')
-			|| (styler[startPos-3] == '\\' && styler[startPos-2] == '\r');
+		continuation = styler.StyleAt(startPos-2) != SCE_PROPS_COMMENT && ((styler[startPos-2] == '\\')
+			|| (styler[startPos-3] == '\\' && styler[startPos-2] == '\r'));
 //!-end-[PropsColouriseFix]
 	for (unsigned int i = startPos; i < startPos + length; i++) {
 		lineBuffer[linePos++] = styler[i];
@@ -728,11 +733,12 @@ static void ColourisePropsDoc(unsigned int startPos, int length, int, WordList *
 			else
 //!-end-[PropsColouriseFix]
 //!			ColourisePropsLine(lineBuffer, linePos, startLine, i, styler);
-			ColourisePropsLine(lineBuffer, linePos, startLine, i, keywordlists, styler); //!-change-[PropsKeysSets]
+			style = ColourisePropsLine(lineBuffer, linePos, startLine, i, keywordlists, styler); //!-change-[PropsKeysSets][PropsColouriseFix]
 //!-start-[PropsColouriseFix]
 			// test: is next a continuation of line
-			continuation = (linePos >= sizeof(lineBuffer) - 1) || (lineBuffer[linePos-2] == '\\')
-				|| (lineBuffer[linePos-3] == '\\' && lineBuffer[linePos-2] == '\r');
+			continuation = (linePos >= sizeof(lineBuffer) - 1) ||
+				(style != SCE_PROPS_COMMENT &&  ((lineBuffer[linePos-2] == '\\')
+				|| (lineBuffer[linePos-3] == '\\' && lineBuffer[linePos-2] == '\r')));
 //!-end-[PropsColouriseFix]
 			linePos = 0;
 			startLine = i + 1;
