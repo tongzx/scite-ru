@@ -10,7 +10,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include <windows.h> //!-add-[MsgBox][FileAttr]
 
 #define loslib_c
 #define LUA_LIB
@@ -41,158 +40,6 @@ static int os_execute (lua_State *L) {
   return 1;
 }
 
-//!-start-[os.run]
-void push_lasterr(lua_State *L, LPTSTR lpszFunction) {
-	LPVOID lpMsgBuf;
-	LPVOID lpDisplayBuf;
-	DWORD dw = GetLastError();
-
-	FormatMessage(
-		FORMAT_MESSAGE_ALLOCATE_BUFFER |
-		FORMAT_MESSAGE_FROM_SYSTEM,
-		NULL,
-		dw,
-		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-		(LPTSTR) &lpMsgBuf,
-		0, NULL );
-
-	lpDisplayBuf = (LPVOID)LocalAlloc(LMEM_ZEROINIT,
-		(lstrlen((LPCTSTR)lpMsgBuf)+lstrlen((LPCTSTR)lpszFunction)+40)*sizeof(TCHAR));
-	sprintf (
-		(char*) lpDisplayBuf,
-		"%s failed with error %d: %s",
-		lpszFunction, (int)dw, (char*)lpMsgBuf	);
-	lua_pushstring(L,(LPTSTR)lpDisplayBuf);
-	LocalFree(lpMsgBuf);
-	LocalFree(lpDisplayBuf);
-}
-
-static int os_run(lua_State *L){
-	static const int MAX_CMD = 1024;
-	BOOL RetCode = 0;
-	int DoWait = 0;
-	int top = lua_gettop(L);
-	char *CmdLine = 0;
-	STARTUPINFO si;
-	PROCESS_INFORMATION pi;
-	DWORD exit_code = 0; /* Код завершения процесса */
-
-	ZeroMemory( &si, sizeof(si) );
-	si.cb = sizeof(si);
-	ZeroMemory( &pi, sizeof(pi) );
-
-	if(top == 0){
-		lua_pushnil(L);
-		lua_pushstring(L,"No parameters!");
-		return 2;
-	}
-
-	if( !lua_isstring(L,1) ){
-		lua_pushnil(L);
-		lua_pushstring(L,"First param must be a string!");
-		return 2;
-	}
-	if( top > 1 ){
-		if( !lua_isnumber(L,2) ){
-			lua_pushnil(L);
-			lua_pushstring(L,"Second param must be a number!");
-			return 2;
-		}
-		si.dwFlags = STARTF_USESHOWWINDOW;
-		si.wShowWindow = (unsigned short)lua_tonumber(L, 2);
-	}
-	if( top > 2 ){
-		if( !lua_isboolean(L,3) ){
-			lua_pushnil(L);
-			lua_pushstring(L,"Thrid param must be a boolean!");
-			return 2;
-		}
-		DoWait = lua_toboolean(L, 3);
-	}
-
-	CmdLine = malloc(MAX_CMD * sizeof(char));
-	ZeroMemory( CmdLine , sizeof(MAX_CMD * sizeof(char)) );
-	strncpy(CmdLine,luaL_checkstring(L,1),MAX_CMD-1);
-	
-	/* Start the child process. */
-	RetCode = CreateProcess(
-		NULL,           /* No module name (use command line) */
-		CmdLine,        /* Command line */
-		NULL,           /* Process handle not inheritable */
-		NULL,           /* Thread handle not inheritable */
-		FALSE,          /* Set handle inheritance to FALSE */
-		0,              /* No creation flags */
-		NULL,           /* Use parent's environment block */
-		NULL,           /* Use parent's starting directory */
-		&si,            /* Pointer to STARTUPINFO structure */
-		&pi             /* Pointer to PROCESS_INFORMATION structure */
-	);
-
-	if( ! RetCode ){
-		lua_pushnil(L);
-		push_lasterr(L,"\"CreateProcess\"");
-		free(CmdLine);
-		return 2;
-	}
-	CloseHandle( pi.hThread );
-	if(DoWait){
-		/* Wait until child process exits. */
-		WaitForSingleObject( pi.hProcess, INFINITE );
-	}
-	free(CmdLine);
-
-	GetExitCodeProcess(pi.hProcess,&exit_code);
-	/* Close process and thread handles. */
-	CloseHandle( pi.hProcess );
-
-	lua_pushnumber( L, exit_code );
-	return 1;
-}
-//!-end-[os.run]
-
-//!-start-[MsgBox]
-static int os_msgbox(lua_State *L) {
-	int options;
-	const char *text = luaL_checkstring(L, 1);
-	const char *title = "SciTE"; /* Default text for title */
-	options = 0;
-	if (lua_gettop(L) > 1) {
-		title = luaL_checkstring(L, 2);
-		if (lua_gettop(L) > 2) {
-			options = (int)lua_tonumber(L, 3);
-		};
-	};
-	options = options + 8192; /* Task Modal*/
-	lua_pushnumber(L, MessageBox(0, text, title, options));
-	return 1;                   /* number of results */
-}
-//!-end-[MsgBox]
-
-//!-start-[FileAttr]
-static int os_getfileattr (lua_State *L) {
-  const char*FN = luaL_checkstring(L,-1);
-  WIN32_FILE_ATTRIBUTE_DATA fad;
-  if(0==GetFileAttributesEx(FN,GetFileExInfoStandard ,&fad)){
-    lua_pushnil(L);
-    push_lasterr(L,"\"getfileattr\"");
-    return 2;
-  }
-  lua_pushnumber(L, fad.dwFileAttributes);
-	return 1;
-}
-
-static int os_setfileattr (lua_State *L) {
-  const char *FN = luaL_checkstring(L,-2);
-  DWORD attr = luaL_checkint(L,-1);
-  if(0 == SetFileAttributes(FN, attr)){
-    lua_pushnil(L);
-    push_lasterr(L,"\"setfileattr\"");
-    return 2;
-  }
-  lua_pushnumber(L, 1);  
-	return 1;
-}
-//!-end-[FileAttr]
 
 static int os_remove (lua_State *L) {
   const char *filename = luaL_checkstring(L, 1);
@@ -376,10 +223,6 @@ static const luaL_Reg syslib[] = {
   {"date",      os_date},
   {"difftime",  os_difftime},
   {"execute",   os_execute},
-  {"run",       os_run}, //!-add-[os.run]
-  {"msgbox",     os_msgbox}, //!-add-[MsgBox]
-  {"getfileattr",os_getfileattr}, //!-add-[FileAttr]
-  {"setfileattr",os_setfileattr}, //!-add-[FileAttr]
   {"exit",      os_exit},
   {"getenv",    os_getenv},
   {"remove",    os_remove},
