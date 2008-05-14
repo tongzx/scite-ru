@@ -1556,6 +1556,7 @@ bool LuaExtension::Initialise(ExtensionAPI *host_) {
 
 bool LuaExtension::Finalise() {
 	if (luaState) {
+		CallNamedFunction("OnFinalise"); //!-add-[OnFinalise]
 		lua_close(luaState);
 	}
 
