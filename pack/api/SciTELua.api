@@ -139,10 +139,6 @@ os.rename
 os.setlocale
 os.time
 os.tmpname
-os.msgbox
-os.getfileattr
-os.setfileattr
-os.run
 clock () returns CPU time used by program in seconds
 date ([format [, time]]) returns a string or table containing date and time, "*t" returns a table
 difftime (t2, t1) returns number of seconds from time t1 to time t2
@@ -154,6 +150,11 @@ rename (oldname, newname) renames file oldname to newname, nil if fails
 setlocale (locale [, category]) set current locale of program, returns name of new locate or nil
 time ([table]) returns current time (usually seconds) or time as represented by table
 tmpname () returns a string with a filename for a temporary file (dangerous! tmpfile is better)
+
+shell.msgbox
+shell.getfileattr
+shell.setfileattr
+shell.run
 msgbox (<Text>, <Title>, <Options>) - Message Box. Return select button (only SciTE-Ru)
 getfileattr (<FileName>) - return File Attribute as number (only SciTE-Ru)
 setfileattr (<FileName>, <FileAttr>) - Set File Attribute (only SciTE-Ru)
