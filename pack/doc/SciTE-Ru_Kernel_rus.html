@@ -34,7 +34,7 @@
   </table>
 </td></tr></table>
 
-    <h3>Текстовый редактор SciTE RU-Board 1.76 .57</h3>
+    <h3>Текстовый редактор SciTE RU-Board 1.76 .58</h3>
 
     <p>Все модификации оригинального кода редактора <A href="http://www.scintilla.org">SciTE</A> выполнены энтузиастами <A href="http://forum.ru-board.com/topic.cgi?forum=5&topic=24956&glp">форума Ru-Board</A>.
 
@@ -55,26 +55,31 @@
       Интерфейс
     </h3>
 
-<h5> <sup>(.58)</sup>
+<h5> <sup>new</sup>
+[save.session.multibuffers.only] <span class=desc>(Автор: VladVRO)</span></h5>
+Новый параметр в .properties, который позволяет запретить запись файла сессии при выходе из редактора, если открыта только одна вкладка:
+<div class="example">save.session.multibuffers.only=1</div>
+
+<h5> <sup>new</sup>
 [session.close.buffers.onload] <span class=desc>(Автор: VladVRO)</span></h5>
 Новый параметр <span class="example">session.close.buffers.onload</span> в .properties позволяет задать закрывать или нет уже открытые файлы при загрузке сессии.<br>
 Например, для того что бы вкладки остались открытыми:
 <div class="example">session.close.buffers.onload=0</div>
 по умолчанию при загрузке сессии все открытые файлы закрываются.
 
-<h5> <sup>new</sup>
+<h5>
 [ReadOnlyTabMarker] <span class=desc>(Авторы: Midas, VladVRO)</span></h5>
 Добавлена возможность отображать состояние <i>"только для чтения"</i> с помощью доп. символов в имени вкладки, которые задаются в настройках параметром <span class="example">tabbar.readonly.marker</span>, например:
 <div class="example">tabbar.readonly.marker= R/O</div>
 
-<h5> <sup>new</sup>
+<h5>
 [HighlightCurrFolder] <span class=desc>(Автор: VladVRO)</span></h5>
 Добавлена подсветка текущего блока свертки текста в поле фолдинга.<br>
 Новый параметр в настройках для задания цвета подсветки:<br>
 <div class="example">fold.highlight.colour=#0099FF</div>
 если цвет не задан, подсветка выключается.
 
-<h5> <sup>new</sup>
+<h5>
 [TrueTextSelMargin] <span class=desc>(Автор: VladVRO)</span></h5>
 Изменено отображение курсора над левым полем, там где отображаются номера строк, метки и фолдинг.<br>
 Курсор меняется на перевернутый указатель только тогда, когда доступна функция выделения текста, иначе курсор принимает свой обычный вид.
@@ -142,13 +147,13 @@ command.name.6.*=Date and Time</div>
 <br>
 Новый параметр в .properties <span class="example">lexer.errorlist.findliststyle=0</span> позволяет отключить эту возможность.
 
-<h5> <sup>new</sup>
+<h5>
 [close.find.window] <span class=desc>(Автор: Дмитрий Маслов)</span></h5>
 Новый параметр в .properties<br>
 <span class="example">find.replace.closefind=число</span><br>
 0 - предотвращает закрытие окна поиска после нажатия на кнопку "Найти", 1 - закрыть окно (обычное поведение по умолчанию).
 
-<h5> <sup>new</sup>
+<h5>
 [find.bookmark.disable] <span class=desc>(Автор: dB6)</span></h5>
 Новый параметр в .properties<br>
 <span class="example">find.bookmark.disable=1</span><br>
@@ -159,7 +164,7 @@ command.name.6.*=Date and Time</div>
 <span class="example">find.mark.delete=1</span><br>
 Если 1, то при нажатии на кнопку "Пометить все" удаляются все установленные ранее метки (bookmarks) и маркеры.
 
-<h5> <sup>update</sup>
+<h5>
 [TabsMoving] <span class=desc>(Автор: VladVRO и Дмитрий Маслов)</span></h5>
 В редактор добавлены две новых команды <span class="example">IDM_MOVETABLEFT</span> и <span class="example">IDM_MOVETABRIGHT</span> позволяющие перемещать текущую вкладку. Они доступны в меню Вкладки.<br>
 Кроме того реализовано перемещение вкладок с помощью мыши.
@@ -174,7 +179,7 @@ command.name.6.*=Date and Time</div>
 <span class="example">buffers.new.position=число</span><br>
 0 - открывать новую вкладку в конце списка (default), 1 - следующей за текущей, 2 - в начале списка.
 
-<h5> <sup>new</sup>
+<h5>
 [warning.couldnotopenfile.disable] <span class=desc>(Автор: mozers)</span></h5>
 Новый параметр в .properties<br>
 <span class="example">warning.couldnotopenfile.disable=1</span><br>
@@ -188,7 +193,7 @@ command.name.6.*=Date and Time</div>
 <h5>[new_on_dbl_clk] <span class=desc>(Автор: Дмитрий Маслов)</span></h5>
 Добавлен функционал: На двойной клик по свободному месту справа от вкладок открывается новый файл (а ля FireFox)
 
-<h5> <sup>new</sup>
+<h5>
 [close_on_dbl_clk] <span class=desc>(Автор: Дмитрий Маслов, Moon_aka_Sun, VladVRO)</span></h5>
 Добавлен функционал: Закрытие активной вкладки по двойному клику мыши на ней
 
@@ -249,7 +254,7 @@ command.name.6.*=Date and Time</div>
 <span class="example">abbrev.maximum.length=[число]</span><br>
 Задает максимальную длину сокращения, обрабатываемого по Ctrl+B, иначе говоря, максимальную длину текста который будет сравниваться с набором сокращений.
 
-<h5> <sup>update</sup>
+<h5>
 [import] <span class=desc>(Автор: mimir, VladVRO)</span></h5>
 Переделан механизм импорта в файлах настроек, теперь редактор сперва делает попытку загрузить файл с явно указанным именем, если не находит, то добавляет расширение ".properties" и повторяет попытку.<br>
 Возможно использование директивы <span class="example">import</span> в файлах *.abbrev
@@ -277,7 +282,7 @@ command.name.6.*=Date and Time</div>
 <span class="example">warning.executeko.message=текст сообщения</span><br>
 <span class="example">warning.nootherbookmark.message=текст сообщения</span>
 
-<h5> <sup>update</sup>
+<h5>
 [AutoComplete] <span class=desc>(Автор: mimir, VladVRO)</span></h5>
 Функция автозавершения (Ctrl+I, Ctrl+Space) берет варианты завершения слова не только из соответствующего .api файла (как в оригинальном SciTE), но и из редактируемого текста.
 
@@ -307,11 +312,11 @@ calltip.*.word.wrap</div>
 <br>
 Добавлена возможность указывать несколько диапазонов подсветки для окошка calltip'а, введены новые команды Scintilla для этих целей (SCI_CALLTIPADDHLT, SCI_CALLTIPCLEARHLT, SCI_CALLTIPUPDATEHLT)
 
-<h5> <sup>new</sup>
+<h5>
 [TextSizeMax for Dialog] <span class=desc>(Автор: dB6)</span></h5>
 Максимально допустимый размер строки в диалогах поиска и замены увеличен до 1024 байт.
 
-<h5> <sup>new</sup>
+<h5>
 [ignore_overstrike_change] <span class=desc>(Автор: Дмитрий Маслов)</span></h5>
 Новый параметр в .properties<br>
 <span class="example">change.overwrite.enable=0</span> включает режим игнорирования переключения режима вставка/замена.<br>
@@ -328,15 +333,15 @@ calltip.*.word.wrap</div>
       Расширения
     </h3>
 
-<h5> <sup>(.58)</sup>
+<h5> <sup>new</sup>
 [OnFinalise] <span class=desc>(Автор: VladVRO)</span></h5>
 Добавлено новое событие SciTE в Луа API <span class="example">OnFinalise()</span>. Событие возникает при закрытии редактора.
 
-<h5> <sup>new</sup>
+<h5>
 [ABAP] <span class=desc>(Автор: VladVRO)</span></h5>
 Добавлен новый лексер для языка ABAP/4.
 
-<h5> <sup>new</sup>
+<h5>
 [EditorUnicodeMode] <span class=desc>(Автор: VladVRO)</span></h5>
 Добавлен новый параметр <span class="example">editor.unicode.mode</span> в который редактор сохраняет текущее значение режима двухбитной кодировки, заданного одним из следующего множества значений:
 <span class="example">IDM_ENCODING_DEFAULT, IDM_ENCODING_UCS2BE, IDM_ENCODING_UCS2LE, IDM_ENCODING_UTF8, IDM_ENCODING_UCOOKIE</span>.
@@ -379,13 +384,13 @@ end</div>
 Расширена функция луа <span class="example">OnKey</span>, теперь в нее передается также нажатый символ:<br>
 <span class="example">function OnKey(key, shift, ctrl, alt, char)</span>
 
-<h5> <sup>new</sup>
+<h5>
 [OnMouseButtonUp] <span class=desc>(Автор: VladVRO)</span></h5>
 Добавлено новое событие SciTE <span class="example">OnMouseButtonUp()</span>. Событие возникает при отжатии кнопки мыши в окне редактирования или в окне консоли.<br>
 Получает в строке параметров состояние клавиши-модификатора Ctrl:<br>
 <span class="example">function OnMouseButtonUp(ctrl)</span>
 
-<h5> <sup>new</sup> [MouseClickHandled] <span class=desc>(Автор: VladVRO)</span></h5>
+<h5> [MouseClickHandled] <span class=desc>(Автор: VladVRO)</span></h5>
 Добавлено новое сообщение <span class="example">SCI_SETMOUSECAPTURE</span> для ядра Scintilla, позволяющее менять реакцию на события от мыши.<br>
 С его помощью можно сообщить ядру, что нажатие кнопки мыши обработано.<br>
 Пример: <span class="example">SendEditor(SCI_SETMOUSECAPTURE, 0)</span> <br>
@@ -396,7 +401,7 @@ end</div>
 <span class="example">scite.Perform(actionList)</span> - исполняет команды <a href="SciTEDirector_rus.html">SciTE Director Interface</a><br>
 где <span class="example">actionList</span> - одна или несколько команд разделенных символом новой строки.
 
-<h5> <sup>new</sup> [ReloadStartupScript] <span class=desc>(Автор: VladVRO)</span></h5>
+<h5> [ReloadStartupScript] <span class=desc>(Автор: VladVRO)</span></h5>
 В SciTE Lua Scripting Extension добавлена новая команда<br>
 <span class="example">scite.ReloadStartupScript()</span> - которая позволяет перезагрузить стартовый Луа скрипт
 
@@ -481,21 +486,21 @@ Tеперь можно задавать до 4х дополнительных наборов слов с разной подсветкой, при
       Устранение ошибок
     </h3>
 
-<h5> <sup>new</sup>
+<h5>
 [PropsColouriseFix] <span class=desc>(Автор: VladVRO)</span></h5>
 Исправлена подсветка синтаксиса в файлах настроек для длинных строк (более 1024 символов) и строк с символом переноса.
 
-<h5> <sup>new</sup>
+<h5>
 [LuaLexerImprovement] <span class=desc>(Автор: VladVRO)</span></h5>
 Переделан лексер для языка Lua.<br>
 Теперь символы ":" и "." обрабатываются в качестве разделителя сложного объекта. В настройках ключевых слов лексера как и ранее можно указывать слова вида <span class="example">string.sub</span> или <span class="example">editor:append</span>, и кроме того можно задать функции или поля объекта, например <span class="example">:GetText</span> или <span class="example">.Cursor</span>.
 
-<h5> <sup>new</sup>
+<h5>
 [GoMessageImprovement] <span class=desc>(Автор: VladVRO)</span></h5>
 Сделано перемещение фокуса в окно редактора после позиционирования на строке при клике мышкой в окне консоли на строке с ошибкой или результатом поиска.<br>
 Использована доработка <span class="example">[OnMouseButtonUp]</span>.
 
-<h5> <sup>new</sup>
+<h5>
 [fix_invalid_codepage] <span class=desc>(Автор: Дмитрий Маслов)</span></h5>
 Исправлена ошибка при которой не работало переключение в кодировку по умолчанию, если параметр code.page был задан неверно. (<a href="http://code.google.com/p/scite-ru/issues/detail?id=49">подробности</a>)
 
@@ -523,7 +528,7 @@ Tеперь можно задавать до 4х дополнительных наборов слов с разной подсветкой, при
 <h5>[FindInFiles] <span class=desc>(Автор: dB6)</span></h5>
 Выделенный текст вставлялся в диалог поиска в файлах исключительно в кодировке UTF-8, поэтому русский текст превращался в "крякозяблы".
 
-<h5> <sup>new</sup>
+<h5>
 [find_in_files_no_empty] <span class=desc>(Автор: Дмитрий Маслов)</span></h5>
 Поиск текста в файлах теперь не запускается если в строку поиска ничего не ввели. (<a href="http://code.google.com/p/scite-ru/issues/detail?id=52">Issue 52</a>).
 

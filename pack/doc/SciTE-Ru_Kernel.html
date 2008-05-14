@@ -38,7 +38,7 @@
       </tr>
     </table>
     <h1>
-      Text editor SciTE RU-Board 1.76 .57
+      Text editor SciTE RU-Board 1.76 .58
     </h1>
     <p>All modifications of original <A href="http://www.scintilla.org">SciTE editor</A> has been developed by persons from <A href="http://forum.ru-board.com/topic.cgi?forum=5&topic=24956&glp">Ru-Board community</A>.
 
@@ -59,26 +59,31 @@
       Interface
     </h3>
 
-<h5> <sup>(.58)</sup>
+<h5> <sup>new</sup>
+[save.session.multibuffers.only] <span class=desc>(Author: VladVRO)</span></h5>
+New variable in properties files to deny of saving session on exit if opened one buffer only:
+<div class="example">save.session.multibuffers.only=1</div>
+
+<h5> <sup>new</sup>
 [session.close.buffers.onload] <span class=desc>(Author: VladVRO)</span></h5>
 New variable in properties files <span class="example">session.close.buffers.onload</span> for define should opened files be closed or not on load session.<br>
 For example to define do not close opened files:
 <div class="example">session.close.buffers.onload=0</div>
 by default all opened files should be closed on load session.
 
-<h5> <sup>new</sup>
+<h5>
 [ReadOnlyTabMarker] <span class=desc>(Authors: Midas, VladVRO)</span></h5>
 Added possibility to show <i>Readonly</i> status by additional symbols in tab name, which can be setup by property <span class="example">tabbar.readonly.marker</span>, for example:
 <div class="example">tabbar.readonly.marker= R/O</div>
 
-<h5> <sup>new</sup>
+<h5>
 [HighlightCurrFolder] <span class=desc>(Author: VladVRO)</span></h5>
 Added a highlighting of current folding on fold margin.<br>
 New property for setup highlight color:<br>
 <div class="example">fold.highlight.colour=#0099FF</div>
 if color is not set then highlighting is off.
 
-<h5> <sup>new</sup>
+<h5>
 [TrueTextSelMargin] <span class=desc>(Author: VladVRO)</span></h5>
 Changed cursor image over left margin (line number, marker and fold margins).<br>
 Cursor is set as inverse arrow when we realy can to select text otherwise used default cursor.
@@ -147,13 +152,13 @@ Internal search (Ctrl+Shift+F) result text looks more better now:<br>
 You can switch off this feature by setup new parameter in properties:<br>
 <span class="example">lexer.errorlist.findliststyle=0</span>
 
-<h5> <sup>new</sup>
+<h5>
 [close.find.window] <span class=desc>(Author: Dmitry Maslov)</span></h5>
 New variable in properties files<br>
 <span class="example">find.replace.closefind=&lt;number value&gt;</span><br>
 Set to 0 to prevent the Find dialog from closing when "Find" pressed.
 
-<h5> <sup>new</sup>
+<h5>
 [find.bookmark.disable] <span class=desc>(Author: dB6)</span></h5>
 New variable in properties files<br>
 <span class="example">find.bookmark.disable=1</span><br>
@@ -164,7 +169,7 @@ New variable in properties files<br>
 <span class="example">find.mark.delete=1</span><br>
 If 1, then pressing the button "Mark all" removed any earlier bookmarks.
 
-<h5> <sup>update</sup>
+<h5>
 [TabsMoving] <span class=desc>(Authors: VladVRO, Dmitry Maslov)</span></h5>
 You can move tabs now. In editor added two new commands <span class="example">IDM_MOVETABLEFT</span> and <span class="example">IDM_MOVETABRIGHT</span> for shift current tab left or right and added identical commands in menu Buffers.<br>
 And also you can move tab by mouse now.
@@ -179,7 +184,7 @@ New variable in properties files<br>
 <span class="example">buffers.new.position=&lt;number value&gt;</span><br>
 0 - new tab should be opened at last position in buffers list (default), 1 - next the current tab, 2 - first in list.
 
-<h5> <sup>new</sup>
+<h5>
 [warning.couldnotopenfile.disable] <span class=desc>(Author: mozers)</span></h5>
 New variable in properties files<br>
 <span class="example">warning.couldnotopenfile.disable=1</span><br>
@@ -193,7 +198,7 @@ if option is present then after closing buffer current buffer will be next in bu
 <h5>[new_on_dbl_clk] <span class=desc>(Author: Dmitry Maslov)</span></h5>
 You can open new buffer now by double click on empty space on right of tabs (a-la FireFox).
 
-<h5> <sup>new</sup>
+<h5>
 [close_on_dbl_clk] <span class=desc>(Author: Dmitry Maslov, Moon_aka_Sun, VladVRO)</span></h5>
 You can close current buffer now by double click on tabs.
 
@@ -255,7 +260,7 @@ New variable in properties files<br>
 <span class="example">abbrev.maximum.length=[value]</span><br>
 Set value of length limit for expand abbreviation by Ctrl+B, in other words it is the maximum length of text for comparing with abbreviations set
 
-<h5> <sup>update</sup>
+<h5>
 [import] <span class=desc>(Author: mimir, VladVRO)</span></h5>
 Changed rules for import file in properties files. In first case trying to load file with name as is, if file not found then adding extension ".properties" and repeat trying to open file.<br>
 It is possible to use <span class="example">import</span> instruction in *.abbrev files.
@@ -284,7 +289,7 @@ Now can to set up alert with warning message for each warning type:<br>
 <span class="example">warning.executeko.message=alert's text</span><br>
 <span class="example">warning.nootherbookmark.message=alert's text</span><br>
 
-<h5> <sup>update</sup> [AutoComplete] <span class=desc>(Author: mimir, VladVRO)</span></h5>
+<h5> [AutoComplete] <span class=desc>(Author: mimir, VladVRO)</span></h5>
 Autocomplete function (Ctrl+I, Ctrl+Space) takes variants of end of a word not only from appropriate ".api" a file (as in original SciTE), but also from the edited text.
 
 <h5>[oem2ansi] <span class=desc>(Author: gansA)</span></h5>
@@ -313,11 +318,11 @@ Calltip horizontal position is adjusted to maximize amount of information displa
 <br>
 New Scintilla commands to support several highlight regions inside calltip window (SCI_CALLTIPADDHLT, SCI_CALLTIPCLEARHLT, SCI_CALLTIPUPDATEHLT).
 
-<h5> <sup>new</sup>
+<h5>
 [TextSizeMax for Dialog] <span class=desc>(Author: dB6)</span></h5>
 Increased buffer size for dialog box text conversions up to 1024.
 
-<h5> <sup>new</sup>
+<h5>
 [ignore_overstrike_change] <span class=desc>(Author: Dmitry Maslov)</span></h5>
 New variable in properties files<br>
 <span class="example">change.overwrite.enable=0</span> includes a mode of ignoring of switching of a mode INS/OVR.<br>
@@ -333,15 +338,15 @@ It is possible to set this parameter through SCI_SETOVERTYPE<br>
       Extensions
     </h3>
 
-<h5> <sup>(.58)</sup>
+<h5> <sup>new</sup>
 [OnFinalise] <span class=desc>(Author: VladVRO)</span></h5>
 Added new SciTE event in Lua API <span class="example">OnFinalise()</span>. Event arises on exit from editor.
 
-<h5> <sup>new</sup>
+<h5>
 [ABAP] <span class=desc>(Author: VladVRO)</span></h5>
 Added new lexer for ABAP/4 language.
 
-<h5> <sup>new</sup>
+<h5>
 [EditorUnicodeMode] <span class=desc>(Author: VladVRO)</span></h5>
 Added new property <span class="example">editor.unicode.mode</span> for editor unicode mode which has been assigned by editor and can be one from next states:
 <span class="example">IDM_ENCODING_DEFAULT, IDM_ENCODING_UCS2BE, IDM_ENCODING_UCS2LE, IDM_ENCODING_UTF8, IDM_ENCODING_UCOOKIE</span>.
@@ -371,7 +376,7 @@ Example of letter case changing macro:
 &nbsp;&nbsp;end<br>
 end</div>
 
-<h5> <sup>new</sup>
+<h5>
 [OnClick] <span class=desc>(Author: Dmitry Maslov)</span></h5>
 Added new event to SciTE <span class="example">OnClick()</span>. Event arises from a single click on the mouse left button in the editing pane or the output pane.<br>
 Receives the state of key modifiers (Shift, Ctrl, Alt):<br>
@@ -385,13 +390,13 @@ Event <span class="example">OnDoubleClick()</span> is expanded, now it is return
 Function <span class="example">OnKey</span> is expanded, now in it the pressed symbol is passed also:<br>
 <span class="example">function OnKey(key, shift, ctrl, alt, char)</span>
 
-<h5> <sup>new</sup>
+<h5>
 [OnMouseButtonUp] <span class=desc>(Author: VladVRO)</span></h5>
 Added new event to SciTE <span class="example">OnMouseButtonUp()</span>. Event arises from a mouse button up in the editing pane or the output pane.<br>
 Receives the state of Ctrl:<br>
 <span class="example">function OnMouseButtonUp(ctrl)</span>
 
-<h5> <sup>new</sup>
+<h5>
 [MouseClickHandled] <span class=desc>(Author: VladVRO)</span></h5>
 Added new message <span class="example">SCI_SETMOUSECAPTURE</span> to the Scintilla for change mouse cuptured state.<br>
 This message let to inform the Scintilla that mouse click handled.<br>
@@ -403,7 +408,7 @@ In SciTE Lua Scripting Extension added new command<br>
 <span class="example">scite.Perform(actionList)</span> - execute commands <a href="http://scintilla.sourceforge.net/SciTEDirector.html">SciTE Director Interface</a><br>
 with <span class="example">actionList</span> - one or several commands separated by a symbol of a new line.
 
-<h5> <sup>new</sup>
+<h5>
 [ReloadStartupScript] <span class=desc>(Author: VladVRO)</span></h5>
 In SciTE Lua Scripting Extension added new command<br>
 <span class="example">scite.ReloadStartupScript()</span> - this function initializes Lua startup script reloading.
@@ -487,21 +492,21 @@ Now OnSendEditor can trace event SCI_SETZOOM arising at change of the size of a 
       Bug fix
     </h3>
 
-<h5> <sup>new</sup>
+<h5>
 [PropsColouriseFix] <span class=desc>(Author: VladVRO)</span></h5>
 Fixed coloring of syntax in properties files for long lines (more then 1024 chars) and for lines with division of words.
 
-<h5> <sup>new</sup>
+<h5>
 [LuaLexerImprovement] <span class=desc>(Author: VladVRO)</span></h5>
 Changed lexer for language Lua.<br>
 Simbols ":" and "." processed as separator for object now. You can setup lexer keywords as <span class="example">string.sub</span> or <span class="example">editor:append</span> as before and you can setup object function or property as <span class="example">:GetText</span> or <span class="example">.Cursor</span> now.
 
-<h5> <sup>new</sup>
+<h5>
 [GoMessageImprovement] <span class=desc>(Author: VladVRO)</span></h5>
 Made the editor window focused after uses double-click in console on message with file name and line number.<br>
 For implementation used <span class="example">[OnMouseButtonUp]</span> improvement.
 
-<h5> <sup>new</sup>
+<h5>
 [fix_invalid_codepage] <span class=desc>(Author: Dmitry Maslov)</span></h5>
 Bug fixed at which switching in the "Code Page Property" did not work if the props code.page has been set incorrectly. (<a href="http://code.google.com/p/scite-ru/issues/detail?id=49">details</a>)
 
@@ -529,7 +534,7 @@ Correct working with national characters<br>
 <h5>[FindInFiles] <span class=desc>(Author: dB6)</span></h5>
 Selected text inserted into FindInFiles dialog solely in the UTF-8, thus Russian letter turned out unreadable.
 
-<h5> <sup>new</sup>
+<h5>
 [find_in_files_no_empty] <span class=desc>(Author: Dmitry Maslov)</span></h5>
 "Find in Files" now is not started if into a input box "Find what:" have entered nothing. (<a href="http://code.google.com/p/scite-ru/issues/detail?id=52">Issue 52</a>).
 

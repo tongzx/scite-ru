@@ -718,6 +718,7 @@ int SciTEBase::SaveIfUnsureAll(bool forceQuestion) {
 		}
 		SaveRecentStack();
 	}
+	if (!props.GetInt("save.session.multibuffers.only") || buffers.length > 1) //!-add-[save.session.multibuffers.only]
 	if (props.GetInt("buffers") && props.GetInt("save.session"))
 		SaveSession("");
 
