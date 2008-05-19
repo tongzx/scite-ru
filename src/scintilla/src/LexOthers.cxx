@@ -397,6 +397,10 @@ static void ColouriseBatchLine(
 				styler.ColourTo(startLine + offset - 1 - (wbl - 3), SCE_BAT_IDENTIFIER);
 				// Reset Offset to re-process remainder of word
 				offset -= (wbl - 3);
+//!-start-[BatchLexerImprovement]
+			} else {
+				offset -= (wbl - 1);
+//!-end-[BatchLexerImprovement]
 			}
 		// Check for Operator
 		} else if (IsBOperator(wordBuffer[0])) {
