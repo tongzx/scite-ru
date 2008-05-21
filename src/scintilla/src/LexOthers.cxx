@@ -52,20 +52,26 @@ static bool IsBSeparator(char ch) {
 }
 
 //!-start-[BatchLexerImprovement]
-// find length of batch Variable with modifier (%~...) or return 0
+// Tests for Environment Variable simbol
+static inline bool IsEnvironmentVar(char ch) {
+	return isalpha(ch) || Is0To9(ch) || (ch == '_');
+}
+
+// Find length of BATCH Variable with modifier (%~...) or return 0
 static unsigned int GetBatchVarLen(char *wordBuffer, unsigned int wbl)
 {
 	if (wbl > 2 && wordBuffer[0] == '%' && wordBuffer[1] == '~') {
 		wordBuffer += 2;
-		if (wbl > 4 && wordBuffer[0] == '$') {
-			unsigned int l = 1;
-			while (isalpha(wordBuffer[l])) l++;
+		if (wbl > 5 && wordBuffer[0] == '$' && isalpha(wordBuffer[1])) {
+			unsigned int l = 2;
+			while (IsEnvironmentVar(wordBuffer[l])) l++;
 			if (wordBuffer[l] == ':' && isalpha(wordBuffer[l+1]))
 				return l + 2;
 		} else
-		if (wbl > 7 && 0 == CompareNCaseInsensitive(wordBuffer, "dp$", 3)) {
-			unsigned int l = 3;
-			while (isalpha(wordBuffer[l])) l++;
+		if (wbl > 7 && 0 == CompareNCaseInsensitive(wordBuffer, "dp$", 3) &&
+			isalpha(wordBuffer[3])) {
+			unsigned int l = 4;
+			while (IsEnvironmentVar(wordBuffer[l])) l++;
 			if (wordBuffer[l] == ':' && isalpha(wordBuffer[l+1]))
 				return l + 2;
 		} else
