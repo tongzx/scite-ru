@@ -66,25 +66,25 @@ static unsigned int GetBatchVarLen(char *wordBuffer, unsigned int wbl)
 			unsigned int l = 2;
 			while (IsEnvironmentVar(wordBuffer[l])) l++;
 			if (wordBuffer[l] == ':' && isalpha(wordBuffer[l+1]))
-				return l + 2;
+				return l + 4;
 		} else
 		if (wbl > 7 && 0 == CompareNCaseInsensitive(wordBuffer, "dp$", 3) &&
 			isalpha(wordBuffer[3])) {
 			unsigned int l = 4;
 			while (IsEnvironmentVar(wordBuffer[l])) l++;
 			if (wordBuffer[l] == ':' && isalpha(wordBuffer[l+1]))
-				return l + 2;
+				return l + 4;
 		} else
 		if (wbl > 6 && 0 == CompareNCaseInsensitive(wordBuffer, "ftza", 4) &&
 			isalpha(wordBuffer[4])) {
-			return 5;
+			return 7;
 		} else
 		if (wbl > 4 &&
 			(0 == CompareNCaseInsensitive(wordBuffer, "dp", 2) ||
 			0 == CompareNCaseInsensitive(wordBuffer, "nx", 2) ||
 			0 == CompareNCaseInsensitive(wordBuffer, "fs", 2)) &&
 			isalpha(wordBuffer[2])) {
-			return 3;
+			return 5;
 		} else
 		if (wbl > 3 &&
 			(wordBuffer[0] == 'f' || wordBuffer[0] == 'F' ||
@@ -97,10 +97,10 @@ static unsigned int GetBatchVarLen(char *wordBuffer, unsigned int wbl)
 			wordBuffer[0] == 't' || wordBuffer[0] == 'T' ||
 			wordBuffer[0] == 'z' || wordBuffer[0] == 'Z') &&
 			isalpha(wordBuffer[1])) {
-			return 2;
+			return 4;
 		} else
 		if (isalpha(wordBuffer[0])) {
-			return 1;
+			return 3;
 		}
 	}
 	return 0;
@@ -123,6 +123,7 @@ static void ColouriseBatchLine(
 	unsigned int wbo;		// Word Buffer Offset - also Special Keyword Buffer Length
 	WordList &keywords = *keywordlists[0];      // Internal Commands
 	WordList &keywords2 = *keywordlists[1];     // External Commands (optional)
+	bool isDelayedExpansion = styler.GetPropertyInt("lexer.batch.delayed.expansion") != 0; //!-add-[BatchLexerImprovement]
 
 	// CHOICE, ECHO, GOTO, PROMPT and SET have Default Text that may contain Regular Keywords
 	//   Toggling Regular Keyword Checking off improves readability
@@ -403,6 +404,33 @@ static void ColouriseBatchLine(
 					offset -= (wbl - wbo);
 				}
 			}
+//!-start-[BatchLexerImprovement]
+		// Check for SetLocal Variable (!x...!)
+		} else if (isDelayedExpansion && wordBuffer[0] == '!') {
+			wbo++;
+			// Search to end of word for second !
+			while ((wbo < wbl) &&
+				(wordBuffer[wbo] != '!') &&
+				(!IsBOperator(wordBuffer[wbo])) &&
+				(!IsBSeparator(wordBuffer[wbo]))) {
+				wbo++;
+			}
+			if (wordBuffer[wbo] == '!') {
+				wbo++;
+				// Colorize Environment Variable
+				styler.ColourTo(startLine + offset - 1 - (wbl - wbo), SCE_BAT_IDENTIFIER);
+			} else {
+				wbo = 1;
+				// Colorize Simbol
+				styler.ColourTo(startLine + offset - 1 - (wbl - 1), SCE_BAT_DEFAULT);
+			}
+			// Check for External Command / Program
+			if (cmdLoc == offset - wbl) {
+				cmdLoc = offset - (wbl - wbo);
+			}
+			// Reset Offset to re-process remainder of word
+			offset -= (wbl - wbo);
+//!-end-[BatchLexerImprovement]
 		// Check for Argument  (%n), Environment Variable (%x...%) or Local Variable (%%a)
 		} else if (wordBuffer[0] == '%') {
 			unsigned int varlen; //!-add-[BatchLexerImprovement]
@@ -444,23 +472,23 @@ static void ColouriseBatchLine(
 			} else if ((varlen = GetBatchVarLen(wordBuffer, wbl)) != 0) {
 				// Check for External Command / Program
 				if (cmdLoc == offset - wbl) {
-					cmdLoc = offset - (wbl - varlen - 2);
+					cmdLoc = offset - (wbl - varlen);
 				}
 				// Colorize Variable
-				styler.ColourTo(startLine + offset - 1 - (wbl - varlen - 2), SCE_BAT_IDENTIFIER);
+				styler.ColourTo(startLine + offset - 1 - (wbl - varlen), SCE_BAT_IDENTIFIER);
 				// Reset Offset to re-process remainder of word
-				offset -= (wbl - varlen - 2);
+				offset -= (wbl - varlen);
 			// Check for Local Variable with modifiers (%%~...)
 			} else if ((wordBuffer[1] == '%') &&
-				((varlen = GetBatchVarLen(wordBuffer+1, wbl+1)) != 0)) {
+				((varlen = GetBatchVarLen(wordBuffer+1, wbl-1)) != 0)) {
 				// Check for External Command / Program
 				if (cmdLoc == offset - wbl) {
-					cmdLoc = offset - (wbl - varlen - 3);
+					cmdLoc = offset - (wbl - varlen - 1);
 				}
 				// Colorize Local Variable
-				styler.ColourTo(startLine + offset - 1 - (wbl - varlen - 3), SCE_BAT_IDENTIFIER);
+				styler.ColourTo(startLine + offset - 1 - (wbl - varlen - 1), SCE_BAT_IDENTIFIER);
 				// Reset Offset to re-process remainder of word
-				offset -= (wbl - varlen - 3);
+				offset -= (wbl - varlen - 1);
 //!-end-[BatchLexerImprovement]
 			// Check for Local Variable (%%a)
 			} else if (

@@ -592,6 +592,7 @@ static const char *propertiesToForward[] = {
 	"fold.sql.only.begin",
 	"fold.verilog.flags",
 	"html.tags.case.sensitive",
+	"lexer.batch.delayed.expansion", //!-add-[BatchLexerImprovement]
 	"lexer.caml.magic",
 	"lexer.cpp.allow.dollars",
 	"lexer.d.fold.at.else",
