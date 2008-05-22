@@ -259,6 +259,35 @@ static void ColouriseBatchLine(
 					inString = !inString;
 //!-end-[BatchLexerImprovement]
 			}
+//!-start-[BatchLexerImprovement]
+		// Check for SetLocal Variable (!x...!)
+		} else if (isDelayedExpansion && wordBuffer[0] == '!') {
+			// Colorize Default Text
+			styler.ColourTo(startLine + offset - 1 - wbl, SCE_BAT_DEFAULT);
+			wbo++;
+			// Search to end of word for second !
+			while ((wbo < wbl) &&
+				(wordBuffer[wbo] != '!') &&
+				(!IsBOperator(wordBuffer[wbo])) &&
+				(!IsBSeparator(wordBuffer[wbo]))) {
+				wbo++;
+			}
+			if (wordBuffer[wbo] == '!') {
+				wbo++;
+				// Colorize Environment Variable
+				styler.ColourTo(startLine + offset - 1 - (wbl - wbo), SCE_BAT_IDENTIFIER);
+			} else {
+				wbo = 1;
+				// Colorize Simbol
+				styler.ColourTo(startLine + offset - 1 - (wbl - 1), SCE_BAT_DEFAULT);
+			}
+			// Check for External Command / Program
+			if (cmdLoc == offset - wbl) {
+				cmdLoc = offset - (wbl - wbo);
+			}
+			// Reset Offset to re-process remainder of word
+			offset -= (wbl - wbo);
+//!-end-[BatchLexerImprovement]
 		// Check for Regular Keyword in list
 		} else if ((keywords.InList(wordBuffer)) &&
 			(!inString) && //!-add-[BatchLexerImprovement]
@@ -404,33 +433,6 @@ static void ColouriseBatchLine(
 					offset -= (wbl - wbo);
 				}
 			}
-//!-start-[BatchLexerImprovement]
-		// Check for SetLocal Variable (!x...!)
-		} else if (isDelayedExpansion && wordBuffer[0] == '!') {
-			wbo++;
-			// Search to end of word for second !
-			while ((wbo < wbl) &&
-				(wordBuffer[wbo] != '!') &&
-				(!IsBOperator(wordBuffer[wbo])) &&
-				(!IsBSeparator(wordBuffer[wbo]))) {
-				wbo++;
-			}
-			if (wordBuffer[wbo] == '!') {
-				wbo++;
-				// Colorize Environment Variable
-				styler.ColourTo(startLine + offset - 1 - (wbl - wbo), SCE_BAT_IDENTIFIER);
-			} else {
-				wbo = 1;
-				// Colorize Simbol
-				styler.ColourTo(startLine + offset - 1 - (wbl - 1), SCE_BAT_DEFAULT);
-			}
-			// Check for External Command / Program
-			if (cmdLoc == offset - wbl) {
-				cmdLoc = offset - (wbl - wbo);
-			}
-			// Reset Offset to re-process remainder of word
-			offset -= (wbl - wbo);
-//!-end-[BatchLexerImprovement]
 		// Check for Argument  (%n), Environment Variable (%x...%) or Local Variable (%%a)
 		} else if (wordBuffer[0] == '%') {
 			unsigned int varlen; //!-add-[BatchLexerImprovement]
