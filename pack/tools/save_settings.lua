@@ -1,5 +1,5 @@
 -- Save SciTE Settings
--- Version: 1.4
+-- Version: 1.5
 -- Author: mozers™, Dmitry Maslov
 ---------------------------------------------------
 -- Сохраняет текущие установки SciTE
@@ -36,7 +36,6 @@ function SaveSetting()
 	text = SaveKey(text, 'view.eol')
 	text = SaveKey(text, 'view.indentation.guides')
 	text = SaveKey(text, 'line.margin.visible')
-	text = SaveKey(text, 'check.if.already.open')
 	text = SaveKey(text, 'split.vertical')
 	text = SaveKey(text, 'wrap')
 	text = SaveKey(text, 'output.wrap')
@@ -76,8 +75,6 @@ function OnMenuCommand(cmd, source)
 		props['view.indentation.guides'] = fNOT(props['view.indentation.guides'])
 	elseif cmd == IDM_LINENUMBERMARGIN then
 		props['line.margin.visible'] = fNOT(props['line.margin.visible'])
-	elseif cmd == IDM_OPENFILESHERE then
-		props['check.if.already.open'] = fNOT(props['check.if.already.open'])
 	elseif cmd == IDM_SPLITVERTICAL then
 		props['split.vertical'] = fNOT(props['split.vertical'])
 	elseif cmd == IDM_WRAP then
@@ -88,14 +85,14 @@ function OnMenuCommand(cmd, source)
 	return result
 end
 
--- Добавляем свой обработчик события OnMenuCommand
+-- Добавляем свой обработчик события OnFinalise
 -- Сохранение настроек при закрытии SciTE
-local old_OnMenuCommand = OnMenuCommand
-function OnMenuCommand (msg, source)
+local old_OnFinalise = OnFinalise
+function OnFinalise()
 	local result
-	if old_OnMenuCommand then result = old_OnMenuCommand(msg, source) end
-	if props['save.settings.path']~=nil then
-		if msg == IDM_QUIT then
+	if old_OnFinalise then result = old_OnFinalise() end
+	if props['FileName'] ~= '' then
+		if props['save.settings.path']~=nil then
 			SaveSetting()
 		end
 	end
