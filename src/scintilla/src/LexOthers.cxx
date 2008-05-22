@@ -123,7 +123,7 @@ static void ColouriseBatchLine(
 	unsigned int wbo;		// Word Buffer Offset - also Special Keyword Buffer Length
 	WordList &keywords = *keywordlists[0];      // Internal Commands
 	WordList &keywords2 = *keywordlists[1];     // External Commands (optional)
-	bool isDelayedExpansion = styler.GetPropertyInt("lexer.batch.delayed.expansion") != 0; //!-add-[BatchLexerImprovement]
+	bool isDelayedExpansion = styler.GetPropertyInt("lexer.batch.enabledelayedexpansion") != 0; //!-add-[BatchLexerImprovement]
 
 	// CHOICE, ECHO, GOTO, PROMPT and SET have Default Text that may contain Regular Keywords
 	//   Toggling Regular Keyword Checking off improves readability
