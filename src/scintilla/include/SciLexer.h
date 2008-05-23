@@ -455,6 +455,10 @@
 #define SCE_BAT_COMMAND 5
 #define SCE_BAT_IDENTIFIER 6
 #define SCE_BAT_OPERATOR 7
+//!-start-[BatchLexerImprovement]
+#define SCE_BAT_ENVIRONMENT 8
+#define SCE_BAT_EXPANSION 9
+//!-end-[BatchLexerImprovement]
 #define SCE_MAKE_DEFAULT 0
 #define SCE_MAKE_COMMENT 1
 #define SCE_MAKE_PREPROCESSOR 2

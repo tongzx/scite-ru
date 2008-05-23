@@ -457,6 +457,10 @@ static IFaceConstant ifaceConstants[] = {
 	{"SCE_BAT_IDENTIFIER",6},
 	{"SCE_BAT_LABEL",3},
 	{"SCE_BAT_OPERATOR",7},
+//!-start-[BatchLexerImprovement]
+	{"SCE_BAT_ENVIRONMENTV",8},
+	{"SCE_BAT_EXPANSION",9},
+//!-end-[BatchLexerImprovement]
 	{"SCE_BAT_WORD",2},
 	{"SCE_B_ASM",14},
 	{"SCE_B_BINNUMBER",18},

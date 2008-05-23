@@ -202,7 +202,7 @@ static void ColouriseBatchLine(
 			(lineBuffer[enVarEnd] == '%')) {
 			offset = enVarEnd;
 			// Colorize Environment Variable
-			styler.ColourTo(startLine + offset, SCE_BAT_IDENTIFIER);
+			styler.ColourTo(startLine + offset, SCE_BAT_ENVIRONMENT); //!-change-[BatchLexerImprovement]
 			offset++;
 			// Check for External Command / Program
 			if (offset < lengthLine && !isspacechar(lineBuffer[offset])) {
@@ -280,7 +280,7 @@ static void ColouriseBatchLine(
 			if (wordBuffer[wbo] == '!') {
 				wbo++;
 				// Colorize Environment Variable
-				styler.ColourTo(startLine + offset - 1 - (wbl - wbo), SCE_BAT_IDENTIFIER);
+				styler.ColourTo(startLine + offset - 1 - (wbl - wbo), SCE_BAT_EXPANSION);
 			} else {
 				wbo = 1;
 				// Colorize Simbol
@@ -473,7 +473,7 @@ static void ColouriseBatchLine(
 					cmdLoc = offset - (wbl - wbo);
 				}
 				// Colorize Environment Variable
-				styler.ColourTo(startLine + offset - 1 - (wbl - wbo), SCE_BAT_IDENTIFIER);
+				styler.ColourTo(startLine + offset - 1 - (wbl - wbo), SCE_BAT_ENVIRONMENT); //!-change-[BatchLexerImprovement]
 				// Reset Offset to re-process remainder of word
 				offset -= (wbl - wbo);
 //!-start-[BatchLexerImprovement]
