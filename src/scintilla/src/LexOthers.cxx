@@ -104,7 +104,7 @@ static unsigned int GetBatchVarLen(char *wordBuffer, unsigned int wbl)
 			IsBatchVar(wordBuffer[1])) {
 			return 4;
 		} else
-		if (isalpha(wordBuffer[0])) {
+		if (IsBatchVar(wordBuffer[0])) {
 			return 3;
 		}
 	}
@@ -379,6 +379,7 @@ static void ColouriseBatchLine(
 					// Read up to %, Operator or Separator
 					while ((wbo < wbl) &&
 						(wordBuffer[wbo] != '%') &&
+						(!isDelayedExpansion || wordBuffer[wbo] != '!') && //!-add-[BatchLexerImprovement]
 						(!IsBOperator(wordBuffer[wbo])) &&
 						(!IsBSeparator(wordBuffer[wbo]))) {
 						wbo++;
@@ -428,6 +429,7 @@ static void ColouriseBatchLine(
 					// Read up to %, Operator or Separator
 					while ((wbo < wbl) &&
 						(wordBuffer[wbo] != '%') &&
+						(!isDelayedExpansion || wordBuffer[wbo] != '!') && //!-add-[BatchLexerImprovement]
 						(!IsBOperator(wordBuffer[wbo])) &&
 						(!IsBSeparator(wordBuffer[wbo]))) {
 						wbo++;
@@ -584,6 +586,7 @@ static void ColouriseBatchLine(
 			// Read up to %, Operator or Separator
 			while ((wbo < wbl) &&
 				(wordBuffer[wbo] != '%') &&
+				(!isDelayedExpansion || wordBuffer[wbo] != '!') && //!-add-[BatchLexerImprovement]
 				(!IsBOperator(wordBuffer[wbo])) &&
 				(!IsBSeparator(wordBuffer[wbo]))) {
 				wbo++;
