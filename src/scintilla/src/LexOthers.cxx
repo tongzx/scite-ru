@@ -57,6 +57,11 @@ static inline bool IsEnvironmentVar(char ch) {
 	return isalpha(ch) || Is0To9(ch) || (ch == '_');
 }
 
+// Tests for BATCH Variable simbol
+static inline bool IsBatchVar(char ch) {
+	return isalpha(ch) || Is0To9(ch);
+}
+
 // Find length of BATCH Variable with modifier (%~...) or return 0
 static unsigned int GetBatchVarLen(char *wordBuffer, unsigned int wbl)
 {
@@ -65,25 +70,25 @@ static unsigned int GetBatchVarLen(char *wordBuffer, unsigned int wbl)
 		if (wbl > 5 && wordBuffer[0] == '$' && isalpha(wordBuffer[1])) {
 			unsigned int l = 2;
 			while (IsEnvironmentVar(wordBuffer[l])) l++;
-			if (wordBuffer[l] == ':' && isalpha(wordBuffer[l+1]))
+			if (wordBuffer[l] == ':' && IsBatchVar(wordBuffer[l+1]))
 				return l + 4;
 		} else
 		if (wbl > 7 && 0 == CompareNCaseInsensitive(wordBuffer, "dp$", 3) &&
 			isalpha(wordBuffer[3])) {
 			unsigned int l = 4;
 			while (IsEnvironmentVar(wordBuffer[l])) l++;
-			if (wordBuffer[l] == ':' && isalpha(wordBuffer[l+1]))
+			if (wordBuffer[l] == ':' && IsBatchVar(wordBuffer[l+1]))
 				return l + 4;
 		} else
 		if (wbl > 6 && 0 == CompareNCaseInsensitive(wordBuffer, "ftza", 4) &&
-			isalpha(wordBuffer[4])) {
+			IsBatchVar(wordBuffer[4])) {
 			return 7;
 		} else
 		if (wbl > 4 &&
 			(0 == CompareNCaseInsensitive(wordBuffer, "dp", 2) ||
 			0 == CompareNCaseInsensitive(wordBuffer, "nx", 2) ||
 			0 == CompareNCaseInsensitive(wordBuffer, "fs", 2)) &&
-			isalpha(wordBuffer[2])) {
+			IsBatchVar(wordBuffer[2])) {
 			return 5;
 		} else
 		if (wbl > 3 &&
@@ -96,7 +101,7 @@ static unsigned int GetBatchVarLen(char *wordBuffer, unsigned int wbl)
 			wordBuffer[0] == 'a' || wordBuffer[0] == 'A' ||
 			wordBuffer[0] == 't' || wordBuffer[0] == 'T' ||
 			wordBuffer[0] == 'z' || wordBuffer[0] == 'Z') &&
-			isalpha(wordBuffer[1])) {
+			IsBatchVar(wordBuffer[1])) {
 			return 4;
 		} else
 		if (isalpha(wordBuffer[0])) {
