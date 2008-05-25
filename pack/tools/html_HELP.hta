@@ -14,7 +14,7 @@ scroll=no
 selection=yes
 contextMenu=yes
 singleinstance=yes
-version=1.3
+version=1.3.1
 >
 <script language=JavaScript>
 // === Shortcuts ==================================
@@ -145,15 +145,15 @@ if (len_cmd > 2) {
 }
 
 var html_text = '';
-html_text += '<table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td>&nbsp;&nbsp;Zoom:';
+html_text += '<table width="100%" height="100%" cellpadding="0" cellspacing="0" border="0"><tr><td>&nbsp;&nbsp;Zoom:';
 html_text += '&nbsp;<INPUT class="p" TYPE="button" Value="-" onClick="Zoom(-5);" title="ZoomIn [Gray-]">';
 html_text += '&nbsp;<INPUT name="txtZoom" TYPE=text value="100%" style="width:40px; text-align:center;" DISABLED>';
 html_text += '&nbsp;<INPUT class="p" TYPE="button" Value="+" onClick="Zoom(5);" title="ZoomOut [Gray+]"><\/td>';
 html_text += '<td align="right">';
 html_text += 'Find:&nbsp;&nbsp;<INPUT name=sText TYPE=text value="' + text_find + '" style="width:30%" onClick="SearchReset();" onkeydown="if (event.keyCode==13){Find()};" title="Start Search [Enter]\nNew Search  [Click]">';
 html_text += '&nbsp;&nbsp;<INPUT style="color:#000080" NAME="btnSearch" TYPE="button" Value="Search" onClick="Find();" title="Find Next [F3]">&nbsp;&nbsp;&nbsp;';
-html_text += '<\/td><\/tr><\/table>';
-html_text += '<IFRAME onLoad="on_load();" id="html_doc" src="' + help_path + '" style="width:100%; height:100%;"><\/IFRAME>';
+html_text += '<\/td><\/tr>';
+html_text += '<tr height="100%"><td colspan=2><IFRAME onLoad="on_load();" id="html_doc" src="' + help_path + '" style="width:100%; height:100%;"><\/IFRAME><\/td><\/tr><\/table>';
 
 document.body.innerHTML = html_text;
 </script>
