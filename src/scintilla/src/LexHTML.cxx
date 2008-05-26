@@ -292,7 +292,8 @@ static int classifyTagHTML(unsigned int start, unsigned int end,
 		isScript = 0 == strcmp(s, "script");
 	}
 	styler.ColourTo(end, chAttr);
-	return isScript ? SCE_H_SCRIPT : chAttr;
+//!	return isScript ? SCE_H_SCRIPT : chAttr;
+	return (isScript && !isXml) ? SCE_H_SCRIPT : chAttr; //!-change-[XMLLexerFix]
 }
 
 static void classifyWordHTJS(unsigned int start, unsigned int end,
@@ -1008,6 +1009,7 @@ static void ColouriseHyperTextDoc(unsigned int startPos, int length, int initSty
 			if ((chPrev2 == '-') && (chPrev == '-') && (ch == '>')) {
 				styler.ColourTo(i, StateToPrint);
 				state = SCE_H_DEFAULT;
+				if (foldHTMLPreprocessor) //!-add-[XMLLexerFix]
 				levelCurrent--;
 			}
 			break;
