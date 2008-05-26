@@ -93,6 +93,9 @@ dofile (props["SciteDefaultHome"].."\\tools\\set_html.lua")
 -- Автоматическое сворачивание всех секций при открытии файлов заданного типа
 dofile (props["SciteDefaultHome"].."\\tools\\ToggleFoldAll.lua")
 
+-- Фолдинг для текстовых файлов
+dofile (props["SciteDefaultHome"].."\\tools\\FoldText.lua")
+
 -- Автодополнение объектов их методами и свойствами
 dofile (props["SciteDefaultHome"].."\\tools\\AutocompleteObject.lua")
 
