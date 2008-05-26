@@ -597,7 +597,8 @@ static const char *propertiesToForward[] = {
 	"lexer.cpp.allow.dollars",
 	"lexer.d.fold.at.else",
 	"lexer.errorlist.value.separate",
-	"lexer.lua.wordchar.colon",	//!-add-[LuaWord]
+	"lexer.errorlist.findtitle.begin", //!-add-[FindResultListStyle]
+	"lexer.errorlist.findtitle.end", //!-add-[FindResultListStyle]
 	"lexer.metapost.comment.process",
 	"lexer.metapost.interface.default",
 	"lexer.sql.backticks.identifier",

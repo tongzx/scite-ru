@@ -5,6 +5,8 @@
 // Copyright 1998-2001 by Neil Hodgson <neilh@scintilla.org>
 // The License.txt file describes the conditions under which this software may be distributed.
 
+#include "SString.h" //!-add-[FindResultListStyle]
+
 enum { wsSpace = 1, wsTab = 2, wsSpaceTab = 4, wsInconsistent=8};
 
 class Accessor;
@@ -65,6 +67,7 @@ public:
 	virtual int GetLineState(int line)=0;
 	virtual int SetLineState(int line, int state)=0;
 	virtual int GetPropertyInt(const char *key, int defaultValue=0)=0;
+	virtual SString GetProperty(const char *key)=0; //!-add-[FindResultListStyle]
 	virtual char *GetProperties()=0;
 
 	// Style setting

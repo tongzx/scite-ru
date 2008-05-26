@@ -1,5 +1,5 @@
 --[[--------------------------------------------------
-FindText v6.7
+FindText v6.8
 Авторы: mozers™, mimir, Алексей, codewarlock1101
 
 * Если текст выделен - ищется выделенная подстрока
@@ -42,8 +42,12 @@ local current_mark_number = scite.SendEditor(SCI_GETINDICATORCURRENT)
 if current_mark_number < 27 then current_mark_number = 27 end
 if string.len(sText) > 0 then
 	if flag == SCFIND_WHOLEWORD then
+		props['lexer.errorlist.findtitle.begin'] = '> Поиск текущего слова: "'
+		props['lexer.errorlist.findtitle.end'] = '"'
 		print('> Поиск текущего слова: "'..sText..'"')
 	else
+		props['lexer.errorlist.findtitle.begin'] = '> Поиск выделенного текста: "'
+		props['lexer.errorlist.findtitle.end'] = '"'
 		print('> Поиск выделенного текста: "'..sText..'"')
 	end
 	local s,e = editor:findtext(sText,flag,1)

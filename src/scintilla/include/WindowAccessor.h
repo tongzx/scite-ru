@@ -6,6 +6,8 @@
 // Copyright 1998-2001 by Neil Hodgson <neilh@scintilla.org>
 // The License.txt file describes the conditions under which this software may be distributed.
 
+#include "SString.h" //!-add-[FindResultListStyle]
+
 #ifdef SCI_NAMESPACE
 namespace Scintilla {
 #endif
@@ -47,6 +49,11 @@ public:
 	int GetPropertyInt(const char *key, int defaultValue=0) { 
 		return props.GetInt(key, defaultValue); 
 	}
+//!-start-[FindResultListStyle]
+	SString GetProperty(const char *key) { 
+		return props.Get(key); 
+	}
+//!-end-[FindResultListStyle]
 	char *GetProperties() {
 		return props.ToString();
 	}

@@ -56,6 +56,11 @@ public:
 	int GetPropertyInt(const char *key, int defaultValue=0) { 
 		return props.GetInt(key, defaultValue); 
 	}
+//!-start-[FindResultListStyle]
+	SString GetProperty(const char *key) {
+		return props.Get(key);
+	}
+//!-end-[FindResultListStyle]
 	char *GetProperties() {
 		return props.ToString();
 	}

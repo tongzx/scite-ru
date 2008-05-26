@@ -142,15 +142,19 @@ Hint1|IDM_COMMAND1|icon&nbsp;number1|\<br>
 Hint2|IDM_COMMAND2|icon&nbsp;number2|...</div>
 If parameter absent or empty then toolbar will standard.
 
-<h5>[FindResultListStyle] <span class=desc>(Authors: VladVRO, Dmitry Maslov)</span></h5>
+<h5> <sup>updated</sup>
+[FindResultListStyle] <span class=desc>(Authors: VladVRO, Dmitry Maslov)</span></h5>
 Internal search (Ctrl+Shift+F) result text looks more better now:<br>
-- each line colorized by two colors: file path and line number by one color and other by second color.<br>
+- file path in each line is minimized to the relative from search path.<br>
 - all tabs in result replaced by spaces, start spaces removed, double spaces replaced by single.<br>
 - searched string can be highlighted by setup new style parameter in properties:
 <div class="example">style.errorlist.30=fore:#000000 ,bold</div>
 <br>
 You can switch off this feature by setup new parameter in properties:<br>
 <span class="example">lexer.errorlist.findliststyle=0</span>
+<br>
+<br>
+And now you can highlight searched string in result of external search. You can setup format of title of the external search by two new properties <span class="example">lexer.errorlist.findtitle.begin</span> and <span class="example">lexer.errorlist.findtitle.end</span>.
 
 <h5>
 [close.find.window] <span class=desc>(Author: Dmitry Maslov)</span></h5>

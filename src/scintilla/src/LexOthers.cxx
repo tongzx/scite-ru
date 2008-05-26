@@ -1266,15 +1266,20 @@ static int RecogniseErrorListLine(const char *lineBuffer, unsigned int lengthLin
 }
 
 //!-start-[FindResultListStyle]
-static bool RecogniseFindListStart(const char *lineBuffer, char *findValue) {
-	if (strstart(lineBuffer, ">Internal search for \"")) {
-		unsigned int p = 22;
-		while (0 != strncmp(lineBuffer + p, "\" in \"", 6)) {
+// Find part of the string lineBuffer beetwen substrings beginT and endT
+// write results substring to the findValue
+static bool GetPartOf(const char *lineBuffer,
+		const char *beginT, const char *endT, char *findValue, unsigned int maxLen) {
+	if (strstart(lineBuffer, beginT)) {
+		const char *buff = lineBuffer + strlen(beginT);
+		unsigned int len = strlen(endT);
+		unsigned int p = 0;
+		while (0 != strncmp(buff + p, endT, len)) {
 			p++;
-			if (p > 1022) return false;
+			if (p > maxLen) return false;
 		}
-		strncpy(findValue, lineBuffer + 22, p - 22);
-		findValue[p - 22] = '\0';
+		strncpy(findValue, buff, p);
+		findValue[p] = '\0';
 		return true;
 	}
 	return false;
@@ -1308,11 +1313,15 @@ static void ColouriseErrorListLine(
     unsigned int lengthLine,
     unsigned int endPos,
 //!-start-[FindResultListStyle]
-    bool &isFindList,
-    char *findValue,
+    const char *findTitleB,
+    const char *findTitleE,
 //!-end-[FindResultListStyle]
     Accessor &styler,
 	bool valueSeparate) {
+//!-start-[FindResultListStyle]
+	static bool isFindList;
+	static char findValue[1000];
+//!-end-[FindResultListStyle]
 	int startValue = -1;
 	int style = RecogniseErrorListLine(lineBuffer, lengthLine, startValue);
 	if (valueSeparate && (startValue >= 0)) {
@@ -1326,7 +1335,9 @@ static void ColouriseErrorListLine(
 	} else {
 //!-start-[FindResultListStyle]
 		if (valueSeparate && style == SCE_ERR_CMD) {
-			isFindList = RecogniseFindListStart(lineBuffer, findValue);
+			isFindList = GetPartOf(lineBuffer, ">Internal search for \"", "\" in \"", findValue, 1000);
+			if (!isFindList and findTitleB)
+				isFindList = GetPartOf(lineBuffer, findTitleB, findTitleE, findValue, 1000);
 			if (!isFindList) findValue[0] = '\0';
 		}
 //!-end-[FindResultListStyle]
@@ -1342,8 +1353,13 @@ static void ColouriseErrorListDoc(unsigned int startPos, int length, int, WordLi
 //!	bool valueSeparate = styler.GetPropertyInt("lexer.errorlist.value.separate", 0) != 0;
 //!-start-[FindResultListStyle]
 	bool valueSeparate = styler.GetPropertyInt("lexer.errorlist.value.separate", 1) > 0;
-	static bool isFindList;
-	static char findValue[1000];
+	SString findTitleBegin = styler.GetProperty("lexer.errorlist.findtitle.begin");
+	SString findTitleEnd = styler.GetProperty("lexer.errorlist.findtitle.end");
+	const char *findTitleB = NULL, *findTitleE = NULL;
+	if (findTitleBegin.length() > 0) {
+		findTitleB = findTitleBegin.c_str();
+		findTitleE = findTitleEnd.c_str();
+	}
 //!-end-[FindResultListStyle]
 	for (unsigned int i = startPos; i < startPos + length; i++) {
 		lineBuffer[linePos++] = styler[i];
@@ -1351,13 +1367,13 @@ static void ColouriseErrorListDoc(unsigned int startPos, int length, int, WordLi
 			// End of line (or of line buffer) met, colourise it
 			lineBuffer[linePos] = '\0';
 //!			ColouriseErrorListLine(lineBuffer, linePos, i, styler, valueSeparate);
-			ColouriseErrorListLine(lineBuffer, linePos, i, isFindList, findValue, styler, valueSeparate); //!-change-[FindResultListStyle]
+			ColouriseErrorListLine(lineBuffer, linePos, i, findTitleB, findTitleE, styler, valueSeparate); //!-change-[FindResultListStyle]
 			linePos = 0;
 		}
 	}
 	if (linePos > 0) {	// Last line does not have ending characters
 //!		ColouriseErrorListLine(lineBuffer, linePos, startPos + length - 1, styler, valueSeparate);
-		ColouriseErrorListLine(lineBuffer, linePos, startPos + length - 1, isFindList, findValue, styler, valueSeparate); //!-change-[FindResultListStyle]
+		ColouriseErrorListLine(lineBuffer, linePos, startPos + length - 1, findTitleB, findTitleE, styler, valueSeparate); //!-change-[FindResultListStyle]
 	}
 }
 
