@@ -307,6 +307,21 @@ static int cf_scite_show_parameters_dialog(lua_State *L) {
 }
 //!-end-[ParametersDialogFromLua]
 
+//!-start-[LocalizationFromLua]
+static int cf_editor_get_translation(lua_State *L) {
+	const char *s = luaL_checkstring(L, 1);
+	char *r = NULL;
+	if (lua_gettop(L) > 1) {
+		r = host->GetTranslation(s, (lua_toboolean(L, 2) != 0));
+	} else {
+		r = host->GetTranslation(s);
+	}
+	lua_pushstring(L, r);
+	delete []r;
+	return 1;
+}
+//!-end-[LocalizationFromLua]
+
 static int cf_scite_update_status_bar(lua_State *L) {
 	bool bUpdateSlowData = (lua_gettop(L) > 0 ? lua_toboolean(L, 1) : false) != 0;
 	host->UpdateStatusBar(bUpdateSlowData);
@@ -1500,6 +1515,11 @@ static bool InitGlobalScope(bool checkProperties, bool forceReload = false) {
 	lua_pushcfunction(luaState, cf_editor_reload_startup_script);
 	lua_setfield(luaState, -2, "ReloadStartupScript");
 //!-end-[StartupScriptReload]
+
+//!-start-[LocalizationFromLua]
+	lua_pushcfunction(luaState, cf_editor_get_translation);
+	lua_setfield(luaState, -2, "GetTranslation");
+//!-end-[LocalizationFromLua]
 
 	lua_setglobal(luaState, "scite");
 

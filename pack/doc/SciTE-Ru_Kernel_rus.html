@@ -340,6 +340,13 @@ calltip.*.word.wrap</div>
     </h3>
 
 <h5> <sup>new</sup>
+[LocalizationFromLua] <span class=desc>(Автор: VladVRO)</span></h5>
+В SciTE Lua Scripting Extension добавлена новая команда:<br>
+<span class="example">scite.GetTranslation(s, [retainIfNotFound])</span>, которая возвращает перевод строки <span class="example"><i>s</i></span>,<br>
+где <span class="example"><i>retainIfNotFound</i></span> - (по умолчанию <span class="example"><i>true</i></span>) указывает на возврат исходного значения в случае, если перевод не найден.<br>
+Переводы строк берутся из файла <span class="example">locale.properties</span>.
+
+<h5> <sup>new</sup>
 [OnFinalise] <span class=desc>(Автор: VladVRO)</span></h5>
 Добавлено новое событие SciTE в Луа API <span class="example">OnFinalise()</span>. Событие возникает при закрытии редактора.
 

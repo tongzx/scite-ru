@@ -343,6 +343,13 @@ It is possible to set this parameter through SCI_SETOVERTYPE<br>
     </h3>
 
 <h5> <sup>new</sup>
+[LocalizationFromLua] <span class=desc>(Author: VladVRO)</span></h5>
+In SciTE Lua Scripting Extension added new command:<br>
+<span class="example">scite.GetTranslation(s, [retainIfNotFound])</span>, it returns translation of the sentance <span class="example"><i>s</i></span>,<br>
+<span class="example"><i>retainIfNotFound</i></span> - (by default is <span class="example"><i>true</i></span>) should return the input value if translation was not found.<br>
+Translations are taken from the file <span class="example">locale.properties</span>.
+
+<h5> <sup>new</sup>
 [OnFinalise] <span class=desc>(Author: VladVRO)</span></h5>
 Added new SciTE event in Lua API <span class="example">OnFinalise()</span>. Event arises on exit from editor.
 

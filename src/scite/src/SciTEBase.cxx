@@ -5856,3 +5856,9 @@ bool SciTEBase::ShowParametersDialog(const char *msg) {
 	return ParametersDialog(true);
 }
 //!-end-[ParametersDialogFromLua]
+
+//!-start-[LocalizationFromLua]
+char *SciTEBase::GetTranslation(const char *s, bool retainIfNotFound) {
+	return localiser.Text(s, retainIfNotFound).detach();
+}
+//!-end-[LocalizationFromLua]
