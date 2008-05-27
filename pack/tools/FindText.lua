@@ -1,5 +1,5 @@
 --[[--------------------------------------------------
-FindText v6.8
+FindText v6.9
 Авторы: mozers™, mimir, Алексей, codewarlock1101
 
 * Если текст выделен - ищется выделенная подстрока
@@ -41,15 +41,15 @@ end
 local current_mark_number = scite.SendEditor(SCI_GETINDICATORCURRENT)
 if current_mark_number < 27 then current_mark_number = 27 end
 if string.len(sText) > 0 then
+	local msg
 	if flag == SCFIND_WHOLEWORD then
-		props['lexer.errorlist.findtitle.begin'] = '> Поиск текущего слова: "'
-		props['lexer.errorlist.findtitle.end'] = '"'
-		print('> Поиск текущего слова: "'..sText..'"')
+		msg = '> '..scite.GetTranslation('Search for current word')..': "'
 	else
-		props['lexer.errorlist.findtitle.begin'] = '> Поиск выделенного текста: "'
-		props['lexer.errorlist.findtitle.end'] = '"'
-		print('> Поиск выделенного текста: "'..sText..'"')
+		msg = '> '..scite.GetTranslation('Search for selected text')..': "'
 	end
+	props['lexer.errorlist.findtitle.begin'] = msg
+	props['lexer.errorlist.findtitle.end'] = '"'
+	print(msg..sText..'"')
 	local s,e = editor:findtext(sText,flag,1)
 	local count = 0
 	if(s~=nil)then
@@ -65,9 +65,14 @@ if string.len(sText) > 0 then
 			end
 			s,e = editor:findtext(sText,flag,e+1)
 		end
-		print('> Найдено: '..count..' вхождений\nF3 (Shift+F3) - Переход по маркерам\nF4 (Shift+F4) - Переход по строкам\nCtrl+Alt+C - очистка всех маркеров')
+		print('> '..string.gsub(scite.GetTranslation('Found: @ results'), '@', count))
+		if props['findtext.no.tutorial'] ~= '1' then
+			print('F3 (Shift+F3) - '..scite.GetTranslation('Jump by markers')..
+				'\nF4 (Shift+F4) - '..scite.GetTranslation('Jump by lines')..
+				'\nCtrl+Alt+C - '..scite.GetTranslation('Erase all markers'))
+		end
 	else
-		print('> Вхождений ['..sText..'] не найдено!')
+		print('> '..string.gsub(scite.GetTranslation("Can't find [@]!"), '@', sText))
 	end
 	current_mark_number = current_mark_number + 1
 	if current_mark_number > 31 then current_mark_number = 27 end
@@ -82,6 +87,8 @@ if string.len(sText) > 0 then
 else
 	EditorClearMarks()
 	scite.SendEditor(SCI_SETINDICATORCURRENT, 27)
-	print('> Сначала выделите в редакторе текст, который необходимо найти! (поиск текста)\n> Можно просто установить курсор на нужное слово (поиск слова)\n> Так же можно выделить текст в окне консоли')
+	print('> '..scite.GetTranslation('Select text for search! (search for selection)'))
+	print('> '..scite.GetTranslation('Or put cursor on the word for search. (search for word)'))
+	print('> '..scite.GetTranslation('You can also select text in console.'))
 end
 --~ editor:CharRight() editor:CharLeft() --Снимает выделение с исходного текста
