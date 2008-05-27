@@ -1336,7 +1336,7 @@ static void ColouriseErrorListLine(
 //!-start-[FindResultListStyle]
 		if (valueSeparate && style == SCE_ERR_CMD) {
 			isFindList = GetPartOf(lineBuffer, ">Internal search for \"", "\" in \"", findValue, 1000);
-			if (!isFindList and findTitleB)
+			if (!isFindList && findTitleB)
 				isFindList = GetPartOf(lineBuffer, findTitleB, findTitleE, findValue, 1000);
 			if (!isFindList) findValue[0] = '\0';
 		}

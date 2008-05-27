@@ -91,7 +91,7 @@ local fold_text_outline = props["fold.text.outline"]
 if fold_text_outline == "" then fold_text_outline = "*" end
 
 local function set_level(line_num, level, fold)
-	print(line_num, level, fold)
+	-- print(line_num, level, fold)
 	local foldlevel = level + SC_FOLDLEVELBASE
 	if fold then
 		foldlevel = foldlevel + SC_FOLDLEVELHEADERFLAG
@@ -103,7 +103,7 @@ end
 local function get_level(line_num)
 	local line = editor:GetLine(line_num)
 	if line ~= nil then
-		local outline = nil
+		local outline
 		if fold_text_outline ~= "1" then
 			-- chars (e.g. "*** Chapter Two")
 			outline = string.match (line, "^%s*(%"..fold_text_outline.."+)")
@@ -120,7 +120,6 @@ local function get_level(line_num)
 				outline = string.match(line,"([%d%.]+)%s*$")
 				if outline ~= nil then num_pos = "end" end
 			end
-			print (num_pos, outline)
 			if outline ~= nil then
 				local _, level = string.gsub(outline, "%d+", "")
 				return level
