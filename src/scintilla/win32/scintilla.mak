@@ -137,8 +137,8 @@ LEXOBJS=\
 	$(DIR_O)\LexD.obj \
 	$(DIR_O)\LexEiffel.obj \
 	$(DIR_O)\LexErlang.obj \
-	$(DIR_O)\LexEuphoria.obj \
 	$(DIR_O)\LexEScript.obj \
+	$(DIR_O)\LexEuphoria.obj \
 	$(DIR_O)\LexFlagship.obj \
 	$(DIR_O)\LexForth.obj \
 	$(DIR_O)\LexFortran.obj \
@@ -358,6 +358,7 @@ $(DIR_O)\LexErlang.obj: ..\src\LexErlang.cxx $(LEX_HEADERS)
 $(DIR_O)\LexEScript.obj: ..\src\LexEScript.cxx $(LEX_HEADERS)
 
 $(DIR_O)\LexEuphoria.obj: ..\src\LexEuphoria.cxx $(LEX_HEADERS)
+
 $(DIR_O)\LexFlagship.obj: ..\src\LexFlagship.cxx $(LEX_HEADERS)
 
 $(DIR_O)\LexForth.obj: ..\src\LexForth.cxx $(LEX_HEADERS)
