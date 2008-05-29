@@ -1014,11 +1014,11 @@ fun void CallTipSetWordWrap=4016(int wrapBnd,)
 
 ##!-start-[MouseClickHandled]
 # Set mouse capture status
-fun void SetMouseCapture=4017(bool on,)
+set void SetMouseCapture=4017(bool on,)
 ##!-end-[MouseClickHandled]
 
 ##!-start-[HighlightCurrFolder]
-# Set mouse capture status
+# Set folding highlight color
 fun void SetFoldHighlightColour=4018(bool useSetting, colour fore)
 ##!-end-[HighlightCurrFolder]
 
@@ -1853,7 +1853,7 @@ set void SetLexerLanguage=4006(, string language)
 
 ##!-start-[GetLexerLanguage]
 # Retrieve lexing language of the document.
-fun int GetLexerLanguage=4012(, string language)
+get string GetLexerLanguage=4012(,)
 ##!-end-[GetLexerLanguage]
 
 # Load a lexer library (dll / so).
@@ -2434,6 +2434,10 @@ val SCE_BAT_HIDE=4
 val SCE_BAT_COMMAND=5
 val SCE_BAT_IDENTIFIER=6
 val SCE_BAT_OPERATOR=7
+##!-start-[BatchLexerImprovement]
+val SCE_BAT_ENVIRONMENT=8
+val SCE_BAT_EXPANSION=9
+##!-end-[BatchLexerImprovement]
 # Lexical states for SCLEX_MAKEFILE
 lex MakeFile=SCLEX_MAKEFILE SCE_MAKE_
 val SCE_MAKE_DEFAULT=0
