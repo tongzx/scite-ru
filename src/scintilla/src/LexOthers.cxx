@@ -265,6 +265,13 @@ static void ColouriseBatchLine(
 //!-end-[BatchLexerImprovement]
 			}
 //!-start-[BatchLexerImprovement]
+		// Check for Labels in text (... :label)
+		} else if (wordBuffer[0] == ':' && isspacechar(lineBuffer[offset - wbl - 1])) {
+			// Colorize Default Text
+			styler.ColourTo(startLine + offset - 1 - wbl, SCE_BAT_DEFAULT);
+			// Colorize Label
+			styler.ColourTo(startLine + offset - 1, SCE_BAT_CLABEL);
+			// No need to Reset Offset
 		// Check for SetLocal Variable (!x...!)
 		} else if (isDelayedExpansion && wordBuffer[0] == '!') {
 			// Colorize Default Text
