@@ -48,7 +48,9 @@ if string.len(sText) > 0 then
 		msg = '> '..scite.GetTranslation('Search for selected text')..': "'
 	end
 	props['lexer.errorlist.findtitle.begin'] = msg
+	scite.SendOutput(SCI_SETPROPERTY, 'lexer.errorlist.findtitle.begin', msg)
 	props['lexer.errorlist.findtitle.end'] = '"'
+	scite.SendOutput(SCI_SETPROPERTY, 'lexer.errorlist.findtitle.end', '"')
 	print(msg..sText..'"')
 	local s,e = editor:findtext(sText,flag,1)
 	local count = 0
