@@ -473,7 +473,7 @@ SString SciTEBase::ExtensionFileName() {
 		}
 		return SString(fileNameWithLowerCaseExtension);
 	}
-	
+
 	return props.Get("default.file.ext");
 //!-end-[no_wornings]
 }
@@ -590,15 +590,16 @@ static const char *propertiesToForward[] = {
 	"fold.preprocessor",
 	"fold.quotes.python",
 	"fold.sql.only.begin",
+	"fold.symbols",
 	"fold.verilog.flags",
 	"html.tags.case.sensitive",
-	"lexer.batch.enabledelayedexpansion", //!-add-[BatchLexerImprovement]
+	"lexer.batch.enabledelayedexpansion",
 	"lexer.caml.magic",
 	"lexer.cpp.allow.dollars",
 	"lexer.d.fold.at.else",
+	"lexer.errorlist.findtitle.begin",
+	"lexer.errorlist.findtitle.end",
 	"lexer.errorlist.value.separate",
-	"lexer.errorlist.findtitle.begin", //!-add-[FindResultListStyle]
-	"lexer.errorlist.findtitle.end", //!-add-[FindResultListStyle]
 	"lexer.metapost.comment.process",
 	"lexer.metapost.interface.default",
 	"lexer.sql.backticks.identifier",
@@ -783,7 +784,7 @@ void SciTEBase::ReadProperties() {
 //!-start-[GetAbbrevPath]
 	props.Set("AbbrevPath", pathAbbreviations.AsFileSystem());
 //!-end-[GetAbbrevPath]
-	
+
 	if (!props.GetInt("eol.auto")) {
 		SetEol();
 	}
