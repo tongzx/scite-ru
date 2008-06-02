@@ -59,36 +59,37 @@
       Interface
     </h3>
 
-<h5> <sup>new</sup>
+<h5 id="save.session.multibuffers.only"> <sup>new</sup>
 [save.session.multibuffers.only] <span class=desc>(Author: VladVRO)</span></h5>
 New variable in properties files to deny of saving session on exit if opened one buffer only:
 <div class="example">save.session.multibuffers.only=1</div>
 
-<h5> <sup>new</sup>
+<h5 id="session.close.buffers.onload"> <sup>new</sup>
 [session.close.buffers.onload] <span class=desc>(Author: VladVRO)</span></h5>
 New variable in properties files <span class="example">session.close.buffers.onload</span> for define should opened files be closed or not on load session.<br>
 For example to define do not close opened files:
 <div class="example">session.close.buffers.onload=0</div>
 by default all opened files should be closed on load session.
 
-<h5>
+<h5 id="ReadOnlyTabMarker">
 [ReadOnlyTabMarker] <span class=desc>(Authors: Midas, VladVRO)</span></h5>
 Added possibility to show <i>Readonly</i> status by additional symbols in tab name, which can be setup by property <span class="example">tabbar.readonly.marker</span>, for example:
 <div class="example">tabbar.readonly.marker= R/O</div>
 
-<h5>
+<h5 id="HighlightCurrFolder">
 [HighlightCurrFolder] <span class=desc>(Author: VladVRO)</span></h5>
 Added a highlighting of current folding on fold margin.<br>
 New property for setup highlight color:<br>
 <div class="example">fold.highlight.colour=#0099FF</div>
 if color is not set then highlighting is off.
 
-<h5>
+<h5 id="TrueTextSelMargin">
 [TrueTextSelMargin] <span class=desc>(Author: VladVRO)</span></h5>
 Changed cursor image over left margin (line number, marker and fold margins).<br>
 Cursor is set as inverse arrow when we realy can to select text otherwise used default cursor.
 
-<h5>[SubMenu] <span class=desc>(Author: HSolo, Updated by: Dmitry Maslov)</span></h5>
+<h5 id="SubMenu">
+[SubMenu] <span class=desc>(Author: HSolo, Updated by: Dmitry Maslov)</span></h5>
 User's commands in menu Tools separated from other commands now by line.<br>
 And you can insert separator between any new commands in menu Tools.<br>
 For example, <span class="example">command.separator.34.*=1</span> adding separator before command 34.<br>
@@ -107,12 +108,14 @@ command.name.6.*=Date and Time</div>
 <br>
 All menu items text can be localized same as other menu command by file locale.properties.
 
-<h5>[ToolsMax] <span class=desc>(Authors: Moon_aka_Sun, VladVRO)</span></h5>
+<h5 id="ToolsMax">
+[ToolsMax] <span class=desc>(Authors: Moon_aka_Sun, VladVRO)</span></h5>
 Extended amount of line in Tools menu till 300.<br>
 For creation of the user commands in <span class="example">user.context.menu</span> it is necessary to use the formula:<br>
 User command = 9000 + number of this command in menu Tools
 
-<h5>[ExtendedContextMenu] <span class=desc>(Author: Dmitry Maslov)</span></h5>
+<h5 id="ExtendedContextMenu">
+[ExtendedContextMenu] <span class=desc>(Author: Dmitry Maslov)</span></h5>
 You can setup each context menu now by using new parameters in .properties file:<br>
 <span class="example">user.context.menu</span> - editor context menu<br>
 <span class="example">user.tabcontext.menu</span> - tabbar context menu<br>
@@ -129,7 +132,8 @@ Command&nbsp;name1|IDM_COMMAND1|\<br>
 Command&nbsp;name2|IDM_COMMAND2|...</div><br>
 If parameter absent or empty then context menu will standard.
 
-<h5>[user.toolbar] <span class=desc>(Author: Dmitry Maslov)</span></h5>
+<h5 id="user.toolbar">
+[user.toolbar] <span class=desc>(Author: Dmitry Maslov)</span></h5>
 You can setup toolbar now by using new parameter <span class="example">user.toolbar</span> in .properties file:<br>
 Format:
 <div class="example">user.toolbar=\<br>
@@ -142,7 +146,7 @@ Hint1|IDM_COMMAND1|icon&nbsp;number1|\<br>
 Hint2|IDM_COMMAND2|icon&nbsp;number2|...</div>
 If parameter absent or empty then toolbar will standard.
 
-<h5> <sup>updated</sup>
+<h5 id="FindResultListStyle"> <sup>updated</sup>
 [FindResultListStyle] <span class=desc>(Authors: VladVRO, Dmitry Maslov)</span></h5>
 Internal search (Ctrl+Shift+F) result text looks more better now:<br>
 - file path in each line is minimized to the relative from search path.<br>
@@ -156,79 +160,90 @@ You can switch off this feature by setup new parameter in properties:<br>
 <br>
 And now you can highlight searched string in result of external search. You can setup format of title of the external search by two new properties <span class="example">lexer.errorlist.findtitle.begin</span> and <span class="example">lexer.errorlist.findtitle.end</span>.
 
-<h5>
+<h5 id="close.find.window">
 [close.find.window] <span class=desc>(Author: Dmitry Maslov)</span></h5>
 New variable in properties files<br>
 <span class="example">find.replace.closefind=&lt;number value&gt;</span><br>
 Set to 0 to prevent the Find dialog from closing when "Find" pressed.
 
-<h5>
+<h5 id="find.bookmark.disable">
 [find.bookmark.disable] <span class=desc>(Author: dB6)</span></h5>
 New variable in properties files<br>
 <span class="example">find.bookmark.disable=1</span><br>
 If 1, then pressing the button "Mark all" do not sets the bookmarks.
 
-<h5>[NewFind-MarkerDeleteAll] <span class=desc>(Author: Dmitry Maslov)</span></h5>
+<h5 id="NewFind-MarkerDeleteAll">
+[NewFind-MarkerDeleteAll] <span class=desc>(Author: Dmitry Maslov)</span></h5>
 New variable in properties files<br>
 <span class="example">find.mark.delete=1</span><br>
 If 1, then pressing the button "Mark all" removed any earlier bookmarks.
 
-<h5>
+<h5 id="TabsMoving">
 [TabsMoving] <span class=desc>(Authors: VladVRO, Dmitry Maslov)</span></h5>
 You can move tabs now. In editor added two new commands <span class="example">IDM_MOVETABLEFT</span> and <span class="example">IDM_MOVETABRIGHT</span> for shift current tab left or right and added identical commands in menu Buffers.<br>
 And also you can move tab by mouse now.
 
-<h5>[TabbarTitleMaxLength] <span class=desc>(Author: VladVRO)</span></h5>
+<h5 id="TabbarTitleMaxLength">
+[TabbarTitleMaxLength] <span class=desc>(Author: VladVRO)</span></h5>
 New variable in properties files<br>
 <span class="example">tabbar.title.maxlength=&lt;number value&gt;</span><br>
 set limit of tab text length (file name). If text length greater than setup value then text will cut off and finalized with "…"
 
-<h5>[NewBufferPosition] <span class=desc>(Author: VladVRO)</span></h5>
+<h5 id="NewBufferPosition">
+[NewBufferPosition] <span class=desc>(Author: VladVRO)</span></h5>
 New variable in properties files<br>
 <span class="example">buffers.new.position=&lt;number value&gt;</span><br>
 0 - new tab should be opened at last position in buffers list (default), 1 - next the current tab, 2 - first in list.
 
-<h5>
+<h5 id="warning.couldnotopenfile.disable">
 [warning.couldnotopenfile.disable] <span class=desc>(Author: mozers)</span></h5>
 New variable in properties files<br>
 <span class="example">warning.couldnotopenfile.disable=1</span><br>
 1 - removes warning "Could not open file", which is shown at opening a nonexistent file. The new buffer with the set name will be silently created.
 
-<h5>[ZorderSwitchingOnClose] <span class=desc>(Author: VladVRO)</span></h5>
+<h5 id="ZorderSwitchingOnClose">
+[ZorderSwitchingOnClose] <span class=desc>(Author: VladVRO)</span></h5>
 Modification variable in properties files<br>
 <span class="example">buffers.zorder.switching=1</span><br>
 if option is present then after closing buffer current buffer will be next in buffers stack.
 
-<h5>[new_on_dbl_clk] <span class=desc>(Author: Dmitry Maslov)</span></h5>
+<h5 id="new_on_dbl_clk">
+[new_on_dbl_clk] <span class=desc>(Author: Dmitry Maslov)</span></h5>
 You can open new buffer now by double click on empty space on right of tabs (a-la FireFox).
 
-<h5>
+<h5 id="close_on_dbl_clk">
 [close_on_dbl_clk] <span class=desc>(Author: Dmitry Maslov, Moon_aka_Sun, VladVRO)</span></h5>
 You can close current buffer now by double click on tabs.
 
-<h5>[SetBookmark] <span class=desc>(Author: Midas)</span></h5>
+<h5 id="SetBookmark">
+[SetBookmark] <span class=desc>(Author: Midas)</span></h5>
 You can set bookmark by single click on Bookmark's bar now.<br>
 And you can switch off this feature by setup new parameter in .properties:<br>
 <span class="example">margin.bookmark.by.single.click=0</span>
 
-<h5>[position.autosave] <span class=desc>(Author: Dmitry Maslov)</span></h5>
+<h5 id="position.autosave">
+[position.autosave] <span class=desc>(Author: Dmitry Maslov)</span></h5>
 New variable in properties files<br>
 <span class="example">save.settings.path=</span> set to file, which, at the close of SciTE will automatically save the current size and position of window.
 
-<h5>[output.caret] <span class=desc>(Author: VladVRO)</span></h5>
+<h5 id="output.caret">
+[output.caret] <span class=desc>(Author: VladVRO)</span></h5>
 New variables in properties files<br>
 <span class="example">output.caret.fore</span><br>
 <span class="example">output.caret.line.back</span><br>
 <span class="example">output.caret.line.back.alpha</span><br>
 Sets caret style of the output window.
 
-<h5>[NewIcons] <span class=desc>(Author: VladVRO)</span></h5>
+<h5 id="NewIcons">
+[NewIcons] <span class=desc>(Author: VladVRO)</span></h5>
 New icons for the files associated with SciTE and for sessions files.
 
-<h5>[AbbrevRefactoring] <span class=desc>(Author: VladVRO)</span></h5>
+<h5 id="AbbrevRefactoring">
+[AbbrevRefactoring] <span class=desc>(Author: VladVRO)</span></h5>
 Using of char '|' identical for Insert Abbreviation (Ctrl+Shift+R) and for Expand Abbreviation (Ctrl+B).
 
-<h5>[VarAbbrev] <span class=desc>(Authors: mimir, VladVRO)</span></h5>
+<h5 id="VarAbbrev">
+[VarAbbrev] <span class=desc>(Authors: mimir, VladVRO)</span></h5>
 It is possible to add user variables into list of abbreviation (abbrev).<br>
 - <span class="example">%SEL%</span> - selected text<br>
 - <span class="example">%CLP%</span> - text from clipboard<br>
@@ -249,42 +264,49 @@ New variable in properties files<br>
 allows to insert selected text without using %SEL% variable.<br>
 In this case selected text is inserted instead of last char '<span class="example">|</span>'.
 
-<h5>[abbrev.always.update] <span class=desc>(Author: mimir)</span></h5>
+<h5 id="abbrev.always.update">
+[abbrev.always.update] <span class=desc>(Author: mimir)</span></h5>
 If there is only one abbreviation file in use, without <br>
 <span class="example">abbrev.always.update=1</span><br>
 it will be renewed after Scite restart only.
 
-<h5>[AbbrevExpandIncremental] <span class=desc>(Author: VladVRO)</span></h5>
+<h5 id="AbbrevExpandIncremental">
+[AbbrevExpandIncremental] <span class=desc>(Author: VladVRO)</span></h5>
 New variable in properties files<br>
 <span class="example">abbrev.expand.incremental=1</span><br>
 Changing expanding method to incremental for expand abbreviation by Ctrl+B, in other words new method  to expand abbreviation is taking one char first, then two and so on.
 
-<h5>[AbbrevMaxLength] <span class=desc>(Author: VladVRO)</span></h5>
+<h5 id="AbbrevMaxLength">
+[AbbrevMaxLength] <span class=desc>(Author: VladVRO)</span></h5>
 New variable in properties files<br>
 <span class="example">abbrev.maximum.length=[value]</span><br>
 Set value of length limit for expand abbreviation by Ctrl+B, in other words it is the maximum length of text for comparing with abbreviations set
 
-<h5>
+<h5 id="import">
 [import] <span class=desc>(Author: mimir, VladVRO)</span></h5>
 Changed rules for import file in properties files. In first case trying to load file with name as is, if file not found then adding extension ".properties" and repeat trying to open file.<br>
 It is possible to use <span class="example">import</span> instruction in *.abbrev files.
 
-<h5>[selection.hide.on.deactivate] <span class=desc>(Author: mozers)</span></h5>
+<h5 id="selection.hide.on.deactivate">
+[selection.hide.on.deactivate] <span class=desc>(Author: mozers)</span></h5>
 The parameter <span class="example">selection.hide.on.deactivate=0</span> allows to not hide selection from the text when window SciTE loses focus.
 
-<h5>[scite.userhome] <span class=desc>(Authors: gansA, mozers, VladVRO)</span></h5>
+<h5 id="scite.userhome">
+[scite.userhome] <span class=desc>(Authors: gansA, mozers, VladVRO)</span></h5>
 New variable in properties files<br>
 <span class="example">scite.userhome</span> let you assign path to directory $SciteUserHome for user data saving.
 (SciTE.recent, SciTE.ses, SciTEUser.properties)<br>
 Possible to use in the path internal variables of SciTE, for instance:
 <div class="example">scite.userhome=$(SciteDefaultHome)\home</div>
 
-<h5>[IncrementalSearch.AddHotkeys] <span class=desc>(Author: Midas)</span></h5>
+<h5 id="IncrementalSearch.AddHotkeys">
+[IncrementalSearch.AddHotkeys] <span class=desc>(Author: Midas)</span></h5>
 Add on "<span class="example">Incremental Search</span>" (Ctrl+Alt+I) Hotkeys:<br>
 - Enter or F3 - Find Next<br>
 - Shift+Enter or Shift+F3 - Find Previous
 
-<h5>[WarningMessage] <span class=desc>(Author: VladVRO)</span></h5>
+<h5 id="WarningMessage">
+[WarningMessage] <span class=desc>(Author: VladVRO)</span></h5>
 Now can to set up alert with warning message for each warning type:<br>
 <span class="example">warning.findwrapped.message=alert's text</span><br>
 <span class="example">warning.notfound.message=alert's text</span><br>
@@ -293,20 +315,24 @@ Now can to set up alert with warning message for each warning type:<br>
 <span class="example">warning.executeko.message=alert's text</span><br>
 <span class="example">warning.nootherbookmark.message=alert's text</span><br>
 
-<h5> [AutoComplete] <span class=desc>(Author: mimir, VladVRO)</span></h5>
+<h5 id="AutoComplete">
+[AutoComplete] <span class=desc>(Author: mimir, VladVRO)</span></h5>
 Autocomplete function (Ctrl+I, Ctrl+Space) takes variants of end of a word not only from appropriate ".api" a file (as in original SciTE), but also from the edited text.
 
-<h5>[oem2ansi] <span class=desc>(Author: gansA)</span></h5>
+<h5 id="oem2ansi">
+[oem2ansi] <span class=desc>(Author: gansA)</span></h5>
 Parameter <span class="example">output.code.page.oem2ansi=1</span> turn on console output text encoding from OEM to ANSI.<br>
 It let to edit script in win1251 codepage and see it output in console in dos866 codepage without switching codepages.
 
-<h5>[caret] <span class=desc>(Author: mimir)</span></h5>
+<h5 id="caret">
+[caret] <span class=desc>(Author: mimir)</span></h5>
 Added possibility to customize the width and the color of cursor for every lexer individually, i.e. like this:
 <div class="example">caret.fore.$(file.patterns.cpp)=#FF0000<br>
 caret.width.$(file.patterns.cpp)=3</div>
 It is not convenient when there are different colors and backgrounds for different languages but there is only one color for cursor.
 
-<h5>[BetterCalltips] <span class=desc>(Author: chupakabra)</span></h5>
+<h5 id="BetterCalltips">
+[BetterCalltips] <span class=desc>(Author: chupakabra)</span></h5>
 New variable in properties files<br>
 <div class="example">calltip.lexer.automatic<br>
 calltip.*.automatic</div>
@@ -322,11 +348,11 @@ Calltip horizontal position is adjusted to maximize amount of information displa
 <br>
 New Scintilla commands to support several highlight regions inside calltip window (SCI_CALLTIPADDHLT, SCI_CALLTIPCLEARHLT, SCI_CALLTIPUPDATEHLT).
 
-<h5>
+<h5 id="TextSizeMax for Dialog">
 [TextSizeMax for Dialog] <span class=desc>(Author: dB6)</span></h5>
 Increased buffer size for dialog box text conversions up to 1024.
 
-<h5>
+<h5 id="ignore_overstrike_change">
 [ignore_overstrike_change] <span class=desc>(Author: Dmitry Maslov)</span></h5>
 New variable in properties files<br>
 <span class="example">change.overwrite.enable=0</span> includes a mode of ignoring of switching of a mode INS/OVR.<br>
@@ -342,36 +368,47 @@ It is possible to set this parameter through SCI_SETOVERTYPE<br>
       Extensions
     </h3>
 
-<h5> <sup>new</sup>
+<h5 id="BatchLexerImprovement"> <sup>new</sup>
+[BatchLexerImprovement] <span class=desc>(Author: VladVRO)</span></h5>
+Powerfull modified lexer batch (processing of batch files *.bat, *.cmd, *.nt).<br>
+Fixed at folding's processing. The number of supported styles is increased up to 10.<br>
+New variable in properties files<br>
+<span class="example">lexer.batch.enabledelayedexpansion=1</span><br>
+Set individual style support variables of type !variable! (See details in <a href="http://code.google.com/p/scite-ru/issues/detail?id=96">Issue 96</a>)
+
+<h5 id="LocalizationFromLua"> <sup>new</sup>
 [LocalizationFromLua] <span class=desc>(Author: VladVRO)</span></h5>
 In SciTE Lua Scripting Extension added new command:<br>
 <span class="example">scite.GetTranslation(s, [retainIfNotFound])</span>, it returns translation of the sentance <span class="example"><i>s</i></span>,<br>
 <span class="example"><i>retainIfNotFound</i></span> - (by default is <span class="example"><i>true</i></span>) should return the input value if translation was not found.<br>
 Translations are taken from the file <span class="example">locale.properties</span>.
 
-<h5> <sup>new</sup>
+<h5 id="OnFinalise"> <sup>new</sup>
 [OnFinalise] <span class=desc>(Author: VladVRO)</span></h5>
 Added new SciTE event in Lua API <span class="example">OnFinalise()</span>. Event arises on exit from editor.
 
-<h5>
+<h5 id="ABAP">
 [ABAP] <span class=desc>(Author: VladVRO)</span></h5>
 Added new lexer for ABAP/4 language.
 
-<h5>
+<h5 id="EditorUnicodeMode">
 [EditorUnicodeMode] <span class=desc>(Author: VladVRO)</span></h5>
 Added new property <span class="example">editor.unicode.mode</span> for editor unicode mode which has been assigned by editor and can be one from next states:
 <span class="example">IDM_ENCODING_DEFAULT, IDM_ENCODING_UCS2BE, IDM_ENCODING_UCS2LE, IDM_ENCODING_UTF8, IDM_ENCODING_UCOOKIE</span>.
 
-<h5>[macro] <span class=desc>(Author: VladVRO)</span></h5>
+<h5 id="macro">
+[macro] <span class=desc>(Author: VladVRO)</span></h5>
 Support of record and play macro using LUA.
 
-<h5>[OnMenuCommand] <span class=desc>(Author: VladVRO)</span></h5>
+<h5 id="OnMenuCommand">
+[OnMenuCommand] <span class=desc>(Author: VladVRO)</span></h5>
 Added new SciTE event - <span class="example">OnMenuCommand (msg, source)</span><br>
 <span class="example">msg</span> - function id (SCI_constant)<br>
 <span class="example">source</span> - input parameter of editor's internal function MenuCommand.<br>
 It can be equal to IDM_SRCWIN (350) - editor's window, or IDM_RUNWIN (351) - output window, or something else where the focus is.
 
-<h5>[OnSendEditor] <span class=desc>(Author: VladVRO)</span></h5>
+<h5 id="OnSendEditor">
+[OnSendEditor] <span class=desc>(Author: VladVRO)</span></h5>
 Added new event to SciTE - <span class="example">OnSendEditor (msg, wp, lp)</span><br>
 Parameters the same as SendEditor.<br>
 <span class="example">msg</span> - function id (SCI_constant)<br>
@@ -387,60 +424,68 @@ Example of letter case changing macro:
 &nbsp;&nbsp;end<br>
 end</div>
 
-<h5>
+<h5 id="OnClick">
 [OnClick] <span class=desc>(Author: Dmitry Maslov)</span></h5>
 Added new event to SciTE <span class="example">OnClick()</span>. Event arises from a single click on the mouse left button in the editing pane or the output pane.<br>
 Receives the state of key modifiers (Shift, Ctrl, Alt):<br>
 <span class="example">function OnClick(shift, ctrl, alt)</span>
 
-<h5>[OnDoubleClick] <span class=desc>(Author: mimir, Dmitry Maslov)</span></h5>
+<h5 id="OnDoubleClick">
+[OnDoubleClick] <span class=desc>(Author: mimir, Dmitry Maslov)</span></h5>
 Event <span class="example">OnDoubleClick()</span> is expanded, now it is returned to the state of key modifiers (Shift, Ctrl, Alt):<br>
 <span class="example">function OnDoubleClick(shift, ctrl, alt)</span>
 
-<h5>[OnKey] <span class=desc>(Author: Dmitry Maslov)</span></h5>
+<h5 id="OnKey">
+[OnKey] <span class=desc>(Author: Dmitry Maslov)</span></h5>
 Function <span class="example">OnKey</span> is expanded, now in it the pressed symbol is passed also:<br>
 <span class="example">function OnKey(key, shift, ctrl, alt, char)</span>
 
-<h5>
+<h5 id="OnMouseButtonUp">
 [OnMouseButtonUp] <span class=desc>(Author: VladVRO)</span></h5>
 Added new event to SciTE <span class="example">OnMouseButtonUp()</span>. Event arises from a mouse button up in the editing pane or the output pane.<br>
 Receives the state of Ctrl:<br>
 <span class="example">function OnMouseButtonUp(ctrl)</span>
 
-<h5>
+<h5 id="MouseClickHandled">
 [MouseClickHandled] <span class=desc>(Author: VladVRO)</span></h5>
 Added new message <span class="example">SCI_SETMOUSECAPTURE</span> to the Scintilla for change mouse cuptured state.<br>
 This message let to inform the Scintilla that mouse click handled.<br>
 Example: <span class="example">SendEditor(SCI_SETMOUSECAPTURE, 0)</span> <br>
 And this message will be sent if <span class="example">OnClick()</span> or <span class="example">OnDoubleClick()</span> returns <span class="example"><i>true</i></span>.
 
-<h5>[Perform] <span class=desc>(Author: VladVRO)</span></h5>
+<h5 id="Perform">
+[Perform] <span class=desc>(Author: VladVRO)</span></h5>
 In SciTE Lua Scripting Extension added new command<br>
 <span class="example">scite.Perform(actionList)</span> - execute commands <a href="http://scintilla.sourceforge.net/SciTEDirector.html">SciTE Director Interface</a><br>
 with <span class="example">actionList</span> - one or several commands separated by a symbol of a new line.
 
-<h5>
+<h5 id="ReloadStartupScript">
 [ReloadStartupScript] <span class=desc>(Author: VladVRO)</span></h5>
 In SciTE Lua Scripting Extension added new command<br>
 <span class="example">scite.ReloadStartupScript()</span> - this function initializes Lua startup script reloading.
 
-<h5>[GetLexerLanguage] <span class=desc>(Author: Dmitry Maslov)</span></h5>
+<h5 id="GetLexerLanguage">
+[GetLexerLanguage] <span class=desc>(Author: Dmitry Maslov)</span></h5>
 Added Scitilla message allowing to receive a name current lexers:<br>
 Now <span class="example">editor.LexerLanguage</span> - allows both to set lexer, and to receive current
 
-<h5>[GetAPIPath] <span class=desc>(Author: dB6)</span></h5>
+<h5 id="GetAPIPath">
+[GetAPIPath] <span class=desc>(Author: dB6)</span></h5>
 APIPath - new SciTE environment variable. Contains a meaning full path of the current api file.
 
-<h5>[GetAbbrevPath] <span class=desc>(Author: dB6)</span></h5>
+<h5 id="GetAbbrevPath">
+[GetAbbrevPath] <span class=desc>(Author: dB6)</span></h5>
 AbbrevPath - new SciTE environment variable. Contains a meaning full path of the current abbrev file.
 
-<h5>[AbbrevRefactoring] <span class=desc>(Author: Dmitry Maslov)</span></h5>
+<h5 id="AbbrevRefactoring">
+[AbbrevRefactoring] <span class=desc>(Author: Dmitry Maslov)</span></h5>
 In SciTE Lua Scripting Extension added new command<br>
 <span class="example">InsertAbbreviation(string)</span><br>
 where "<span class="example">string</span>" - is a text, on a format similar to abbreviation, for example:
 <div class="example">scite.InsertAbbreviation("&lt;a href="|" title=""&gt;%SEL%&lt;/a&gt;")</div>
 
-<h5>[ParametersDialogFromLua] <span class=desc>(Author: VladVRO)</span></h5>
+<h5 id="ParametersDialogFromLua">
+[ParametersDialogFromLua] <span class=desc>(Author: VladVRO)</span></h5>
 In SciTE Lua Scripting Extension added new command  for show "Parameters" dialog (Shift+F8)<br>
 <span class="example">scite.ShowParametersDialog(text)</span><br>
 <span class="example">text</span> - short comment for window.<br>
@@ -458,30 +503,38 @@ Sample:
 &nbsp;&nbsp;end
 </div>
 
-<h5>[FileAttr in PROPS] <span class=desc>(Author: Midas)</span></h5>
+<h5 id="FileAttr in PROPS">
+[FileAttr in PROPS] <span class=desc>(Author: Midas)</span></h5>
 Now accessible from scripts additional file properties<br>
 <span class="example">FileAttr</span>, <span class="example">FileTime</span>, <span class="example">FileDate</span>.
 
-<h5>[CalltipBreaks] <span class=desc>(Author: Mitchell Foral)</span></h5>
+<h5 id="CalltipBreaks">
+[CalltipBreaks] <span class=desc>(Author: Mitchell Foral)</span></h5>
 Long bubble helps can be carried on the next line (by adding symbol \n at appropriate line in api-file)
 
-<h5>[Euphoria] <span class=desc>(Author: Midas)</span></h5>
+<h5 id="Euphoria">
+[Euphoria] <span class=desc>(Author: M Duffy, Midas)</span></h5>
 Add new lexer <a href="http://www.rapideuphoria.com">Euphoria</a>
 
-<h5>[C_Word] <span class=desc>(Author: mimir)</span></h5>
+<h5 id="C_Word">
+[C_Word] <span class=desc>(Author: mimir)</span></h5>
 Added 3 new classes for LexCpp's keywords (i.e. now you can set up to 4 additional vocabularies with different highlight)
 
-<h5>[PropsKeysSets] <span class=desc>(Author: VladVRO)</span></h5>
+<h5 id="PropsKeysSets">
+[PropsKeysSets] <span class=desc>(Author: VladVRO)</span></h5>
 Added 4 classes for LexProps's keywords (i.e. now you can set up to 4 additional vocabularies with different highlight)<br>
 And words can contain symbol ~, meaning a random set of characters. For example <span class="example">block.start.~</span> or <span class="example">braces.~.style</span>
 
-<h5>[PropsKeywords] <span class=desc>(Author: VladVRO)</span></h5>
+<h5 id="PropsKeywords">
+[PropsKeywords] <span class=desc>(Author: VladVRO)</span></h5>
 Added colorizing for "import" and "if" keywords in properties file.
 
-<h5>[GetApplicationProps] <span class=desc>(Author: VladVRO)</span></h5>
+<h5 id="GetApplicationProps">
+[GetApplicationProps] <span class=desc>(Author: VladVRO)</span></h5>
 New function SciTEBase::GetProps() (for developers) allows to get access to properties of the editor in any place of a code of the editor.
 
-<h5>[Zoom] <span class=desc>(Author: Dmitry Maslov)</span></h5>
+<h5 id="Zoom">
+[Zoom] <span class=desc>(Author: Dmitry Maslov)</span></h5>
 Now OnSendEditor can trace event SCI_SETZOOM arising at change of the size of a font.
 
     <h3>
@@ -489,69 +542,76 @@ Now OnSendEditor can trace event SCI_SETZOOM arising at change of the size of a 
       Bug fix
     </h3>
 
-<h5>
+<h5 id="PropsColouriseFix">
 [PropsColouriseFix] <span class=desc>(Author: VladVRO)</span></h5>
 Fixed coloring of syntax in properties files for long lines (more then 1024 chars) and for lines with division of words.
 
-<h5>
+<h5 id="LuaLexerImprovement">
 [LuaLexerImprovement] <span class=desc>(Author: VladVRO)</span></h5>
 Changed lexer for language Lua.<br>
 Simbols ":" and "." processed as separator for object now. You can setup lexer keywords as <span class="example">string.sub</span> or <span class="example">editor:append</span> as before and you can setup object function or property as <span class="example">:GetText</span> or <span class="example">.Cursor</span> now.
 
-<h5>
+<h5 id="GoMessageImprovement">
 [GoMessageImprovement] <span class=desc>(Author: VladVRO)</span></h5>
 Made the editor window focused after uses double-click in console on message with file name and line number.<br>
 For implementation used <span class="example">[OnMouseButtonUp]</span> improvement.
 
-<h5>
+<h5 id="fix_invalid_codepage">
 [fix_invalid_codepage] <span class=desc>(Author: Dmitry Maslov)</span></h5>
 Bug fixed at which switching in the "Code Page Property" did not work if the props code.page has been set incorrectly. (<a href="http://code.google.com/p/scite-ru/issues/detail?id=49">details</a>)
 
-<h5>[English_KeyCode] <span class=desc>(Author: Dmitry Maslov)</span></h5>
+<h5 id="English_KeyCode">
+[English_KeyCode] <span class=desc>(Author: Dmitry Maslov)</span></h5>
 Bug fixed at which keyboard shortcut ceased to work after switching keyboard layout. (<a href="http://code.google.com/p/scite-ru/issues/detail?id=43">details</a>)
 
-<h5>[InputErr] <span class=desc>(Author: mimir)</span></h5>
+<h5 id="InputErr">
+[InputErr] <span class=desc>(Author: mimir)</span></h5>
 Bug fixed in deadlock of SciTE on using <span class="example">command.input</span>.<br>
 If user forget to select text before running script it cause deadlock.
 
-<h5>[SelectionErr] <span class=desc>(Author: mimir)</span></h5>
+<h5 id="SelectionErr">
+[SelectionErr] <span class=desc>(Author: mimir)</span></h5>
 Bug fixed in text output on <span class="example">command.input</span> and <span class="example">$(CurrentSelection)</span> in UTF-8 code page only.<br>
 It prevent from transfer Russian text into external script or program.
 
-<h5>[StyleDefault] <span class=desc>(Authors: VladVRO, Dmitry Maslov)</span></h5>
+<h5 id="StyleDefault">
+[StyleDefault] <span class=desc>(Authors: VladVRO, Dmitry Maslov)</span></h5>
 Are removed default values of symbols color (black) and a background (white), that allows to not set them obviously in files of adjustment in all styles for set of a corresponding background at export of a file.<br>
 If the <span class="example">style.*.32</span> do not raised characters and the background color, these parameters are collected from your Windows, i.e. equal system Window Text/Background.
 
-<h5>[LowerUpperCase] <span class=desc>(Author: Midas, VladVRO)</span></h5>
+<h5 id="LowerUpperCase">
+[LowerUpperCase] <span class=desc>(Author: Midas, VladVRO)</span></h5>
 Correct working with national characters<br>
 - for Make Lower / Upper Case,<br>
 - for Search without match case,<br>
 - for Search with Regular expression
 
-<h5>[FindInFiles] <span class=desc>(Author: dB6)</span></h5>
+<h5 id="FindInFiles">
+[FindInFiles] <span class=desc>(Author: dB6)</span></h5>
 Selected text inserted into FindInFiles dialog solely in the UTF-8, thus Russian letter turned out unreadable.
 
-<h5>
+<h5 id="find_in_files_no_empty">
 [find_in_files_no_empty] <span class=desc>(Author: Dmitry Maslov)</span></h5>
 "Find in Files" now is not started if into a input box "Find what:" have entered nothing. (<a href="http://code.google.com/p/scite-ru/issues/detail?id=52">Issue 52</a>).
 
-<h5>[FileReaderUnlimitedLen] <span class=desc>(Author: VladVRO)</span></h5>
+<h5 id="FileReaderUnlimitedLen">
+[FileReaderUnlimitedLen] <span class=desc>(Author: VladVRO)</span></h5>
 Removed the restriction on the length of lines in the internal Find in Files. Earlier in long lines only to find worked 1,001 characters, the rest ignored.
 
-<h5>[AbbrevFixCaretPos] <span class=desc>(Author: VladVRO)</span></h5>
+<h5 id="AbbrevFixCaretPos">
+[AbbrevFixCaretPos] <span class=desc>(Author: VladVRO)</span></h5>
 Fixed positioning of caret in insert abbreviation action.<br>
 Bug was in case when abbreviation body has one simbol '|' and in action was not selection text.
 
-<h5>[no_wornings] <span class=desc>(Author: Dmitry Maslov)</span></h5>
+<h5 id="no_wornings">
+[no_wornings] <span class=desc>(Author: Dmitry Maslov)</span></h5>
 Added compatibility with the compiler Visual C++ 6.0<br>
 Eliminated some of warnings in the compilation of Visual C++ 6.0<br>
 <span class="example">warning C4702: unreachable code</span>
 
-<h5>[SQLcase] <span class=desc>(Author: mimir)</span></h5>
+<h5 id="SQLcase">
+[SQLcase] <span class=desc>(Author: mimir)</span></h5>
 The word "case" added into LexSQL to start folding
-
-<p><hr>
-<small>On the found inaccuracies in the description I ask to report to mozers(@)mail.ru</small>
 
 </body>
 </html>
