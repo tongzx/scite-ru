@@ -1,19 +1,19 @@
 --[[--------------------------------------------------
-CIViewer (Color Image Viewer) v1.0
+CIViewer (Color Image Viewer) v1.1
 Автор: mozers™
 
 * Preview of color or image under mouse cursor
 * Предпросмотр цвета, заданного значением в виде "#6495ED" или "red" или рисунка по его URL
 * Данный скрипт служит для обеспечения работоспособности основного приложения CIViewer.hta
 -----------------------------------------------
-Для подключения добавьте в свой файл .properties следующие строки:
+Для обеспечения работоспособности добавьте в SciTEStartup.lua строку:
+    dofile (props["SciteDefaultHome"].."\\tools\\CIViewer\\CIViewer.lua")
+
+Для вызова приложения из меню Tools добавьте в свой файл .properties следующие строки:
     command.parent.112.*=9
     command.name.112.*=Color Image Viewer
     command.112.*="$(SciteDefaultHome)\tools\CIViewer\CIViewer.hta"
     command.mode.112.*=subsystem:shellexec
-
-Добавьте в SciTEStartup.lua строку
-    dofile (props["SciteDefaultHome"].."\\tools\\CIViewer\\CIViewer.lua")
 --]]----------------------------------------------------
 
 local function FileExist(path)
@@ -36,15 +36,14 @@ local function GetWText(pos, word)
 		local line_end_pos = editor:PositionFromLine(cur_line + 1) - 2
 		local s, e
 		repeat
-			s, e = editor:findtext ('[^"|= ]+', SCFIND_REGEXP, line_start_pos, line_end_pos)
+			s, e = editor:findtext ('[^"|=()]+', SCFIND_REGEXP, line_start_pos, line_end_pos)
 			if s == nil then break end
 			line_start_pos = e + 1
 		until (pos >= s and pos < e)
 		if s ~= nil then
+			-- проверка существования файла на диске
 			url = props["FileDir"].."\\"..editor:textrange(s, e)
-			if not FileExist(url) then
-				url = ""
-			end
+			if not FileExist(url) then url = "" end
 		end
 	end
 

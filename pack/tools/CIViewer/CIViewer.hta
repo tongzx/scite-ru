@@ -14,7 +14,7 @@ contextMenu=no
 caption=no
 showInTaskBar=no
 singleinstance=yes
-version=1.0
+version=1.1
 >
 <title>CI Viewer</title>
 <style type="text/css">
@@ -74,7 +74,7 @@ version=1.0
 	SciTE.Focus();
 	// Запуск в SciTE процедуры OnDwellStart, проверяющей положение курсора
 	SciTE.Props("dwell.period")="50";
-	SciTE.MenuCommand(416);
+	SciTE.MenuCommand(416); // Другого способа включить OnDwellStart не нашел :(
 	SciTE.MenuCommand(416);
 	// SciTE.Send("property:dwell.period=500");
 
@@ -104,7 +104,7 @@ version=1.0
 			// Если нажата левая кнопка - закрытие окна
 			// Отключаем в SciTE процедуру OnDwellStart
 			SciTE.Props("dwell.period")="";
-			SciTE.MenuCommand(416);
+			SciTE.MenuCommand(416); // Другого способа отключить OnDwellStart не нашел :(
 			SciTE.MenuCommand(416);
 			self.close();
 		}
