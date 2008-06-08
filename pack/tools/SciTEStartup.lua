@@ -115,6 +115,9 @@ dofile (props["SciteDefaultHome"].."\\tools\\OpenFindFiles.lua")
 
 ----[[ У Т И Л И Т Ы  И  И Н С Т Р У М Е Н Т Ы ]]-----------------------------
 
+-- Color Image Viewer: Предпросмотр цвета и изображений
+dofile (props["SciteDefaultHome"].."\\tools\\CIViewer\\CIViewer.lua")
+
 -- SciTE_HexEdit: A Self-Contained Primitive Hex Editor for SciTE
 dofile (props["SciteDefaultHome"].."\\tools\\HexEdit\\SciTEHexEdit.lua")
 
