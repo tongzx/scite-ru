@@ -9,6 +9,16 @@ package.cpath = props["SciteDefaultHome"].."\\tools\\LuaLib\\?.dll;"..package.cp
 require 'shell'
 
 --------------------------------------------------------
+-- ѕровер€ет параметр на nil и если это так то возвращает default иначе возвращает сам параметр
+function ifnil(val, default)
+  if val == nil then
+    return default
+  else
+    return val
+  end
+end
+
+--------------------------------------------------------
 -- ќпределение соответствует ли стиль символа стилю комментари€
 function IsComment(pos)
 	local style = editor.StyleAt[pos]
