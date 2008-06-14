@@ -1,9 +1,9 @@
 --[[--------------------------------------------------
-CIViewer (Color Image Viewer) v1.1
+CIViewer (Color Image Viewer) v2.0
 Автор: mozers™
 
 * Preview of color or image under mouse cursor
-* Предпросмотр цвета, заданного значением в виде "#6495ED" или "red" или рисунка по его URL
+* Предпросмотр цвета, заданного значением в виде "#6495ED" или "red" или рисунка по его URI
 * Данный скрипт служит для обеспечения работоспособности основного приложения CIViewer.hta
 -----------------------------------------------
 Для обеспечения работоспособности добавьте в SciTEStartup.lua строку:
@@ -16,44 +16,30 @@ CIViewer (Color Image Viewer) v1.1
     command.mode.112.*=subsystem:shellexec
 --]]----------------------------------------------------
 
-local function FileExist(path)
-	if (os.rename (path,path)) then
-		return true
-	else
-		return false
-	end
+-- Поиск по строке (возвращается только результат в заданной позиции)
+local function FindInLine(str_line, pattern, cur_pos)
+	local _start, _end, _match
+	_start = 1
+	repeat
+		_start, _end, _match = string.find(str_line, pattern, _start)
+		if _start == nil then return '' end
+		if ((cur_pos >= _start) and (cur_pos < _end)) then return _match end
+		_start = _end + 1
+	until false
 end
 
--- Определяем слово под курсором мыши
-local function GetWText(pos, word)
-	if pos==0 then return end
+-- Поиск стринга похожего на URI в позиции курсора мыши
+local function GetURI(pos)
+	local cur_line = editor:LineFromPosition(pos)
+	local line_start_pos = editor:PositionFromLine(cur_line)
+	local line_string = editor:GetLine(cur_line)
+	local pos_from_line = pos - line_start_pos + 1
 
-	-- Проверка, не является ли слово под курсором частью URL
-	local url = ""
-	if string.len(word) > 4 then
-		local cur_line = editor:LineFromPosition(pos)
-		local line_start_pos = editor:PositionFromLine(cur_line)
-		local line_end_pos = editor:PositionFromLine(cur_line + 1) - 2
-		local s, e
-		repeat
-			s, e = editor:findtext ('[^"|=()]+', SCFIND_REGEXP, line_start_pos, line_end_pos)
-			if s == nil then break end
-			line_start_pos = e + 1
-		until (pos >= s and pos < e)
-		if s ~= nil then
-			-- проверка существования файла на диске
-			url = props["FileDir"].."\\"..editor:textrange(s, e)
-			if not FileExist(url) then url = "" end
-		end
+	local URI = FindInLine(line_string, '"(.-)"', pos_from_line)
+	if URI == '' then
+		URI = FindInLine(line_string, '([^%s"|=()]+)', pos_from_line)
 	end
-
-	-- Сохраняем найденное значение в переменной
-	-- (CIViewer.hta будет периодически проверять это значение)
-	if url ~= "" then
-		props["civiewer.value"] = "@"..url
-	else
-		props["civiewer.value"] = word
-	end
+	return URI
 end
 
 -- Add user event handler OnDwellStart
@@ -61,6 +47,11 @@ local old_OnDwellStart = OnDwellStart
 function OnDwellStart(pos, word)
 	local result
 	if old_OnDwellStart then result = old_OnDwellStart(pos, word) end
-	if GetWText(pos, word) then return true end
+	if pos ~= 0 then
+		-- Присваиваем значения переменным (CIViewer.hta будет периодически их проверять)
+		props["civiewer.word"] = word
+		props["civiewer.pos"] = pos
+		props["civiewer.uri"] = GetURI(pos)
+	end
 	return result
 end
