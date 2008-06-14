@@ -91,17 +91,22 @@ function EditorMarkText(start, length, style_number)
 	scite.SendEditor(SCI_INDICATORFILLRANGE, start, length)
 end
 
--- Очистка текста от маркерного выделения заданного стиля (если стиль не указан - очищаются все)
-function EditorClearMarks(style_number)
-	local _start, _end, style
+-- Очистка текста от маркерного выделения заданного стиля
+--   если параметры отсутсвуют - очищаются все стили во всем тексте
+--   если не указана позиция и длина - очищается весь текст
+function EditorClearMarks(style_number, start, length)
+	local _first_style, _end_style, style
 	if style_number == nil then
-		_start, _end = 0, 31
+		_first_style, _end_style = 0, 31
 	else
-		_start, _end = style_number, style_number
+		_first_style, _end_style = style_number, style_number
 	end
-	for style = _start, _end do
+	if start == nil then
+		start, length = 0, editor.Length
+	end
+	for style = _first_style, _end_style do
 		scite.SendEditor(SCI_SETINDICATORCURRENT, style)
-		scite.SendEditor(SCI_INDICATORCLEARRANGE, 0, editor.Length)
+		scite.SendEditor(SCI_INDICATORCLEARRANGE, start, length)
 	end
 end
 
