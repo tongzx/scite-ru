@@ -370,11 +370,17 @@ It is possible to set this parameter through SCI_SETOVERTYPE<br>
 
 <h5 id="BatchLexerImprovement"> <sup>new</sup>
 [BatchLexerImprovement] <span class=desc>(Author: VladVRO)</span></h5>
-Powerfull modified lexer batch (processing of batch files *.bat, *.cmd, *.nt).<br>
-Fixed at folding's processing. The number of supported styles is increased up to 10.<br>
-New variable in properties files<br>
-<span class="example">lexer.batch.enabledelayedexpansion=1</span><br>
-Set individual style support variables of type !variable! (See details in <a href="http://code.google.com/p/scite-ru/issues/detail?id=96">Issue 96</a>)
+Lexer batch was greatly improved (used for processing of batch files *.bat, *.cmd, *.nt).<br>
+Processing of left parenthesis was fixed.<br>
+Parentheses is highlighted by style <span class="example">SCE_BAT_OPERATOR</span> now and folding was made at them.<br>
+Three new styles were added:<br>
+ - <span class="example">SCE_BAT_ENVIRONMENT</span> for highlight environment variables like <span class="example"><i>%variable%</i></span>,<br>
+ - <span class="example">SCE_BAT_EXPANSION</span> for highlight environment variables like <span class="example"><i>!variable!</i></span>,<br>
+ &nbsp; new property <span class="example">lexer.batch.enabledelayedexpansion=1</span> 
+is setup this highlight on, by default it is off.<br>
+ - <span class="example">SCE_BAT_CLABEL</span> for highlight links to the labels like <span class="example"><i>:name</i></span>,<br>
+<br>
+For more information look at <a href="http://code.google.com/p/scite-ru/issues/detail?id=96">Issue 96</a>.
 
 <h5 id="LocalizationFromLua"> <sup>new</sup>
 [LocalizationFromLua] <span class=desc>(Author: VladVRO)</span></h5>

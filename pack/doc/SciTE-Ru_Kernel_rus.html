@@ -366,11 +366,17 @@ calltip.*.word.wrap</div>
 
 <h5 id="BatchLexerImprovement"> <sup>new</sup>
 [BatchLexerImprovement] <span class=desc>(Автор: VladVRO)</span></h5>
-Значительно доработан лексер batch (обработка пакетных файлов *.bat, *.cmd, *.nt).<br>
-Исправлена ошибка при обработке фолдинга. Число поддерживаемых стилей увеличено до 10.<br>
-Новый параметр в .properties<br>
-<span class="example">lexer.batch.enabledelayedexpansion=1</span><br>
-Включает подсветку переменных вида !variable! (См. подробности в <a href="http://code.google.com/p/scite-ru/issues/detail?id=96">Issue 96</a>)
+Значительно доработан лексер batch (используется для отображения пакетных файлов *.bat, *.cmd, *.nt).<br>
+Исправлена ошибка обработки круглой открывающей скобки.<br>
+Круглые скобки теперь отображаются стилем <span class="example">SCE_BAT_OPERATOR</span> и по ним сделан фолдинг.<br>
+Добавлено три новых стиля:<br>
+ - <span class="example">SCE_BAT_ENVIRONMENT</span> используется для отображения переменных окружения вида <span class="example"><i>%variable%</i></span>,<br>
+ - <span class="example">SCE_BAT_EXPANSION</span> используется для отображения переменных окружения вида <span class="example"><i>!variable!</i></span>,<br>
+ &nbsp; новый параметр в .properties <span class="example">lexer.batch.enabledelayedexpansion=1</span>
+включает подсветку переменных этого вида, по умолчанию она выключена.<br>
+ - <span class="example">SCE_BAT_CLABEL</span> используется для отображения указателей на метки вида <span class="example"><i>:name</i></span>,<br>
+<br>
+Дополнительная информация в <a href="http://code.google.com/p/scite-ru/issues/detail?id=96">Issue 96</a>.
 
 <h5 id="LocalizationFromLua"> <sup>new</sup>
 [LocalizationFromLua] <span class=desc>(Автор: VladVRO)</span></h5>
