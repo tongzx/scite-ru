@@ -105,6 +105,9 @@ dofile (props["SciteDefaultHome"].."\\tools\\AutocompleteObject.lua")
 -- Подсветка парных тегов в HTML
 dofile (props["SciteDefaultHome"].."\\tools\\highlighting_paired_tags.lua")
 
+-- Подсветка линков в тексте и открытие их в броузере при клике с зажатым Ctrl
+dofile (props["SciteDefaultHome"].."\\tools\\HighlightLinks.lua")
+
 ----[[ Д О П О Л Н И Т Е Л Ь Н Ы Е  М Е Н Ю ]]--------------------------------
 
 -- После выполнения команды "Найти в файлах..." создает пункт в контекстном меню консоли - "Открыть найденные файлы"
