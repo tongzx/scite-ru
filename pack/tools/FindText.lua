@@ -1,5 +1,5 @@
 --[[--------------------------------------------------
-FindText v7.0
+FindText v7.1
 Авторы: mozers™, mimir, Алексей, codewarlock1101, VladVRO
 
 * Если текст выделен - ищется выделенная подстрока
@@ -38,17 +38,20 @@ if firstNum < 1 or firstNum > 31 then firstNum = 31 end
 local isOutput = props['findtext.marks.only'] ~= '1'
 
 local sText = props['CurrentSelection']
-local flag = 0
+local flag0 = 0
 if (sText == '') then
 	sText = props['CurrentWord']
-	flag = SCFIND_WHOLEWORD
+	flag0 = SCFIND_WHOLEWORD
 end
+local flag1 = 0
+if props['findtext.matchcase'] == '1' then flag1 = SCFIND_MATCHCASE end
+
 local current_mark_number = scite.SendEditor(SCI_GETINDICATORCURRENT)
 if current_mark_number < firstNum then current_mark_number = firstNum end
 if string.len(sText) > 0 then
 	local msg
 	if isOutput then
-		if flag == SCFIND_WHOLEWORD then
+		if flag0 == SCFIND_WHOLEWORD then
 			msg = '> '..scite.GetTranslation('Search for current word')..': "'
 		else
 			msg = '> '..scite.GetTranslation('Search for selected text')..': "'
@@ -59,7 +62,7 @@ if string.len(sText) > 0 then
 		scite.SendOutput(SCI_SETPROPERTY, 'lexer.errorlist.findtitle.end', '"')
 		print(msg..sText..'"')
 	end
-	local s,e = editor:findtext(sText,flag,1)
+	local s,e = editor:findtext(sText, flag0 + flag1, 1)
 	local count = 0
 	if(s~=nil)then
 		local m = editor:LineFromPosition(s) - 1
@@ -74,7 +77,7 @@ if string.len(sText) > 0 then
 				end
 				m = l
 			end
-			s,e = editor:findtext(sText,flag,e+1)
+			s,e = editor:findtext(sText, flag0 + flag1, e+1)
 		end
 		if isOutput then
 			print('> '..string.gsub(scite.GetTranslation('Found: @ results'), '@', count))
@@ -91,7 +94,7 @@ if string.len(sText) > 0 then
 	if current_mark_number > 31 then current_mark_number = firstNum end
 	scite.SendEditor(SCI_SETINDICATORCURRENT, current_mark_number)
 		-- обеспечиваем возможность перехода по вхождениям с помощью F3 (Shift+F3)
-		if flag == SCFIND_WHOLEWORD then
+		if flag0 == SCFIND_WHOLEWORD then
 			editor:GotoPos(editor:WordStartPosition(editor.CurrentPos))
 		else
 			editor:GotoPos(editor.SelectionStart)
