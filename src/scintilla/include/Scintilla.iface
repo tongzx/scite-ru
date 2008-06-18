@@ -1843,7 +1843,10 @@ fun void Colourise=4003(position start, position end)
 set void SetProperty=4004(string key, string value)
 
 # Maximum value of keywordSet parameter of SetKeyWords.
-val KEYWORDSET_MAX=8
+#!-start-[VBLexerImprovement]
+#val KEYWORDSET_MAX=8
+val KEYWORDSET_MAX=16
+#!-end-[VBLexerImprovement]
 
 # Set up the key words used by the lexer.
 set void SetKeyWords=4005(int keywordSet, string keyWords)

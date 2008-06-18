@@ -108,6 +108,15 @@ static void ColouriseVBDoc(unsigned int startPos, int length, int initStyle,
 						sc.ChangeState(SCE_B_KEYWORD3);
 					} else if (keywords4.InList(s)) {
 						sc.ChangeState(SCE_B_KEYWORD4);
+//!-start-[VBLexerImprovement]
+					} else if (keywordlists[4]->len) {
+						for (int wl = 4; wl < KEYWORDSET_MAX; wl++) {
+							if (keywordlists[wl]->InList(s)) {
+								sc.ChangeState(SCE_B_KEYWORD4 + wl - 3);
+								break;
+							}
+						}
+//!-end-[VBLexerImprovement]
 					}	// Else, it is really an identifier...
 					sc.SetState(SCE_B_DEFAULT);
 				}
