@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 FoldText.lua
 mozers™
-version 1.0
+version 1.1
 ------------------------------------------------------
 It is primitive variant of Steve Donovan's script <http://lua-users.org/wiki/SciteTextFolding>
 extman.lua is not required.
@@ -112,18 +112,23 @@ local function get_level(line_num)
 			end
 		else
 			-- number (e.g. "Chapter 2.3.1" or "3.1 Header")
+			local _, level
+			level = 0
 			if num_pos == "start" or num_pos == "" then
 				outline = string.match(line,"^%s*([%d%.]+)")
-				if outline ~= nil then num_pos = "start" end
+				if outline ~= nil then
+					_, level = string.gsub(outline, "%d+", "")
+				end
+				if level > 0 then num_pos = "start" end
 			end
 			if num_pos == "end" or num_pos == "" then
-				outline = string.match(line,"([%d%.]+)%s*$")
-				if outline ~= nil then num_pos = "end" end
+				outline = string.match(line,"%s([%d%.]+)%s*$")
+				if outline ~= nil then
+					_, level = string.gsub(outline, "%d+", "")
+				end
+				if level > 0 then num_pos = "end" end
 			end
-			if outline ~= nil then
-				local _, level = string.gsub(outline, "%d+", "")
-				return level
-			end
+			if level > 0 then return level end
 		end
 	end
 	return nil
