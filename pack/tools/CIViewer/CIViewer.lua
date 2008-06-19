@@ -1,5 +1,5 @@
 --[[--------------------------------------------------
-CIViewer (Color Image Viewer) v2.0
+CIViewer (Color Image Viewer) v2.0.1
 Àâòîð: mozers™
 
 * Preview of color or image under mouse cursor
@@ -35,10 +35,14 @@ local function GetURI(pos)
 	local line_string = editor:GetLine(cur_line)
 	local pos_from_line = pos - line_start_pos + 1
 
-	local URI = FindInLine(line_string, '"(.-)"', pos_from_line)
-	if URI == '' then
-		URI = FindInLine(line_string, '([^%s"|=()]+)', pos_from_line)
-	end
+	local URI = ''
+	URI = FindInLine(line_string, '"(.-)"', pos_from_line)
+	if URI ~= '' then return URI end
+	URI = FindInLine(line_string, "'(.-)'", pos_from_line)
+	if URI ~= '' then return URI end
+	URI = FindInLine(line_string, '%((.-)%)', pos_from_line)
+	if URI ~= '' then return URI end
+	URI = FindInLine(line_string, '([^%s"|=]+)', pos_from_line)
 	return URI
 end
 
