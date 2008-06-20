@@ -163,7 +163,8 @@ static void ColouriseBatchLine(
 		return;
 //!-start-[BatchLexerImprovement]
 	// Check for Comment - return if found
-	} else if (CompareNCaseInsensitive(lineBuffer+offset, "rem", 3) == 0) {
+	} else if (CompareNCaseInsensitive(lineBuffer+offset, "rem", 3) == 0 &&
+	           isspacechar(lineBuffer[offset + 3])) {
 			styler.ColourTo(endPos, SCE_BAT_COMMENT);
 			return;
 //!-end-[BatchLexerImprovement]
