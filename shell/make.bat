@@ -27,7 +27,7 @@ SET PATH=%MINGW%;C:\Program Files\CodeBlocks\bin;%PATH%
 CD /D "%~dp0"
 windres -o resfile.o shell.rc
 IF ERRORLEVEL 1 GOTO error
-gcc -shared -o shell.dll -I%INC% shell.cpp resfile.o scite.la -lstdc++
+gcc -s -shared -o shell.dll -I%INC% shell.cpp resfile.o scite.la -lstdc++
 IF ERRORLEVEL 1 GOTO error
 
 IF EXIST "%UPX3%\upx.exe" (
