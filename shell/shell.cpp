@@ -493,6 +493,17 @@ static int endfindfile( lua_State* L )
 }
 //!-end-[find]
 
+static int fileexists( lua_State* L )
+{
+	LPCTSTR filename = luaL_checkstring( L, 1 );
+	if ( ::GetFileAttributes(filename) != DWORD(-1) ) {
+		lua_pushboolean( L, TRUE );
+		return 1;
+	}
+	lua_pushboolean( L, FALSE );
+	return 1;
+}
+
 #pragma warning(pop)
 
 static const struct luaL_reg shell[] = 
@@ -506,6 +517,7 @@ static const struct luaL_reg shell[] =
 	{ "beginfindfile", beginfindfile },
 	{ "nextfindfile", nextfindfile },
 	{ "endfindfile", endfindfile },
+	{ "fileexists", fileexists },
 	{ NULL, NULL }
 };
 
