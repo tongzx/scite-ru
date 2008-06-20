@@ -161,6 +161,12 @@ static void ColouriseBatchLine(
 			styler.ColourTo(endPos, SCE_BAT_LABEL);
 		}
 		return;
+//!-start-[BatchLexerImprovement]
+	// Check for Comment - return if found
+	} else if (CompareNCaseInsensitive(lineBuffer+offset, "rem", 3) == 0) {
+			styler.ColourTo(endPos, SCE_BAT_COMMENT);
+			return;
+//!-end-[BatchLexerImprovement]
 	// Check for Drive Change (Drive Change is internal command) - return if found
 	} else if ((isalpha(lineBuffer[offset])) &&
 		(lineBuffer[offset + 1] == ':') &&
@@ -230,11 +236,14 @@ static void ColouriseBatchLine(
 		wordBuffer[wbl] = '\0';
 		wbo = 0;
 
+//!-start-[BatchLexerImprovement]
+// REM is comment only when it's a first word in line
 		// Check for Comment - return if found
-		if (CompareCaseInsensitive(wordBuffer, "rem") == 0) {
-			styler.ColourTo(endPos, SCE_BAT_COMMENT);
-			return;
-		}
+		// if (CompareCaseInsensitive(wordBuffer, "rem") == 0) {
+			// styler.ColourTo(endPos, SCE_BAT_COMMENT);
+			// return;
+		// }
+//!-end-[BatchLexerImprovement]
 		// Check for Separator
 		if (IsBSeparator(wordBuffer[0])) {
 			// Check for External Command / Program
