@@ -155,10 +155,12 @@ shell.msgbox
 shell.getfileattr
 shell.setfileattr
 shell.run
-msgbox (<Text>, <Title>, <Options>) - Message Box. Return select button (only SciTE-Ru)
-getfileattr (<FileName>) - return File Attribute as number (only SciTE-Ru)
-setfileattr (<FileName>, <FileAttr>) - Set File Attribute (only SciTE-Ru)
-run (Command, [WindowStyle], [WaitOnReturn]) (only SciTE-Ru)
+shell.fileexists
+msgbox (<Text>, <Title>, <Options>) - Message Box. Return select button (extern lib "shell")
+getfileattr (<FileName>) - return File Attribute as number (extern lib "shell")
+setfileattr (<FileName>, <FileAttr>) - Set File Attribute (extern lib "shell")
+run (Command, [WindowStyle], [WaitOnReturn]) (extern lib "shell")
+fileexists (<FileName>) - return true if file or folder exists (extern lib "shell")
 
 pairs (t) returns the next function and table t plus a nil, iterates over all key-value pairs
 pcall (f, arg1, arg2, ...) protected mode call, catches errors, returns status code first (true=success)
