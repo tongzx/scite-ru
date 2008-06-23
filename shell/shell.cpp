@@ -493,6 +493,68 @@ static int endfindfile( lua_State* L )
 }
 //!-end-[find]
 
+static int findfiles( lua_State* L )
+{
+	LPCTSTR filename = luaL_checkstring( L, 1 );
+
+	WIN32_FIND_DATA	findFileData;
+	HANDLE hFind;
+
+	hFind = ::FindFirstFile(filename, &findFileData);
+	if (hFind != INVALID_HANDLE_VALUE) {
+		try {
+			// create table for result
+			lua_createtable( L, 1, 0 );
+
+			lua_Integer num = 1;
+			bool isFound = true;
+			while(isFound)
+			{
+				// store file info
+				lua_pushinteger( L, num );
+				lua_createtable( L, 0, 4 );
+
+				lua_pushstring( L, findFileData.cFileName );
+				lua_setfield( L, -2, "name" );
+
+				lua_pushboolean( L, findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY );
+				lua_setfield( L, -2, "isdirectory" );
+
+				lua_pushnumber( L, findFileData.dwFileAttributes );
+				lua_setfield( L, -2, "attributes" );
+
+				lua_Number filesize = findFileData.nFileSizeHigh;
+				lua_Number mulnamber = MAXDWORD;
+				mulnamber += 1;
+				filesize *= mulnamber;
+				filesize += findFileData.nFileSizeLow;
+				lua_pushnumber( L, filesize );
+				lua_setfield( L, -2, "size" );
+
+				lua_settable( L, -3 );
+				num++;
+
+				// next
+				isFound = ::FindNextFile(hFind, &findFileData);
+			}
+
+			::FindClose( hFind );
+
+			return 1;
+
+		} catch (...) {
+			::FindClose( hFind );
+
+			lua_pop( L, 1 );
+			return 0;
+		}
+		
+	} else {
+		// files not found
+		return 0;
+	}
+}
+
 static int fileexists( lua_State* L )
 {
 	LPCTSTR filename = luaL_checkstring( L, 1 );
@@ -517,6 +579,7 @@ static const struct luaL_reg shell[] =
 	{ "beginfindfile", beginfindfile },
 	{ "nextfindfile", nextfindfile },
 	{ "endfindfile", endfindfile },
+	{ "findfiles", findfiles },
 	{ "fileexists", fileexists },
 	{ NULL, NULL }
 };
