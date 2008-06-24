@@ -523,12 +523,7 @@ static int findfiles( lua_State* L )
 				lua_pushnumber( L, findFileData.dwFileAttributes );
 				lua_setfield( L, -2, "attributes" );
 
-				lua_Number filesize = findFileData.nFileSizeHigh;
-				lua_Number mulnamber = MAXDWORD;
-				mulnamber += 1;
-				filesize *= mulnamber;
-				filesize += findFileData.nFileSizeLow;
-				lua_pushnumber( L, filesize );
+				lua_pushnumber( L, findFileData.nFileSizeHigh * ((lua_Number)MAXDWORD + 1) + findFileData.nFileSizeLow );
 				lua_setfield( L, -2, "size" );
 
 				lua_settable( L, -3 );
