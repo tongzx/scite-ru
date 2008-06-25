@@ -1,5 +1,5 @@
 --[[----------------------------------------------------------------------------
-HighlightLinks v1.0
+HighlightLinks v1.1
 јвтор: VladVRO
 
 ѕодсветка линков в тексте и открытие их в броузере при клике с зажатым Ctrl
@@ -20,9 +20,12 @@ HighlightLinks v1.0
   command.mode.137.*=subsystem:lua,savebefore:no
 «адать стиль маркера дл€ подсветки линка:
   find.mark.3=#0000FF,plain
-«адать список имен лексеров через зап€тую (дл€ файлов без лексера им€ null)
-дл€ которых при открытии файла будет автоматически выполн€тьс€ подсветка:
+«адать файлы дл€ которых при открытии и при сохранении файла будет автоматически
+выполн€тьс€ подсветка:
+в виде списка имен лексеров через зап€тую (дл€ файлов без лексера им€ null)
   highlight.links.lexers=null
+или списка расширений файлов через зап€тую:
+  highlight.links.exts=txt,htm
 --]]----------------------------------------------------------------------------
 
 local mark_number = 3
@@ -40,14 +43,16 @@ function HighlightLinks()
 end
 
 local browser
-local function select_highlighted_link()
+local function select_highlighted_link(is_browse)
 	local p = editor.CurrentPos
 	if scite.SendEditor(SCI_INDICATORVALUEAT, mark_number, p) == 1 then
 		local s = scite.SendEditor(SCI_INDICATORSTART, mark_number, p)
 		local e = scite.SendEditor(SCI_INDICATOREND, mark_number, p)
 		if s and e then
 			editor:SetSel(s,e)
-			browser = ('explorer "'..editor:GetSelText()..'"')
+			if is_browse then
+				browser = ('explorer "'..editor:GetSelText()..'"')
+			end
 			return true
 		end
 	end
@@ -60,12 +65,22 @@ local function launch_browse()
 	end
 end
 
+local function auto_highlight()
+	local list_lexers = props['highlight.links.lexers']
+	local list_exts = props['highlight.links.exts']
+	if (list_lexers ~= '' and string.find(','..list_lexers..',', ','..editor.LexerLanguage..',')) or
+	   (list_exts ~= '' and string.find(','..list_exts..',', ','..props['FileExt']..','))
+	then
+		HighlightLinks()
+	end
+end
+
 -- Add user event handler OnClick
 local old_OnClick = OnClick
 function OnClick(shift, ctrl, alt)
 	local result
 	if ctrl and editor.Focus then
-		if select_highlighted_link() then return true end
+		if select_highlighted_link(true) then return true end
 	end
 	if old_OnClick then result = old_OnClick(shift, ctrl, alt) end
 	return result
@@ -80,15 +95,29 @@ function OnMouseButtonUp()
 	return result
 end
 
+-- Add user event handler OnDoubleClick
+local old_OnDoubleClick = OnDoubleClick
+function OnDoubleClick(shift, ctrl, alt)
+	local result
+	select_highlighted_link(false)
+	if old_OnDoubleClick then result = old_OnDoubleClick(shift, ctrl, alt) end
+	return result
+end
+
 -- Add user event handler OnOpen
 local old_OnOpen = OnOpen
 function OnOpen(file)
 	local result
-	local list = props['highlight.links.lexers']
-	if list ~= '' and string.find(','..list..',', ','..editor.LexerLanguage..',') then
-		HighlightLinks()
-	end
 	if old_OnOpen then result = old_OnOpen(file) end
+	auto_highlight()
 	return result
 end
 
+-- Add user event handler OnSave
+local old_OnSave = OnSave
+function OnSave(file)
+	local result
+	if old_OnSave then result = old_OnSave(file) end
+	auto_highlight()
+	return result
+end
