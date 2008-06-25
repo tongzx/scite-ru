@@ -134,7 +134,7 @@ end
 	<b>Параметры:</b><br>
 		&nbsp;&nbsp;<dfn>strCommand</dfn> - командная строка запуска<br>
 		&nbsp;&nbsp;<dfn>intWindowStyle</dfn> - стиль окна. Допустимые значения приведены в таблице:<br>
-		<table style="margin-left:8pt">
+		<table style="margin-left:8pt;margin-top:3pt">
 			<tr><th>Значение</th><th>Описание</th></tr>
 			<tr><td align="center">0</td><td>Окно скрыто, и фокус передается скрытому окну</td></tr>
 			<tr><td align="center">1</td><td>Окно имеет фокус и восстанавливает свои стандартные размер и положение (значение по умолчанию)</td></tr>
@@ -173,7 +173,7 @@ end
 		&nbsp;&nbsp;<dfn>strMessageText</dfn> - текст сообщения<br>
 		&nbsp;&nbsp;<dfn>strTitle</dfn> - текст заголовка сообщения<br>
 		&nbsp;&nbsp;<dfn>intOptions</dfn> - числовое выражение, представляющее собой сумму значений, перечисленных в таблице.
-		<table style="margin-left:8pt">
+		<table style="margin-left:8pt;margin-top:3pt">
 		<tr><th>Значение</th><th>Описание</th></tr>
 		<tr>
 		<td align="center">0</td>
@@ -246,7 +246,7 @@ end
 	<p>
 	<b>Возвращаемое значение:</b><br>
 		&nbsp;&nbsp;Возвращает код нажатой кнопки. Значения перечисленны в таблице:
-		<table style="margin-left:8pt">
+		<table style="margin-left:8pt;margin-top:3pt">
 		<tr><th>Значение</th><th>Описание</th></tr>
 		<tr>
 		<td align="center">1</td>
@@ -358,7 +358,7 @@ end
 		&nbsp;&nbsp;<dfn>strParameters</dfn> - строка параметров передаваемая загружаемому приложению или запуск без параметров (по умолчанию)<br>
 		&nbsp;&nbsp;<dfn>boolNoShow</dfn> - если <var>true</var>, то запускается в скрытом режиме, <var>false</var> - показать окно (по умолчанию) <br>
 		&nbsp;&nbsp;<dfn>strOperation</dfn> - исполняемая операция из перечисленных в таблице:<br>
-		<table style="margin-left:8pt">
+		<table style="margin-left:8pt;margin-top:3pt">
 		<tr><th>Значение</th><th>Описание</th></tr>
 		<tr>
 		<td align="center">open</td>
@@ -415,13 +415,163 @@ end
 	<p class="author">Авторы: Стив Донован, Маслов Дмитрий</p>
 </td></tr>
 
+<tr><td>
+	<p class="head"> <sup>new</sup>
+		<dfn>fileexists (strFileName)</dfn>
+	</p>
+	<p>
+	<b>Описание:</b><br>
+		&nbsp;&nbsp;Проверяет существует ли файл или папка с указанным именем.<br>
+	<br>
+	<b>Параметры:</b><br>
+		&nbsp;&nbsp;<dfn>strFileName</dfn> - имя файла или папки<br>
+		<br>
+	<b>Возвращаемое значение:</b><br>
+		&nbsp;&nbsp;Возвращает <var>true</var> или <var>false</var><br>
+	</p>
+		<p><b>Пример использования:</b>
+		<div class="example">
+		if shell.fileexists("c:\tmp\test.log") then<br>
+		&nbsp;&nbsp;print("Файл c:\tmp\test.log существует")<br>
+		end
+		</div>
+		</p>
+	<p class="author">Автор: VladVRO</p>
+</td></tr>
+
+<tr><td>
+	<p class="head"> <sup>new</sup>
+		<dfn>findfiles (strFindMask)</dfn>
+	</p>
+	<p>
+	<b>Описание:</b><br>
+		&nbsp;&nbsp;Ищет файлы и папки по маске и результат возвращает в виде таблицы.<br>
+	<br>
+	<b>Параметры:</b><br>
+		&nbsp;&nbsp;<dfn>strFindMask</dfn> - имя файла или папки, или маска с использованием группового символа (wildcard), который заменяет один или несколько символов: знак вопроса (<var>?</var>) может представлять любой одиночный символ; звездочка (<var>*</var>) используется для представления любого символа или группы символов.<br>
+		<br>
+	<b>Возвращаемое значение:</b><br>
+		&nbsp;&nbsp;Возвращает список найденных файлов и папок в виде нумерованной таблицы (нумерация начиается с <var>1</var>),<br>
+		&nbsp;&nbsp;где каждый элемент - структура содержащая:<br>
+		<table style="margin-left:8pt;margin-top:3pt;margin-bottom:3pt">
+		<tr><th>Значение</th><th>Описание</th></tr>
+		<tr>
+			<td align="left">name</td>
+			<td>имя папки или файла</td>
+		</tr>
+		<tr>
+			<td align="left">isdirectory</td>
+			<td>признак файл это или папка (<var>true</var> если папка, <var>false</var> если файл)</td>
+		</tr>
+		<tr>
+			<td align="left">attributes</td>
+			<td>атрибуты файла (см. ниже)</td>
+		</tr>
+		<tr>
+			<td align="left">size</td>
+			<td>размер файла в байтах</td>
+		</tr>
+		</table>
+		&nbsp;&nbsp;где атрибуты файла представлены в виде числа, которое может быть комбинацией следующих значений:<br>
+		<table style="margin-left:8pt;margin-top:3pt;margin-right:8pt">
+		<tr><th>Значение</th><th>Описание</th></tr>
+		<tr>
+			<td>0x00000001</td>
+			<td>Файл только для чтения. Приложения могут читать такой файл, но не могут записывать или удалять его.</td>
+		</tr>
+		<tr>
+			<td>0x00000002</td>
+			<td>Файл скрыт. Такой файл не включается в обычный листинг каталога.</td>
+		</tr>
+		<tr>
+			<td>0x00000004</td>
+			<td>Это системный файл. Обычно такой файл является частью операционной системы.</td>
+		</tr>
+		<tr>
+			<td>0x00000010</td>
+			<td>Это каталог.</td>
+		</tr>
+		<tr>
+			<td>0x00000020</td>
+			<td>Это архивный файл. Приложения должны использовать этот флаг для копирования, архивирования или удаления.</td>
+		</tr>
+		<tr>
+			<td>0x00000080</td>
+			<td>У этого файла не установлены другие атрибуты. Это значение корректно только при использовании без остальных флагов.</td>
+		</tr>
+		<tr>
+			<td>0x00000100</td>
+			<td>Это временный файл. Приложения должны записывать в такой файл только в крайней необходимости. Большая часть данных файла находится в памяти и не сбрасывается наак как файл будет удален.</td>
+		</tr>
+		<tr>
+			<td>0x00000200</td>
+			<td>Файл является т.н. "Sparse file".</td>
+		</tr>
+		<tr>
+			<td>0x00000400</td>
+			<td>Каталог является символической связью.</td>
+		</tr>
+		<tr>
+			<td>0x00000800</td>
+			<td>Файл или каталог сжат. Для файла это означает, что все данные его сжаты, для каталога - что компрессия по умолчанию применяется ко всем его файлам и подкаталогам.</td>
+		</tr>
+		<tr>
+			<td>0x00001000</td>
+			<td>Данные файла не доступны непосредственно. Означает, что реальные данные файла были физически перемещены на устройства хранения.</td>
+		</tr>
+		<tr>
+			<td>0x00002000</td>
+			<td>Этот файл или каталог не будут индексироваться службой индексирования.</td>
+		</tr>
+		<tr>
+			<td>0x00004000</td>
+			<td>Файл или каталог зашифрован. Для файла, это означает, что все данные в файле зашифрованы. Для директория, это означает, что шифрование является умолчанием дляозданных файлов и подкаталогов.</td>
+		</tr>
+		<tr>
+			<td>0x00010000</td>
+			<td>Этот файл - виртуальный файл.</td>
+		</tr>
+		</table>
+		<br>
+		&nbsp;&nbsp;В случае неудачи возвращает <var>nil</var>
+	</p>
+		<p><b>Пример использования:</b>
+		<div class="example">
+		local t = shell.findfiles("*")<br>
+		if t then<br>
+		&nbsp;&nbsp;table.sort(t,<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;function(v1,v2)<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if v1.isdirectory ~= v2.isdirectory then<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return v1.isdirectory<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return v1.name &lt; v2.name<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;end<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;end<br>
+		&nbsp;&nbsp;)<br>
+		&nbsp;&nbsp;table.foreachi(t,<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;function(i,v)<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if v.isdirectory then<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print('D', v.attributes, v.name)<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print(' ', v.attributes, v.name, v.size)<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;end<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;end<br>
+		&nbsp;&nbsp;)<br>
+		else<br>
+		&nbsp;&nbsp;print('not found')<br>
+		end
+		</div>
+		</p>
+	<p class="author">Автор: VladVRO</p>
+</td></tr>
+
 </table>
 
 <h3>Загрузка</h3>
 
-<p><u>Текущая версия Shell</u>: <var>1.0</var><br></p>
+<p><u>Текущая версия Shell</u>: <var>1.1</var><br></p>
 <p>
-<a href="http://code.google.com/p/scite-ru/downloads/detail?name=shell.zip">shell.dll</a> (включая документацию)<br>
+<a href="http://scite-ru.googlecode.com/svn/trunk/pack/tools/LuaLib/shell.dll">shell.dll</a><br>
 <a href="http://scite-ru.googlecode.com/svn/trunk/shell/">Исходный код</a>
 </p>
 
