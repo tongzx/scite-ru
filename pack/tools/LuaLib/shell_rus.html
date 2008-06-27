@@ -123,45 +123,6 @@ end
 <table width="100%" cellpadding="1" cellspacing="0" border="1">
 
 <tr><td>
-	<p class="head"> <sup>update</sup>
-		<dfn>run (strCommand, [intWindowStyle], [bWaitOnReturn])</dfn>
-	</p>
-	<p>
-	<p>
-	<b>Описание:</b><br>
-		&nbsp;&nbsp;Запуск внешнего приложения.<br>
-	<br>
-	<b>Параметры:</b><br>
-		&nbsp;&nbsp;<dfn>strCommand</dfn> - командная строка запуска<br>
-		&nbsp;&nbsp;<dfn>intWindowStyle</dfn> - стиль окна. Допустимые значения приведены в таблице:<br>
-		<table style="margin-left:8pt;margin-top:3pt">
-			<tr><th>Значение</th><th>Описание</th></tr>
-			<tr><td align="center">0</td><td>Окно скрыто, и фокус передается скрытому окну</td></tr>
-			<tr><td align="center">1</td><td>Окно имеет фокус и восстанавливает свои стандартные размер и положение (значение по умолчанию)</td></tr>
-			<tr><td align="center">2</td><td>Окно отображается в виде значка с фокусом</td></tr>
-			<tr><td align="center">3</td><td>Окно развертывается на полный экран с фокусом</td></tr>
-			<tr><td align="center">4</td><td>Восстанавливаются предыдущие размер и положение окна. Активным остается текущее окно</td></tr>
-			<tr><td align="center">6</td><td>Окно отображается в виде значка. Активным остается текущее окно</td></tr>
-		</table><br>
-		&nbsp;&nbsp;<dfn>bWaitOnReturn</dfn> = <var>true</var> | <var>false</var> (значение по умолчанию) - приостанавливать или нет скрипт на время выполнения команды</p>
-		<br>
-		<p>
-	<b>Возвращаемое значение:</b><br>
-		&nbsp;&nbsp;первое содержит код завершения вызываемого приложения,<br>
-		&nbsp;&nbsp;второе - текст, который приложение вывело в <code>StdOut</code> или <code>StdErr</code> (работает только при <code>intWindowStyle = 0</code> и <code>bWaitOnReturn = true</code>)<br>
-	</p>
-		<p><b>Пример использования:</b>
-		<div class="example">
-		local err, output = shell.run('cmd /c DIR /b', 0, true)<br>
-		if err == 0 then<br>
-		&nbsp;&nbsp;print(output)<br>
-		end
-		</div>
-		</p>
-	<p class="author">Авторы: mimir, Дмитрий Маслов</p>
-</td></tr>
-
-<tr><td>
 	<p class="head">
 		<dfn>msgbox (strMessageText, [strTitle], [intOptions])</dfn>
 	</p>
@@ -300,20 +261,19 @@ end
 		&nbsp;&nbsp;<dfn>strFileName</dfn> - имя файла<br>
 		<br>
 	<b>Возвращаемое значение:</b><br>
-		&nbsp;&nbsp;первое содержит атрибуты файла в виде числа,<br>
-		&nbsp;&nbsp;второе содержит либо <var>nil</var> (при удачном завершении) либо текст сообщения об ошибке (при неудаче)
+		&nbsp;&nbsp;содержит атрибуты файла в виде числа<br>
 	</p>
 		<p><b>Пример использования:</b>
 		<div class="example">
-		local attr, err = shell.getfileattr("c:\\MSDOS.SYS")<br>
-		if err == nil then<br>
-		&nbsp;&nbsp;print(attr)<br>
+		local attr = shell.getfileattr("c:\\MSDOS.SYS")<br>
+		if attr == 4294967295 then<br>
+		&nbsp;&nbsp;print("error")<br>
 		else<br>
-		&nbsp;&nbsp;print(err)<br>
+		&nbsp;&nbsp;print(attr)<br>
 		end
 		</div>
 		</p>
-	<p class="author">Авторы: Midas</p>
+	<p class="author">Авторы: Midas, Маслов Дмитрий</p>
 </td></tr>
 
 <tr><td>
@@ -329,90 +289,19 @@ end
 		&nbsp;&nbsp;<dfn>iFileAttr</dfn> - атрибуты файла в числовом виде<br>
 		<br>
 	<b>Возвращаемое значение:</b><br>
-		&nbsp;&nbsp;первое содержит либо <var>1</var> (при удачном завершении) либо <var>nil</var> (при неудаче),<br>
-		&nbsp;&nbsp;второе содержит либо <var>nil</var> (при удачном завершении) либо текст сообщения об ошибке (при неудаче)
+		&nbsp;&nbsp;содержит <var>true</var> (при удачном завершении) либо <var>false</var> (при неудаче)<br>
 	</p>
 		<p><b>Пример использования:</b>
 		<div class="example">
-		local result, err = shell.setfileattr("c:\\MSDOS.SYS", 32)<br>
-		if result == 1 then<br>
+		local result = shell.setfileattr("c:\\MSDOS.SYS", 32)<br>
+		if result == true then<br>
 		&nbsp;&nbsp;print("Атрибуты установлены успешно")<br>
 		else<br>
-		&nbsp;&nbsp;print(err)<br>
+		&nbsp;&nbsp;print("error")<br>
 		end
 		</div>
 		</p>
-	<p class="author">Авторы: Midas</p>
-</td></tr>
-
-<tr><td>
-	<p class="head">
-		<dfn>exec (strFileName, [strParameters], [boolNoShow], [strOperation])</dfn>
-	</p>
-	<p>
-	<b>Описание:</b><br>
-		&nbsp;&nbsp;Запуск файла зарегестрированным приложением. В отличии от run позволяет запускать файлы, документы и ссылки, а так же открывать каталоги.<br>
-	<br>
-	<b>Параметры:</b><br>
-		&nbsp;&nbsp;<dfn>strFileName</dfn> - имя файла или папки<br>
-		&nbsp;&nbsp;<dfn>strParameters</dfn> - строка параметров передаваемая загружаемому приложению или запуск без параметров (по умолчанию)<br>
-		&nbsp;&nbsp;<dfn>boolNoShow</dfn> - если <var>true</var>, то запускается в скрытом режиме, <var>false</var> - показать окно (по умолчанию) <br>
-		&nbsp;&nbsp;<dfn>strOperation</dfn> - исполняемая операция из перечисленных в таблице:<br>
-		<table style="margin-left:8pt;margin-top:3pt">
-		<tr><th>Значение</th><th>Описание</th></tr>
-		<tr>
-		<td align="center">open</td>
-		<td>Открыть. strFileName может быть документом, приложением или папкой (параметр по умолчанию)</td>
-		</tr>
-		<tr>
-		<td align="center">edit</td>
-		<td>Изменить. Открывает файл на редактирование. strFileName должен быть документом.</td>
-		</tr>
-		<tr>
-		<td align="center">print</td>
-		<td>Печать. strFileName должен быть документом.</td>
-		</tr>
-		<tr>
-		<td align="center">explore</td>
-		<td>Открывает папку в проводнике Windows. strFileName должен указывать путь к папке</td>
-		</tr>
-		<tr>
-		<td align="center">find</td>
-		<td>Выводит диалоговое окно для поиска файлов по условиям, strFileName должен указывать путь к папке,<br>начиная с которой будет выполняться поиск</td>
-		</tr>
-		</table>
-		<br>
-	<b>Возвращаемое значение:</b><br>
-		&nbsp;&nbsp;Возвращает <var>true</var> (при удачном запуске) или <var>false</var> (при неудаче)<br>
-	</p>
-		<p><b>Пример использования:</b>
-		<div class="example">
-		-- запустить приложение<br>
-		shell.exec("c:\windows\calc.exe")<br>
-		shell.exec("cmd", "/c dir > out.txt")<br>
-		<br>
-		-- открыть каталог<br>
-		shell.exec("c:\windows")<br>
-		shell.exec("c:\windows", nil, false, "find")<br>
-		shell.exec("c:\windows", nil, false, "explore")<br>
-		<br>
-		-- открыть ссылку на сайт<br>
-		shell.exec("http://www.site.ru")<br>
-		<br>
-		-- послать E-mail<br>
-		shell.exec("mailto:support@mail.ru")<br>
-		<br>
-		-- открыть файл<br>
-		shell.exec("D:\file.doc")<br>
-		<br>
-		-- распечатать файл<br>
-		shell.exec("D:\file.doc", nil, true, "print")<br>
-		<br>
-		-- редактировать файл<br>
-		shell.exec("D:\shell_rus.html", nil, false, "edit")
-		</div>
-		</p>
-	<p class="author">Авторы: Стив Донован, Маслов Дмитрий</p>
+	<p class="author">Авторы: Midas, Маслов Дмитрий</p>
 </td></tr>
 
 <tr><td>
@@ -427,16 +316,111 @@ end
 		&nbsp;&nbsp;<dfn>strFileName</dfn> - имя файла или папки<br>
 		<br>
 	<b>Возвращаемое значение:</b><br>
-		&nbsp;&nbsp;Возвращает <var>true</var> или <var>false</var><br>
+		&nbsp;&nbsp;содержит <var>true</var> если файл существует, либо <var>false</var> в противном случае<br>
 	</p>
 		<p><b>Пример использования:</b>
 		<div class="example">
-		if shell.fileexists("c:\tmp\test.log") then<br>
-		&nbsp;&nbsp;print("Файл c:\tmp\test.log существует")<br>
+		local result = shell.fileexists("c:\\MSDOS.SYS")<br>
+		if result == true then<br>
+		&nbsp;&nbsp;print("Файл существует")<br>
+		else<br>
+		&nbsp;&nbsp;print("Файл сотсутствует")<br>
 		end
 		</div>
 		</p>
 	<p class="author">Автор: VladVRO</p>
+</td></tr>
+
+<tr><td>
+	<p class="head"> <sup>new</sup>
+		<dfn>exec (strCommand, [strOperation], [boolNoShow], [bWaitOnReturn])</dfn>
+	</p>
+	<p>
+	<b>Описание:</b><br>
+		&nbsp;&nbsp;Запуск файла зарегестрированным приложением. В отличии от run позволяет запускать файлы, документы и ссылки, а так же открывать каталоги.<br>
+	<br>
+	<b>Параметры:</b><br>
+		&nbsp;&nbsp;<dfn>strCommand</dfn> - команда запуска: имя файла или папки, если содержит параметры запуска, а имя файла содержит пробелы, то его нужно брать в ковычки, может содержать %переменные_окружения%<br>
+		&nbsp;&nbsp;<dfn>strOperation</dfn> - исполняемая операция из перечисленных в таблице:<br>
+		<table style="margin-left:8pt;margin-top:3pt">
+		<tr><th>Значение</th><th>Описание</th></tr>
+		<tr>
+		<td align="center">open</td>
+		<td>Открыть. strCommand - файл или папка (параметр по умолчанию)</td>
+		</tr>
+		<tr>
+		<td align="center">edit</td>
+		<td>Изменить. Открывает файл на редактирование. strCommand должен быть документом.</td>
+		</tr>
+		<tr>
+		<td align="center">print</td>
+		<td>Печать. strCommand должен быть документом.</td>
+		</tr>
+		<tr>
+		<td align="center">explore</td>
+		<td>Открывает папку в проводнике Windows (с двумя панелями). strCommand - файл или папка</td>
+		</tr>
+		<td align="center">select</td>
+		<td>Открывает каталог в проводнике Windows и ставит выделение на файл или папку. strCommand - файл или папка</td>
+		</tr>
+		<tr>
+		<td align="center">find</td>
+		<td>Выводит диалоговое окно для поиска файлов по условиям, strCommand должен указывать путь к папке,<br>начиная с которой будет выполняться поиск</td>
+		</tr>
+		<td align="center">properties</td>
+		<td>Выводит диалоговое окно свойств файла или папки, strCommand - файл или папка</td>
+		</tr>
+		<td align="center">другое</td>
+		<td>Другие операции над файлами можно посмотреть в реестре: HKEY_CLASSES_ROOT\Subkey\Shell\Verb<br>Например, есть операция play для звуковых файлов: HKEY_CLASSES_ROOT\SoundRec\shell\play</td>
+		</tr>
+		</table>
+		<br>
+		&nbsp;&nbsp;<dfn>boolNoShow</dfn> - <var>true</var> | <var>false</var> (значение по умолчанию) - скрывать или нет окно запускаемой программы<br>
+		&nbsp;&nbsp;<dfn>bWaitOnReturn</dfn> - <var>true</var> | <var>false</var> (значение по умолчанию) - приостанавливать или нет скрипт на время выполнения команды<br>
+	<br>
+	<b>Возвращаемое значение:</b><br>
+		&nbsp;&nbsp;первое содержит при удачном запуске: <var>true</var> или, если запущен с параметром <var>bWaitOnReturn = true</var>, код завершения процесса, при неудаче: <var>false</var><br>
+		&nbsp;&nbsp;второе содержит сообщение об ошибке/успехе операции, при запуске консольных приложений с параметрами <var>boolNoShow = true</var> и <var>bWaitOnReturn = true</var>, содержит консольный вывод<br>
+	</p>
+		<p><b>Пример использования:</b>
+		<div class="example">
+		-- запустить приложение<br>
+		shell.exec("c:\\windows\\calc.exe")<br>
+		shell.exec("cmd /c dir > out.txt", nil, false, true)<br>
+		<br>
+		-- вывести результат консольного приложения<br>
+		print( shell.exec("cmd /c dir", nil, true, true) )<br>
+		print( shell.exec("\"D:\\scite174ru\\shell\\make.bat\" -?", nil, true, true) )<br>
+		<br>
+		-- анализ кода завершения процесса<br>
+		if shell.exec("ping -n 1 localhostX", nil, true, true) == 1 then<br>
+		&nbsp;&nbsp;print("localhostX не пингуется")<br>
+		end<br>
+		<br>
+		-- открыть каталог<br>
+		shell.exec("%tmp%\\..")<br>
+		shell.exec("c:\\windows", "find")<br>
+		shell.exec("%WinDir%\\regedit.exe", "explore")<br>
+		shell.exec("%ProgramFiles%", "properties")<br>
+		shell.exec("c:\\windows\\calc.exe", "select")<br>
+		<br>
+		-- открыть ссылку на сайт<br>
+		shell.exec("http://scite.ruteam.ru/")<br>
+		<br>
+		-- послать E-mail<br>
+		shell.exec("mailto:support@mail.ru")<br>
+		<br>
+		-- открыть файл<br>
+		shell.exec("D:\\file.doc")<br>
+		<br>
+		-- распечатать файл<br>
+		shell.exec("D:\\file.doc", "print")<br>
+		<br>
+		-- редактировать файл<br>
+		shell.exec("D:\\shell_rus.html", "edit")
+		</div>
+		</p>
+	<p class="author">Авторы: Маслов Дмитрий</p>
 </td></tr>
 
 <tr><td>
@@ -451,8 +435,8 @@ end
 		&nbsp;&nbsp;<dfn>strFindMask</dfn> - имя файла или папки, или маска с использованием группового символа (wildcard), который заменяет один или несколько символов: знак вопроса (<var>?</var>) может представлять любой одиночный символ; звездочка (<var>*</var>) используется для представления любого символа или группы символов.<br>
 		<br>
 	<b>Возвращаемое значение:</b><br>
-		&nbsp;&nbsp;Возвращает список найденных файлов и папок в виде нумерованной таблицы (нумерация начиается с <var>1</var>),<br>
-		&nbsp;&nbsp;где каждый элемент - структура содержащая:<br>
+		&nbsp;&nbsp;Возвращает список найденных файлов и папок в виде нумерованной таблицы (нумерация начиается с <var>1</var>), где<br>
+		&nbsp;&nbsp;каждый элемент - структура содержащая:<br>
 		<table style="margin-left:8pt;margin-top:3pt;margin-bottom:3pt">
 		<tr><th>Значение</th><th>Описание</th></tr>
 		<tr>
@@ -472,7 +456,7 @@ end
 			<td>размер файла в байтах</td>
 		</tr>
 		</table>
-		&nbsp;&nbsp;где атрибуты файла представлены в виде числа, которое может быть комбинацией следующих значений:<br>
+		&nbsp;&nbsp;атрибуты файла представлены в виде числа, которое может быть комбинацией следующих значений:<br>
 		<table style="margin-left:8pt;margin-top:3pt;margin-right:8pt">
 		<tr><th>Значение</th><th>Описание</th></tr>
 		<tr>
@@ -501,7 +485,7 @@ end
 		</tr>
 		<tr>
 			<td>0x00000100</td>
-			<td>Это временный файл. Приложения должны записывать в такой файл только в крайней необходимости. Большая часть данных файла находится в памяти и не сбрасывается наак как файл будет удален.</td>
+			<td>Это временный файл. Приложения должны записывать в такой файл только в крайней необходимости. Большая часть данных файла находится в памяти и не сбрасывается так как файл будет удален.</td>
 		</tr>
 		<tr>
 			<td>0x00000200</td>
@@ -525,7 +509,7 @@ end
 		</tr>
 		<tr>
 			<td>0x00004000</td>
-			<td>Файл или каталог зашифрован. Для файла, это означает, что все данные в файле зашифрованы. Для директория, это означает, что шифрование является умолчанием дляозданных файлов и подкаталогов.</td>
+			<td>Файл или каталог зашифрован. Для файла, это означает, что все данные в файле зашифрованы. Для директория, это означает, что шифрование является умолчанием для созданных файлов и подкаталогов.</td>
 		</tr>
 		<tr>
 			<td>0x00010000</td>
@@ -569,7 +553,7 @@ end
 
 <h3>Загрузка</h3>
 
-<p><u>Текущая версия Shell</u>: <var>1.1</var><br></p>
+<p><u>Текущая версия Shell</u>: <var>1.2</var><br></p>
 <p>
 <a href="http://scite-ru.googlecode.com/svn/trunk/pack/tools/LuaLib/shell.dll">shell.dll</a><br>
 <a href="http://scite-ru.googlecode.com/svn/trunk/shell/">Исходный код</a>

@@ -1,8 +1,8 @@
 #include <winver.h>
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,1,0,0
- PRODUCTVERSION 1,1,0,0
+ FILEVERSION 1,2,0,0
+ PRODUCTVERSION 1,2,0,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -19,15 +19,15 @@ BEGIN
         BEGIN
             VALUE "Comments", "Windows Shell Lua Lib for SciTE\0"
             VALUE "CompanyName", "SciTE-Ru\0"
-            VALUE "FileDescription", "shell\0"
-            VALUE "FileVersion", "1.1\0"
+            VALUE "FileDescription", "Windows Shell Lua Lib for SciTE\0"
+            VALUE "FileVersion", "1.2\0"
             VALUE "InternalName", "shell\0"
             VALUE "LegalCopyright", "Copyright © 2008\0"
             VALUE "LegalTrademarks", "\0"
             VALUE "OriginalFilename", "shell.dll\0"
             VALUE "PrivateBuild", "\0"
             VALUE "ProductName", "Shell - SciTE Lua Lib\0"
-            VALUE "ProductVersion", "1.1\0"
+            VALUE "ProductVersion", "1.2\0"
             VALUE "SpecialBuild", "\0"
         END
     END
