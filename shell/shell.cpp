@@ -842,49 +842,40 @@ static int findfiles( lua_State* L )
 	HANDLE hFind = ::FindFirstFileA( filename, &findFileData );
 	if ( hFind != INVALID_HANDLE_VALUE )
 	{
-		try
+		// create table for result
+		lua_createtable( L, 1, 0 );
+
+		lua_Integer num = 1;
+		BOOL isFound = TRUE;
+		while ( isFound != FALSE )
 		{
-			// create table for result
-			lua_createtable( L, 1, 0 );
+			// store file info
+			lua_pushinteger( L, num );
+			lua_createtable( L, 0, 4 );
 
-			lua_Integer num = 1;
-			BOOL isFound = TRUE;
-			while ( isFound != FALSE )
-			{
-				// store file info
-				lua_pushinteger( L, num );
-				lua_createtable( L, 0, 4 );
+			lua_pushstring( L, findFileData.cFileName );
+			lua_setfield( L, -2, "name" );
 
-				lua_pushstring( L, findFileData.cFileName );
-				lua_setfield( L, -2, "name" );
+			lua_pushboolean( L, findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY );
+			lua_setfield( L, -2, "isdirectory" );
 
-				lua_pushboolean( L, findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY );
-				lua_setfield( L, -2, "isdirectory" );
+			lua_pushnumber( L, findFileData.dwFileAttributes );
+			lua_setfield( L, -2, "attributes" );
 
-				lua_pushnumber( L, findFileData.dwFileAttributes );
-				lua_setfield( L, -2, "attributes" );
+			lua_pushnumber( L, findFileData.nFileSizeHigh * ((lua_Number)MAXDWORD + 1) +
+							   findFileData.nFileSizeLow );
+			lua_setfield( L, -2, "size" );
 
-				lua_pushnumber( L, findFileData.nFileSizeHigh * ((lua_Number)MAXDWORD + 1) +
-								   findFileData.nFileSizeLow );
-				lua_setfield( L, -2, "size" );
+			lua_settable( L, -3 );
+			num++;
 
-				lua_settable( L, -3 );
-				num++;
-
-				// next
-				isFound = ::FindNextFileA( hFind, &findFileData );
-			}
-
-			::FindClose( hFind );
-
-			return 1;
+			// next
+			isFound = ::FindNextFileA( hFind, &findFileData );
 		}
-		catch (...)
-		{
-			::FindClose( hFind );
-			lua_pop( L, 1 );
-			return 0;
-		}
+
+		::FindClose( hFind );
+
+		return 1;
 	}
 
 	// files not found
