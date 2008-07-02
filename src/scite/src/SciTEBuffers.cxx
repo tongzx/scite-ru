@@ -1845,7 +1845,8 @@ bool SciTEBase::GoMessage(int dir) { //!-change-[GoMessageImprovement]
 				}
 //!-end-[FindResultListStyle]
 				FilePath sourcePath(source);
-				if (!filePath.Name().SameNameAs(sourcePath)) {
+//!				if (!filePath.Name().SameNameAs(sourcePath)) {
+				if (sourcePath.IsSet() && !filePath.Name().SameNameAs(sourcePath)) { //!-change-[GoMessageFix]
 					FilePath messagePath;
 					bool bExists = false;
 					if (Exists(dirNameAtExecute.AsInternal(), source, &messagePath)) {
