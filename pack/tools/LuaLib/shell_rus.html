@@ -321,10 +321,10 @@ end
 		<p><b>Пример использования:</b>
 		<div class="example">
 		local result = shell.fileexists("c:\\MSDOS.SYS")<br>
-		if result == true then<br>
+		if result then<br>
 		&nbsp;&nbsp;print("Файл существует")<br>
 		else<br>
-		&nbsp;&nbsp;print("Файл сотсутствует")<br>
+		&nbsp;&nbsp;print("Файл отсутствует")<br>
 		end
 		</div>
 		</p>
@@ -485,7 +485,7 @@ end
 		</tr>
 		<tr>
 			<td>0x00000100</td>
-			<td>Это временный файл. Приложения должны записывать в такой файл только в крайней необходимости. Большая часть данных файла находится в памяти и не сбрасывается так как файл будет удален.</td>
+			<td>Это временный файл. Приложения должны записывать в такой файл только в крайней необходимости. Большая часть данных файла находится в памяти и не сбрасывается на диск, так как файл будет удален.</td>
 		</tr>
 		<tr>
 			<td>0x00000200</td>
@@ -509,11 +509,11 @@ end
 		</tr>
 		<tr>
 			<td>0x00004000</td>
-			<td>Файл или каталог зашифрован. Для файла, это означает, что все данные в файле зашифрованы. Для директория, это означает, что шифрование является умолчанием для созданных файлов и подкаталогов.</td>
+			<td>Файл или каталог зашифрован. Для файла, это означает, что все данные в файле зашифрованы. Для директория, это означает, что шифрование является умолчанием для вновь созданных файлов и подкаталогов.</td>
 		</tr>
 		<tr>
 			<td>0x00010000</td>
-			<td>Этот файл - виртуальный файл.</td>
+			<td>Это виртуальный файл.</td>
 		</tr>
 		</table>
 		<br>
@@ -521,29 +521,29 @@ end
 	</p>
 		<p><b>Пример использования:</b>
 		<div class="example">
-		local t = shell.findfiles("*")<br>
+		local t = shell.findfiles("C:\\*")<br>
 		if t then<br>
 		&nbsp;&nbsp;table.sort(t,<br>
 		&nbsp;&nbsp;&nbsp;&nbsp;function(v1,v2)<br>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if v1.isdirectory ~= v2.isdirectory then<br>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return v1.isdirectory<br>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else<br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return v1.name &lt; v2.name<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return v1.name:lower() &lt; v2.name:lower()<br>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;end<br>
 		&nbsp;&nbsp;&nbsp;&nbsp;end<br>
 		&nbsp;&nbsp;)<br>
 		&nbsp;&nbsp;table.foreachi(t,<br>
 		&nbsp;&nbsp;&nbsp;&nbsp;function(i,v)<br>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if v.isdirectory then<br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print('D', v.attributes, v.name)<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print(string.format("D%5x %s", v.attributes, v.name))<br>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else<br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print(' ', v.attributes, v.name, v.size)<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print(string.format(" %5x %-30s", v.attributes, v.name), v.size)<br>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;end<br>
 		&nbsp;&nbsp;&nbsp;&nbsp;end<br>
 		&nbsp;&nbsp;)<br>
 		else<br>
-		&nbsp;&nbsp;print('not found')<br>
-		end
+		&nbsp;&nbsp;print("not found")<br>
+		end<br>
 		</div>
 		</p>
 	<p class="author">Автор: VladVRO</p>
