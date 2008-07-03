@@ -384,40 +384,40 @@ end
 	</p>
 		<p><b>Пример использования:</b>
 		<div class="example">
-		-- запустить приложение<br>
-		shell.exec("c:\\windows\\calc.exe")<br>
-		shell.exec("cmd /c dir > out.txt", nil, false, true)<br>
-		<br>
-		-- вывести результат консольного приложения<br>
-		print( shell.exec("cmd /c dir", nil, true, true) )<br>
-		print( shell.exec("\"D:\\scite174ru\\shell\\make.bat\" -?", nil, true, true) )<br>
-		<br>
-		-- анализ кода завершения процесса<br>
-		if shell.exec("ping -n 1 localhostX", nil, true, true) == 1 then<br>
-		&nbsp;&nbsp;print("localhostX не пингуется")<br>
-		end<br>
-		<br>
-		-- открыть каталог<br>
-		shell.exec("%tmp%\\..")<br>
-		shell.exec("c:\\windows", "find")<br>
-		shell.exec("%WinDir%\\regedit.exe", "explore")<br>
-		shell.exec("%ProgramFiles%", "properties")<br>
-		shell.exec("c:\\windows\\calc.exe", "select")<br>
-		<br>
-		-- открыть ссылку на сайт<br>
-		shell.exec("http://scite.ruteam.ru/")<br>
-		<br>
-		-- послать E-mail<br>
-		shell.exec("mailto:support@mail.ru")<br>
-		<br>
-		-- открыть файл<br>
-		shell.exec("D:\\file.doc")<br>
-		<br>
-		-- распечатать файл<br>
-		shell.exec("D:\\file.doc", "print")<br>
-		<br>
-		-- редактировать файл<br>
-		shell.exec("D:\\shell_rus.html", "edit")
+			-- запустить приложение<br>
+			shell.exec("clipbrd.exe")<br>
+			shell.exec("CMD /c IPCONFIG /all > out.txt", nil, true, false)<br>
+			<br>
+			-- вывести результат консольного приложения<br>
+			print( shell.exec("CMD /c DIR", nil, true, true) )<br>
+			print( shell.exec("cscript /nologo %WINDIR%\\system32\\eventquery.vbs /?", nil, true, true) )<br>
+			<br>
+			-- анализ кода завершения процесса<br>
+			if shell.exec("ping -n 1 localhost", nil, true, true) == 0 then<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;print("Сеть работает") else print("Сеть не работает")<br>
+			end<br>
+			<br>
+			-- открыть каталог<br>
+			shell.exec("%TEMP%")<br>
+			shell.exec("%USERPROFILE%", "find")<br>
+			shell.exec("%WINDIR%\\regedit.exe", "explore")<br>
+			shell.exec("%ProgramFiles%", "properties")<br>
+			shell.exec("%ComSpec%", "select")<br>
+			<br>
+			-- открыть ссылку на сайт<br>
+			shell.exec("http://scite.ruteam.ru/")<br>
+			<br>
+			-- послать E-mail<br>
+			shell.exec("mailto:support@mail.ru")<br>
+			<br>
+			-- открыть файл<br>
+			shell.exec("%WINDIR%\\WindowsUpdate.log")<br>
+			<br>
+			-- распечатать файл<br>
+			shell.exec("%WINDIR%\\win.ini", "print")<br>
+			<br>
+			-- редактировать файл<br>
+			shell.exec("%WINDIR%\\winnt.bmp", "edit")
 		</div>
 		</p>
 	<p class="author">Авторы: Маслов Дмитрий</p>
