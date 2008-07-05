@@ -12,7 +12,7 @@ scroll=no
 selection=no
 contextMenu=no
 singleinstance=yes
-version=2.01
+version=2.3
 >
 <meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
 <style type="text/css">
@@ -257,7 +257,7 @@ function CheckOpenfor(){
 }
 
 function SetOpenfor(){
-		WshShell.RegWrite('HKCR\\*\\shell\\Open with SciTE\\', 'Открыть в &SciTE');
+		WshShell.RegWrite('HKCR\\*\\shell\\Open with SciTE\\', 'Open with &SciTE');
 		WshShell.RegWrite('HKCR\\*\\shell\\Open with SciTE\\command\\', '"' + form.home.value + '\\SciTE.exe" -check.if.already.open=0 "%1"');
 }
 
@@ -369,7 +369,12 @@ function CheckHelper(){
 function SetHelper(){
 	var file_dll = form.home.value + '\\tools\\Helper\\SciTE.dll';
 	if (fso.FileExists(file_dll)){
-		WshShell.Run('Regsvr32 "' + file_dll + '"',0,false);
+	var ret = WshShell.Run('cmd /c for /f %i in ("msvbvm50.dll") do if "%~$PATH:i"=="" exit /b 1', 0, true);
+		if (ret != 0) {
+			msvbvm50();
+		} else {
+			WshShell.Run('Regsvr32 "' + file_dll + '"',0,false);
+		}
 	}
 }
 
@@ -399,6 +404,18 @@ function About() {
 		// -----------------------------------------------------------------------------------
 		dW.write(str1);
 	}
+}
+// =============================================================
+// Окно "msvbvm50.dll"
+function msvbvm50() {
+	var alert_win = window.open("about:blank",null, "height=80,width=450,status=no,toolbar=no,menubar=no,location=no");
+	var html = '<HTML><HEAD>\n';
+	html += '<title>SciTE.Helper Install Error</title>\n';
+	html += '<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1251">\n';
+	html += '</HEAD><style>body {font-family:verdana; font-size:10pt; a {color:#000080; text-decoration:none;} a:hover {color:red;}</style>\n';
+	html += '<center><b>SciTE.Helper</b> <font color=red>не был зарегистрирован</font> в Вашей системе,<br>поскольку для его работы необходим <a href="http://www.google.com/search?q=MSVBVM50.DLL" target="_blank"><b>MSVBVM50.DLL</b></a>.<br><br>Подробности изложены в <a href="http://code.google.com/p/scite-ru/issues/detail?id=62" target="_blank"><b>Issue 62</b></a></center>\n';
+	html += '</BODY></HTML>';
+	alert_win.document.write(html);
 }
 </script>
 
