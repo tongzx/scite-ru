@@ -12,12 +12,12 @@ scroll=no
 selection=no
 contextMenu=no
 singleinstance=yes
-version=2.3
+version=2.5
 >
 <meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
 <style type="text/css">
-	body, table, td, input, button {
-		font:normal normal 8px MS Sans Serif;
+	body, td, input {
+		font:normal normal 6pt MS Sans Serif;
 		white-space:nowrap;
 		margin:0;
 	}
@@ -26,20 +26,7 @@ version=2.3
 		background-color:threedface;
 	}
 
-	button {width:95px;}
-
-	fieldset{
-		cursor:default;
-		margin:0px;
-		text-align:left;
-		padding:4px;
-		padding-top:0px;
-	}
-
-	legend {
-		margin-bottom:2px;
-		color:blue;
-	}
+	input.btn {width:95px;}
 
 	label {
 		cursor:hand;
@@ -89,34 +76,26 @@ var fso = new ActiveXObject("Scripting.FileSystemObject");
 var script_path = unescape(self.location.href).replace(/file:\/\/\/([a-z]:.*)\/.*?$/i,'$1').replace(/\//g,'\\');
 var reg_backup = 'HKLM\\SOFTWARE\\SciTE\\Script\\WinIntegrator\\';
 
-// Проверка локализации
-var is_locale = false
-
-// Проверка регистрации
-function Check(){
-	if (scite_path == ""){
-		alert(as_locale(
-			"Can't find SciTE!\nPlease run this script from folder with SciTE.",
-			"SciTE не найден!\nЗапустите скрипт из каталога с установленным SciTE"));
-		self.close();
-	} else {
-		CheckHome()
-		CheckAssociations()
-		CheckOpenfor()
-		CheckSession()
-		CheckHTML_def()
-		CheckHTML()
-		CheckHelper()
-	}
-}
-
 // После нажатия на "ОК" проверяем, изменил ли пользователь установки
 // и выполняем только те позиции, в которых состояние чекбоксов изменилось
 function Set(){
-	var _alert = false;
+	// --------------------------------
+	if (CheckRusLocaleProperties()){
+		if (form.chk_lng[0].checked){
+			try {fso.MoveFile(scite_path + "\\locale.properties", scite_path + "\\locale_rus.properties")} catch(e) {}
+		}
+	}else{
+		if (form.chk_lng[1].checked){
+			try {
+				fso.MoveFile(scite_path + "\\locale_rus.properties", scite_path + "\\locale.properties");
+			} catch(e) {
+				alert("Русификация интерфейса SciTE невозможна ввиду отсутствия файла\n" + scite_path + "\\locale_rus.properties");
+			}
+		}
+	}
+	// --------------------------------
 	for (i=0;i<form.chk.length;i++){
 		if (form.chk[i].checked.toString() != form.chk[i].value.toString()){
-			_alert = true;
 			if (form.chk[i].checked){
 				SetValue(form.chk[i].id);
 			}else{
@@ -124,9 +103,7 @@ function Set(){
 			}
 		}
 	}
-	if (_alert){
-		alert(as_locale("Integration completed successfully!", "Изменения успешно внесены в реестр!"));
-	}
+	// --------------------------------
 	self.close();
 }
 
@@ -181,6 +158,104 @@ function UnSetValue(id){
 	case "chk_helper":
 		UnSetHelper();
 		break;
+	}
+}
+
+// Language =============================================
+
+function CheckRusLocaleProperties(){
+	var locale_file = scite_path + "\\locale.properties";
+	if (fso.FileExists(locale_file)){
+		if (fso.GetFile(locale_file).Size > 0) {
+			var file = fso.OpenTextFile(locale_file);
+			var text = file.ReadAll();
+			file.Close();
+			if (/translation.encoding=Cyrillic/gi.test(text)){
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+function CheckLanguage(){
+	if (CheckRusLocaleProperties()){
+		form.chk_lng[1].checked = true;
+		SetInterfaceLng('rus');
+	}else{
+		form.chk_lng[0].checked = true;
+		SetInterfaceLng('eng');
+	}
+}
+
+function SetInterfaceLng(lng){
+	if (lng != 'rus'){
+		lng_legend.innerHTML = "&nbsp;Interface Language:&nbsp;";
+		lng_help[0].innerHTML = "Change interface this application<br>SciTE Interface will change after restart";
+		lng_help[1].innerHTML = lng_help[0].innerHTML;
+		lng_label[0].innerHTML = "English";
+		lng_label[1].innerHTML = "Russian";
+
+		env_legend.innerHTML = "&nbsp;Environment variable:&nbsp;";
+		env_help.innerHTML = "Setup location for properties files<br><cite>SciTEGlobal.properties</cite>, <cite>SciTE.session</cite>, <cite>SciTE.recent</cite><br><br><em>ATTENTION!</em> Using of this variable is set properties files location<br>for all instanses of <cite>SciTE</cite>. Use this option carefully.";
+
+		explorer_legend.innerHTML = "&nbsp;Integration with Explorer:&nbsp;";
+		explorer_text.innerHTML = "&nbsp;Associate SciTE with extensions:";
+		explorer_help[0].innerHTML = "You\'ll able to open in SciTE files with this extensions by double click.";
+		explorer_help[1].innerHTML = "You\'ll able to open in SciTE any file from context menu.";
+		explorer_label[0].innerHTML = 'Add to context menu for all files new command "Open with SciTE"';
+		explorer_help[2].innerHTML = "You\'ll able to open SciTE session files by double click.";
+		explorer_label[1].innerHTML = 'Associate files *.session as SciTE session files';
+
+		ie_legend.innerHTML = "&nbsp;Integration with Internet Explorer:&nbsp;";
+		ie_help[0].innerHTML = "Command \'<cite>View source</cite>\' will open source file in SciTE";
+		ie_label[0].innerHTML = "Set SciTE as default HTML editor";
+		ie_help[1].innerHTML = "On Internet Explorer toolbar can be placed button '<cite>Edit</cite>'.<br>This option add the command '<cite>Edit with SciTE</cite>'";
+		ie_label[1].innerHTML = 'SciTE as one editor from button menu "Edit"';
+
+		win_legend.innerHTML = "&nbsp;Integration with Windows:&nbsp;";
+		win_help.innerHTML = "<cite>SciTE.Helper</cite> is needed for external scripts for communicate with SciTE.";
+		win_label.innerHTML = "Install SciTE.Helper (COM-server for communication with SciTE)";
+
+		form.btn_cancel.value = "Cancel";
+		form.btn_about.value = "About";
+
+		alert_msvbvm50_locale = '<font color=red>Can\'t register <b>SciTE.Helper</b></font> in your sistem,<br> because required library <a href="http://www.google.com/search?q=MSVBVM50.DLL" target="_blank"><b>MSVBVM50.DLL</b></a> is absent.<br><br>For more information <a href="http://code.google.com/p/scite-ru/issues/detail?id=62" target="_blank"><b>Issue 62</b></a>';
+		open_with_scite_locale = "Open with &SciTE";
+
+	}else{
+		lng_legend.innerHTML = "&nbsp;Язык интерфейса:&nbsp;";
+		lng_help[0].innerHTML = "Сменить интерфейс этого приложения<br>Интерфейс SciTE изменится после перезапуска";
+		lng_help[1].innerHTML = lng_help[0].innerHTML;
+		lng_label[0].innerHTML = "Английский";
+		lng_label[1].innerHTML = "Русский";
+
+		env_legend.innerHTML = "&nbsp;Установка переменных окружения:&nbsp;";
+		env_help.innerHTML = "Задает местоположение файлов настроек<br><cite>SciTEGlobal.properties</cite>, <cite>SciTE.session</cite>, <cite>SciTE.recent</cite><br><br><em>ВНИМАНИЕ!</em> Если Вы установите это значение, то любой экземпляр<br><cite>SciTE</cite>, запущенный на этой машине, будет искать файлы настроек<br>не в своем каталоге, а по пути указанному в этой переменной.";
+
+		explorer_legend.innerHTML = "&nbsp;Интеграция в Проводник:&nbsp;";
+		explorer_text.innerHTML = "&nbsp;Связать файлы заданных расширений с SciTE:";
+		explorer_help[0].innerHTML = "Позволяет открывать в SciTE файлы ассоциированных типов<br>с помощью двойного клика мыши";
+		explorer_help[1].innerHTML = "Позволяет открыть любой выбранный файл в SciTE";
+		explorer_label[0].innerHTML = 'Добавить в контекстное меню всех файлов пункт "Открыть в SciTE"';
+		explorer_help[2].innerHTML = "Позволяет открывать сохраненные ранее сессиии SciTE";
+		explorer_label[1].innerHTML = 'Открывать файлы *.session как файлы сессий SciTE';
+
+		ie_legend.innerHTML = "&nbsp;Интеграция в Internet Explorer:&nbsp;";
+		ie_help[0].innerHTML = "Выбор пункта меню Internet Explorer \'<cite>Просмотр HTML кода</cite>\'<br>откроет текущую страницу в SciTE";
+		ie_label[0].innerHTML = "Установить SciTE в качестве дефолтового HTML редактора";
+		ie_help[1].innerHTML = "На панели инструментов Internet Explorer можно установить кнопку \'<cite>Правка</cite>\'.<br>Данная опция добавит в меню этой кнопки пункт \'<cite>Править в SciTE</cite>\'";
+		ie_label[1].innerHTML = 'SciTE в качестве одного из редакторов в меню кнопки "Правка"';
+
+		win_legend.innerHTML = "&nbsp;Интеграция в Windows:&nbsp;";
+		win_help.innerHTML = "C помощью <cite>SciTE.Helper</cite> внешние скрипты и программы<br>смогут управлять SciTE и получать из него данные";
+		win_label.innerHTML = "Установить SciTE.Helper (COM-сервер для управления SciTE)";
+
+		form.btn_cancel.value = "Отмена";
+		form.btn_about.value = "О программе";
+
+		alert_msvbvm50_locale = '<b>SciTE.Helper</b> <font color=red>не был зарегистрирован</font> в Вашей системе,<br>поскольку для его работы необходим <a href="http://www.google.com/search?q=MSVBVM50.DLL" target="_blank"><b>MSVBVM50.DLL</b></a>.<br><br>Подробности изложены в <a href="http://code.google.com/p/scite-ru/issues/detail?id=62" target="_blank"><b>Issue 62</b></a>';
+		open_with_scite_locale = "Открыть в &SciTE";
 	}
 }
 
@@ -267,8 +342,8 @@ function CheckOpenfor(){
 }
 
 function SetOpenfor(){
-		WshShell.RegWrite('HKCR\\*\\shell\\Open with SciTE\\', 'Open with &SciTE');
-		WshShell.RegWrite('HKCR\\*\\shell\\Open with SciTE\\command\\', '"' + form.home.value + '\\SciTE.exe" -check.if.already.open=0 "%1"');
+		WshShell.RegWrite('HKCR\\*\\shell\\Open with SciTE\\', open_with_scite_locale);
+		WshShell.RegWrite('HKCR\\*\\shell\\Open with SciTE\\command\\', '"' + form.home.value + '\\SciTE.exe" "%1"');
 }
 
 function UnSetOpenfor(){
@@ -301,7 +376,7 @@ function SetSessions(){
 	var text = 'var scite = "' + form.home.value.replace(/\\/g,'\\\\') + '\\\\SciTE.exe";\n';
 	text += 'var WshShell = new ActiveXObject("WScript.Shell");\n';
 	text += 'var filename = WScript.Arguments(0);\n';
-	text += 'var opt = \'\"-loadsession:\' + filename.replace(\/\\\\\/g,\"\\\\\\\\\") + \'\"\';\n'
+	text += 'var opt = \'-check.if.already.open=0 \"-loadsession:\' + filename.replace(\/\\\\\/g,\"\\\\\\\\\") + \'\"\';\n'
 	text += 'var cmd = \'\"\' + scite + \'\" \' + opt;\nWshShell.Run(cmd, 0, false);\n\n';
 	var file = fso.OpenTextFile(script_path + '\\' + open_ses_file, 2, true);
 	file.Write(text);
@@ -381,7 +456,7 @@ function SetHelper(){
 	if (fso.FileExists(file_dll)){
 	var ret = WshShell.Run('cmd /c for /f %i in ("msvbvm50.dll") do if "%~$PATH:i"=="" exit /b 1', 0, true);
 		if (ret != 0) {
-			msvbvm50();
+			alert_msvbvm50();
 		} else {
 			WshShell.Run('Regsvr32 "' + file_dll + '"',0,false);
 		}
@@ -398,51 +473,155 @@ function UnSetHelper(){
 // =============================================================
 // Окно "О программе"
 function About() {
-	if(top.location=='about:blank') {alert(as_locale('Can\'t working on blank page!', 'На пустой странице не работаю!'))}
-	else{
-		atr='status:no; help:no; dialogWidth:250px; dialogHeight:150px;';
-		try {dW=PrxRealModelessDialog('dialog.htm',window,atr).document}
-		catch(e) {dW=showModelessDialog('dialog.htm',window,atr).document}
-		// -----------------------------------------------------------------------------------
-		str1 = '<HTML><HEAD>\n';
-		str1 += '<title>' + as_locale('About...', 'О программе') + '</title>\n';
-		str1 += '<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1251">\n';
-		str1 += '</HEAD><style>body {font-family:verdana; font-size:x-small; background-color:black; color:white} a{color:white; text-decoration:none;} a:hover{color:#99FFFF;}</style>\n';
-		str1 += '<center><span style="width:240; height:30; font:40px Impact; color:#0EDA05; font-weight:bold; filter:Shadow (Color=#6699CC, Direction=135")>SciTE<\/span>\n';
-		str1 += '<br><span style="position: absolute; margin-top:-28px; margin-left:-85px; font-family:Arial; font-size:20px; font-style:italic; font-weight:bold; color:#E5E1B1; filter:Shadow (Color=#84602C, Direction=135")">Windows Integrator<\/span><br><font color=white>Version <b>'+SWI.version+'</b><br>Copyleft by <b><a href="mailto:mozers@mail.ru?subject=SciTE_Windows_Integrator_'+SWI.version+'" title="Жду предложений и пожеланий :)">mozers&trade;</a></b></font></center>\n';
-		str1 += '</BODY></HTML>';
-		// -----------------------------------------------------------------------------------
-		dW.write(str1);
-	}
+	atr='status:no; help:no; dialogWidth:250px; dialogHeight:150px;';
+	try {dW=PrxRealModelessDialog('dialog.htm',window,atr).document}
+	catch(e) {dW=showModelessDialog('dialog.htm',window,atr).document}
+	// -----------------------------------------------------------------------------------
+	var text = '<HTML><HEAD>\n';
+	text += '<title>' + form.btn_about.value + '</title>\n';
+	text += '<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1251">\n';
+	text += '</HEAD><style>body {font-family:verdana; font-size:x-small; background-color:black; color:white} a{color:white; text-decoration:none;} a:hover{color:#99FFFF;}</style>\n';
+	text += '<center><span style="width:240; height:30; font:40px Impact; color:#0EDA05; font-weight:bold; filter:Shadow (Color=#6699CC, Direction=135")>SciTE<\/span>\n';
+	text += '<br><span style="position: absolute; margin-top:-28px; margin-left:-85px; font-family:Arial; font-size:20px; font-style:italic; font-weight:bold; color:#E5E1B1; filter:Shadow (Color=#84602C, Direction=135")">Windows Integrator<\/span><br><font color=white>Version <b>'+SWI.version+'</b><br><b><a href="mailto:mozers@mail.ru?subject=SciTE_Windows_Integrator_'+SWI.version+'">mozers&trade;</a></b> and <b><a href="mailto:vladvro@gmail.com?subject=SciTE_Windows_Integrator_'+SWI.version+'">VladVRO</a></b></font></center>\n';
+	text += '</BODY></HTML>';
+	// -----------------------------------------------------------------------------------
+	dW.write(text);
 }
 // =============================================================
 // Окно "msvbvm50.dll"
-function msvbvm50() {
+function alert_msvbvm50() {
 	var alert_win = window.open("about:blank",null, "height=80,width=450,status=no,toolbar=no,menubar=no,location=no");
 	var html = '<HTML><HEAD>\n';
 	html += '<title>SciTE.Helper Install Error</title>\n';
 	html += '<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1251">\n';
 	html += '</HEAD><style>body {font-family:verdana; font-size:10pt; a {color:#000080; text-decoration:none;} a:hover {color:red;}</style>\n';
-	html += as_locale(
-	'<center><font color=red>Can\'t register <b>SciTE.Helper</b></font> in your sistem,<br> because required library <a href="http://www.google.com/search?q=MSVBVM50.DLL" target="_blank"><b>MSVBVM50.DLL</b></a> is absent.<br><br>For more information <a href="http://code.google.com/p/scite-ru/issues/detail?id=62" target="_blank"><b>Issue 62</b></a></center>\n',
-	'<center><b>SciTE.Helper</b> <font color=red>не был зарегистрирован</font> в Вашей системе,<br>поскольку для его работы необходим <a href="http://www.google.com/search?q=MSVBVM50.DLL" target="_blank"><b>MSVBVM50.DLL</b></a>.<br><br>Подробности изложены в <a href="http://code.google.com/p/scite-ru/issues/detail?id=62" target="_blank"><b>Issue 62</b></a></center>\n');
+	html += '<center>';
+	html += alert_msvbvm50_locale;
+	html += '</center>\n';
 	html += '</BODY></HTML>';
 	alert_win.document.write(html);
 }
 
-// locale ==================================================
-function as_locale(en_str, ru_str) {
-	if (is_locale)
-		return ru_str
-	else
-		return en_str
-}
+</script>
 
-function write_as_locale(en_str, ru_str) {
-	document.write(as_locale(en_str, ru_str))
-}
+</head><body>
+<form id="form">
+<table width=100%><tr><td>
 
-// check scite ==================================================
+<fieldset><legend id="lng_legend"></legend><table width=100%>
+	<tr>
+		<td style="width:50%">
+			<a class="help" href="#" hidefocus>
+			<input type="radio" name=chk_lng hidefocus onClick="SetInterfaceLng('eng');">
+			<span class="help" id="lng_help"></span></a>
+			<label id="lng_label" onClick="form.chk_lng[0].checked = true; SetInterfaceLng('eng');"></label>
+		</td>
+		<td style="width:50%">
+			<a class="help" href="#" hidefocus>
+			<input type="radio" name=chk_lng hidefocus onClick="SetInterfaceLng('rus');">
+			<span class="help" id="lng_help"></span></a>
+			<label id="lng_label" onClick="form.chk_lng[1].checked = true; SetInterfaceLng('rus');"></label>
+		</td>
+	</tr>
+</table></fieldset>
+&nbsp;
+
+<fieldset><legend id="env_legend"></legend><table width=100%>
+	<tr>
+		<td>
+			<a class="help" href="#" hidefocus>
+			<input name="chk" type="checkbox" id=chk_home hidefocus onClick="home.disabled=!chk_home.checked">
+			<span class="help" id="env_help"></span></a>
+			<label for=chk_home>SCITE_HOME&nbsp;=</label>
+		</td>
+		<td style="width:100%">
+			<input type=text id="home" value="" style="width:100%; font:normal normal 10pt Courier New;">
+		</td>
+	</tr>
+</table></fieldset>
+&nbsp;
+
+<fieldset><legend id="explorer_legend"></legend>
+<table width=100%>
+	<tr>
+		<td colspan="2" id="explorer_text"></td>
+	</tr>
+	<tr>
+		<td>
+			<a class="help" href="#" hidefocus>
+			<input name="chk" type="checkbox" id=chk_associations hidefocus onClick="associations.disabled=!chk_associations.checked">&nbsp;
+			<span class="help" id="explorer_help"></span></a>
+		</td>
+		<td style="width:100%">
+			<input TYPE=text id="associations" style="width:100%; font:normal normal 10pt Courier New;">
+		</td>
+	</tr>
+</table>
+<table width=100%>
+	<tr>
+		<td>
+			<a class="help" href="#" hidefocus>
+			<input name="chk" type="checkbox" id=chk_openfor hidefocus>
+			<span class="help" id="explorer_help"></span></a>
+			<label for=chk_openfor id="explorer_label"></label>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<a class="help" href="#" hidefocus>
+			<input name="chk" type="checkbox" id=chk_ses hidefocus>
+			<span class="help" id="explorer_help"></span></a>
+			<label for=chk_ses id="explorer_label"></label>
+		</td>
+	</tr>
+</table>
+</fieldset>
+&nbsp;
+
+<fieldset><legend id="ie_legend"></legend><table width=100%>
+	<tr>
+		<td>
+			<a class="help" href="#" hidefocus>
+			<input name="chk" type="checkbox" id=chk_html_def hidefocus>
+			<span class="help" id="ie_help"></span></a>
+			<label for=chk_html_def id="ie_label"></label>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<a class="help" href="#" hidefocus>
+			<input name="chk" type="checkbox" id=chk_html hidefocus>
+			<span class="help" id="ie_help"></span></a>
+			<label for=chk_html id="ie_label"></label>
+		</td>
+	</tr>
+</table></fieldset>
+&nbsp;
+
+<fieldset><legend id="win_legend"></legend><table width=100%>
+<tr>
+	<td>
+		<a class="help" href="#" hidefocus>
+		<input name="chk" type="checkbox" id=chk_helper hidefocus>
+		<span class="help" id="win_help"></span></a>
+		<label for=chk_helper id="win_label"></label>
+	</td>
+</tr>
+</table></fieldset>
+&nbsp;
+
+<table width=100%>
+	<tr>
+		<td align=center width=33%><input type="button" class="btn" onClick="Set();" id="btn_ok" value="OK"></td>
+		<td align=center width=33%><input type="button" class="btn" onClick="self.close();" id="btn_cancel" value=""></td>
+		<td align=center width=33%><input type="button" class="btn" onClick="About();" id="btn_about" value=""></td>
+	</tr>
+</table>
+</td></tr>
+</table>
+</form>
+
+<script language="JavaScript">
 function check_scite(scite_path){
 	if (fso.FileExists(scite_path + "\\SciTE.exe")){
 		return true;
@@ -465,166 +644,22 @@ function find_scite(){
 	}
 }
 
-var scite_path = find_scite();
-if (scite_path != ""){
-	// Проверка локализации
-	is_locale = fso.FileExists(scite_path + '\\locale.properties')
-}
-</script>
-
-</head><body>
-<form id="form">
-<table width=100%><tr><td>
-
-<fieldset><legend>&nbsp;<script language="JavaScript">
-write_as_locale("Environment variable", "Установка переменных окружения")
-</script>:&nbsp;</legend><table width=100%>
-	<tr>
-		<td>
-			<a class="help" href="#" hidefocus>
-			<input name="chk" type="checkbox" id=chk_home hidefocus onClick="home.disabled=!chk_home.checked">
-			<span class="help"><script language="JavaScript">
-			write_as_locale("Setup location for properties files", "Задает местоположение файлов настроек")
-			</script><br>
-				<cite>SciTEGlobal.properties</cite>, <cite>SciTE.session</cite>, <cite>SciTE.recent</cite><br><br>
-				<script language="JavaScript">
-				write_as_locale(
-				"<em>ATTENTION!</em> Using of this variable is set properties files location<br> for all instanses of <cite>SciTE</cite>. Use this option carefully.",
-				"<em>ВНИМАНИЕ!</em> Если Вы установите это значение, то любой экземпляр<br><cite>SciTE</cite>, запущенный на этой машине, будет искать файлы настроек<br>не в своем каталоге, а по пути указанному в этой переменной.")
-</script></span></a>
-			<label for=chk_home>SCITE_HOME&nbsp;=</label>
-		</td>
-		<td style="width:100%">
-			<input type=text id="home" value="" style="width:100%; font:normal normal 10pt Courier New;">
-		</td>
-	</tr>
-</table></fieldset>
-&nbsp;
-
-<fieldset><legend>&nbsp;<script language="JavaScript">
-write_as_locale("Integration with explorer", "Интеграция в Проводник")
-</script>:&nbsp;</legend>
-<table width=100%>
-	<tr>
-		<td colspan="2">
-			&nbsp;<script language="JavaScript">
-			write_as_locale("Associate SciTE with extensions", "Связать файлы заданных расширений с SciTE")
-			</script>:
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<a class="help" href="#" hidefocus>
-			<input name="chk" type="checkbox" id=chk_associations hidefocus onClick="associations.disabled=!chk_associations.checked">&nbsp;
-			<span class="help"><script language="JavaScript">
-			write_as_locale("You'll able to open in SciTE files with this extensions by double click.", "Позволяет открывать в SciTE файлы ассоциированных типов<br> с помощью двойного клика мыши")
-</script></span></a>
-		</td>
-		<td style="width:100%">
-			<input TYPE=text id="associations" style="width:100%; font:normal normal 10pt Courier New;">
-		</td>
-	</tr>
-</table>
-<table width=100%>
-	<tr>
-		<td>
-			<a class="help" href="#" hidefocus>
-			<input name="chk" type="checkbox" id=chk_openfor hidefocus>
-			<span class="help"><script language="JavaScript">
-			write_as_locale("You'll able to open in SciTE any file from context menu.", "Позволяет открыть любой выбранный файл в SciTE")
-			</script></span></a>
-			<label for=chk_openfor><script language="JavaScript">
-			write_as_locale("Add to context menu for all files new command ", "Добавить в контекстное меню всех файлов пункт")
-			</script> "Open with SciTE"</label>
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<a class="help" href="#" hidefocus>
-			<input name="chk" type="checkbox" id=chk_ses hidefocus>
-			<span class="help"><script language="JavaScript">
-			write_as_locale("You'll able to open SciTE session files by double click.", "Позволяет открывать сохраненные ранее сессиии SciTE")
-			</script></span></a>
-			<label for=chk_ses><script language="JavaScript">
-			write_as_locale("Associate files *.session as SciTE session files", "Открывать файлы *.session как файлы сессий SciTE")
-			</script></label>
-		</td>
-	</tr>
-</table>
-</fieldset>
-&nbsp;
-
-<fieldset><legend>&nbsp;<script language="JavaScript">
-write_as_locale("Integration with Internet Explorer", "Интеграция в Internet Explorer")
-</script>:&nbsp;</legend><table width=100%>
-	<tr>
-		<td>
-			<a class="help" href="#" hidefocus>
-			<input name="chk" type="checkbox" id=chk_html_def hidefocus>
-			<span class="help"><script language="JavaScript">
-			write_as_locale("Command \"View source\" will open source file in SciTE.", "Выбор пункта меню Internet Explorer '<cite>Просмотр HTML кода</cite>'<br> откроет текущую страницу в SciTE")
-			</script></span></a>
-			<label for=chk_html_def><script language="JavaScript">
-			write_as_locale("Set SciTE as default HTML editor", "Установить SciTE в качестве дефолтового HTML редактора")
-			</script></label>
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<a class="help" href="#" hidefocus>
-			<input name="chk" type="checkbox" id=chk_html hidefocus>
-			<span class="help"><script language="JavaScript">
-			write_as_locale("On Internet Explorer toolbar can be placed button \"Edit\".<br> This option add the command \"Edit with SciTE\" to menu on this button.", "На панели инструментов Internet Explorer можно установить кнопку '<cite>Правка</cite>'.<br> Данная опция добавит в меню этой кнопки пункт '<cite>Править в SciTE</cite>'")
-			</script></span></a>
-			<label for=chk_html><script language="JavaScript">
-			write_as_locale("SciTE as one editor from button menu \"Edit\"", "SciTE в качестве одного из редакторов в меню кнопки \"Правка\"")
-			</script></label>
-		</td>
-	</tr>
-</table></fieldset>
-&nbsp;
-
-<fieldset><legend>&nbsp;<script language="JavaScript">
-write_as_locale("Integration with Windows", "Интеграция в Windows")
-</script>:&nbsp;</legend><table width=100%>
-<tr>
-	<td>
-		<a class="help" href="#" hidefocus>
-		<input name="chk" type="checkbox" id=chk_helper hidefocus>
-		<span class="help"><script language="JavaScript">
-		write_as_locale("<cite>SciTE.Helper</cite> is needed for external scripts for communicate with SciTE.", "C помощью <cite>SciTE.Helper</cite> внешние скрипты и программы<br> смогут управлять SciTE и получать из него данные")
-		</script></span></a>
-		<label for=chk_helper><script language="JavaScript">
-		write_as_locale("Install SciTE.Helper (COM-server for communication with SciTE)", "Установить SciTE.Helper (COM-сервер для управления SciTE)")
-		</script></label>
-	</td>
-</tr>
-</table></fieldset>
-&nbsp;
-
-<table width=100%>
-	<tr>
-		<td align=center width=33%><button onClick="Set();"><script language="JavaScript">
-		write_as_locale("OK", "ОК")
-		</script></button></td>
-		<td align=center width=33%><button onClick="self.close();"><script language="JavaScript">
-		write_as_locale("Cancel", "Отмена")
-		</script></button></td>
-		<td align=center width=33%><button onClick="About();"><script language="JavaScript">
-		write_as_locale("About...", "О программе")
-		</script></button></td>
-	</tr>
-</table>
-
-</td></tr>
-</table>
-</form>
-
-<script language="JavaScript">
 document.title = SWI.applicationName.replace(/_/g,' ') + ' ' + SWI.version;
-window.resizeTo(450,400);
+window.resizeTo(440,455);
+var scite_path = find_scite();
+if (scite_path == ""){
+	alert("Can't find SciTE!\nPlease run this script from folder with SciTE");
+	self.close();
+}
 
-Check();
+CheckLanguage();
+CheckHome();
+CheckAssociations();
+CheckOpenfor();
+CheckSession();
+CheckHTML_def();
+CheckHTML();
+CheckHelper();
 </script>
 
 </body>
