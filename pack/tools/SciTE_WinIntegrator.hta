@@ -508,15 +508,16 @@ function alert_msvbvm50() {
 <form id="form">
 <table width=100%><tr><td>
 
-<fieldset><legend id="lng_legend"></legend><table width=100%>
+<fieldset><legend id="lng_legend"></legend><table>
 	<tr>
-		<td style="width:50%">
+		<td>
 			<a class="help" href="#" hidefocus>
 			<input type="radio" name=chk_lng hidefocus onClick="SetInterfaceLng('eng');">
 			<span class="help" id="lng_help"></span></a>
 			<label id="lng_label" onClick="form.chk_lng[0].checked = true; SetInterfaceLng('eng');"></label>
 		</td>
-		<td style="width:50%">
+		<td>&nbsp;&nbsp;</td>
+		<td>
 			<a class="help" href="#" hidefocus>
 			<input type="radio" name=chk_lng hidefocus onClick="SetInterfaceLng('rus');">
 			<span class="help" id="lng_help"></span></a>
@@ -645,7 +646,7 @@ function find_scite(){
 }
 
 document.title = SWI.applicationName.replace(/_/g,' ') + ' ' + SWI.version;
-window.resizeTo(440,455);
+window.resizeTo(460,455);
 var scite_path = find_scite();
 if (scite_path == ""){
 	alert("Can't find SciTE!\nPlease run this script from folder with SciTE");
