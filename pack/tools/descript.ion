@@ -2,6 +2,7 @@ Calculator SciTE Calculator - Калькулятор на Lua
 CIViewer Color Image Viewer - Предпросмотр цвета и изображений
 Helper SciTE Helper - ActiveX компонент для связи SciTE со скриптами и приложениями
 HexEdit SciTE HexEdit - Hex редактор на Lua
+LuaLib Внешние Lua библиотеки
 SessionManager SciTE Session Manager - Менеджер сессий
 abbrevlist.lua При вводе слова, если это сокращение то вызывается список аббревиатур
 ascii.lua Трассировка выделенного текста в коды ASCII
@@ -24,6 +25,7 @@ FindText.lua Поиск выделенного в окне редактора (или консоли) текста с выводом с
 FoldText.lua Фолдинг для текстовых файлов
 FontChanger.lua Смена текущих установок шрифта
 FuncProcList.lua Вывод списка функций / процедур, имеющихся в коде
+HighlightLinks.lua Подсветка и открытие линков в тексте
 highlighting_paired_tags.lua Подсветка парных и непарных тегов в HTML и XML
 html_HELP.hta Оболочка для просмотра/поиска в HTML файлах справки
 html_tags_autoclose.lua Автозакрытие тегов в HTML файлах
