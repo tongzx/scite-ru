@@ -1,6 +1,6 @@
 -- Создание резервной копии сохраняемого после редактирования файла
 -- mozers
--- version 1.4.1
+-- version 1.4.2
 ------------------------------------------------
 -- Подключение:
 -- В файл SciTEStartup.lua добавьте строку:
@@ -39,7 +39,7 @@ local function GetPath()
 
 -- 	if backup folder not exist
 	if not FileExist(path) then
-		shell.run('CMD /C MD "'..path..'"',0,true) -- Silient window (only SciTE-Ru)
+		shell.exec('CMD /C MD "'..path..'"', nil, true, true) -- Silient window (only SciTE-Ru)
 --~ 		os.execute('CMD /C MD "'..path..'"')
 	end
 	return path

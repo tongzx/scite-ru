@@ -154,13 +154,13 @@ tmpname () returns a string with a filename for a temporary file (dangerous! tmp
 shell.msgbox
 shell.getfileattr
 shell.setfileattr
-shell.run
+shell.exec
 shell.findfiles
 shell.fileexists
 msgbox (<Text>, <Title>, <Options>) - Message Box. Return select button (extern lib "shell")
 getfileattr (<FileName>) - return File Attribute as number (extern lib "shell")
 setfileattr (<FileName>, <FileAttr>) - Set File Attribute (extern lib "shell")
-run (Command, [WindowStyle], [WaitOnReturn]) (extern lib "shell")
+exec (strCommand, [strOperation], [boolNoShow], [bWaitOnReturn]) (extern lib "shell")
 findfiles (<FileMask>) - return list of files by mask (extern lib "shell")
 fileexists (<FileName>) - return true if file or folder exists (extern lib "shell")
 

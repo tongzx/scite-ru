@@ -1,5 +1,5 @@
 -- OpenFindFiles.lua
--- Version: 1.0
+-- Version: 1.1
 -- Author: mozers™
 ---------------------------------------------------
 -- После выполнения команды "Найти в файлах..."
@@ -28,7 +28,7 @@ function OpenFindFiles()
 			if filename ~= filename_old then
 				local path_filename = string.gsub(path..filename,'\\','\\\\')
 				local cmd = '"'..props["SciteDefaultHome"]..'\\scite.exe" -check.if.already.open=1 "-open:'..path_filename..'" "-find:'..str..'"'
-				shell.run (cmd)
+				shell.exec(cmd, nil, true, false)
 				filename_old = filename 
 			end
 		end

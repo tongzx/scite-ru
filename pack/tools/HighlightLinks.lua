@@ -1,5 +1,5 @@
 --[[----------------------------------------------------------------------------
-HighlightLinks v1.1
+HighlightLinks v1.2
 Автор: VladVRO
 
 Подсветка линков в тексте и открытие их в броузере при клике с зажатым Ctrl
@@ -7,7 +7,7 @@ HighlightLinks v1.1
 Внимание:
 Скрипт работает только в версии SciTE-Ru.
 В скрипте используются функции из COMMON.lua (EditorMarkText, EditorClearMarks)
-и внешней библиотеки shell (shell.run)
+и внешней библиотеки shell (shell.exec)
 -----------------------------------------------
 
 Подключение:
@@ -60,7 +60,7 @@ end
 
 local function launch_browse()
 	if browser then
-		shell.run(browser, 0, false)
+		shell.exec(browser, nil, true, false)
 		browser = nil
 	end
 end
