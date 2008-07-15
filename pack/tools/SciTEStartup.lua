@@ -114,7 +114,7 @@ dofile (props["SciteDefaultHome"].."\\tools\\HighlightLinks.lua")
 dofile (props["SciteDefaultHome"].."\\tools\\OpenFindFiles.lua")
 
 -- Создает в контекстном меню таба (вкладки) подменю для команд SVN
---~ dofile (props["SciteDefaultHome"].."\\tools\\svn_menu.lua")
+dofile (props["SciteDefaultHome"].."\\tools\\svn_menu.lua")
 
 ----[[ У Т И Л И Т Ы  И  И Н С Т Р У М Е Н Т Ы ]]-----------------------------
 
