@@ -12,7 +12,7 @@ scroll=no
 selection=no
 contextMenu=no
 singleinstance=yes
-version=2.5
+version=2.6
 >
 <meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
 <style type="text/css">
@@ -80,16 +80,23 @@ var reg_backup = 'HKLM\\SOFTWARE\\SciTE\\Script\\WinIntegrator\\';
 // и выполняем только те позиции, в которых состояние чекбоксов изменилось
 function Set(){
 	// --------------------------------
-	if (CheckRusLocaleProperties()){
-		if (form.chk_lng[0].checked){
-			try {fso.MoveFile(scite_path + "\\locale.properties", scite_path + "\\locale_rus.properties")} catch(e) {}
+	// English
+	if (form.chk_lng[0].checked){
+		if (CheckRusLocaleProperties()){
+			if (locale_rus_exists) {fso.DeleteFile(scite_path + "\\locale_rus.properties", true)};
+			fso.MoveFile(scite_path + "\\locale.properties", scite_path + "\\locale_rus.properties");
 		}
-	}else{
-		if (form.chk_lng[1].checked){
-			try {
-				fso.MoveFile(scite_path + "\\locale_rus.properties", scite_path + "\\locale.properties");
-			} catch(e) {
+	}
+	// Russian
+	if (form.chk_lng[1].checked){
+		if (!CheckRusLocaleProperties()){
+			if (locale_rus_exists){
+				if (fso.FileExists(scite_path + "\\locale_old.properties")) {fso.DeleteFile(scite_path + "\\locale_old.properties")}
+				if (locale_exists) {fso.MoveFile(scite_path + "\\locale.properties", scite_path + "\\locale_old.properties")}
+				fso.MoveFile(scite_path + "\\locale_rus.properties", scite_path + "\\locale.properties")
+			}else{
 				alert("Русификация интерфейса SciTE невозможна ввиду отсутствия файла\n" + scite_path + "\\locale_rus.properties");
+				return false;
 			}
 		}
 	}
@@ -97,9 +104,9 @@ function Set(){
 	for (i=0;i<form.chk.length;i++){
 		if (form.chk[i].checked.toString() != form.chk[i].value.toString()){
 			if (form.chk[i].checked){
-				SetValue(form.chk[i].id);
+				if (!SetValue(form.chk[i].id)) {return false}
 			}else{
-				UnSetValue(form.chk[i].id);
+				if (!UnSetValue(form.chk[i].id)) {return false}
 			}
 		}
 	}
@@ -111,26 +118,19 @@ function Set(){
 function SetValue(id){
 	switch(id){
 	case "chk_home":
-		SetHome();
-		break;
+		return SetHome();
 	case "chk_associations":
-		SetAssociations();
-		break;
+		return SetAssociations();
 	case "chk_openfor":
-		SetOpenfor();
-		break;
+		return SetOpenfor();
 	case "chk_ses":
-		SetSessions();
-		break;
+		return SetSessions();
 	case "chk_html_def":
-		SetHTML_def();
-		break;
+		return SetHTML_def();
 	case "chk_html":
-		SetHTML();
-		break;
+		return SetHTML();
 	case "chk_helper":
-		SetHelper();
-		break;
+		return SetHelper();
 	}
 }
 
@@ -138,26 +138,19 @@ function SetValue(id){
 function UnSetValue(id){
 	switch(id){
 	case "chk_home":
-		UnSetHome();
-		break;
+		return UnSetHome();
 	case "chk_associations":
-		UnSetAssociations();
-		break;
+		return UnSetAssociations();
 	case "chk_openfor":
-		UnSetOpenfor();
-		break;
+		return UnSetOpenfor();
 	case "chk_ses":
-		UnSetSessions();
-		break;
+		return UnSetSessions();
 	case "chk_html_def":
-		UnSetHTML_def();
-		break;
+		return UnSetHTML_def();
 	case "chk_html":
-		UnSetHTML();
-		break;
+		return UnSetHTML();
 	case "chk_helper":
-		UnSetHelper();
-		break;
+		return UnSetHelper();
 	}
 }
 
@@ -276,10 +269,12 @@ function CheckHome(){
 
 function SetHome(){
 	WshShell.RegWrite('HKCU\\Environment\\SCITE_HOME', form.home.value);
+	return true;
 }
 
 function UnSetHome(){
-	try {WshShell.RegDelete('HKCU\\Environment\\SCITE_HOME')}catch(e){};
+	try {WshShell.RegDelete('HKCU\\Environment\\SCITE_HOME')}catch(e){return false};
+	return true;
 }
 
 // associations ============================================
@@ -312,6 +307,7 @@ function SetAssociations(){
 	WshShell.RegWrite('HKCR\\SciTE.File\\', 'SciTE file');
 	WshShell.RegWrite('HKCR\\SciTE.File\\DefaultIcon\\', form.home.value + '\\SciTE.exe,1');
 	WshShell.RegWrite('HKCR\\SciTE.File\\shell\\open\\command\\', '"' + form.home.value + '\\SciTE.exe" "%1"');
+	return true;
 }
 
 function UnSetAssociations(){
@@ -328,6 +324,7 @@ function UnSetAssociations(){
 		}
 	}
 	WshShell.RegDelete(reg_backup+'associations');
+	return true;
 }
 
 // openfor =================================================
@@ -342,15 +339,17 @@ function CheckOpenfor(){
 }
 
 function SetOpenfor(){
-		WshShell.RegWrite('HKCR\\*\\shell\\Open with SciTE\\', open_with_scite_locale);
-		WshShell.RegWrite('HKCR\\*\\shell\\Open with SciTE\\command\\', '"' + form.home.value + '\\SciTE.exe" "%1"');
+	WshShell.RegWrite('HKCR\\*\\shell\\Open with SciTE\\', open_with_scite_locale);
+	WshShell.RegWrite('HKCR\\*\\shell\\Open with SciTE\\command\\', '"' + form.home.value + '\\SciTE.exe" "%1"');
+	return true;
 }
 
 function UnSetOpenfor(){
 	try {
 		WshShell.RegDelete('HKCR\\*\\shell\\Open with SciTE\\command\\');
 		WshShell.RegDelete('HKCR\\*\\shell\\Open with SciTE\\');
-	}catch(e){}
+		return true;
+	}catch(e){return false}
 }
 
 // session =================================================
@@ -381,10 +380,12 @@ function SetSessions(){
 	var file = fso.OpenTextFile(script_path + '\\' + open_ses_file, 2, true);
 	file.Write(text);
 	file.Close();
+	return true;
 }
 
 function UnSetSessions(){
-	try{WshShell.RegDelete('HKCR\\.session\\')}catch(e){};
+	try{WshShell.RegDelete('HKCR\\.session\\')}catch(e){return false};
+	return true;
 }
 
 // html_def ================================================
@@ -405,6 +406,7 @@ function SetHTML_def(){
 	try {var current_htmldef = WshShell.RegRead('HKLM\\SOFTWARE\\Microsoft\\Internet Explorer\\View Source Editor\\Editor Name\\')} catch(e) {}
 	WshShell.RegWrite(reg_backup+'Source Editor', current_htmldef);
 	WshShell.RegWrite('HKLM\\SOFTWARE\\Microsoft\\Internet Explorer\\View Source Editor\\Editor Name\\', '"' + form.home.value + '\\SciTE.exe"');
+	return true;
 }
 
 function UnSetHTML_def(){
@@ -414,6 +416,7 @@ function UnSetHTML_def(){
 		WshShell.RegDelete(reg_backup+'Source Editor');
 	} catch(e) {}
 	WshShell.RegWrite('HKLM\\SOFTWARE\\Microsoft\\Internet Explorer\\View Source Editor\\Editor Name\\', old_htmldef);
+	return true;
 }
 
 // html ====================================================
@@ -434,10 +437,12 @@ function SetHTML(){
 	WshShell.RegWrite('HKCU\\Software\\Microsoft\\Internet Explorer\\Default HTML Editor\\shell\\edit\\command\\', form.home.value + '\\SciTE.exe "%1"');
 	WshShell.RegWrite('HKCU\\Software\\Microsoft\\Internet Explorer\\Default HTML Editor\\Description', 'SciTE - a Scintilla based Text Editor');
 	WshShell.RegWrite('HKCU\\Software\\Microsoft\\Shared\\HTML\\Default Editor\\shell\\edit\\command\\', form.home.value + '\\SciTE.exe "%1"');
+	return true;
 }
 
 function UnSetHTML(){
-	try{WshShell.RegDelete('HKCR\\.htm\\OpenWithList\\SCITE.EXE\\')}catch(e){};
+	try{WshShell.RegDelete('HKCR\\.htm\\OpenWithList\\SCITE.EXE\\')}catch(e){return false};
+	return true;
 }
 
 // helper ==================================================
@@ -457,10 +462,12 @@ function SetHelper(){
 	var ret = WshShell.Run('cmd /c for /f %i in ("msvbvm50.dll") do if "%~$PATH:i"=="" exit /b 1', 0, true);
 		if (ret != 0) {
 			alert_msvbvm50();
+			return false;
 		} else {
 			WshShell.Run('Regsvr32 "' + file_dll + '"',0,false);
 		}
 	}
+	return true;
 }
 
 function UnSetHelper(){
@@ -468,6 +475,7 @@ function UnSetHelper(){
 	if (fso.FileExists(file_dll)){
 		WshShell.Run('Regsvr32 /u "' + file_dll + '"',0,false);
 	}
+	return true;
 }
 
 // =============================================================
@@ -612,7 +620,7 @@ function alert_msvbvm50() {
 
 <table width=100%>
 	<tr>
-		<td align=center width=33%><input type="button" class="btn" onClick="Set();" id="btn_ok" value="OK"></td>
+		<td align=center width=33%><input type="button" class="btn" onClick="if (!Set()){self.location.reload()}" id="btn_ok" value="OK"></td>
 		<td align=center width=33%><input type="button" class="btn" onClick="self.close();" id="btn_cancel" value=""></td>
 		<td align=center width=33%><input type="button" class="btn" onClick="About();" id="btn_about" value=""></td>
 	</tr>
@@ -652,6 +660,12 @@ if (scite_path == ""){
 	self.close();
 }
 
+var locale_exists = fso.FileExists(scite_path + "\\locale.properties");
+var locale_rus_exists = fso.FileExists(scite_path + "\\locale_rus.properties");
+// при update уничтожаем старый locale.properties
+if ((CheckRusLocaleProperties())&(locale_rus_exists)){
+	fso.DeleteFile(scite_path + "\\locale.properties", true);
+}
 CheckLanguage();
 CheckHome();
 CheckAssociations();
