@@ -266,14 +266,10 @@ end
 		<p><b>Пример использования:</b>
 		<div class="example">
 		local attr = shell.getfileattr("c:\\MSDOS.SYS")<br>
-		if attr == 4294967295 then<br>
-		&nbsp;&nbsp;print("error")<br>
-		else<br>
-		&nbsp;&nbsp;print(attr)<br>
-		end
+		print(attr)
 		</div>
 		</p>
-	<p class="author">Авторы: Midas, Маслов Дмитрий</p>
+	<p class="author">Авторы: Midas, Дмитрий Маслов</p>
 </td></tr>
 
 <tr><td>
@@ -301,7 +297,7 @@ end
 		end
 		</div>
 		</p>
-	<p class="author">Авторы: Midas, Маслов Дмитрий</p>
+	<p class="author">Авторы: Midas, Дмитрий Маслов</p>
 </td></tr>
 
 <tr><td>
@@ -337,10 +333,10 @@ end
 	</p>
 	<p>
 	<b>Описание:</b><br>
-		&nbsp;&nbsp;Запуск файла зарегестрированным приложением. В отличии от run позволяет запускать файлы, документы и ссылки, а так же открывать каталоги.<br>
+		&nbsp;&nbsp;Выполнение внешней програмы или открытие файла зарегистрированным приложением. Позволяет запускать файлы, документы и ссылки, а так же открывать каталоги в Проводнике Windows.<br>
 	<br>
 	<b>Параметры:</b><br>
-		&nbsp;&nbsp;<dfn>strCommand</dfn> - команда запуска: имя файла или папки, если содержит параметры запуска, а имя файла содержит пробелы, то его нужно брать в ковычки, может содержать %переменные_окружения%<br>
+		&nbsp;&nbsp;<dfn>strCommand</dfn> - имя файла или папки с возможными параметрами запуска. Может содержать <nobr>%переменные_окружения%</nobr><br>
 		&nbsp;&nbsp;<dfn>strOperation</dfn> - исполняемая операция из перечисленных в таблице:<br>
 		<table style="margin-left:8pt;margin-top:3pt">
 		<tr><th>Значение</th><th>Описание</th></tr>
@@ -371,7 +367,7 @@ end
 		<td>Выводит диалоговое окно свойств файла или папки, strCommand - файл или папка</td>
 		</tr>
 		<td align="center">другое</td>
-		<td>Другие операции над файлами можно посмотреть в реестре: HKEY_CLASSES_ROOT\Subkey\Shell\Verb<br>Например, есть операция play для звуковых файлов: HKEY_CLASSES_ROOT\SoundRec\shell\play</td>
+		<td>Другая операция над файлом, имеющаяся в его контекстном меню. Например, есть операция play для звуковых файлов.</td>
 		</tr>
 		</table>
 		<br>
@@ -379,8 +375,11 @@ end
 		&nbsp;&nbsp;<dfn>bWaitOnReturn</dfn> - <var>true</var> | <var>false</var> (значение по умолчанию) - приостанавливать или нет скрипт на время выполнения команды<br>
 	<br>
 	<b>Возвращаемое значение:</b><br>
-		&nbsp;&nbsp;первое содержит при удачном запуске: <var>true</var> или, если запущен с параметром <var>bWaitOnReturn = true</var>, код завершения процесса, при неудаче: <var>false</var><br>
-		&nbsp;&nbsp;второе содержит сообщение об ошибке/успехе операции, при запуске консольных приложений с параметрами <var>boolNoShow = true</var> и <var>bWaitOnReturn = true</var>, содержит консольный вывод<br>
+		&nbsp;&nbsp;Первое содержит<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;- при удачном запуске: <var>true</var> или, если запущен с параметром <var>bWaitOnReturn = true</var>, код завершения процесса<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;- при неудаче: <var>false</var><br>
+		&nbsp;&nbsp;Второе содержит сообщение об ошибке/успехе операции;<br>
+		&nbsp;&nbsp;при запуске консольных приложений с параметрами <var>boolNoShow = true</var> и <var>bWaitOnReturn = true</var>, содержит текст консольного вывода приложения<br>
 	</p>
 		<p><b>Пример использования:</b>
 		<div class="example">
@@ -420,7 +419,7 @@ end
 			shell.exec("%WINDIR%\\winnt.bmp", "edit")
 		</div>
 		</p>
-	<p class="author">Авторы: Маслов Дмитрий</p>
+	<p class="author">Авторы: Дмитрий Маслов</p>
 </td></tr>
 
 <tr><td>
