@@ -12,7 +12,7 @@ scroll=no
 selection=no
 contextMenu=no
 singleinstance=yes
-version=2.6
+version=2.7
 >
 <meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
 <style type="text/css">
@@ -80,27 +80,11 @@ var reg_backup = 'HKLM\\SOFTWARE\\SciTE\\Script\\WinIntegrator\\';
 // и выполняем только те позиции, в которых состояние чекбоксов изменилось
 function Set(){
 	// --------------------------------
-	// English
 	if (form.chk_lng[0].checked){
-		if (CheckRusLocaleProperties()){
-			if (locale_rus_exists) {fso.DeleteFile(scite_path + "\\locale_rus.properties", true)};
-			fso.MoveFile(scite_path + "\\locale.properties", scite_path + "\\locale_rus.properties");
-		}
+		if (!SetSciteLocale('eng')){return false}
+	}else{
+		if (!SetSciteLocale('rus')){return false}
 	}
-	// Russian
-	if (form.chk_lng[1].checked){
-		if (!CheckRusLocaleProperties()){
-			if (locale_rus_exists){
-				if (fso.FileExists(scite_path + "\\locale_old.properties")) {fso.DeleteFile(scite_path + "\\locale_old.properties")}
-				if (locale_exists) {fso.MoveFile(scite_path + "\\locale.properties", scite_path + "\\locale_old.properties")}
-				fso.MoveFile(scite_path + "\\locale_rus.properties", scite_path + "\\locale.properties")
-			}else{
-				alert("Русификация интерфейса SciTE невозможна ввиду отсутствия файла\n" + scite_path + "\\locale_rus.properties");
-				return false;
-			}
-		}
-	}
-	// --------------------------------
 	for (i=0;i<form.chk.length;i++){
 		if (form.chk[i].checked.toString() != form.chk[i].value.toString()){
 			if (form.chk[i].checked){
@@ -181,8 +165,33 @@ function CheckLanguage(){
 	}
 }
 
+function SetSciteLocale(lng){
+	if (lng == 'eng'){
+		if (CheckRusLocaleProperties()){
+			if (locale_rus_exists) {fso.DeleteFile(scite_path + "\\locale_rus.properties", true)};
+			fso.MoveFile(scite_path + "\\locale.properties", scite_path + "\\locale_rus.properties");
+		}
+	}else{
+		if (!CheckRusLocaleProperties()){
+			if (locale_rus_exists){
+				if (fso.FileExists(scite_path + "\\locale.properties")) {
+					var old_name = "locale.old."
+					var n = 0
+					while (fso.FileExists(scite_path + "\\" + old_name + n + ".properties")) n++
+					fso.MoveFile(scite_path + "\\locale.properties", scite_path + "\\" + old_name + n + ".properties")
+				}
+				fso.MoveFile(scite_path + "\\locale_rus.properties", scite_path + "\\locale.properties")
+			}else{
+				alert("Русификация интерфейса SciTE невозможна ввиду отсутствия файла\n" + scite_path + "\\locale_rus.properties");
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
 function SetInterfaceLng(lng){
-	if (lng != 'rus'){
+	if (lng == 'eng'){
 		lng_legend.innerHTML = "&nbsp;Interface Language:&nbsp;";
 		lng_help[0].innerHTML = "Change interface this application<br>SciTE Interface will change after restart";
 		lng_help[1].innerHTML = lng_help[0].innerHTML;
@@ -660,7 +669,6 @@ if (scite_path == ""){
 	self.close();
 }
 
-var locale_exists = fso.FileExists(scite_path + "\\locale.properties");
 var locale_rus_exists = fso.FileExists(scite_path + "\\locale_rus.properties");
 // при update уничтожаем старый locale.properties
 if ((CheckRusLocaleProperties())&(locale_rus_exists)){
