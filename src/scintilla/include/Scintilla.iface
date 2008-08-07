@@ -1843,10 +1843,10 @@ fun void Colourise=4003(position start, position end)
 set void SetProperty=4004(string key, string value)
 
 # Maximum value of keywordSet parameter of SetKeyWords.
-#!-start-[VBLexerImprovement]
+#!-start-[VBLexerImprovement][ForthImprovement]
 #val KEYWORDSET_MAX=8
 val KEYWORDSET_MAX=16
-#!-end-[VBLexerImprovement]
+#!-end-[VBLexerImprovement][ForthImprovement]
 
 # Set up the key words used by the lexer.
 set void SetKeyWords=4005(int keywordSet, string keyWords)
@@ -2555,6 +2555,14 @@ val SCE_NNCRONTAB_NUMBER=7
 val SCE_NNCRONTAB_STRING=8
 val SCE_NNCRONTAB_ENVIRONMENT=9
 val SCE_NNCRONTAB_IDENTIFIER=10
+#-start-[ForthImprovement]
+val SCE_NNCRONTAB_WORD1=11
+val SCE_NNCRONTAB_WORD2=12
+val SCE_NNCRONTAB_WORD3=13
+val SCE_NNCRONTAB_WORD4=14
+val SCE_NNCRONTAB_WORD5=15
+val SCE_NNCRONTAB_WORD6=16
+#-end-[ForthImprovement]
 # Lexical states for SCLEX_FORTH (Forth Lexer)
 lex Forth=SCLEX_FORTH SCE_FORTH_
 val SCE_FORTH_DEFAULT=0
@@ -2569,6 +2577,14 @@ val SCE_FORTH_PREWORD2=8
 val SCE_FORTH_NUMBER=9
 val SCE_FORTH_STRING=10
 val SCE_FORTH_LOCALE=11
+#-start-[ForthImprovement]
+val SCE_FORTH_GUI=12
+val SCE_FORTH_OOP=13
+val SCE_FORTH_WORD1=14
+val SCE_FORTH_WORD2=15
+val SCE_FORTH_WORD3=16
+val SCE_FORTH_WORD4=17
+#-end-[ForthImprovement]
 # Lexical states for SCLEX_MATLAB
 lex MatLab=SCLEX_MATLAB SCE_MATLAB_
 val SCE_MATLAB_DEFAULT=0

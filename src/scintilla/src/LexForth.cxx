@@ -126,6 +126,14 @@ static void ColouriseForthDoc(unsigned int startPos, int length, int, WordList *
     WordList &preword1 = *keywordLists[3];
     WordList &preword2 = *keywordLists[4];
     WordList &strings = *keywordLists[5];
+//!-start-[ForthImprovement]
+    WordList &gui = *keywordLists[8];
+    WordList &oop = *keywordLists[9];
+    WordList &word1 = *keywordLists[10];
+    WordList &word2 = *keywordLists[11];
+    WordList &word3 = *keywordLists[12];
+    WordList &word4 = *keywordLists[13];
+//!-end-[ForthImprovement]
 
     // go through all provided text segment
     // using the hand-written state machine shown below
@@ -147,8 +155,13 @@ static void ColouriseForthDoc(unsigned int startPos, int length, int, WordList *
             styler.ColourTo(cur_pos,SCE_FORTH_COMMENT);
         }else if(strcmp("[",buffer)==0){
             styler.ColourTo(pos1,SCE_FORTH_STRING);
-            parse(']',true);
-            if(cur_pos<lengthDoc) cur_pos++;
+//!-start-[ForthImprovement]
+//!            parse(']',true);
+//!            if(cur_pos<lengthDoc) cur_pos++;
+            while(parse(BL,true)!=0)
+                if(strcmp("]",buffer)==0)
+                    break;
+//!-end-[ForthImprovement]
             styler.ColourTo(cur_pos,SCE_FORTH_STRING);
         }else if(strcmp("{",buffer)==0){
             styler.ColourTo(pos1,SCE_FORTH_LOCALE);
@@ -187,6 +200,20 @@ static void ColouriseForthDoc(unsigned int startPos, int length, int, WordList *
         }else if(is_number(buffer)){
             styler.ColourTo(pos1,SCE_FORTH_NUMBER);
             styler.ColourTo(pos2,SCE_FORTH_NUMBER);
+//!-start-[ForthImprovement]
+        }else if(gui.InList(buffer)) {
+            styler.ColourTo(pos2,SCE_FORTH_GUI);
+        }else if(oop.InList(buffer)) {
+            styler.ColourTo(pos2,SCE_FORTH_OOP);
+        }else if(word1.InList(buffer)) {
+            styler.ColourTo(pos2,SCE_FORTH_WORD1);
+        }else if(word2.InList(buffer)) {
+            styler.ColourTo(pos2,SCE_FORTH_WORD2);
+        }else if(word3.InList(buffer)) {
+            styler.ColourTo(pos2,SCE_FORTH_WORD3);
+        }else if(word4.InList(buffer)) {
+            styler.ColourTo(pos2,SCE_FORTH_WORD4);
+//!-end-[ForthImprovement]
         }
     }
 #ifdef FORTH_DEBUG
@@ -335,8 +362,70 @@ static void ColouriseForthDoc(unsigned int startPos, int length, int, WordList *
 */
 }
 
-static void FoldForthDoc(unsigned int, int, int, WordList *[],
-                       Accessor &) {
+//!static void FoldForthDoc(unsigned int, int, int, WordList *[],
+//!                       Accessor &) {
+//!-start-[ForthImprovement]
+static void FoldForthDoc(unsigned int startPos, int length, int initStyle,
+    WordList *keywordlists[], Accessor &styler)
+{
+    WordList &fold_begin = *keywordlists[6];
+    WordList &fold_end = *keywordlists[7];
+
+    int line = styler.GetLine(startPos);
+    int level = styler.LevelAt(line);
+    int levelIndent = 0;
+    unsigned int endPos = startPos + length;
+    char word[256];
+    int wordlen = 0;
+    int style = initStyle;
+    // Scan for tokens
+    for (unsigned int i = startPos; i < endPos; i++) {
+        int c = styler.SafeGetCharAt(i, '\n');
+        style = styler.StyleAt(i);
+        if (is_whitespace(c)) {
+            if (wordlen) { // done with token
+                word[wordlen] = '\0';
+                // CheckFoldPoint
+                if (fold_begin.InList(word)) {
+                    levelIndent += 1;
+                } else
+                if (fold_end.InList(word)) {
+                    levelIndent -= 1;
+                }
+                wordlen = 0;
+            }
+        }
+        else if (!(style == SCE_FORTH_COMMENT || style == SCE_FORTH_COMMENT_ML
+            || style == SCE_FORTH_LOCALE || style == SCE_FORTH_STRING
+            || style == SCE_FORTH_DEFWORD || style == SCE_FORTH_PREWORD1
+            || style == SCE_FORTH_PREWORD2)) {
+            if (wordlen) {
+                if (wordlen < 255) {
+                    word[wordlen] = c;
+                    wordlen++;
+                }
+            } else { // start scanning at first word character
+                word[0] = c;
+                wordlen = 1;
+            }
+        }
+        if (c == '\n') { // line end
+            if (levelIndent > 0) {
+                level |= SC_FOLDLEVELHEADERFLAG;
+            }
+            if (level != styler.LevelAt(line))
+                styler.SetLevel(line, level);
+            level += levelIndent;
+            if ((level & SC_FOLDLEVELNUMBERMASK) < SC_FOLDLEVELBASE)
+                level = SC_FOLDLEVELBASE;
+            line++;
+            // reset state
+            levelIndent = 0;
+            level &= ~SC_FOLDLEVELHEADERFLAG;
+            level &= ~SC_FOLDLEVELWHITEFLAG;
+        }
+    }
+//!-end-[ForthImprovement]
 }
 
 static const char * const forthWordLists[] = {
@@ -346,6 +435,16 @@ static const char * const forthWordLists[] = {
             "prewords with one argument",
             "prewords with two arguments",
             "string definition keywords",
+//!-start-[ForthImprovement]
+            "folding start words",
+            "folding end words",
+            "GUI",
+            "OOP",
+            "user defined words 1",
+            "user defined words 2",
+            "user defined words 3",
+            "user defined words 4",
+//!-end-[ForthImprovement]
             0,
         };
 

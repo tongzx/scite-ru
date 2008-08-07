@@ -711,13 +711,19 @@ static IFaceConstant ifaceConstants[] = {
 	{"SCE_FORTH_CONTROL",4},
 	{"SCE_FORTH_DEFAULT",0},
 	{"SCE_FORTH_DEFWORD",6},
+	{"SCE_FORTH_GUI",12},
 	{"SCE_FORTH_IDENTIFIER",3},
 	{"SCE_FORTH_KEYWORD",5},
 	{"SCE_FORTH_LOCALE",11},
 	{"SCE_FORTH_NUMBER",9},
+	{"SCE_FORTH_OOP",13},
 	{"SCE_FORTH_PREWORD1",7},
 	{"SCE_FORTH_PREWORD2",8},
 	{"SCE_FORTH_STRING",10},
+	{"SCE_FORTH_WORD1",14},
+	{"SCE_FORTH_WORD2",15},
+	{"SCE_FORTH_WORD3",16},
+	{"SCE_FORTH_WORD4",17},
 	{"SCE_FS_ASM",19},
 	{"SCE_FS_BINNUMBER",23},
 	{"SCE_FS_COMMENT",1},
@@ -1072,6 +1078,12 @@ static IFaceConstant ifaceConstants[] = {
 	{"SCE_NNCRONTAB_SECTION",3},
 	{"SCE_NNCRONTAB_STRING",8},
 	{"SCE_NNCRONTAB_TASK",2},
+	{"SCE_NNCRONTAB_WORD1",11},
+	{"SCE_NNCRONTAB_WORD2",12},
+	{"SCE_NNCRONTAB_WORD3",13},
+	{"SCE_NNCRONTAB_WORD4",14},
+	{"SCE_NNCRONTAB_WORD5",15},
+	{"SCE_NNCRONTAB_WORD6",16},
 	{"SCE_NSIS_COMMENT",1},
 	{"SCE_NSIS_COMMENTBOX",18},
 	{"SCE_NSIS_DEFAULT",0},
@@ -2371,7 +2383,7 @@ static IFaceProperty ifaceProperties[] = {
 
 enum {
 	ifaceFunctionCount = 247,
-	ifaceConstantCount = 1849,
+	ifaceConstantCount = 1861,
 	ifacePropertyCount = 135
 };
 
