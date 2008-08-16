@@ -474,7 +474,50 @@ struct BarButtonIn {
 };
 
 void SciTEWin::SetToolBar() {
-	while (::SendMessage(reinterpret_cast<HWND>(wToolBar.GetID()), TB_DELETEBUTTON, 0, 0));
+	wToolBar.Destroy();
+	HWND hwndToolBar = ::CreateWindowEx( 0,
+										 TOOLBARCLASSNAME,
+										 "",
+										 WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS |
+										 TBSTYLE_FLAT | TBSTYLE_TOOLTIPS | CCS_NORESIZE,
+										 0, 0,
+										 100, heightTools,
+										 MainHWND(),
+										 reinterpret_cast<HMENU>(IDM_TOOLWIN),
+										 hInstance,
+										 0 );
+	wToolBar = hwndToolBar;
+
+	::SendMessage(hwndToolBar, TB_BUTTONSTRUCTSIZE, sizeof(TBBUTTON), 0);
+
+	SString sIconlib = props.GetNewExpand( "user.toolbar.iconlib" );
+	HICON hIcon = NULL;
+	HICON hIconBig = NULL;
+	int iCount = 0;
+	HDC hDesktopDC = ::GetDC( NULL );
+	RECT rect = { 0, 0, 16, 16 };
+	HBRUSH hBrashBack = ::GetSysColorBrush( COLOR_BTNFACE );
+	while ( (int)::ExtractIconEx( sIconlib.c_str(), iCount++, &hIconBig, &hIcon, 1 ) > 0 ) {
+		if ( hIconBig != NULL )::DestroyIcon( hIconBig );
+		if ( hIcon != NULL ) {
+			HDC hDC = ::CreateCompatibleDC( hDesktopDC );
+			HBITMAP hbm = ::CreateCompatibleBitmap( hDesktopDC, 16, 16 );
+			::SelectObject( hDC, hbm );
+			::FillRect( hDC, &rect, hBrashBack );
+			::DrawIconEx( hDC, 0, 0, hIcon, 16, 16, 0, NULL, DI_NORMAL );
+			::DeleteDC( hDC );
+			::DestroyIcon( hIcon );
+			TBADDBITMAP bitmap = { NULL, (UINT)hbm };
+			::SendMessage( hwndToolBar, TB_ADDBITMAP, 1, (LPARAM)&bitmap );
+		}
+	}
+	::DeleteDC( hDesktopDC );
+	if ( iCount == 1 )
+	{
+		TBADDBITMAP addbmp = { hInstance, IDR_BUTTONS };
+		::SendMessage( hwndToolBar, TB_ADDBITMAP, 31, (LPARAM)&addbmp );
+	}
+
 	TArray<BarButtonIn,BarButtonIn> barbuttons;
 	SString userContextMenu = props.GetNewExpand("user.toolbar");
 	userContextMenu.substitute('|', '\0');
@@ -497,8 +540,7 @@ void SciTEWin::SetToolBar() {
 		}
 	}
 	
-	if (!barbuttons.GetSize()) 
-	{
+	if (!barbuttons.GetSize()) {
 		ToolBarTips[IDM_NEW]			= "New";
 		ToolBarTips[IDM_OPEN]			= "Open";
 		ToolBarTips[IDM_SAVE]			= "Save";
@@ -532,21 +574,20 @@ void SciTEWin::SetToolBar() {
 		barbuttons.Add(BarButtonIn(11, IDM_REPLACE));
 	}
 
-		TBBUTTON *tbb = new TBBUTTON[barbuttons.GetSize()];
-		for (int i = 0;i < barbuttons.GetSize();i++) {
-			tbb[i].idCommand = barbuttons[i].cmd;
-			tbb[i].iBitmap = barbuttons[i].id;
-			tbb[i].fsState = TBSTATE_ENABLED;
-			if ( -1 == tbb[i].iBitmap)
-				tbb[i].fsStyle = TBSTYLE_SEP;
-			else
-				tbb[i].fsStyle = TBSTYLE_BUTTON;
-			tbb[i].dwData = 0;
-			tbb[i].iString = 0;
-		}
-		::SendMessage(reinterpret_cast<HWND>(wToolBar.GetID()), TB_ADDBUTTONS, barbuttons.GetSize(), reinterpret_cast<LPARAM>(tbb));
-		delete []tbb;
+	TBBUTTON *tbb = new TBBUTTON[barbuttons.GetSize()];
+	for (int i = 0;i < barbuttons.GetSize();i++) {
+		tbb[i].idCommand = barbuttons[i].cmd;
+		tbb[i].iBitmap = barbuttons[i].id;
+		tbb[i].fsState = TBSTATE_ENABLED;
+		tbb[i].fsStyle = -1 == tbb[i].iBitmap ? TBSTYLE_SEP : TBSTYLE_BUTTON;
+		tbb[i].dwData = 0;
+		tbb[i].iString = 0;
 	}
+	::SendMessage( hwndToolBar, TB_ADDBUTTONS, barbuttons.GetSize(), reinterpret_cast<LPARAM>(tbb) );
+	delete []tbb;
+
+	wToolBar.Show();
+}
 //!-end-[user.toolbar]
 
 void SciTEWin::SetMenuItem(int menuNumber, int position, int itemID,
@@ -913,6 +954,7 @@ void SciTEWin::Creation() {
 	SendOutput(SCI_USEPOPUP, 0);
 	::DragAcceptFiles(MainHWND(), true);
 
+/*!-change-[user.toolbar]
 	HWND hwndToolBar = ::CreateWindowEx(
 	               0,
 	               TOOLBARCLASSNAME,
@@ -928,18 +970,13 @@ void SciTEWin::Creation() {
 	wToolBar = hwndToolBar;
 
 	::SendMessage(hwndToolBar, TB_BUTTONSTRUCTSIZE, sizeof(TBBUTTON), 0);
-/*!
+
 	::SendMessage(hwndToolBar, TB_LOADIMAGES, IDB_STD_SMALL_COLOR,
 	              reinterpret_cast<LPARAM>(HINST_COMMCTRL));
 
 	TBADDBITMAP addbmp = { hInstance, IDR_CLOSEFILE };
 	::SendMessage(hwndToolBar, TB_ADDBITMAP, 1, (LPARAM)&addbmp);
-*/
-//!-start-[user.toolbar]
-	TBADDBITMAP addbmp = { hInstance, IDR_BUTTONS };
-	::SendMessage(hwndToolBar, TB_ADDBITMAP, 31, (LPARAM)&addbmp);
-//!-end-[user.toolbar]
-/*!
+
 	TBBUTTON tbb[ELEMENTS(bbs)];
 	for (unsigned int i = 0;i < ELEMENTS(bbs);i++) {
 		if (bbs[i].cmd == IDM_CLOSE)
@@ -957,8 +994,9 @@ void SciTEWin::Creation() {
 	}
 
 	::SendMessage(hwndToolBar, TB_ADDBUTTONS, ELEMENTS(bbs), reinterpret_cast<LPARAM>(tbb));
-*/
+
 	wToolBar.Show();
+*/
 
 	INITCOMMONCONTROLSEX icce;
 	icce.dwSize = sizeof(icce);
