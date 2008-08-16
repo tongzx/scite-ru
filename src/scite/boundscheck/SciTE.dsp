@@ -295,6 +295,10 @@ SOURCE=..\..\scintilla\src\LexEScript.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\scintilla\src\LexEuphoria.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\scintilla\src\LexFlagship.cxx
 # End Source File
 # Begin Source File
