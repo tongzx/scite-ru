@@ -3,8 +3,6 @@
 ::-----------------------------------------
 :: Путь к MinGW
 SET MINGW=C:\MinGW\bin
-:: Путь к upx (если отсутствует не менять)
-SET UPX3=C:\MinGW\upx300w
 ::-----------------------------------------
 
 ECHO Start building toolbar.dll ...
@@ -24,12 +22,6 @@ windres -o resfile.o toolbar.rc
 IF ERRORLEVEL 1 GOTO error
 gcc -s -shared -o toolbar.dll resfile.o
 IF ERRORLEVEL 1 GOTO error
-
-IF EXIST "%UPX3%\upx.exe" (
-	"%UPX3%\upx.exe" --best toolbar.dll
-) ELSE (
-	ECHO  Warning: UPX not found! File toolbar.dll not packed.
-)
 
 DEL resfile.o
 
