@@ -474,6 +474,7 @@ struct BarButtonIn {
 };
 
 void SciTEWin::SetToolBar() {
+	ToolBarTips.RemoveAll();
 	wToolBar.Destroy();
 	HWND hwndToolBar = ::CreateWindowEx( 0,
 										 TOOLBARCLASSNAME,
@@ -587,6 +588,7 @@ void SciTEWin::SetToolBar() {
 	delete []tbb;
 
 	wToolBar.Show();
+	SizeSubWindows();
 }
 //!-end-[user.toolbar]
 
