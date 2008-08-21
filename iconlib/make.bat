@@ -20,7 +20,7 @@ SET PATH=%MINGW%;C:\Program Files\CodeBlocks\bin;%PATH%
 
 windres -o resfile.o toolbar.rc
 IF ERRORLEVEL 1 GOTO error
-gcc -s -shared -o toolbar.dll resfile.o
+gcc -s -shared -nostdlib -o toolbar.dll resfile.o
 IF ERRORLEVEL 1 GOTO error
 
 DEL resfile.o
