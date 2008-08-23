@@ -1,5 +1,5 @@
 -- FuncProcList.lua
--- Version: 1.2.4
+-- Version: 1.3
 -- mozersЩ , Maximka (выполн€€ пожелание ALeXkRU при активном тестировании mimir)
 -- »спользованы идеи: Grisper и gansA
 ---------------------------------------------------
@@ -37,7 +37,7 @@ local textAll = editor:GetText()
 local startPos, endPos, findString
 local count = 0
 startPos = 1
-print("> —писок функций / процедур:")
+print('> '..scite.GetTranslation('List of Functions / Procedures')..':')
 while true do
 	startPos, endPos, findString = string.find(textAll, findPattern, startPos)
 	if startPos == nil then break end
@@ -54,7 +54,7 @@ while true do
 	startPos = endPos + 1
 end
 if count > 0 then
-	trace("> Ќайдено: "..count.." функций / процедур\nƒвойной щелчок на строке с результатом установит курсор на оригинальную строку")
+	trace("> "..scite.GetTranslation('Found')..": "..count.." "..scite.GetTranslation('functions/procedures\nThe double click at line with result will establish the cursor for an original line'))
 else
-	trace("> ‘ункций / процедур не найдено!")
+	trace("> "..scite.GetTranslation('nothing found!'))
 end
