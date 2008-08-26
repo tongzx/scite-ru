@@ -2538,17 +2538,6 @@ bool SciTEBase::StartInsertAbbreviation() {
 	return true;
 }
 
-//!-start-[VarAbbrev]
-#if PLAT_WIN
-inline void GUIDToStr(const GUID &g, char*a){
-	sprintf(a,"{%X-%X-%X-%X%X-%X%X%X%X%X%X}",(unsigned int)g.Data1,
-		(unsigned int)g.Data2,(unsigned int)g.Data3,
-		g.Data4[0],g.Data4[1],g.Data4[2],g.Data4[3],g.Data4[4],
-		g.Data4[5],g.Data4[6],g.Data4[7]);
-}
-#endif
-//!-end-[VarAbbrev]
-
 bool SciTEBase::InsertAbbreviation(const char* data, int expandedLength) {
 	size_t dataLength = strlen(data);
 	if (dataLength == 0) {
@@ -2557,7 +2546,6 @@ bool SciTEBase::InsertAbbreviation(const char* data, int expandedLength) {
 //!-end-[AbbrevRefactoring]
 
 //!-start-[VarAbbrev]
-	char *pPerc=NULL;
 	SString currentSelection = EncodeString(SelectionExtend(0, false));
 	bool UseSel = false;
 #if PLAT_WIN
@@ -2673,7 +2661,7 @@ bool SciTEBase::InsertAbbreviation(const char* data, int expandedLength) {
 						abbrevText += c;
 						i++;
 					} else {
-						pPerc = strstr(&expbuf[i+1],"%");
+						char *pPerc = strstr(&expbuf[i+1],"%");
 						if(pPerc){
 							int lenPerc = pPerc - expbuf-i+1;
 							pPerc = new char[lenPerc+2];
@@ -2721,10 +2709,14 @@ bool SciTEBase::InsertAbbreviation(const char* data, int expandedLength) {
 								UseSel = true;
 							}else
 							if(strcmp(pPerc,"%GUID%")==0){
-								char chGUID[40]={0};
 								GUID guid;
 								::CoCreateGuid(&guid);
-								GUIDToStr(guid,chGUID);
+								char chGUID[40]={0};
+								sprintf( chGUID, "{%X-%X-%X-%X%X-%X%X%X%X%X%X}",
+										 (unsigned int)guid.Data1, (unsigned int)guid.Data2,
+										 (unsigned int)guid.Data3, guid.Data4[0], guid.Data4[1],
+										 guid.Data4[2], guid.Data4[3], guid.Data4[4],
+										 guid.Data4[5], guid.Data4[6], guid.Data4[7] );
 								abbrevText += chGUID;
 								i+=lenPerc-1;
 							}else
