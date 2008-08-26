@@ -2539,13 +2539,14 @@ bool SciTEBase::StartInsertAbbreviation() {
 }
 
 //!-start-[VarAbbrev]
-#define FINALLY(ARG) catch(...){ARG;}ARG;
+#if PLAT_WIN
 inline void GUIDToStr(const GUID &g, char*a){
 	sprintf(a,"{%X-%X-%X-%X%X-%X%X%X%X%X%X}",(unsigned int)g.Data1,
 		(unsigned int)g.Data2,(unsigned int)g.Data3,
 		g.Data4[0],g.Data4[1],g.Data4[2],g.Data4[3],g.Data4[4],
 		g.Data4[5],g.Data4[6],g.Data4[7]);
 }
+#endif
 //!-end-[VarAbbrev]
 
 bool SciTEBase::InsertAbbreviation(const char* data, int expandedLength) {
@@ -2558,13 +2559,12 @@ bool SciTEBase::InsertAbbreviation(const char* data, int expandedLength) {
 //!-start-[VarAbbrev]
 	char *pPerc=NULL;
 	SString currentSelection = EncodeString(SelectionExtend(0, false));
-	SString clpBuffer;
-	bool UseSel = false; 
+	bool UseSel = false;
 #if PLAT_WIN
+	SString clpBuffer;
 	BOOL IsOpen=OpenClipboard(0);
 	if(IsOpen){
-		HANDLE Data;
-		Data = GetClipboardData(CF_TEXT);
+		HANDLE Data = GetClipboardData(CF_TEXT);
 		if(Data != 0){
 			clpBuffer = static_cast<char*>(GlobalLock(Data));
 			GlobalUnlock(Data);
@@ -2683,11 +2683,11 @@ bool SciTEBase::InsertAbbreviation(const char* data, int expandedLength) {
 								if (at_start) {
 									int texteol = PropFileEx::GetEOLtype(currentSelection);
 									int pos = currentSelection.search(texteol == SC_EOL_CRLF || texteol == SC_EOL_LF?"\n":"\r");
-									int	tpos = currentSelection.search("\t", pos);
-									int	tabcount=0;
+									int tpos = currentSelection.search("\t", pos);
+									int tabcount=0;
 									if (tpos == pos+1)
 									{
-										do 
+										do
 										{
 											tabcount++;
 											tpos = currentSelection.search("\t", tpos+1);
@@ -2699,12 +2699,13 @@ bool SciTEBase::InsertAbbreviation(const char* data, int expandedLength) {
 								i+=lenPerc-1;
 								UseSel = true;
 							}else
+#if PLAT_WIN
 							if(strcmp(pPerc,"%CLP%")==0){
 								if (at_start) {
 									int texteol = PropFileEx::GetEOLtype(clpBuffer);
 									int pos = clpBuffer.search(texteol == SC_EOL_CRLF || texteol == SC_EOL_LF?"\n":"\r");
-									int	tpos = clpBuffer.search("\t", pos);
-									int	tabcount=0;
+									int tpos = clpBuffer.search("\t", pos);
+									int tabcount=0;
 									if (tpos == pos+1)
 									{
 										do 
@@ -2722,11 +2723,12 @@ bool SciTEBase::InsertAbbreviation(const char* data, int expandedLength) {
 							if(strcmp(pPerc,"%GUID%")==0){
 								char chGUID[40]={0};
 								GUID guid;
-								CoCreateGuid (&guid);
+								::CoCreateGuid(&guid);
 								GUIDToStr(guid,chGUID);
 								abbrevText += chGUID;
 								i+=lenPerc-1;
 							}else
+#endif
 							if(lenPerc>4 && pPerc[1]=='[' && pPerc[lenPerc-2]==']'){
 								pPerc[lenPerc-2] = '\0'; 
 								abbrevText += props.GetExpanded(&pPerc[2]);
