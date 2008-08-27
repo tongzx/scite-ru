@@ -295,4 +295,13 @@ const char *MultiplexExtension::OnSendEditor(unsigned int msg, unsigned int wp, 
 	}
 	return result;
 }
+
+const char *MultiplexExtension::OnSendEditor(unsigned int msg, unsigned int wp, long lp) {
+	const char *result = 0;
+	for (int i=0; i<extensionCount; ++i) {
+		result = extensions[i]->OnSendEditor(msg,wp,lp);
+		if (result != 0) break;
+	}
+	return result;
+}
 //!-end-[OnSendEditor]

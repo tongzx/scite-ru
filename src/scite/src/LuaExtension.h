@@ -46,4 +46,5 @@ public:
 	virtual bool OnMacro(const char *p, const char *q); //!-add-[macro]
 	virtual bool OnMenuCommand(int, int); //!-add-[OnMenuCommand]
 	virtual const char *OnSendEditor(unsigned int, unsigned int, const char *); //!-add-[OnSendEditor]
+	virtual const char *OnSendEditor(unsigned int, unsigned int, long); //!-add-[OnSendEditor]
 };

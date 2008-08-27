@@ -177,6 +177,10 @@ bool SingleThreadExtension::OnMenuCommand(int cmd, int source) {
 const char *SingleThreadExtension::OnSendEditor(unsigned int msg, unsigned int wp, const char *lp) {
 	return ext->OnSendEditor(msg, wp, lp);
 }
+
+const char *SingleThreadExtension::OnSendEditor(unsigned int msg, unsigned int wp, long lp) {
+	return ext->OnSendEditor(msg, wp, lp);
+}
 //!-end-[OnSendEditor]
 
 bool SingleThreadExtension::SendProperty(const char *prop) {

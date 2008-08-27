@@ -585,7 +585,8 @@ sptr_t SciTEBase::SendEditor(unsigned int msg, uptr_t wParam, sptr_t lParam) {
 		if (!isNotStringParams(msg))
 			result = extender->OnSendEditor(msg, wParam, reinterpret_cast<const char *>(lParam));
 		else
-			result = extender->OnSendEditor(msg, wParam, NULL);
+			result = extender->OnSendEditor(msg, wParam, reinterpret_cast<long>(lParam));
+			// result = extender->OnSendEditor(msg, wParam, reinterpret_cast<const char *>(NULL));
 		OnSendEditorCallsCount--;
 	}
 	if (result != NULL) {

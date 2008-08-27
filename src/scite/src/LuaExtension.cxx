@@ -942,6 +942,22 @@ static const char *CallNamedFunction(const char *name, unsigned int numberArg, u
 	}
 	return handled;
 }
+
+static const char *CallNamedFunction(const char *name, unsigned int numberArg, unsigned int numberArg2, long numberArg3) {
+	const char *handled = NULL;
+	if (luaState) {
+		lua_getglobal(luaState, name);
+		if (lua_isfunction(luaState, -1)) {
+			lua_pushnumber(luaState, numberArg);
+			lua_pushnumber(luaState, numberArg2);
+			lua_pushnumber(luaState, numberArg3);
+			handled = call_sfunction(luaState, 3);
+		} else {
+			lua_pop(luaState, 1);
+		}
+	}
+	return handled;
+}
 //!-end-[OnSendEditor]
 
 static int iface_function_helper(lua_State *L, const IFaceFunction &func) {
@@ -1912,6 +1928,10 @@ bool LuaExtension::OnMenuCommand(int cmd, int source) {
 
 //!-start-[OnSendEditor]
 const char *LuaExtension::OnSendEditor(unsigned int msg, unsigned int wp, const char *lp) {
+	return CallNamedFunction("OnSendEditor", msg, wp, lp);
+}
+
+const char *LuaExtension::OnSendEditor(unsigned int msg, unsigned int wp, long lp) {
 	return CallNamedFunction("OnSendEditor", msg, wp, lp);
 }
 //!-end-[OnSendEditor]
