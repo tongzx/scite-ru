@@ -449,7 +449,7 @@ SciTEBase::~SciTEBase() {
 //!	popup.Destroy();	//!-change-[ExtendedContextMenu]
 }
 
-//!-start-[macro]
+//!-start-[OnSendEditor]
 static bool isInterruptableMessage(unsigned int msg) {
 	switch (msg) {
 	// Enumerates all macroable messages
@@ -554,11 +554,23 @@ static bool isInterruptableMessage(unsigned int msg) {
 		case SCI_SELECTIONDUPLICATE:
 	// One more interruptable messages
 		case SCI_SETREADONLY:
+		case SCI_MARKERADD:
+		case SCI_MARKERDELETE:
 			return true;
 	}
 	return false;
 }
-//!-end-[macro]
+
+// messages list witch has not string parameter
+static bool isNotStringParams(unsigned int msg) {
+	switch (msg) {
+		case SCI_MARKERADD:
+		case SCI_MARKERDELETE:
+			return true;
+	}
+	return false;
+}
+//!-end-[OnSendEditor]
 
 /*!
 sptr_t SciTEBase::SendEditor(unsigned int msg, uptr_t wParam, sptr_t lParam) {
@@ -570,7 +582,10 @@ sptr_t SciTEBase::SendEditor(unsigned int msg, uptr_t wParam, sptr_t lParam) {
 	const char *result = NULL;
 	if (extender && isInterruptableMessage(msg) && OnSendEditorCallsCount < _MAX_EXTENSION_RECURSIVE_CALL) {
 		OnSendEditorCallsCount++;
-		result = extender->OnSendEditor(msg, wParam, reinterpret_cast<const char *>(lParam));
+		if (!isNotStringParams(msg))
+			result = extender->OnSendEditor(msg, wParam, reinterpret_cast<const char *>(lParam));
+		else
+			result = extender->OnSendEditor(msg, wParam, NULL);
 		OnSendEditorCallsCount--;
 	}
 	if (result != NULL) {
