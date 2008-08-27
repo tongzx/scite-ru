@@ -22,7 +22,7 @@ local findRegExp = {
 	 ['js']="(\n[^,<>\n]-function[^(]-%b())[^{]-%b{}",
 	['vbs']="(\n[SsFf][Uu][BbNn][^\r]-)\r",
 	['css']="([%w.#-_]+)[%s}]-%b{}",
-	['pas']="\n([pPff][rRuU][oOnN][cC][eEtT][dDiI][uUoO][rRnN].-%b().-)\n",
+	['pas']="\n([pPfF][rRuU][oOnN][cC][eEtT][dDiI][uUoO][rRnN].-%b().-)\n",
 	['py']="\n%s-([dc][el][fa]%s-.-):"
 }
 local findPattern = findRegExp [props["FileExt"]]

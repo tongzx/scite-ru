@@ -6,7 +6,7 @@ SET MINGW_ALT=%ProgramFiles%\CodeBlocks\bin
 :: Путь к исходникам Lua
 SET INC=..\src\scite\lua\include
 :: Путь к upx (если отсутствует не менять)
-SET UPX3=C:\MinGW\upx300w\upx.exe
+SET UPX3=C:\MinGW\upx\upx.exe
 ::-----------------------------------------
 ECHO Start building lualib ...
 ECHO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
