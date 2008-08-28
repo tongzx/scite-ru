@@ -3,7 +3,7 @@ MODE CON COLS=120 LINES=2000
 
 :check_upx
 SET NO_UPX=0
-IF EXIST C:\MinGW\upx300w GOTO check_mingw
+IF EXIST C:\MinGW\upx GOTO check_mingw
 SET NO_UPX=1
 :check_mingw
 IF EXIST C:\MinGW GOTO clear_pre
@@ -21,7 +21,7 @@ CALL delbin.bat
 del /Q "%~dp0\src\scite\bin"\*.properties >NUL:
 
 :main
-SET PATH=C:\MinGW\bin\;C:\Program Files\CodeBlocks\bin;C:\MinGW\upx300w\;%PATH%
+SET PATH=C:\MinGW\bin\;C:\Program Files\CodeBlocks\bin;C:\MinGW\upx\;%PATH%
 CD %~dp0\src\scintilla\win32
 TITLE SciTE-Ru make scintilla
 mingw32-make
