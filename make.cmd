@@ -55,7 +55,7 @@ DEL /Q "%~dp0\src\scite\bin"\*.properties >NUL:
 
 :laulib
 CD %~dp0\shell
-CALL make.bat
+CALL make.cmd
 COPY shell.dll ..\Pack\tools\LuaLib\
 DEL /Q shell.dll >NUL:
 
