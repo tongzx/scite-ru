@@ -25,10 +25,9 @@ winreg.dll: $(OBJFILE)
 all: winreg.dll
 
 clean:
-	-del winreg.dll
 	-del *.o
 
-lua_int64.o: lua_int64.c 
+lua_int64.o: lua_int64.c
 lua_mtutil.o: lua_mtutil.c
 lua_tstring.o: lua_tstring.c
 luawin_dllerror.o: luawin_dllerror.c
