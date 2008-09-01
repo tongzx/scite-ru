@@ -1,5 +1,5 @@
 -- Save SciTE Settings
--- Version: 1.5
+-- Version: 1.5.1
 -- Author: mozersЩ, Dmitry Maslov
 ---------------------------------------------------
 -- —охран€ет текущие установки SciTE
@@ -17,7 +17,7 @@
 -- установить в text текущее значение проперти key
 local function SaveKey(text, key)
 	local value = props[key]
-	local regex = '([^%w.]'..key..'=)%d+'
+	local regex = '([^%w.]'..key..'=)%-?%d+'
 	local find = string.find(text, regex)
 	if find == nil then
 		return text..'\n'..key..'='..value
