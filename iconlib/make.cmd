@@ -1,23 +1,19 @@
 @ECHO OFF
+SETLOCAL
 ::-----------------------------------------
 :: Путь к MinGW (выбирается один из заданных)
-SET MINGW=C:\MinGW\bin
-SET MINGW_ALT=%ProgramFiles%\CodeBlocks\bin
+SET PATH=C:\MinGW\bin;%ProgramFiles%\CodeBlocks\bin
 ::-----------------------------------------
 
-IF NOT EXIST "%MINGW%" (
-	IF EXIST "%MINGW_ALT%" (
-		SET MINGW=%MINGW_ALT%
-	) ELSE (
-		ECHO Please install MinGW!
-		ECHO For more information visit: http://code.google.com/p/scite-ru/
-		GOTO error
-	)
+CALL :check "gcc.exe"
+IF ERRORLEVEL 1 (
+	ECHO Error : Please install MinGW!
+	ECHO - For more information visit: http://code.google.com/p/scite-ru/
+	GOTO error
 )
-SET PATH=%MINGW%;%PATH%
 
-ECHO Start building toolbar.dll ...
-ECHO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ECHO Start building ...
+ECHO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 CD /D "%~dp0"
 windres -o resfile.o toolbar.rc
@@ -27,10 +23,15 @@ IF ERRORLEVEL 1 GOTO error
 
 DEL resfile.o
 
-ECHO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-ECHO Building toolbar.dll successfully completed!
-EXIT /B
+ECHO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ECHO Building successfully completed!
+EXIT 0
+
+:check
+FOR /f %%i IN (%1) DO IF "%%~$PATH:i"=="" EXIT /b 1
+EXIT /b 0
 
 :error
-ECHO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ECHO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ECHO Compile errors were found!
+EXIT 1

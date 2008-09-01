@@ -1,33 +1,30 @@
 @ECHO OFF
+SETLOCAL
+CD /D "%~dp0"
+
 ::-----------------------------------------
 :: Путь к MinGW (выбирается один из заданных)
-SET MINGW=C:\MinGW\bin
-SET MINGW_ALT=%ProgramFiles%\CodeBlocks\bin
+SET PATH=C:\MinGW\bin;%ProgramFiles%\CodeBlocks\bin
 :: Путь к исходникам Lua
 SET INC=..\src\scite\lua\include
 :: Путь к upx (если отсутствует не менять)
 SET UPX3=C:\MinGW\upx\upx.exe
 ::-----------------------------------------
-ECHO Start building lualib ...
-ECHO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-CD /D "%~dp0"
 
 IF NOT EXIST "%INC%" (
 	ECHO Error : Dir "%INC%" not exist!
 	GOTO error
 )
-IF NOT EXIST "%MINGW%" (
-	IF EXIST "%MINGW_ALT%" (
-		SET MINGW=%MINGW_ALT%
-	) ELSE (
-		ECHO Please install MinGW!
-		ECHO For more information visit: http://code.google.com/p/scite-ru/
-		GOTO error
-	)
+
+CALL :check "gcc.exe"
+IF ERRORLEVEL 1 (
+	ECHO Error : Please install MinGW!
+	ECHO - For more information visit: http://code.google.com/p/scite-ru/
+	GOTO error
 )
-SET PATH=%MINGW%;%PATH%
-::----------------------------------------------
+
+ECHO Start building ...
+ECHO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 windres -o resfile.o shell.rc
 IF ERRORLEVEL 1 GOTO error
@@ -37,15 +34,20 @@ IF ERRORLEVEL 1 GOTO error
 IF EXIST "%UPX3%" (
 	"%UPX3%" --best shell.dll
 ) ELSE (
-	ECHO  Warning: UPX not found! File shell.dll not packed.
+	ECHO Warning : UPX not found! File shell.dll not packed.
 )
 
 DEL resfile.o
 
-ECHO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-ECHO Building lualib successfully completed!
-GOTO :EOF
+ECHO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ECHO Building successfully completed!
+EXIT 0
+
+:check
+FOR /f %%i IN (%1) DO IF "%%~$PATH:i"=="" EXIT /b 1
+EXIT /b 0
 
 :error
-ECHO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ECHO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ECHO Compile errors were found!
+EXIT 1
