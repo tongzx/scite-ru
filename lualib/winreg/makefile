@@ -20,7 +20,7 @@ winreg.dll: $(OBJFILE)
 	$(CC) $(CFLAGS) -shared -o winreg.dll $(OBJFILE) $(LIBS)
 
 .c.o:
-	$(CC) -W0 $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
 all: winreg.dll
 
