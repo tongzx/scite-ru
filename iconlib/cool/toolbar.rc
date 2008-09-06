@@ -1,0 +1,90 @@
+#include <winver.h>
+
+i00 ICON "ico\\new.ico"
+i01 ICON "ico\\open.ico"
+i02 ICON "ico\\save.ico"
+i03 ICON "ico\\print.ico"
+i04 ICON "ico\\cut.ico"
+i05 ICON "ico\\copy.ico"
+i06 ICON "ico\\paste.ico"
+i07 ICON "ico\\clear.ico"
+i08 ICON "ico\\undo.ico"
+i09 ICON "ico\\redo.ico"
+i10 ICON "ico\\find.ico"
+i11 ICON "ico\\replase.ico"
+i12 ICON "ico\\close.ico"
+i13 ICON "ico\\macroplay.ico"
+i14 ICON "ico\\macrostoprecord.ico"
+i15 ICON "ico\\macrorecord.ico"
+i16 ICON "ico\\go.ico"
+i17 ICON "ico\\build.ico"
+i18 ICON "ico\\compile.ico"
+i19 ICON "ico\\vieweol.ico"
+i20 ICON "ico\\saveas.ico"
+i21 ICON "ico\\monofont.ico"
+i22 ICON "ico\\readonly.ico"
+i23 ICON "ico\\toggleoutput.ico"
+i24 ICON "ico\\fullscreen.ico"
+i25 ICON "ico\\help.ico"
+i26 ICON "ico\\openglobalproperties.ico"
+i27 ICON "ico\\openuserproperties.ico"
+i28 ICON "ico\\openabbrevproperties.ico"
+i29 ICON "ico\\wrap.ico"
+i30 ICON "ico\\saveall.ico"
+i31 ICON "ico\\close_all.ico"
+i32 ICON "ico\\page_setup.ico"
+i33 ICON "ico\\session_manager.ico"
+i34 ICON "ico\\load_session.ico"
+i35 ICON "ico\\save_session.ico"
+i36 ICON "ico\\select_all.ico"
+i37 ICON "ico\\select_to_brace.ico"
+i38 ICON "ico\\find_next.ico"
+i39 ICON "ico\\find_prev.ico"
+i40 ICON "ico\\find_in_files.ico"
+i41 ICON "ico\\goto_line.ico"
+i42 ICON "ico\\bookmark_next.ico"
+i43 ICON "ico\\bookmark_prev.ico"
+i44 ICON "ico\\bookmark_toggle.ico"
+i45 ICON "ico\\bookmark_clear.ico"
+i46 ICON "ico\\line_numbers.ico"
+i47 ICON "ico\\always_on_top.ico"
+i48 ICON "ico\\functions_list.ico"
+i49 ICON "ico\\spelling.ico"
+i50 ICON "ico\\color.ico"
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,0
+ PRODUCTVERSION 1,0,0,0
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x40004L
+ FILETYPE 0x2L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "Comments", "COOL Toolbar - SciTE-Ru toolbar icons Lib\0"
+            VALUE "CompanyName", "SciTE-Ru\0"
+            VALUE "FileDescription", "COOL Toolbar - SciTE-Ru toolbar icons Lib\0"
+            VALUE "FileVersion", "1.0\0"
+            VALUE "InternalName", "COOL\0"
+            VALUE "LegalCopyright", "Copyright © ur4ltz\0"
+            VALUE "LegalTrademarks", "\0"
+            VALUE "OriginalFilename", "cool.dll\0"
+            VALUE "PrivateBuild", "\0"
+            VALUE "ProductName", "COOL Toolbar - SciTE-Ru toolbar icons Lib\0"
+            VALUE "ProductVersion", "1.0\0"
+            VALUE "SpecialBuild", "\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
