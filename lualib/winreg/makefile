@@ -4,7 +4,7 @@ LIBS= -lscite -ladvapi32 -lkernel32 -luser32
 
 OUTFILE= winreg.dll
 
-LUA= ../src/scite/lua/include
+LUA= ../../src/scite/lua/include
 
 CUFLAGS= -DUNICODE -D_UNICODE -UMBS -U_MBS
 

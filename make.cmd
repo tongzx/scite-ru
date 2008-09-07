@@ -18,7 +18,7 @@ CD %~dp0\src\scintilla
 CALL delbin.bat
 CD %~dp0\src\scite
 CALL delbin.bat
-del /Q "%~dp0\src\scite\bin"\*.properties >NUL:
+REM del /Q "%~dp0\src\scite\bin"\*.properties >NUL:
 
 :main
 SET PATH=C:\MinGW\bin\;C:\Program Files\CodeBlocks\bin;C:\MinGW\upx\;%PATH%
@@ -33,7 +33,7 @@ mingw32-make
 IF ERRORLEVEL 1 GOTO error
 
 CD ..\bin
-IF NOT EXIST Sc1.exe PAUSE
+REM IF NOT EXIST Sc1.exe PAUSE
 
 IF %NO_UPX%==1 GOTO copy_to_pack
 TITLE SciTE-Ru packing
@@ -51,12 +51,18 @@ CD %~dp0\src\scintilla
 CALL delbin.bat
 CD %~dp0\src\scite
 CALL delbin.bat
-DEL /Q "%~dp0\src\scite\bin"\*.properties >NUL:
+REM DEL /Q "%~dp0\src\scite\bin"\*.properties >NUL:
+
+:winreg
+CD %~dp0\lualib\winreg
+CALL make.cmd
+COPY winreg.dll ..\..\Pack\tools\LuaLib\
+DEL /Q winreg.dll >NUL:
 
 :laulib
-CD %~dp0\shell
+CD %~dp0\lualib\shell
 CALL make.cmd
-COPY shell.dll ..\Pack\tools\LuaLib\
+COPY shell.dll ..\..\Pack\tools\LuaLib\
 DEL /Q shell.dll >NUL:
 
 :completed

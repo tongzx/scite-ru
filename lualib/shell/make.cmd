@@ -6,7 +6,7 @@ CD /D "%~dp0"
 :: Путь к MinGW (выбирается один из заданных)
 SET PATH=C:\MinGW\bin;%ProgramFiles%\CodeBlocks\bin
 :: Путь к исходникам Lua
-SET INC=..\src\scite\lua\include
+SET INC=..\..\src\scite\lua\include
 :: Путь к upx (если отсутствует не менять)
 SET UPX3=C:\MinGW\upx\upx.exe
 ::-----------------------------------------
