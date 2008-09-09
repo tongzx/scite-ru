@@ -126,6 +126,8 @@ protected:
 	Window wFindReplace;
 	Window wParameters;
 
+	virtual void GetWindowPosition(int *left, int *top, int *width, int *height, int *maximize);
+
 	virtual MenuEx GetMenu(int menuNumber) { return MenuEx(((MenuID)::GetSubMenu(::GetMenu(reinterpret_cast<HWND>(wSciTE.GetID())), menuNumber)));}; //!-add-[SubMenu]
 	virtual void ReadProperties();
 
@@ -246,6 +248,8 @@ protected:
 	void AboutDialogWithBuild(int staticBuild);
 
 	void MakeAccelerator(SString sKey, ACCEL &Accel);
+
+	void RestorePosition();
 
 public:
 

@@ -228,13 +228,15 @@ void SciTEBase::DiscoverEOLSetting() {
 	int linesLF;
 	int linesCRLF;
 	SetEol();
-	CountLineEnds(linesCR, linesLF, linesCRLF);
-	if (((linesLF >= linesCR) && (linesLF > linesCRLF)) || ((linesLF > linesCR) && (linesLF >= linesCRLF)))
-		SendEditor(SCI_SETEOLMODE, SC_EOL_LF);
-	else if (((linesCR >= linesLF) && (linesCR > linesCRLF)) || ((linesCR > linesLF) && (linesCR >= linesCRLF)))
-		SendEditor(SCI_SETEOLMODE, SC_EOL_CR);
-	else if (((linesCRLF >= linesLF) && (linesCRLF > linesCR)) || ((linesCRLF > linesLF) && (linesCRLF >= linesCR)))
-		SendEditor(SCI_SETEOLMODE, SC_EOL_CRLF);
+	if (props.GetInt("eol.auto")) {
+		CountLineEnds(linesCR, linesLF, linesCRLF);
+		if (((linesLF >= linesCR) && (linesLF > linesCRLF)) || ((linesLF > linesCR) && (linesLF >= linesCRLF)))
+			SendEditor(SCI_SETEOLMODE, SC_EOL_LF);
+		else if (((linesCR >= linesLF) && (linesCR > linesCRLF)) || ((linesCR > linesLF) && (linesCR >= linesCRLF)))
+			SendEditor(SCI_SETEOLMODE, SC_EOL_CR);
+		else if (((linesCRLF >= linesLF) && (linesCRLF > linesCR)) || ((linesCRLF > linesLF) && (linesCRLF >= linesCR)))
+			SendEditor(SCI_SETEOLMODE, SC_EOL_CRLF);
+	}
 }
 
 // Look inside the first line for a #! clue regarding the language
@@ -373,9 +375,7 @@ void SciTEBase::OpenFile(int fileSize, bool suppressMessage) {
 		props.SetInteger("editor.unicode.mode", CurrentBuffer()->unicodeMode + IDM_ENCODING_DEFAULT); //!-add-[EditorUnicodeMode]
 		SendEditor(SCI_SETCODEPAGE, codePage);
 
-		if (props.GetInt("eol.auto")) {
-			DiscoverEOLSetting();
-		}
+		DiscoverEOLSetting();
 
 		if (props.GetInt("indent.auto")) {
 			DiscoverIndentSetting();
@@ -716,11 +716,11 @@ int SciTEBase::SaveIfUnsureAll(bool forceQuestion) {
 			Buffer buff = buffers.buffers[i];
 			AddFileToStack(buff, buff.selection, buff.scrollPosition);
 		}
-		SaveRecentStack();
 	}
 	if (!props.GetInt("save.session.multibuffers.only") || buffers.length > 1) //!-add-[save.session.multibuffers.only]
-	if (props.GetInt("buffers") && props.GetInt("save.session"))
-		SaveSession("");
+	if (props.GetInt("save.session") || props.GetInt("save.position") || props.GetInt("save.recent")) {
+		SaveSessionFile("");
+	}
 
 	// Definitely going to exit now, so delete all documents
 	// Set editor back to initial document
@@ -803,40 +803,43 @@ bool SciTEBase::SaveBuffer(FilePath saveName) {
 		SendEditor(SCI_CONVERTEOLS, SendEditor(SCI_GETEOLMODE));
 
 	if (extender)
-		extender->OnBeforeSave(saveName.AsFileSystem());
+		retVal = extender->OnBeforeSave(saveName.AsFileSystem());
 
 	SendEditor(SCI_ENDUNDOACTION);
 
-	Utf8_16_Write convert;
-	if (CurrentBuffer()->unicodeMode != uniCookie) {	// Save file with cookie without BOM.
-		convert.setEncoding(static_cast<Utf8_16::encodingType>(
-		            static_cast<int>(CurrentBuffer()->unicodeMode)));
+	if (!retVal) {
+		Utf8_16_Write convert;
+		if (CurrentBuffer()->unicodeMode != uniCookie) {	// Save file with cookie without BOM.
+			convert.setEncoding(static_cast<Utf8_16::encodingType>(
+				    static_cast<int>(CurrentBuffer()->unicodeMode)));
+		}
+
+		FILE *fp = saveName.Open(fileWrite);
+		if (fp) {
+			convert.setfile(fp);
+			char data[blockSize + 1];
+			int lengthDoc = LengthDocument();
+			retVal = true;
+			int grabSize;
+			for (int i = 0; i < lengthDoc; i += grabSize) {
+				grabSize = lengthDoc - i;
+				if (grabSize > blockSize)
+					grabSize = blockSize;
+				// Round down so only whole characters retrieved.
+				grabSize = SendEditor(SCI_POSITIONBEFORE, i + grabSize + 1) - i;
+				GetRange(wEditor, i, i + grabSize, data);
+				size_t written = convert.fwrite(data, grabSize);
+				if (written == 0) {
+					retVal = false;
+					break;
+				}
+			}
+			convert.fclose();
+		}
 	}
 
-	FILE *fp = saveName.Open(fileWrite);
-	if (fp) {
-		convert.setfile(fp);
-		char data[blockSize + 1];
-		int lengthDoc = LengthDocument();
-		retVal = true;
-		int grabSize;
-		for (int i = 0; i < lengthDoc; i += grabSize) {
-			grabSize = lengthDoc - i;
-			if (grabSize > blockSize)
-				grabSize = blockSize;
-			// Round down so only whole characters retrieved.
-			grabSize = SendEditor(SCI_POSITIONBEFORE, i + grabSize + 1) - i;
-			GetRange(wEditor, i, i + grabSize, data);
-			size_t written = convert.fwrite(data, grabSize);
-			if (written == 0) {
-				retVal = false;
-				break;
-			}
-		}
-		convert.fclose();
-
-		if (extender)
-			extender->OnSave(saveName.AsFileSystem());
+	if (retVal && extender) {
+		extender->OnSave(saveName.AsFileSystem());
 	}
 	UpdateStatusBar(true);
 	return retVal;
@@ -881,8 +884,8 @@ bool SciTEBase::Save() {
 	}
 }
 
-void SciTEBase::SaveAs(const char *file) {
-	SetFileName(file);
+void SciTEBase::SaveAs(const char *file, bool fixCase) {
+	SetFileName(file, fixCase);
 	Save();
 	ReadProperties();
 	SendEditor(SCI_CLEARDOCUMENTSTYLE);
@@ -890,6 +893,20 @@ void SciTEBase::SaveAs(const char *file) {
 	Redraw();
 	SetWindowName();
 	BuffersMenu();
+	if (extender)
+		extender->OnSave(filePath.AsFileSystem());
+}
+
+void SciTEBase::SaveIfNotOpen(const FilePath &destFile, bool fixCase) {
+	FilePath absPath = destFile.AbsolutePath();
+	int index = buffers.GetDocumentByName(absPath, true /* excludeCurrent */);
+	if (index >= 0) {
+		SString msg = LocaliseMessage(
+			    "File '^0' is already open in another buffer.", destFile.AsFileSystem());
+		WindowMessageBox(wSciTE, msg, MB_OK | MB_ICONWARNING);
+	} else {
+		SaveAs(absPath.AsFileSystem(), fixCase);
+	}
 }
 
 bool SciTEBase::IsStdinBlocked() {

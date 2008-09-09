@@ -607,6 +607,7 @@ static const char *propertiesToForward[] = {
 	"lexer.tex.comment.process",
 	"lexer.tex.interface.default",
 	"lexer.tex.use.keywords",
+	"lexer.xml.allow.scripts",
 	"nsis.ignorecase",
 	"nsis.uservars",
 	"ps.level",
@@ -781,6 +782,7 @@ void SciTEBase::ReadProperties() {
 		ReadAbbrevPropFile();
 	}
 
+	DiscoverEOLSetting();
 //!-start-[GetAbbrevPath]
 	props.Set("AbbrevPath", pathAbbreviations.AsFileSystem());
 //!-end-[GetAbbrevPath]

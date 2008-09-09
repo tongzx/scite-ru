@@ -1,5 +1,5 @@
 /*
-** $Id: lstate.h,v 1.2 2007/06/15 00:37:57 nyamatongwe Exp $
+** $Id: lstate.h,v 1.3 2008/09/07 05:52:56 nyamatongwe Exp $
 ** Global State
 ** See Copyright Notice in lua.h
 */
@@ -112,6 +112,7 @@ struct lua_State {
   int stacksize;
   int size_ci;  /* size of array `base_ci' */
   unsigned short nCcalls;  /* number of nested C calls */
+  unsigned short baseCcalls;  /* nested C calls when resuming coroutine */
   lu_byte hookmask;
   lu_byte allowhook;
   int basehookcount;

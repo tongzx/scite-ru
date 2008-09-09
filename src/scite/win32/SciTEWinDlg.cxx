@@ -308,15 +308,7 @@ bool SciTEWin::SaveAsDialog() {
 	FilePath path = ChooseSaveName(filePath.Directory(), "Save File");
 	if (path.IsSet()) {
 		//Platform::DebugPrintf("Save: <%s>\n", openName);
-		SetFileName(path, false); // don't fix case
-		Save();
-		ReadProperties();
-
-		// In case extension was changed
-		SendEditor(SCI_COLOURISE, 0, -1);
-		wEditor.InvalidateAll();
-		if (extender)
-			extender->OnSave(filePath.AsFileSystem());
+		SaveIfNotOpen(path, false);
 		return true;
 	}
 	return false;
@@ -382,8 +374,10 @@ void SciTEWin::LoadSessionDialog() {
 	SString translatedTitle = localiser.Text("Load Session");
 	ofn.lpstrTitle = translatedTitle.c_str();
 	ofn.Flags = OFN_HIDEREADONLY;
-	if (::GetOpenFileName(&ofn))
-		LoadSession(openName);
+	if (::GetOpenFileName(&ofn)) {
+		LoadSessionFile(openName);
+		RestoreSession();
+	}
 }
 
 void SciTEWin::SaveSessionDialog() {
@@ -402,7 +396,7 @@ void SciTEWin::SaveSessionDialog() {
 	ofn.Flags = OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT;
 	ofn.lpstrFilter = "Session (.session)\0*.session\0";
 	if (::GetSaveFileName(&ofn)) {
-		SaveSession(saveName);
+		SaveSessionFile(saveName);
 	}
 }
 

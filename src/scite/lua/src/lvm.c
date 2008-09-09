@@ -1,5 +1,5 @@
 /*
-** $Id: lvm.c,v 1.2 2007/06/15 00:37:57 nyamatongwe Exp $
+** $Id: lvm.c,v 1.3 2008/09/07 05:52:56 nyamatongwe Exp $
 ** Lua virtual machine
 ** See Copyright Notice in lua.h
 */
@@ -61,11 +61,9 @@ static void traceexec (lua_State *L, const Instruction *pc) {
   lu_byte mask = L->hookmask;
   const Instruction *oldpc = L->savedpc;
   L->savedpc = pc;
-  if (mask > LUA_MASKLINE) {  /* instruction-hook set? */
-    if (L->hookcount == 0) {
-      resethookcount(L);
-      luaD_callhook(L, LUA_HOOKCOUNT, -1);
-    }
+  if ((mask & LUA_MASKCOUNT) && L->hookcount == 0) {
+    resethookcount(L);
+    luaD_callhook(L, LUA_HOOKCOUNT, -1);
   }
   if (mask & LUA_MASKLINE) {
     Proto *p = ci_func(L->ci)->l.p;

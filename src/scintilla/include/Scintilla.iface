@@ -104,7 +104,7 @@ fun void ClearAll=2004(,)
 # Set all style bytes to 0, remove all folding information.
 fun void ClearDocumentStyle=2005(,)
 
-# Returns the number of characters in the document.
+# Returns the number of bytes in the document.
 get int GetLength=2006(,)
 
 # Returns the character byte at the position.
@@ -516,7 +516,7 @@ get int GetCaretPeriod=2075(,)
 set void SetCaretPeriod=2076(int periodMilliseconds,)
 
 # Set the set of characters making up words for when moving or selecting by word.
-# First sets deaults like SetCharsDefault.
+# First sets defaults like SetCharsDefault.
 set void SetWordChars=2077(, string characters)
 
 # Start a sequence of actions that is undone and redone as a unit.
@@ -1560,7 +1560,7 @@ fun void ChooseCaretX=2399(,)
 # Set the focus to this Scintilla widget.
 fun void GrabFocus=2400(,)
 
-enu CaretPolicy = CARET_
+enu CaretPolicy=CARET_
 # Caret policy, used by SetXCaretPolicy and SetYCaretPolicy.
 # If CARET_SLOP is set, we can define a slop value: caretSlop.
 # This value defines an unwanted zone (UZ) where the caret is... unwanted.
@@ -1823,6 +1823,16 @@ get int GetPositionCache=2515(,)
 
 # Copy the selection, if selection empty copy the line with the caret
 fun void CopyAllowLine=2519(,)
+
+# Compact the document buffer and return a read-only pointer to the
+# characters in the document.
+get int GetCharacterPointer=2520(,)
+
+# Always interpret keyboard input as Unicode
+set void SetKeysUnicode=2521(bool keysUnicode,)
+
+# Are keys always interpreted as Unicode?
+get bool GetKeysUnicode=2522(,)
 
 # Start notifying the container of all key presses and commands.
 fun void StartRecord=3001(,)
@@ -2460,6 +2470,7 @@ val SCE_DIFF_HEADER=3
 val SCE_DIFF_POSITION=4
 val SCE_DIFF_DELETED=5
 val SCE_DIFF_ADDED=6
+val SCE_DIFF_CHANGED=7
 # Lexical states for SCLEX_CONF (Apache Configuration Files Lexer)
 lex Conf=SCLEX_CONF SCE_CONF_
 val SCE_CONF_DEFAULT=0
@@ -3436,11 +3447,12 @@ evt void CallTipClick=2021(int position)
 evt void AutoCSelection=2022(string text)
 evt void IndicatorClick=2023(int modifiers, int position)
 evt void IndicatorRelease=2024(int modifiers, int position)
+evt void AutoCCancelled=2025(void)
 ##!-start-[OnClick]
-evt void Click=2025(int modifiers)
+evt void Click=2026(int modifiers)
 ##!-end-[OnClick]
 ##!-start-[OnMouseButtonUp]
-evt void MouseButtonUp=2026(int modifiers)
+evt void MouseButtonUp=2027(int modifiers)
 ##!-end-[OnMouseButtonUp]
 
 cat Deprecated

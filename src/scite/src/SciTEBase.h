@@ -355,7 +355,7 @@ public:
 	~BufferList();
 	void Allocate(int maxSize);
 	int Add();
-	int GetDocumentByName(FilePath filename);
+	int GetDocumentByName(FilePath filename, bool excludeCurrent=false);
 	void RemoveCurrent();
 	int Current();
 	Buffer *CurrentBuffer();
@@ -635,6 +635,8 @@ protected:
 
 	PropSetFile propsAbbrev;
 
+	PropSetFile propsSession;
+
 	FilePath pathAbbreviations;
 
 	Localization localiser;
@@ -704,11 +706,12 @@ protected:
 	void ClearDocument();
 	void CreateBuffers();
 	void InitialiseBuffers();
-	FilePath RecentFilePath(const char *name);
-	void LoadRecentMenu();
-	void SaveRecentStack();
-	void LoadSession(const char *sessionName);
-	void SaveSession(const char *sessionName);
+	FilePath UserFilePath(const char *name);
+	void LoadSessionFile(const char *sessionName);
+	void RestoreRecentMenu();
+	void RestoreSession();
+	void SaveSessionFile(const char *sessionName);
+	virtual void GetWindowPosition(int *left, int *top, int *width, int *height, int *maximize) = 0;
 	void SetIndentSettings();
 	void SetEol();
 	void New();
@@ -741,8 +744,9 @@ protected:
 	int SaveIfUnsure(bool forceQuestion = false);
 	int SaveIfUnsureAll(bool forceQuestion = false);
 	int SaveIfUnsureForBuilt();
+	void SaveIfNotOpen(const FilePath &destFile, bool fixCase);
 	bool Save();
-	void SaveAs(const char *file);
+	void SaveAs(const char *file, bool fixCase);
 	virtual void SaveACopy() = 0;
 	void SaveToHTML(FilePath saveName);
 	void StripTrailingSpaces();
@@ -974,7 +978,6 @@ protected:
 	void AskMacroList();
 	bool StartMacroList(const char *words);
 	void ContinueMacroList(const char *stxt);
-	void LoadMRUAndSession(bool allowLoadSession);
 	bool ProcessCommandLine(SString &args, int phase);
 	virtual bool IsStdinBlocked();
 	void OpenFromStdin(bool UseOutputPane);

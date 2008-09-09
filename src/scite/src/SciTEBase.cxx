@@ -297,6 +297,10 @@ const char *contributors[] = {
             "Tim Gerundt",
             "Sam Harwell",
             "Boris",
+            "Jason Oster",
+            "Gertjan Kloosterman",
+            "alexbodn",
+            "Sergiu Dotenco",
 //!-start-[SciTE-Ru]
             "HSolo",
             "Midas",
@@ -923,7 +927,6 @@ void SciTEBase::GetRange(Window &win, int start, int end, char *text) {
 int SciTEBase::IsLinePreprocessorCondition(char *line) {
 	char *currChar = line;
 	char word[32];
-	int i = 0;
 
 	if (!currChar) {
 		return false;
@@ -936,7 +939,8 @@ int SciTEBase::IsLinePreprocessorCondition(char *line) {
 		while (isspacechar(*currChar) && *currChar) {
 			currChar++;
 		}
-		while (!isspacechar(*currChar) && *currChar) {
+		size_t i = 0;
+		while (!isspacechar(*currChar) && *currChar && (i < (sizeof(word) - 1))) {
 			word[i++] = *currChar++;
 		}
 		word[i] = '\0';
@@ -3908,8 +3912,7 @@ void SciTEBase::MenuCommand(int cmdID, int source) {
 			New();
 			ReadProperties();
 			SetIndentSettings();
-			if (props.GetInt("eol.auto"))
-				SetEol();
+			SetEol();
 			UpdateStatusBar(true);
 			WindowSetFocus(wEditor);
 		}
@@ -4571,7 +4574,8 @@ void SciTEBase::FoldChanged(int line, int levelNow, int levelPrev) {
 			SendEditor(SCI_SETFOLDEXPANDED, line, 1);
 			Expand(line, true, false, 0, levelPrev);
 		}
-	} else if (!(levelNow & SC_FOLDLEVELWHITEFLAG) &&
+	}
+	if (!(levelNow & SC_FOLDLEVELWHITEFLAG) &&
 	        ((levelPrev & SC_FOLDLEVELNUMBERMASK) > (levelNow & SC_FOLDLEVELNUMBERMASK))) {
 		// See if should still be hidden
 		int parentLine = SendEditor(SCI_GETFOLDPARENT, line);
@@ -5371,7 +5375,8 @@ void SciTEBase::PerformOne(char *action) {
 			SendEditorString(SCI_REPLACESEL, 0, arg);
 		} else if (isprefix(action, "loadsession:")) {
 			if (*arg) {
-				LoadSession(arg);
+				LoadSessionFile(arg);
+				RestoreSession();
 			}
 		} else if (isprefix(action, "macrocommand:")) {
 			ExecuteMacroCommand(arg);
@@ -5401,13 +5406,13 @@ void SciTEBase::PerformOne(char *action) {
 			}
 		} else if (isprefix(action, "saveas:")) {
 			if (*arg) {
-				SaveAs(arg);
+				SaveAs(arg, true);
 			} else {
 				SaveAsDialog();
 			}
 		} else if (isprefix(action, "savesession:")) {
 			if (*arg) {
-				SaveSession(arg);
+				SaveSessionFile(arg);
 			}
 		} else if (isprefix(action, "extender:")) {
 			extender->OnExecute(arg);
@@ -5675,17 +5680,6 @@ void SciTEBase::ExecuteMacroCommand(const char *command) {
 	delete []tbuff;
 }
 
-void SciTEBase::LoadMRUAndSession(bool allowLoadSession) {
-	InitialiseBuffers();
-	if (props.GetInt("save.recent")) {
-		LoadRecentMenu();
-	}
-	if (allowLoadSession && props.GetInt("buffers") &&
-	        props.GetInt("save.session")) {
-		LoadSession("");
-	}
-}
-
 /**
  * Process all the command line arguments.
  * Arguments that start with '-' (also '/' on Windows) are switches or commands with
@@ -5752,7 +5746,11 @@ bool SciTEBase::ProcessCommandLine(SString &args, int phase) {
 				return performPrint;
 			else
 				evaluate = true;
-			LoadMRUAndSession(false);
+
+			InitialiseBuffers();
+			if (props.GetInt("save.recent"))
+				RestoreRecentMenu();
+
 			if (!PreOpenCheck(arg))
 				Open(arg, ofQuiet);
 		}
@@ -5761,7 +5759,11 @@ bool SciTEBase::ProcessCommandLine(SString &args, int phase) {
 		// If we have finished with all args and no buffer is open
 		// try to load session.
 		if (!buffers.initialised) {
-			LoadMRUAndSession(true);
+			InitialiseBuffers();
+			if (props.GetInt("save.recent"))
+				RestoreRecentMenu();
+			if (props.GetInt("buffers") && props.GetInt("save.session"))
+				RestoreSession();
 		}
 		// No open file after session load so create empty document.
 		if (filePath.IsUntitled() && buffers.length == 1 && !buffers.buffers[0].isDirty) {
