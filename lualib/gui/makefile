@@ -11,7 +11,7 @@ gui_ext.o: gui_ext.cpp yawl.h
 	g++ $(CFLAGS) -c -I$(LUA_INCLUDE) gui_ext.cpp
 
 clean:
-	-del *.o
+	-del /S *.o
 
 vpath %.cpp yawl
 
