@@ -37,7 +37,7 @@ REM IF NOT EXIST Sc1.exe PAUSE
 
 IF %NO_UPX%==1 GOTO copy_to_pack
 TITLE SciTE-Ru packing
-upx --best SciLexer.dll SciTE.exe
+upx --best --compress-icons=0 SciLexer.dll SciTE.exe
 
 :copy_to_pack
 COPY SciTE.exe ..\..\..\Pack\
