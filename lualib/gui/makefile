@@ -1,17 +1,17 @@
 YAWL=twl.o twl_cntrls.o twl_data.o twl_dialogs.o twl_ini.o \
 twl_layout.o twl_menu.o twl_modal.o twl_splitter.o twl_toolbar.o
 
-LUA_INCLUDE=c:\lang\lua\src
-CFLAGS=-Os
-LIBS=SciTE.lib -lgdi32 -lcomdlg32 -lcomctl32 -lshell32
+LUA_INCLUDE=../../src/scite/lua/include
+CFLAGS=-Os -D_WIN32_IE=0x0500
+LIBS=-lscite -lgdi32 -lcomdlg32 -lcomctl32 -lshell32
 
 gui.dll: gui_ext.o $(YAWL)
-	g++ $(CFLAGS) -shared -o gui.dll gui_ext.o $(YAWL) $(LIBS)
+	g++ $(CFLAGS) -s -shared -o gui.dll gui_ext.o $(YAWL) $(LIBS)
 gui_ext.o: gui_ext.cpp yawl.h
 	g++ $(CFLAGS) -c -I$(LUA_INCLUDE) gui_ext.cpp
 
 clean:
-	del *.o
+	-del *.o
 
 vpath %.cpp yawl
 
