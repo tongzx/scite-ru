@@ -353,12 +353,11 @@ FilePath SciTEWin::GetSciteDefaultHome() {
 FilePath SciTEWin::GetSciteUserHome() {
 	char *home = getenv("SciTE_HOME");
 //!-start-[scite.userhome]
+	SString value;
 	if (!home) {
-		SString value = props.GetExpanded("scite.userhome");
-		if (value.length()) {
-			char *retval = new char[value.length() + 1];
-			home = strcpy(retval, value.c_str());
-		}
+		value = props.GetExpanded("scite.userhome");
+		if (value.length())
+			home = const_cast<char*>(value.c_str());
 	}
 //!-end-[scite.userhome]
 	if (!home)
@@ -1136,12 +1135,10 @@ void SciTEWin::QuitProgram() {
 //!-start-[position.autosave]
 		SString value = props.GetExpanded("save.settings.path");
 		if (value.length()) {
-			char *retval = new char[value.length() + 1];
-			char *setfile = strcpy(retval, value.c_str());
 			winPlace.length = sizeof(winPlace);
 			::GetWindowPlacement(MainHWND(), &winPlace);
 			PropFileEx file;
-			file.Open(setfile);
+			file.Open(value.c_str());
 			ToDesctopRect(winPlace.rcNormalPosition);
 			file.SetProperty("position.left", winPlace.rcNormalPosition.left);
 			file.SetProperty("position.top", winPlace.rcNormalPosition.top);
