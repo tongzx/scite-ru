@@ -560,6 +560,7 @@ static bool isInterruptableMessage(unsigned int msg) {
 		case SCI_SETREADONLY:
 		case SCI_MARKERADD:
 		case SCI_MARKERDELETE:
+		case SCI_MARKERDELETEALL:
 			return true;
 	}
 	return false;
