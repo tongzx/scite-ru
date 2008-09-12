@@ -22,6 +22,7 @@ gcc -s -shared -nostdlib -o cool.dll resfile.o
 IF ERRORLEVEL 1 GOTO error
 
 DEL resfile.o
+MOVE /Y cool.dll ..\..\pack\home\cool.dll
 
 ECHO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ECHO Building successfully completed!

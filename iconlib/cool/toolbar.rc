@@ -51,6 +51,7 @@ i47 ICON "ico\\always_on_top.ico"
 i48 ICON "ico\\functions_list.ico"
 i49 ICON "ico\\spelling.ico"
 i50 ICON "ico\\color.ico"
+i51 ICON "ico\\togge_sidebar.ico"
 
 VS_VERSION_INFO VERSIONINFO
  FILEVERSION 1,0,0,0
