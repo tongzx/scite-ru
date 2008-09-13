@@ -7,6 +7,7 @@
 -- Подключение библиотеки shell.dll
 package.cpath = props["SciteDefaultHome"].."\\tools\\LuaLib\\?.dll;"..package.cpath
 require 'shell'
+require 'gui'
 
 --------------------------------------------------------
 -- Проверяет параметр на nil и если это так то возвращает default иначе возвращает сам параметр

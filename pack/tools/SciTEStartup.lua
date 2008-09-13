@@ -118,6 +118,9 @@ dofile (props["SciteDefaultHome"].."\\tools\\svn_menu.lua")
 
 ----[[ У Т И Л И Т Ы  И  И Н С Т Р У М Е Н Т Ы ]]-----------------------------
 
+-- SideBar: Многофункциональная боковая панель
+dofile (props["SciteDefaultHome"].."\\tools\\SideBar.lua")
+
 -- Color Image Viewer: Предпросмотр цвета и изображений
 dofile (props["SciteDefaultHome"].."\\tools\\CIViewer\\CIViewer.lua")
 

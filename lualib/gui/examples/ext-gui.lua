@@ -103,4 +103,4 @@ visible, x, y, width, height = text1:bounds()
 text = text1:get_text() -- Note: There is no. This - the wish.
 
 -- Event:
-list1:on_key(function(key) print(key) end) -- Note: There is no. This - the wish.
+text1:on_key(function(key) print(key) end) -- Note: There is no. This - the wish.
