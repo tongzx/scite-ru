@@ -1,18 +1,18 @@
--- Save SciTE Settings
--- Version: 1.5.1
--- Author: mozers™, Dmitry Maslov
+--[[--------------------------------------------------
+ Save SciTE Settings
+ Version: 1.6
+ Author: mozers™, Dmitry Maslov
 ---------------------------------------------------
--- Сохраняет текущие установки SciTE
--- Подключение:
---   Добавьте в SciTEStartup.lua строку
---     dofile (props["SciteDefaultHome"].."\\tools\\save_settings.lua")
---   Для сохранения настроек через меню:
---     command.name.196.*=Save Current Settings
---     command.196.*=SaveSetting()
---     command.mode.196.*=subsystem:lua,savebefore:no
---     command.shortcut.196.*=Ctrl+Alt+S
---   При установке position.autosave=1 скрипт автоматически сохраняет заданные настройки при закрытии SciTE через меню или по щорткату.
+ Save current settings on SciTE close.
+ Сохраняет текущие установки при закрытии SciTE (в файле SciTE.session)
 ---------------------------------------------------
+Connection:
+In file SciTEStartup.lua add a line:
+  dofile (props["SciteDefaultHome"].."\\tools\\save_settings.lua")
+Set in a file .properties:
+  save.settings=1
+  import home\SciTE.session
+--]]----------------------------------------------------
 
 -- установить в text текущее значение проперти key
 local function SaveKey(text, key)
@@ -26,7 +26,7 @@ local function SaveKey(text, key)
 end
 
 function SaveSetting()
-	local file = props["save.settings.path"]
+	local file = props["scite.userhome"]..'\\SciTE.session'
 	io.input(file)
 	local text = io.read('*a')
 	text = SaveKey(text, 'toolbar.visible')
@@ -92,7 +92,7 @@ function OnFinalise()
 	local result
 	if old_OnFinalise then result = old_OnFinalise() end
 	if props['FileName'] ~= '' then
-		if props['save.settings.path']~=nil then
+		if tonumber(props['save.settings']) == 1 then
 			SaveSetting()
 		end
 	end
