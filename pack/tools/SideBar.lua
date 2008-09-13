@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozersЩ
-version 0.6.4
+version 0.7
 ------------------------------------------------------
   Needed gui.dll by Steve Donovan
   Connection:
@@ -20,6 +20,7 @@ local file_mask = '*.*'
 local panel_width = 200
 local tab_index = 0
 local line_count = 0
+local text_list = ''
 props['sidebar.show'] = 1
 -- you can choose to make it a stand-alone window; just uncomment this line:
 -- local win = true
@@ -33,7 +34,12 @@ local text_path = gui.memo()
 tab0:add(text_path, "top", 22)
 
 local list_dir = gui.list()
-tab0:client(list_dir)
+local list_dir_height = tonumber(props['position.height'])/2 - 80
+tab0:add(list_dir, "top", list_dir_height)
+
+local list_favorites = gui.list(true)
+list_favorites:add_column("Favorites", 600)
+tab0:client(list_favorites)
 -------------------------
 local tab1 = gui.panel(panel_width + 18)
 
@@ -87,7 +93,6 @@ function show_hide()
 			win_parent:hide()
 		else
 			win_parent:size(0, 0)
-			scite.Perform("reloadproperties:") -- очень грубо! но лучшего не придумал :(
 		end
 		props['sidebar.show'] = 0
 	else
@@ -95,7 +100,6 @@ function show_hide()
 			win_parent:show()
 		else
 			win_parent:size(panel_width, 0)
-			scite.Perform("reloadproperties:") -- очень грубо! но лучшего не придумал :(
 		end
 		props['sidebar.show'] = 1
 	end
@@ -150,6 +154,16 @@ function file_del()
 	end
 end
 
+function add_fav()
+	if attr ~= 'd' then
+		list_favorites:add_item(dir_or_file, current_path..'\\'..dir_or_file)
+	end
+	text_list = ''
+	for i = 0, list_favorites:count() - 1 do
+		text_list = text_list..list_favorites:get_item_data(i)..'\n'
+	end
+end
+
 tab0:context_menu {
 	'Show all files|all_files',
 	'Only current ext|current_ext',
@@ -158,6 +172,8 @@ tab0:context_menu {
 	'Move file to...|file_move',
 	'Rename file|file_ren',
 	'Delete file|file_del',
+	'-|f_nil', -- типа разделитель. другого, увы, нет :(
+	'Add to Favorites|add_fav',
 }
 
 ----------------------------------------------------------
@@ -173,6 +189,16 @@ end
 ----------------------------------------------------------
 -- List: Folders and Files
 ----------------------------------------------------------
+local function open_file(filename)
+	if filename:match(".session$") ~= nil then
+		filename = filename:gsub('\\','\\\\')
+		scite.Perform ("loadsession:"..filename)
+	else
+		scite.Open(filename)
+	end
+	editor.Focus = true
+end
+
 function fill_list_dir()
 	list_dir:clear()
 	local folders = gui.files(current_path..'\\*', true)
@@ -200,8 +226,7 @@ list_dir:on_double_click(function(idx)
 			end
 			fill_list_dir()
 		else
-			scite.Open(current_path..'\\*'..dir_or_file)
-			editor.Focus = true
+			open_file(current_path..'\\'..dir_or_file)
 		end
 	end
 end)
@@ -215,6 +240,39 @@ list_dir:on_select(function(idx)
 end)
 
 ----------------------------------------------------------
+-- List: Favirites
+----------------------------------------------------------
+local favorites_filename = props['SciteDefaultHome']..'\\favorites.lst'
+
+list_favorites:on_double_click(function(idx)
+	if idx 	~= -1 then
+		open_file(list_favorites:get_item_data(idx))
+	end
+end)
+
+local function fill_list_favorites()
+	local favorites_file = io.open(favorites_filename)
+	if favorites_file then
+		for line in favorites_file:lines() do
+			if line.len ~= 0 then
+				local caption = line:gsub('.+\\','')
+				list_favorites:add_item(caption, line)
+				text_list = text_list..caption..'\n'
+			end
+		end
+		favorites_file:close()
+	end
+end
+
+fill_list_favorites()
+
+local function save_list_favorites()
+	io.output(favorites_filename)
+	io.write(text_list)
+	io.close()
+end
+
+---------------------------------------------------------
 -- List: Functions/Procedures
 ----------------------------------------------------------
 list_func:on_double_click(function(idx)
@@ -394,5 +452,14 @@ function OnSendEditor(id_msg, wp, lp)
 	elseif id_msg == SCI_MARKERDELETEALL then
 		if wp == 1 then list_bookmark_delete_all() end
 	end
+	return result
+end
+
+-- Add user event handler OnFinalise
+local old_OnFinalise = OnFinalise
+function OnFinalise()
+	local result
+	if old_OnFinalise then result = old_OnFinalise() end
+	save_list_favorites()
 	return result
 end

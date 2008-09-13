@@ -99,7 +99,7 @@ for i = sel_start, sel_end-1 do
 	forum_text = forum_text..char
 end
 -----------------------------------
-if fore ~= nil then
+if fore ~= 0 then
 	forum_text = forum_text.."[/color]"
 end
 if italics then
