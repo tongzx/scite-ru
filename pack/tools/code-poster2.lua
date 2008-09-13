@@ -1,6 +1,6 @@
--- Code Poster 2
--- Version: 2.1
--- Author: mozersЩ  (»де€ и перва€ реализаци€: VladVRO)
+-- Code Poster
+-- Version: 3.0
+-- Author: mozersЩ, frs (»де€ и перва€ реализаци€: VladVRO)
 ---------------------------------------------------
 -- Description:
 -- конвертирует выделенный текст или весь файл в форматированный текст форума,
@@ -12,30 +12,20 @@
 --  command.mode.125.*=subsystem:lua,savebefore:no
 
 -- ремарки по использованию:
---  в скрипте используютс€ функции editor.LexerLanguage и os.msgbox
+--  в скрипте используютс€ функци€ shell.msgbox
 --  (сборка Ru-Board, http://code.google.com/p/scite-ru)
 ---------------------------------------------------
 
-local function GetStyleString(pos)
-	local style = editor.StyleAt[pos]
-	local lang = editor.LexerLanguage
-	return props["style."..lang.."."..style]
-end
-
-local function GetColor(style_string)
-	local fore
-	for w in string.gmatch(style_string, "fore: *(#%x%x%x%x%x%x)") do
-		fore = w
+function DEC_HEX(IN)
+	local B,K,OUT,I,D=16,"0123456789ABCDEF","",0
+	while IN>0 do
+		I=I+1
+		IN,D=math.floor(IN/B),math.mod(IN,B)+1
+		OUT=string.sub(K,D,D)..OUT
 	end
-	return fore
-end
-
-local function GetAttr(style_string, attr)
-	if string.find(style_string, attr) then
-		return true
-	else
-		return false
-	end
+	OUT = string.match("000000"..OUT,'%x%x%x%x%x%x$')
+	OUT = string.gsub(OUT,'(%x%x)(%x%x)(%x%x)','%3%2%1')
+	return OUT
 end
 
 local function ReplaceForumTag(pos)
@@ -63,7 +53,7 @@ if sel_start == sel_end then
 end
 
 local fore
-local fore_old = nil
+local fore_old = 0
 local italics
 local italics_old = false
 local bold
@@ -75,9 +65,9 @@ for i = sel_start, sel_end-1 do
 	if char == "\t" then char = string.rep(" ", props["tabsize"]) end
 	if char == "[" then char = ReplaceForumTag(i) end
 	if not string.find(char,"%s") then
-		local style_string = GetStyleString(i)
+		local style_num = editor.StyleAt[i]
 		--------------------------------------------
-		italics = GetAttr(style_string, "italics")
+		italics = editor.StyleItalic[style_num]
 		if italics ~= italics_old then
 			if italics then
 				forum_text = forum_text.."[i]"
@@ -87,7 +77,7 @@ for i = sel_start, sel_end-1 do
 			italics_old = italics
 		end
 		--------------------------------------------
-		bold = GetAttr(style_string, "bold")
+		bold = editor.StyleBold[style_num]
 		if bold ~= bold_old then
 			if bold then
 				forum_text = forum_text.."[b]"
@@ -97,12 +87,12 @@ for i = sel_start, sel_end-1 do
 			bold_old = bold
 		end
 		--------------------------------------------
-		fore = GetColor(style_string)
-		if fore ~= fore_old and fore_old ~= nil then
+		fore = editor.StyleFore[style_num]
+		if fore ~= fore_old and fore_old ~= 0 then
 			forum_text = forum_text.."[/color]"
 		end
-		if fore ~= fore_old and fore ~= nil then
-			forum_text = forum_text.."[color="..fore.."]"
+		if fore ~= fore_old and fore ~= 0 then
+			forum_text = forum_text.."[color=#"..DEC_HEX(fore).."]"
 		end
 		fore_old = fore
 	end
