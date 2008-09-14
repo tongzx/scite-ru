@@ -57,6 +57,7 @@ i53 ICON "ico\\ansi_to_oem.ico"
 i54 ICON "ico\\open_api.ico"
 i55 ICON "ico\\favorite_files.ico"
 i56 ICON "ico\\trim_tral_spaces.ico"
+i57 ICON "ico\\favorite_folders.ico"
 
 VS_VERSION_INFO VERSIONINFO
 FILEVERSION 1,0,0,0
