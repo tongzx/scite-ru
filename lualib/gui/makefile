@@ -7,16 +7,17 @@ LIBS=-lscite -lgdi32 -lcomdlg32 -lcomctl32 -lshell32
 
 gui.dll: gui_ext.o $(YAWL)
 	g++ $(CFLAGS) -s -shared -o gui.dll gui_ext.o $(YAWL) $(LIBS)
+
 gui_ext.o: gui_ext.cpp yawl.h
-	g++ $(CFLAGS) -c -I$(LUA_INCLUDE) gui_ext.cpp
+	g++ $(CFLAGS) -MMD -c -I$(LUA_INCLUDE) gui_ext.cpp
 
 clean:
-	-del /S *.o
+	-del /S *.o *.d
 
 vpath %.cpp yawl
 
 .cpp.o:
-	g++ $(CFLAGS) -c $< -o $@
+	g++ $(CFLAGS) -MMD -c $< -o $@
 
 twl.o: yawl/twl.cpp
 

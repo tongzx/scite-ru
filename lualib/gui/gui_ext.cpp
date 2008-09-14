@@ -1004,7 +1004,7 @@ static WNDPROC subclass(HWND hwnd, LONG_PTR newproc)
 		old = reinterpret_cast<WNDPROC>(GetWindowLongPtrW(hwnd, GWLP_WNDPROC));
 		SetWindowLongPtrW(hwnd, GWLP_WNDPROC, newproc);
 	} else {
-		old = reinterpret_cast<WNDPROC>(GetWindowLongPtrW(hwnd, GWLP_WNDPROC));
+		old = reinterpret_cast<WNDPROC>(GetWindowLongPtrA(hwnd, GWLP_WNDPROC));
 		SetWindowLongPtrA(hwnd, GWLP_WNDPROC, newproc);
 	}
 	return old;

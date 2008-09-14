@@ -55,7 +55,8 @@ typedef const char *pchar;
 #define WM_USER_PLUS 0x9999
 
 #ifndef __UNDERC__
-#define EXPORT __declspec(dllexport)
+// #define EXPORT __declspec(dllexport)
+#define EXPORT
 #define DLGFN EXPORT BOOL __stdcall
 #define WNDFN EXPORT long __stdcall
 #else
