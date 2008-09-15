@@ -159,6 +159,7 @@ Buffer *BufferList::CurrentBuffer() {
 
 void BufferList::SetCurrent(int index) {
 	current = index;
+	SciTEBase::GetProps()->SetInteger("buffer.number", current+1); //!-add-[buffer.number]
 }
 
 void BufferList::PopStack() {
