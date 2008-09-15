@@ -35,7 +35,7 @@
   </table>
 </td></tr></table>
 
-    <h3>Текстовый редактор SciTE RU-Board 1.76 .59</h3>
+    <h3>Текстовый редактор SciTE RU-Board 1.76 .60</h3>
 
     <p>Все модификации оригинального кода редактора <A href="http://www.scintilla.org">SciTE</A> выполнены энтузиастами <A href="http://forum.ru-board.com/topic.cgi?forum=5&topic=24956&glp">форума Ru-Board</A>.
 
@@ -56,12 +56,12 @@
       Интерфейс
     </h3>
 
-<h5 id="save.session.multibuffers.only"> <sup>new</sup>
+<h5 id="save.session.multibuffers.only">
 [save.session.multibuffers.only] <span class=desc>(Автор: VladVRO)</span></h5>
 Новый параметр в .properties, который позволяет запретить запись файла сессии при выходе из редактора, если открыта только одна вкладка:
 <div class="example">save.session.multibuffers.only=1</div>
 
-<h5 id="session.close.buffers.onload"> <sup>new</sup>
+<h5 id="session.close.buffers.onload">
 [session.close.buffers.onload] <span class=desc>(Автор: VladVRO)</span></h5>
 Новый параметр <span class="example">session.close.buffers.onload</span> в .properties позволяет задать закрывать или нет уже открытые файлы при загрузке сессии.<br>
 Например, для того что бы вкладки остались открытыми:
@@ -129,7 +129,7 @@ command.name.6.*=Date and Time</div>
 Имя&nbsp;команды2|IDM_COMMAND2|...</div>
 Если параметр не задан в настройках, то отображается стандартное контекстное меню.
 
-<h5 id="user.toolbar"> <sup>updated</sup>
+<h5 id="user.toolbar">
 [user.toolbar] <span class=desc>(Автор: Дмитрий Маслов)</span></h5>
 Новый параметр <span class="example">user.toolbar</span> в .properties позволяет ПОЛНОСТЬЮ настроить панель инструментов.<br>
 Формат:
@@ -145,7 +145,7 @@ command.name.6.*=Date and Time</div>
 Новый параметр в настройках позволяет задать пользовательскую библиотеку с иконками:
 <span class="example">user.toolbar.iconlib=$(SciteUserHome)\gnome.dll</span>
 
-<h5 id="FindResultListStyle"> <sup>updated</sup>
+<h5 id="FindResultListStyle">
 [FindResultListStyle] <span class=desc>(Авторы: VladVRO, Дмитрий Маслов)</span></h5>
 Улучшена наглядность строк, выводимых встроенным инструментом для поиска текста в файлах (Ctrl+Shift+F):<br>
 - путь до файла в каждой строке результата отображается в сокращенном виде, относительным от каталога поиска,<br>
@@ -366,12 +366,12 @@ calltip.*.word.wrap</div>
       Расширения
     </h3>
 
-<h5 id="ForthImprovement"> <sup>new</sup>
+<h5 id="ForthImprovement">
 [ForthImprovement] <span class=desc>(Автор: VladVRO)</span></h5>
 Улучшены лексеры Forth и Crontab. Добавлен фолдинг и созданы дополнительные группы ключевых слов.<br>
 В лексере Forth исправлен алгоритм поиска закрывающего тега для строки <span class="example">[ ]</span>.
 
-<h5 id="BatchLexerImprovement"> <sup>new</sup>
+<h5 id="BatchLexerImprovement">
 [BatchLexerImprovement] <span class=desc>(Автор: VladVRO)</span></h5>
 Значительно доработан лексер batch (используется для отображения пакетных файлов *.bat, *.cmd, *.nt).<br>
 Исправлена ошибка обработки круглой открывающей скобки.<br>
@@ -385,14 +385,14 @@ calltip.*.word.wrap</div>
 <br>
 Дополнительная информация в <a href="http://code.google.com/p/scite-ru/issues/detail?id=96">Issue 96</a>.
 
-<h5 id="LocalizationFromLua"> <sup>new</sup>
+<h5 id="LocalizationFromLua">
 [LocalizationFromLua] <span class=desc>(Автор: VladVRO)</span></h5>
 В SciTE Lua Scripting Extension добавлена новая команда:<br>
 <span class="example">scite.GetTranslation(s, [retainIfNotFound])</span>, которая возвращает перевод строки <span class="example"><i>s</i></span>,<br>
 где <span class="example"><i>retainIfNotFound</i></span> - (по умолчанию <span class="example"><i>true</i></span>) указывает на возврат исходного значения в случае, если перевод не найден.<br>
 Переводы строк берутся из файла <span class="example">locale.properties</span>.
 
-<h5 id="OnFinalise"> <sup>new</sup>
+<h5 id="OnFinalise">
 [OnFinalise] <span class=desc>(Автор: VladVRO)</span></h5>
 Добавлено новое событие SciTE в Луа API <span class="example">OnFinalise()</span>. Событие возникает при закрытии редактора.
 
@@ -485,6 +485,10 @@ APIPath - новая внутренняя переменная SciTE. Cодержит путь к текущему api файлу.
 <h5 id="GetAbbrevPath">
 [GetAbbrevPath] <span class=desc>(Автор: dB6)</span></h5>
 AbbrevPath - новая внутренняя переменная SciTE. Cодержит путь к текущему abbrev файлу.
+
+<h5 id="BufferNumber"> <sup>new</sup>
+[BufferNumber] <span class=desc>(Автор: VladVRO)</span></h5>
+BufferNumber - новая внутренняя переменная SciTE. Cодержит номер текущего буфера.
 
 <h5 id="AbbrevRefactoring">
 [AbbrevRefactoring] <span class=desc>(Автор: Дмитрий Маслов)</span></h5>
