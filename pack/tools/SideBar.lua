@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™
-version 0.7.2
+version 0.8
 ------------------------------------------------------
   Needed gui.dll by Steve Donovan
   Connection:
@@ -51,6 +51,7 @@ local list_func_height = tonumber(props['position.height'])/2 - 80
 tab1:add(list_func, "top", list_func_height)
 
 local list_bookmarks = gui.list(true)
+list_bookmarks:add_column("@", 22)
 list_bookmarks:add_column("Bookmarks", 600)
 tab1:client(list_bookmarks)
 -------------------------
@@ -338,7 +339,7 @@ end
 ----------------------------------------------------------
 function list_bookmark_add(line_number)
 	local line_text = editor:GetLine(line_number):gsub('%s+', ' ')
-	list_bookmarks:add_item(line_text, {file_path, line_number})
+	list_bookmarks:add_item({props['BufferNumber'], line_text}, {file_path, line_number})
 end
 
 local function list_bookmark_delete(line_number)
