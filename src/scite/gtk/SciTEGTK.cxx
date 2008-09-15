@@ -623,7 +623,7 @@ SciTEGTK::~SciTEGTK() {}
 
 //!-start-[GetApplicationProps]
 SciTEBase *SciTEBase::GetApplicationInstance() {
-	return SciTEGTK::instance;
+	return instance;
 }
 //!-end-[GetApplicationProps]
 
