@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozersЩ
-version 0.7
+version 0.7.2
 ------------------------------------------------------
   Needed gui.dll by Steve Donovan
   Connection:
@@ -21,6 +21,8 @@ local panel_width = 200
 local tab_index = 0
 local line_count = 0
 local text_list = ''
+local file_ext = '*.*'
+local fav_select_index = 0
 props['sidebar.show'] = 1
 -- you can choose to make it a stand-alone window; just uncomment this line:
 -- local win = true
@@ -44,7 +46,7 @@ tab0:client(list_favorites)
 local tab1 = gui.panel(panel_width + 18)
 
 local list_func = gui.list(true)
-list_func:add_column("Functions", 600)
+list_func:add_column("Functions/Procedures", 600)
 local list_func_height = tonumber(props['position.height'])/2 - 80
 tab1:add(list_func, "top", list_func_height)
 
@@ -109,14 +111,12 @@ end
 -- Tab0: FileManager
 ----------------------------------------------------------
 function all_files()
-print('all')
 	file_mask = '*.*'
 	fill_list_dir()
 end
 
-function current_ext()
-print(props['FileExt'])
-	file_mask = '*.'..props['FileExt']
+function only_current_ext()
+	file_mask = file_ext
 	fill_list_dir()
 end
 
@@ -164,9 +164,13 @@ function add_fav()
 	end
 end
 
+function del_fav()
+	list_favorites:delete_item(fav_select_index)
+end
+
 tab0:context_menu {
 	'Show all files|all_files',
-	'Only current ext|current_ext',
+	'Only current ext|only_current_ext',
 	'-|f_nil', -- типа разделитель. другого, увы, нет :(
 	'Copy file to...|file_copy',
 	'Move file to...|file_move',
@@ -174,6 +178,7 @@ tab0:context_menu {
 	'Delete file|file_del',
 	'-|f_nil', -- типа разделитель. другого, увы, нет :(
 	'Add to Favorites|add_fav',
+	'Delete to Favorites|del_fav',
 }
 
 ----------------------------------------------------------
@@ -236,6 +241,7 @@ list_dir:on_select(function(idx)
 		local data = list_dir:get_item_data(idx)
 		dir_or_file = data[1]
 		attr = data[2]
+		file_ext = '*.'..dir_or_file:gsub('.+%.','')
 	end
 end)
 
@@ -243,6 +249,12 @@ end)
 -- List: Favirites
 ----------------------------------------------------------
 local favorites_filename = props['SciteDefaultHome']..'\\favorites.lst'
+
+list_favorites:on_select(function(idx)
+	if idx 	~= -1 then
+		fav_select_index = idx
+	end
+end)
 
 list_favorites:on_double_click(function(idx)
 	if idx 	~= -1 then

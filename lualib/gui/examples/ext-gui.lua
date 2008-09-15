@@ -20,7 +20,7 @@ window1:position(x, y)
 window1:show()
 window1:ontop(true) -- Note: There is no. This - the wish.
 window1:hide()
-window1:context_menu {'item1|func1', 'item2|func2'} -- Note: Need to use global functions!
+window1:context_menu {'item1|func1', 'item2|func2'} -- Note: Need to use global functions! Separators is not available.
 
 -- Get:
 visible, x, y, width, height = window1:bounds()
@@ -83,24 +83,25 @@ visible, x, y, width, height = list1:bounds()
 -- Event:
 list1:on_select(function(index) print(index) end) -- Note: Works as on_click. Check index ~= index_old
 list1:on_double_click(function(index) print(index) end)
+list1:on_key(function(key) print(key) end) -- Note: There is no. This - the wish.
 
 -------------
 -- MEMO TEXT
 -------------
 -- Set:
-text1 = gui.memo()
-window_or_panel1:add(text1, "top", height) -- "top" or "bottom"
+memo1 = gui.memo()
+window_or_panel1:add(memo1, "top", height) -- "top" or "bottom"
 -- or
-window_or_panel1:add(text1, "left", width) -- "left" or "right"
+window_or_panel1:add(memo1, "left", width) -- "left" or "right"
 -- or
-window_or_panel1:client(text1)
-text1:size(width, height) -- Note: Changes either height or width (one of parameters is ignored)
-text1:set_text('{\\rtf{\\fonttbl{\\f0\\fcharset0 Helv;}}\\f0\\fs16'..'sample text'..'}')
-text1:set_list_colour("#FFFFFF", "#000000") -- foreground, background
+window_or_panel1:client(memo1)
+memo1:size(width, height) -- Note: Changes either height or width (one of parameters is ignored)
+memo1:set_text('{\\rtf{\\fonttbl{\\f0\\fcharset0 Helv;}}\\f0\\fs16'..'sample text'..'}')
+memo1:set_memo_colour("#FFFFFF", "#000000") -- foreground, background
 
 -- Get:
-visible, x, y, width, height = text1:bounds()
-text = text1:get_text() -- Note: There is no. This - the wish.
+visible, x, y, width, height = memo1:bounds()
+text = memo1:get_text() -- Note: There is no. This - the wish.
 
 -- Event:
-text1:on_key(function(key) print(key) end) -- Note: There is no. This - the wish.
+memo1:on_key(function(key) print(key) end) -- Note: There is no. This - the wish.
