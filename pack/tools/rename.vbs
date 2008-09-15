@@ -1,5 +1,5 @@
 ' Rename
-' Version: 1.1
+' Version: 1.1.1
 ' Author: mozersЩ (иде€ codewarlock1101)
 ' ------------------------------------------------
 ' ѕереименовывает текущий файл
@@ -31,7 +31,7 @@ If filename_new <> "" And filename_new <> filename Then
 	filename_new = dir & "\" & filename_new
 	SciTE.Send ("open:" & filename)
 	SciTE.Send ("saveas:" & filename_new)
-	If FSO.FileExists(filename_new) Then FSO.DeleteFile(filename)
+	If FSO.FileExists(filename) Then FSO.DeleteFile(filename)
 End If
 
 Set SciTE = Nothing

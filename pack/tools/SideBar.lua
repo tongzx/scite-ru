@@ -20,7 +20,7 @@ local file_mask = '*.*'
 local panel_width = 200
 local tab_index = 0
 local line_count = 0
-local text_list = ''
+local list_fav_table = {}
 local file_ext = '*.*'
 local fav_select_index = 0
 props['sidebar.show'] = 1
@@ -154,31 +154,39 @@ function file_del()
 	end
 end
 
+function file_exec()
+	local filename = current_path..'\\'..dir_or_file
+	local ret, descr = shell.exec(filename)
+	if not ret then
+		print (">Exec: "..filename)
+		print ("Error: "..descr)
+	end
+end
+
 function add_fav()
 	if attr ~= 'd' then
 		list_favorites:add_item(dir_or_file, current_path..'\\'..dir_or_file)
-	end
-	text_list = ''
-	for i = 0, list_favorites:count() - 1 do
-		text_list = text_list..list_favorites:get_item_data(i)..'\n'
+		table.insert(list_fav_table, current_path..'\\'..dir_or_file)
 	end
 end
 
 function del_fav()
 	list_favorites:delete_item(fav_select_index)
+	table.remove (list_fav_table, fav_select_index+1)
 end
 
 tab0:context_menu {
-	'Show all files|all_files',
-	'Only current ext|only_current_ext',
-	'-|f_nil', -- типа разделитель. другого, увы, нет :(
-	'Copy file to...|file_copy',
-	'Move file to...|file_move',
-	'Rename file|file_ren',
-	'Delete file|file_del',
-	'-|f_nil', -- типа разделитель. другого, увы, нет :(
-	'Add to Favorites|add_fav',
-	'Delete to Favorites|del_fav',
+	'Files: Show All|all_files',
+	'Files: Only current ext|only_current_ext',
+	'-----------------------|f_nil', -- типа разделитель. другого, увы, нет :(
+	'Files: Copy to...|file_copy',
+	'Files: Move to...|file_move',
+	'Files: Rename|file_ren',
+	'Files: Delete|file_del',
+	'Files: Execute|file_exec',
+	'Files: Add to Favorites|add_fav',
+	'-----------------------|f_nil', -- типа разделитель. другого, увы, нет :(
+	'Favorites: Delete item|del_fav',
 }
 
 ----------------------------------------------------------
@@ -246,9 +254,9 @@ list_dir:on_select(function(idx)
 end)
 
 ----------------------------------------------------------
--- List: Favirites
+-- List: Favorites
 ----------------------------------------------------------
-local favorites_filename = props['SciteDefaultHome']..'\\favorites.lst'
+local favorites_filename = props['SciteUserHome']..'\\favorites.lst'
 
 list_favorites:on_select(function(idx)
 	if idx 	~= -1 then
@@ -269,7 +277,7 @@ local function fill_list_favorites()
 			if line.len ~= 0 then
 				local caption = line:gsub('.+\\','')
 				list_favorites:add_item(caption, line)
-				text_list = text_list..caption..'\n'
+				table.insert(list_fav_table, line)
 			end
 		end
 		favorites_file:close()
@@ -280,7 +288,8 @@ fill_list_favorites()
 
 local function save_list_favorites()
 	io.output(favorites_filename)
-	io.write(text_list)
+	local list_string = table.concat(list_fav_table,'\n')
+	io.write(list_string)
 	io.close()
 end
 
