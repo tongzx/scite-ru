@@ -51,7 +51,7 @@ local list_func_height = tonumber(props['position.height'])/2 - 80
 tab1:add(list_func, "top", list_func_height)
 
 local list_bookmarks = gui.list(true)
-list_bookmarks:add_column("@", 22)
+list_bookmarks:add_column("@", 24)
 list_bookmarks:add_column("Bookmarks", 600)
 tab1:client(list_bookmarks)
 -------------------------
