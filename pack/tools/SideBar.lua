@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs
-version 0.91
+version 0.92
 ------------------------------------------------------
   Needed gui.dll by Steve Donovan
   Connection:
@@ -308,50 +308,51 @@ list_func:on_double_click(function(idx)
 	end
 end)
 
-local FIND_FUNC_REG_EXP = {
-	['cpp']="([^.,<>=\n]-[ :][^.,<>=\n%s]+[(][^.<>=)]-[)])[%s\/}]-%b{}",
-	['js']="(\n[^,<>\n]-function[^(]-%b())[^{]-%b{}",
-	['vbs']="(\n[SsFf][Uu][BbNn][^\r]-)\r",
-	['css']="([%w.#-_]+)[%s}]-%b{}",
-	['pas']="\n[pPfF][rRuU][oOnN][cC][eEtT][dDiI][uUoO][rRnN].(.-%b().-)\n",
-	['py']="\n%s-([dc][el][fa]%s-.-):",
+local Lang2RegEx = {
+	['C++']="([^.,<>=\n]-[ :][^.,<>=\n%s]+[(][^.<>=)]-[)])[%s\/}]-%b{}",
+	['JScript']="(\n[^,<>\n]-function[^(]-%b())[^{]-%b{}",
+	['VBScript']="(\n[SsFf][Uu][BbNn][^\r]-)\r",
+	['VisualBasic']="(\n[Public ]*[Private ]*[SsFfP][Uur][BbNno][^\r]-)\r",
+	['CSS']="([%w.#-_]+)[%s}]-%b{}",
+	['Pascal']="\n[pPfF][rRuU][oOnN][cC][eEtT][dDiI][uUoO][rRnN].(.-%b().-)\n",
+	['Python']="\n%s-([dc][el][fa]%s-.-):",
 	['*']="\n[local ]*[SsFf][Uu][BbNn][^ .]* ([^(]*%b())",
 }
-local FIND_FUNC_REG_EXP_LEX_IDX = {
-	['cpp']='cpp',
-	['js']='js',
-	['vb']='vbs',
-	['vbscript']='vbs',
-	['css']='css',
-	['pascal']='pas',
-	['python']='py',
+local Lexer2Lang = {
+	['cpp']='C++',
+	['js']='JScript',
+	['vb']='VisualBasic',
+	['vbscript']='VBScript',
+	['css']='CSS',
+	['pascal']='Pascal',
+	['python']='Python',
 }
-local FIND_FUNC_REG_EXP_EXT_IDX = {}
-local function fill_func_reg_exp_idx()
+local Ext2Lang = {}
+local function Fill_Ext2Lang()
 	local patterns = {
-		[props['file.patterns.cpp']]='cpp',
-		[props['file.patterns.wsh']]='js',
-		[props['file.patterns.vb']]='vbs',
-		[props['file.patterns.wscript']]='vbs',
-		['*.css']='css',
-		[props['file.patterns.pascal']]='pas',
-		[props['file.patterns.py']]='py',
+		[props['file.patterns.cpp']]='C++',
+		[props['file.patterns.wsh']]='JScript',
+		[props['file.patterns.vb']]='VisualBasic',
+		[props['file.patterns.wscript']]='VBScript',
+		['*.css']='CSS',
+		[props['file.patterns.pascal']]='Pascal',
+		[props['file.patterns.py']]='Python',
 	}
 	for i,v in pairs(patterns) do
 		for ext in (i..';'):gfind("%*%.([^;]+);") do
-			FIND_FUNC_REG_EXP_EXT_IDX[ext] = v
+			Ext2Lang[ext] = v
 		end
 	end
 end
-fill_func_reg_exp_idx()
+Fill_Ext2Lang()
 
 function fill_list_func()
 	list_func:clear()
-	local findPattern = FIND_FUNC_REG_EXP [FIND_FUNC_REG_EXP_EXT_IDX [props["FileExt"]]]
+	local findPattern = Lang2RegEx[Ext2Lang[props["FileExt"]]]
 	if not findPattern then
-		findPattern = FIND_FUNC_REG_EXP [FIND_FUNC_REG_EXP_LEX_IDX [editor.LexerLanguage]]
+		findPattern = Lang2RegEx[Lexer2Lang[editor.LexerLanguage]]
 		if not findPattern then
-			findPattern = FIND_FUNC_REG_EXP ['*']
+			findPattern = Lang2RegEx['*']
 		end
 	end
 	local textAll = editor:GetText()
