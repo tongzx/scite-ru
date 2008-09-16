@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs
-version 0.9
+version 0.91
 ------------------------------------------------------
   Needed gui.dll by Steve Donovan
   Connection:
@@ -437,7 +437,10 @@ end
 list_abbrev:on_double_click(function(idx)
 	if idx~=-1 then
 		local abbrev = list_abbrev:get_item_text(idx)
-		editor:ReplaceSel(abbrev)
+		local ss,se = editor.SelectionStart,editor.SelectionEnd
+		local len = abbrev:len()
+		editor:InsertText(ss, abbrev)
+		editor:SetSel(se+len, ss+len)
 		scite.MenuCommand(IDM_ABBREV)
 		editor.Focus = true
 	end
