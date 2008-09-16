@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
-Authors: Frank Wunderlich, mozers™
-version 0.8
+Authors: Frank Wunderlich, mozers™, VladVRO, frs
+version 0.9
 ------------------------------------------------------
   Needed gui.dll by Steve Donovan
   Connection:
@@ -27,6 +27,9 @@ props['sidebar.show'] = 1
 -- you can choose to make it a stand-alone window; just uncomment this line:
 -- local win = true
 
+local win_height = props['position.height']
+if win_height == '' then win_height = 600 end
+
 ----------------------------------------------------------
 -- Create panels
 ----------------------------------------------------------
@@ -36,7 +39,7 @@ local text_path = gui.memo()
 tab0:add(text_path, "top", 22)
 
 local list_dir = gui.list()
-local list_dir_height = tonumber(props['position.height'])/2 - 80
+local list_dir_height = win_height/2 - 80
 tab0:add(list_dir, "top", list_dir_height)
 
 local list_favorites = gui.list(true)
@@ -47,7 +50,7 @@ local tab1 = gui.panel(panel_width + 18)
 
 local list_func = gui.list(true)
 list_func:add_column("Functions/Procedures", 600)
-local list_func_height = tonumber(props['position.height'])/2 - 80
+local list_func_height = win_height/2 - 80
 tab1:add(list_func, "top", list_func_height)
 
 local list_bookmarks = gui.list(true)
@@ -305,21 +308,51 @@ list_func:on_double_click(function(idx)
 	end
 end)
 
+local FIND_FUNC_REG_EXP = {
+	['cpp']="([^.,<>=\n]-[ :][^.,<>=\n%s]+[(][^.<>=)]-[)])[%s\/}]-%b{}",
+	['js']="(\n[^,<>\n]-function[^(]-%b())[^{]-%b{}",
+	['vbs']="(\n[SsFf][Uu][BbNn][^\r]-)\r",
+	['css']="([%w.#-_]+)[%s}]-%b{}",
+	['pas']="\n[pPfF][rRuU][oOnN][cC][eEtT][dDiI][uUoO][rRnN].(.-%b().-)\n",
+	['py']="\n%s-([dc][el][fa]%s-.-):",
+	['*']="\n[local ]*[SsFf][Uu][BbNn][^ .]* ([^(]*%b())",
+}
+local FIND_FUNC_REG_EXP_LEX_IDX = {
+	['cpp']='cpp',
+	['js']='js',
+	['vb']='vbs',
+	['vbscript']='vbs',
+	['css']='css',
+	['pascal']='pas',
+	['python']='py',
+}
+local FIND_FUNC_REG_EXP_EXT_IDX = {}
+local function fill_func_reg_exp_idx()
+	local patterns = {
+		[props['file.patterns.cpp']]='cpp',
+		[props['file.patterns.wsh']]='js',
+		[props['file.patterns.vb']]='vbs',
+		[props['file.patterns.wscript']]='vbs',
+		['*.css']='css',
+		[props['file.patterns.pascal']]='pas',
+		[props['file.patterns.py']]='py',
+	}
+	for i,v in pairs(patterns) do
+		for ext in (i..';'):gfind("%*%.([^;]+);") do
+			FIND_FUNC_REG_EXP_EXT_IDX[ext] = v
+		end
+	end
+end
+fill_func_reg_exp_idx()
+
 function fill_list_func()
 	list_func:clear()
-	local findRegExp = {
-		['cxx']="([^.,<>=\n]-[ :][^.,<>=\n%s]+[(][^.<>=)]-[)])[%s\/}]-%b{}",
-		['c']="([^.,<>=\n]-[ :][^.,<>=\n%s]+[(][^.<>=)]-[)])[%s\/}]-%b{}",
-		['h']="([^.,<>=\n]-[ :][^.,<>=\n%s]+[(][^.<>=)]-[)])[%s\/}]-%b{}",
-		['js']="(\n[^,<>\n]-function[^(]-%b())[^{]-%b{}",
-		['vbs']="(\n[SsFf][Uu][BbNn][^\r]-)\r",
-		['css']="([%w.#-_]+)[%s}]-%b{}",
-		['pas']="\n[pPfF][rRuU][oOnN][cC][eEtT][dDiI][uUoO][rRnN].(.-%b().-)\n",
-		['py']="\n%s-([dc][el][fa]%s-.-):"
-	}
-	local findPattern = findRegExp [props["FileExt"]]
-	if findPattern == nil then
-		findPattern = "\n[local ]*[SsFf][Uu][BbNn][^ .]* ([^(]*%b())"
+	local findPattern = FIND_FUNC_REG_EXP [FIND_FUNC_REG_EXP_EXT_IDX [props["FileExt"]]]
+	if not findPattern then
+		findPattern = FIND_FUNC_REG_EXP [FIND_FUNC_REG_EXP_LEX_IDX [editor.LexerLanguage]]
+		if not findPattern then
+			findPattern = FIND_FUNC_REG_EXP ['*']
+		end
 	end
 	local textAll = editor:GetText()
 	local startPos, endPos, findString
