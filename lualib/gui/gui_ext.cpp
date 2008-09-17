@@ -953,6 +953,9 @@ static LRESULT SciTEWndProc(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lPar
 	if (iMessage == WM_ACTIVATEAPP) {
 		PaletteWindow::set_visibility(wParam);
 		call_named_function(sL,"OnActivate",wParam);
+		if (wParam) { // floating toolbars may grab the focus, so restore it.
+			code_window->set_focus();
+		}
 	} else
 	if (iMessage == WM_CLOSE) {
 		call_named_function(sL,"OnClosing",0);
@@ -996,6 +999,14 @@ static LRESULT ContentWndProc(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lP
 		return CallWindowProcA(old_content_proc,hwnd,iMessage,wParam,lParam);
 	}
 }
+
+#ifndef GetWindowLongPtrW
+#define GetWindowLongPtrW(hwnd,offs) (void*)GetWindowLongW(hwnd,offs)
+#define GetWindowLongPtrA(hwnd,offs) (void*)GetWindowLongA(hwnd,offs)
+#define SetWindowLongPtrW(hwnd,offs,newv) (void*)SetWindowLongW(hwnd,offs,newv)
+#define SetWindowLongPtrA(hwnd,offs,newv) (void*)SetWindowLongA(hwnd,offs,newv)
+#endif
+
 
 static WNDPROC subclass(HWND hwnd, LONG_PTR newproc)
 {

@@ -1230,6 +1230,7 @@ BOOL APIENTRY DllMain(
 void force_entry()
 {
   if (! been_registered) {
+	CmdShow = SW_SHOW;
     hInst = GetModuleHandle(NULL);
     RegisterEventWindow();
   }

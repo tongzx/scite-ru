@@ -31,6 +31,13 @@
 #ifndef LVS_EX_FULLROWSELECT
 #define LVS_EX_FULLROWSELECT  0x00000020
 #endif
+#ifndef CDDS_PREPAINT
+#define CDDS_PREPAINT           0x00000001
+#define CDRF_NOTIFYITEMDRAW     0x00000020
+#define CDDS_ITEM               0x00010000
+#define CDDS_ITEMPREPAINT       (CDDS_ITEM | CDDS_PREPAINT)
+#define CDRF_NEWFONT            0x00000002
+#endif
 
 void *ApplicationInstance();
 
