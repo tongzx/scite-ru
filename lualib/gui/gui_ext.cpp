@@ -602,7 +602,15 @@ int window_context_menu(lua_State* L)
 	for (;*items; items++) {
 		char* text = strtok(*items,"|");
 		char* fun = strtok(NULL,"");
-		mnu << Item(text,(EH)&ContainerWindow::handler,fun);
+		if ( ( text == 0 || *text == 0 )
+			 && ( fun == 0 || *fun == 0 ) )
+		{
+			mnu.add_separator();
+		}
+		else
+		{
+			mnu << Item(text,(EH)&ContainerWindow::handler,fun);
+		}
 	}
 	//mnu.release();
 	return 0;

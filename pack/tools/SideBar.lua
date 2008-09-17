@@ -124,8 +124,6 @@ function only_current_ext()
 	fill_list_dir()
 end
 
-function f_nil() end -- заглушка для разделителя списка в контекстном меню
-
 function file_copy()
 	if string.len(dir_or_file) < 2 then return end
 	local path_destantion = gui.open_dir_dlg -- Note: There is no. This - the wish.
@@ -187,14 +185,14 @@ end
 tab0:context_menu {
 	'Files: Show All|all_files',
 	'Files: Only current ext|only_current_ext',
-	'-----------------------|f_nil', -- типа разделитель. другого, увы, нет :(
+	'', -- разделитель
 	'Files: Copy to...|file_copy',
 	'Files: Move to...|file_move',
 	'Files: Rename|file_ren',
 	'Files: Delete|file_del',
 	'Files: Execute|file_exec',
 	'Files: Add to Favorites|add_fav',
-	'-----------------------|f_nil', -- типа разделитель. другого, увы, нет :(
+	'', -- разделитель
 	'Favorites: Add active buffer|add_fav_buffer',
 	'Favorites: Delete item|del_fav',
 }
