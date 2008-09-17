@@ -544,20 +544,21 @@ public:
 
 TTabControlB::TTabControlB(TWin* form, bool multiline)
 {
-     // Create the tab control.
-	 int style = WS_CHILD; // | TCS_TOOLTIPS;
-	 if (multiline) style |= TCS_MULTILINE;
+	// Create the tab control.
+	int style = WS_CHILD; // | TCS_TOOLTIPS;
+	if (multiline) style |= TCS_MULTILINE;
 
-     set(create_common_control(form,WC_TABCONTROL,style,30));
+	set(create_common_control(form,WC_TABCONTROL,style,30));
+	send_msg(WM_SETFONT,(WPARAM)::GetStockObject(DEFAULT_GUI_FONT),(LPARAM)TRUE);
 
-	 m_index = 0;
+	m_index = 0;
 
-     /*
-     HWND hToolTip = (HWND)send_msg(TCM_GETTOOLTIPS);
-     if (hToolTip) {
-         form->add(new TTabToolTipNotifyHandler(hToolTip));
-     }
-     */
+	/*
+	HWND hToolTip = (HWND)send_msg(TCM_GETTOOLTIPS);
+	if (hToolTip) {
+		form->add(new TTabToolTipNotifyHandler(hToolTip));
+	}
+	*/
 }
 
 void TTabControlB::add(const char* caption, void* data, int image_idx /*= -1*/)
