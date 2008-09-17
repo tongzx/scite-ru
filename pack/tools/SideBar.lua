@@ -203,7 +203,7 @@ tab0:context_menu {
 -- Memo: Path and Mask
 ----------------------------------------------------------
 local function show_path()
-	local rtf = '{\\rtf{\\fonttbl{\\f0\\fcharset0 Helv;}}{\\colortbl ;\\red0\\green0\\blue255;  \\red255\\green0\\blue0;}\\f0\\fs16'
+	local rtf = '{\\rtf{\\fonttbl{\\f0\\fcharset1 Helv;}}{\\colortbl ;\\red0\\green0\\blue255;  \\red255\\green0\\blue0;}\\f0\\fs16'
 	local path = '\\cf1'..string.gsub(current_path, '\\', '\\\\')..'\\\\'
 	local mask = '\\cf2'..file_mask..'}'
 	text_path:set_text(rtf..path..mask)
