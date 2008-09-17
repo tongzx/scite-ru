@@ -174,6 +174,11 @@ function add_fav()
 	end
 end
 
+function add_fav_buffer()
+	list_favorites:add_item(props['FileNameExt'], props['FilePath'])
+	table.insert(list_fav_table, props['FilePath'])
+end
+
 function del_fav()
 	list_favorites:delete_item(fav_select_index)
 	table.remove (list_fav_table, fav_select_index+1)
@@ -190,6 +195,7 @@ tab0:context_menu {
 	'Files: Execute|file_exec',
 	'Files: Add to Favorites|add_fav',
 	'-----------------------|f_nil', -- типа разделитель. другого, увы, нет :(
+	'Favorites: Add active buffer|add_fav_buffer',
 	'Favorites: Delete item|del_fav',
 }
 
