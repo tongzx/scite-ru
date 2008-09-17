@@ -1,5 +1,5 @@
 @ECHO OFF
-SET PATH=C:\MinGW\bin;
+SET PATH=C:\MinGW\bin;%ProgramFiles%\CodeBlocks\bin
 
 mingw32-make
 mingw32-make clean
