@@ -301,6 +301,7 @@ const char *contributors[] = {
             "Gertjan Kloosterman",
             "alexbodn",
             "Sergiu Dotenco",
+            "Anders Karlsson",
 //!-start-[SciTE-Ru]
             "HSolo",
             "Midas",

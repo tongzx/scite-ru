@@ -1,5 +1,5 @@
 /*
-** $Id: lparser.c,v 1.3 2008/09/07 05:52:56 nyamatongwe Exp $
+** $Id: lparser.c,v 1.4 2008/09/14 11:07:58 nyamatongwe Exp $
 ** Lua Parser
 ** See Copyright Notice in lua.h
 */
@@ -838,7 +838,7 @@ static BinOpr subexpr (LexState *ls, expdesc *v, unsigned int limit) {
   else simpleexp(ls, v);
   /* expand while operators have priorities higher than `limit' */
   op = getbinopr(ls->t.token);
-  while (op != OPR_NOBINOPR && priority[op].left > limit) {
+  while (op != OPR_NOBINOPR && priority[op].left > (int)limit) {
     expdesc v2;
     BinOpr nextop;
     luaX_next(ls);

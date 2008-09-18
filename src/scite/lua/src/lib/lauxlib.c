@@ -1,5 +1,5 @@
 /*
-** $Id: lauxlib.c,v 1.3 2008/09/07 05:52:56 nyamatongwe Exp $
+** $Id: lauxlib.c,v 1.4 2008/09/14 11:08:04 nyamatongwe Exp $
 ** Auxiliary functions for building Lua libraries
 ** See Copyright Notice in lua.h
 */
@@ -646,7 +646,7 @@ static int panic (lua_State *L) {
 
 LUALIB_API lua_State *luaL_newstate (void) {
   lua_State *L = lua_newstate(l_alloc, NULL);
-  if (L) lua_atpanic(L, &panic);
+  if (L) lua_atpanic(L, panic);
   return L;
 }
 
