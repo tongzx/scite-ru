@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs
-version 0.92
+version 0.93
 ------------------------------------------------------
   Needed gui.dll by Steve Donovan
   Connection:
@@ -98,14 +98,14 @@ function show_hide()
 		if win then
 			win_parent:hide()
 		else
-			win_parent:size(0, 0)
+			gui.set_panel()
 		end
 		props['sidebar.show'] = 0
 	else
 		if win then
 			win_parent:show()
 		else
-			win_parent:size(panel_width, 0)
+			gui.set_panel(win_parent,"right")
 		end
 		props['sidebar.show'] = 1
 	end

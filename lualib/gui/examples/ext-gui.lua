@@ -20,7 +20,7 @@ window1:position(x, y)
 window1:show()
 window1:ontop(true) -- Note: There is no. This - the wish.
 window1:hide()
-window1:context_menu {'item1|func1', 'item2|func2'} -- Note: Need to use global functions! Separators is not available.
+window1:context_menu {'item1|func1', 'item2|func2'} -- Note: Need to use global functions!
 
 -- Get:
 visible, x, y, width, height = window1:bounds()
@@ -31,11 +31,12 @@ visible, x, y, width, height = window1:bounds()
 -- Set:
 panel1 = gui.panel(width)
 gui.set_panel(panel1, "right") -- "right" or "left"
+gui.set_panel() -- remove the panel and hide it
 -- or
 window_or_panel1:client(panel2)
 panel1:size(width, height) -- Note: Changes either height or width (one of parameters is ignored)
 panel1:show() -- BUG: Not working! (it is always shown without this command)
-panel1:hide() -- BUG: Not working!
+panel1:context_menu {'item1|func1', 'item2|func2'} -- Note: Need to use global functions!
 
 -- Get:
 visible, x, y, width, height = panel1:bounds()
