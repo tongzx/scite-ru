@@ -809,17 +809,23 @@ int _TranslateAccelerator(HWND h, HACCEL acc, MSG* msg)
 int TEventWindow::run()
 //---------------------
 {
-  MSG msg;
-  while (GetMessage (&msg, NULL, 0, 0)) {
-    if (msg.message == WM_QUIT_LOOP) return msg.wParam;
-	if (! hAccel || !TranslateAccelerator(m_hwnd,hAccel,&msg)) {
-	if (! hModeless || !IsDialogMessage(hModeless,&msg)) {
-	  TranslateMessage (&msg) ;
-	  DispatchMessage (&msg) ;
-	 }
+	BOOL bRet;
+	MSG msg;
+	while ( (bRet = GetMessage( &msg, NULL, 0, 0 )) != 0 ) {
+		if (bRet == -1) {
+			// handle the error and possibly exit
+		}
+		else {
+			if ( msg.message == WM_QUIT_LOOP ) return msg.wParam;
+			if ( !hAccel || !TranslateAccelerator( m_hwnd, hAccel, &msg ) ) {
+				if ( !hModeless || !IsDialogMessage( hModeless, &msg ) ) {
+					TranslateMessage( &msg );
+					DispatchMessage( &msg );
+				}
+			}
+		}
 	}
- }
- return msg.wParam ;
+	return msg.wParam;
 }
 
 void TEventWindow::quit(int retcode)
