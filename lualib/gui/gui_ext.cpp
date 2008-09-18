@@ -14,8 +14,6 @@ extern "C" {
 #include <lualib.h>
 }
 
-//#define NO_WINDOW_SUBCLASS 1
-
 const char* WINDOW_CLASS = "WINDOW*";
 const int BUFFER_SIZE = 2*0xFFFF;
 static TWin* s_parent = NULL;
@@ -897,7 +895,7 @@ int window_add_buttons(lua_State* L)
 }
 
 
-static HWND hSciTE, hContent;
+static HWND hSciTE = NULL, hContent = NULL;
 static WNDPROC old_scite_proc, old_scintilla_proc, old_content_proc;
 static lua_State *sL;
 static TWin *code_window = NULL;
@@ -1077,19 +1075,29 @@ static int do_set_panel(lua_State *L)
 		lua_pushstring(L,"Window subclassing was not successful");
 		lua_error(L);
 	}
-	extra_window = window_arg(L);
-	const char *align = luaL_optstring(L,2,"left");
-	if (EQ(align,"left")) {
-		extra_window->align(alLeft);
-	} else
-	if (EQ(align,"right")) {
-		extra_window->align(alRight);
+	if (! lua_isuserdata(L,1) && extra_window != NULL) {
+		extra_window->hide();
+		extra_window = NULL;
+		extra_window_splitter->close();
+		delete extra_window_splitter;
+		extra_window_splitter = NULL;
+		shake_scite_window();
+	} else {
+		extra_window = window_arg(L);
+		const char *align = luaL_optstring(L,2,"left");
+		if (EQ(align,"left")) {
+			extra_window->align(alLeft);
+		} else
+		if (EQ(align,"right")) {
+			extra_window->align(alRight);
+		}
+		extra_window->set_parent(content_window);
+		extra_window->show();
+		extra_window_splitter = new SideSplitter((TEventWindow*)content_window, extra_window);
+		extra_window_splitter->show();
+		force_contents_resize();
 	}
-	extra_window->set_parent(content_window);
-	extra_window->show();
-	extra_window_splitter = new SideSplitter((TEventWindow*)content_window, extra_window);
-	extra_window_splitter->show();
-	force_contents_resize();
+	
 	return 0;
 }
 
@@ -1176,25 +1184,52 @@ static const struct luaL_reg window_methods[] = {
 	{NULL, NULL},
 };
 
+BOOL CALLBACK CheckSciteWindow(HWND  hwnd, LPARAM  lParam)
+{
+	char buff[120];
+    GetClassName(hwnd,buff,sizeof(buff));	
+    if (strcmp(buff,"SciTEWindow") == 0) {
+		*(HWND *)lParam = hwnd;
+		return FALSE;
+    }
+    return TRUE;
+}
+
+BOOL CALLBACK CheckContainerWindow(HWND  hwnd, LPARAM  lParam)
+{
+	char buff[120];
+    GetClassName(hwnd,buff,sizeof(buff));	
+    if (strcmp(buff,"SciTEWindowContent") == 0) {
+		*(HWND *)lParam = hwnd;
+		return FALSE;
+    }
+    return TRUE;
+}
+
+
 void force_entry();
 
 extern "C" __declspec(dllexport)
-#ifndef NO_WINDOW_SUBCLASS 
 int luaopen_gui(lua_State *L)
-#else
-int luaopen_ngui(lua_State *L)
-#endif
 {
 	bool subclassed = false;
+
+	// this is a workaround because the mingw build doesn't seem to export a 
+	// DllMain that is called on loading.
 	force_entry();
-	// at this point, SciTE is the foreground window. We know at this point
-	// that its first child is the content pane (editor+output), and that
-	// the first child of the content pane is the editor pane.
-	s_parent = TWin::get_foreground_window();
+
+	// at this point, the SciTE window is available. Can't always assume
+	// that it is the foreground window, so we hunt through all windows
+	// associated with this thread (the main GUI thread) to find a window
+	// matching the appropriate class name
+	EnumThreadWindows(GetCurrentThreadId(),CheckSciteWindow,(long)&hSciTE);
+	s_parent = new TWin(hSciTE);
 	sL = L;
-#ifndef NO_WINDOW_SUBCLASS 
-	hSciTE = (HWND)s_parent->handle();
-	hContent = GetWindow(hSciTE,GW_CHILD);
+	
+	// Its first child shold be the content pane (editor+output), 
+	// but we check this anyway....	
+	EnumChildWindows(hSciTE,CheckContainerWindow,(long)&hContent);
+	// the first child of the content pane is the editor pane.
 	if (hContent != NULL) {
 		content_window = new TWin(hContent);
 		HWND hCode = GetWindow(hContent,GW_CHILD);
@@ -1207,7 +1242,6 @@ int luaopen_ngui(lua_State *L)
 	if (! subclassed) {
 		get_parent()->message("Cannot subclass SciTE Window",2);
 	}
-#endif
 	luaL_openlib (L, "gui", gui, 0);
 	luaL_newmetatable(L, WINDOW_CLASS);  // create metatable for window objects
 	lua_pushvalue(L, -1);  // push metatable
