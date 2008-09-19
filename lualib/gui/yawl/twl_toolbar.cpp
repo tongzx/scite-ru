@@ -5,7 +5,6 @@
 //   TTabControl
 //   TListView
 //   TTreeView
-#define NO_STRICT
 #include <windows.h>
 #include <commctrl.h>
 #include "twl_toolbar.h"
@@ -44,6 +43,19 @@ void *ApplicationInstance();
 
 static int gID = 445560;
 
+static WNDPROC subclass(HWND hwnd, LONG_PTR newproc)
+{
+	WNDPROC old;
+	if (::IsWindowUnicode(hwnd)) {
+		old = reinterpret_cast<WNDPROC>(GetWindowLongPtrW(hwnd, GWLP_WNDPROC));
+		SetWindowLongPtrW(hwnd, GWLP_WNDPROC, newproc);
+	} else {
+		old = reinterpret_cast<WNDPROC>(GetWindowLongPtrA(hwnd, GWLP_WNDPROC));
+		SetWindowLongPtrA(hwnd, GWLP_WNDPROC, newproc);
+	}
+	return old;
+}
+
 static HWND create_common_control(TWin* form, const char* winclass, int style, int height = -1)
 {
     int w = CW_USEDEFAULT, h = CW_USEDEFAULT;
@@ -51,9 +63,9 @@ static HWND create_common_control(TWin* form, const char* winclass, int style, i
     return CreateWindowEx( 0L,   // No extended styles.
        winclass,"",WS_CHILD | style,
        0, 0, w, h,
-       form->handle(),                  // Parent window of the control.
-       (void*)gID++,
-       ApplicationInstance(),             // Current instance.
+       (HWND)form->handle(),                  // Parent window of the control.
+       (HMENU)(void*)gID++,
+       (HINSTANCE)ApplicationInstance(),             // Current instance.
        NULL );
 }
 
@@ -122,7 +134,7 @@ void TToolbar::create()
 
 static HICON load_icon(const char* file)
 {
-  return (HICON) LoadImage(ApplicationInstance(),file,IMAGE_ICON,0,0,LR_LOADFROMFILE | LR_LOADTRANSPARENT);
+  return (HICON)LoadImage( (HINSTANCE)ApplicationInstance(),file,IMAGE_ICON,0,0,LR_LOADFROMFILE | LR_LOADTRANSPARENT);
 }
 
 static HBITMAP load_bitmap (const char* file)
@@ -301,7 +313,7 @@ int TImageList::load_icons_from_module(const char* mod)
  int cy = cx;
  int i = 1;
  while (
-     (hIcon = LoadImage(hInst, (const char*)(i++), IMAGE_ICON, cx, cy, LR_LOADMAP3DCOLORS))
+     (hIcon = (HICON)LoadImage(hInst, (const char*)(i++), IMAGE_ICON, cx, cy, LR_LOADMAP3DCOLORS))
      != NULL)
 	    ImageList_AddIcon(m_handle,hIcon);
  return i;
@@ -320,28 +332,49 @@ void TImageList::load_shell_icons()
 
 ////// TListView
 
+static LRESULT ListViewWndProc(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
+{
+	TListViewB *This = (TListViewB *)GetWindowLong( hwnd, GWL_USERDATA );
+	if ( This == NULL ) return DefWindowProc( hwnd, iMessage, wParam, lParam );
+
+	switch ( iMessage )
+	{
+	case WM_KEYDOWN:
+		This->keydown( wParam );
+		break;
+	}
+
+	return CallWindowProc( This->old_proc, hwnd, iMessage, wParam, lParam );
+}
+
 TListViewB::TListViewB(TWin* form, bool large_icons, bool multiple_columns, bool single_select)
 {
-	 int style = WS_CHILD;
-	 if (large_icons) style |= (LVS_ICON | LVS_AUTOARRANGE);
-	 else {
-		 style |= LVS_REPORT;
-		 if (single_select)
-			 style |= LVS_SINGLESEL;
-		 if (! multiple_columns) {
-			 style |= LVS_NOCOLUMNHEADER;
-			 //add_column("*",1000);
-		 }
+	int style = WS_CHILD;
+	if ( large_icons ) {
+		style |= ( LVS_ICON | LVS_AUTOARRANGE );
+	}
+	else {
+		style |= LVS_REPORT;
+		if ( single_select ) {
+			style |= LVS_SINGLESEL;
+		}
+		if ( !multiple_columns ) {
+			style |= LVS_NOCOLUMNHEADER;
+			//add_column("*",1000);
+		}
 	 }
 
-     // Create the list view control.
-     set(create_common_control(form,WC_LISTVIEW,style));
-	 m_custom_paint = false;
-	 m_has_images = false;
-	 m_last_col = 0;
-	 m_last_row = -1;
+	// Create the list view control.
+	HWND hWnd = create_common_control( form, WC_LISTVIEW, style );
+	SetWindowLong( hWnd, GWL_USERDATA, (long)this );
+	old_proc = subclass( hWnd, (long)ListViewWndProc );
+	set( hWnd );
+	m_custom_paint = false;
+	m_has_images = false;
+	m_last_col = 0;
+	m_last_row = -1;
 
-	 send_msg(LVM_SETEXTENDEDLISTVIEWSTYLE,0,LVS_EX_FULLROWSELECT); // Set style
+	send_msg( LVM_SETEXTENDEDLISTVIEWSTYLE, 0, LVS_EX_FULLROWSELECT ); // Set style
 }
 
 void TListViewB::set_image_list(TImageList* il_small, TImageList* il_large)
@@ -360,7 +393,7 @@ void TListViewB::add_column(const char* label, int width)
      lvc.pszText = (char*)label;
 	 lvc.iSubItem = m_last_col;
 
-	 ListView_InsertColumn(m_hwnd, m_last_col, &lvc);
+	 ListView_InsertColumn((HWND)m_hwnd, m_last_col, &lvc);
 	 m_last_col++;
 }
 
@@ -385,7 +418,7 @@ int TListViewB::columns()
 
 void TListViewB::autosize_column(int col, bool by_contents)
 {
-  ListView_SetColumnWidth(m_hwnd,col,by_contents ? LVSCW_AUTOSIZE : LVSCW_AUTOSIZE_USEHEADER);
+  ListView_SetColumnWidth((HWND)m_hwnd,col,by_contents ? LVSCW_AUTOSIZE : LVSCW_AUTOSIZE_USEHEADER);
 }
 
 void TListViewB::start_items()
@@ -406,7 +439,7 @@ int TListViewB::add_item_at(int i, const char* text, int idx, void* data)
 	 lvi.iImage = idx;                // image list index
 	 lvi.iSubItem = 0;
 
-     ListView_InsertItem(m_hwnd, &lvi);
+     ListView_InsertItem((HWND)m_hwnd, &lvi);
 	 return i;
 }
 
@@ -418,17 +451,22 @@ int TListViewB::add_item(const char* text, int idx, void* data)
 
 void TListViewB::add_subitem(int i, const char* text, int idx)
 {
-	ListView_SetItemText(m_hwnd,i,idx,(char*)text);
+	ListView_SetItemText((HWND)m_hwnd,i,idx,(char*)text);
 }
 
 void TListViewB::delete_item(int i)
 {
-	ListView_DeleteItem(m_hwnd,i);
+	ListView_DeleteItem((HWND)m_hwnd,i);
+}
+
+void TListViewB::select_item(int i)
+{
+	ListView_SetItemState((HWND)m_hwnd,i,LVIS_SELECTED | LVIS_FOCUSED,LVIS_SELECTED | LVIS_FOCUSED );
 }
 
 void TListViewB::get_item_text(int i, char* buff, int buffsize)
 {
-	ListView_GetItemText(m_hwnd,i,0,buff,buffsize);
+	ListView_GetItemText((HWND)m_hwnd,i,0,buff,buffsize);
 }
 
 void* TListViewB::get_item_data(int i)
@@ -437,7 +475,7 @@ void* TListViewB::get_item_data(int i)
 	lvi.mask = LVIF_PARAM;
 	lvi.iItem = i;
 	lvi.iSubItem = 0;
-	ListView_GetItem(m_hwnd,&lvi);
+	ListView_GetItem((HWND)m_hwnd,&lvi);
 	return (void*)lvi.lParam;
 }
 
@@ -498,10 +536,14 @@ int TListViewB::handle_notify(void *p)
  return 0;
 }
 
+void TListViewB::keydown(int vkey)
+{
+	handle_onkey(vkey);
+}
 
 TListView::TListView(TEventWindow* form, bool large_icons, bool multiple_columns, bool single_select)
 :	TListViewB(form,large_icons,multiple_columns,single_select),
-	m_form(form),m_on_select(NULL), m_on_double_click(NULL)
+	m_form(form),m_on_select(NULL), m_on_double_click(NULL),m_on_key(NULL)
 {
 
 }
@@ -517,6 +559,13 @@ void TListView::handle_double_click(int i)
 {
 	if (m_on_select) {
 		(m_form->*m_on_double_click)(i);
+	}
+}
+
+void TListView::handle_onkey(int i)
+{
+	if (m_on_select) {
+		(m_form->*m_on_key)(i);
 	}
 }
 

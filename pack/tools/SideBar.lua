@@ -233,32 +233,53 @@ function fill_list_dir()
 			list_dir:add_item(filename, {filename})
 		end
 	end
+	list_dir:set_selected_item(0)
 	show_path()
 end
 
-list_dir:on_double_click(function(idx)
-	if idx 	~= -1 then
-		if attr == 'd' then
-			gui.chdir(dir_or_file)
-			if dir_or_file == '..' then
-				current_path = string.gsub(current_path,"(.*)\\.*$", "%1")
-			else
-				current_path = current_path..'\\'..dir_or_file
-			end
-			fill_list_dir()
+local function list_dir_start()
+	if attr == 'd' then
+		gui.chdir(dir_or_file)
+		if dir_or_file == '..' then
+			current_path = string.gsub(current_path,"(.*)\\.*$", "%1")
 		else
-			open_file(current_path..'\\'..dir_or_file)
+			current_path = current_path..'\\'..dir_or_file
 		end
+		fill_list_dir()
+	else
+		open_file(current_path..'\\'..dir_or_file)
 	end
-end)
+end
 
-list_dir:on_select(function(idx)
+local function list_dir_select(idx)
 	if idx 	~= -1 then
 		local data = list_dir:get_item_data(idx)
 		dir_or_file = data[1]
 		attr = data[2]
 		file_ext = '*.'..dir_or_file:gsub('.+%.','')
 	end
+end
+
+list_dir:on_double_click(function(idx)
+	if idx 	~= -1 then
+		list_dir_start()
+	end
+end)
+
+list_dir:on_key(function(key)
+	local idx = list_dir:get_selected_item()
+	if key == 13 and idx ~= -1 then
+		list_dir_select(idx)
+		list_dir_start()
+	elseif key == 8 then
+		list_dir:set_selected_item(0)
+		list_dir_select(0)
+		list_dir_start()
+	end
+end)
+
+list_dir:on_select(function(idx)
+	list_dir_select(idx)
 end)
 
 ----------------------------------------------------------

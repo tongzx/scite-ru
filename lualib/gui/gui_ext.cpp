@@ -240,10 +240,11 @@ protected:
 	lua_State *L;
 	int select_idx;
 	int double_idx;
+	int onkey_idx;
 
 public:
 	LuaControl(lua_State *l)
-		: L(l), select_idx(0), double_idx(0)
+		: L(l), select_idx(0), double_idx(0), onkey_idx(0)
 	{}
 
 	virtual void set_select(int iarg)
@@ -254,6 +255,11 @@ public:
 	virtual void set_double_click(int iarg)
 	{
 		function_ref(L,2,&double_idx);
+	}
+
+	virtual void set_onkey(int iarg)
+	{
+		function_ref(L,iarg,&onkey_idx);
 	}
 
 };
@@ -280,6 +286,11 @@ public:
 	virtual void handle_double_click(int id)
 	{
 		dispatch_ref(L,double_idx,id);
+	}
+
+	virtual void handle_onkey(int id)
+	{
+		dispatch_ref(L,onkey_idx,id);
 	}
 };
 
@@ -845,6 +856,19 @@ int window_get_item_data(lua_State* L)
 	return 1;
 }
 
+int window_selected_item(lua_State* L)
+{
+	int idx =list_window_arg(L)->selected_id();
+	lua_pushinteger(L,idx);
+	return 1;
+}
+
+int window_select_item(lua_State* L)
+{
+	list_window_arg(L)->select_item(luaL_checkinteger(L,2));
+	return 0;
+}
+
 /** w:clear()
 	@param self
 */
@@ -884,6 +908,12 @@ int window_on_select(lua_State* L)
 int window_on_double_click(lua_State* L)
 {
 	list_window_arg(L)->set_double_click(2);
+	return 0;
+}
+
+int window_on_key(lua_State* L)
+{
+	list_window_arg(L)->set_onkey(2);
 	return 0;
 }
 
@@ -1172,8 +1202,11 @@ static const struct luaL_reg window_methods[] = {
 	{"count",window_count},
 	{"get_item_text",window_get_item_text},
 	{"get_item_data",window_get_item_data},
+	{"get_selected_item",window_selected_item},
+	{"set_selected_item",window_select_item},
 	{"on_select",window_on_select},
 	{"on_double_click",window_on_double_click},
+	{"on_key",window_on_key},
 	{"clear",window_clear},
 	{"autosize",window_autosize},
 	{"add_buttons",window_add_buttons},
