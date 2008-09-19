@@ -1,4 +1,5 @@
 #ifndef _YAWL_H
+#include "yawl/vc6.h"
 #include "yawl/twl.h"
 #include "yawl/twl_data.h"
 #include "yawl/twl_cntrls.h"

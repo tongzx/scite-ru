@@ -17,6 +17,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <io.h>
+#include "vc6.h"
 
 // these aren't found in the mingw headers...
 #ifndef TBSTYLE_FLAT
