@@ -28,7 +28,7 @@ ECHO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 windres -o resfile.o shell.rc
 IF ERRORLEVEL 1 GOTO error
-gcc -s -shared -o shell.dll -I%INC% shell.cpp resfile.o SciTE.lib -lshlwapi -lstdc++
+gcc -s -shared -o shell.dll -I%INC% shell.cpp resfile.o scite.la -lshlwapi -lstdc++
 IF ERRORLEVEL 1 GOTO error
 
 IF EXIST "%UPX3%" (
