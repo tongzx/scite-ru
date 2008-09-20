@@ -219,7 +219,19 @@ void dispatch_ref(lua_State* L,int idx, int ival)
 	if (idx != 0) {
 		lua_rawgeti(L,LUA_REGISTRYINDEX,idx);
 		lua_pushnumber(L,ival);
-		lua_call(L,1,0);
+		
+		// For some reason any error here brings down SciTE.
+		// So we'll invoke the lua_pcall func and show an
+		// error message if invocation fails.
+		
+		if (lua_pcall(L,1,0,0)) {
+			const char *errmsg = luaL_checkstring(L, -1);
+			if (errmsg) {
+				get_parent()->message(errmsg,2);
+			} else {
+				get_parent()->message("Unknown error occured in gui/ngui extension",2);
+			}
+		}
 	}
 }
 
@@ -1057,14 +1069,18 @@ static WNDPROC subclass(HWND hwnd, LONG_PTR newproc)
 	return old;
 }
 
+bool subclassed = false;
 
 static void subclass_scite_window ()
 {
-	HWND hScintilla = (HWND)code_window->handle();
-	HWND hContent = (HWND)content_window->handle();
-	old_scite_proc = subclass(hSciTE,(long)SciTEWndProc);
-	old_scintilla_proc = subclass(hScintilla,(long)ScintillaWndProc);
-	old_content_proc = subclass(hContent,(long)ContentWndProc);
+	// Without this check we surely find oneself in infinite message loop
+	if (!subclassed) {
+		HWND hScintilla = (HWND)code_window->handle();
+		HWND hContent = (HWND)content_window->handle();
+		old_scite_proc = subclass(hSciTE,(long)SciTEWndProc);
+		old_scintilla_proc = subclass(hScintilla,(long)ScintillaWndProc);
+		old_content_proc = subclass(hContent,(long)ContentWndProc);
+	}
 }
 
 // this terrible hack gets a SciTE resize by 'shaking the frame' by a little bit
@@ -1245,8 +1261,6 @@ void force_entry();
 extern "C" __declspec(dllexport)
 int luaopen_gui(lua_State *L)
 {
-	bool subclassed = false;
-
 	// this is a workaround because the mingw build doesn't seem to export a 
 	// DllMain that is called on loading.
 	force_entry();
