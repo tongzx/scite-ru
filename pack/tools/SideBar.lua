@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
-Authors: Frank Wunderlich, mozers™, VladVRO, frs
-version 0.93
+Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo
+version 0.95
 ------------------------------------------------------
   Needed gui.dll by Steve Donovan
   Connection:
@@ -12,6 +12,9 @@ version 0.93
       command.name.17.*=SideBar
       command.17.*=show_hide
       command.mode.17.*=subsystem:lua,savebefore:no
+
+    # Set show(1) or hide(0) to SciTE start
+    sidebar.show=1
 --]]--------------------------------------------------
 
 local current_path = props['FileDir']
@@ -23,7 +26,6 @@ local line_count = 0
 local list_fav_table = {}
 local file_ext = '*.*'
 local fav_select_index = 0
-props['sidebar.show'] = 1
 -- you can choose to make it a stand-alone window; just uncomment this line:
 -- local win = true
 
@@ -80,11 +82,13 @@ win_parent:client(tab2)
 win_parent:client(tab1)
 win_parent:client(tab0)
 
-if win then
-	win_parent:size(panel_width + 24, 600)
-	win_parent:show()
-else
-	gui.set_panel(win_parent,"right")
+if tonumber(props['sidebar.show']) == 1 then
+	if win then
+		win_parent:size(panel_width + 24, 600)
+		win_parent:show()
+	else
+		gui.set_panel(win_parent,"right")
+	end
 end
 
 tabs:on_select(function(ind)
@@ -237,7 +241,7 @@ function fill_list_dir()
 	show_path()
 end
 
-local function list_dir_start()
+local function list_dir_openitem()
 	if attr == 'd' then
 		gui.chdir(dir_or_file)
 		if dir_or_file == '..' then
@@ -262,19 +266,23 @@ end
 
 list_dir:on_double_click(function(idx)
 	if idx 	~= -1 then
-		list_dir_start()
+		list_dir_openitem()
 	end
 end)
 
 list_dir:on_key(function(key)
 	local idx = list_dir:get_selected_item()
-	if key == 13 and idx ~= -1 then
+	if idx == -1 then return end
+	if key == 13 then -- Enter
 		list_dir_select(idx)
-		list_dir_start()
-	elseif key == 8 then
+		list_dir_openitem()
+	elseif key == 8 then -- BackSpace
 		list_dir:set_selected_item(0)
 		list_dir_select(0)
-		list_dir_start()
+		list_dir_openitem()
+	elseif key == 46 then -- Delele
+		list_dir_select(idx)
+		file_del()
 	end
 end)
 
@@ -296,6 +304,15 @@ end)
 list_favorites:on_double_click(function(idx)
 	if idx 	~= -1 then
 		open_file(list_favorites:get_item_data(idx))
+	end
+end)
+
+list_favorites:on_key(function(key)
+	local idx = list_favorites:get_selected_item()
+	if idx == -1 then return end
+	if key == 46 then -- Delele
+		fav_select_index = idx
+		del_fav()
 	end
 end)
 
