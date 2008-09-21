@@ -1,12 +1,10 @@
 --[[----------------------------------------------------------
-SciTE GUI Extensions for Windows by Steve Donovan
-http://mysite.mweb.co.za/residents/sdonovan/scite/gui_ext.zip
+SciTE GUI Extensions for Windows by Steve Donovan and RU-Team
 Examples of some of the functions
 --]]----------------------------------------------------------
 
 -- Set:
 require("gui")
--- BUG: After that command does not work in the national character input keyboard layout.
 
 -- NOTE: It's important that any controls be created immediately after the form, so they pick up the correct parent window!
 
@@ -31,7 +29,7 @@ visible, x, y, width, height = window1:bounds()
 -- Set:
 panel1 = gui.panel(width)
 gui.set_panel(panel1, "right") -- "right" or "left"
-gui.set_panel() -- remove the panel and hide it
+gui.set_panel() -- remove the panel and hide it (Revision: 741)
 -- or
 window_or_panel1:client(panel2)
 panel1:size(width, height) -- Note: Changes either height or width (one of parameters is ignored)
@@ -66,6 +64,7 @@ window_or_panel1:client(list1)
 list1:size(width, height) -- Note: Changes either height or width (one of parameters is ignored)
 list1:set_list_colour("#FFFFFF", "#000000") -- foreground, background
 list1:context_menu {'item1|func1', 'item2|func2'} -- Note: There is no. This - the wish.
+list_dir:set_selected_item(index) -- Note: Revision: 747
 
 -- Add:
 list1:add_column('Title1', width) -- Note: If gui.list(true)
@@ -79,12 +78,13 @@ list1:insert_item(index, {'Caption1','Caption2'}, {data1, data2}) -- data or tab
 list1_count = list1:count()
 data = list1:get_item_data(index) -- Note: Check index ~= -1
 text = list1:get_item_text(index) -- Note: Check index ~= -1. BUG: Returned contain only first entry!
+index = list1:get_selected_item() -- Note: Revision: 747
 visible, x, y, width, height = list1:bounds()
 
 -- Event:
 list1:on_select(function(index) print(index) end) -- Note: Works as on_click. Check index ~= index_old
 list1:on_double_click(function(index) print(index) end)
-list1:on_key(function(key) print(key) end) -- Note: There is no. This - the wish.
+list1:on_key(function(key) print(key) end) -- Note: Revision: 747
 
 -------------
 -- MEMO TEXT
