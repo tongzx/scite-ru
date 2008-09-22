@@ -1,6 +1,7 @@
 OBJFILE= lua_int64.o lua_mtutil.o lua_tstring.o luawin_dllerror.o win_privileges.o win_registry.o win_trace.o winreg.o
 
 LIBS= -lscite -ladvapi32 -lkernel32 -luser32
+LIBDIR= -L ../lib/
 
 OUTFILE= winreg.dll
 
@@ -17,7 +18,7 @@ CFLAGS= $(COPT) $(CDEBUG) $(CUFLAGS) -I. -I$(LUA)
 CC= gcc
 
 winreg.dll: $(OBJFILE)
-	$(CC) $(CFLAGS) -shared -o winreg.dll $(OBJFILE) $(LIBS)
+	$(CC) $(CFLAGS) -shared -o winreg.dll $(OBJFILE) $(LIBDIR) $(LIBS)
 
 .c.o:
 	$(CC) $(CFLAGS) -c $< -o $@
