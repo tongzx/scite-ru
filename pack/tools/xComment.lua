@@ -1,22 +1,34 @@
--- xComment
--- Version: 1.3.1
--- Author: mozers™, VladVRO
----------------------------------------------------
--- C блеском заменяет стандартную комбинацию Ctrl+Q (комментирование/снятие комментария)
--- В зависимости от того что выделено, комментируются (снимается комментарий) со строки или с потока текста
--- Подключение:
--- В файл SciTEStartup.lua добавьте строку:
---   dofile (props["SciteDefaultHome"].."\\tools\\xComment.lua")
--- Задайте в файле .properties используемых вами языков параметры:
---   comment.block.lexer
---   comment.block.at.line.start.lexer
---   comment.stream.start.lexer
---   comment.stream.end.lexer
--- И забудьте навсегда про этот атавизм "~". Тильда вам больше никогда не понадобится!
--- Внимание: В скрипте используется функция IsComment (обязательно подключение COMMON.lua)
----------------------------------------------------
+--[[--------------------------------------------
+xComment
+Version: 1.4
+Author: mozers™, VladVRO
+-------------------------------------------------
+  C блеском заменяет стандартную комбинацию Ctrl+Q (комментирование|снятие комментария)
 
--- local iDEBUG = true
+Вид комментария зависит от выделения текста:
+  * Если выделен поток текста, то скрипт ставит|снимает потоковый комментарий.
+  * Если выделена целая строка(включая символ перевода строки) или несколько строк, то то скрипт ставит|снимает блочный комментарий.
+  * Если выделение отсутствует, то ставится|снимается блочный комментарий на текущую строку.
+  * Если параметры comment.stream.* отсутсвуют, то независимо от способа выделения ставится|снимается блочный комментарий.
+
+Снятие/установка комментария зависит от первого символа выделения:
+  * Если первый символ в выделении закомментированн, то комментарий снимается со всего выделения.
+  * Если - нет, то на все выделение ставится комментарий.
+
+Подключение:
+В файл SciTEStartup.lua добавьте строку:
+  dofile (props["SciteDefaultHome"].."\\tools\\xComment.lua")
+Задайте в файле .properties используемых вами языков параметры:
+  comment.block.lexer
+  comment.block.at.line.start.lexer
+  comment.stream.start.lexer
+  comment.stream.end.lexer
+
+И забудьте навсегда про этот атавизм "~". Тильда вам больше никогда не понадобится!
+Внимание: В скрипте используется функция IsComment (обязательно подключение COMMON.lua)
+--]]--------------------------------------------
+
+-- local iDEBUG = true -- включается при отладке скрипта
 local lexer = ""
 local sel_text = ""
 local sel_start = 0
@@ -243,6 +255,19 @@ local function xComment()
 	-- This Stream
 		if comment_stream_start ~= "" and comment_stream_end ~= "" then
 			PatternStream = Pattern(comment_stream_start).."(.-)"..Pattern(comment_stream_end)
+		else
+			-- если параметры comment.stream.* отсутствуют, то расширяем выделение потока до блока
+			-- и комментируем|сниманием блочный комментарий
+			-- (предложение frs <http://forum.ru-board.com/topic.cgi?forum=5&topic=24956&start=660#6>)
+			line_sel_end = line_sel_end + 1
+			editor:SetSel(editor:PositionFromLine(line_sel_start), editor:PositionFromLine(line_sel_end))
+			-- This Block
+			if IsComment(FirstLetterFromBlock()) then
+				BlockUnComment()
+			else
+				BlockComment()
+			end
+			return true
 		end
 
 		if IsStreamComment() then
