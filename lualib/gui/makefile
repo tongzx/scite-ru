@@ -21,7 +21,7 @@ vpath %.cpp yawl
 
 twl.o: yawl/twl.cpp
 
-twl_ini.o: yawl/twl_ini.o
+twl_ini.o: yawl/twl_ini.cpp
 
 twl_cntrls.o: yawl/twl_cntrls.cpp
 
