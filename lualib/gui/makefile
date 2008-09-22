@@ -3,10 +3,11 @@ twl_layout.o twl_menu.o twl_modal.o twl_splitter.o twl_toolbar.o
 
 LUA_INCLUDE=../../src/scite/lua/include
 CFLAGS=-Os -D_WIN32_IE=0x0500
-LIBS=-lgdi32 -lcomdlg32 -lcomctl32 -lshell32
+LIBS=-lscite -lgdi32 -lcomdlg32 -lcomctl32 -lshell32
+LIBDIR= -L ../lib/
 
 gui.dll: gui_ext.o $(YAWL)
-	g++ $(CFLAGS) -s -shared -o gui.dll gui_ext.o scite.la $(YAWL) $(LIBS)
+	g++ $(CFLAGS) -s -shared -o gui.dll gui_ext.o $(YAWL) $(LIBDIR) $(LIBS)
 
 gui_ext.o: gui_ext.cpp yawl.h
 	g++ $(CFLAGS) -MMD -c -I$(LUA_INCLUDE) gui_ext.cpp
