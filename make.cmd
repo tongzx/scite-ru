@@ -59,11 +59,17 @@ CALL make.cmd
 COPY winreg.dll ..\..\Pack\tools\LuaLib\
 DEL /Q winreg.dll >NUL:
 
-:laulib
+:shell
 CD %~dp0\lualib\shell
 CALL make.cmd
 COPY shell.dll ..\..\Pack\tools\LuaLib\
 DEL /Q shell.dll >NUL:
+
+:gui
+CD %~dp0\lualib\gui
+CALL make.cmd
+COPY gui.dll ..\..\Pack\tools\LuaLib\
+DEL /Q gui.dll >NUL:
 
 :completed
 ECHO __________________

@@ -1,6 +1,5 @@
 @ECHO OFF
-SET PATH=C:\MinGW\bin;%ProgramFiles%\CodeBlocks\bin
+SET PATH=C:\MinGW\bin;%ProgramFiles%\CodeBlocks\bin;%PATH%;
 
 mingw32-make
-
-DEL scite.def
+mingw32-make clean
