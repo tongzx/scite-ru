@@ -1,16 +1,25 @@
--- ToggleFoldAll.lua
--- Version: 1.3
--- Author: mozers™
----------------------------------------------------
--- Скрипт для автоматического сворачивания всех секций при открытии файлов заданного типа
--- Подключение:
---   Добавьте в SciTEStartup.lua строку
---     dofile (props["SciteDefaultHome"].."\\tools\\ToggleFoldAll.lua")
---   Задайте расширеня файлов в файле .properties
---     fold.on.open.ext=properties,ini
----------------------------------------------------
+--[[-------------------------------------------------
+ToggleFoldAll.lua
+Version: 1.4
+Author: mozers™
+-----------------------------------------------------
+Скрипт для автоматического сворачивания всех секций при открытии файлов заданного типа
+Подключение:
+  Добавьте в SciTEStartup.lua строку
+    dofile (props["SciteDefaultHome"].."\\tools\\ToggleFoldAll.lua")
+  Задайте расширеня файлов в файле .properties
+    fold.on.open.ext=properties,ini
+--]]-------------------------------------------------
 
-local IsSciteStarted = false
+local function CheckSession()
+	local filename = props['FilePath']
+	for i = 1, props['buffers'] do
+		local path = props['buffer.'..i..'.path']
+		if path == '' then return true end
+		if path == filename then return false end
+	end
+	return true
+end
 
 local function CheckExt()
 	local toggle_foldall_ext = string.upper(props['fold.on.open.ext'])
@@ -22,7 +31,7 @@ local function CheckExt()
 end
 
 local function ToggleFoldAll()
-	if IsSciteStarted and CheckExt() then
+	if CheckSession() and CheckExt() then
 		scite.MenuCommand (IDM_TOGGLE_FOLDALL)
 	end
 end
@@ -33,14 +42,5 @@ function OnOpen(file)
 	local result
 	if old_OnOpen then result = old_OnOpen(file) end
 	if ToggleFoldAll() then return true end
-	return result
-end
-
--- Add user event handler OnUpdateUI
-local old_OnUpdateUI = OnUpdateUI
-function OnUpdateUI ()
-	local result
-	if old_OnUpdateUI then result = old_OnUpdateUI() end
-	IsSciteStarted = true
 	return result
 end
