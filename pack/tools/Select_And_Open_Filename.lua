@@ -1,7 +1,7 @@
 --[[----------------------------------------------------------------------------
 Select_And_Open_Filename.lua
 Author: VladVRO
-version 1.2
+version 1.2.1
 
 Расширение команды "Открыть выделенный файл" для случая когда выделения нет.
 А также возможность открыть файл по клику мыши на его имени при нажатой
@@ -19,14 +19,6 @@ version 1.2
 Для срабатывания по клику мыши добавить в файл настроек:
   select.and.open.by.click=1
 --]]----------------------------------------------------------------------------
-
-local function isFileExists(filename)
-	if shell.getfileattr(filename) then
-		return true
-	else
-		return false
-	end
-end
 
 local function isFilenameChar(ch)
 	if
@@ -74,7 +66,7 @@ local function Select_And_Open_File()
 			local dir = props["FileDir"].."\\"
 			filename = string.gsub(sci:GetSelText(), '\\\\', '\\')
 			foropen = dir..filename
-			local isFile = isFileExists(foropen)
+			local isFile = shell.fileexists(foropen)
 			
 			while not isFile do
 				ch = sci.CharAt[s-1]
@@ -93,7 +85,7 @@ local function Select_And_Open_File()
 				else
 					break
 				end
-				isFile = isFileExists(foropen)
+				isFile = shell.fileexists(foropen)
 			end
 			
 			if isFile then
