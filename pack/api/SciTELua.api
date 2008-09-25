@@ -758,6 +758,7 @@ editor.CaretLineVisible
 editor.CaretPeriod
 editor.CaretSticky
 editor.CaretWidth
+editor.CharacterPointer
 editor.CharAt
 editor.CodePage
 editor.Column
@@ -788,6 +789,7 @@ editor.Indent
 editor.IndentationGuides
 editor.IndicFore
 editor.IndicStyle
+editor.KeysUnicode
 editor.KeyWords
 editor.LayoutCache
 editor.Length
@@ -888,6 +890,7 @@ CaretLineVisible = bool
 CaretPeriod = int
 CaretSticky = bool
 CaretWidth = int
+CharacterPointer = int /RO/ \n Compact the document buffer and return a read-only pointer to the characters in the document.
 CharAt [position] = int
 CodePage = int
 Column [position] = int
@@ -918,6 +921,7 @@ Indent = int
 IndentationGuides = bool
 IndicFore [int] = colour
 IndicStyle [int] = int
+KeysUnicode = bool /RW/ \n Always interpret keyboard input as Unicode
 KeyWords [int] = string
 LayoutCache = int
 Length = int
@@ -993,6 +997,10 @@ WrapVisualFlags = int
 WrapVisualFlagsLocation = int
 XOffset = int
 Zoom = int
+
+SCI_SETKEYSUNICODE = 2521
+SCI_GETKEYSUNICODE = 2522
+SCI_GETCHARACTERPOINTER = 2520
 
 INVALID_POSITION = -1
 SCI_START = 2000
@@ -1688,6 +1696,8 @@ SCMOD_NORM = 0
 SCMOD_SHIFT = 1
 SCMOD_CTRL = 2
 SCMOD_ALT = 4
+
+# Not embeded constants
 SCN_STYLENEEDED = 2000
 SCN_CHARADDED = 2001
 SCN_SAVEPOINTREACHED = 2002
@@ -1712,8 +1722,9 @@ SCN_CALLTIPCLICK = 2021
 SCN_AUTOCSELECTION = 2022
 SCN_INDICATORCLICK = 2023
 SCN_INDICATORRELEASE = 2024
-SCN_CLICK = 2025
-SCN_MOUSEBUTTONUP = 2026
+SCN_AUTOCCANCELLED = 2025
+SCN_CLICK = 2026
+SCN_MOUSEBUTTONUP = 2027
 
 # File
 IDM_NEW = 101
