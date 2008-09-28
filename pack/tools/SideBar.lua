@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo
-version 0.95
+version 1.0
 ------------------------------------------------------
   Needed gui.dll by Steve Donovan
   Connection:
@@ -10,22 +10,20 @@ version 0.95
    Set in a file .properties:
       command.checked.17.*=$(sidebar.show)
       command.name.17.*=SideBar
-      command.17.*=show_hide
+      command.17.*=SideBar_ShowHide
       command.mode.17.*=subsystem:lua,savebefore:no
 
     # Set show(1) or hide(0) to SciTE start
     sidebar.show=1
 --]]--------------------------------------------------
 
-local current_path = props['FileDir']
-local file_path = props['FilePath']
-local file_mask = '*.*'
 local panel_width = 200
 local tab_index = 0
-local line_count = 0
+local current_path = props['FileDir']
+local file_mask = '*.*'
 local list_fav_table = {}
-local file_ext = '*.*'
-local fav_select_index = 0
+local line_count = 0
+
 -- you can choose to make it a stand-alone window; just uncomment this line:
 -- local win = true
 
@@ -37,8 +35,8 @@ if win_height == '' then win_height = 600 end
 ----------------------------------------------------------
 local tab0 = gui.panel(panel_width + 18)
 
-local text_path = gui.memo()
-tab0:add(text_path, "top", 22)
+local memo_path = gui.memo()
+tab0:add(memo_path, "top", 22)
 
 local list_dir = gui.list()
 local list_dir_height = win_height/2 - 80
@@ -47,6 +45,21 @@ tab0:add(list_dir, "top", list_dir_height)
 local list_favorites = gui.list(true)
 list_favorites:add_column("Favorites", 600)
 tab0:client(list_favorites)
+
+tab0:context_menu {
+	'FileMan: Show All|FileMan_MaskAllFiles',
+	'FileMan: Only current ext|FileMan_MaskOnlyCurrentExt',
+	'', -- separator
+	'FileMan: Copy to...|FileMan_FileCopy',
+	'FileMan: Move to...|FileMan_FileMove',
+	'FileMan: Rename|FileMan_FileRename',
+	'FileMan: Delete\tDel|FileMan_FileDelete',
+	'FileMan: Execute|FileMan_FileExec',
+	'FileMan: Add to Favorites\tIns|Favorites_AddFile',
+	'', -- separator
+	'Favorites: Add active buffer|Favorites_AddCurrentBuffer',
+	'Favorites: Delete item\tDel|Favorites_DeleteItem',
+}
 -------------------------
 local tab1 = gui.panel(panel_width + 18)
 
@@ -59,6 +72,7 @@ local list_bookmarks = gui.list(true)
 list_bookmarks:add_column("@", 24)
 list_bookmarks:add_column("Bookmarks", 600)
 tab1:client(list_bookmarks)
+
 -------------------------
 local tab2 = gui.panel(panel_width + 18)
 
@@ -66,6 +80,7 @@ local list_abbrev = gui.list(true)
 list_abbrev:add_column("Abbrev", 60)
 list_abbrev:add_column("Expansion", 600)
 tab2:client(list_abbrev)
+
 -------------------------
 local win_parent
 if win then
@@ -82,7 +97,7 @@ win_parent:client(tab2)
 win_parent:client(tab1)
 win_parent:client(tab0)
 
-if tonumber(props['sidebar.show']) == 1 then
+if tonumber(props['sidebar.show'])==1 then
 	if win then
 		win_parent:size(panel_width + 24, 600)
 		win_parent:show()
@@ -91,140 +106,20 @@ if tonumber(props['sidebar.show']) == 1 then
 	end
 end
 
-tabs:on_select(function(ind)
-	tab_index=ind
-	on_switch()
-end)
-
--- Скрытие / показ панели
-function show_hide()
-	if tonumber(props['sidebar.show']) == 1 then
-		if win then
-			win_parent:hide()
-		else
-			gui.set_panel()
-		end
-		props['sidebar.show'] = 0
-	else
-		if win then
-			win_parent:show()
-		else
-			gui.set_panel(win_parent,"right")
-		end
-		props['sidebar.show'] = 1
-	end
-end
-
 ----------------------------------------------------------
--- Tab0: FileManager
+-- tab0:memo_path   Path and Mask
 ----------------------------------------------------------
-function all_files()
-	file_mask = '*.*'
-	fill_list_dir()
-end
-
-function only_current_ext()
-	file_mask = file_ext
-	fill_list_dir()
-end
-
-function file_copy()
-	if string.len(dir_or_file) < 2 then return end
-	local path_destantion = gui.open_dir_dlg -- Note: There is no. This - the wish.
-	-- Будет реализовано, когда появится функция выбора каталога
-end
-
-function file_move()
-	if string.len(dir_or_file) < 2 then return end
-	local path_destantion = gui.open_dir_dlg -- Note: There is no. This - the wish.
-	-- Будет реализовано, когда появится функция выбора каталога
-end
-
-function file_ren()
-	-- "Порнографический" диалог будет появлятся до той поры, пока не будет реализовано
-	-- Issue 103: shell.inputbox http://code.google.com/p/scite-ru/issues/detail?id=103
-	if string.len(dir_or_file) < 2 then return end
-	local filename_new = gui.prompt_value("Enter new filename:", dir_or_file)
-	if filename_new.len ~= 0 and filename_new ~= dir_or_file then
-		os.rename(current_path..'\\'..dir_or_file, current_path..'\\'..filename_new)
-		fill_list_dir()
-	end
-end
-
-function file_del()
-	if string.len(dir_or_file) < 2 then return end
-	if shell.msgbox("Are you sure DELETE file?\n"..dir_or_file, "DELETE", 4+256) == 6 then
-	-- if gui.message("Are you sure DELETE file?\n"..dir_or_file, "query") then
-		os.remove(current_path..'\\'..dir_or_file)
-		fill_list_dir()
-	end
-end
-
-function file_exec()
-	local filename = current_path..'\\'..dir_or_file
-	local ret, descr = shell.exec(filename)
-	if not ret then
-		print (">Exec: "..filename)
-		print ("Error: "..descr)
-	end
-end
-
-function add_fav()
-	if attr ~= 'd' then
-		list_favorites:add_item(dir_or_file, current_path..'\\'..dir_or_file)
-		table.insert(list_fav_table, current_path..'\\'..dir_or_file)
-	end
-end
-
-function add_fav_buffer()
-	list_favorites:add_item(props['FileNameExt'], props['FilePath'])
-	table.insert(list_fav_table, props['FilePath'])
-end
-
-function del_fav()
-	list_favorites:delete_item(fav_select_index)
-	table.remove (list_fav_table, fav_select_index+1)
-end
-
-tab0:context_menu {
-	'Files: Show All|all_files',
-	'Files: Only current ext|only_current_ext',
-	'', -- разделитель
-	'Files: Copy to...|file_copy',
-	'Files: Move to...|file_move',
-	'Files: Rename|file_ren',
-	'Files: Delete|file_del',
-	'Files: Execute|file_exec',
-	'Files: Add to Favorites|add_fav',
-	'', -- разделитель
-	'Favorites: Add active buffer|add_fav_buffer',
-	'Favorites: Delete item|del_fav',
-}
-
-----------------------------------------------------------
--- Memo: Path and Mask
-----------------------------------------------------------
-local function show_path()
+local function FileMan_ShowPath()
 	local rtf = '{\\rtf{\\fonttbl{\\f0\\fcharset1 Helv;}}{\\colortbl ;\\red0\\green0\\blue255;  \\red255\\green0\\blue0;}\\f0\\fs16'
 	local path = '\\cf1'..string.gsub(current_path, '\\', '\\\\')..'\\\\'
 	local mask = '\\cf2'..file_mask..'}'
-	text_path:set_text(rtf..path..mask)
+	memo_path:set_text(rtf..path..mask)
 end
 
 ----------------------------------------------------------
--- List: Folders and Files
+-- tab0:list_dir   File Manager
 ----------------------------------------------------------
-local function open_file(filename)
-	if filename:match(".session$") ~= nil then
-		filename = filename:gsub('\\','\\\\')
-		scite.Perform ("loadsession:"..filename)
-	else
-		scite.Open(filename)
-	end
-	editor.Focus = true
-end
-
-function fill_list_dir()
+local function FileMan_Fill()
 	list_dir:clear()
 	local folders = gui.files(current_path..'\\*', true)
 	list_dir:add_item ('[..]', {'..','d'})
@@ -238,10 +133,90 @@ function fill_list_dir()
 		end
 	end
 	list_dir:set_selected_item(0)
-	show_path()
+	FileMan_ShowPath()
 end
 
-local function list_dir_openitem()
+local function FileMan_GetSelectedItem()
+	local idx = list_dir:get_selected_item()
+	if idx == -1 then return '' end
+	local data = list_dir:get_item_data(idx)
+	local dir_or_file = data[1]
+	local attr = data[2]
+	return dir_or_file, attr
+end
+
+function FileMan_MaskAllFiles()
+	file_mask = '*.*'
+	FileMan_Fill()
+end
+
+function FileMan_MaskOnlyCurrentExt()
+	local filename, attr = FileMan_GetSelectedItem()
+	if filename == '' then return end
+	if attr == 'd' then return end
+	file_mask = '*.'..filename:gsub('.+%.','')
+	FileMan_Fill()
+end
+
+function FileMan_FileCopy()
+	local filename = FileMan_GetSelectedItem()
+	if filename == '' or filename == '..' then return end
+	local path_destantion = gui.open_dir_dlg -- Note: There is no. This - the wish.
+	-- Будет реализовано, когда появится функция выбора каталога
+end
+
+function FileMan_FileMove()
+	local filename = FileMan_GetSelectedItem()
+	if filename == '' or filename == '..' then return end
+	local path_destantion = gui.open_dir_dlg -- Note: There is no. This - the wish.
+	-- Будет реализовано, когда появится функция выбора каталога
+end
+
+function FileMan_FileRename()
+	local filename = FileMan_GetSelectedItem()
+	-- "Порнографический" диалог будет появлятся до той поры, пока не будет реализовано
+	-- Issue 103: shell.inputbox http://code.google.com/p/scite-ru/issues/detail?id=103
+	if filename == '' or filename == '..' then return end
+	local filename_new = gui.prompt_value("Enter new filename:", filename)
+	if filename_new.len ~= 0 and filename_new ~= filename then
+		os.rename(current_path..'\\'..filename, current_path..'\\'..filename_new)
+		FileMan_Fill()
+	end
+end
+
+function FileMan_FileDelete()
+	local filename, attr = FileMan_GetSelectedItem()
+	if filename == '' then return end
+	if attr == 'd' then return end
+	if shell.msgbox("Are you sure DELETE file?\n"..filename, "DELETE", 4+256) == 6 then
+	-- if gui.message("Are you sure DELETE file?\n"..filename, "query") then
+		os.remove(current_path..'\\'..filename)
+		FileMan_Fill()
+	end
+end
+
+function FileMan_FileExec()
+	local filename = FileMan_GetSelectedItem()
+	if filename == '' then return end
+	local ret, descr = shell.exec(current_path..'\\'..filename)
+	if not ret then
+		print (">Exec: "..filename)
+		print ("Error: "..descr)
+	end
+end
+
+local function OpenFile(filename)
+	if filename:match(".session$") ~= nil then
+		filename = filename:gsub('\\','\\\\')
+		scite.Perform ("loadsession:"..filename)
+	else
+		scite.Open(filename)
+	end
+	editor.Focus = true
+end
+
+local function FileMan_OpenItem()
+	local dir_or_file, attr = FileMan_GetSelectedItem()
 	if attr == 'd' then
 		gui.chdir(dir_or_file)
 		if dir_or_file == '..' then
@@ -249,74 +224,35 @@ local function list_dir_openitem()
 		else
 			current_path = current_path..'\\'..dir_or_file
 		end
-		fill_list_dir()
+		FileMan_Fill()
 	else
-		open_file(current_path..'\\'..dir_or_file)
+		OpenFile(current_path..'\\'..dir_or_file)
 	end
 end
 
-local function list_dir_select(idx)
-	if idx 	~= -1 then
-		local data = list_dir:get_item_data(idx)
-		dir_or_file = data[1]
-		attr = data[2]
-		file_ext = '*.'..dir_or_file:gsub('.+%.','')
-	end
-end
-
-list_dir:on_double_click(function(idx)
-	if idx 	~= -1 then
-		list_dir_openitem()
-	end
+list_dir:on_double_click(function()
+	FileMan_OpenItem()
 end)
 
 list_dir:on_key(function(key)
-	local idx = list_dir:get_selected_item()
-	if idx == -1 then return end
 	if key == 13 then -- Enter
-		list_dir_select(idx)
-		list_dir_openitem()
+		FileMan_OpenItem()
 	elseif key == 8 then -- BackSpace
 		list_dir:set_selected_item(0)
-		list_dir_select(0)
-		list_dir_openitem()
+		FileMan_OpenItem()
 	elseif key == 46 then -- Delele
-		list_dir_select(idx)
-		file_del()
+		FileMan_FileDelete()
+	elseif key == 45 then -- Insert
+		Favorites_AddFile()
 	end
 end)
 
-list_dir:on_select(function(idx)
-	list_dir_select(idx)
-end)
-
 ----------------------------------------------------------
--- List: Favorites
+-- tab0:list_favorites   Favorites
 ----------------------------------------------------------
 local favorites_filename = props['SciteUserHome']..'\\favorites.lst'
 
-list_favorites:on_select(function(idx)
-	if idx 	~= -1 then
-		fav_select_index = idx
-	end
-end)
-
-list_favorites:on_double_click(function(idx)
-	if idx 	~= -1 then
-		open_file(list_favorites:get_item_data(idx))
-	end
-end)
-
-list_favorites:on_key(function(key)
-	local idx = list_favorites:get_selected_item()
-	if idx == -1 then return end
-	if key == 46 then -- Delele
-		fav_select_index = idx
-		del_fav()
-	end
-end)
-
-local function fill_list_favorites()
+local function Favorites_Fill()
 	local favorites_file = io.open(favorites_filename)
 	if favorites_file then
 		for line in favorites_file:lines() do
@@ -329,27 +265,57 @@ local function fill_list_favorites()
 		favorites_file:close()
 	end
 end
+Favorites_Fill()
 
-fill_list_favorites()
-
-local function save_list_favorites()
+local function Favorites_SaveList()
 	io.output(favorites_filename)
 	local list_string = table.concat(list_fav_table,'\n')
 	io.write(list_string)
 	io.close()
 end
 
----------------------------------------------------------
--- List: Functions/Procedures
-----------------------------------------------------------
-list_func:on_double_click(function(idx)
-	local pos = list_func:get_item_data(idx)
-	if pos then
-		editor:GotoLine(pos)
-		editor.Focus = true
+function Favorites_AddFile()
+	local filename, attr = FileMan_GetSelectedItem()
+	if filename == '' then return end
+	if attr == 'd' then return end
+	list_favorites:add_item(filename, current_path..'\\'..filename)
+	table.insert(list_fav_table, current_path..'\\'..filename)
+end
+
+function Favorites_AddCurrentBuffer()
+	list_favorites:add_item(props['FileNameExt'], props['FilePath'])
+	table.insert(list_fav_table, props['FilePath'])
+end
+
+function Favorites_DeleteItem()
+	local idx = list_favorites:get_selected_item()
+	if idx == -1 then return end
+	list_favorites:delete_item(idx)
+	table.remove (list_fav_table, idx+1)
+end
+
+local function Favorites_OpenFile()
+	local idx = list_favorites:get_selected_item()
+	if idx == -1 then return end
+	local filename = list_favorites:get_item_data(idx)
+	OpenFile(filename)
+end
+
+list_favorites:on_double_click(function()
+	Favorites_OpenFile()
+end)
+
+list_favorites:on_key(function(key)
+	if key == 13 then -- Enter
+		Favorites_OpenFile()
+	elseif key == 46 then -- Delele
+		Favorites_DeleteItem()
 	end
 end)
 
+----------------------------------------------------------
+-- tab1:list_func   Functions/Procedures
+----------------------------------------------------------
 local Lang2RegEx = {
 	['C++']="([^.,<>=\n]-[ :][^.,<>=\n%s]+[(][^.<>=)]-[)])[%s\/}]-%b{}",
 	['JScript']="(\n[^,<>\n]-function[^(]-%b())[^{]-%b{}",
@@ -388,7 +354,7 @@ local function Fill_Ext2Lang()
 end
 Fill_Ext2Lang()
 
-function fill_list_func()
+local function Functions_Fill()
 	list_func:clear()
 	local findPattern = Lang2RegEx[Ext2Lang[props["FileExt"]]]
 	if not findPattern then
@@ -398,61 +364,93 @@ function fill_list_func()
 		end
 	end
 	local textAll = editor:GetText()
-	local startPos, endPos, findString
-	startPos = 1
+	local pos_start, pos_end, findString
+	pos_start = 1
 	while true do
-		startPos, endPos, findString = string.find(textAll, findPattern, startPos)
-		if startPos == nil then break end
+		pos_start, pos_end, findString = string.find(textAll, findPattern, pos_start)
+		if pos_start == nil then break end
 		findString = findString:gsub("[\r\n]", ""):gsub("%s+", " ")
-		local line_number = editor:LineFromPosition(startPos)
+		local line_number = editor:LineFromPosition(pos_start)
 		list_func:add_item(findString, line_number)
-		startPos = endPos + 1
+		pos_start = pos_end + 1
 	end
 end
 
-----------------------------------------------------------
--- List: Bookmarks
-----------------------------------------------------------
-function list_bookmark_add(line_number)
-	local line_text = editor:GetLine(line_number):gsub('%s+', ' ')
-	list_bookmarks:add_item({props['BufferNumber'], line_text}, {file_path, line_number})
+local function Functions_GotoLine()
+	local sel_item = list_func:get_selected_item()
+	if sel_item == -1 then return end
+	local pos = list_func:get_item_data(sel_item)
+	if pos then
+		editor:GotoLine(pos)
+		editor.Focus = true
+	end
 end
 
-local function list_bookmark_delete(line_number)
+list_func:on_double_click(function()
+	Functions_GotoLine()
+end)
+
+list_func:on_key(function(key)
+	if key == 13 then -- Enter
+		Functions_GotoLine()
+	end
+end)
+
+----------------------------------------------------------
+-- tab1:list_bookmarks   Bookmarks
+----------------------------------------------------------
+local function Bookmarks_Add(line_number)
+	local line_text = editor:GetLine(line_number):gsub('%s+', ' ')
+	local buffer_number = props['BufferNumber']
+	if buffer_number == '' then buffer_number = 1 end
+	list_bookmarks:add_item({buffer_number, line_text}, {props['FilePath'], line_number})
+end
+
+local function Bookmarks_Delete(line_number)
 	for i = 0, list_bookmarks:count() - 1 do
 		local bookmark = list_bookmarks:get_item_data(i)
-		if bookmark[1] == file_path and bookmark[2] == line_number then
+		if bookmark[1] == props['FilePath'] and bookmark[2] == line_number then
 			list_bookmarks:delete_item(i)
 			break
 		end
 	end
 end
 
-local function list_bookmark_delete_all()
+local function Bookmarks_DeleteAll()
 	for i = list_bookmarks:count()-1, 0, -1 do
 		local bookmark = list_bookmarks:get_item_data(i)
-		if bookmark[1] == file_path then
+		if bookmark[1] == props['FilePath'] then
 			list_bookmarks:delete_item(i)
 		end
 	end
 end
 
-list_bookmarks:on_double_click(function(idx)
-	if idx 	~= -1 then
-		local pos = list_bookmarks:get_item_data(idx)
-		if pos then
-			scite.Open(pos[1])
-			editor:GotoLine(pos[2])
-			editor.Focus = true
-		end
+local function Bookmarks_GotoLine()
+	local sel_item = list_bookmarks:get_selected_item()
+	if sel_item == -1 then return end
+	local pos = list_bookmarks:get_item_data(sel_item)
+	if pos then
+		scite.Open(pos[1])
+		editor:GotoLine(pos[2])
+		editor.Focus = true
+	end
+end
+
+list_bookmarks:on_double_click(function()
+	Bookmarks_GotoLine()
+end)
+
+list_bookmarks:on_key(function(key)
+	if key == 13 then -- Enter
+		Bookmarks_GotoLine()
 	end
 end)
 
 ----------------------------------------------------------
--- List: Abbreviations
+-- tab2:list_abbrev   Abbreviations
 ----------------------------------------------------------
-function fill_list_abbrev()
-	function read_abbrev(file)
+local function Abbreviations_Fill()
+	local function ReadAbbrev(file)
 		local abbrev_file = io.open(file) 
 		if abbrev_file then 
 			for line in abbrev_file:lines() do 
@@ -463,7 +461,7 @@ function fill_list_abbrev()
 					else
 						local import_file = string.match(line, '^import%s+(.+)')
 						if import_file ~= nil then
-							read_abbrev(string.match(file, '.+\\')..import_file)
+							ReadAbbrev(string.match(file, '.+\\')..import_file)
 						end
 					end
 				end
@@ -474,37 +472,79 @@ function fill_list_abbrev()
 
 	list_abbrev:clear()
 	local abbrev_filename = props['AbbrevPath']
-	read_abbrev(abbrev_filename)
+	ReadAbbrev(abbrev_filename)
 end
 
-list_abbrev:on_double_click(function(idx)
-	if idx~=-1 then
-		local abbrev = list_abbrev:get_item_text(idx)
-		local ss,se = editor.SelectionStart,editor.SelectionEnd
-		local len = abbrev:len()
-		editor:InsertText(ss, abbrev)
-		editor:SetSel(se+len, ss+len)
-		scite.MenuCommand(IDM_ABBREV)
-		editor.Focus = true
+local function Abbreviations_InsertExpansion()
+	local sel_item = list_abbrev:get_selected_item()
+	if sel_item == -1 then return end
+	local abbrev = list_abbrev:get_item_text(sel_item)
+	local ss,se = editor.SelectionStart,editor.SelectionEnd
+	local len = abbrev:len()
+	editor:InsertText(ss, abbrev)
+	editor:SetSel(se+len, ss+len)
+	scite.MenuCommand(IDM_ABBREV)
+	editor.Focus = true
+end
+
+list_abbrev:on_double_click(function()
+	Abbreviations_InsertExpansion()
+end)
+
+list_abbrev:on_key(function(key)
+	if key == 13 then -- Enter
+		Abbreviations_InsertExpansion()
 	end
 end)
 
 ----------------------------------------------------------
 -- Events
 ----------------------------------------------------------
-function on_switch()
+local function OnSwitch()
+	if tonumber(props['sidebar.show'])~=1 then return end
 	if tab_index == 0 then
 		local path = props['FileDir']
-		file_path = props['FilePath']
 		if path == '' then return end
 		if path ~= current_path then
 			current_path = path
-			fill_list_dir()
+			FileMan_Fill()
 		end
 	elseif tab_index == 1 then
-		fill_list_func()
+		Functions_Fill()
 	elseif tab_index == 2 then
-		fill_list_abbrev()
+		Abbreviations_Fill()
+	end
+end
+
+tabs:on_select(function(ind)
+	tab_index=ind
+	OnSwitch()
+end)
+
+-- Скрытие / показ панели
+function SideBar_ShowHide()
+	if tonumber(props['sidebar.show'])==1 then
+		if win then
+			win_parent:hide()
+		else
+			gui.set_panel()
+		end
+		props['sidebar.show']=0
+	else
+		if win then
+			win_parent:show()
+		else
+			gui.set_panel(win_parent,"right")
+		end
+		props['sidebar.show']=1
+		OnSwitch()
+	end
+end
+
+local function OnDocumentContentsChanged()
+	if tonumber(props['sidebar.show'])~=1 then return end
+	if tab_index == 0 then
+		Functions_Fill()
 	end
 end
 
@@ -513,7 +553,7 @@ local old_OnSwitchFile = OnSwitchFile
 function OnSwitchFile(file)
 	local result
 	if old_OnSwitchFile then result = old_OnSwitchFile(file) end
-	on_switch()
+	OnSwitch()
 	return result
 end
 
@@ -522,21 +562,19 @@ local old_OnOpen = OnOpen
 function OnOpen(file)
 	local result
 	if old_OnOpen then result = old_OnOpen(file) end
-	on_switch()
+	OnSwitch()
 	return result
 end
 
--- Add user event handler OnUpdateUI (Call function fill_list_func)
+-- Add user event handler OnUpdateUI
 local old_OnUpdateUI = OnUpdateUI
 function OnUpdateUI()
 	local result
 	if old_OnUpdateUI then result = old_OnUpdateUI() end
-	if tab_index == 1 then
-		local line_count_new = editor.LineCount
-		if line_count_new ~= line_count then
-			fill_list_func()
-			line_count = line_count_new
-		end
+	local line_count_new = editor.LineCount
+	if line_count_new ~= line_count then
+		OnDocumentContentsChanged()
+		line_count = line_count_new
 	end
 	return result
 end
@@ -547,11 +585,11 @@ function OnSendEditor(id_msg, wp, lp)
 	local result
 	if old_OnSendEditor then result = old_OnSendEditor(id_msg, wp, lp) end
 	if id_msg == SCI_MARKERADD then
-		if lp == 1 then list_bookmark_add(wp) end
+		if lp == 1 then Bookmarks_Add(wp) end
 	elseif id_msg == SCI_MARKERDELETE then
-		if lp == 1 then list_bookmark_delete(wp) end
+		if lp == 1 then Bookmarks_Delete(wp) end
 	elseif id_msg == SCI_MARKERDELETEALL then
-		if wp == 1 then list_bookmark_delete_all() end
+		if wp == 1 then Bookmarks_DeleteAll() end
 	end
 	return result
 end
@@ -561,6 +599,6 @@ local old_OnFinalise = OnFinalise
 function OnFinalise()
 	local result
 	if old_OnFinalise then result = old_OnFinalise() end
-	save_list_favorites()
+	Favorites_SaveList()
 	return result
 end
