@@ -1,6 +1,6 @@
 -- SessionManager
 -- Àâòîð: mozers™
--- Version: 0.97
+-- Version: 0.98
 -----------------------------------------------
 local function LoadSession()
 	shell.exec('mshta "'..props['SciteDefaultHome']..'\\tools\\SessionManager\\SessionManager.hta"', nil, true, false)
@@ -45,14 +45,6 @@ local function os_copy(source_path,dest_path)
 end
 -- ==============================================================
 
-local function FileExist(path)
-	if (os.rename (path,path)) then
-		return true
-	else
-		return false
-	end
-end
-
 local function SaveSessionOnQuitAuto()
 	local path = ""
 	local i = 0
@@ -61,7 +53,7 @@ local function SaveSessionOnQuitAuto()
 		filename = string.gsub(filename,' ','_')
 		path = props['scite.userhome']..'\\'..filename..'.session'
 		i = i + 1
-	until not FileExist(path)
+	until not shell.fileexists(path)
 	local session_file = props['scite.userhome']..'\\SciTE.session'
 	os_copy (session_file, path)
 end

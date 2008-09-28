@@ -1,6 +1,6 @@
 -- Создание резервной копии сохраняемого после редактирования файла
 -- mozers
--- version 1.4.2
+-- version 1.4.3
 ------------------------------------------------
 -- Подключение:
 -- В файл SciTEStartup.lua добавьте строку:
@@ -21,14 +21,6 @@
 --   backup.path=$(TEMP)\SciTE
 ------------------------------------------------
 
-local function FileExist(path)
-	if (os.rename (path,path)) then
-		return true
-	else
-		return false
-	end
-end
-
 local function GetPath()
 	local path = props['backup.path']
 
@@ -38,7 +30,7 @@ local function GetPath()
 	end
 
 -- 	if backup folder not exist
-	if not FileExist(path) then
+	if not shell.fileexists(path) then
 		shell.exec('CMD /C MD "'..path..'"', nil, true, true) -- Silient window (only SciTE-Ru)
 --~ 		os.execute('CMD /C MD "'..path..'"')
 	end
@@ -65,12 +57,12 @@ local function BakupFile(filename)
 		nbck = nbck + 1
 	end
 	os.remove (filename..".bak")
-	if not FileExist(sfilename) then
+	if not shell.fileexists(sfilename) then
 		io.output(sfilename)
 		io.close()
 	end
 	os.rename (sfilename, filename..".bak")
-	if not FileExist(filename..".bak") then
+	if not shell.fileexists(filename..".bak") then
 		_ALERT("=>\tERROR CREATE BACKUP FILE: "..filename..".bak".."\t"..sbck)
 	end
 	return false
