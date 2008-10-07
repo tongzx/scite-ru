@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo
-version 1.0
+version 1.1
 ------------------------------------------------------
   Needed gui.dll by Steve Donovan
   Connection:
@@ -17,16 +17,10 @@ version 1.0
     sidebar.show=1
 --]]--------------------------------------------------
 
-local panel_width = 200
-local tab_index = 0
-local current_path = props['FileDir']
-local file_mask = '*.*'
-local list_fav_table = {}
-local line_count = 0
-
 -- you can choose to make it a stand-alone window; just uncomment this line:
 -- local win = true
 
+local panel_width = 200
 local win_height = props['position.height']
 if win_height == '' then win_height = 600 end
 
@@ -109,9 +103,12 @@ end
 ----------------------------------------------------------
 -- tab0:memo_path   Path and Mask
 ----------------------------------------------------------
+local current_path = ''
+local file_mask = '*.*'
+
 local function FileMan_ShowPath()
-	local rtf = '{\\rtf{\\fonttbl{\\f0\\fcharset1 Helv;}}{\\colortbl ;\\red0\\green0\\blue255;  \\red255\\green0\\blue0;}\\f0\\fs16'
-	local path = '\\cf1'..string.gsub(current_path, '\\', '\\\\')..'\\\\'
+	local rtf = '{\\rtf\\ansi\\ansicpg1251{\\fonttbl{\\f0\\fcharset204 Helv;}}{\\colortbl ;\\red0\\green0\\blue255;  \\red255\\green0\\blue0;}\\f0\\fs16'
+	local path = '\\cf1'..current_path:gsub('\\', '\\\\')
 	local mask = '\\cf2'..file_mask..'}'
 	memo_path:set_text(rtf..path..mask)
 end
@@ -119,14 +116,15 @@ end
 ----------------------------------------------------------
 -- tab0:list_dir   File Manager
 ----------------------------------------------------------
-local function FileMan_Fill()
+local function FileMan_ListFILL()
+	if current_path == '' then return end
 	list_dir:clear()
-	local folders = gui.files(current_path..'\\*', true)
+	local folders = gui.files(current_path..'*', true)
 	list_dir:add_item ('[..]', {'..','d'})
 	for i, d in ipairs(folders) do
 		list_dir:add_item('['..d..']', {d,'d'})
 	end
-	local files = gui.files(current_path..'\\'..file_mask)
+	local files = gui.files(current_path..file_mask)
 	if files then
 		for i, filename in ipairs(files) do
 			list_dir:add_item(filename, {filename})
@@ -147,7 +145,7 @@ end
 
 function FileMan_MaskAllFiles()
 	file_mask = '*.*'
-	FileMan_Fill()
+	FileMan_ListFILL()
 end
 
 function FileMan_MaskOnlyCurrentExt()
@@ -155,7 +153,7 @@ function FileMan_MaskOnlyCurrentExt()
 	if filename == '' then return end
 	if attr == 'd' then return end
 	file_mask = '*.'..filename:gsub('.+%.','')
-	FileMan_Fill()
+	FileMan_ListFILL()
 end
 
 function FileMan_FileCopy()
@@ -179,8 +177,8 @@ function FileMan_FileRename()
 	if filename == '' or filename == '..' then return end
 	local filename_new = gui.prompt_value("Enter new filename:", filename)
 	if filename_new.len ~= 0 and filename_new ~= filename then
-		os.rename(current_path..'\\'..filename, current_path..'\\'..filename_new)
-		FileMan_Fill()
+		os.rename(current_path..filename, current_path..filename_new)
+		FileMan_ListFILL()
 	end
 end
 
@@ -190,15 +188,15 @@ function FileMan_FileDelete()
 	if attr == 'd' then return end
 	if shell.msgbox("Are you sure DELETE file?\n"..filename, "DELETE", 4+256) == 6 then
 	-- if gui.message("Are you sure DELETE file?\n"..filename, "query") then
-		os.remove(current_path..'\\'..filename)
-		FileMan_Fill()
+		os.remove(current_path..filename)
+		FileMan_ListFILL()
 	end
 end
 
 function FileMan_FileExec()
 	local filename = FileMan_GetSelectedItem()
 	if filename == '' then return end
-	local ret, descr = shell.exec(current_path..'\\'..filename)
+	local ret, descr = shell.exec(current_path..filename)
 	if not ret then
 		print (">Exec: "..filename)
 		print ("Error: "..descr)
@@ -217,16 +215,19 @@ end
 
 local function FileMan_OpenItem()
 	local dir_or_file, attr = FileMan_GetSelectedItem()
+	if dir_or_file == '' then return end
 	if attr == 'd' then
 		gui.chdir(dir_or_file)
 		if dir_or_file == '..' then
-			current_path = string.gsub(current_path,"(.*)\\.*$", "%1")
+			local new_path = current_path:gsub('(.*\\).*\\$', '%1')
+			if not gui.files(new_path..'*',true) then return end
+			current_path = new_path
 		else
-			current_path = current_path..'\\'..dir_or_file
+			current_path = current_path..dir_or_file..'\\'
 		end
-		FileMan_Fill()
+		FileMan_ListFILL()
 	else
-		OpenFile(current_path..'\\'..dir_or_file)
+		OpenFile(current_path..dir_or_file)
 	end
 end
 
@@ -251,8 +252,9 @@ end)
 -- tab0:list_favorites   Favorites
 ----------------------------------------------------------
 local favorites_filename = props['SciteUserHome']..'\\favorites.lst'
+local list_fav_table = {}
 
-local function Favorites_Fill()
+local function Favorites_ListFILL()
 	local favorites_file = io.open(favorites_filename)
 	if favorites_file then
 		for line in favorites_file:lines() do
@@ -265,7 +267,7 @@ local function Favorites_Fill()
 		favorites_file:close()
 	end
 end
-Favorites_Fill()
+Favorites_ListFILL()
 
 local function Favorites_SaveList()
 	io.output(favorites_filename)
@@ -278,8 +280,8 @@ function Favorites_AddFile()
 	local filename, attr = FileMan_GetSelectedItem()
 	if filename == '' then return end
 	if attr == 'd' then return end
-	list_favorites:add_item(filename, current_path..'\\'..filename)
-	table.insert(list_fav_table, current_path..'\\'..filename)
+	list_favorites:add_item(filename, current_path..filename)
+	table.insert(list_fav_table, current_path..filename)
 end
 
 function Favorites_AddCurrentBuffer()
@@ -317,6 +319,7 @@ end)
 -- tab1:list_func   Functions/Procedures
 ----------------------------------------------------------
 local Lang2RegEx = {
+	['Assembler']="\n%s*(%w+)%s+[FfPp][Rr][AaOo][MmCc][Ee%s].-[Ee][Nn][Dd][FfPp]",
 	['C++']="([^.,<>=\n]-[ :][^.,<>=\n%s]+[(][^.<>=)]-[)])[%s\/}]-%b{}",
 	['JScript']="(\n[^,<>\n]-function[^(]-%b())[^{]-%b{}",
 	['VBScript']="(\n[SsFf][Uu][BbNn][^\r]-)\r",
@@ -327,6 +330,7 @@ local Lang2RegEx = {
 	['*']="\n[local ]*[SsFf][Uu][BbNn][^ .]* ([^(]*%b())",
 }
 local Lexer2Lang = {
+	['asm']='Assembler',
 	['cpp']='C++',
 	['js']='JScript',
 	['vb']='VisualBasic',
@@ -338,6 +342,7 @@ local Lexer2Lang = {
 local Ext2Lang = {}
 local function Fill_Ext2Lang()
 	local patterns = {
+		[props['file.patterns.asm']]='Assembler',
 		[props['file.patterns.cpp']]='C++',
 		[props['file.patterns.wsh']]='JScript',
 		[props['file.patterns.vb']]='VisualBasic',
@@ -354,7 +359,7 @@ local function Fill_Ext2Lang()
 end
 Fill_Ext2Lang()
 
-local function Functions_Fill()
+local function Functions_ListFILL()
 	list_func:clear()
 	local findPattern = Lang2RegEx[Ext2Lang[props["FileExt"]]]
 	if not findPattern then
@@ -399,30 +404,54 @@ end)
 ----------------------------------------------------------
 -- tab1:list_bookmarks   Bookmarks
 ----------------------------------------------------------
-local function Bookmarks_Add(line_number)
-	local line_text = editor:GetLine(line_number):gsub('%s+', ' ')
-	local buffer_number = props['BufferNumber']
-	if buffer_number == '' then buffer_number = 1 end
-	list_bookmarks:add_item({buffer_number, line_text}, {props['FilePath'], line_number})
+local table_bookmarks = {}
+-- 1 - file path
+-- 2 - buffer number
+-- 3 - line number
+-- 4 - line text
+
+local function GetBufferNumber()
+	local buf = props['BufferNumber']
+	if buf == '' then buf = 1 else buf = tonumber(buf) end
+	return buf
 end
 
-local function Bookmarks_Delete(line_number)
-	for i = 0, list_bookmarks:count() - 1 do
-		local bookmark = list_bookmarks:get_item_data(i)
-		if bookmark[1] == props['FilePath'] and bookmark[2] == line_number then
-			list_bookmarks:delete_item(i)
-			break
+local function Bookmark_Add(line_number)
+	local line_text = editor:GetLine(line_number):gsub('^%s+', ''):gsub('%s+', ' ')
+	local buffer_number = GetBufferNumber()
+	table.insert (table_bookmarks, {props['FilePath'], buffer_number, line_number, line_text})
+end
+
+local function Bookmark_Delete(line_number)
+	for i = #table_bookmarks, 1, -1 do
+		local a = table_bookmarks[i]
+		if a[1] == props['FilePath'] then
+			if line_number == nil then
+				table.remove(table_bookmarks, i)
+			elseif a[3] == line_number then
+				table.remove(table_bookmarks, i)
+				break
+			end
 		end
 	end
 end
 
-local function Bookmarks_DeleteAll()
-	for i = list_bookmarks:count()-1, 0, -1 do
-		local bookmark = list_bookmarks:get_item_data(i)
-		if bookmark[1] == props['FilePath'] then
-			list_bookmarks:delete_item(i)
+local function Bookmarks_ListFILL()
+	table.sort(table_bookmarks, function(a, b) return a[2]<b[2] or a[2]==b[2] and a[3]<b[3] end)
+	list_bookmarks:clear()
+	for _, a in ipairs(table_bookmarks) do
+		list_bookmarks:add_item({a[2], a[4]}, {a[1], a[3]})
+	end
+end
+
+local function Bookmarks_RefreshTable()
+	Bookmark_Delete()
+	for i = 0, editor.LineCount do
+		if editor:MarkerGet(i) == 2 then
+			Bookmark_Add(i)
 		end
 	end
+	Bookmarks_ListFILL()
 end
 
 local function Bookmarks_GotoLine()
@@ -449,7 +478,7 @@ end)
 ----------------------------------------------------------
 -- tab2:list_abbrev   Abbreviations
 ----------------------------------------------------------
-local function Abbreviations_Fill()
+local function Abbreviations_ListFILL()
 	local function ReadAbbrev(file)
 		local abbrev_file = io.open(file) 
 		if abbrev_file then 
@@ -500,19 +529,22 @@ end)
 ----------------------------------------------------------
 -- Events
 ----------------------------------------------------------
+local tab_index = 0
+
 local function OnSwitch()
 	if tonumber(props['sidebar.show'])~=1 then return end
 	if tab_index == 0 then
 		local path = props['FileDir']
 		if path == '' then return end
+		path = path:gsub('\\$','')..'\\'
 		if path ~= current_path then
 			current_path = path
-			FileMan_Fill()
+			FileMan_ListFILL()
 		end
 	elseif tab_index == 1 then
-		Functions_Fill()
+		Functions_ListFILL()
 	elseif tab_index == 2 then
-		Abbreviations_Fill()
+		Abbreviations_ListFILL()
 	end
 end
 
@@ -543,8 +575,9 @@ end
 
 local function OnDocumentContentsChanged()
 	if tonumber(props['sidebar.show'])~=1 then return end
-	if tab_index == 0 then
-		Functions_Fill()
+	if tab_index == 1 then
+		Functions_ListFILL()
+		Bookmarks_RefreshTable()
 	end
 end
 
@@ -567,6 +600,7 @@ function OnOpen(file)
 end
 
 -- Add user event handler OnUpdateUI
+local line_count = 0
 local old_OnUpdateUI = OnUpdateUI
 function OnUpdateUI()
 	local result
@@ -585,11 +619,11 @@ function OnSendEditor(id_msg, wp, lp)
 	local result
 	if old_OnSendEditor then result = old_OnSendEditor(id_msg, wp, lp) end
 	if id_msg == SCI_MARKERADD then
-		if lp == 1 then Bookmarks_Add(wp) end
+		if lp == 1 then Bookmark_Add(wp) Bookmarks_ListFILL() end
 	elseif id_msg == SCI_MARKERDELETE then
-		if lp == 1 then Bookmarks_Delete(wp) end
+		if lp == 1 then Bookmark_Delete(wp) Bookmarks_ListFILL() end
 	elseif id_msg == SCI_MARKERDELETEALL then
-		if wp == 1 then Bookmarks_DeleteAll() end
+		if wp == 1 then Bookmark_Delete() Bookmarks_ListFILL() end
 	end
 	return result
 end
