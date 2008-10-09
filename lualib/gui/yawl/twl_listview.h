@@ -32,10 +32,6 @@ public:
 
 	// override
     int handle_notify(void *p);
-	virtual void keydown(int vkey);
-
-public:
-	WNDPROC old_proc;
 };
 
 class EXPORT TListView: public TListViewB {

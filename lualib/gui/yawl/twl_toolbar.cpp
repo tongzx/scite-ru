@@ -43,19 +43,6 @@ void *ApplicationInstance();
 
 static int gID = 445560;
 
-static WNDPROC subclass(HWND hwnd, LONG_PTR newproc)
-{
-	WNDPROC old;
-	if (::IsWindowUnicode(hwnd)) {
-		old = reinterpret_cast<WNDPROC>(GetWindowLongPtrW(hwnd, GWLP_WNDPROC));
-		SetWindowLongPtrW(hwnd, GWLP_WNDPROC, newproc);
-	} else {
-		old = reinterpret_cast<WNDPROC>(GetWindowLongPtrA(hwnd, GWLP_WNDPROC));
-		SetWindowLongPtrA(hwnd, GWLP_WNDPROC, newproc);
-	}
-	return old;
-}
-
 static HWND create_common_control(TWin* form, const char* winclass, int style, int height = -1)
 {
     int w = CW_USEDEFAULT, h = CW_USEDEFAULT;
@@ -332,21 +319,6 @@ void TImageList::load_shell_icons()
 
 ////// TListView
 
-static LRESULT ListViewWndProc(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
-{
-	TListViewB *This = (TListViewB *)GetWindowLong( hwnd, GWL_USERDATA );
-	if ( This == NULL ) return DefWindowProc( hwnd, iMessage, wParam, lParam );
-
-	switch ( iMessage )
-	{
-	case WM_KEYDOWN:
-		This->keydown( wParam );
-		break;
-	}
-
-	return CallWindowProc( This->old_proc, hwnd, iMessage, wParam, lParam );
-}
-
 TListViewB::TListViewB(TWin* form, bool large_icons, bool multiple_columns, bool single_select)
 {
 	int style = WS_CHILD;
@@ -365,10 +337,7 @@ TListViewB::TListViewB(TWin* form, bool large_icons, bool multiple_columns, bool
 	 }
 
 	// Create the list view control.
-	HWND hWnd = create_common_control( form, WC_LISTVIEW, style );
-	SetWindowLong( hWnd, GWL_USERDATA, (long)this );
-	old_proc = subclass( hWnd, (long)ListViewWndProc );
-	set( hWnd );
+	set(create_common_control(form,WC_LISTVIEW,style));
 	m_custom_paint = false;
 	m_has_images = false;
 	m_last_col = 0;
@@ -524,6 +493,9 @@ int TListViewB::handle_notify(void *p)
  case NM_DBLCLK:
 	handle_double_click(id);
 	return 1;
+ case LVN_KEYDOWN:
+	handle_onkey(((LPNMLVKEYDOWN)p)->wVKey);
+	return 0;  // ignored, anyway
  case NM_RCLICK:
 	send_msg(WM_CHAR,VK_ESCAPE,0);
 	return 0;
@@ -534,11 +506,6 @@ int TListViewB::handle_notify(void *p)
 	return 0;
  }
  return 0;
-}
-
-void TListViewB::keydown(int vkey)
-{
-	handle_onkey(vkey);
 }
 
 TListView::TListView(TEventWindow* form, bool large_icons, bool multiple_columns, bool single_select)

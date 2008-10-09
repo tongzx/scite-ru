@@ -739,7 +739,7 @@ void TEventWindow::set_background(float r, float g, float b)
 void TEventWindow::set_menu(pchar res)
 //------------------------------------
 {
-	 if (m_hmenu) DeleteObject(m_hmenu);
+	 if (m_hmenu) DestroyMenu(m_hmenu);
 	 set_menu(LoadMenu(hInst,res));
 }
 
@@ -1430,7 +1430,7 @@ WNDFN WndProc (HWND hwnd, UINT msg, UINT wParam,LONG lParam)
 
   case WM_DESTROY:
 	This->destroy();
-	if (This->m_hmenu) DeleteObject(This->m_hmenu);  // but why here?
+	//if (This->m_hmenu) DestroyMenu(This->m_hmenu);  // but why here?
 	return 0 ;
 
  }
