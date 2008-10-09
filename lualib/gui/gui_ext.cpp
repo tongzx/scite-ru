@@ -1025,7 +1025,11 @@ static LRESULT ScintillaWndProc(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM 
 			}
 		}
 	}
-	return CallWindowProc(old_scintilla_proc,hwnd,iMessage,wParam,lParam);
+	if (IsWindowUnicode(hwnd)) {
+		return CallWindowProcW(old_scintilla_proc,hwnd,iMessage,wParam,lParam);
+	} else {
+		return CallWindowProcA(old_scintilla_proc,hwnd,iMessage,wParam,lParam);
+	}
 }
 
 // the content pane contains the two Scintilla windows (editor and output).
@@ -1041,11 +1045,7 @@ static LRESULT ContentWndProc(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lP
 			return DefWindowProc(hSciTE,iMessage,wParam,lParam);
 		}
 	}
-	if (::IsWindowUnicode(hwnd)) {
-		return CallWindowProcW(old_content_proc,hwnd,iMessage,wParam,lParam);
-	} else {
-		return CallWindowProcA(old_content_proc,hwnd,iMessage,wParam,lParam);
-	}
+	return CallWindowProc(old_content_proc,hwnd,iMessage,wParam,lParam);
 }
 
 #ifndef GetWindowLongPtrW
@@ -1256,15 +1256,9 @@ BOOL CALLBACK CheckContainerWindow(HWND  hwnd, LPARAM  lParam)
 }
 
 
-void force_entry();
-
 extern "C" __declspec(dllexport)
 int luaopen_gui(lua_State *L)
 {
-	// this is a workaround because the mingw build doesn't seem to export a 
-	// DllMain that is called on loading.
-	force_entry();
-
 	// at this point, the SciTE window is available. Can't always assume
 	// that it is the foreground window, so we hunt through all windows
 	// associated with this thread (the main GUI thread) to find a window

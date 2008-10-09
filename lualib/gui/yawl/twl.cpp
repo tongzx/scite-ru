@@ -1192,6 +1192,14 @@ void RegisterEventWindow(HANDLE hIcon=0, HANDLE hCurs=0)
 
  }
 
+void UnregisterEventWindow()
+{
+	if (been_registered) {
+		UnregisterClass(EW_CLASSNAME, hInst);
+		been_registered = false;
+	}
+}
+
 char *args[N_CMD_LINE];
 int n_args;
 int ParseCmdLine(LPSTR CmdLine, char **args);
@@ -1221,15 +1229,23 @@ int PASCAL WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance,
 }
 #endif
 
+extern "C"  // inhibit C++ name mangling
 BOOL APIENTRY DllMain(
   HINSTANCE hinstDLL,  // handle to DLL module
   DWORD fdwReason,     // reason for calling function
   LPVOID lpvReserved   // reserved
   )
 {
-  hInst = hinstDLL;
-  RegisterEventWindow();
-  CmdShow = SW_SHOW;
+	switch (fdwReason) {
+	case DLL_PROCESS_ATTACH:
+		hInst = hinstDLL;
+		RegisterEventWindow();
+		CmdShow = SW_SHOW;
+		break;
+	case DLL_PROCESS_DETACH:
+		UnregisterEventWindow();  // though it is important only on NT platform...
+		break;
+	};
   return TRUE;
 }
 
