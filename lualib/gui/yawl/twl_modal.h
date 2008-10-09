@@ -52,6 +52,7 @@ public:
 class EXPORT LayoutDlg: public TModalDlg
 {
 	Layout& m_layout;
+	LayoutDlg& operator =(const LayoutDlg&);  // or else msvc grumbles about impossibility to generate an assignment operator
 public:	
 	LayoutDlg(TEventWindow *ew, Layout& lo, pchar caption, int type = ML_STANDARD);
 	virtual void do_layout();

@@ -1,7 +1,7 @@
 YAWL=twl.o twl_cntrls.o twl_data.o twl_dialogs.o twl_ini.o twl_layout.o twl_menu.o twl_modal.o twl_splitter.o twl_toolbar.o
 
 LUA_INCLUDE=../../src/scite/lua/include
-CFLAGS=-Os -D_WIN32_IE=0x0500
+CFLAGS=-Os -pedantic -D_USRDLL -D_WIN32_IE=0x0500
 LIBS=-lscite -lgdi32 -lcomdlg32 -lcomctl32 -lshell32
 LIBDIR= -L ../lib/
 

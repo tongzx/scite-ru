@@ -93,11 +93,21 @@ void LayoutDlg::do_layout()
 
 static int mModalResult;
 
+#ifdef _MSC_VER
+// Suppress an annoying MSVC warning about use 'this' pointer.
+#pragma warning(push)
+#pragma warning(disable:4355)
+#endif
+
 TModalLayout::TModalLayout(TEventWindow *ew, pchar caption, int type /*= ML_STANDARD*/)
 : m_dlg(ew,*this,caption,type), m_released(false)
 {
 		set_form(&m_dlg);
 }
+
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
 
 int TModalLayout::show_modal()
 {   

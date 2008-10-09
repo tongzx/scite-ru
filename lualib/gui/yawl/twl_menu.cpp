@@ -67,13 +67,13 @@ void Menu::add_menu(Item& item)
       //accl.fVirt = 0;
 	  key = (int)vkey[0];
     }
-    accl.key = key;
+    accl.key = (WORD)key;
 	if (ckey != NULL) {
       if (EQ(ckey,"CTRL")) accl.fVirt |= FCONTROL; else
       if (EQ(ckey,"ALT")) accl.fVirt |= FALT; else
       if (EQ(ckey,"SHIFT")) accl.fVirt |= FSHIFT;
     }
-    accl.cmd = item.id;
+    accl.cmd = (WORD)item.id;
 	//if (accl.fVirt & FVIRTKEY)  // for now...
 	m_accel_list->push_back(accl);
   }

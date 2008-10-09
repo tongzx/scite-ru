@@ -183,7 +183,7 @@ void TDC::get_text_extent(pchar text, int& w, int& h, TFont *font)
 //----------------------------------------------------------------
 {
  SIZE sz;
- HFONT oldfont;
+ HFONT oldfont = 0;
  get();
  if (font) oldfont = select(*font);
  GetTextExtentPoint32(m_hdc,text,lstrlen(text),&sz);
@@ -652,7 +652,7 @@ POINT TEventWindow::fixed_size()
 //*1 new cursor types
 void TEventWindow::cursor(CursorType curs)
 {
-  HCURSOR new_cursor;
+  HCURSOR new_cursor = 0;
   if (curs == RESTORE) new_cursor = m_old_cursor;
   else {
     m_old_cursor = GetCursor();
@@ -1100,7 +1100,7 @@ DLGFN DialogProc (HWND hdlg, UINT msg, UINT wParam,LONG lParam);
 void TDialog::go ()
 //-----------------
 {
-    HWND hdlg,hOwner;
+    HWND hdlg = 0, hOwner;
 
     hOwner = (m_owner) ? m_owner->handle() : NULL; //GetDesktopWindow();
     m_lpfnBox = (void FAR *)MakeProcInstance((FARPROC)DialogProc,hInst);
@@ -1469,7 +1469,7 @@ int ParseCmdLine(LPSTR CmdLine, char **args)
   args[1] =  _quote_strtok(buff,'\"');
   if (! args[1]) return 0;
   i = 2;
-  while (arg = _quote_strtok(NULL,'\"')) args[i++] = arg;
+  while ((arg = _quote_strtok(NULL,'\"')) != 0) args[i++] = arg;
   return i;
 }
 

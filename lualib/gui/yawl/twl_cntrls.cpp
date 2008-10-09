@@ -179,7 +179,7 @@ int TMemo::line_size(int line)
 
 int TMemo::get_line_text(int line, char* buff, int sz)
 {
-    *(short *)buff = sz;
+    *(short *)(void *)buff = (short)sz;
     int len = send_msg(EM_GETLINE,line,(LPARAM)buff);
     buff[len] = '\0';
     return len;

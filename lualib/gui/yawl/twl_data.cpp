@@ -109,7 +109,7 @@ void IntData::read()
 { m_co->set_long(*(int *)m_ptr); }
 
 void ShortData::write()
-{ *(short *)m_ptr = m_co->get_long(); }
+{ *(short *)m_ptr = (short)m_co->get_long(); }
 
 void ShortData::read()
 { m_co->set_long(*(short *)m_ptr); }

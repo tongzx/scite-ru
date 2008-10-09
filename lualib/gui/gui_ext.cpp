@@ -434,7 +434,7 @@ int do_message(lua_State* L)
 {
 	const char* msg = luaL_checkstring(L,1);
 	const char* kind = luaL_optstring(L,2,"message");
-	int type;
+	int type = 0;
 	if (EQ(kind,"message")) type = 0; else
 	if (EQ(kind,"warning")) type = 1; else
 	if (EQ(kind,"error")) type = 2; else
