@@ -937,7 +937,7 @@ int window_add_buttons(lua_State* L)
 }
 
 
-static HWND hSciTE = NULL, hContent = NULL;
+static HWND hSciTE = NULL, hContent = NULL, hCode;
 static WNDPROC old_scite_proc, old_scintilla_proc, old_content_proc;
 static lua_State *sL;
 static TWin *code_window = NULL;
@@ -1069,17 +1069,14 @@ static WNDPROC subclass(HWND hwnd, LONG_PTR newproc)
 	return old;
 }
 
-bool subclassed = false;
-
 static void subclass_scite_window ()
 {
-	// Without this check we surely find oneself in infinite message loop
-	if (!subclassed) {
-		HWND hScintilla = (HWND)code_window->handle();
-		HWND hContent = (HWND)content_window->handle();
-		old_scite_proc = subclass(hSciTE,(long)SciTEWndProc);
-		old_scintilla_proc = subclass(hScintilla,(long)ScintillaWndProc);
-		old_content_proc = subclass(hContent,(long)ContentWndProc);
+	static bool subclassed = false;
+	if (!subclassed) {  // to prevent a recursion
+		old_scite_proc     = subclass(hSciTE,   (long)SciTEWndProc);
+		old_content_proc   = subclass(hContent, (long)ContentWndProc);
+		old_scintilla_proc = subclass(hCode,    (long)ScintillaWndProc);
+		subclassed = true;
 	}
 }
 
@@ -1092,6 +1089,17 @@ static void shake_scite_window()
 	frt.right += delta;
 	delta = - delta;
 	s_parent->resize(frt);
+}
+
+// Unfortunately, shake_scite_window() does not work in the full screen mode.
+// So here is yet another hack, which seems even more terrible than the first one,
+// since its workability completely depends on WM_SIZE handler implementation
+// in SciTEWin.
+static void shake_scite_descendants()
+{
+	Rect frt;
+	s_parent->get_rect(frt,false);
+	s_parent->send_msg(WM_SIZE, SIZE_RESTORED, MAKELONG(frt.width(), frt.height()));
 }
 
 class SideSplitter: public TSplitterB
@@ -1111,7 +1119,7 @@ public:
 	void on_resize(const Rect& rt)
 	{
 		TSplitterB::on_resize(rt);
-		shake_scite_window();
+		shake_scite_descendants();
 	}
 };
 
@@ -1127,7 +1135,7 @@ static int do_set_panel(lua_State *L)
 		extra_window_splitter->close();
 		delete extra_window_splitter;
 		extra_window_splitter = NULL;
-		shake_scite_window();
+		shake_scite_descendants();
 	} else {
 		extra_window = window_arg(L);
 		const char *align = luaL_optstring(L,2,"left");
@@ -1255,6 +1263,25 @@ BOOL CALLBACK CheckContainerWindow(HWND  hwnd, LPARAM  lParam)
     return TRUE;
 }
 
+void destroy_windows()
+{
+	if (extra_window) {
+		extra_window->hide();
+		extra_window->set_parent(0);
+		extra_window->close();
+		delete extra_window;
+		extra_window = 0;
+	}
+	if (extra_window_splitter) {
+		extra_window_splitter->hide();
+		extra_window_splitter->set_parent(0);
+		extra_window_splitter->close();
+		delete extra_window_splitter;
+		extra_window_splitter = 0;
+	}
+	extra.bottom = extra.top = extra.left = extra.right = 0;
+	shake_scite_descendants();
+}
 
 extern "C" __declspec(dllexport)
 int luaopen_gui(lua_State *L)
@@ -1266,14 +1293,19 @@ int luaopen_gui(lua_State *L)
 	EnumThreadWindows(GetCurrentThreadId(),CheckSciteWindow,(long)&hSciTE);
 	s_parent = new TWin(hSciTE);
 	sL = L;
+
+	// Destroy window hierarchy created before.
+	// And there are still memory and handle leaks.
+	destroy_windows();
 	
 	// Its first child shold be the content pane (editor+output), 
 	// but we check this anyway....	
 	EnumChildWindows(hSciTE,CheckContainerWindow,(long)&hContent);
 	// the first child of the content pane is the editor pane.
+	bool subclassed = false;
 	if (hContent != NULL) {
 		content_window = new TWin(hContent);
-		HWND hCode = GetWindow(hContent,GW_CHILD);
+		hCode = GetWindow(hContent,GW_CHILD);
 		if (hCode != NULL) {
 			code_window = new TWin(hCode);		
 			subclass_scite_window();
