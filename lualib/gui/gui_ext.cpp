@@ -534,6 +534,22 @@ int do_open_dlg(lua_State* L)
 	return 1;
 }
 
+/** gui.select_dir_dlg(description)
+	@param description (defaults to empty string)
+	@return chosen directory
+*/
+int do_select_dir_dlg(lua_State* L)
+{
+	const char* descr = luaL_optstring(L,1,"");
+	TSelectDir dir(get_parent(), descr);
+	if (dir.go()) {
+		lua_pushstring(L, dir.path());
+	} else {
+		lua_pushnil(L);
+	}
+	return 1;
+}
+
 
 int new_toolbar(lua_State* L)
 {
@@ -1195,6 +1211,7 @@ static const struct luaL_reg gui[] = {
 	{"message",do_message},
 	{"colour_dlg",do_colour_dlg},
 	{"open_dlg",do_open_dlg},
+	{"select_dir_dlg",do_select_dir_dlg},
 	{"toolbar",new_toolbar},
 	{"window",new_window},
 	{"panel",new_panel},

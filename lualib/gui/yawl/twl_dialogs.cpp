@@ -1,6 +1,8 @@
 // twl_dialogs.cpp
 #include <windows.h>
 #include <commdlg.h>
+#include <shlobj.h>
+
 #include "twl.h"
 #include "twl_dialogs.h"
 
@@ -119,3 +121,37 @@ int TColourDialog::result()
 	return LPCHOOSECOLOR(m_choose_color)->rgbResult;
 }
 
+
+TSelectDir::TSelectDir(TWin *_parent, const char *_description)
+	: parent(_parent), descr(0), dirPath(new char[MAX_PATH])
+{
+	memset(dirPath, 0, MAX_PATH);
+	descr = new char[::lstrlenA(_description)+1];
+	::lstrcpyA(descr, _description);
+}
+
+TSelectDir::~TSelectDir()
+{
+	delete[] descr;
+	delete[] dirPath;
+}
+
+bool TSelectDir::go()
+{
+	BROWSEINFO bi = { 0 };
+	bi.hwndOwner = (HWND)parent->handle();
+	bi.lpszTitle = descr;
+	bi.ulFlags   = BIF_RETURNONLYFSDIRS | BIF_USENEWUI;
+
+	LPMALLOC shellMalloc = 0;
+	SHGetMalloc(&shellMalloc);
+	LPCITEMIDLIST pidl = ::SHBrowseForFolderA(&bi);
+
+	bool result = false;
+	if (pidl) {
+		result = ::SHGetPathFromIDListA(pidl, dirPath) != FALSE;
+	}
+	shellMalloc->Release();
+
+	return result;
+}

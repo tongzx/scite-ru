@@ -21,6 +21,20 @@ public:
   void file_name(const char *buff);
 };
 
+class TSelectDir {
+	TWin *parent;
+	char *descr;
+	char *dirPath;
+
+	TSelectDir();
+public:
+	TSelectDir(TWin *_parent, const char *_description="");
+	virtual ~TSelectDir();
+	virtual bool go();
+	const char *path() const
+		{ return dirPath; }
+};
+
 class EXPORT TSaveFile: public TOpenFile {
   public:
   TSaveFile(TWin *parent, const char *caption, const char *filter,bool do_prompt=true)
