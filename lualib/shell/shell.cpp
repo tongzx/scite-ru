@@ -882,6 +882,8 @@ static int findfiles( lua_State* L )
 	return 0;
 }
 
+extern int showinputbox(lua_State*);
+
 #pragma warning(pop)
 
 static const struct luaL_reg shell[] = 
@@ -893,6 +895,7 @@ static const struct luaL_reg shell[] =
 	{ "fileexists", fileexists },
 	{ "getclipboardtext", getclipboardtext },
 	{ "findfiles", findfiles },
+	{ "inputbox", showinputbox },
 	{ NULL, NULL }
 };
 

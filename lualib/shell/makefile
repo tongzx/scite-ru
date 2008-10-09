@@ -1,4 +1,4 @@
-LIBS= -lscite -lshlwapi -lstdc++
+LIBS= -lscite -lshlwapi -lgdi32 -lstdc++
 LIBDIR= -L ../lib/
 
 OUTFILE= shell.dll
@@ -10,7 +10,7 @@ CFLAGS= -s -I$(LUA)
 CC= g++
 
 $(OUTFILE): resfile.o
-	$(CC) $(CFLAGS) -shared -o $(OUTFILE) shell.cpp resfile.o $(LIBDIR) $(LIBS)
+	$(CC) $(CFLAGS) -shared -o $(OUTFILE) shell.cpp ibox/ibox.cpp resfile.o $(LIBDIR) $(LIBS)
 
 resfile.o: shell.rc
 	windres -o resfile.o shell.rc
