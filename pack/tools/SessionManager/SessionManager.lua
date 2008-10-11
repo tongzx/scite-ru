@@ -1,6 +1,6 @@
 -- SessionManager
 -- Автор: mozers™
--- Version: 0.98
+-- Version: 0.99
 -----------------------------------------------
 local function LoadSession()
 	shell.exec('mshta "'..props['SciteDefaultHome']..'\\tools\\SessionManager\\SessionManager.hta"', nil, true, false)
@@ -14,36 +14,6 @@ local function SaveSessionOnQuit()
 	props['save.session']=1
 	shell.exec('mshta "'..props['SciteDefaultHome']..'\\tools\\SessionManager\\SessionManager.hta" '..'QUIT '..props['FileName'], nil, true, false)
 end
-
--- ==============================================================
--- Функция копирования os_copy2(source_path,dest_path)
--- Автор z00n <http://www.lua.ru/forum/posts/list/15/89.page>
---// "библиотечная" функция
-local function unwind_protect(thunk,cleanup)
-	local ok,res = pcall(thunk)
-	if cleanup then cleanup() end
-	if not ok then error(res,0) else return res end
-end
-
---// общая функция для работы с открытыми файлами
-local function with_open_file(name,mode)
-	return function(body)
-	local f = assert(io.open(name,mode))
-	return unwind_protect(function()return body(f) end,
-		function()return f and f:close() end)
-	end
-end
-
---// собственно os-copy --
-local function os_copy(source_path,dest_path)
-	return with_open_file(source_path,"rb") (function(source)
-		return with_open_file(dest_path,"wb") (function(dest)
-			assert(dest:write(assert(source:read("*a"))))
-			return true
-		end)
-	end)
-end
--- ==============================================================
 
 local function SaveSessionOnQuitAuto()
 	local path = ""

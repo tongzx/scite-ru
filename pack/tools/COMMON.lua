@@ -1,5 +1,5 @@
 -- COMMON.lua
--- Version: 1.3
+-- Version: 1.4
 ---------------------------------------------------
 -- Общие функции, использующиеся во многих скриптах
 ---------------------------------------------------
@@ -178,3 +178,33 @@ function CheckChange(prop_name)
 		props[prop_name] = 1
 	end
 end
+
+-- ==============================================================
+-- Функция копирования os_copy(source_path,dest_path)
+-- Автор z00n <http://www.lua.ru/forum/posts/list/15/89.page>
+--// "библиотечная" функция
+local function unwind_protect(thunk,cleanup)
+	local ok,res = pcall(thunk)
+	if cleanup then cleanup() end
+	if not ok then error(res,0) else return res end
+end
+
+--// общая функция для работы с открытыми файлами
+local function with_open_file(name,mode)
+	return function(body)
+	local f = assert(io.open(name,mode))
+	return unwind_protect(function()return body(f) end,
+		function()return f and f:close() end)
+	end
+end
+
+--// собственно os-copy --
+function os_copy(source_path,dest_path)
+	return with_open_file(source_path,"rb") (function(source)
+		return with_open_file(dest_path,"wb") (function(dest)
+			assert(dest:write(assert(source:read("*a"))))
+			return true
+		end)
+	end)
+end
+-- ==============================================================
