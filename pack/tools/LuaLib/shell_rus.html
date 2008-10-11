@@ -250,6 +250,35 @@ end
 </td></tr>
 
 <tr><td>
+	<p class="head"> <sup>new</sup>
+		<dfn>inputbox(strCaptionText, strPrompt, strDefaultValue, funcCheckInput, intMinWidth)</dfn>
+	</p>
+	<p>
+	<b>Описание:</b><br>
+		&nbsp;&nbsp;Показывает форму для ввода данных.<br>
+	<br>
+	<b>Параметры:</b><br>
+		&nbsp;&nbsp;<dfn>strCaptionText</dfn> - текст заголовка формы. Значение по-умолчанию равно <var>"InputBox"</var><br>
+		&nbsp;&nbsp;<dfn>strPrompt</dfn> - текст приглашения над полем ввода. Значение по-умолчанию равно <var>"Enter"</var><br>
+		&nbsp;&nbsp;<dfn>strDefaultValue</dfn> - исходное значение поля ввода. Значение по-умолчанию равно пустой строке <var>""</var><br>
+		&nbsp;&nbsp;<dfn>funcCheckInput</dfn> - функция для проверки вводимых символов (<var>true</var> разрешает вывод символа в поле ввода, <var>false</var> - подавляет). Значение по-умолчанию равно <var>nil</var><br>
+		&nbsp;&nbsp;<dfn>intMinWidth</dfn> - минимальная ширина поля ввода в усреднённых символах (если <var>strPrompt</var> или <var>strDefaultValue</var> будут шире, то минимальная ширина будет автоматически подгоняется под большее из них). Значение по-умолчанию равно <var>20</var><br>
+		<br>
+	<b>Возвращаемое значение:</b><br>
+		&nbsp;&nbsp;содержит введенный текст. При отказе от ввода возвращает <var>nil</var><br>
+	</p>
+		<p><b>Пример использования:</b>
+		<div class="example">
+		function CheckInput(char)<br>
+		&nbsp;&nbsp;return char:match("[а-яА-ЯёЁ ]")<br>
+		end<br>
+		prompt = "Введите Вашу фамилию имя и отчество\n(на русском языке):"<br>
+		print(shell.inputbox("Имя кандидата", prompt, "Иванов Иван Иванович", "CheckInput"))</div>
+		</p>
+	<p class="author">Автор: qVaclav</p>
+</td></tr>
+
+<tr><td>
 	<p class="head">
 		<dfn>getfileattr (strFileName)</dfn>
 	</p>
@@ -301,7 +330,7 @@ end
 </td></tr>
 
 <tr><td>
-	<p class="head"> <sup>new</sup>
+	<p class="head">
 		<dfn>fileexists (strFileName)</dfn>
 	</p>
 	<p>
@@ -328,7 +357,7 @@ end
 </td></tr>
 
 <tr><td>
-	<p class="head"> <sup>new</sup>
+	<p class="head">
 		<dfn>exec (strCommand, [strOperation], [boolNoShow], [bWaitOnReturn])</dfn>
 	</p>
 	<p>
@@ -423,7 +452,7 @@ end
 </td></tr>
 
 <tr><td>
-	<p class="head"> <sup>new</sup>
+	<p class="head">
 		<dfn>findfiles (strFindMask)</dfn>
 	</p>
 	<p>
