@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo
-version 1.1
+version 1.2
 ------------------------------------------------------
   Needed gui.dll by Steve Donovan
   Connection:
@@ -20,6 +20,7 @@ version 1.1
 -- you can choose to make it a stand-alone window; just uncomment this line:
 -- local win = true
 
+local tab_index = 0
 local panel_width = 200
 local win_height = props['position.height']
 if win_height == '' then win_height = 600 end
@@ -159,23 +160,29 @@ end
 function FileMan_FileCopy()
 	local filename = FileMan_GetSelectedItem()
 	if filename == '' or filename == '..' then return end
-	local path_destantion = gui.open_dir_dlg -- Note: There is no. This - the wish.
-	-- Будет реализовано, когда появится функция выбора каталога
+	local path_destantion = gui.select_dir_dlg("Copy to...")
+	if path_destantion == nil then return end
+	os_copy(current_path..filename, path_destantion..'\\'..filename)
+	FileMan_ListFILL()
 end
 
 function FileMan_FileMove()
 	local filename = FileMan_GetSelectedItem()
 	if filename == '' or filename == '..' then return end
-	local path_destantion = gui.open_dir_dlg -- Note: There is no. This - the wish.
-	-- Будет реализовано, когда появится функция выбора каталога
+	local path_destantion = gui.select_dir_dlg("Move to...")
+	if path_destantion == nil then return end
+	os.rename(current_path..filename, path_destantion..'\\'..filename)
+	FileMan_ListFILL()
 end
 
 function FileMan_FileRename()
+	function CheckFilename(char)
+		return not char:match('[\/:|*?"<>]')
+	end
 	local filename = FileMan_GetSelectedItem()
-	-- "Порнографический" диалог будет появлятся до той поры, пока не будет реализовано
-	-- Issue 103: shell.inputbox http://code.google.com/p/scite-ru/issues/detail?id=103
 	if filename == '' or filename == '..' then return end
-	local filename_new = gui.prompt_value("Enter new filename:", filename)
+	local filename_new = shell.inputbox("Rename", "Enter new filename:", filename, "CheckFilename")
+	if filename_new == nil then return end
 	if filename_new.len ~= 0 and filename_new ~= filename then
 		os.rename(current_path..filename, current_path..filename_new)
 		FileMan_ListFILL()
@@ -321,6 +328,7 @@ end)
 local Lang2RegEx = {
 	['Assembler']="\n%s*(%w+)%s+[FfPp][Rr][AaOo][MmCc][Ee%s].-[Ee][Nn][Dd][FfPp]",
 	['C++']="([^.,<>=\n]-[ :][^.,<>=\n%s]+[(][^.<>=)]-[)])[%s\/}]-%b{}",
+	-- ['C++']="([_%w]+::[~%w]+)%s*%b() ?c?o?n?s?t?[%s:\r]*\n",
 	['JScript']="(\n[^,<>\n]-function[^(]-%b())[^{]-%b{}",
 	['VBScript']="(\n[SsFf][Uu][BbNn][^\r]-)\r",
 	['VisualBasic']="(\n[Public ]*[Private ]*[SsFfP][Uur][BbNno][^\r]-)\r",
@@ -437,6 +445,7 @@ local function Bookmark_Delete(line_number)
 end
 
 local function Bookmarks_ListFILL()
+	if tonumber(props['sidebar.show'])~=1 or tab_index~=1 then return end
 	table.sort(table_bookmarks, function(a, b) return a[2]<b[2] or a[2]==b[2] and a[3]<b[3] end)
 	list_bookmarks:clear()
 	for _, a in ipairs(table_bookmarks) do
@@ -529,8 +538,6 @@ end)
 ----------------------------------------------------------
 -- Events
 ----------------------------------------------------------
-local tab_index = 0
-
 local function OnSwitch()
 	if tonumber(props['sidebar.show'])~=1 then return end
 	if tab_index == 0 then
@@ -543,6 +550,7 @@ local function OnSwitch()
 		end
 	elseif tab_index == 1 then
 		Functions_ListFILL()
+		Bookmarks_ListFILL()
 	elseif tab_index == 2 then
 		Abbreviations_ListFILL()
 	end
