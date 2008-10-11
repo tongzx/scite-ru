@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo
-version 1.2
+version 1.3
 ------------------------------------------------------
   Needed gui.dll by Steve Donovan
   Connection:
@@ -489,13 +489,13 @@ end)
 ----------------------------------------------------------
 local function Abbreviations_ListFILL()
 	local function ReadAbbrev(file)
-		local abbrev_file = io.open(file) 
-		if abbrev_file then 
-			for line in abbrev_file:lines() do 
+		local abbrev_file = io.open(file)
+		if abbrev_file then
+			for line in abbrev_file:lines() do
 				if string.len(line) ~= 0 then
 					local _abr, _exp = string.match(line, '(.-)=(.+)')
 					if _abr ~= nil then
-						list_abbrev:add_item {_abr, _exp}
+						list_abbrev:add_item({_abr, _exp}, _exp)
 					else
 						local import_file = string.match(line, '^import%s+(.+)')
 						if import_file ~= nil then
@@ -504,7 +504,7 @@ local function Abbreviations_ListFILL()
 					end
 				end
 			end
-			abbrev_file:close() 
+			abbrev_file:close()
 		end
 	end
 
@@ -517,21 +517,37 @@ local function Abbreviations_InsertExpansion()
 	local sel_item = list_abbrev:get_selected_item()
 	if sel_item == -1 then return end
 	local abbrev = list_abbrev:get_item_text(sel_item)
-	local ss,se = editor.SelectionStart,editor.SelectionEnd
+	local ss, se = editor.SelectionStart, editor.SelectionEnd
 	local len = abbrev:len()
+	editor:BeginUndoAction()
 	editor:InsertText(ss, abbrev)
 	editor:SetSel(se+len, ss+len)
 	scite.MenuCommand(IDM_ABBREV)
+	editor:EndUndoAction()
 	editor.Focus = true
+end
+
+local function Abbreviations_ShowExpansion()
+	local sel_item = list_abbrev:get_selected_item()
+	if sel_item == -1 then return end
+	local expansion = list_abbrev:get_item_data(sel_item)
+	expansion = expansion:gsub('\\r','\r'):gsub('\\n','\n'):gsub('\\t','\t')
+	editor:CallTipShow(editor.CurrentPos, expansion)
 end
 
 list_abbrev:on_double_click(function()
 	Abbreviations_InsertExpansion()
 end)
 
+list_abbrev:on_select(function()
+	Abbreviations_ShowExpansion()
+end)
+
 list_abbrev:on_key(function(key)
 	if key == 13 then -- Enter
 		Abbreviations_InsertExpansion()
+	elseif (key >= 33 and key <= 40) then -- âñå ıòî èç çà òîãî, ÷òî âûáîğ ñ ïîìîùüş êóğñîğíûõ êëàâèø íå ïîğîæäàåò ñîáûòèÿ on_select
+		Abbreviations_ShowExpansion()
 	end
 end)
 
