@@ -497,7 +497,6 @@ editor:WordRightEnd
 editor:WordRightEndExtend
 editor:WordRightExtend
 editor:WordStartPosition
-editor:WordStartPosition
 editor:WrapCount
 editor:ZoomIn
 editor:ZoomOut
