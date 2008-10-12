@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo
-version 1.3
+version 1.4
 ------------------------------------------------------
   Needed gui.dll by Steve Donovan
   Connection:
@@ -50,6 +50,7 @@ tab0:context_menu {
 	'FileMan: Rename|FileMan_FileRename',
 	'FileMan: Delete\tDel|FileMan_FileDelete',
 	'FileMan: Execute|FileMan_FileExec',
+	'FileMan: Exec with Params|FileMan_FileExecWithParams',
 	'FileMan: Add to Favorites\tIns|Favorites_AddFile',
 	'', -- separator
 	'Favorites: Add active buffer|Favorites_AddCurrentBuffer',
@@ -200,13 +201,62 @@ function FileMan_FileDelete()
 	end
 end
 
-function FileMan_FileExec()
+local function FileMan_FileExecWithSciTE(cmd, mode)
+	local p0 = props["command.0.*"]
+	local p1 = props["command.mode.0.*"]
+	props["command.name.0.*"] = 'tmp'
+	props["command.0.*"] = cmd
+	if mode == nil then mode = 'console' end
+	props["command.mode.0.*"] = 'subsystem:'..mode..',savebefore:no'
+	scite.MenuCommand(9000)
+	props["command.0.*"] = p0
+	props["command.mode.0.*"] = p1
+end
+
+function FileMan_FileExec(params)
+	if params == nil then params = '' end
 	local filename = FileMan_GetSelectedItem()
 	if filename == '' then return end
-	local ret, descr = shell.exec(current_path..filename)
-	if not ret then
-		print (">Exec: "..filename)
-		print ("Error: "..descr)
+	local file_ext = filename:match("[^.]+$")
+	if file_ext == nil then return end
+	file_ext = '%*%.'..string.lower(file_ext)
+	local cmd = ''
+	local function command_build(lng)
+		local cmd = props['command.build.$(file.patterns.'..lng..')']
+		cmd = cmd:gsub(props["FilePath"], current_path..filename)
+		return cmd
+	end
+	-- Lua
+	if string.match(props['file.patterns.lua'], file_ext) ~= nil then
+		dostring(params)
+		dofile(current_path..filename)
+	-- Batch
+	elseif string.match(props['file.patterns.batch'], file_ext) ~= nil then
+		FileMan_FileExecWithSciTE(command_build('batch'))
+		return
+	-- WSH
+	elseif string.match(props['file.patterns.wscript']..props['file.patterns.wsh'], file_ext) ~= nil then
+		FileMan_FileExecWithSciTE(command_build('wscript'))
+	-- Other
+	else
+		local ret, descr = shell.exec(current_path..filename..params)
+		if not ret then
+			print (">Exec: "..filename)
+			print ("Error: "..descr)
+		end
+	end
+end
+
+function FileMan_FileExecWithParams()
+	if scite.ShowParametersDialog('Exec "'..FileMan_GetSelectedItem()..'". Please set params:') then
+		local params = ''
+		for p = 1, 4 do
+			local ps = props[tostring(p)]
+			if ps ~= '' then
+				params = params..' '..ps
+			end
+		end
+		FileMan_FileExec(params)
 	end
 end
 
