@@ -6,10 +6,8 @@ set Tools=Common7\Tools
 set path=%VC8%\%Tools%;%VC71%\%Tools%;%VC7%\%Tools%
 call vsvars32.bat
 
-nmake -nologo -f makefile.vc
-if errorlevel 1 exit /b 1
-nmake -nologo -f makefile.vc clean
-
-set path=c:\MinGW\bin;%ProgramFiles%\CodeBlocks\bin;%path%;
-c:\MinGW\upx\upx.exe --best -f gui.dll
-
+cd scintilla\win32
+nmake -f scintilla.mak
+cd ..\..
+cd scite\win32
+nmake -f scite.mak
