@@ -1,5 +1,5 @@
 -- MakeAbbrev.lua
--- Version: 1.2
+-- Version: 1.3
 -- Author: frs
 -- http://forum.ru-board.com/topic.cgi?forum=5&topic=3215&start=1940#15
 ---------------------------------------------------
@@ -18,17 +18,10 @@ local function MakeAbbrev()
         local x1,x2=string.find(sel_text,"%w+%S")
         if x1 and x2 then
             local key=string.sub(sel_text,x1,x2)
-            props["1"] = key
-            if scite.ShowParametersDialog("Enter abbr for code:") then
-                key=props["1"]
-           else
-                return
-            end
-            sel_text=string.gsub(sel_text,"\\","\\\\")
-            --~ sel_text=string.gsub(sel_text,"\r\n","\\r\\n")
-            sel_text=string.gsub(sel_text,"\n","\\n")
-            sel_text=string.gsub(sel_text,"\r","\\r")
-            sel_text=string.gsub(sel_text,"\t","\\t")
+            --key = shell.inputbox("Abbreviation", "Enter abbreviation for code:", key, "")
+            key = shell.inputbox("Аббревиатура", "Введите аббревиатуру кода:", key, "")
+            if key == nil then return end
+            sel_text=sel_text:gsub("\\","\\\\"):gsub("\n","\\n"):gsub("\r","\\r"):gsub("\t","\\t")
             local file=props["AbbrevPath"]
             local abb_file =io.open(file)
             if abb_file~=nil then
