@@ -349,7 +349,7 @@ static void ColouriseLuaDoc(
 				sc.SetState(SCE_LUA_OPERATOR);
 			}
 //!-start-[LuaLexerImprovement]
-			if (sc.ch == ')')
+			if (sc.ch == ')' || sc.ch == ']')
 				isSubObject = true;
 			else
 			if (isSubObject && sc.state != SCE_LUA_IDENTIFIER)
