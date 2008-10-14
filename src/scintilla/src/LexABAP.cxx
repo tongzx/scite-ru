@@ -304,6 +304,8 @@ static void FoldABAPDoc(unsigned int startPos, int length, int initStyle,
 			if (level != styler.LevelAt(line))
 				styler.SetLevel(line, level);
 			level += levelIndent;
+			if ((level & SC_FOLDLEVELNUMBERMASK) < SC_FOLDLEVELBASE)
+				level = SC_FOLDLEVELBASE;
 			line++;
 			// reset state
 			levelIndent = 0;

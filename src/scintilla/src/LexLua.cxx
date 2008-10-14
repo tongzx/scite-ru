@@ -449,6 +449,10 @@ static void FoldLuaDoc(unsigned int startPos, int length, int /* initStyle */, W
 				styler.SetLevel(lineCurrent, lev);
 			}
 			lineCurrent++;
+//!-start-[LexersFoldFix]
+			if ((levelCurrent & SC_FOLDLEVELNUMBERMASK) < SC_FOLDLEVELBASE)
+				levelCurrent = SC_FOLDLEVELBASE;
+//!-end-[LexersFoldFix]
 			levelPrev = levelCurrent;
 			visibleChars = 0;
 		}

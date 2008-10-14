@@ -455,6 +455,10 @@ static void FoldCppDoc(unsigned int startPos, int length, int initStyle,
 				styler.SetLevel(lineCurrent, lev);
 			}
 			lineCurrent++;
+//!-start-[LexersFoldFix]
+			if ((levelNext & SC_FOLDLEVELNUMBERMASK) < SC_FOLDLEVELBASE)
+				levelNext = SC_FOLDLEVELBASE;
+//!-end-[LexersFoldFix]
 			levelCurrent = levelNext;
 			levelMinCurrent = levelCurrent;
 			visibleChars = 0;
