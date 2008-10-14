@@ -195,6 +195,7 @@ int Scintilla_LinkLexers() {
 	LINK_LEXER(lmMETAPOST);
 	LINK_LEXER(lmMMIXAL);
 	LINK_LEXER(lmMSSQL);
+	LINK_LEXER(lmMySQL);
 	LINK_LEXER(lmNncrontab);
 	LINK_LEXER(lmNsis);
 	LINK_LEXER(lmNull);
@@ -206,6 +207,7 @@ int Scintilla_LinkLexers() {
 	LINK_LEXER(lmPHP);
 	LINK_LEXER(lmPHPSCRIPT);
 	LINK_LEXER(lmPLM);
+	LINK_LEXER(lmPo);
 	LINK_LEXER(lmPOV);
 	LINK_LEXER(lmPowerShell);
 	LINK_LEXER(lmProgress);

@@ -585,6 +585,8 @@ static const char *propertiesToForward[] = {
 	"fold.directive",
 	"fold.html",
 	"fold.html.preprocessor",
+	"fold.hypertext.comment",
+	"fold.hypertext.heredoc",
 	"fold.perl.package",
 	"fold.perl.pod",
 	"fold.preprocessor",
