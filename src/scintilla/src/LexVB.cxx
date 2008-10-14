@@ -75,7 +75,8 @@ static void ColouriseVBDoc(unsigned int startPos, int length, int initStyle,
 
 	StyleContext sc(startPos, length, initStyle, styler);
 
-	for (; sc.More(); sc.Forward()) {
+//!	for (; sc.More(); sc.Forward()) {
+	for (bool doing = sc.More(); doing; doing = sc.More(), sc.Forward()) { //!-change-[LexersLastWordFix]
 
 		if (sc.state == SCE_B_OPERATOR) {
 			sc.SetState(SCE_B_DEFAULT);

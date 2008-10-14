@@ -66,8 +66,8 @@ static void ColouriseAsmDoc(unsigned int startPos, int length, int initStyle, Wo
 
 	StyleContext sc(startPos, length, initStyle, styler);
 
-	//! for (; sc.More(); sc.Forward())
-	for (; ; sc.Forward()) //!-change-[issues 112]
+//!	for (; sc.More(); sc.Forward())
+	for (bool doing = sc.More(); doing; doing = sc.More(), sc.Forward()) //!-change-[LexersLastWordFix]
 	{
 
 		// Prevent SCE_ASM_STRINGEOL from leaking back to previous line
@@ -162,9 +162,6 @@ static void ColouriseAsmDoc(unsigned int startPos, int length, int initStyle, Wo
 				sc.SetState(SCE_ASM_OPERATOR);
 			}
 		}
-
-		if (!sc.More()) //!-change-[issues 112]
-			break;
 
 	}
 	sc.Complete();

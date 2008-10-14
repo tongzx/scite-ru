@@ -64,7 +64,8 @@ static void ColouriseSQLDoc(unsigned int startPos, int length, int initStyle, Wo
 	bool sqlBackslashEscapes = styler.GetPropertyInt("sql.backslash.escapes", 0) != 0;
 	bool sqlBackticksIdentifier = styler.GetPropertyInt("lexer.sql.backticks.identifier", 0) != 0;
 	int styleBeforeDCKeyword = SCE_SQL_DEFAULT;
-	for (; sc.More(); sc.Forward()) {
+//!	for (; sc.More(); sc.Forward()) {
+	for (bool doing = sc.More(); doing; doing = sc.More(), sc.Forward()) { //!-change-[LexersLastWordFix]
 		// Determine if the current state should terminate.
 		switch (sc.state) {
 		case SCE_SQL_OPERATOR:

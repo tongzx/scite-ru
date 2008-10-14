@@ -107,7 +107,8 @@ static void ColouriseLuaDoc(
 		// shbang line: # is a comment only if first char of the script
 		sc.SetState(SCE_LUA_COMMENTLINE);
 	}
-	for (; sc.More(); sc.Forward()) {
+//!	for (; sc.More(); sc.Forward()) {
+	for (bool doing = sc.More(); doing; doing = sc.More(), sc.Forward()) { //!-change-[LexersLastWordFix]
 		if (sc.atLineEnd) {
 			// Update the line state, so it can be seen by next line
 			currentLine = styler.GetLine(sc.currentPos);
@@ -360,6 +361,7 @@ static void ColouriseLuaDoc(
 		}
 	}
 
+/*!-[LexersLastWordFix]
 	if (setWord.Contains(sc.chPrev)) {
 		char s[100];
 		sc.GetCurrent(s, sizeof(s));
@@ -381,6 +383,7 @@ static void ColouriseLuaDoc(
 			sc.ChangeState(SCE_LUA_WORD8);
 		}
 	}
+*/
 
 	sc.Complete();
 }

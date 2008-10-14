@@ -85,6 +85,7 @@ public:
 			GetNextChar(pos);
 			Forward();
 		} else {
+			currentPos = endPos;
 			atLineStart = false;
 			chPrev = ' ';
 			ch = ' ';

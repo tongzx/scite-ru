@@ -76,7 +76,7 @@ static void ColouriseABAPDoc(unsigned int startPos, int length, int initStyle,
 	s[currLen] = '\0';
 	bool isTypeCheck = false;
 	
-	for (; sc.More(); sc.Forward()) {
+	for (bool doing = sc.More(); doing; doing = sc.More(), sc.Forward()) {
 		// Determine if the current state should terminate.
 		switch (sc.state) {
 		case SCE_ABAP_OPERATOR:
