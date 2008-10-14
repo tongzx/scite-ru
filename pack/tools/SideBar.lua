@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo
-version 1.4
+version 1.5
 ------------------------------------------------------
   Needed gui.dll by Steve Donovan
   Connection:
@@ -69,6 +69,10 @@ list_bookmarks:add_column("@", 24)
 list_bookmarks:add_column("Bookmarks", 600)
 tab1:client(list_bookmarks)
 
+tab1:context_menu {
+	'Functions: Sort by Order|Functions_SortByOrder',
+	'Functions: Sort by Name|Functions_SortByName',
+}
 -------------------------
 local tab2 = gui.panel(panel_width + 18)
 
@@ -375,17 +379,35 @@ end)
 ----------------------------------------------------------
 -- tab1:list_func   Functions/Procedures
 ----------------------------------------------------------
+local table_functions = {}
+-- 1 - function names
+-- 2 - line number
+local _sort = 'order'
+
+--[[ Note:
+	- only upper char
+	- ()function name()
+	Правила создания регсепов:
+	- использовать только заглавные буквы
+	- имя функции должно быть выделено с обеих сторон парами скобок "()function name()" . Не путать с %b()!
+	- если для языка задано несколько регсепов, то функция должна находится только одним из них
+]]
 local Lang2RegEx = {
-	['Assembler']="\n%s*(%w+)%s+[FfPp][Rr][AaOo][MmCc][Ee%s].-[Ee][Nn][Dd][FfPp]",
-	['C++']="([^.,<>=\n]-[ :][^.,<>=\n%s]+[(][^.<>=)]-[)])[%s\/}]-%b{}",
-	-- ['C++']="([_%w]+::[~%w]+)%s*%b() ?c?o?n?s?t?[%s:\r]*\n",
-	['JScript']="(\n[^,<>\n]-function[^(]-%b())[^{]-%b{}",
-	['VBScript']="(\n[SsFf][Uu][BbNn][^\r]-)\r",
-	['VisualBasic']="(\n[Public ]*[Private ]*[SsFfP][Uur][BbNno][^\r]-)\r",
-	['CSS']="([%w.#-_]+)[%s}]-%b{}",
-	['Pascal']="\n[pPfF][rRuU][oOnN][cC][eEtT][dDiI][uUoO][rRnN].(.-%b().-)\n",
-	['Python']="\n%s-([dc][el][fa]%s-.-):",
-	['*']="\n[local ]*[SsFf][Uu][BbNn][^ .]* ([^(]*%b())",
+	['Assembler']={"\n%s*()%w+()%s+[FP][R][AO][MC][E%s].-[E][N][D][FP]"},
+	['C++']={"()[^.,<>=\n%s]+()%([^.<>=)]-%)[%s\/}]-%b{}",
+			"()[_%w]+::[~%w]+()%s*%b() -C?O?N?S?T?[%s:\r]*\n"},
+	['JScript']={"\n%s*()FUNCTION *[^ ]-()%b()%s-%b{}"},
+	['VBScript']={"\n%s*()SUB *.-()%b().-END SUB",
+				"\n%s*()FUNCTION *.-()%b().-END FUNCTION"},
+	['VisualBasic']={"\n%s*P?U?B?L?I?C?P?R?I?V?A?T?E? *()SUB *[%w_]-()%b().-END SUB",
+					"\n%s*P?U?B?L?I?C?P?R?I?V?A?T?E? *()FUNCTION *[%w_]-()%b().-END FUNCTION",
+					"\n%s*P?U?B?L?I?C?P?R?I?V?A?T?E? *()PROPERTY *[LG]ET *[%w_]-()%b().-END PROPERTY"},
+	['CSS']={"()[%w.#-_]+()%s-%b{}"},
+	['Pascal']={"\n%s*()PROCEDURE *[%w_]-()%b()",
+				"\n%s*()FUNCTION *[%w_]-()%b()"},
+	['Python']={"\n%s*()DEF *[%w_]-()%b():",
+				"\n%s*()CLASS *[%w_]-()%b():"},
+	['*']={"\n%s*L*O*C*A*L* *()[SF][U][BN][^ .]* [^ (]*()%b()"},
 }
 local Lexer2Lang = {
 	['asm']='Assembler',
@@ -417,26 +439,54 @@ local function Fill_Ext2Lang()
 end
 Fill_Ext2Lang()
 
-local function Functions_ListFILL()
-	list_func:clear()
-	local findPattern = Lang2RegEx[Ext2Lang[props["FileExt"]]]
-	if not findPattern then
-		findPattern = Lang2RegEx[Lexer2Lang[editor.LexerLanguage]]
-		if not findPattern then
-			findPattern = Lang2RegEx['*']
+local function Functions_GetNames()
+	table_functions = {}
+	local tablePattern = Lang2RegEx[Ext2Lang[props["FileExt"]]]
+	if not tablePattern then
+		tablePattern = Lang2RegEx[Lexer2Lang[editor.LexerLanguage]]
+		if not tablePattern then
+			tablePattern = Lang2RegEx['*']
 		end
 	end
 	local textAll = editor:GetText()
-	local pos_start, pos_end, findString
-	pos_start = 1
-	while true do
-		pos_start, pos_end, findString = string.find(textAll, findPattern, pos_start)
-		if pos_start == nil then break end
-		findString = findString:gsub("[\r\n]", ""):gsub("%s+", " ")
-		local line_number = editor:LineFromPosition(pos_start)
-		list_func:add_item(findString, line_number)
-		pos_start = pos_end + 1
+	for _, findPattern in ipairs(tablePattern) do
+		for _start, _end in string.gmatch(textAll:upper(), findPattern) do
+			local findString = textAll:sub(_start, _end-1)
+			findString = findString:gsub("[Ss][Uu][Bb] ", "s: ") -- VB, VBS
+			findString = findString:gsub("[Ff][Uu][Nn][Cc][Tt][Ii][Oo][Nn] ", "f: ") -- JS, VB,...
+			findString = findString:gsub("[Pp][Rr][Oo][Cc][Ee][Dd][Uu][Rr][Ee] ", "p: ") -- Pascal
+			findString = findString:gsub("[Pp][Rr][Oo][Сс] ", "p: ") -- C
+			findString = findString:gsub("[Pp][Rr][Oo][Pp][Ee][Rr][Tt][Yy] [Ll][Ee][Tt] ", "pl: ") -- VB
+			findString = findString:gsub("[Pp][Rr][Oo][Pp][Ee][Rr][Tt][Yy] [Gg][Ee][Tt] ", "pg: ") -- VB
+			findString = findString:gsub("[Cc][Ll][Aa][Ss][Ss] ", "c: ") -- Phyton
+			findString = findString:gsub("[Dd][Ee][Ff] ", "d: ") -- Phyton
+			local line_number = editor:LineFromPosition(_start)
+			table.insert (table_functions, {findString, line_number})
+		end
 	end
+end
+
+local function Functions_ListFILL()
+	if tonumber(props['sidebar.show'])~=1 or tab_index~=1 then return end
+	if _sort == 'order' then
+		table.sort(table_functions, function(a, b) return a[2]<b[2] end)
+	else
+		table.sort(table_functions, function(a, b) return a[1]<b[1] end)
+	end
+	list_func:clear()
+	for _, a in ipairs(table_functions) do
+		list_func:add_item(a[1], a[2])
+	end
+end
+
+function Functions_SortByOrder()
+	_sort = 'order'
+	Functions_ListFILL()
+end
+
+function Functions_SortByName()
+	_sort = 'name'
+	Functions_ListFILL()
 end
 
 local function Functions_GotoLine()
@@ -612,10 +662,10 @@ local function OnSwitch()
 		path = path:gsub('\\$','')..'\\'
 		if path ~= current_path then
 			current_path = path
-			FileMan_ListFILL()
+				Functions_GetNames() FileMan_ListFILL()
 		end
 	elseif tab_index == 1 then
-		Functions_ListFILL()
+		Functions_GetNames() Functions_ListFILL()
 		Bookmarks_ListFILL()
 	elseif tab_index == 2 then
 		Abbreviations_ListFILL()
@@ -650,7 +700,7 @@ end
 local function OnDocumentContentsChanged()
 	if tonumber(props['sidebar.show'])~=1 then return end
 	if tab_index == 1 then
-		Functions_ListFILL()
+		Functions_GetNames() Functions_ListFILL()
 		Bookmarks_RefreshTable()
 	end
 end
