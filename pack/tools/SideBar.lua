@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo
-version 1.5
+version 1.5.1
 ------------------------------------------------------
   Needed gui.dll by Steve Donovan
   Connection:
@@ -392,32 +392,34 @@ local _sort = 'order'
 	- имя функции должно быть выделено с обеих сторон парами скобок "()function name()" . Не путать с %b()!
 	- если для языка задано несколько регсепов, то функция должна находится только одним из них
 ]]
+
 local Lang2RegEx = {
-	['Assembler']={"\n%s*()%w+()%s+[FP][R][AO][MC][E%s].-[E][N][D][FP]"},
-	['C++']={"()[^.,<>=\n%s]+()%([^.<>=)]-%)[%s\/}]-%b{}",
-			"()[_%w]+::[~%w]+()%s*%b() -C?O?N?S?T?[%s:\r]*\n"},
-	['JScript']={"\n%s*()FUNCTION *[^ ]-()%b()%s-%b{}"},
-	['VBScript']={"\n%s*()SUB *.-()%b().-END SUB",
-				"\n%s*()FUNCTION *.-()%b().-END FUNCTION"},
-	['VisualBasic']={"\n%s*P?U?B?L?I?C?P?R?I?V?A?T?E? *()SUB *[%w_]-()%b().-END SUB",
-					"\n%s*P?U?B?L?I?C?P?R?I?V?A?T?E? *()FUNCTION *[%w_]-()%b().-END FUNCTION",
-					"\n%s*P?U?B?L?I?C?P?R?I?V?A?T?E? *()PROPERTY *[LG]ET *[%w_]-()%b().-END PROPERTY"},
+	['Assembler']={"\n%s*()%w+()%s+[FP][R][AO][MC][E%s]"},
+-- 	['C++']={"()[^.,<>=\n%s]+()%([^.<>=)']-%)[%s\/}]-{",
+	['C++']={"[^.,<>=\n]-[ :]()[^.,<>=\n%s]+()%b()[%s\/\n}]-{",
+			"()[%u_]+::[%w~]+()%s*%b()[^};]-{"},
+	['JScript']={"[\n;]%s*()FUNCTION +[^ ]-()%b()%s-%b{}"},
+	['VisualBasic']={"[\n:][%s%u]*()SUB +[%w_]-()%b()",
+					"[\n:][%s%u]*()FUNCTION +[%w_]-()%b()",
+					"[\n:][%s%u]*()PROPERTY +[LGS]ET +[%w_]-()%b()"},
 	['CSS']={"()[%w.#-_]+()%s-%b{}"},
-	['Pascal']={"\n%s*()PROCEDURE *[%w_]-()%b()",
-				"\n%s*()FUNCTION *[%w_]-()%b()"},
-	['Python']={"\n%s*()DEF *[%w_]-()%b():",
-				"\n%s*()CLASS *[%w_]-()%b():"},
-	['*']={"\n%s*L*O*C*A*L* *()[SF][U][BN][^ .]* [^ (]*()%b()"},
+	['Pascal']={"\n%s*()PROCEDURE +[%w_]-()%b()",
+				"\n%s*()FUNCTION +[%w_]-()%b()"},
+	['Python']={"\n%s*()DEF +[%w_]-()%b():",
+				"\n%s*()CLASS +[%w_]-()%b():"},
+	['Lua']={"\n[%s%u]*FUNCTION +()[%w_]-()%b()"},
+	['*']={"\n%s*()[SF][U][BN][^ .]* [^ (]*()%b()"},
 }
 local Lexer2Lang = {
 	['asm']='Assembler',
 	['cpp']='C++',
 	['js']='JScript',
 	['vb']='VisualBasic',
-	['vbscript']='VBScript',
+	['vbscript']='VisualBasic',
 	['css']='CSS',
 	['pascal']='Pascal',
 	['python']='Python',
+	['lua']='Lua',
 }
 local Ext2Lang = {}
 local function Fill_Ext2Lang()
@@ -426,10 +428,11 @@ local function Fill_Ext2Lang()
 		[props['file.patterns.cpp']]='C++',
 		[props['file.patterns.wsh']]='JScript',
 		[props['file.patterns.vb']]='VisualBasic',
-		[props['file.patterns.wscript']]='VBScript',
+		[props['file.patterns.wscript']]='VisualBasic',
 		['*.css']='CSS',
 		[props['file.patterns.pascal']]='Pascal',
 		[props['file.patterns.py']]='Python',
+		[props['file.patterns.lua']]='Lua',
 	}
 	for i,v in pairs(patterns) do
 		for ext in (i..';'):gfind("%*%.([^;]+);") do
@@ -449,18 +452,22 @@ local function Functions_GetNames()
 		end
 	end
 	local textAll = editor:GetText()
+-- output:ClearAll()
 	for _, findPattern in ipairs(tablePattern) do
 		for _start, _end in string.gmatch(textAll:upper(), findPattern) do
+			local line_number = editor:LineFromPosition(_start)
 			local findString = textAll:sub(_start, _end-1)
-			findString = findString:gsub("[Ss][Uu][Bb] ", "s: ") -- VB, VBS
+-- print(props['FileNameExt']..':'..(line_number+1)..':\t'..findString)
+			findString = findString:gsub("%s+", " ")
+			findString = findString:gsub("[Ss][Uu][Bb] ", "s: ") -- VB
 			findString = findString:gsub("[Ff][Uu][Nn][Cc][Tt][Ii][Oo][Nn] ", "f: ") -- JS, VB,...
 			findString = findString:gsub("[Pp][Rr][Oo][Cc][Ee][Dd][Uu][Rr][Ee] ", "p: ") -- Pascal
 			findString = findString:gsub("[Pp][Rr][Oo][Сс] ", "p: ") -- C
 			findString = findString:gsub("[Pp][Rr][Oo][Pp][Ee][Rr][Tt][Yy] [Ll][Ee][Tt] ", "pl: ") -- VB
 			findString = findString:gsub("[Pp][Rr][Oo][Pp][Ee][Rr][Tt][Yy] [Gg][Ee][Tt] ", "pg: ") -- VB
+			findString = findString:gsub("[Pp][Rr][Oo][Pp][Ee][Rr][Tt][Yy] [Ss][Ee][Tt] ", "ps: ") -- VB
 			findString = findString:gsub("[Cc][Ll][Aa][Ss][Ss] ", "c: ") -- Phyton
 			findString = findString:gsub("[Dd][Ee][Ff] ", "d: ") -- Phyton
-			local line_number = editor:LineFromPosition(_start)
 			table.insert (table_functions, {findString, line_number})
 		end
 	end
@@ -662,7 +669,7 @@ local function OnSwitch()
 		path = path:gsub('\\$','')..'\\'
 		if path ~= current_path then
 			current_path = path
-				Functions_GetNames() FileMan_ListFILL()
+				FileMan_ListFILL()
 		end
 	elseif tab_index == 1 then
 		Functions_GetNames() Functions_ListFILL()
