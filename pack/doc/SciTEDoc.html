@@ -74,6 +74,7 @@
           Frequently Asked Questions</a>&nbsp;&nbsp;
 	  <a href="http://scintilla.sourceforge.net/SciTELua.html">
           Scripting</a>&nbsp;&nbsp;
+	  <a href="SciTERegEx.html">Regular Expressions</a>&nbsp;&nbsp;
         </td>
       </tr>
     </table>
@@ -83,9 +84,8 @@
     <p>
         Text editing in SciTE works similarly to most Macintosh or Windows editors with the added
         feature of automatic syntax styling. SciTE can hold multiple files in memory at one time but
-        only one file will be visible. SciTE's initial configuration only allows one file to be in memory
-        at once but this can be modified by changing the value of the buffers property. Rectangular
-        regions of text can be selected in SciTE by holding down the Alt key on Windows or the Ctrl
+        only one file will be visible. Rectangular
+        blocks of text can be selected in SciTE by holding down the Alt key on Windows or the Ctrl
         key on GTK+ while dragging the mouse over the text.
     </p>
     <p>
@@ -357,6 +357,11 @@ NameError: mistake
         will never open a couple of files when you are trying to open just
         one, specific file.
      </p>
+     <p>
+        By setting "session.bookmarks" and "session.folds" variables bookmarks
+        and folding states of the currently opened buffers are saved in session
+        files and restored when sessions are loaded.
+     </p>
     <h3>
        Languages understood by SciTE
     </h3>
@@ -480,11 +485,10 @@ NameError: mistake
        Keyboard commands
     </h3>
     <p>
-       SciTE uses the default key bindings defined in Scintilla, so
-       keyboard commands in SciTE mostly follow common Windows and GTK+ conventions.
-       All move keys (arrows, page up/down, home and end)
-       allows to extend or reduce the stream selection when holding the Shift key,
-       and the rectangular selection when holding the Shift and Alt keys.
+       Keyboard commands in SciTE mostly follow common Windows and GTK+ conventions.
+       All movement keys (arrows, page up/down, home and end)
+       allow to extend or reduce a stream selection when holding the Shift key,
+       and a rectangular selection when holding the Shift and Alt keys.
        Some keys may not be available with some national keyboards or because
        they are taken by the system such as by a window manager on GTK+.
        The user.shortcuts setting may be used to assign a key to a function.
@@ -615,6 +619,9 @@ NameError: mistake
       </tr>
       <tr>
         <td>Next word part. Shift extends selection.</td><td>Ctrl+\</td>
+      </tr>
+      <tr>
+        <td>Rectangular block selection.</td><td>Alt+Shift+Movement</td>
       </tr>
     </table>
     <h3>
@@ -840,12 +847,13 @@ NameError: mistake
           position.left<br />
            position.top<br />
            position.width<br />
-           position.height
+           position.height<br />
+           position.maximize
         </td>
         <td>
           Set the initial window size and position. If these are omitted then the
-          environment's defaults are used. If the width or height are -1 then the window
-          is maximised.
+          environment's defaults are used. If the width or height are -1 or the
+          position.maximize property is set then the window is maximised.
         </td>
       </tr>
       <tr class="windowsonly">
@@ -1257,7 +1265,8 @@ NameError: mistake
           Sets the colours used for displaying selected text. If one of these is not set then that
           attribute is not changed for the selection. The default is to show the selection by
           changing the background to light grey and leaving the foreground the same as when it was
-          not selected. The translucency of the selection is set with selection.alpha.
+          not selected. The translucency of the selection is set with selection.alpha with an alpha
+	of 256 turning translucency off.
         </td>
       </tr>
       <tr>
@@ -1485,7 +1494,9 @@ NameError: mistake
           Loads a set of API files for a particular language.
           If there is more than one API file then the file names are separated by ';'.
           API files contain a sorted list of
-          identifiers and function prototypes, one per line. The "Complete Symbol" command
+          identifiers and function prototypes, one per line. If there are multiple files then each file should
+	end with a line end or the next file's first line will merge with the previous file's last line.
+	The "Complete Symbol" command
           looks at the characters before the caret and displayed the subset of the API file
           starting with that string. When an opening brace is typed, the file is searched for the
           text preceding the caret and if a function prototype is found then it is displayed as a
@@ -1661,6 +1672,14 @@ NameError: mistake
         </td>
         <td>
           Set to 0 to disallow the '$' character in identifiers with the cpp lexer.
+        </td>
+      </tr>
+      <tr>
+        <td>
+          lexer.xml.allow.scripts
+        </td>
+        <td>
+          Set to 0 to disable scripts in XML.
         </td>
       </tr>
       <tr>
@@ -1915,12 +1934,12 @@ Prev File|IDM_PREVFILE|<br/>
           max.file.size
         </td>
         <td>
-        To avoid to load accidently huge files on slow media, or just to ensure SciTE is used
-        only to edit human readable code, user can set the max.file.size property to specify
+        To avoid accidentally loading huge files on slow media, or just to ensure SciTE is used
+        only to edit human readable code, the user can set the max.file.size property to specify
         a limit to file loading.
-        If unset or set to 0, there is no limits.
-        If set to a given byte size and if a file to load exceeds this limit, user is asked
-        if the file has to be loaded. If accepted, the file is read as usual. If rejected, no
+        If unset or set to 0, there is no limit.
+        If set to a given size in bytes and if a file to load exceeds this limit, the user is asked
+        if the file should be loaded. If accepted, the file is read as usual. If rejected then no
         action is taken (no file loaded, no buffer created).
         </td>
       </tr>
@@ -1936,30 +1955,30 @@ Prev File|IDM_PREVFILE|<br/>
       </tr>
       <tr>
         <td>
+          save.session<br />
           save.recent<br />
-          save.session
+          save.position
         </td>
         <td>
-          Setting save.recent causes the most recently used files list to be
-        saved on exit in a file and reloaded at start up.
-        For GTK+, the file is called ".SciTE.recent" and is located in the directory
-        given by the SciTE_HOME environment variable and if that is not
-        set, the value of the HOME environment variable
-        and if that is not set the top level directory.
-        For Windows, the file is called SciTE.recent and is located in the directory
-        given by the SciTE_HOME environment variable and if that is not
-        set, the value of the USERPROFILE environment variable
-        and if that is not set the directory of the SciTE executable.<br />
-        If you set "save.session=1", current session
-        will be automatically saved to a file "SciTE.session" on Windows and
-        ".SciTE.session" on GTK+ located at the same
-        place as "SciTE.recent" file. When you start SciTE next time the last
-        session will be automatically loaded.
+        If you set save.session, the list of currently opened buffers will be saved on exit
+        in a session file. When you start SciTE next time (without specifying a file name
+        on the command line) the last session will be restored automatically.<br />
+        For GTK+, the file is called ".SciTE.session" and is located in the directory
+        given by the SciTE_HOME environment variable and if that is not set, the value
+        of the HOME environment variable and if that is not set, the top level directory.
+        For Windows, the file is called "SciTE.session" and is located in the directory
+        given by the SciTE_HOME environment variable and if that is not set, the value
+        of the USERPROFILE environment variable and if that is not set, the directory
+        of the SciTE executable.<br />
+        Setting save.recent causes the most recently used files list to be saved on
+        exit in the session file and read at start up.<br />
+        Setting save.position causes the SciTE window position on the desktop to be
+        saved on exit in the session file and restored at start up.
         </td>
       </tr>
       <tr>
         <td>
-          session.bookmarks
+          session.bookmarks<br />
           session.folds
         </td>
         <td>
@@ -2016,13 +2035,14 @@ Prev File|IDM_PREVFILE|<br/>
         If set to 1, these characters are meta characters itself.
         </td>
       </tr>
-      <tr class="windowsonly">
+      <tr>
         <td>
          find.replace.advanced
         </td>
         <td>
-          Enables Replace in Buffers command and Search only in this style checkbox.
-          If enabled, searches can be restricted to a particular style (e.g. strings).
+          Enables Replace in Buffers command
+	  <span class="windowsonly">and Search only in this style checkbox.
+          If enabled, searches can be restricted to a particular style (e.g. strings).</span>
         </td>
       </tr>
       <tr>
@@ -2205,7 +2225,7 @@ c:\cygwin\bin\xargs -0 fgrep -G -n "$(find.what)"
         Box comments are a form of stream comment that takes several lines
         and uses different strings for the start, end and other lines in the range.
         These are defined with comment.box.start,
-        comment.box.middle and comment.stream.end.
+        comment.box.middle and comment.box.end.
         </td>
       </tr>
       <tr>
@@ -2768,6 +2788,33 @@ groupundo - yes or no
         <td>
         Folding is turned on or off for HTML and XML files with this option.
         The fold option must also be on for folding to occur.
+        </td>
+      </tr>
+      <tr>
+        <td>
+          fold.html.preprocessor
+        </td>
+        <td>
+        Folding is turned on or off for scripts embedded in HTML files with this option.
+        The default is on.
+        </td>
+      </tr>
+      <tr>
+        <td>
+          fold.hypertext.comment
+        </td>
+        <td>
+        Allow folding for comments in scripts embedded in HTML.
+        The default is off.
+        </td>
+      </tr>
+      <tr>
+        <td>
+          fold.hypertext.heredoc
+        </td>
+        <td>
+        Allow folding for heredocs in scripts embedded in HTML.
+        The default is off.
         </td>
       </tr>
       <tr>
