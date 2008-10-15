@@ -1,3 +1,16 @@
+// Небольшая страховка, т.к. используем только "узкострочные" функции
+#if defined(UNICODE) && defined(_UNICODE)
+#  undef UNICODE
+#  undef _UNICODE
+#  define RESTOREUNICODENESS 3
+#elseif  defined(UNICODE)
+#  undef UNICODE
+#  define RESTOREUNICODENESS 2
+#elseif  defined(_UNICODE)
+#  undef _UNICODE
+#  define RESTOREUNICODENESS 1
+#endif
+
 #include <windows.h>
 #include "resource.h"
 
@@ -115,11 +128,11 @@ class InputBox {
 		Rect rc;
 	} DlgData;
 
-	enum { MAX_SHORT_STRING=64, MAX_MIDDLE_STRING=256, MAX_LONG_STRING=1024 };
+	enum { MAX_SHORT_STRING=128, MAX_MIDDLE_STRING=512, MAX_LONG_STRING=1024 };
 
 public:
 	InputBox(const char *Caption, const char *Prompt, const char *Value,
-			int CharMinCount, const char *onkey, lua_State* L);
+			int CharMinCount, const char *onchar, lua_State* L);
 	~InputBox();
 	int  ShowModal();
 	const char *Text() const;
@@ -138,7 +151,6 @@ private:
 	void MoveY(int ctrlID, HWND hdlg, int dy);
 	void CenterButtons(HWND hdlg);
 	void CalcDlgMinWidth(HWND hdlg);
-	bool OnKeyHandler(char ch);
 	static BOOL CALLBACK EditHandler(HWND, UINT, WPARAM, LPARAM);
 	static BOOL CALLBACK DlgHandler(HWND, UINT, WPARAM, LPARAM);
 
@@ -149,7 +161,7 @@ private:
 	char editText[MAX_MIDDLE_STRING];  // введённый пользователем текст
 	char caption[MAX_SHORT_STRING];    // заголовок окна диалога
 	char prompt[MAX_LONG_STRING];      // многострочная надпись над полем ввода
-	char onKey[MAX_SHORT_STRING];
+	char onChar[MAX_SHORT_STRING];
 
 	int marginX;       // гор. отступ от края окна
 	int marginY;       // верт. отступ от края окна
@@ -185,7 +197,7 @@ void InputBox::CalcDlgMinWidth(HWND hdlg)
 	int stc = GetWindowWidth(IDC_PROMPTTEXT, hdlg);
 	int edc = GetWindowWidth(IDC_EDITTEXT, hdlg);
 	int btn = GetWindowWidth(IDOK, hdlg);
-	
+
 	minWidth = CalcAverWidth(GetDlgItem(hdlg, IDC_EDITTEXT), charMinCount);
 	minWidth = max(minWidth, max(stc, edc));
 	minWidth = max(minWidth, 2*btn + btnSpacing);
@@ -370,14 +382,14 @@ void InputBox::PrepareEdit(HWND hdlg)
 	Rect rc;
 	rc.GetClientRect(hctrl);
 	rc.right = 0;
-		
+
 	int len = lstrlen(editText);
 	if (len) {
 		GetTextExtentPoint32 (hdc, editText, len, &size);
 		if (rc.right < size.cx)
 			rc.right = size.cx;
 	}
-	
+
 	TEXTMETRIC tm = { 0 };
 	GetTextMetrics(hdc, &tm);
 	if (rc.height() < tm.tmHeight)
@@ -418,17 +430,20 @@ void InputBox::Layout(HWND hdlg)
 }
 
 //------------------------------------------------------------------------------
-// Передаёт пользовательскому обработчику вводимые символы
+// Передаёт пользовательской функции Lua вводимый текст (полностью)
 //------------------------------------------------------------------------------
-bool InputBox::OnKeyHandler(char ch)
+bool IsInputValid(lua_State * L, const char *str, const char *onChar)
 {
-	if (*onKey) {
-		char str[2] = { ch, '\0' };
-		lua_getfield(luaState, LUA_GLOBALSINDEX, onKey);
-		lua_pushstring(luaState, str);
-		lua_pcall(luaState, 1, 1, 0);
-		bool res = lua_toboolean(luaState, -1) != 0;
-		lua_pop(luaState, 1);
+	if (*onChar) {
+		int num = lua_gettop(L);
+		lua_getfield(L, LUA_GLOBALSINDEX, onChar);
+		lua_pushstring(L, str);
+		lua_pcall(L, 1, 1, 0);
+		bool res = lua_toboolean(L, -1) != 0;
+		num = lua_gettop(L) - num;
+		if (num > 0) {
+			lua_pop(L, num);
+		}
 		return res;
 	}
 	return true;
@@ -447,8 +462,31 @@ BOOL CALLBACK InputBox::EditHandler(HWND hctrl, UINT msg, WPARAM wParam, LPARAM 
 
 	switch (msg) {
 		case WM_CHAR:
-			if (!self->OnKeyHandler(static_cast<char>(wParam)))
-				return 0;
+		{
+			unsigned char ch = static_cast<unsigned char>(wParam);
+			if (ch != VK_BACK) {
+				int bSel = 0;
+				int eSel = 0;
+				char str[sizeof(self->editText)];
+				char tail[sizeof(self->editText)];
+				tail[0] = '\0';
+				int len = GetWindowText(hctrl, str, sizeof(self->editText));
+
+				if (len) {
+					SendMessage(hctrl, EM_GETSEL, reinterpret_cast<WPARAM>(&bSel),
+						reinterpret_cast<LPARAM>(&eSel));
+					lstrcpy(tail, str+eSel);
+				}
+
+				str[bSel] = ch;
+				str[bSel+1] = '\0';
+				lstrcat(str, tail);
+
+				if (!IsInputValid(self->luaState, str, self->onChar)) {
+					return 0;
+				}
+			}
+		}
 	}
 	return CallWindowProc(originalEditHandler, hctrl, msg, wParam, lParam);
 }
@@ -466,7 +504,7 @@ BOOL CALLBACK InputBox::DlgHandler(HWND hdlg, UINT msg, WPARAM wParam, LPARAM lP
 		self->data.isFirst = true;
 		SetWindowLongPtr(hdlg, DWLP_USER, reinterpret_cast<LONG_PTR>(&self->data));
 
-		// Делаем подкласс поля ввода с целью обработки клавиатурных нажатий
+		// Делаем подкласс поля ввода с целью обработки вводимых символов
 		HWND hedit = GetDlgItem(hdlg, IDC_EDITTEXT);
 		originalEditHandler = reinterpret_cast<WNDPROC>(
 			SetWindowLongPtr(hedit, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(EditHandler))
@@ -482,6 +520,9 @@ BOOL CALLBACK InputBox::DlgHandler(HWND hdlg, UINT msg, WPARAM wParam, LPARAM lP
 
 		// Помещаем текст в поле ввода
 		SetDlgItemText(hdlg, IDC_EDITTEXT, self->editText);
+
+		// Ограничиваем допустимый размер вводимого текста
+		SendMessage(GetDlgItem(hdlg, IDC_EDITTEXT), EM_SETLIMITTEXT, sizeof(self->editText)-1, 0);
 
 		// Центрируем диалог на экране
 		Rect rcDt, rcDlg;
@@ -626,7 +667,7 @@ BOOL CALLBACK InputBox::DlgHandler(HWND hdlg, UINT msg, WPARAM wParam, LPARAM lP
 
 //------------------------------------------------------------------------------
 InputBox::InputBox(const char *Caption, const char *Prompt, const char *Value,
-	int CharMinCount, const char *onkey, lua_State* L)
+	int CharMinCount, const char *onchar, lua_State* L)
 	:
 	marginX      (10),
 	marginY      (10),
@@ -640,7 +681,7 @@ InputBox::InputBox(const char *Caption, const char *Prompt, const char *Value,
 	lstrcpyn(editText, Value, sizeof(editText));
 	lstrcpyn(caption, Caption, sizeof(caption));
 	lstrcpyn(prompt, Prompt, sizeof(prompt));
-	lstrcpyn(onKey, onkey, sizeof(onKey));
+	lstrcpyn(onChar, onchar, sizeof(onChar));
 
 	smallIcon = static_cast<HICON>(
 		LoadImage(GetModuleHandle(0), "SCITE", IMAGE_ICON,
@@ -682,8 +723,11 @@ int InputBox::ShowModal()
 //   caption: текст заголовка окна
 //   prompt:  надпись над полем ввода (строки должны отделяться '\r' или '\n')
 //   value:   текст, помещаемый в поле ввода
-//   onkey:   обработчик вводимых символов; получает символ, должен вернуть
-//            false, чтобы подавить вывод символа, иначе - true
+//   onchar:  пользовательская функция-валидатор вводимой строки; получает
+//            вводимую строку в том виде, в каком она будет ПОСЛЕ принятия
+//            только что введённого символа (этого символа ещё нет ни на экране,
+//            ни в строке ввода);
+//            должна вернуть true, если изменения принимаются, иначе - false
 //   width:   ширина поля ввода в условных (усреднённых символах)
 // Результат:
 //   введённая строка, если нажата Ok, или nil, если - Cancel
@@ -692,7 +736,7 @@ int InputBox::ShowModal()
 //   caption = "InputBox"
 //   prompt  = "Enter"
 //   value   = ""
-//   onkey   =  nil
+//   onchar  =  nil
 //   width   =  20
 //
 extern int showinputbox(lua_State* L)
@@ -701,10 +745,14 @@ extern int showinputbox(lua_State* L)
 	const char *caption = luaL_optstring(L, 1, "InputBox");
 	const char *prompt = num > 1? luaL_optstring(L, 2, "Enter") : "Enter";
 	const char *value  = num > 2? luaL_optstring(L, 3, "") : "";
-	const char *onkey  = num > 3? luaL_optstring(L, 4, "") : "";
+	const char *onchar = num > 3? luaL_optstring(L, 4, "") : "";
 	int         width  = num > 4? luaL_optint(L, 5, 20) : 20;
 
-	InputBox dlg(caption, prompt, value, width, onkey, L);
+	const char *safeValue = "";
+	if (!IsInputValid(L, value, onchar))
+		value = safeValue;
+
+	InputBox dlg(caption, prompt, value, width, onchar, L);
 	bool res = dlg.ShowModal() == IDOK;
 	lua_pushboolean(L, res);
 
@@ -715,3 +763,15 @@ extern int showinputbox(lua_State* L)
 
 	return 1;
 }
+
+#ifdef RESTOREUNICODENESS
+#  if RESTOREUNICODENESS == 3
+#    define  UNICODE 1
+#    define _UNICODE 1
+#  elseif RESTOREUNICODENESS == 2
+#    define UNICODE  1
+#  else
+#    define _UNICODE 1
+#  endif
+#  undef RESTOREUNICODENESS
+#endif

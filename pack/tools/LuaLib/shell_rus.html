@@ -3,8 +3,8 @@
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<meta http-equiv="content-type" content="text/html; charset=windows-1251">
-<meta name="generator" content="SciTE">
+<meta http-equiv="content-type" content="text/html; charset=windows-1251" />
+<meta name="generator" content="SciTE" />
 
 <title>Shell</title>
 <style type="text/css">
@@ -52,6 +52,8 @@ span.example {
 	color:#333399;
 }
 
+span.nobr {white-space:nowrap;}
+
 table.tmenu {
 	border-width:0;
 }
@@ -77,7 +79,7 @@ sup {color:red;font-family:MS Sans Serif; font-weight:bold;}
 <table class="tmenu" width="100%"><tr><td>
 <table bgcolor="#000000" width="100%" cellspacing="4" cellpadding="0" border="0" summary="banner">
 	<tr>
-		<td><img src="../../doc/SciTEIco.png" height="64" width="64" alt="Scintilla icon"></td>
+		<td><img src="../../doc/SciTEIco.png" height="64" width="64" alt="Scintilla icon" /></td>
 		<td width="100%"><font size="5">Shell - Lua библиотека для SciTE</font></td>
 	</tr>
 </table>
@@ -92,7 +94,7 @@ sup {color:red;font-family:MS Sans Serif; font-weight:bold;}
 		<a href="../../doc/CommandValuesExt_rus.html">Команды SciTE и Scintilla</a>&nbsp;&nbsp;
 		<a href="../../doc/SciTE-Ru_Pack_rus.html">Сборка Ru-Board</a>&nbsp;&nbsp;
 		<a href="../../doc/SciTE-Ru_Kernel_rus.html">Ядро SciTE-Ru</a>&nbsp;&nbsp;
-		<nobr>Shell</nobr>&nbsp;&nbsp;
+		<span class="nobr">Shell</span>&nbsp;&nbsp;
 		<a href="../Helper/SciTE.Helper_rus.html">SciTE Helper</a>&nbsp;&nbsp;
 		<a href="../../doc/ScintillaHistory_rus.html">История</a>
 	</td></tr>
@@ -105,18 +107,18 @@ sup {color:red;font-family:MS Sans Serif; font-weight:bold;}
 
 <h3>Подключение</h3>
 
-<p>Перед использованием функций библиотеки ее необходимо загрузить:
+<p>Перед использованием функций библиотеки ее необходимо загрузить:</p>
 <div class="example">
-package.cpath = props["SciteDefaultHome"].."\\tools\\LuaLib\\?.dll;"..package.cpath<br>
--- покажем все пути, по которым SciTE будет искать нашу библиотеку<br>
-print(package.cpath)<br>
--- загрузка библиотеки<br>
-require 'shell'<br>
--- тест успешной загрузки<br>
-if shell then<br>
-&nbsp;&nbsp;table.foreach(shell, print)<br>
+package.cpath = props["SciteDefaultHome"].."\\tools\\LuaLib\\?.dll;"..package.cpath<br />
+-- покажем все пути, по которым SciTE будет искать нашу библиотеку<br />
+print(package.cpath)<br />
+-- загрузка библиотеки<br />
+require 'shell'<br />
+-- тест успешной загрузки<br />
+if shell then<br />
+&nbsp;&nbsp;table.foreach(shell, print)<br />
 end
-</div></p>
+</div>
 
 <h3>Функции</h3>
 
@@ -127,13 +129,14 @@ end
 		<dfn>msgbox (strMessageText, [strTitle], [intOptions])</dfn>
 	</p>
 	<p>
-		<b>Описание:</b><br>
-		&nbsp;&nbsp;Вывод текстового сообщения с кнопками.<br>
-	<br>
-	<b>Параметры:</b><br>
-		&nbsp;&nbsp;<dfn>strMessageText</dfn> - текст сообщения<br>
-		&nbsp;&nbsp;<dfn>strTitle</dfn> - текст заголовка сообщения<br>
+		<b>Описание:</b><br />
+		&nbsp;&nbsp;Вывод текстового сообщения с кнопками.<br />
+	<br />
+	<b>Параметры:</b><br />
+		&nbsp;&nbsp;<dfn>strMessageText</dfn> - текст сообщения<br />
+		&nbsp;&nbsp;<dfn>strTitle</dfn> - текст заголовка сообщения<br />
 		&nbsp;&nbsp;<dfn>intOptions</dfn> - числовое выражение, представляющее собой сумму значений, перечисленных в таблице.
+	</p>
 		<table style="margin-left:8pt;margin-top:3pt">
 		<tr><th>Значение</th><th>Описание</th></tr>
 		<tr>
@@ -202,11 +205,11 @@ end
 		приложений</td>
 		</tr>
 		</table>
-	</p>
-	<br>
+	<br />
 	<p>
-	<b>Возвращаемое значение:</b><br>
-		&nbsp;&nbsp;Возвращает код нажатой кнопки. Значения перечисленны в таблице:
+	<b>Возвращаемое значение:</b><br />
+		&nbsp;&nbsp;Возвращает код нажатой кнопки. Значения перечислены в таблице:
+	</p>
 		<table style="margin-left:8pt;margin-top:3pt">
 		<tr><th>Значение</th><th>Описание</th></tr>
 		<tr>
@@ -238,14 +241,13 @@ end
 		<td>Нажата кнопка Нет (No)</td>
 		</tr>
 		</table>
-	</p>
-		<p><b>Пример использования:</b>
+		<br />
+		<p><b>Пример использования:</b></p>
 		<div class="example">
-		if shell.msgbox("Вы уверены?", "SciTE", 65) == 1 then<br>
-		&nbsp;&nbsp;print("Yes")<br>
-		end<br>
+		if shell.msgbox("Вы уверены?", "SciTE", 65) == 1 then<br />
+		&nbsp;&nbsp;print("Yes")<br />
+		end<br />
 		</div>
-		</p>
 	<p class="author">Авторы: Midas, mimir</p>
 </td></tr>
 
@@ -254,27 +256,26 @@ end
 		<dfn>inputbox(strCaptionText, strPrompt, strDefaultValue, funcCheckInput, intMinWidth)</dfn>
 	</p>
 	<p>
-	<b>Описание:</b><br>
-		&nbsp;&nbsp;Показывает форму для ввода данных.<br>
-	<br>
-	<b>Параметры:</b><br>
-		&nbsp;&nbsp;<dfn>strCaptionText</dfn> - текст заголовка формы. Значение по-умолчанию равно <var>"InputBox"</var><br>
-		&nbsp;&nbsp;<dfn>strPrompt</dfn> - текст приглашения над полем ввода. Значение по-умолчанию равно <var>"Enter"</var><br>
-		&nbsp;&nbsp;<dfn>strDefaultValue</dfn> - исходное значение поля ввода. Значение по-умолчанию равно пустой строке <var>""</var><br>
-		&nbsp;&nbsp;<dfn>funcCheckInput</dfn> - функция для проверки вводимых символов (<var>true</var> разрешает вывод символа в поле ввода, <var>false</var> - подавляет). Значение по-умолчанию равно <var>nil</var><br>
-		&nbsp;&nbsp;<dfn>intMinWidth</dfn> - минимальная ширина поля ввода в усреднённых символах (если <var>strPrompt</var> или <var>strDefaultValue</var> будут шире, то минимальная ширина будет автоматически подгоняется под большее из них). Значение по-умолчанию равно <var>20</var><br>
-		<br>
-	<b>Возвращаемое значение:</b><br>
-		&nbsp;&nbsp;содержит введенный текст. При отказе от ввода возвращает <var>nil</var><br>
+	<b>Описание:</b><br />
+		&nbsp;&nbsp;Показывает диалоговое окно для ввода данных.<br />
+	<br />
+	<b>Параметры:</b><br />
+		&nbsp;&nbsp;<dfn>strCaptionText</dfn> - текст заголовка окна. Значение по-умолчанию равно <var>"InputBox"</var><br />
+		&nbsp;&nbsp;<dfn>strPrompt</dfn> - текст приглашения над полем ввода. Значение по-умолчанию равно <var>"Enter"</var><br />
+		&nbsp;&nbsp;<dfn>strDefaultValue</dfn> - исходное значение поля ввода. Значение по-умолчанию равно пустой строке <var>""</var><br />
+		&nbsp;&nbsp;<dfn>funcCheckInput</dfn> - функция для проверки вводимого текста. Получает текст в том виде, в каком он будет вместе с только что поступившим символом и возвращает либо <var>true</var> - принять этот символ, либо <var>false</var> - отклонить ввод. Значение по-умолчанию равно <var>nil</var> - ввод без каких-либо ограничений<br />
+		&nbsp;&nbsp;<dfn>intMinWidth</dfn> - минимальная ширина поля ввода в усреднённых символах (если <var>strPrompt</var> или <var>strDefaultValue</var> будут шире, то минимальная ширина автоматически подгоняется под большее из них). Значение по-умолчанию равно <var>20</var><br />
+		<br />
+	<b>Возвращаемое значение:</b><br />
+		&nbsp;&nbsp;содержит введенный текст. При отказе от ввода возвращает <var>nil</var><br />
 	</p>
-		<p><b>Пример использования:</b>
+		<p><b>Пример использования:</b></p>
 		<div class="example">
-		function CheckInput(char)<br>
-		&nbsp;&nbsp;return char:match("[а-яА-ЯёЁ ]")<br>
-		end<br>
-		prompt = "Введите Вашу фамилию имя и отчество\n(на русском языке):"<br>
+		function CheckInput(char)<br />
+		&nbsp;&nbsp;return char:match("[а-яА-ЯёЁ ]")<br />
+		end<br />
+		prompt = "Введите Вашу фамилию имя и отчество\n(на русском языке):"<br />
 		print(shell.inputbox("Имя кандидата", prompt, "Иванов Иван Иванович", "CheckInput"))</div>
-		</p>
 	<p class="author">Автор: qVaclav</p>
 </td></tr>
 
@@ -283,21 +284,20 @@ end
 		<dfn>getfileattr (strFileName)</dfn>
 	</p>
 	<p>
-	<b>Описание:</b><br>
-		&nbsp;&nbsp;Получение атрибутов файла.<br>
-	<br>
-	<b>Параметры:</b><br>
-		&nbsp;&nbsp;<dfn>strFileName</dfn> - имя файла<br>
-		<br>
-	<b>Возвращаемое значение:</b><br>
-		&nbsp;&nbsp;содержит атрибуты файла в виде числа<br>
+	<b>Описание:</b><br />
+		&nbsp;&nbsp;Получение атрибутов файла.<br />
+	<br />
+	<b>Параметры:</b><br />
+		&nbsp;&nbsp;<dfn>strFileName</dfn> - имя файла<br />
+		<br />
+	<b>Возвращаемое значение:</b><br />
+		&nbsp;&nbsp;содержит атрибуты файла в виде числа<br />
 	</p>
-		<p><b>Пример использования:</b>
+		<p><b>Пример использования:</b></p>
 		<div class="example">
-		local attr = shell.getfileattr("c:\\MSDOS.SYS")<br>
+		local attr = shell.getfileattr("c:\\MSDOS.SYS")<br />
 		print(attr)
 		</div>
-		</p>
 	<p class="author">Авторы: Midas, Дмитрий Маслов</p>
 </td></tr>
 
@@ -306,26 +306,25 @@ end
 		<dfn>setfileattr (strFileName, intFileAttr)</dfn>
 	</p>
 	<p>
-	<b>Описание:</b><br>
-		&nbsp;&nbsp;Установка атрибутов файла.<br>
-	<br>
-	<b>Параметры:</b><br>
-		&nbsp;&nbsp;<dfn>strFileName</dfn> - имя файла<br>
-		&nbsp;&nbsp;<dfn>iFileAttr</dfn> - атрибуты файла в числовом виде<br>
-		<br>
-	<b>Возвращаемое значение:</b><br>
-		&nbsp;&nbsp;содержит <var>true</var> (при удачном завершении) либо <var>false</var> (при неудаче)<br>
+	<b>Описание:</b><br />
+		&nbsp;&nbsp;Установка атрибутов файла.<br />
+	<br />
+	<b>Параметры:</b><br />
+		&nbsp;&nbsp;<dfn>strFileName</dfn> - имя файла<br />
+		&nbsp;&nbsp;<dfn>iFileAttr</dfn> - атрибуты файла в числовом виде<br />
+		<br />
+	<b>Возвращаемое значение:</b><br />
+		&nbsp;&nbsp;содержит <var>true</var> (при удачном завершении) либо <var>false</var> (при неудаче)<br />
 	</p>
-		<p><b>Пример использования:</b>
+		<p><b>Пример использования:</b></p>
 		<div class="example">
-		local result = shell.setfileattr("c:\\MSDOS.SYS", 32)<br>
-		if result == true then<br>
-		&nbsp;&nbsp;print("Атрибуты установлены успешно")<br>
-		else<br>
-		&nbsp;&nbsp;print("error")<br>
+		local result = shell.setfileattr("c:\\MSDOS.SYS", 32)<br />
+		if result == true then<br />
+		&nbsp;&nbsp;print("Атрибуты установлены успешно")<br />
+		else<br />
+		&nbsp;&nbsp;print("error")<br />
 		end
 		</div>
-		</p>
 	<p class="author">Авторы: Midas, Дмитрий Маслов</p>
 </td></tr>
 
@@ -334,25 +333,24 @@ end
 		<dfn>fileexists (strFileName)</dfn>
 	</p>
 	<p>
-	<b>Описание:</b><br>
-		&nbsp;&nbsp;Проверяет существование файла или папки с указанным именем.<br>
-	<br>
-	<b>Параметры:</b><br>
-		&nbsp;&nbsp;<dfn>strFileName</dfn> - имя файла или папки<br>
-		<br>
-	<b>Возвращаемое значение:</b><br>
-		&nbsp;&nbsp;содержит <var>true</var> если файл (папка) существует, либо <var>false</var> в противном случае<br>
+	<b>Описание:</b><br />
+		&nbsp;&nbsp;Проверяет существование файла или папки с указанным именем.<br />
+	<br />
+	<b>Параметры:</b><br />
+		&nbsp;&nbsp;<dfn>strFileName</dfn> - имя файла или папки<br />
+		<br />
+	<b>Возвращаемое значение:</b><br />
+		&nbsp;&nbsp;содержит <var>true</var> если файл (папка) существует, либо <var>false</var> в противном случае<br />
 	</p>
-		<p><b>Пример использования:</b>
+		<p><b>Пример использования:</b></p>
 		<div class="example">
-		local result = shell.fileexists("c:\\MSDOS.SYS")<br>
-		if result then<br>
-		&nbsp;&nbsp;print("Файл существует")<br>
-		else<br>
-		&nbsp;&nbsp;print("Файл отсутствует")<br>
+		local result = shell.fileexists("c:\\MSDOS.SYS")<br />
+		if result then<br />
+		&nbsp;&nbsp;print("Файл существует")<br />
+		else<br />
+		&nbsp;&nbsp;print("Файл отсутствует")<br />
 		end
 		</div>
-		</p>
 	<p class="author">Автор: VladVRO</p>
 </td></tr>
 
@@ -361,12 +359,13 @@ end
 		<dfn>exec (strCommand, [strOperation], [boolNoShow], [bWaitOnReturn])</dfn>
 	</p>
 	<p>
-	<b>Описание:</b><br>
-		&nbsp;&nbsp;Выполнение внешней программы или открытие файла зарегистрированным приложением. Позволяет запускать файлы, документы и ссылки, а так же открывать каталоги в Проводнике Windows.<br>
-	<br>
-	<b>Параметры:</b><br>
-		&nbsp;&nbsp;<dfn>strCommand</dfn> - имя файла или папки с возможными параметрами запуска. Может содержать <nobr>%переменные_окружения%</nobr><br>
-		&nbsp;&nbsp;<dfn>strOperation</dfn> - исполняемая операция из перечисленных в таблице:<br>
+	<b>Описание:</b><br />
+		&nbsp;&nbsp;Выполнение внешней программы или открытие файла зарегистрированным приложением. Позволяет запускать файлы, документы и ссылки, а так же открывать каталоги в Проводнике Windows.<br />
+	<br />
+	<b>Параметры:</b><br />
+		&nbsp;&nbsp;<dfn>strCommand</dfn> - имя файла или папки с возможными параметрами запуска. Может содержать <span class="nobr">%переменные_окружения%</span><br />
+		&nbsp;&nbsp;<dfn>strOperation</dfn> - исполняемая операция из перечисленных в таблице:<br />
+	</p>
 		<table style="margin-left:8pt;margin-top:3pt">
 		<tr><th>Значение</th><th>Описание</th></tr>
 		<tr>
@@ -385,69 +384,71 @@ end
 		<td align="center">explore</td>
 		<td>Открывает папку в проводнике Windows (с двумя панелями). strCommand - файл или папка</td>
 		</tr>
+		<tr>
 		<td align="center">select</td>
 		<td>Открывает каталог в проводнике Windows и ставит выделение на файл или папку. strCommand - файл или папка</td>
 		</tr>
 		<tr>
 		<td align="center">find</td>
-		<td>Выводит диалоговое окно для поиска файлов по условиям, strCommand должен указывать путь к папке,<br>начиная с которой будет выполняться поиск</td>
+		<td>Выводит диалоговое окно для поиска файлов по условиям, strCommand должен указывать путь к папке,<br />начиная с которой будет выполняться поиск</td>
 		</tr>
+		<tr>
 		<td align="center">properties</td>
 		<td>Выводит диалоговое окно свойств файла или папки, strCommand - файл или папка</td>
 		</tr>
+		<tr>
 		<td align="center">другое</td>
 		<td>Другая операция над файлом, имеющаяся в его контекстном меню. Например, есть операция "play" для мультимедийных файлов.</td>
 		</tr>
 		</table>
-		<br>
-		&nbsp;&nbsp;<dfn>boolNoShow</dfn> - <var>true</var> | <var>false</var> (значение по умолчанию) - скрывать или нет окно запускаемой программы<br>
-		&nbsp;&nbsp;<dfn>bWaitOnReturn</dfn> - <var>true</var> | <var>false</var> (значение по умолчанию) - приостанавливать или нет скрипт на время выполнения команды<br>
-	<br>
-	<b>Возвращаемое значение:</b><br>
-		&nbsp;&nbsp;Первое содержит<br>
-		&nbsp;&nbsp;&nbsp;&nbsp;- при удачном завершении: <var>true</var> или, если функция была запущена с параметром <var>bWaitOnReturn = true</var>, код завершения процесса<br>
-		&nbsp;&nbsp;&nbsp;&nbsp;- при неудаче: <var>false</var><br>
-		&nbsp;&nbsp;Второе содержит сообщение об ошибке/успехе операции;<br>
+	<p>
+		&nbsp;&nbsp;<dfn>boolNoShow</dfn> - <var>true</var> | <var>false</var> (значение по умолчанию) - скрывать или нет окно запускаемой программы<br />
+		&nbsp;&nbsp;<dfn>bWaitOnReturn</dfn> - <var>true</var> | <var>false</var> (значение по умолчанию) - приостанавливать или нет скрипт на время выполнения команды<br />
+	<br />
+	<b>Возвращаемое значение:</b><br />
+		&nbsp;&nbsp;Первое содержит<br />
+		&nbsp;&nbsp;&nbsp;&nbsp;- при удачном завершении: <var>true</var> или, если функция была запущена с параметром <var>bWaitOnReturn = true</var>, код завершения процесса<br />
+		&nbsp;&nbsp;&nbsp;&nbsp;- при неудаче: <var>false</var><br />
+		&nbsp;&nbsp;Второе содержит сообщение об ошибке/успехе операции;<br />
 		&nbsp;&nbsp;или содержит текст консольного вывода приложения (при запуске консольных приложений с параметрами <var>boolNoShow = true</var> и <var>bWaitOnReturn = true</var>)
 	</p>
-		<p><b>Пример использования:</b>
+		<p><b>Пример использования:</b></p>
 		<div class="example">
-			-- запустить приложение<br>
-			shell.exec("clipbrd.exe")<br>
-			shell.exec("CMD /c IPCONFIG /all > out.txt", nil, true, false)<br>
-			<br>
-			-- вывести результат консольного приложения<br>
-			print( shell.exec("CMD /c DIR", nil, true, true) )<br>
-			print( shell.exec("cscript /nologo %WINDIR%\\system32\\eventquery.vbs /?", nil, true, true) )<br>
-			<br>
-			-- анализ кода завершения процесса<br>
-			if shell.exec("ping -n 1 localhost", nil, true, true) == 0 then<br>
-			&nbsp;&nbsp;&nbsp;&nbsp;print("Сеть работает") else print("Сеть не работает")<br>
-			end<br>
-			<br>
-			-- открыть каталог<br>
-			shell.exec("%TEMP%")<br>
-			shell.exec("%USERPROFILE%", "find")<br>
-			shell.exec("regedit.exe", "explore")<br>
-			shell.exec("%ProgramFiles%", "properties")<br>
-			shell.exec("%ComSpec%", "select")<br>
-			<br>
-			-- открыть ссылку на сайт<br>
-			shell.exec("http://scite.ruteam.ru/")<br>
-			<br>
-			-- послать E-mail<br>
-			shell.exec("mailto:support@mail.ru")<br>
-			<br>
-			-- открыть файл<br>
-			shell.exec("%WINDIR%\\WindowsUpdate.log")<br>
-			<br>
-			-- распечатать файл<br>
-			shell.exec("%WINDIR%\\win.ini", "print")<br>
-			<br>
-			-- редактировать файл<br>
+			-- запустить приложение<br />
+			shell.exec("clipbrd.exe")<br />
+			shell.exec("CMD /c IPCONFIG /all > out.txt", nil, true, false)<br />
+			<br />
+			-- вывести результат консольного приложения<br />
+			print( shell.exec("CMD /c DIR", nil, true, true) )<br />
+			print( shell.exec("cscript /nologo %WINDIR%\\system32\\eventquery.vbs /?", nil, true, true) )<br />
+			<br />
+			-- анализ кода завершения процесса<br />
+			if shell.exec("ping -n 1 localhost", nil, true, true) == 0 then<br />
+			&nbsp;&nbsp;&nbsp;&nbsp;print("Сеть работает") else print("Сеть не работает")<br />
+			end<br />
+			<br />
+			-- открыть каталог<br />
+			shell.exec("%TEMP%")<br />
+			shell.exec("%USERPROFILE%", "find")<br />
+			shell.exec("regedit.exe", "explore")<br />
+			shell.exec("%ProgramFiles%", "properties")<br />
+			shell.exec("%ComSpec%", "select")<br />
+			<br />
+			-- открыть ссылку на сайт<br />
+			shell.exec("http://scite.ruteam.ru/")<br />
+			<br />
+			-- послать E-mail<br />
+			shell.exec("mailto:support@mail.ru")<br />
+			<br />
+			-- открыть файл<br />
+			shell.exec("%WINDIR%\\WindowsUpdate.log")<br />
+			<br />
+			-- распечатать файл<br />
+			shell.exec("%WINDIR%\\win.ini", "print")<br />
+			<br />
+			-- редактировать файл<br />
 			shell.exec("%WINDIR%\\winnt.bmp", "edit")
 		</div>
-		</p>
 	<p class="author">Авторы: Дмитрий Маслов</p>
 </td></tr>
 
@@ -456,15 +457,16 @@ end
 		<dfn>findfiles (strFindMask)</dfn>
 	</p>
 	<p>
-	<b>Описание:</b><br>
-		&nbsp;&nbsp;Ищет файлы и папки по маске и результат возвращает в виде таблицы.<br>
-	<br>
-	<b>Параметры:</b><br>
-		&nbsp;&nbsp;<dfn>strFindMask</dfn> - имя файла или папки, или маска с использованием группового символа (wildcard), который заменяет один или несколько символов: знак вопроса (<var>?</var>) может представлять любой одиночный символ; звездочка (<var>*</var>) используется для представления любого символа или группы символов.<br>
-		<br>
-	<b>Возвращаемое значение:</b><br>
-		&nbsp;&nbsp;Возвращает список найденных файлов и папок в виде нумерованной таблицы (нумерация начинается с <var>1</var>), где<br>
-		&nbsp;&nbsp;каждый элемент - структура содержащая:<br>
+	<b>Описание:</b><br />
+		&nbsp;&nbsp;Ищет файлы и папки по маске и результат возвращает в виде таблицы.<br />
+	<br />
+	<b>Параметры:</b><br />
+		&nbsp;&nbsp;<dfn>strFindMask</dfn> - имя файла или папки, или маска с использованием группового символа (wildcard), который заменяет один или несколько символов: знак вопроса (<var>?</var>) может представлять любой одиночный символ; звездочка (<var>*</var>) используется для представления любого символа или группы символов.<br />
+		<br />
+	<b>Возвращаемое значение:</b><br />
+		&nbsp;&nbsp;Возвращает список найденных файлов и папок в виде нумерованной таблицы (нумерация начинается с <var>1</var>), где<br />
+		&nbsp;&nbsp;каждый элемент - структура содержащая:<br />
+	</p>
 		<table style="margin-left:8pt;margin-top:3pt;margin-bottom:3pt">
 		<tr><th>Значение</th><th>Описание</th></tr>
 		<tr>
@@ -484,7 +486,7 @@ end
 			<td>размер файла в байтах</td>
 		</tr>
 		</table>
-		&nbsp;&nbsp;Атрибуты представлены в виде числа, которое может быть комбинацией следующих значений:<br>
+		<p>&nbsp;&nbsp;Атрибуты представлены в виде числа, которое может быть комбинацией следующих значений:<br /></p>
 		<table style="margin-left:8pt;margin-top:3pt;margin-right:8pt">
 		<tr><th>Значение</th><th>Описание</th></tr>
 		<tr>
@@ -544,36 +546,33 @@ end
 			<td>Это виртуальный файл.</td>
 		</tr>
 		</table>
-		<br>
-		&nbsp;&nbsp;В случае неудачи возвращает <var>nil</var>
-	</p>
-		<p><b>Пример использования:</b>
+		<p>&nbsp;&nbsp;В случае неудачи возвращает <var>nil</var></p>
+		<p><b>Пример использования:</b></p>
 		<div class="example">
-		local t = shell.findfiles("C:\\*")<br>
-		if t then<br>
-		&nbsp;&nbsp;table.sort(t,<br>
-		&nbsp;&nbsp;&nbsp;&nbsp;function(v1,v2)<br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if v1.isdirectory ~= v2.isdirectory then<br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return v1.isdirectory<br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else<br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return v1.name:lower() &lt; v2.name:lower()<br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;end<br>
-		&nbsp;&nbsp;&nbsp;&nbsp;end<br>
-		&nbsp;&nbsp;)<br>
-		&nbsp;&nbsp;table.foreachi(t,<br>
-		&nbsp;&nbsp;&nbsp;&nbsp;function(i,v)<br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if v.isdirectory then<br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print(string.format("D%5x %s", v.attributes, v.name))<br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else<br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print(string.format(" %5x %-30s", v.attributes, v.name), v.size)<br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;end<br>
-		&nbsp;&nbsp;&nbsp;&nbsp;end<br>
-		&nbsp;&nbsp;)<br>
-		else<br>
-		&nbsp;&nbsp;print("not found")<br>
-		end<br>
+		local t = shell.findfiles("C:\\*")<br />
+		if t then<br />
+		&nbsp;&nbsp;table.sort(t,<br />
+		&nbsp;&nbsp;&nbsp;&nbsp;function(v1,v2)<br />
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if v1.isdirectory ~= v2.isdirectory then<br />
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return v1.isdirectory<br />
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else<br />
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return v1.name:lower() &lt; v2.name:lower()<br />
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;end<br />
+		&nbsp;&nbsp;&nbsp;&nbsp;end<br />
+		&nbsp;&nbsp;)<br />
+		&nbsp;&nbsp;table.foreachi(t,<br />
+		&nbsp;&nbsp;&nbsp;&nbsp;function(i,v)<br />
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if v.isdirectory then<br />
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print(string.format("D%5x %s", v.attributes, v.name))<br />
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else<br />
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print(string.format(" %5x %-30s", v.attributes, v.name), v.size)<br />
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;end<br />
+		&nbsp;&nbsp;&nbsp;&nbsp;end<br />
+		&nbsp;&nbsp;)<br />
+		else<br />
+		&nbsp;&nbsp;print("not found")<br />
+		end<br />
 		</div>
-		</p>
 	<p class="author">Автор: VladVRO</p>
 </td></tr>
 
@@ -581,9 +580,9 @@ end
 
 <h3>Загрузка</h3>
 
-<p><u>Текущая версия Shell</u>: <var>1.2</var><br></p>
+<p><u>Текущая версия Shell</u>: <var>1.2</var><br /></p>
 <p>
-<a href="http://scite-ru.googlecode.com/svn/trunk/pack/tools/LuaLib/shell.dll">shell.dll</a><br>
+<a href="http://scite-ru.googlecode.com/svn/trunk/pack/tools/LuaLib/shell.dll">shell.dll</a><br />
 <a href="http://scite-ru.googlecode.com/svn/trunk/shell/">Исходный код</a>
 </p>
 

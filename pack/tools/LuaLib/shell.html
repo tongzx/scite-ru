@@ -3,8 +3,8 @@
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<meta http-equiv="content-type" content="text/html; charset=windows-1251">
-<meta name="generator" content="SciTE">
+<meta http-equiv="content-type" content="text/html; charset=windows-1251" />
+<meta name="generator" content="SciTE" />
 
 <title>Shell</title>
 <style type="text/css">
@@ -52,6 +52,8 @@ span.example {
 	color:#333399;
 }
 
+span.nobr {white-space:nowrap;}
+
 table.tmenu {
 	border-width:0;
 }
@@ -77,7 +79,7 @@ sup {color:red;font-family:MS Sans Serif; font-weight:bold;}
 <table class="tmenu" width="100%"><tr><td>
   <table bgcolor="#000000" width="100%" cellspacing="4" cellpadding="0" border="0" summary="banner">
     <tr>
-      <td><img src="../../doc/SciTEIco.png" height="64" width="64" alt="Scintilla icon"></td>
+      <td><img src="../../doc/SciTEIco.png" height="64" width="64" alt="Scintilla icon" /></td>
       <td width="100%"><font size="5">Shell - Lua library for SciTE</font></td>
     </tr>
   </table>
@@ -89,18 +91,18 @@ sup {color:red;font-family:MS Sans Serif; font-weight:bold;}
 
 <h3>DLL loading</h3>
 
-<p>Before use of library functions it require load:
+<p>Before use of library functions it require load:</p>
 <div class="example">
-package.cpath = props["SciteDefaultHome"].."\\tools\\LuaLib\\?.dll;"..package.cpath<br>
--- show all paths on which SciTE will search for our library<br>
-print(package.cpath)<br>
--- library loading<br>
-require 'shell'<br>
--- test dll<br>
-if shell then<br>
-&nbsp;&nbsp;table.foreach(shell, print)<br>
+package.cpath = props["SciteDefaultHome"].."\\tools\\LuaLib\\?.dll;"..package.cpath<br />
+-- show all paths on which SciTE will search for our library<br />
+print(package.cpath)<br />
+-- library loading<br />
+require 'shell'<br />
+-- test dll<br />
+if shell then<br />
+&nbsp;&nbsp;table.foreach(shell, print)<br />
 end
-</div></p>
+</div>
 
 <h3>Functions</h3>
 
@@ -111,13 +113,14 @@ end
 		<dfn>msgbox (strMessageText, [strTitle], [intOptions])</dfn>
 	</p>
 	<p>
-		<b>Description:</b><br>
-		&nbsp;&nbsp;Showing text message with buttons.<br>
-	<br>
-	<b>Parameters:</b><br>
-		&nbsp;&nbsp;<dfn>strMessageText</dfn> - text message<br>
-		&nbsp;&nbsp;<dfn>strTitle</dfn> - title text of message<br>
+		<b>Description:</b><br />
+		&nbsp;&nbsp;Showing text message with buttons.<br />
+	<br />
+	<b>Parameters:</b><br />
+		&nbsp;&nbsp;<dfn>strMessageText</dfn> - text message<br />
+		&nbsp;&nbsp;<dfn>strTitle</dfn> - title text of message<br />
 		&nbsp;&nbsp;<dfn>intOptions</dfn> - numerical expression representing the sum of values, listed in the table.
+	</p>
 		<table style="margin-left:8pt;margin-top:3pt">
 		<tr><th>Value</th><th>Description</th></tr>
 		<tr>
@@ -185,11 +188,11 @@ end
 		<td>System modal. On Win16 systems, all applications are suspended until the user responds to the message box. On Win32 systems, this constant provides an application modal message box that always remains on top of any other programs you may have running.</td>
 		</tr>
 		</table>
-	</p>
-	<br>
+	<br />
 	<p>
-	<b>Return value:</b><br>
+	<b>Return value:</b><br />
 		&nbsp;&nbsp;Returned code to identify which button a user has selected. Values are listed in the table:
+	</p>
 		<table style="margin-left:8pt;margin-top:3pt">
 		<tr><th>Value</th><th>Description</th></tr>
 		<tr>
@@ -221,15 +224,43 @@ end
 		<td>No button was clicked</td>
 		</tr>
 		</table>
-	</p>
-		<p><b>Example:</b>
+		<p><b>Example:</b></p>
 		<div class="example">
-		if shell.msgbox("You are sure?", "SciTE", 65) == 1 then<br>
-		&nbsp;&nbsp;print("Yes")<br>
-		end<br>
+		if shell.msgbox("You are sure?", "SciTE", 65) == 1 then<br />
+		&nbsp;&nbsp;print("Yes")<br />
+		end<br />
 		</div>
-		</p>
 	<p class="author">Authors: Midas, mimir</p>
+</td></tr>
+
+<tr><td>
+	<p class="head"> <sup>new</sup>
+		<dfn>inputbox(strCaptionText, strPrompt, strDefaultValue, funcCheckInput, intMinWidth)</dfn>
+	</p>
+	<p>
+	<b>Description:</b><br />
+		&nbsp;&nbsp;Display dialog box for input some text value.<br />
+	<br />
+	<b>Parameters:</b><br />
+		&nbsp;&nbsp;<dfn>strCaptionText</dfn> - the title for the dialog box. The default is <var>"InputBox"</var>.<br />
+		&nbsp;&nbsp;<dfn>strPrompt</dfn> - the message to be displayed above an edit field. The default is <var>"Enter"</var>.<br />
+		&nbsp;&nbsp;<dfn>strDefaultValue</dfn> - text to be displayed in the edit field. Defaults to <var>""</var> (the empty string).<br />
+		&nbsp;&nbsp;<dfn>funcCheckInput</dfn> - the input-checking function. It gets the text from the edit field together with the newly received char and must return either <var>true</var> (to accept this char) or <var>false</var> (to reject it). Default value is <var>nil</var> (it means no restrictions).<br />
+		&nbsp;&nbsp;<dfn>intMinWidth</dfn> - the minimal width of the edit field in average chars. The default is <var>20</var>. <b>Note</b>. The dialog box automatically changes its width to accommodate the widest field of the <var>strPrompt</var> and <var>strDefaultValue</var> ones if value proposed by the intMinWidth is not enough.<br />
+		<br />
+	<b>Return value:</b><br />
+		&nbsp;&nbsp;a string value which is entered by user. <var>nil</var> means that user input was cancelled.<br />
+	</p>
+		<p><b>Example:</b></p>
+		<div class="example">
+		function CheckInput(text)<br />
+		&nbsp;&nbsp;return text:match("^[A-Za-z%p ]*$")<br />
+		end<br />
+		prompt = "Enter some text (in English).\nThis text is also checked\nin the CheckInput function..."<br />
+		defaultText = "...before it will (or won't) displayed"<br />
+		print(shell.inputbox("Some text", prompt, defaultText, "CheckInput"))
+		</div>
+	<p class="author">Author: qVaclav</p>
 </td></tr>
 
 <tr><td>
@@ -237,21 +268,20 @@ end
 		<dfn>getfileattr (strFileName)</dfn>
 	</p>
 	<p>
-	<b>Description:</b><br>
-		&nbsp;&nbsp;Get file attributes.<br>
-	<br>
-	<b>Parameters:</b><br>
-		&nbsp;&nbsp;<dfn>strFileName</dfn> - filename<br>
-		<br>
-	<b>Return value:</b><br>
-		&nbsp;&nbsp;contains file attributes as number<br>
+	<b>Description:</b><br />
+		&nbsp;&nbsp;Get file attributes.<br />
+	<br />
+	<b>Parameters:</b><br />
+		&nbsp;&nbsp;<dfn>strFileName</dfn> - filename<br />
+		<br />
+	<b>Return value:</b><br />
+		&nbsp;&nbsp;contains file attributes as number<br />
 	</p>
-		<p><b>Example:</b>
+		<p><b>Example:</b></p>
 		<div class="example">
-		local attr = shell.getfileattr("c:\\MSDOS.SYS")<br>
+		local attr = shell.getfileattr("c:\\MSDOS.SYS")<br />
 		print(attr)
 		</div>
-		</p>
 	<p class="author">Authors: Midas, Dmitry Maslov</p>
 </td></tr>
 
@@ -260,26 +290,25 @@ end
 		<dfn>setfileattr (strFileName, intFileAttr)</dfn>
 	</p>
 	<p>
-	<b>Description:</b><br>
-		&nbsp;&nbsp;Set file attributes.<br>
-	<br>
-	<b>Parameters:</b><br>
-		&nbsp;&nbsp;<dfn>strFileName</dfn> - filename<br>
-		&nbsp;&nbsp;<dfn>iFileAttr</dfn> - file attributes as number<br>
-		<br>
-	<b>Return value:</b><br>
-		&nbsp;&nbsp;contains <var>true</var> (at successful end) or <var>false</var> (at failure)<br>
+	<b>Description:</b><br />
+		&nbsp;&nbsp;Set file attributes.<br />
+	<br />
+	<b>Parameters:</b><br />
+		&nbsp;&nbsp;<dfn>strFileName</dfn> - filename<br />
+		&nbsp;&nbsp;<dfn>iFileAttr</dfn> - file attributes as number<br />
+		<br />
+	<b>Return value:</b><br />
+		&nbsp;&nbsp;contains <var>true</var> (at successful end) or <var>false</var> (at failure)<br />
 	</p>
-		<p><b>Example:</b>
+		<p><b>Example:</b></p>
 		<div class="example">
-		local result = shell.setfileattr("c:\\MSDOS.SYS", 32)<br>
-		if result == true then<br>
-		&nbsp;&nbsp;print("File attributes are successfully established")<br>
-		else<br>
-		&nbsp;&nbsp;print("error")<br>
+		local result = shell.setfileattr("c:\\MSDOS.SYS", 32)<br />
+		if result == true then<br />
+		&nbsp;&nbsp;print("File attributes are successfully established")<br />
+		else<br />
+		&nbsp;&nbsp;print("error")<br />
 		end
 		</div>
-		</p>
 	<p class="author">Authors: Midas, Dmitry Maslov</p>
 </td></tr>
 
@@ -288,25 +317,24 @@ end
 		<dfn>fileexists (strFileName)</dfn>
 	</p>
 	<p>
-	<b>Description:</b><br>
-		&nbsp;&nbsp;Check exist file or folder with specified name.<br>
-	<br>
-	<b>Parameters:</b><br>
-		&nbsp;&nbsp;<dfn>strFileName</dfn> - filename or folder name<br>
-		<br>
-	<b>Return value:</b><br>
-		&nbsp;&nbsp;contains <var>true</var> if file (folder) exist or <var>false</var> otherwise<br>
+	<b>Description:</b><br />
+		&nbsp;&nbsp;Check exist file or folder with specified name.<br />
+	<br />
+	<b>Parameters:</b><br />
+		&nbsp;&nbsp;<dfn>strFileName</dfn> - filename or folder name<br />
+		<br />
+	<b>Return value:</b><br />
+		&nbsp;&nbsp;contains <var>true</var> if file (folder) exist or <var>false</var> otherwise<br />
 	</p>
-		<p><b>Example:</b>
+		<p><b>Example:</b></p>
 		<div class="example">
-		local result = shell.fileexists("c:\\MSDOS.SYS")<br>
-		if result then<br>
-		&nbsp;&nbsp;print("File exist")<br>
-		else<br>
-		&nbsp;&nbsp;print("File not found")<br>
+		local result = shell.fileexists("c:\\MSDOS.SYS")<br />
+		if result then<br />
+		&nbsp;&nbsp;print("File exist")<br />
+		else<br />
+		&nbsp;&nbsp;print("File not found")<br />
 		end
 		</div>
-		</p>
 	<p class="author">Author: VladVRO</p>
 </td></tr>
 
@@ -315,12 +343,13 @@ end
 		<dfn>exec (strCommand, [strOperation], [boolNoShow], [bWaitOnReturn])</dfn>
 	</p>
 	<p>
-	<b>Description:</b><br>
-		&nbsp;&nbsp;Run external programm or open file with associate application. Allows to execute files, documents and links and to open folders in Windows Explorer.<br>
-	<br>
-	<b>Parameters:</b><br>
-		&nbsp;&nbsp;<dfn>strCommand</dfn> - filename or folder with possible startup parameters. Can contain <nobr>%environments_variable%</nobr><br>
-		&nbsp;&nbsp;<dfn>strOperation</dfn> - executed operation from listed in the table:<br>
+	<b>Description:</b><br />
+		&nbsp;&nbsp;Run external programm or open file with associate application. Allows to execute files, documents and links and to open folders in Windows Explorer.<br />
+	<br />
+	<b>Parameters:</b><br />
+		&nbsp;&nbsp;<dfn>strCommand</dfn> - filename or folder with possible startup parameters. Can contain <span class="nobr">%environments_variable%</span><br />
+		&nbsp;&nbsp;<dfn>strOperation</dfn> - executed operation from listed in the table:<br />
+		</p>
 		<table style="margin-left:8pt;margin-top:3pt">
 		<tr><th>Operation</th><th>Description</th></tr>
 		<tr>
@@ -339,6 +368,7 @@ end
 		<td align="center">explore</td>
 		<td>Opens a folder in Explorer window (with two panels). strCommand - file or folder</td>
 		</tr>
+		<tr>
 		<td align="center">select</td>
 		<td>Opens a folder in Explorer window and chooses the specified folder or a file. strCommand - file or folder</td>
 		</tr>
@@ -346,62 +376,64 @@ end
 		<td align="center">find</td>
 		<td>Showing a dialog box "File Search". strCommand should specify a folder path from which search will begin</td>
 		</tr>
+		<tr>
 		<td align="center">properties</td>
 		<td>Showing file|folder "Properties" window. strCommand - file or folder</td>
 		</tr>
+		<tr>
 		<td align="center">other</td>
 		<td>Other operation available in context menu of a file. For example "Play" operation available for media files.</td>
 		</tr>
 		</table>
-		<br>
-		&nbsp;&nbsp;<dfn>boolNoShow</dfn> - <var>true</var> | <var>false</var> (default) - silent or show a window of the started program<br>
-		&nbsp;&nbsp;<dfn>bWaitOnReturn</dfn> - <var>true</var> | <var>false</var> (default) - boolean value indicating whether the script should wait for the program to finish executing before continuing to the next statement in your script<br>
-	<br>
-	<b>Return value:</b><br>
-		&nbsp;&nbsp;The first contains<br>
-		&nbsp;&nbsp;&nbsp;&nbsp;- at successful end: <var>true</var> or (if function has been started with parameter <var>bWaitOnReturn = true</var>), exit code of process<br>
-		&nbsp;&nbsp;&nbsp;&nbsp;- at failure: <var>false</var><br>
-		&nbsp;&nbsp;The second value contains error/success message of operation;<br>
+	<p>
+		&nbsp;&nbsp;<dfn>boolNoShow</dfn> - <var>true</var> | <var>false</var> (default) - silent or show a window of the started program<br />
+		&nbsp;&nbsp;<dfn>bWaitOnReturn</dfn> - <var>true</var> | <var>false</var> (default) - boolean value indicating whether the script should wait for the program to finish executing before continuing to the next statement in your script
+		<br />
+	<br />
+	<b>Return value:</b><br />
+		&nbsp;&nbsp;The first contains<br />
+		&nbsp;&nbsp;&nbsp;&nbsp;- at successful end: <var>true</var> or (if function has been started with parameter <var>bWaitOnReturn = true</var>), exit code of process<br />
+		&nbsp;&nbsp;&nbsp;&nbsp;- at failure: <var>false</var><br />
+		&nbsp;&nbsp;The second value contains error/success message of operation;<br />
 		&nbsp;&nbsp;or contains the output text of the console application (if execute console applications with parameters <var>boolNoShow = true</var> and <var>bWaitOnReturn = true</var>)
 	</p>
-		<p><b>Example:</b>
+		<p><b>Example:</b></p>
 		<div class="example">
-			-- run application<br>
-			shell.exec("clipbrd.exe")<br>
-			shell.exec("CMD /c IPCONFIG /all > out.txt", nil, true, false)<br>
-			<br>
-			-- show result of console application<br>
-			print( shell.exec("CMD /c DIR", nil, true, true) )<br>
-			print( shell.exec("cscript /nologo %WINDIR%\\system32\\eventquery.vbs /?", nil, true, true) )<br>
-			<br>
-			-- analysis of the exit code of process<br>
-			if shell.exec("ping -n 1 localhost", nil, true, true) == 0 then<br>
-			&nbsp;&nbsp;&nbsp;&nbsp;print("Network works") else print("Network does not work")<br>
-			end<br>
-			<br>
-			-- open folder<br>
-			shell.exec("%TEMP%")<br>
-			shell.exec("%USERPROFILE%", "find")<br>
-			shell.exec("%WINDIR%\\regedit.exe", "explore")<br>
-			shell.exec("%ProgramFiles%", "properties")<br>
-			shell.exec("%ComSpec%", "select")<br>
-			<br>
-			-- open URL link<br>
-			shell.exec("http://scite.ruteam.ru/")<br>
-			<br>
-			-- send e-mail<br>
-			shell.exec("mailto:support@gmail.com")<br>
-			<br>
-			-- open file (with associate application)<br>
-			shell.exec("%WINDIR%\\WindowsUpdate.log")<br>
-			<br>
-			-- print file<br>
-			shell.exec("%WINDIR%\\win.ini", "print")<br>
-			<br>
-			-- edit file<br>
+			-- run application<br />
+			shell.exec("clipbrd.exe")<br />
+			shell.exec("CMD /c IPCONFIG /all > out.txt", nil, true, false)<br />
+			<br />
+			-- show result of console application<br />
+			print( shell.exec("CMD /c DIR", nil, true, true) )<br />
+			print( shell.exec("cscript /nologo %WINDIR%\\system32\\eventquery.vbs /?", nil, true, true) )<br />
+			<br />
+			-- analysis of the exit code of process<br />
+			if shell.exec("ping -n 1 localhost", nil, true, true) == 0 then<br />
+			&nbsp;&nbsp;&nbsp;&nbsp;print("Network works") else print("Network does not work")<br />
+			end<br />
+			<br />
+			-- open folder<br />
+			shell.exec("%TEMP%")<br />
+			shell.exec("%USERPROFILE%", "find")<br />
+			shell.exec("%WINDIR%\\regedit.exe", "explore")<br />
+			shell.exec("%ProgramFiles%", "properties")<br />
+			shell.exec("%ComSpec%", "select")<br />
+			<br />
+			-- open URL link<br />
+			shell.exec("http://scite.ruteam.ru/")<br />
+			<br />
+			-- send e-mail<br />
+			shell.exec("mailto:support@gmail.com")<br />
+			<br />
+			-- open file (with associate application)<br />
+			shell.exec("%WINDIR%\\WindowsUpdate.log")<br />
+			<br />
+			-- print file<br />
+			shell.exec("%WINDIR%\\win.ini", "print")<br />
+			<br />
+			-- edit file<br />
 			shell.exec("%WINDIR%\\winnt.bmp", "edit")
 		</div>
-		</p>
 	<p class="author">Authors: Dmitry Maslov</p>
 </td></tr>
 
@@ -410,15 +442,16 @@ end
 		<dfn>findfiles (strFindMask)</dfn>
 	</p>
 	<p>
-	<b>Description:</b><br>
-		&nbsp;&nbsp;Searches for files and folders with mask and returned result as the table.<br>
-	<br>
-	<b>Parameters:</b><br>
-		&nbsp;&nbsp;<dfn>strFindMask</dfn> - file or folder name, or mask with wildcard symbol, which replaces one or several symbols: (<var>?</var>) can present any single symbol; (<var>*</var>) it is used for present of any symbol or group of symbols.<br>
-		<br>
-	<b>Return value:</b><br>
-		&nbsp;&nbsp;Returns the list of the found files and folders as the numbered table (numbering begins with <var>1</var>), where<br>
-		&nbsp;&nbsp;each element is structure containing:<br>
+	<b>Description:</b><br />
+		&nbsp;&nbsp;Searches for files and folders with mask and returned result as the table.<br />
+	<br />
+	<b>Parameters:</b><br />
+		&nbsp;&nbsp;<dfn>strFindMask</dfn> - file or folder name, or mask with wildcard symbol, which replaces one or several symbols: (<var>?</var>) can present any single symbol; (<var>*</var>) it is used for present of any symbol or group of symbols.<br />
+		<br />
+	<b>Return value:</b><br />
+		&nbsp;&nbsp;Returns the list of the found files and folders as the numbered table (numbering begins with <var>1</var>), where<br />
+		&nbsp;&nbsp;each element is structure containing:
+	</p>
 		<table style="margin-left:8pt;margin-top:3pt;margin-bottom:3pt">
 		<tr><th>Value</th><th>Description</th></tr>
 		<tr>
@@ -438,7 +471,9 @@ end
 			<td>size of a file in bytes</td>
 		</tr>
 		</table>
-		&nbsp;&nbsp;Attributes are submitted as number which can be a combination of the following values:<br>
+	<p>
+		&nbsp;&nbsp;Attributes are submitted as number which can be a combination of the following values:
+	</p>
 		<table style="margin-left:8pt;margin-top:3pt;margin-right:8pt">
 		<tr><th>Value</th><th>Description</th></tr>
 		<tr>
@@ -498,36 +533,35 @@ end
 			<td>This file virtual.</td>
 		</tr>
 		</table>
-		<br>
+	<p>
 		&nbsp;&nbsp;At failure return <var>nil</var>
 	</p>
-		<p><b>Example:</b>
+		<p><b>Example:</b></p>
 		<div class="example">
-		local t = shell.findfiles("C:\\*")<br>
-		if t then<br>
-		&nbsp;&nbsp;table.sort(t,<br>
-		&nbsp;&nbsp;&nbsp;&nbsp;function(v1,v2)<br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if v1.isdirectory ~= v2.isdirectory then<br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return v1.isdirectory<br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else<br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return v1.name:lower() &lt; v2.name:lower()<br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;end<br>
-		&nbsp;&nbsp;&nbsp;&nbsp;end<br>
-		&nbsp;&nbsp;)<br>
-		&nbsp;&nbsp;table.foreachi(t,<br>
-		&nbsp;&nbsp;&nbsp;&nbsp;function(i,v)<br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if v.isdirectory then<br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print(string.format("D%5x %s", v.attributes, v.name))<br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else<br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print(string.format(" %5x %-30s", v.attributes, v.name), v.size)<br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;end<br>
-		&nbsp;&nbsp;&nbsp;&nbsp;end<br>
-		&nbsp;&nbsp;)<br>
-		else<br>
-		&nbsp;&nbsp;print("not found")<br>
-		end<br>
+		local t = shell.findfiles("C:\\*")<br />
+		if t then<br />
+		&nbsp;&nbsp;table.sort(t,<br />
+		&nbsp;&nbsp;&nbsp;&nbsp;function(v1,v2)<br />
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if v1.isdirectory ~= v2.isdirectory then<br />
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return v1.isdirectory<br />
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else<br />
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return v1.name:lower() &lt; v2.name:lower()<br />
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;end<br />
+		&nbsp;&nbsp;&nbsp;&nbsp;end<br />
+		&nbsp;&nbsp;)<br />
+		&nbsp;&nbsp;table.foreachi(t,<br />
+		&nbsp;&nbsp;&nbsp;&nbsp;function(i,v)<br />
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if v.isdirectory then<br />
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print(string.format("D%5x %s", v.attributes, v.name))<br />
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else<br />
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print(string.format(" %5x %-30s", v.attributes, v.name), v.size)<br />
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;end<br />
+		&nbsp;&nbsp;&nbsp;&nbsp;end<br />
+		&nbsp;&nbsp;)<br />
+		else<br />
+		&nbsp;&nbsp;print("not found")<br />
+		end<br />
 		</div>
-		</p>
 	<p class="author">Author: VladVRO</p>
 </td></tr>
 
@@ -535,9 +569,9 @@ end
 
 <h3>Download</h3>
 
-<p><u>Current version Shell</u>: <var>1.2</var><br></p>
+<p><u>Current version Shell</u>: <var>1.2</var><br /></p>
 <p>
-<a href="http://scite-ru.googlecode.com/svn/trunk/pack/tools/LuaLib/shell.dll">shell.dll</a><br>
+<a href="http://scite-ru.googlecode.com/svn/trunk/pack/tools/LuaLib/shell.dll">shell.dll</a><br />
 <a href="http://scite-ru.googlecode.com/svn/trunk/shell/">Source code</a>
 </p>
 
