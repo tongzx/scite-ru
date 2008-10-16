@@ -1,6 +1,6 @@
 --[[
 Macros support for SciTE
-Version 2.2.1
+Version 2.3
 Author: VladVRO
 ---------------------------------------------------
 Description:
@@ -146,15 +146,19 @@ function MacroAddToList(macro, name, pos)
         i = i + 1
         name = "record"..i
       until glb_macros_table[name] == nil or i > 9999
-      if not is_load_from_file and props["macro.fill.name.dialog"] == "1" then
+      if not is_load_from_file and props["macro.fill.name.dialog"] == "1"
+        and shell and shell.inputbox
+      then
         repeat
-          props[1] = name
-          if scite.ShowParametersDialog("Имя макроса (a-zA-Z0-9_-+.())") then
-            name = str_to_macro_name(props[1])
+          local input = shell.inputbox(scite.GetTranslation("Macro Name"),
+            scite.GetTranslation("Enter macro name").." \n("..
+            scite.GetTranslation("usable chars").." A...z0-9_-+.())", name)
+          if input then
+            name = str_to_macro_name(input)
           else
             return
           end
-        until name == props[1]
+        until name == input
       end
     end
     if not glb_macros_table[name] or table.getn(glb_macros_name_table) == 0 then
