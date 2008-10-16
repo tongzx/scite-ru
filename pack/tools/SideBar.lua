@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo
-version 1.5.1
+version 1.6
 ------------------------------------------------------
   Needed gui.dll by Steve Donovan
   Connection:
@@ -42,6 +42,7 @@ list_favorites:add_column("Favorites", 600)
 tab0:client(list_favorites)
 
 tab0:context_menu {
+	'FileMan: Select Dir|FileMan_SelectDir',
 	'FileMan: Show All|FileMan_MaskAllFiles',
 	'FileMan: Only current ext|FileMan_MaskOnlyCurrentExt',
 	'', -- separator
@@ -149,6 +150,18 @@ local function FileMan_GetSelectedItem()
 	return dir_or_file, attr
 end
 
+function FileMan_SelectDir()
+	local newPath = gui.select_dir_dlg('Select new directory')
+	if newPath ~= '' then
+		if newPath:match('[\\/]$') then
+			current_path = newPath
+		else
+			current_path = newPath..'\\'
+		end
+		FileMan_ListFILL()
+	end
+end
+
 function FileMan_MaskAllFiles()
 	file_mask = '*.*'
 	FileMan_ListFILL()
@@ -182,11 +195,11 @@ end
 
 function FileMan_FileRename()
 	function CheckFilename(char)
-		return not char:match('[\/:|*?"<>]')
+		return not char:match('[\\/:|*?"<>]')
 	end
 	local filename = FileMan_GetSelectedItem()
 	if filename == '' or filename == '..' then return end
-	local filename_new = shell.inputbox("Rename", "Enter new filename:", filename, "CheckFilename")
+	local filename_new = shell.inputbox("Rename", "Enter new file name:", filename, "CheckFilename")
 	if filename_new == nil then return end
 	if filename_new.len ~= 0 and filename_new ~= filename then
 		os.rename(current_path..filename, current_path..filename_new)
@@ -198,8 +211,8 @@ function FileMan_FileDelete()
 	local filename, attr = FileMan_GetSelectedItem()
 	if filename == '' then return end
 	if attr == 'd' then return end
-	if shell.msgbox("Are you sure DELETE file?\n"..filename, "DELETE", 4+256) == 6 then
-	-- if gui.message("Are you sure DELETE file?\n"..filename, "query") then
+	if shell.msgbox("Are you sure you want to DELETE this file?\n"..filename, "DELETE", 4+256) == 6 then
+	-- if gui.message("Are you sure you want to DELETE this file?\n"..filename, "query") then
 		os.remove(current_path..filename)
 		FileMan_ListFILL()
 	end
