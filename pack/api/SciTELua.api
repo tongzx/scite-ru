@@ -152,12 +152,14 @@ time ([table]) returns current time (usually seconds) or time as represented by 
 tmpname () returns a string with a filename for a temporary file (dangerous! tmpfile is better)
 
 shell.msgbox
+shell.inputbox
 shell.getfileattr
 shell.setfileattr
 shell.exec
 shell.findfiles
 shell.fileexists
 msgbox (<Text>, <Title>, <Options>) - Message Box. Return select button  /extern lib "shell"/
+inputbox (<Title>, <Prompt>, <Default>, <funcCheck>, <minWidth>) - Input Box. Return input string  /extern lib "shell"/
 getfileattr (<FileName>) - return File Attribute as number  /extern lib "shell"/
 setfileattr (<FileName>, <FileAttr>) - Set File Attribute  /extern lib "shell"/
 exec (strCommand, [strOperation], [boolNoShow], [bWaitOnReturn])  /extern lib "shell"/

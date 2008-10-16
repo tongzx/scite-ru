@@ -1,6 +1,6 @@
 --[[--------------------------------------------------
  Rename.lua
- Version: 2.0
+ Version: 2.0.1
  Author: mozersЩ (иде€ codewarlock1101)
  ------------------------------------------------
  ѕереименовывает текущий файл
@@ -11,11 +11,11 @@
 --]]--------------------------------------------------
 
 function CheckFilename(char)
-	return not char:match('[\/:|*?"<>]')
+	return not char:match('[\\/:|*?"<>]')
 end
 
 local filename = props["FileNameExt"]
-local filename_new = shell.inputbox("Rename", "Enter new filename:", filename, "CheckFilename")
+local filename_new = shell.inputbox("Rename", "Enter new file name:", filename, "CheckFilename")
 if filename_new == nil then return end
 if filename_new.len ~= 0 and filename_new ~= filename then
 	local file_dir = props["FileDir"]
