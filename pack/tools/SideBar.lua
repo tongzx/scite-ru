@@ -533,6 +533,7 @@ end
 
 local function Bookmark_Add(line_number)
 	local line_text = editor:GetLine(line_number):gsub('^%s+', ''):gsub('%s+', ' ')
+	if line_text == '' then line_text = 'Blank Line' end
 	local buffer_number = GetBufferNumber()
 	table.insert (table_bookmarks, {props['FilePath'], buffer_number, line_number, line_text})
 end
