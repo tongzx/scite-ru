@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo
-version 1.6
+version 1.7
 ------------------------------------------------------
   Needed gui.dll by Steve Donovan
   Connection:
@@ -416,8 +416,8 @@ local Lang2RegEx = {
 					"[\n:][%s%u]*()FUNCTION +[%w_]-()%b()",
 					"[\n:][%s%u]*()PROPERTY +[LGS]ET +[%w_]-()%b()"},
 	['CSS']={"()[%w.#-_]+()%s-%b{}"},
-	['Pascal']={"\n%s*()PROCEDURE +[%w_]-()%b()",
-				"\n%s*()FUNCTION +[%w_]-()%b()"},
+	['Pascal']={"\n%s*()PROCEDURE +[%w_.]-()%b()",
+				"\n%s*()FUNCTION +[%w_.]-()%b()"},
 	['Python']={"\n%s*()DEF +[%w_]-()%b():",
 				"\n%s*()CLASS +[%w_]-()%b():"},
 	['Lua']={"\n[%s%u]*FUNCTION +()[%w_]-()%b()"},
@@ -545,8 +545,12 @@ local function GetBufferNumber()
 end
 
 local function Bookmark_Add(line_number)
-	local line_text = editor:GetLine(line_number):gsub('^%s+', ''):gsub('%s+', ' ')
-	if line_text == '' then line_text = 'Blank Line' end
+	local line_text = editor:GetLine(line_number)
+	if line_text == nil then line_text = '' end
+	line_text = line_text:gsub('^%s+', ''):gsub('%s+', ' ')
+	if #line_text == 0 then
+		line_text = ' - empty line - ('..(line_number+1)..')'
+	end
 	local buffer_number = GetBufferNumber()
 	table.insert (table_bookmarks, {props['FilePath'], buffer_number, line_number, line_text})
 end
@@ -584,12 +588,25 @@ local function Bookmarks_RefreshTable()
 	Bookmarks_ListFILL()
 end
 
+local function ShowCompactedLine(line_num)
+	local function GetFoldLine(ln)
+		while editor.FoldExpanded[ln] do ln = ln-1 end
+		return ln
+	end
+	while not editor.LineVisible[line_num] do
+		local x = GetFoldLine(line_num)
+		editor:ToggleFold(x)
+		line_num = x - 1
+	end
+end
+
 local function Bookmarks_GotoLine()
 	local sel_item = list_bookmarks:get_selected_item()
 	if sel_item == -1 then return end
 	local pos = list_bookmarks:get_item_data(sel_item)
 	if pos then
 		scite.Open(pos[1])
+		ShowCompactedLine(pos[2])
 		editor:GotoLine(pos[2])
 		editor.Focus = true
 	end
@@ -637,15 +654,11 @@ end
 local function Abbreviations_InsertExpansion()
 	local sel_item = list_abbrev:get_selected_item()
 	if sel_item == -1 then return end
-	local abbrev = list_abbrev:get_item_text(sel_item)
-	local ss, se = editor.SelectionStart, editor.SelectionEnd
-	local len = abbrev:len()
-	editor:BeginUndoAction()
-	editor:InsertText(ss, abbrev)
-	editor:SetSel(se+len, ss+len)
-	scite.MenuCommand(IDM_ABBREV)
-	editor:EndUndoAction()
+	local expansion = list_abbrev:get_item_data(sel_item)
+	expansion = expansion:gsub('\\r','\r'):gsub('\\n','\n'):gsub('\\t','\t')
+	scite.InsertAbbreviation(expansion)
 	editor.Focus = true
+	editor:CallTipCancel()
 end
 
 local function Abbreviations_ShowExpansion()
@@ -683,7 +696,7 @@ local function OnSwitch()
 		path = path:gsub('\\$','')..'\\'
 		if path ~= current_path then
 			current_path = path
-				FileMan_ListFILL()
+			FileMan_ListFILL()
 		end
 	elseif tab_index == 1 then
 		Functions_GetNames() Functions_ListFILL()
