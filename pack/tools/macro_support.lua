@@ -149,16 +149,16 @@ function MacroAddToList(macro, name, pos)
       if not is_load_from_file and props["macro.fill.name.dialog"] == "1"
         and shell and shell.inputbox
       then
-        repeat
-          local input = shell.inputbox(scite.GetTranslation("Macro Name"),
-            scite.GetTranslation("Enter macro name").." \n("..
-            scite.GetTranslation("usable chars").." A...z0-9_-+.())", name)
-          if input then
-            name = str_to_macro_name(input)
-          else
-            return
-          end
-        until name == input
+        local input = shell.inputbox{caption = scite.GetTranslation("Macro Name"),
+          prompt = scite.GetTranslation("Enter macro name").." \n("..
+          scite.GetTranslation("usable chars").." A...z0-9_-+.())", value = name,
+          on_char  = function(char, input) return char:match('[%w_+.() ]') end,
+          on_enter = function(input) return str_to_macro_name(input) end}
+        if input then
+          name = str_to_macro_name(input)
+        else
+          return
+        end
       end
     end
     if not glb_macros_table[name] or table.getn(glb_macros_name_table) == 0 then

@@ -132,7 +132,7 @@ class InputBox {
 
 public:
 	InputBox(const char *Caption, const char *Prompt, const char *Value,
-			int CharMinCount, const char *onchar, lua_State* L);
+		int CharMinCount, int OnChar, int OnEnter, lua_State* L);
 	~InputBox();
 	int  ShowModal();
 	const char *Text() const;
@@ -161,7 +161,6 @@ private:
 	char editText[MAX_MIDDLE_STRING];  // введённый пользователем текст
 	char caption[MAX_SHORT_STRING];    // заголовок окна диалога
 	char prompt[MAX_LONG_STRING];      // многострочная надпись над полем ввода
-	char onChar[MAX_SHORT_STRING];
 
 	int marginX;       // гор. отступ от края окна
 	int marginY;       // верт. отступ от края окна
@@ -173,6 +172,8 @@ private:
 	HICON smallIcon;
 	HICON bigIcon;
 	lua_State *luaState;
+	int onChar;
+	int onEnter;
 };
 
 //------------------------------------------------------------------------------
@@ -430,21 +431,63 @@ void InputBox::Layout(HWND hdlg)
 }
 
 //------------------------------------------------------------------------------
-// Передаёт пользовательской функции Lua вводимый текст (полностью)
+// Выводит текст на консоль SciTE.
+// msg == NULL означает, что текст лежит на вершине стека.
 //------------------------------------------------------------------------------
-bool IsInputValid(lua_State * L, const char *str, const char *onChar)
+void OutputMessage(lua_State *L, const char *msg=0)
 {
-	if (*onChar) {
-		int num = lua_gettop(L);
-		lua_getfield(L, LUA_GLOBALSINDEX, onChar);
+	char *txt;
+	if (msg) {
+		txt = new char[lstrlen(msg) + 2];
+		lstrcpy(txt, msg);
+	} else {
+		if (!lua_isstring(L, -1))
+			return;
+		txt = new char[lstrlen(lua_tostring(L, -1)) + 2];
+		lstrcpy(txt, lua_tostring(L, -1));
+		lua_pop(L, 1);
+	}
+	lstrcat(txt, "\n");
+
+	lua_getglobal(L, "output");
+	lua_getfield(L, -1, "AddText");
+	lua_insert(L, -2);
+	lua_pushstring(L, txt);
+	delete[] txt;
+	lua_pcall(L, 2, 0, 0);
+}
+
+//------------------------------------------------------------------------------
+// Передаёт пользовательской функции on_char вводимый текст для проверки
+//------------------------------------------------------------------------------
+bool IsInputValid(lua_State *L, char ch, const char *str, int checker)
+{
+	if (checker) {
+		lua_rawgeti(L, LUA_REGISTRYINDEX, checker);
+		lua_pushlstring(L, &ch, 1);
 		lua_pushstring(L, str);
-		lua_pcall(L, 1, 1, 0);
-		bool res = lua_toboolean(L, -1) != 0;
-		num = lua_gettop(L) - num;
-		if (num > 0) {
-			lua_pop(L, num);
+		if (lua_pcall(L, 2, 1, 0)) {
+			OutputMessage(L);
+			lua_pushboolean(L, 1);
 		}
-		return res;
+		return lua_toboolean(L, -1) != 0;
+	}
+	return true;
+}
+
+//------------------------------------------------------------------------------
+// Передаёт пользовательской функции on_enter текст для окончательной проверки
+//------------------------------------------------------------------------------
+bool IsInputValid(lua_State *L, const char *str, int checker)
+{
+	if (checker) {
+		lua_rawgeti(L, LUA_REGISTRYINDEX, checker);
+		lua_pushstring(L, str);
+		if (lua_pcall(L, 1, 1, 0)) {
+			OutputMessage(L);
+			lua_pushboolean(L, 1);
+		}
+		return lua_toboolean(L, -1) != 0;
 	}
 	return true;
 }
@@ -482,7 +525,7 @@ BOOL CALLBACK InputBox::EditHandler(HWND hctrl, UINT msg, WPARAM wParam, LPARAM 
 				str[bSel+1] = '\0';
 				lstrcat(str, tail);
 
-				if (!IsInputValid(self->luaState, str, self->onChar)) {
+				if (!IsInputValid(self->luaState, ch, str, self->onChar)) {
 					return 0;
 				}
 			}
@@ -551,6 +594,10 @@ BOOL CALLBACK InputBox::DlgHandler(HWND hdlg, UINT msg, WPARAM wParam, LPARAM lP
 					case IDOK:
 						if (!GetDlgItemText(hdlg, IDC_EDITTEXT, self->editText, MAX_MIDDLE_STRING)) {
 							self->editText[0] = '\0';
+						}
+
+						if (!IsInputValid(self->luaState, self->editText, self->onEnter)) {
+							return TRUE;
 						}
 					case IDCANCEL:
 						EndDialog(hdlg, wParam);
@@ -667,7 +714,7 @@ BOOL CALLBACK InputBox::DlgHandler(HWND hdlg, UINT msg, WPARAM wParam, LPARAM lP
 
 //------------------------------------------------------------------------------
 InputBox::InputBox(const char *Caption, const char *Prompt, const char *Value,
-	int CharMinCount, const char *onchar, lua_State* L)
+	int CharMinCount, int OnChar, int OnEnter, lua_State* L)
 	:
 	marginX      (10),
 	marginY      (10),
@@ -676,12 +723,13 @@ InputBox::InputBox(const char *Caption, const char *Prompt, const char *Value,
 	stcDy        (0),
 	charMinCount (CharMinCount),
 	luaState     (L),
-	minWidth     (0)
+	minWidth     (0),
+	onChar       (OnChar),
+	onEnter      (OnEnter)
 {
 	lstrcpyn(editText, Value, sizeof(editText));
 	lstrcpyn(caption, Caption, sizeof(caption));
 	lstrcpyn(prompt, Prompt, sizeof(prompt));
-	lstrcpyn(onChar, onchar, sizeof(onChar));
 
 	smallIcon = static_cast<HICON>(
 		LoadImage(GetModuleHandle(0), "SCITE", IMAGE_ICON,
@@ -697,6 +745,10 @@ InputBox::~InputBox()
 {
 	DestroyIcon(smallIcon);
 	DestroyIcon(bigIcon);
+	if (onChar)
+		luaL_unref(luaState, LUA_REGISTRYINDEX, onChar);
+	if (onEnter)
+		luaL_unref(luaState, LUA_REGISTRYINDEX, onEnter);
 }
 
 //------------------------------------------------------------------------------
@@ -719,48 +771,170 @@ int InputBox::ShowModal()
 }
 
 //------------------------------------------------------------------------------
-// Параметры:
-//   caption: текст заголовка окна
-//   prompt:  надпись над полем ввода (строки должны отделяться '\r' или '\n')
-//   value:   текст, помещаемый в поле ввода
-//   onchar:  пользовательская функция-валидатор вводимой строки; получает
-//            вводимую строку в том виде, в каком она будет ПОСЛЕ принятия
-//            только что введённого символа (этого символа ещё нет ни на экране,
-//            ни в строке ввода);
-//            должна вернуть true, если изменения принимаются, иначе - false
-//   width:   ширина поля ввода в условных (усреднённых символах)
-// Результат:
-//   введённая строка, если нажата Ok, или nil, если - Cancel
-//
-// Значения по умолчанию:
-//   caption = "InputBox"
-//   prompt  = "Enter"
-//   value   = ""
-//   onchar  =  nil
-//   width   =  20
-//
+// "Костыль", приделанный во время отладки. 
+// Пока оставим: похоже, пришёлся впору. ;)
+//------------------------------------------------------------------------------
+class StackBalancer {
+	StackBalancer();
+	StackBalancer(const StackBalancer&);
+	lua_State * L;
+	int n;
+	bool purged;
+public:
+	StackBalancer(lua_State *ls)
+		: L(ls), n(lua_gettop(ls)), purged(false)
+		{ }
+	~StackBalancer()
+		{ Purge(); }
+	void Purge()
+	{
+		int dn = lua_gettop(L) - n;
+		if (!purged && dn > 0) {
+			lua_pop(L, dn);
+			n = lua_gettop(L);
+			purged = true;
+		}
+	}
+};
+
+// Helpers для извлечения элементов таблицы
+
+class LuaTable {
+	lua_State *L;
+	int table;
+private:
+	LuaTable();
+	LuaTable(const LuaTable&);
+	void getKey(const char *key)
+	{
+		lua_checkstack(L, 2);
+		lua_pushstring(L, key);
+		lua_rawget(L, table);
+	}
+public:
+	LuaTable(lua_State *ls, int tbl)
+		: L(ls), table(tbl)
+	{ }
+	// Строка помещается на вершину стека и возвращается указатель на неё
+	const char *GetString(const char *key, const char *defaultValue="")
+	{
+		getKey(key);
+		const char *res = lua_tostring(L, -1);
+			
+		if (res) return res;
+		else     return defaultValue;
+	}
+	// Возвращается ссылка на функцию
+	int GetFunction(const char *key)
+	{
+		getKey(key);
+		if (lua_isfunction(L, -1)) {
+			return luaL_ref(L, LUA_REGISTRYINDEX);
+		}
+		return 0;
+	}
+	// Возвращается целочисленное значение
+	int GetInt(const char *key, int defaultValue)
+	{
+		StackBalancer sb(L);
+		getKey(key);
+		if (lua_isnumber(L, -1))
+			return luaL_checkint(L, -1);
+		return defaultValue;
+	}
+};
+
+/*
+--------------------------------------------------------------------------------
+  Функция
+     shell.showinputbox
+  Параметры
+     caption
+         Текст заголовка окна.
+         Значение по умолчанию: "InputBox".
+     prompt
+         Надпись над полем ввода (строки должны разделяться '\r' или '\n').
+         Значение по умолчанию: "Enter:".
+     value
+         Текст, помещаемый в поле ввода.
+         Значение по умолчанию: "" (пустая строка).
+     on_char
+         Пользовательская функция-контролёр ВВОДИМОЙ строки.
+         Вызывается каждый раз, когда поступает новый символ
+         (однако, НЕ вызывается при нажатии на Backspace, удалениях и т.п).
+         Получает только что введённый символ (этого символа ещё нет ни
+            на экране, ни в строке ввода) и весь текст из строки ввода
+             в том виде, в каком он будет ПОСЛЕ принятия этого символа.
+         Должна вернуть true, если изменения принимаются, иначе - false.
+         Значение по умолчанию: nil (никаких ограничений на ввод).
+     on_enter
+         Пользовательская функция-контролёр ВВЕДЁННОЙ строки.
+         Вступает в действие после нажатия на Enter или Ok.
+         Не вызывается при отмене ввода.
+         Получает введённую пользователем строку.
+         Должна вернуть true, если строка принимается, иначе - false.
+         В последнем случае процесс ввода продолжается дальше.
+         Значение по умолчанию: nil (контроль отсутствует).
+     width
+         Ширина поля ввода в условных (усреднённых символах).
+         Значение по умолчанию: 20.
+ Результат
+     Введённая строка или nil, если ввод был отменён.
+
+ ВНИМАНИЕ!
+     Все параметры -- именованные и передаются как элементы таблицы.
+     Примеры.
+	     -- Все аргументы принимают значения по умолчанию
+         shell.inputbox{}
+	     -- Аналогично предыдущему, но со своей надписью
+         shell.inputbox{prompt = "Введите число:"}
+	     -- С собственными обработчиками -- ввода и результата
+         shell.inputbox{
+           on_enter = function(input)
+             if input:match('^%s*0+%s*$') then
+               shell.msgbox("0 -- не натуральное число", "Ошибка", 0x40000)
+               return false
+             end
+             return true
+           end,
+           prompt = 'Введите натуральное число',
+           on_char = function(char, input)
+             return char:match('[%d ]')
+           end}
+--------------------------------------------------------------------------------
+*/
+
 extern int showinputbox(lua_State* L)
 {
-	int num = lua_gettop(L);
-	const char *caption = luaL_optstring(L, 1, "InputBox");
-	const char *prompt = num > 1? luaL_optstring(L, 2, "Enter") : "Enter";
-	const char *value  = num > 2? luaL_optstring(L, 3, "") : "";
-	const char *onchar = num > 3? luaL_optstring(L, 4, "") : "";
-	int         width  = num > 4? luaL_optint(L, 5, 20) : 20;
+	if (lua_istable(L, lua_gettop(L))) {
 
-	const char *safeValue = "";
-	if (!IsInputValid(L, value, onchar))
-		value = safeValue;
+		StackBalancer sb(L);
+		LuaTable lt(L, lua_gettop(L));
 
-	InputBox dlg(caption, prompt, value, width, onchar, L);
-	bool res = dlg.ShowModal() == IDOK;
-	lua_pushboolean(L, res);
+		int on_char  = lt.GetFunction("on_char");
+		int on_enter = lt.GetFunction("on_enter");
+		int width    = lt.GetInt("width", 20);
 
-	if (res)
-		lua_pushstring(L, dlg.Text());
-	else
+		const char *caption = lt.GetString("caption", "InputBox");
+		const char *prompt  = lt.GetString("prompt", "Enter");
+		const char *value   = lt.GetString("value");
+
+		const char *safeValue = "";
+		if (!IsInputValid(L, value, on_char))
+			value = safeValue;
+
+		InputBox dlg(caption, prompt, value, width, on_char, on_enter, L);
+		bool res = dlg.ShowModal() == IDOK;
+
+		sb.Purge();
+
+		if (res)
+			lua_pushstring(L, dlg.Text());
+		else
+			lua_pushnil(L);
+	} else {
 		lua_pushnil(L);
-
+	}
 	return 1;
 }
 

@@ -18,8 +18,10 @@ local function MakeAbbrev()
         local x1,x2=string.find(sel_text,"%w+%S")
         if x1 and x2 then
             local key=string.sub(sel_text,x1,x2)
-            --key = shell.inputbox("Abbreviation", "Enter abbreviation for code:", key, "")
-            key = shell.inputbox("Аббревиатура", "Введите аббревиатуру кода:", key, "")
+            --key = shell.inputbox{caption = "Abbreviation", prompt = "Enter abbreviation for code:",
+            --    value = key, on_enter = function(input) return not input:match('^%s*$') end}
+            key = shell.inputbox{caption = "Аббревиатура", prompt = "Введите аббревиатуру кода:",
+                value = key, on_enter = function(input) return not input:match('^%s*$') end}
             if key == nil then return end
             sel_text=sel_text:gsub("\\","\\\\"):gsub("\n","\\n"):gsub("\r","\\r"):gsub("\t","\\t")
             local file=props["AbbrevPath"]

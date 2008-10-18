@@ -10,7 +10,7 @@
     command.mode.31.*=subsystem:lua,savebefore:no
 --]]--------------------------------------------------
 
-function CheckFilename(char)
+local function CheckFilename(char, str)
 	return not char:match('[\\/:|*?"<>]')
 end
 
@@ -20,7 +20,9 @@ local title = scite.GetTranslation("File Rename")
 local msg1 = scite.GetTranslation("Please enter new file name:")
 local msg2 = scite.GetTranslation("The file with such name already exists!\nPlease enter different file name.")
 repeat
-	filename_new = shell.inputbox(title, msg1, filename_new, "CheckFilename")if filename_new == nil then return end
+	filename_new = shell.inputbox{caption = title, prompt = msg1, value = filename_new,
+		on_char = CheckFilename}
+	if filename_new == nil then return end
 	if #filename_new == 0 then return end
 	if filename_new == filename then return end
 	if not shell.fileexists(filename_new) then break end

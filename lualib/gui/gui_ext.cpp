@@ -225,12 +225,13 @@ void dispatch_ref(lua_State* L,int idx, int ival)
 		// error message if invocation fails.
 		
 		if (lua_pcall(L,1,0,0)) {
-			const char *errmsg = luaL_checkstring(L, -1);
+			const char *errmsg = lua_tostring(L, -1);
 			if (errmsg) {
-				get_parent()->message(errmsg,2);
+				get_parent()->message(errmsg, 2);
 			} else {
-				get_parent()->message("Unknown error occured in gui/ngui extension",2);
+				get_parent()->message("Unknown error occured in gui extension",2);
 			}
+			lua_pop(L, -1);
 		}
 	}
 }
