@@ -319,7 +319,7 @@ public:
 	SString overrideExtension;	///< User has chosen to use a particular language
 	FoldState foldState;
 	Buffer() :
-			RecentFile(), doc(0), isDirty(false), useMonoFont(false),
+			RecentFile(), doc(0), isDirty(false), useMonoFont(false), ROMarker(0),  //!-add-[ReadOnlyTabMarker]
 			unicodeMode(uni8Bit), fileModTime(0), fileModLastAsk(0), findMarks(fmNone), foldState() {}
 
 	void Init() {

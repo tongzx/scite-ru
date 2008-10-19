@@ -7,6 +7,7 @@
 
 //! #include <time.h> //!-change-[close_on_dbl_clk]
 
+#include <locale.h>
 #include "SciTEWin.h"
 
 #ifndef NO_EXTENSIONS
@@ -2180,6 +2181,7 @@ int SciTEWin::EventLoop() {
 }
 
 int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpszCmdLine, int) {
+	setlocale(LC_ALL, ".ACP");
 
 #ifdef NO_EXTENSIONS
 	Extension *extender = 0;
