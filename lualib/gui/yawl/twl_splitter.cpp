@@ -31,6 +31,7 @@ void TSplitterB::mouse_down(Point& pt)
 {
   Alignment a = align();
   m_start = pt;
+  cursor(m_cursor);
 
   // allocate ourselves a DC to draw the line, and draw it. 
   update_size(pt.x,pt.y);

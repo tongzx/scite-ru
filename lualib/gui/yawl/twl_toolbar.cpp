@@ -487,7 +487,7 @@ int TListViewB::handle_notify(void *p)
  LPNMHDR np  = (LPNMHDR)p;
  int id = selected_id();
  switch(np->code) {
- case NM_CLICK:
+ case LVN_ITEMCHANGED:
 	handle_select(id);
 	return 1;
  case NM_DBLCLK:
