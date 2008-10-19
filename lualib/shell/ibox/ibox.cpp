@@ -132,7 +132,7 @@ class InputBox {
 
 public:
 	InputBox(const char *Caption, const char *Prompt, const char *Value,
-		int CharMinCount, int OnChar, int OnEnter, lua_State* L);
+		int CharMinCount, int OnChar, lua_State* L);
 	~InputBox();
 	int  ShowModal();
 	const char *Text() const;
@@ -173,7 +173,6 @@ private:
 	HICON bigIcon;
 	lua_State *luaState;
 	int onChar;
-	int onEnter;
 };
 
 //------------------------------------------------------------------------------
@@ -460,30 +459,17 @@ void OutputMessage(lua_State *L, const char *msg=0)
 //------------------------------------------------------------------------------
 // Передаёт пользовательской функции on_char вводимый текст для проверки
 //------------------------------------------------------------------------------
-bool IsInputValid(lua_State *L, char ch, const char *str, int checker)
+bool IsInputValid(lua_State *L, const char *str, char ch, int checker)
 {
+	int lua_gettop();
 	if (checker) {
 		lua_rawgeti(L, LUA_REGISTRYINDEX, checker);
-		lua_pushlstring(L, &ch, 1);
 		lua_pushstring(L, str);
+		if (ch)
+			lua_pushlstring(L, &ch, 1);
+		else
+			lua_pushnil(L);
 		if (lua_pcall(L, 2, 1, 0)) {
-			OutputMessage(L);
-			lua_pushboolean(L, 1);
-		}
-		return lua_toboolean(L, -1) != 0;
-	}
-	return true;
-}
-
-//------------------------------------------------------------------------------
-// Передаёт пользовательской функции on_enter текст для окончательной проверки
-//------------------------------------------------------------------------------
-bool IsInputValid(lua_State *L, const char *str, int checker)
-{
-	if (checker) {
-		lua_rawgeti(L, LUA_REGISTRYINDEX, checker);
-		lua_pushstring(L, str);
-		if (lua_pcall(L, 1, 1, 0)) {
 			OutputMessage(L);
 			lua_pushboolean(L, 1);
 		}
@@ -525,7 +511,7 @@ BOOL CALLBACK InputBox::EditHandler(HWND hctrl, UINT msg, WPARAM wParam, LPARAM 
 				str[bSel+1] = '\0';
 				lstrcat(str, tail);
 
-				if (!IsInputValid(self->luaState, ch, str, self->onChar)) {
+				if (!IsInputValid(self->luaState, str, ch, self->onChar)) {
 					return 0;
 				}
 			}
@@ -596,7 +582,7 @@ BOOL CALLBACK InputBox::DlgHandler(HWND hdlg, UINT msg, WPARAM wParam, LPARAM lP
 							self->editText[0] = '\0';
 						}
 
-						if (!IsInputValid(self->luaState, self->editText, self->onEnter)) {
+						if (!IsInputValid(self->luaState, self->editText, '\0', self->onChar)) {
 							return TRUE;
 						}
 					case IDCANCEL:
@@ -714,7 +700,7 @@ BOOL CALLBACK InputBox::DlgHandler(HWND hdlg, UINT msg, WPARAM wParam, LPARAM lP
 
 //------------------------------------------------------------------------------
 InputBox::InputBox(const char *Caption, const char *Prompt, const char *Value,
-	int CharMinCount, int OnChar, int OnEnter, lua_State* L)
+	int CharMinCount, int OnChar, lua_State* L)
 	:
 	marginX      (10),
 	marginY      (10),
@@ -724,8 +710,7 @@ InputBox::InputBox(const char *Caption, const char *Prompt, const char *Value,
 	charMinCount (CharMinCount),
 	luaState     (L),
 	minWidth     (0),
-	onChar       (OnChar),
-	onEnter      (OnEnter)
+	onChar       (OnChar)
 {
 	lstrcpyn(editText, Value, sizeof(editText));
 	lstrcpyn(caption, Caption, sizeof(caption));
@@ -747,8 +732,6 @@ InputBox::~InputBox()
 	DestroyIcon(bigIcon);
 	if (onChar)
 		luaL_unref(luaState, LUA_REGISTRYINDEX, onChar);
-	if (onEnter)
-		luaL_unref(luaState, LUA_REGISTRYINDEX, onEnter);
 }
 
 //------------------------------------------------------------------------------
@@ -770,171 +753,57 @@ int InputBox::ShowModal()
 	return result;
 }
 
-//------------------------------------------------------------------------------
-// "Костыль", приделанный во время отладки. 
-// Пока оставим: похоже, пришёлся впору. ;)
-//------------------------------------------------------------------------------
-class StackBalancer {
-	StackBalancer();
-	StackBalancer(const StackBalancer&);
-	lua_State * L;
-	int n;
-	bool purged;
-public:
-	StackBalancer(lua_State *ls)
-		: L(ls), n(lua_gettop(ls)), purged(false)
-		{ }
-	~StackBalancer()
-		{ Purge(); }
-	void Purge()
-	{
-		int dn = lua_gettop(L) - n;
-		if (!purged && dn > 0) {
-			lua_pop(L, dn);
-			n = lua_gettop(L);
-			purged = true;
-		}
-	}
-};
-
-// Helpers для извлечения элементов таблицы
-
-class LuaTable {
-	lua_State *L;
-	int table;
-private:
-	LuaTable();
-	LuaTable(const LuaTable&);
-	void getKey(const char *key)
-	{
-		lua_checkstack(L, 2);
-		lua_pushstring(L, key);
-		lua_rawget(L, table);
-	}
-public:
-	LuaTable(lua_State *ls, int tbl)
-		: L(ls), table(tbl)
-	{ }
-	// Строка помещается на вершину стека и возвращается указатель на неё
-	const char *GetString(const char *key, const char *defaultValue="")
-	{
-		getKey(key);
-		const char *res = lua_tostring(L, -1);
-			
-		if (res) return res;
-		else     return defaultValue;
-	}
-	// Возвращается ссылка на функцию
-	int GetFunction(const char *key)
-	{
-		getKey(key);
-		if (lua_isfunction(L, -1)) {
-			return luaL_ref(L, LUA_REGISTRYINDEX);
-		}
-		return 0;
-	}
-	// Возвращается целочисленное значение
-	int GetInt(const char *key, int defaultValue)
-	{
-		StackBalancer sb(L);
-		getKey(key);
-		if (lua_isnumber(L, -1))
-			return luaL_checkint(L, -1);
-		return defaultValue;
-	}
-};
-
-/*
---------------------------------------------------------------------------------
-  Функция
-     shell.showinputbox
-  Параметры
-     caption
-         Текст заголовка окна.
-         Значение по умолчанию: "InputBox".
-     prompt
-         Надпись над полем ввода (строки должны разделяться '\r' или '\n').
-         Значение по умолчанию: "Enter:".
-     value
-         Текст, помещаемый в поле ввода.
-         Значение по умолчанию: "" (пустая строка).
-     on_char
-         Пользовательская функция-контролёр ВВОДИМОЙ строки.
-         Вызывается каждый раз, когда поступает новый символ
-         (однако, НЕ вызывается при нажатии на Backspace, удалениях и т.п).
-         Получает только что введённый символ (этого символа ещё нет ни
-            на экране, ни в строке ввода) и весь текст из строки ввода
-             в том виде, в каком он будет ПОСЛЕ принятия этого символа.
-         Должна вернуть true, если изменения принимаются, иначе - false.
-         Значение по умолчанию: nil (никаких ограничений на ввод).
-     on_enter
-         Пользовательская функция-контролёр ВВЕДЁННОЙ строки.
-         Вступает в действие после нажатия на Enter или Ok.
-         Не вызывается при отмене ввода.
-         Получает введённую пользователем строку.
-         Должна вернуть true, если строка принимается, иначе - false.
-         В последнем случае процесс ввода продолжается дальше.
-         Значение по умолчанию: nil (контроль отсутствует).
-     width
-         Ширина поля ввода в условных (усреднённых символах).
-         Значение по умолчанию: 20.
- Результат
-     Введённая строка или nil, если ввод был отменён.
-
- ВНИМАНИЕ!
-     Все параметры -- именованные и передаются как элементы таблицы.
-     Примеры.
-	     -- Все аргументы принимают значения по умолчанию
-         shell.inputbox{}
-	     -- Аналогично предыдущему, но со своей надписью
-         shell.inputbox{prompt = "Введите число:"}
-	     -- С собственными обработчиками -- ввода и результата
-         shell.inputbox{
-           on_enter = function(input)
-             if input:match('^%s*0+%s*$') then
-               shell.msgbox("0 -- не натуральное число", "Ошибка", 0x40000)
-               return false
-             end
-             return true
-           end,
-           prompt = 'Введите натуральное число',
-           on_char = function(char, input)
-             return char:match('[%d ]')
-           end}
---------------------------------------------------------------------------------
-*/
-
+// Параметры:
+//   caption: текст заголовка окна
+//   prompt:  надпись над полем ввода (строки должны отделяться '\r' или '\n')
+//   value:   текст, помещаемый в поле ввода
+//   onchar:  пользовательская функция-контролёр вводимой строки; получает
+//            вводимую строку в том виде, в каком она будет ПОСЛЕ принятия
+//            только что введённого символа (этого символа ещё нет ни на экране,
+//            ни в строке ввода) и сам этот символ;
+//            если вместо символа получено nil -- нажат Enter или Ok;
+//            должна вернуть true, если изменения принимаются, иначе -- false
+//            (Примечание этой функции при первом вызове передаётся value
+//            для проверки, а вместо символа -- nil, как для последней);
+//   width:   ширина поля ввода в условных (усреднённых символах)
+// Результат:
+//   введённая строка, если нажата Ok, или nil, если - Cancel
+//
+// Значения по умолчанию:
+//   caption = "InputBox"
+//   prompt  = "Enter:"
+//   value   = ""
+//   onchar  =  nil
+//   width   =  20
+//
 extern int showinputbox(lua_State* L)
 {
-	if (lua_istable(L, lua_gettop(L))) {
-
-		StackBalancer sb(L);
-		LuaTable lt(L, lua_gettop(L));
-
-		int on_char  = lt.GetFunction("on_char");
-		int on_enter = lt.GetFunction("on_enter");
-		int width    = lt.GetInt("width", 20);
-
-		const char *caption = lt.GetString("caption", "InputBox");
-		const char *prompt  = lt.GetString("prompt", "Enter");
-		const char *value   = lt.GetString("value");
-
-		const char *safeValue = "";
-		if (!IsInputValid(L, value, on_char))
-			value = safeValue;
-
-		InputBox dlg(caption, prompt, value, width, on_char, on_enter, L);
-		bool res = dlg.ShowModal() == IDOK;
-
-		sb.Purge();
-
-		if (res)
-			lua_pushstring(L, dlg.Text());
-		else
-			lua_pushnil(L);
-	} else {
-		lua_pushnil(L);
+	int num = lua_gettop(L);
+	const char *caption = luaL_optstring(L, 1, "InputBox");
+	const char *prompt = num > 1? luaL_optstring(L, 2, "Enter:") : "Enter:";
+	const char *value  = num > 2? luaL_optstring(L, 3, "") : "";
+	int onchar = 0;
+	if (num > 3) {
+		luaL_checktype(L, 4, LUA_TFUNCTION);
+		lua_checkstack(L, 1);
+		lua_pushvalue(L, 4);
+		onchar = luaL_ref(L, LUA_REGISTRYINDEX);
 	}
+	int width  = num > 4? luaL_optint(L, 5, 20) : 20;
+
+	const char *safeValue = "";
+	if (!IsInputValid(L, value, '\0', onchar))
+		value = safeValue;
+
+	InputBox dlg(caption, prompt, value, width, onchar, L);
+	bool res = dlg.ShowModal() == IDOK;
+	lua_pushboolean(L, res);
+
+	if (res)
+		lua_pushstring(L, dlg.Text());
+	else
+		lua_pushnil(L);
+
 	return 1;
 }
 

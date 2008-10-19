@@ -194,13 +194,12 @@ function FileMan_FileMove()
 end
 
 function FileMan_FileRename()
-	function CheckFilename(char, str)
+	function CheckFilename(str, char)
 		return not char:match('[\\/:|*?"<>]')
 	end
 	local filename = FileMan_GetSelectedItem()
 	if filename == '' or filename == '..' then return end
-	local filename_new = shell.inputbox{caption = "Rename", prompt = "Enter new file name:",
-		value = filename, on_char = CheckFilename}
+	local filename_new = shell.inputbox("Rename", "Enter new file name:", filename, CheckFilename)
 	if filename_new == nil then return end
 	if filename_new.len ~= 0 and filename_new ~= filename then
 		os.rename(current_path..filename, current_path..filename_new)
