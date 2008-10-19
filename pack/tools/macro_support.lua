@@ -1,6 +1,6 @@
 --[[
 Macros support for SciTE
-Version 2.3
+Version 2.3.1
 Author: VladVRO
 ---------------------------------------------------
 Description:
@@ -29,6 +29,9 @@ and next lines into SciTEUser.properties:
 ]]
 
 scite.Perform("macroenable:1")
+
+-- pattern for macro name
+local macro_name_pattern = "([a-zA-Z0-9_%-%+%.%(%)]+)"
 
 -- global tables
 local glb_macro_buf = {}
@@ -133,7 +136,7 @@ function OnMacro(cmd, msg)
 end
 
 local function str_to_macro_name(str)
-  for a in string.gfind(str, "([a-zA-Z0-9_%-%+%.%(%)]+)") do
+  for a in string.gfind(str, macro_name_pattern) do
     return a
   end
 end
@@ -149,16 +152,15 @@ function MacroAddToList(macro, name, pos)
       if not is_load_from_file and props["macro.fill.name.dialog"] == "1"
         and shell and shell.inputbox
       then
-        repeat
-          local input = shell.inputbox(scite.GetTranslation("Macro Name"),
-            scite.GetTranslation("Enter macro name").." \n("..
-            scite.GetTranslation("usable chars").." A...z0-9_-+.())", name)
-          if input then
-            name = str_to_macro_name(input)
-          else
-            return
+        name = shell.inputbox(
+          scite.GetTranslation("Macro Name"),
+          scite.GetTranslation("Enter macro name").." \n("..
+          scite.GetTranslation("usable chars").." A...z0-9_-+.())",
+          name,
+          function(str, char)
+            return str ~= '' and (char == nil or char:match(macro_name_pattern))
           end
-        until name == input
+        )
       end
     end
     if not glb_macros_table[name] or table.getn(glb_macros_name_table) == 0 then
