@@ -1,9 +1,9 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozersЩ, VladVRO, frs, BioInfo
-version 1.7
+version 1.7.1
 ------------------------------------------------------
-  Needed gui.dll by Steve Donovan
+  Note: Needed gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
   Connection:
    In file SciTEStartup.lua add a line:
       dofile (props["SciteDefaultHome"].."\\tools\\SideBar.lua")
@@ -194,12 +194,9 @@ function FileMan_FileMove()
 end
 
 function FileMan_FileRename()
-	function CheckFilename(str, char)
-		return not char:match('[\\/:|*?"<>]')
-	end
 	local filename = FileMan_GetSelectedItem()
 	if filename == '' or filename == '..' then return end
-	local filename_new = shell.inputbox("Rename", "Enter new file name:", filename, CheckFilename)
+	local filename_new = shell.inputbox("Rename", "Enter new file name:", filename, function(name) return not name:match('[\\/:|*?"<>]') end)
 	if filename_new == nil then return end
 	if filename_new.len ~= 0 and filename_new ~= filename then
 		os.rename(current_path..filename, current_path..filename_new)
@@ -416,8 +413,8 @@ local Lang2RegEx = {
 					"[\n:][%s%u]*()FUNCTION +[%w_]-()%b()",
 					"[\n:][%s%u]*()PROPERTY +[LGS]ET +[%w_]-()%b()"},
 	['CSS']={"()[%w.#-_]+()%s-%b{}"},
-	['Pascal']={"\n%s*()PROCEDURE +[%w_.]-()%b()",
-				"\n%s*()FUNCTION +[%w_.]-()%b()"},
+	['Pascal']={"\n%s*()PROCEDURE +[%w_.]+()[ (;]",
+				"\n%s*()FUNCTION +[%w_.]+() *%b(): *%a+;"},
 	['Python']={"\n%s*()DEF +[%w_]-()%b():",
 				"\n%s*()CLASS +[%w_]-()%b():"},
 	['Lua']={"\n[%s%u]*FUNCTION +()[%w_]-()%b()"},
@@ -472,15 +469,15 @@ local function Functions_GetNames()
 			local findString = textAll:sub(_start, _end-1)
 -- print(props['FileNameExt']..':'..(line_number+1)..':\t'..findString)
 			findString = findString:gsub("%s+", " ")
-			findString = findString:gsub("[Ss][Uu][Bb] ", "s: ") -- VB
-			findString = findString:gsub("[Ff][Uu][Nn][Cc][Tt][Ii][Oo][Nn] ", "f: ") -- JS, VB,...
-			findString = findString:gsub("[Pp][Rr][Oo][Cc][Ee][Dd][Uu][Rr][Ee] ", "p: ") -- Pascal
-			findString = findString:gsub("[Pp][Rr][Oo][—с] ", "p: ") -- C
-			findString = findString:gsub("[Pp][Rr][Oo][Pp][Ee][Rr][Tt][Yy] [Ll][Ee][Tt] ", "pl: ") -- VB
-			findString = findString:gsub("[Pp][Rr][Oo][Pp][Ee][Rr][Tt][Yy] [Gg][Ee][Tt] ", "pg: ") -- VB
-			findString = findString:gsub("[Pp][Rr][Oo][Pp][Ee][Rr][Tt][Yy] [Ss][Ee][Tt] ", "ps: ") -- VB
-			findString = findString:gsub("[Cc][Ll][Aa][Ss][Ss] ", "c: ") -- Phyton
-			findString = findString:gsub("[Dd][Ee][Ff] ", "d: ") -- Phyton
+			findString = findString:gsub("[Ss][Uu][Bb] ", "[s] ") -- VB
+			findString = findString:gsub("[Ff][Uu][Nn][Cc][Tt][Ii][Oo][Nn] ", "[f] ") -- JS, VB,...
+			findString = findString:gsub("[Pp][Rr][Oo][Cc][Ee][Dd][Uu][Rr][Ee] ", "[p] ") -- Pascal
+			findString = findString:gsub("[Pp][Rr][Oo][—с] ", "[p] ") -- C
+			findString = findString:gsub("[Pp][Rr][Oo][Pp][Ee][Rr][Tt][Yy] [Ll][Ee][Tt] ", "[pl] ") -- VB
+			findString = findString:gsub("[Pp][Rr][Oo][Pp][Ee][Rr][Tt][Yy] [Gg][Ee][Tt] ", "[pg] ") -- VB
+			findString = findString:gsub("[Pp][Rr][Oo][Pp][Ee][Rr][Tt][Yy] [Ss][Ee][Tt] ", "[ps] ") -- VB
+			findString = findString:gsub("[Cc][Ll][Aa][Ss][Ss] ", "[c] ") -- Phyton
+			findString = findString:gsub("[Dd][Ee][Ff] ", "[d] ") -- Phyton
 			table.insert (table_functions, {findString, line_number})
 		end
 	end
@@ -680,8 +677,6 @@ end)
 list_abbrev:on_key(function(key)
 	if key == 13 then -- Enter
 		Abbreviations_InsertExpansion()
-	elseif (key >= 33 and key <= 40) then -- все это из за того, что выбор с помощью курсорных клавиш не порождает событи€ on_select
-		Abbreviations_ShowExpansion()
 	end
 end)
 
