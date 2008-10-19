@@ -729,7 +729,6 @@ WordRight()\n Move caret right one word.
 WordRightEnd()\n Move caret right one word, position cursor at end of word.
 WordRightEndExtend()\n Move caret right one word, position cursor at end of word, extending selection to new caret position.
 WordRightExtend()\n Move caret right one word extending selection to new caret position.
-WordStartPosition(int pos, bool) = int
 WordStartPosition(int pos, bool onlyWordCharacters) = int\n Get position of start of word.
 WrapCount(int) = int
 ZoomIn()\n Magnify the displayed text by increasing the sizes by 1 point.
