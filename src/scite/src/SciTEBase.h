@@ -38,7 +38,7 @@ public:
 };
 //!-end-[ExtendedContextMenu]
 
-//!-start-[position.autosave]
+//!-start-[VarAbbrev]
 class PropFileEx
 {
 public:
@@ -135,7 +135,7 @@ private:
 	SString m_buf;
 	FilePath m_filename;
 };
-//!-end-[position.autosave]
+//!-end-[VarAbbrev]
 
 /**
  * The order of menus on Windows - the Buffers menu may not be present

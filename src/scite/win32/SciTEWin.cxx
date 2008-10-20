@@ -36,29 +36,6 @@ SciTEBase *SciTEBase::GetApplicationInstance() {
 }
 //!-end-[GetApplicationProps]
 
-//!-start-[position.autosave]
-static void ToDesctopRect(RECT &rc){
-	// See if taskbar's autohide property is on
-	APPBARDATA abd;
-	memset(&abd, 0, sizeof(abd));
-	abd.cbSize = sizeof(abd); 
-	if(!(::SHAppBarMessage(ABM_GETSTATE, &abd) & ABS_AUTOHIDE))	{
-		// Get the taskbar rect
-		::SHAppBarMessage(ABM_GETTASKBARPOS, &abd);
-		switch(abd.uEdge) {
-		case ABE_TOP:
-			rc.top		+= abd.rc.bottom - abd.rc.top;
-			rc.bottom	+= abd.rc.bottom - abd.rc.top;
-			break;
-		case ABE_LEFT:
-			rc.left += abd.rc.right - abd.rc.left;
-			rc.right+= abd.rc.right - abd.rc.left;
-			break;
-		}
-	}
-}
-//!-end-[position.autosave]
-
 long SciTEKeys::ParseKeyCode(const char *mnemonic) {
 	int modsInKey = 0;
 	int keyval = -1;
@@ -1141,22 +1118,6 @@ void SciTEWin::QuitProgram() {
 	if (SaveIfUnsureAll() != IDCANCEL) {
 		if (fullScreen)	// Ensure tray visible on exit
 			FullScreenToggle();
-//!-start-[position.autosave]
-		SString value = props.GetExpanded("save.settings.path");
-		if (value.length()) {
-			winPlace.length = sizeof(winPlace);
-			::GetWindowPlacement(MainHWND(), &winPlace);
-			PropFileEx file;
-			file.Open(value.c_str());
-			ToDesctopRect(winPlace.rcNormalPosition);
-			file.SetProperty("position.left", winPlace.rcNormalPosition.left);
-			file.SetProperty("position.top", winPlace.rcNormalPosition.top);
-			file.SetProperty("position.width", winPlace.rcNormalPosition.right - winPlace.rcNormalPosition.left);
-			file.SetProperty("position.height", winPlace.rcNormalPosition.bottom - winPlace.rcNormalPosition.top);
-			file.SetProperty("position.cmdShow", winPlace.showCmd);
-			file.Save();
-		}
-//!-end-[position.autosave]
 		::PostQuitMessage(0);
 		wSciTE.Destroy();
 	}
