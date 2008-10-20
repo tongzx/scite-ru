@@ -316,6 +316,7 @@ editor:ClearRegisteredImages
 editor:Colourise
 editor:ConvertEOLs
 editor:Copy
+editor:CopyAllowLine
 editor:CopyRange
 editor:CopyText
 editor:CreateDocument
@@ -324,6 +325,7 @@ editor:DelLineLeft
 editor:DelLineRight
 editor:DelWordLeft
 editor:DelWordRight
+editor:DelWordRightEnd
 editor:DeleteBack
 editor:DeleteBackNotLine
 editor:DocLineFromVisible
@@ -546,6 +548,7 @@ ClearDocumentStyle()\n Set all style bytes to 0, remove all folding information.
 ClearRegisteredImages()\n Clear all the registered XPM images.
 Colourise(int posStart, int posEnd)\n Colourise a segment of the document using the current lexing language.
 ConvertEOLs(int eolMode)\n Convert all line endings in the document to one mode.
+CopyAllowLine()\n Copy the selection, if selection empty copy the line with the caret.
 Copy()\n Copy the selection to the clipboard.
 CopyRange(int posStart, int posEnd)\n Copy a range of text to the clipboard. Positions are clipped into the document.
 CopyText(int length, string text)\n Copy argument text to the clipboard.
@@ -555,6 +558,7 @@ DelLineLeft()\n Delete back from the current position to the start of the line.
 DelLineRight()\n Delete forwards from the current position to the end of the line.
 DelWordLeft()\n Delete the word to the left of the caret.
 DelWordRight()\n Delete the word to the right of the caret.
+DelWordRightEnd()\n Delete the word to the right of the caret, but not the trailing non-word characters.
 DeleteBack()\n Delete the selection or if no selection, the character before the caret.
 DeleteBackNotLine()\n Delete the selection or if no selection, the character before the caret. Will not delete the character before at the start of a line.
 DocLineFromVisible(int lineDisplay) = int\n Find the document line of a display line taking hidden lines into account.

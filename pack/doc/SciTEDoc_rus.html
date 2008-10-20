@@ -497,11 +497,15 @@ NameError: mistake
 
   <p>Файл, открываемый с помощью командной строки, уничтожает предыдущую сессию. Чтобы этого не происходило, можно поступить следующим способом: сначала запустить SciTE (SciTE при <dfn>save.session=1</dfn> автоматически откроет предыдущую сессию), а затем уже добавить в SciTE файл любым удобным способом (перетаскиванием, через меню &quot;<cite>Файл</cite>&quot; или с помощью командной стоки). В этом случае открываемый файл не уничтожит текущую сессию, а добавится к ней.</p>
 
+  <p>При установке <dfn>session.bookmarks=1</dfn> и <dfn>session.folds=1</dfn> бумарки и состояние фолдинга всех открытых файлов будут сохранены в файле сеанса, откуда затем будут восстановлены при следующем старте.</p>
+
   <h3><a name="languages">Языки, поддерживаемые SciTE</a></h3>
 
   <p>В настоящий момент SciTE поддерживает подсветку синтаксиса в следующих языках (* означает поддержку сворачивания кода):</p>
 
   <ul>
+    <li>Abaqus*</li>
+
     <li>Ada</li>
 
     <li>ANS.1 MIB definition files* файлы описания</li>
@@ -911,6 +915,12 @@ NameError: mistake
 
       <td>Ctrl+\</td>
     </tr>
+
+    <tr>
+      <td>Выделение прямоугольного блока</td>
+
+      <td>Alt+Shift+курсорные</td>
+    </tr>
   </table>
 
   <h3><a name="abbrev">Аббревиатуры</a></h3>
@@ -1134,9 +1144,10 @@ NameError: mistake
       <td><dfn><a name="position.*">position.left<br>
       position.top<br>
       position.width<br>
-      position.height</a></dfn></td>
+      position.height<br>
+      position.maximize</a></dfn></td>
 
-      <td>Задают первоначальный размер и позицию окна. Если эти переменные не заданы, первоначальный размер и позиция окна определяются системой. Если <code>width</code> или <code>height</code> имеют значение равное <var>-1</var> - окно развернуто до максимального размера.</td>
+      <td>Задают первоначальный размер и позицию окна. Если эти переменные не заданы, первоначальный размер и позиция окна определяются системой. Если <span class="example">position.width=-1</span> или <span class="example">position.height=-1</span> или <span class="example">position.maximize=1</span> - окно развернуто до максимального размера.</td>
     </tr>
 
     <tr class="windowsonly">
@@ -1383,7 +1394,7 @@ NameError: mistake
       selection.back<br>
       selection.alpha</a></dfn></td>
 
-      <td>Задают цвета, используемые для отображения выделенного текста. По умолчанию, фон выделенного текста – светло-серый, а передний план остается таким же, как до выделения. Опция <code>selection.alpha</code> задает степень прозрачности выделенного текста.</td>
+      <td>Задают цвета, используемые для отображения выделенного текста. По умолчанию, фон выделенного текста – светло-серый, а передний план остается таким же, как до выделения. Опция <code>selection.alpha</code> задает степень прозрачности выделенного текста. Значение <code>256</code> соответствует полной непрозрачности.</td>
     </tr>
 
     <tr>
@@ -1705,6 +1716,19 @@ NameError: mistake
     </tr>
 
     <tr>
+      <td><dfn><a name="lexer.xml.allow.scripts">lexer.xml.allow.scripts</a></dfn></td>
+
+      <td>Set to 0 to disable scripts in XML.</td>
+    </tr>
+
+    <tr>
+      <td><dfn><a name="lexer.errorlist.value.separate">lexer.errorlist.value.separate</a></dfn></td>
+
+      <td>For lines in the output pane that are matches from Find in Files or GCC-style diagnostics,
+style the path and line number separately from the rest of the line with style 21 used for the rest of the line. This allows matched text to be more easily distinguished from its location.</td>
+    </tr>
+
+    <tr>
       <td><dfn><a name="sql.backslash.escapes">sql.backslash.escapes</a></dfn></td>
 
       <td>Разрешает использование обратного слеша в качестве escape-символа в SQL.</td>
@@ -1875,12 +1899,12 @@ NameError: mistake
 
     <tr>
       <td><dfn><a name="save.recent">save.recent<br>
-      save.session</a></dfn></td>
+      save.session<br>
+      save.position</a></dfn></td>
 
-      <td>Задайте переменную <dfn>save.recent</dfn> для того, чтобы список последних использованных файлов сохранялся в момент завершения работы и обновлялся при запуске.<br>
-      В Windows файл называется <code>SciTE.recent</code> и расположен в каталоге, заданном переменной окружения <code>SciTE_HOME</code>. Если эта переменная не задана, тогда он расположен в каталоге, заданном значением переменной окружения <code>USERPROFILE</code>, а если и эта переменная не задана, тогда файл расположен в каталоге, в котором находится исполняемый файл <code>scite.exe</code><br>
-      Под GTK+ этот файл называется &quot;<code>.SciTE.recent</code>&quot;. Он расположен в каталоге, заданном переменной окружения <code>SciTE_HOME</code>. Если эта переменная не задана, тогда он расположен в каталоге, заданном значением переменной окружения HOME, а если и эта переменная не задана, тогда файл расположен в каталоге верхнего уровня.<br>
-      Если задать переменной <dfn>save.session</dfn> значение <var>1</var>, текущая сессия будет автоматически сохранена в файле &quot;<code>SciTE.session</code>&quot; (под Windows) или &quot;<code>.SciTE.session</code>&quot; (под GTK+), которые расположены там же, где и файл &quot;<code>SciTE.recent</code>&quot;. При следующем запуске SciTE последняя сессия будет автоматически загружена.</td>
+      <td>Установка этих переменных в <var>1</var> заставляет SciTE сохранять в файле сеанса список последних использованных файлов, список открытых в настоящее время буферов и положение окна SciTE на экране соответственно.<br>
+      В Windows файл называется <code>SciTE.session</code> и расположен в каталоге, заданном переменной окружения <code>SciTE_HOME</code>. Если эта переменная не задана, тогда он расположен в каталоге, заданном значением переменной окружения <code>USERPROFILE</code>, а если и эта переменная не задана, тогда файл расположен в каталоге, в котором находится исполняемый файл <code>scite.exe</code><br>
+      Под GTK+ этот файл называется &quot;<code>.SciTE.session</code>&quot;. Он расположен в каталоге, заданном переменной окружения <code>SciTE_HOME</code>. Если эта переменная не задана, тогда он расположен в каталоге, заданном значением переменной окружения HOME, а если и эта переменная не задана, тогда файл расположен в каталоге верхнего уровня.</td>
     </tr>
 
     <tr>
@@ -2426,6 +2450,18 @@ NameError: mistake
       <td><dfn><a name="fold.html.preprocessor">fold.html.preprocessor</a></dfn></td>
 
       <td>Если данная переменная равна <var>0</var> (<var>1</var> - значение по умолчанию), то команда "<cite>Свернуть все блоки текста</cite>" выполненная на  файле содержащем только код <code>php</code> (не php внедренный в html) свернет файл корректно, оставляя видимыми заголовки процедур. По умолчанию этого не происходит и команда сворачивает все содержимое файла целиком.</td>
+    </tr>
+
+    <tr>
+      <td><dfn><a name="fold.hypertext.comment">fold.hypertext.comment</a></dfn></td>
+
+      <td>Разрешает свертку в комментариях скриптов внедренных в HTML. По умолчанию отключено.</td>
+    </tr>
+
+    <tr>
+      <td><dfn><a name="fold.hypertext.heredoc">fold.hypertext.heredoc</a></dfn></td>
+
+      <td>Разрешает свертку скриптов внедренных в HTML. По умолчанию отключено.</td>
     </tr>
 
     <tr>
