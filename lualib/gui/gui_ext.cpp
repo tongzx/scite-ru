@@ -1208,6 +1208,19 @@ static int do_files(lua_State *L)
 	return 1;
 }
 
+//  this will allow us to hand keyboard focus over to editor
+static int do_pass_focus(lua_State *L)
+{
+	lua_getglobal(L,"editor");
+	lua_pushboolean(L,1);
+	lua_setfield(L,-2,"Focus");
+	lua_pop(L,1);
+	if (code_window) {
+		code_window->set_focus();
+	}
+	return 0;
+}
+
 static const struct luaL_reg gui[] = {
 	{"message",do_message},
 	{"colour_dlg",do_colour_dlg},
@@ -1224,6 +1237,7 @@ static const struct luaL_reg gui[] = {
 	{"chdir",do_chdir},
 	{"files",do_files},
 	{"set_panel",do_set_panel},
+	{"pass_focus",do_pass_focus},
 	{NULL, NULL},
 };
 
