@@ -1,16 +1,16 @@
-assert (v [, message]) error if v nil or false, otherwise returns v
-collectgarbage ([limit]) set threshold to limit KBytes, default 0, may run GC
+assert (v [, message])\n  error if v nil or false, otherwise returns v
+collectgarbage ([limit])\n  set threshold to limit KBytes, default 0, may run GC
 
 coroutine.create
 coroutine.resume
 coroutine.status
 coroutine.wrap
 coroutine.yield
-create (f) creates coroutine from function f, returns coroutine
-resume (co, val1, ...) continues execution of co, returns bool status plus any values
-status (co) returns co status: "running", "suspended" or "dead"
-wrap (f) creates coroutine with body f, returns function that resumes co
-yield (val1, ...) suspend execution of calling coroutine
+create (f)\n  creates coroutine from function f, returns coroutine
+resume (co, val1, ...)\n  continues execution of co, returns bool status plus any values
+status (co)\n  returns co status: "running", "suspended" or "dead"
+wrap (f)\n  creates coroutine with body f, returns function that resumes co
+yield (val1, ...)\n  suspend execution of calling coroutine
 
 debug.debug
 debug.gethook
@@ -21,22 +21,22 @@ debug.sethook
 debug.setlocal
 debug.setupvalue
 debug.traceback
-debug () enters interactive debug mode, line with only "cont" terminates
-gethook () returns current hook function, hook mask, hook count
-getinfo (function [, what]) returns table with information about a function
-getlocal (level, local) returns name and value of local variable with index local at stack level
-getupvalue (func, up) returns name and value of upvalue with index up of function func
-sethook (hook, mask [, count]) sets given function as a hook, mask="[crl]"
-setlocal (level, local, value) sets local variable with index local at stack level with value
-setupvalue (func, up, value) sets upvalue with index up of function func with value
-traceback ([message]) returns a string with a traceback of the call stack
+debug ()\n  enters interactive debug mode, line with only "cont" terminates
+gethook ()\n  returns current hook function, hook mask, hook count
+getinfo (function [, what])\n  returns table with information about a function
+getlocal (level, local)\n  returns name and value of local variable with index local at stack level
+getupvalue (func, up)\n  returns name and value of upvalue with index up of function func
+sethook (hook, mask [, count])\n  sets given function as a hook, mask="[crl]"
+setlocal (level, local, value)\n  sets local variable with index local at stack level with value
+setupvalue (func, up, value)\n  sets upvalue with index up of function func with value
+traceback ([message])\n  returns a string with a traceback of the call stack
 
-dofile (filename) executes as Lua chunk, default stdin, returns value
-dostring (s) in SciTE, executes s as a Lua string, like Lua's dostring
-error (message [, level]) terminates protected func, never returns, level 1 (default), 2=parent
-gcinfo () returns dynamic mem in use (KB), and current GC threshold (KB)
-getfenv (f) gets env, f can be a function or number (stack level, default=1), 0=global env
-getmetatable (object) returns metatable of given object, otherwise nil
+dofile (filename)\n  executes as Lua chunk, default stdin, returns value
+dostring (s)\n  in SciTE, executes s as a Lua string, like Lua's dostring
+error (message [, level])\n  terminates protected func, never returns, level 1 (default), 2=parent
+gcinfo ()\n  returns dynamic mem in use (KB), and current GC threshold (KB)
+getfenv (f)\n  gets env, f can be a function or number (stack level, default=1), 0=global env
+getmetatable (object)\n  returns metatable of given object, otherwise nil
 
 io.close
 io.flush
@@ -50,32 +50,32 @@ io.tmpfile
 io.type
 io.write
 #file=io.open
-file:close ([file]) closes file, or the default output file
-file:flush () flushes the default output file
-file:input ([file]) opens file in text mode, sets as default input file, or returns current default input file
-file:lines ([filename]) open file in read mode, returns iterator function to return lines, nil ends
-file:open (filename [, mode]) opens file in specified mode "[rawb+]", returns handle or nil
-file:output ([file]) opens file in text mode, sets as default output file, or returns current default output file
-file:read (format1, ...) reads file according to given formats, returns read values or nil
-file:tmpfile () returns a handle for a temporary file, opened in update mode
-file:type (obj) returns "file" if obj is an open file handle, "close file" if closed, or nil if not a file handle
-file:write (value1, ...) writes strings or numbers to file
-close ([file]) closes file, or the default output file
-flush () flushes the default output file
-input ([file]) opens file in text mode, sets as default input file, or returns current default input file
-lines ([filename]) open file in read mode, returns iterator function to return lines, nil ends
-open (filename [, mode]) opens file in specified mode "[rawb+]", returns handle or nil
-popen (prog [, mode]) run program in specified mode "[rawb+]", returns handle or nil
-output ([file]) opens file in text mode, sets as default output file, or returns current default output file
-read (format1, ...) reads file according to given formats, returns read values or nil
-tmpfile () returns a handle for a temporary file, opened in update mode
-type (obj) returns "file" if obj is an open file handle, "close file" if closed, or nil if not a file handle
-write (value1, ...) writes strings or numbers to file
+file:close ([file])\n  closes file, or the default output file
+file:flush ()\n  flushes the default output file
+file:input ([file])\n  opens file in text mode, sets as default input file, or returns current default input file
+file:lines ([filename])\n  open file in read mode, returns iterator function to return lines, nil ends
+file:open (filename [, mode])\n  opens file in specified mode "[rawb+]", returns handle or nil
+file:output ([file])\n  opens file in text mode, sets as default output file, or returns current default output file
+file:read (format1, ...)\n  reads file according to given formats, returns read values or nil
+file:tmpfile ()\n  returns a handle for a temporary file, opened in update mode
+file:type (obj)\n  returns "file" if obj is an open file handle, "close file" if closed, or nil if not a file handle
+file:write (value1, ...)\n  writes strings or numbers to file
+close ([file])\n  closes file, or the default output file
+flush ()\n  flushes the default output file
+input ([file])\n  opens file in text mode, sets as default input file, or returns current default input file
+lines ([filename])\n  open file in read mode, returns iterator function to return lines, nil ends
+open (filename [, mode])\n  opens file in specified mode "[rawb+]", returns handle or nil
+popen (prog [, mode])\n  run program in specified mode "[rawb+]", returns handle or nil
+output ([file])\n  opens file in text mode, sets as default output file, or returns current default output file
+read (format1, ...)\n  reads file according to given formats, returns read values or nil
+tmpfile ()\n  returns a handle for a temporary file, opened in update mode
+type (obj)\n  returns "file" if obj is an open file handle, "close file" if closed, or nil if not a file handle
+write (value1, ...)\n  writes strings or numbers to file
 
-ipairs (t) returns an iterator function, table t and 0
-loadfile (filename) loads chunk without execution, returns chunk as function, else nil plus error
-loadlib (libname, funcname) links to dynamic library libname, returns funcname as a C function
-loadstring (string [, chunkname]) loads string as chunk, returns chunk as function, else nil plus error
+ipairs (t)\n  returns an iterator function, table t and 0
+loadfile (filename)\n  loads chunk without execution, returns chunk as function, else nil plus error
+loadlib (libname, funcname)\n  links to dynamic library libname, returns funcname as a C function
+loadstring (string [, chunkname])\n  loads string as chunk, returns chunk as function, else nil plus error
 
 math.abs
 math.acos
@@ -101,32 +101,32 @@ math.randomseed
 math.sin
 math.sqrt
 math.tan
-abs (v) returns absolute value of v
-acos (v) returns arc cosine value of v in radians
-asin (v) returns arc sine value of v in radians
-atan (v) returns arc tangent value of v in radians
-atan2 (v1, v2) returns arc tangent value of v1/v2 in radians
-ceil (v) returns smallest integer >= v
-cos (rad) returns cosine value of angle rad
-deg (rad) returns angle in degrees of radians rad
-exp (v) returns e^v
-floor (v) returns largest integer <= v
-frexp (v) returns mantissa [0.5,1) and exponent values of v
-ldexp (v1, v2) returns v1*2^v2
-log (v) returns natural logarithm of v
-log10 (v) returns logarithm 10 of v
-max (v1, ...) returns maximum in a list of one or more values
-min (v1, ...) returns minimum in a list of one or more values
-mod (v1, v2) returns remainder of v1/v2 which is v1 - iV2 for some integer i
-pow (v1, v2) returns v1 raised to the power of v2
-rad (deg) returns angle in radians of degrees deg
-random ([n [, u]]) returns random real [0,1), integer [1,n] or real [1,u] (with n=1)
-randomseed (seed) sets seed for pseudo-random number generator
-sin (rad) returns sine value of angle rad 
-sqrt (v) returns square root of v
-tan (rad) returns tangent value of angle rad  
+abs (v)\n  returns absolute value of v
+acos (v)\n  returns arc cosine value of v in radians
+asin (v)\n  returns arc sine value of v in radians
+atan (v)\n  returns arc tangent value of v in radians
+atan2 (v1, v2)\n  returns arc tangent value of v1/v2 in radians
+ceil (v)\n  returns smallest integer >= v
+cos (rad)\n  returns cosine value of angle rad
+deg (rad)\n  returns angle in degrees of radians rad
+exp (v)\n  returns e^v
+floor (v)\n  returns largest integer <= v
+frexp (v)\n  returns mantissa [0.5,1) and exponent values of v
+ldexp (v1, v2)\n  returns v1*2^v2
+log (v)\n  returns natural logarithm of v
+log10 (v)\n  returns logarithm 10 of v
+max (v1, ...)\n  returns maximum in a list of one or more values
+min (v1, ...)\n  returns minimum in a list of one or more values
+mod (v1, v2)\n  returns remainder of v1/v2 which is v1 - iV2 for some integer i
+pow (v1, v2)\n  returns v1 raised to the power of v2
+rad (deg)\n  returns angle in radians of degrees deg
+random ([n [, u]])\n  returns random real [0,1), integer [1,n] or real [1,u] (with n=1)
+randomseed (seed)\n  sets seed for pseudo-random number generator
+sin (rad)\n  returns sine value of angle rad 
+sqrt (v)\n  returns square root of v
+tan (rad)\n  returns tangent value of angle rad  
 
-next (table [, index]) returns next index,value pair, if index=nil (default), returns first index
+next (table [, index])\n  returns next index,value pair, if index=nil (default), returns first index
 
 os.clock
 os.date
@@ -139,17 +139,17 @@ os.rename
 os.setlocale
 os.time
 os.tmpname
-clock () returns CPU time used by program in seconds
-date ([format [, time]]) returns a string or table containing date and time, "*t" returns a table
-difftime (t2, t1) returns number of seconds from time t1 to time t2
-execute (command) executes command using C function system, returns status code
-exit ([code]) terminates host program with optional code, default is success code
-getenv (varname) returns value of environment variable varname. nil if not defined
-remove (filename) deletes file with given name, nil if fails
-rename (oldname, newname) renames file oldname to newname, nil if fails
-setlocale (locale [, category]) set current locale of program, returns name of new locate or nil
-time ([table]) returns current time (usually seconds) or time as represented by table
-tmpname () returns a string with a filename for a temporary file (dangerous! tmpfile is better)
+clock ()\n  returns CPU time used by program in seconds
+date ([format [, time]])\n  returns a string or table containing date and time, "*t" returns a table
+difftime (t2, t1)\n  returns number of seconds from time t1 to time t2
+execute (command)\n  executes command using C function system, returns status code
+exit ([code])\n  terminates host program with optional code, default is success code
+getenv (varname)\n  returns value of environment variable varname. nil if not defined
+remove (filename)\n  deletes file with given name, nil if fails
+rename (oldname, newname)\n  renames file oldname to newname, nil if fails
+setlocale (locale [, category])\n  set current locale of program, returns name of new locate or nil
+time ([table])\n  returns current time (usually seconds) or time as represented by table
+tmpname ()\n  returns a string with a filename for a temporary file (dangerous! tmpfile is better)
 
 shell.msgbox
 shell.inputbox
@@ -158,23 +158,104 @@ shell.setfileattr
 shell.exec
 shell.findfiles
 shell.fileexists
-msgbox (<Text>, <Title>, <Options>) - Message Box. Return select button  /extern lib "shell"/
-inputbox (<Title>, <Prompt>, <Default>, <funcCheck>, <minWidth>) - Input Box. Return input string  /extern lib "shell"/
-getfileattr (<FileName>) - return File Attribute as number  /extern lib "shell"/
-setfileattr (<FileName>, <FileAttr>) - Set File Attribute  /extern lib "shell"/
-exec (strCommand, [strOperation], [boolNoShow], [bWaitOnReturn])  /extern lib "shell"/
-findfiles (<FileMask>) - return list of files by mask  /extern lib "shell"/
-fileexists (<FileName>) - return true if file or folder exists  /extern lib "shell"/
+msgbox (<Text>, <Title>, <Options>)\n Message Box. Return select button  /extern lib "shell"/
+inputbox (<Title>, <Prompt>, <Default>, <funcCheck>, <minWidth>)\n Input Box. Return input string  /extern lib "shell"/
+getfileattr (<FileName>)\n return File Attribute as number  /extern lib "shell"/
+setfileattr (<FileName>, <FileAttr>)\n Set File Attribute  /extern lib "shell"/
+exec (strCommand, [strOperation], [boolNoShow], [bWaitOnReturn])\n /extern lib "shell"/
+findfiles (<FileMask>)\n return list of files by mask  /extern lib "shell"/
+fileexists (<FileName>)\n return true if file or folder exists  /extern lib "shell"/
 
-pairs (t) returns the next function and table t plus a nil, iterates over all key-value pairs
-pcall (f, arg1, arg2, ...) protected mode call, catches errors, returns status code first (true=success)
-print (e1, e2, ...) prints values to stdout using tostring
-rawequal (v1, v2) non-metamethod v1==v2, returns boolean
-rawget (table, index) non-metamethod get value of table[index], index != nil
-rawset (table, index, value) non-metamethod set value of table[index], index != nil
-require (packagename) loads package, updates _LOADED, returns boolean
-setfenv (f, table) sets env, f can be a function or number (stack level, default=1), 0=global env
-setmetatable (table, metatable) sets metatable, nil to remove metatable
+gui.window
+gui.panel
+gui.set_panel
+gui.tabbar
+gui.list
+gui.memo
+gui.pass_focus
+gui.toolbar
+gui.open_dlg
+gui.select_dir_dlg
+gui.colour_dlg
+gui.files
+gui.chdir
+gui.message
+gui.prompt_value
+gui.run
+window ("title")\n create new top-level windows  /extern lib "gui"/
+panel (width)\n create panel  /extern lib "gui"/
+set_panel (panel_name, "right")\n panel attached to the left or the right side of the editor pane  /extern lib "gui"/
+set_panel ()\n remove the panel and hide it  /extern lib "gui"/
+tabbar (win_name)\n create tabbar control from window or panel  /extern lib "gui"/
+list (true)\n create standard list view (with caption\n true|false)  /extern lib "gui"/
+memo ()\n creates a Windows Rich Text control  /extern lib "gui"/
+pass_focus ()\n pass keyboard focus to editor  /extern lib "gui"/
+toolbar ("title", {"icon1.bmp:item1 caption|func1", "FILEOPEN:Open|IDM_OPEN"}, icons_size, "c:\\Path to icons\\button")
+open_dlg (caption,filter)\n standard Open File Dialog to the user, with the specified caption and filter  /extern lib "gui"/
+select_dir_dlg (caption)\n standard Open Folder Dialog to the user, with the specified caption  /extern lib "gui"/
+colour_dlg (default_colour)\n open the Windows Colour choser  /extern lib "gui"/
+files (path_with_mask, true)\n list of files (nil/false) or folders (true)  /extern lib "gui"/
+chdir (dir)\n change current dir  /extern lib "gui"/
+message (msg,kind)\n message box with the desired message text  /extern lib "gui"/
+prompt_value (prompt,default)\n ask the user to enter a single string value  /extern lib "gui"/
+run (program_or_document, parameters)\n launch a program or open a document  /extern lib "gui"/
+
+#win=gui.window
+win:add(list1, "top", height)\n "top" or "bottom"
+win:add(list1, "left", width)\n "left" or "right"
+win:client(list1)\n list or memo
+win:size(width, height)
+win:position(x, y)
+win:show()
+win:hide()
+win:context_menu {'item1|func1', 'item2|func2'}
+win:bounds()\n return visible, x, y, width, height
+
+#pan=gui.panel
+pan:add(list1, "top", height)\n "top" or "bottom"
+pan:add(list1, "left", width)\n "left" or "right"
+pan:client(list1)\n list or memo
+pan:size(width, height)
+pan:context_menu {'item1|func1', 'item2|func2'}
+pan:bounds()\n return visible, x, y, width, height
+
+#tab=gui.tabbar
+tab:client(list1)\n list or memo
+tab:add_tab("Tab1 heading", list1)
+tab:on_select(function(index) print(index) end)
+
+#lst=gui.list
+lst:size(width, height)\n Note: Changes either height or width (one of parameters is ignored)
+lst:set_list_colour("#FFFFFF", "#000000")\n foreground, background
+lst:set_selected_item(index)
+lst:add_column('Title1', width)\n Note: If gui.list(true)
+lst:add_item ({'Caption1','Caption2'}, {data1, data2})
+lst:delete_item(index)
+lst:insert_item(index, {'Caption1','Caption2'}, {data1, data2})
+lst:count()
+lst:get_item_data(index)
+lst:get_item_text(index)
+lst:get_selected_item()
+lst:bounds()\n return visible, x, y, width, height
+lst:on_select(function(index) print(index) end)
+lst:on_double_click(function(index) print(index) end)
+lst:on_key(function(key) print(key) end)
+
+#mem=gui.memo
+mem:size(width, height)\n Note: Changes either height or width (one of parameters is ignored)
+mem:set_text('{\\rtf{\\fonttbl{\\f0\\fcharset0 Helv;}}\\f0\\fs16'..'sample text'..'}')
+mem:set_memo_colour("#FFFFFF", "#000000")\n foreground, background
+mem:bounds()
+
+pairs (t)\n  returns the next function and table t plus a nil, iterates over all key-value pairs
+pcall (f, arg1, arg2, ...)\n  protected mode call, catches errors, returns status code first (true=success)
+print (e1, e2, ...)\n  prints values to stdout using tostring
+rawequal (v1, v2)\n  non-metamethod v1==v2, returns boolean
+rawget (table, index)\n  non-metamethod get value of table[index], index != nil
+rawset (table, index, value)\n  non-metamethod set value of table[index], index != nil
+require (packagename)\n loads package, updates _LOADED, returns boolean
+setfenv (f, table)\n  sets env, f can be a function or number (stack level, default=1), 0=global env
+setmetatable (table, metatable)\n  sets metatable, nil to remove metatable
 
 string.byte
 string.char
@@ -190,20 +271,20 @@ string.gmatch
 string.rep
 string.sub
 string.upper
-byte (s [, i]) returns numerical code, nil if index out of range, default i=1
-char (i1, i2, ...) returns a string built from 0 or more integers
-dump (function) returns binary representation of function, used with loadstring
-find (s, pattern [, init [, plain]]) matches pattern in s, returns start,end indices, else nil
-format (formatstring, e1, e2, ...) returns formatted string, printf-style
-gfind (s, pat) returns iterator function that returns next captures from pattern pat on s \n /DEPRECATED - renamed to gmatch in Lua 5.1/
-gsub (s, pat, repl [, n]) returns copy of s with pat replaced by repl, and substitutions made
-len (s) returns string length
-lower (s) returns string with letters in lower case
-rep (s, n) returns string with n copies of string s
-match (s, pattern [, init]) looks for the first match of pattern in the string s \n {rus} поиск первого вхождения шаблона pattern в строку s
-gmatch (s, pattern) returns iterator function that returns next captures from pattern pat on s \n {rus} возвращает итератор, который, при каждом вызове, возвращает следующее захваченное значение
-sub (s, i [, j]) returns substring from index i to j of s, default j=-1 (string length)
-upper (s) returns string with letters in upper case
+byte (s [, i])\n returns numerical code, nil if index out of range, default i=1
+char (i1, i2, ...)\n returns a string built from 0 or more integers
+dump (function)\n returns binary representation of function, used with loadstring
+find (s, pattern [, init [, plain]])\n matches pattern in s, returns start,end indices, else nil
+format (formatstring, e1, e2, ...)\n returns formatted string, printf-style
+gfind (s, pat)\n returns iterator function that returns next captures from pattern pat on s \n /DEPRECATED - renamed to gmatch in Lua 5.1/
+gsub (s, pat, repl [, n])\n returns copy of s with pat replaced by repl, and substitutions made
+len (s)\n returns string length
+lower (s)\n returns string with letters in lower case
+rep (s, n)\n returns string with n copies of string s
+match (s, pattern [, init])\n looks for the first match of pattern in the string s \n {rus} поиск первого вхождения шаблона pattern в строку s
+gmatch (s, pattern)\n returns iterator function that returns next captures from pattern pat on s \n {rus} возвращает итератор, который, при каждом вызове, возвращает следующее захваченное значение
+sub (s, i [, j])\n returns substring from index i to j of s, default j=-1 (string length)
+upper (s)\n returns string with letters in upper case
 
 table.concat
 table.foreach
@@ -213,26 +294,26 @@ table.insert
 table.remove
 table.setn
 table.sort
-concat (table [, sep [, i [, j]]]) returns concatenated table elements i to j separated by sep
-foreach (table, f) executes f(index,value) over all elements of table, returns first non-nil of f
-foreachi (table, f) executes f(index,value) in sequential order 1 to n, returns first non-nil of f
-getn (table) returns size of table, or n field, or table.setn value, or 1 less first index with nil value
-insert (table, [pos,] value) insert value at location pos in table, default pos=n+1
-remove (table [, pos]) removes element at pos from table, default pos=n
-setn (table, n) sets size of table, n field of table if it exists
-sort (table [, comp]) sorts in-place elements 1 to n, comp(v1,v2) should return true if v1<v2
+concat (table [, sep [, i [, j]]])\n returns concatenated table elements i to j separated by sep
+foreach (table, f)\n executes f(index,value) over all elements of table, returns first non-nil of f
+foreachi (table, f)\n executes f(index,value) in sequential order 1 to n, returns first non-nil of f
+getn (table)\n returns size of table, or n field, or table.setn value, or 1 less first index with nil value
+insert (table, [pos,] value)\n insert value at location pos in table, default pos=n+1
+remove (table [, pos])\n removes element at pos from table, default pos=n
+setn (table, n)\n sets size of table, n field of table if it exists
+sort (table [, comp])\n sorts in-place elements 1 to n, comp(v1,v2) should return true if v1<v2
 
-tonumber (e [, base]) convert to number, returns number, nil if non-convertible, 2<=base<=36
-tostring (e) convert to string, returns string
-type (v) returns type of v as a string
-unpack (list) returns all elements from list
-xpcall (f, err) pcall function f with new error handler err
+tonumber (e [, base])\n convert to number, returns number, nil if non-convertible, 2<=base<=36
+tostring (e)\n convert to string, returns string
+type (v)\n returns type of v as a string
+unpack (list)\n returns all elements from list
+xpcall (f, err)\n pcall function f with new error handler err
 
-_ALERT (e1, e2, ...) prints values to stdout using tostring
-_VERSION () returns version of Lua
+_ALERT (e1, e2, ...)\n prints values to stdout using tostring
+_VERSION ()\n returns version of Lua
 
-trace(s) -  in SciTE, writes s to the output pane (no prefix, no newlines)
-dostring(s) - executes s as a Lua string, like Lua 4's dostring
+trace(s)\n in SciTE, writes s to the output pane (no prefix, no newlines)
+dostring(s)\n executes s as a Lua string, like Lua 4's dostring
 
 #editor=output
 
@@ -243,12 +324,12 @@ editor:append
 editor:insert
 editor:remove
 
-textrange(startPos, endPos) - gets the text in the specified range
-findtext(text, [flags], [startPos, [endPos]]) - returns the start and end of the first match, or nil if no match
-match(text, [flags], [startPos]) - returns a generator that allows you to loop over the matches\ni.e. for m in output:match(text, flags) do ... end
-append(text) - appends text to the end of the document
-insert(pos, text) - inserts text at the specified position
-remove(startPos, endPos) - removes the text in the range
+textrange(startPos, endPos)\n gets the text in the specified range
+findtext(text, [flags], [startPos, [endPos]])\n returns the start and end of the first match, or nil if no match
+match(text, [flags], [startPos])\n returns a generator that allows you to loop over the matches\ni.e. for m in output:match(text, flags) do ... end
+append(text)\n appends text to the end of the document
+insert(pos, text)\n inserts text at the specified position
+remove(startPos, endPos)\n removes the text in the range
 
 scite.Open
 scite.ConstantName
@@ -260,15 +341,15 @@ scite.Perform
 scite.UpdateStatusBar
 scite.ReloadStartupScript
 
-Open(filename) - opens a file in a new buffer
-ConstantName(number) returns the symbolic name of a Scintilla / SciTE constant
-MenuCommand(IDM_constant) run specifed menu command
-SendEditor(SCI_constant, ...) sends a message to the editor pane
-SendOutput(SCI_constant, ...) sends a message to the output pane
-ShowParametersDialog(text) show parametrs dialog with message (txt) and return result action (only SciTE-Ru)
-Perform("action") execute commands of SciTE Director Interface (only SciTE-Ru)
-UpdateStatusBar([bUpdateSlowData]) perform update status bar
-ReloadStartupScript() reload startup script
+Open(filename)\n opens a file in a new buffer
+ConstantName(number)\n returns the symbolic name of a Scintilla / SciTE constant
+MenuCommand(IDM_constant)\n run specifed menu command
+SendEditor(SCI_constant, ...)\n sends a message to the editor pane
+SendOutput(SCI_constant, ...)\n sends a message to the output pane
+ShowParametersDialog(text)\n show parametrs dialog with message (txt) and return result action (only SciTE-Ru)
+Perform("action")\n execute commands of SciTE Director Interface (only SciTE-Ru)
+UpdateStatusBar([bUpdateSlowData])\n perform update status bar
+ReloadStartupScript()\n reload startup script
 
 props[string] = text_value
 

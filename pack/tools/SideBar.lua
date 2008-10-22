@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo
-version 1.7.1
+version 1.7.2
 ------------------------------------------------------
   Note: Needed gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
   Connection:
@@ -281,7 +281,7 @@ local function OpenFile(filename)
 	else
 		scite.Open(filename)
 	end
-	editor.Focus = true
+	gui.pass_focus()
 end
 
 local function FileMan_OpenItem()
@@ -512,7 +512,7 @@ local function Functions_GotoLine()
 	local pos = list_func:get_item_data(sel_item)
 	if pos then
 		editor:GotoLine(pos)
-		editor.Focus = true
+		gui.pass_focus()
 	end
 end
 
@@ -605,7 +605,7 @@ local function Bookmarks_GotoLine()
 		scite.Open(pos[1])
 		ShowCompactedLine(pos[2])
 		editor:GotoLine(pos[2])
-		editor.Focus = true
+		gui.pass_focus()
 	end
 end
 
@@ -654,7 +654,7 @@ local function Abbreviations_InsertExpansion()
 	local expansion = list_abbrev:get_item_data(sel_item)
 	expansion = expansion:gsub('\\r','\r'):gsub('\\n','\n'):gsub('\\t','\t')
 	scite.InsertAbbreviation(expansion)
-	editor.Focus = true
+	gui.pass_focus()
 	editor:CallTipCancel()
 end
 
@@ -663,6 +663,7 @@ local function Abbreviations_ShowExpansion()
 	if sel_item == -1 then return end
 	local expansion = list_abbrev:get_item_data(sel_item)
 	expansion = expansion:gsub('\\r','\r'):gsub('\\n','\n'):gsub('\\t','\t')
+	editor:CallTipCancel()
 	editor:CallTipShow(editor.CurrentPos, expansion)
 end
 

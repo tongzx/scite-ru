@@ -63,7 +63,7 @@ window_or_panel1:client(list1)
 list1:size(width, height) -- Note: Changes either height or width (one of parameters is ignored)
 list1:set_list_colour("#FFFFFF", "#000000") -- foreground, background
 list1:context_menu {'item1|func1', 'item2|func2'} -- Note: There is no. This - the wish.
-list_dir:set_selected_item(index) -- Note: Revision 747
+list1:set_selected_item(index) -- Note: Revision 747
 
 -- Add:
 list1:add_column('Title1', width) -- Note: If gui.list(true)
@@ -81,7 +81,7 @@ index = list1:get_selected_item() -- Note: Revision 747
 visible, x, y, width, height = list1:bounds()
 
 -- Event:
-list1:on_select(function(index) print(index) end) -- Note: Works as on_click. Check index ~= index_old. Only mouse click (no cursor keys). Not recommended. Use list1:get_selected_item()
+list1:on_select(function(index) print(index) end)
 list1:on_double_click(function(index) print(index) end)
 list1:on_key(function(key) print(key) end) -- Note: Revision: 747
 
