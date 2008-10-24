@@ -58,6 +58,28 @@ public:
     }
 };
 
+// show a message on the SciTE output window
+void OutputMessage(lua_State *L)
+{
+	if (lua_isstring(L,-1)) {
+		size_t len;
+		const char *msg = lua_tolstring(L,-1,&len);
+		char *buff = new char[len+2];
+		strncpy(buff,msg,len);
+		buff[len] = '\n';
+		buff[len+1] = '\0';
+		lua_pop(L,1);
+		if (lua_checkstack(L,3)) {
+			lua_getglobal(L,"output");
+			lua_getfield(L,-1,"AddText");
+			lua_insert(L,-2);
+			lua_pushstring(L,buff);
+			lua_pcall(L,2,0,0);
+		}
+		delete[] buff;
+	}
+}
+
 class LuaWindow: public TEventWindow
 {
 protected:
@@ -76,7 +98,9 @@ public:
 			luaL_dostring(L,buff);
 		} else {
 			lua_getglobal(L,name);
-			lua_pcall(L,0,0,0);
+			if (lua_pcall(L,0,0,0)) {
+				OutputMessage(L);
+			}
 		}
 	}
 
@@ -187,7 +211,9 @@ public:
 		if (name != NULL) {
 			lua_getglobal(L,name);
 			lua_pushnumber(L,ival);
-			lua_pcall(L,1,0,0);
+			if (lua_pcall(L,1,0,0)) {
+				OutputMessage(L);
+			}
 		}
 	}
 
@@ -220,18 +246,8 @@ void dispatch_ref(lua_State* L,int idx, int ival)
 		lua_rawgeti(L,LUA_REGISTRYINDEX,idx);
 		lua_pushnumber(L,ival);
 		
-		// For some reason any error here brings down SciTE.
-		// So we'll invoke the lua_pcall func and show an
-		// error message if invocation fails.
-		
 		if (lua_pcall(L,1,0,0)) {
-			const char *errmsg = lua_tostring(L, -1);
-			if (errmsg) {
-				get_parent()->message(errmsg, 2);
-			} else {
-				get_parent()->message("Unknown error occured in gui extension",2);
-			}
-			lua_pop(L, -1);
+			OutputMessage(L);
 		}
 	}
 }
@@ -1002,13 +1018,19 @@ static void force_contents_resize()
 
 static int call_named_function(lua_State* L, const char *name, int arg)
 {
+	int ret = 0;
 	lua_getglobal(L,name);
 	if (lua_isfunction(L,-1)) {
 		lua_pushinteger(L,arg);
-		lua_pcall(L,1,1,0);
-		if (lua_toboolean(L,-1)) return TRUE;
+		if (lua_pcall(L,1,1,0)) {
+			OutputMessage(L);
+		} else {
+			ret = lua_toboolean(L,-1);
+			lua_pop(L,1);
+		}
 	}
-	return FALSE;
+	lua_pop(L,1);
+	return ret;
 }
 
 // we subclass the main SciTE window proc mostly because we need to track whether
