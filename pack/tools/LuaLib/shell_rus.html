@@ -126,7 +126,7 @@ end
 
 <tr><td>
 	<p class="head">
-		<dfn>msgbox (strMessageText, [strTitle], [intOptions])</dfn>
+		<dfn id="msgbox">msgbox (strMessageText, [strTitle], [intOptions])</dfn>
 	</p>
 	<p>
 		<b>Описание:</b><br />
@@ -252,8 +252,8 @@ end
 </td></tr>
 
 <tr><td>
-	<p class="head"> <sup>new</sup>
-		<dfn>inputbox(strCaptionText, strPrompt, strDefaultValue, funcCheckInput, intMinWidth)</dfn>
+	<p class="head">
+		<dfn id="inputbox">inputbox(strCaptionText, strPrompt, strDefaultValue, funcCheckInput, intMinWidth)</dfn>
 	</p>
 	<p>
 	<b>Описание:</b><br />
@@ -271,17 +271,13 @@ end
 	</p>
 		<p><b>Пример использования:</b></p>
 		<div class="example">
-		function CheckInput(char)<br />
-		&nbsp;&nbsp;return char:match("[а-яА-ЯёЁ ]")<br />
-		end<br />
-		prompt = "Введите Вашу фамилию имя и отчество\n(на русском языке):"<br />
-		print(shell.inputbox("Имя кандидата", prompt, "Иванов Иван Иванович", "CheckInput"))</div>
+		print(shell.inputbox("Переименование файла", "Введите новое имя:", "filename.ext", function(name) return not name:match('[\\/:|*?"&lt;&gt;]') end))</div>
 	<p class="author">Автор: qVaclav</p>
 </td></tr>
 
 <tr><td>
 	<p class="head">
-		<dfn>getfileattr (strFileName)</dfn>
+		<dfn id="getfileattr">getfileattr (strFileName)</dfn>
 	</p>
 	<p>
 	<b>Описание:</b><br />
@@ -303,7 +299,7 @@ end
 
 <tr><td>
 	<p class="head">
-		<dfn>setfileattr (strFileName, intFileAttr)</dfn>
+		<dfn id="setfileattr">setfileattr (strFileName, intFileAttr)</dfn>
 	</p>
 	<p>
 	<b>Описание:</b><br />
@@ -330,7 +326,7 @@ end
 
 <tr><td>
 	<p class="head">
-		<dfn>fileexists (strFileName)</dfn>
+		<dfn id="fileexists">fileexists (strFileName)</dfn>
 	</p>
 	<p>
 	<b>Описание:</b><br />
@@ -356,7 +352,7 @@ end
 
 <tr><td>
 	<p class="head">
-		<dfn>exec (strCommand, [strOperation], [boolNoShow], [bWaitOnReturn])</dfn>
+		<dfn id="exec">exec (strCommand, [strOperation], [boolNoShow], [bWaitOnReturn])</dfn>
 	</p>
 	<p>
 	<b>Описание:</b><br />
@@ -454,7 +450,7 @@ end
 
 <tr><td>
 	<p class="head">
-		<dfn>findfiles (strFindMask)</dfn>
+		<dfn id="findfiles">findfiles (strFindMask)</dfn>
 	</p>
 	<p>
 	<b>Описание:</b><br />

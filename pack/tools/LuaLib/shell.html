@@ -110,7 +110,7 @@ end
 
 <tr><td>
 	<p class="head">
-		<dfn>msgbox (strMessageText, [strTitle], [intOptions])</dfn>
+		<dfn id="msgbox">msgbox (strMessageText, [strTitle], [intOptions])</dfn>
 	</p>
 	<p>
 		<b>Description:</b><br />
@@ -234,8 +234,8 @@ end
 </td></tr>
 
 <tr><td>
-	<p class="head"> <sup>new</sup>
-		<dfn>inputbox(strCaptionText, strPrompt, strDefaultValue, funcCheckInput, intMinWidth)</dfn>
+	<p class="head">
+		<dfn id="inputbox">inputbox(strCaptionText, strPrompt, strDefaultValue, funcCheckInput, intMinWidth)</dfn>
 	</p>
 	<p>
 	<b>Description:</b><br />
@@ -253,19 +253,14 @@ end
 	</p>
 		<p><b>Example:</b></p>
 		<div class="example">
-		function CheckInput(text)<br />
-		&nbsp;&nbsp;return text:match("^[A-Za-z%p ]*$")<br />
-		end<br />
-		prompt = "Enter some text (in English).\nThis text is also checked\nin the CheckInput function..."<br />
-		defaultText = "...before it will (or won't) displayed"<br />
-		print(shell.inputbox("Some text", prompt, defaultText, "CheckInput"))
+		print(shell.inputbox("Rename", "Enter new file name:", "filename.ext", function(name) return not name:match('[\\/:|*?"&lt;&gt;]') end))
 		</div>
 	<p class="author">Author: qVaclav</p>
 </td></tr>
 
 <tr><td>
 	<p class="head">
-		<dfn>getfileattr (strFileName)</dfn>
+		<dfn id="getfileattr">getfileattr (strFileName)</dfn>
 	</p>
 	<p>
 	<b>Description:</b><br />
@@ -287,7 +282,7 @@ end
 
 <tr><td>
 	<p class="head">
-		<dfn>setfileattr (strFileName, intFileAttr)</dfn>
+		<dfn id="setfileattr">setfileattr (strFileName, intFileAttr)</dfn>
 	</p>
 	<p>
 	<b>Description:</b><br />
@@ -313,8 +308,8 @@ end
 </td></tr>
 
 <tr><td>
-	<p class="head"> <sup>new</sup>
-		<dfn>fileexists (strFileName)</dfn>
+	<p class="head">
+		<dfn id="fileexists">fileexists (strFileName)</dfn>
 	</p>
 	<p>
 	<b>Description:</b><br />
@@ -339,8 +334,8 @@ end
 </td></tr>
 
 <tr><td>
-	<p class="head"> <sup>new</sup>
-		<dfn>exec (strCommand, [strOperation], [boolNoShow], [bWaitOnReturn])</dfn>
+	<p class="head">
+		<dfn id="exec">exec (strCommand, [strOperation], [boolNoShow], [bWaitOnReturn])</dfn>
 	</p>
 	<p>
 	<b>Description:</b><br />
@@ -438,8 +433,8 @@ end
 </td></tr>
 
 <tr><td>
-	<p class="head"> <sup>new</sup>
-		<dfn>findfiles (strFindMask)</dfn>
+	<p class="head">
+		<dfn id="findfiles">findfiles (strFindMask)</dfn>
 	</p>
 	<p>
 	<b>Description:</b><br />

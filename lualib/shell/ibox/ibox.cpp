@@ -12,6 +12,7 @@
 #endif
 
 #include <windows.h>
+#include "../utils/luaargs.h"
 #include "resource.h"
 
 extern "C" {
@@ -430,30 +431,27 @@ void InputBox::Layout(HWND hdlg)
 }
 
 //------------------------------------------------------------------------------
-// Выводит текст на консоль SciTE.
-// msg == NULL означает, что текст лежит на вершине стека.
+// Выводит текст на консоль SciTE
 //------------------------------------------------------------------------------
-void OutputMessage(lua_State *L, const char *msg=0)
+void OutputMessage(lua_State *L)
 {
-	char *txt;
-	if (msg) {
-		txt = new char[lstrlen(msg) + 2];
-		lstrcpy(txt, msg);
-	} else {
-		if (!lua_isstring(L, -1))
-			return;
-		txt = new char[lstrlen(lua_tostring(L, -1)) + 2];
-		lstrcpy(txt, lua_tostring(L, -1));
+	if (lua_isstring(L, -1)) {
+		size_t len;
+		const char *msg = lua_tolstring(L, -1, &len);
+		char *buff = new char[len+2];
+		strncpy(buff, msg, len);
+		buff[len] = '\n';
+		buff[len+1] = '\0';
 		lua_pop(L, 1);
+		if (lua_checkstack(L, 3)) {
+			lua_getglobal(L, "output");
+			lua_getfield(L, -1, "AddText");
+			lua_insert(L, -2);
+			lua_pushstring(L, buff);
+			lua_pcall(L, 2, 0, 0);
+		}
+		delete[] buff;
 	}
-	lstrcat(txt, "\n");
-
-	lua_getglobal(L, "output");
-	lua_getfield(L, -1, "AddText");
-	lua_insert(L, -2);
-	lua_pushstring(L, txt);
-	delete[] txt;
-	lua_pcall(L, 2, 0, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -461,7 +459,6 @@ void OutputMessage(lua_State *L, const char *msg=0)
 //------------------------------------------------------------------------------
 bool IsInputValid(lua_State *L, const char *str, char ch, int checker)
 {
-	int lua_gettop();
 	if (checker) {
 		lua_rawgeti(L, LUA_REGISTRYINDEX, checker);
 		lua_pushstring(L, str);
@@ -473,13 +470,14 @@ bool IsInputValid(lua_State *L, const char *str, char ch, int checker)
 			OutputMessage(L);
 			lua_pushboolean(L, 1);
 		}
-		return lua_toboolean(L, -1) != 0;
+		bool ret = lua_toboolean(L, -1) != 0;
+		lua_pop(L, 1);
+		return ret;
 	}
 	return true;
 }
 
 //------------------------------------------------------------------------------
-typedef LRESULT (CALLBACK * WNDPROC)(HWND, UINT, WPARAM, LPARAM);
 WNDPROC originalEditHandler = 0;
 
 //------------------------------------------------------------------------------
@@ -730,8 +728,6 @@ InputBox::~InputBox()
 {
 	DestroyIcon(smallIcon);
 	DestroyIcon(bigIcon);
-	if (onChar)
-		luaL_unref(luaState, LUA_REGISTRYINDEX, onChar);
 }
 
 //------------------------------------------------------------------------------
@@ -741,10 +737,32 @@ const char *InputBox::Text() const
 }
 
 //------------------------------------------------------------------------------
+// The next functions were borrowed from Steve Donovan's gui library
+//------------------------------------------------------------------------------
+BOOL CALLBACK CheckSciteWindow(HWND hwnd, LPARAM lParam)
+{
+	char buff[120];
+    GetClassName(hwnd, buff, sizeof(buff));	
+    if (lstrcmp(buff, "SciTEWindow") == 0) {
+		*reinterpret_cast<HWND*>(lParam) = hwnd;
+		return FALSE;
+    }
+    return TRUE;
+}
+
+HWND FindScite()
+{
+	HWND SciTE = 0;
+	EnumThreadWindows(GetCurrentThreadId(), CheckSciteWindow,
+		reinterpret_cast<LPARAM>(&SciTE));
+	return SciTE;
+}
+
+//------------------------------------------------------------------------------
 int InputBox::ShowModal()
 {
 	int result = DialogBoxParam(GetModuleHandle("shell.dll"), "IBOX_DLG",
-		GetDesktopWindow(), DlgHandler, reinterpret_cast<LPARAM>(this));
+		FindScite(), DlgHandler, reinterpret_cast<LPARAM>(this));
 	if (result == -1) {
 		// Вообще-то, это означает, что произошла какая-то ошибка,
 		// но мы сделаем вид, что всё Ок: будто бы нажата Cancel
@@ -753,51 +771,20 @@ int InputBox::ShowModal()
 	return result;
 }
 
-// Параметры:
-//   caption: текст заголовка окна
-//   prompt:  надпись над полем ввода (строки должны отделяться '\r' или '\n')
-//   value:   текст, помещаемый в поле ввода
-//   onchar:  пользовательская функция-контролёр вводимой строки; получает
-//            вводимую строку в том виде, в каком она будет ПОСЛЕ принятия
-//            только что введённого символа (этого символа ещё нет ни на экране,
-//            ни в строке ввода) и сам этот символ;
-//            если вместо символа получено nil -- нажат Enter или Ok;
-//            должна вернуть true, если изменения принимаются, иначе -- false
-//            (Примечание этой функции при первом вызове передаётся value
-//            для проверки, а вместо символа -- nil, как для последней);
-//   width:   ширина поля ввода в условных (усреднённых символах)
-// Результат:
-//   введённая строка, если нажата Ok, или nil, если - Cancel
-//
-// Значения по умолчанию:
-//   caption = "InputBox"
-//   prompt  = "Enter:"
-//   value   = ""
-//   onchar  =  nil
-//   width   =  20
-//
+//------------------------------------------------------------------------------
+// shell.showinputbox(caption, prompt, default, check, modality, width)
+//------------------------------------------------------------------------------
 extern int showinputbox(lua_State* L)
 {
-	int num = lua_gettop(L);
-	const char *caption = luaL_optstring(L, 1, "InputBox");
-	const char *prompt = num > 1? luaL_optstring(L, 2, "Enter:") : "Enter:";
-	const char *value  = num > 2? luaL_optstring(L, 3, "") : "";
-	int onchar = 0;
-	if (num > 3) {
-		luaL_checktype(L, 4, LUA_TFUNCTION);
-		lua_checkstack(L, 1);
-		lua_pushvalue(L, 4);
-		onchar = luaL_ref(L, LUA_REGISTRYINDEX);
-	}
-	int width  = num > 4? luaL_optint(L, 5, 20) : 20;
-
-	const char *safeValue = "";
-	if (!IsInputValid(L, value, '\0', onchar))
-		value = safeValue;
+	LuaArgs lua(L);
+	const char *caption = lua.gets(1, "InputBox");
+	const char *prompt  = lua.gets(2, "Enter:");
+	const char *value   = lua.gets(3, "");
+	int         onchar  = lua.getf(4);
+	int         width   = lua.geti(5, 20);
 
 	InputBox dlg(caption, prompt, value, width, onchar, L);
 	bool res = dlg.ShowModal() == IDOK;
-	lua_pushboolean(L, res);
 
 	if (res)
 		lua_pushstring(L, dlg.Text());
