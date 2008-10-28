@@ -14,7 +14,7 @@ scroll=no
 selection=yes
 contextMenu=yes
 singleinstance=yes
-version=1.5
+version=1.6
 >
 <script language=JavaScript>
 function ParseCmdLine(cmd){
@@ -64,7 +64,28 @@ function Shortcuts(event, pane){
 			if (event.altKey) forward();
 			break;
 	}
-	return;
+}
+
+function CopyURL(event){
+	var element = event.srcElement;
+	var id_name = element.name||element.id;
+	if (!id_name){
+		element = element.parentElement;
+		id_name = element.name||element.id;
+	};
+	if (!id_name){
+		element = element.parentElement;
+		id_name = element.name||element.id;
+	};
+	var url = frames["html_doc"].document.URL.replace(/^.*\\(.*?\\.*?)(#.*?)?$/gi, '$1').replace(/\\/gi,'/');
+	url = 'http://scite-ru.googlecode.com/svn/trunk/pack/' + url;
+	if (id_name){
+		var url_tag = '[url=' + url + '#' + id_name + ']' + id_name + '[/url]';
+	}else{
+		var url_tag = '[url=' + url + ']' + url.replace(/^.*\//, '') + '[/url]';
+	}
+	window.clipboardData.setData('Text',url_tag);
+	alert('Copy to clipboard:\n' + url_tag);
 }
 
 document.onkeydown = function(){Shortcuts(event, 0);};
@@ -164,7 +185,7 @@ function on_load() {
 	}
 
 	// Zoom
-	html_doc.document.onkeydown = function() {parent.Shortcuts(html_doc.event, 1);};
+	html_doc.document.onkeydown = function() {parent.Shortcuts(html_doc.event, 1)};
 	document.title = html_doc.document.title + " - [" + HTA.applicationName.replace(/_/g,' ') + ' ' + HTA.version + ']';
 	if (text_find != ''){
 		Find();
@@ -173,6 +194,9 @@ function on_load() {
 	} else {
 		SearchReset();
 	}
+
+	// CopyURL
+	html_doc.document.ondblclick = function() {parent.CopyURL(html_doc.event)};
 }
 
 </script>
