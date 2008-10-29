@@ -1,6 +1,6 @@
 --[[-------------------------------------------------
 MakeAbbrev.lua
-Version: 1.4
+Version: 1.4.1
 Author: frs
 -------------------------------------------------
 add selected text to SciTE Abbreviation, enter the abbreviature in a dialog
@@ -20,7 +20,7 @@ local title = scite.GetTranslation("Abbreviation")
 local text = scite.GetTranslation("Enter abbreviation for code:")
 
 local key = sel_text:match("%w+")
-key = shell.inputbox(title, text, key, function(name) return name:match('^[^# \t][^=]+$') end)
+key = shell.inputbox(title, text, key, function(name) return not name:match('[# \t=]') end)
 if key == nil then return end
 
 local abbrev_file_text = ''
