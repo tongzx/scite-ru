@@ -33,13 +33,14 @@ local tab0 = gui.panel(panel_width + 18)
 local memo_path = gui.memo()
 tab0:add(memo_path, "top", 22)
 
-local list_dir = gui.list()
-local list_dir_height = win_height/2 - 80
-tab0:add(list_dir, "top", list_dir_height)
-
+local list_dir_height = win_height/3
+if list_dir_height <= 0 then list_dir_height = 200 end
 local list_favorites = gui.list(true)
 list_favorites:add_column("Favorites", 600)
-tab0:client(list_favorites)
+tab0:add(list_favorites, "bottom", list_dir_height)
+
+local list_dir = gui.list()
+tab0:client(list_dir)
 
 tab0:context_menu {
 	'FileMan: Select Dir|FileMan_SelectDir',
@@ -60,15 +61,16 @@ tab0:context_menu {
 -------------------------
 local tab1 = gui.panel(panel_width + 18)
 
-local list_func = gui.list(true)
-list_func:add_column("Functions/Procedures", 600)
-local list_func_height = win_height/2 - 80
-tab1:add(list_func, "top", list_func_height)
-
+local list_func_height = win_height/3
+if list_func_height <= 0 then list_func_height = 200 end
 local list_bookmarks = gui.list(true)
 list_bookmarks:add_column("@", 24)
 list_bookmarks:add_column("Bookmarks", 600)
-tab1:client(list_bookmarks)
+tab1:add(list_bookmarks, "bottom", list_func_height)
+
+local list_func = gui.list(true)
+list_func:add_column("Functions/Procedures", 600)
+tab1:client(list_func)
 
 tab1:context_menu {
 	'Functions: Sort by Order|Functions_SortByOrder',
