@@ -769,14 +769,14 @@ STDMETHODIMP tLuaControl::DoVerb(LONG lVerb, LPMSG pMsg, IOleClientSite *pActive
             #pragma message("FIX - luacom bug http://lua-users.org/lists/lua-l/2006-09/msg00030.html")
             FAIL("FIX - luacom bug lua-l/2006-09/msg00030.html");
 
-            if (hr == OLEOBJ_S_INVALIDVERB) {
+            if (lVerb == OLEOBJ_S_INVALIDVERB) {
                 // unrecognised verb -- just do the primary verb and
                 // activate the sucker.
                 //
                 hr = InPlaceActivate(0);
                 return (FAILED(hr)) ? hr : OLEOBJ_S_INVALIDVERB;
             } else
-                return hr;
+                return S_OK;
         } else {
             FAIL("Unrecognized Negative verb in DoVerb().  bad.");
             return E_NOTIMPL;

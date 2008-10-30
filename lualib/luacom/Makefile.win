@@ -34,30 +34,40 @@ SRC_DLL_DIR = .\src\dll
 # WARNING: The version of Lua in these # directories MUST MATCH the one
 # specified in LUA_VERSION
 # ---------------------------------------------------------------------------
-LUA_INC = ..\lua5.1\include
-LUA_LIB = ..\lua5.1\lib\static
-LUA_LIBDLL = ..\lua5.1\lib
-LUA = ..\lua5.1\bin\lua$(LUA_SUFFIX).exe
-LUAC = ..\lua5.1\bin\luac$(LUA_SUFFIX).exe
-BIN2C = ..\lua5.1\bin\bin2c$(LUA_SUFFIX).exe
+#LUA_INC = ..\lua5.1\include
+#LUA_LIB = ..\lua5.1\lib\static
+#LUA_LIBDLL = ..\lua5.1\lib
+#LUA = ..\lua5.1\bin\lua$(LUA_SUFFIX).exe
+#LUAC = ..\lua5.1\bin\luac$(LUA_SUFFIX).exe
+#BIN2C = ..\lua5.1\bin\bin2c$(LUA_SUFFIX).exe
+LUA_INC = ..\..\src\scite\lua\include
+LUA_LIBDLL = ..\lib
+LUAC = ..\bin\luac$(LUA_SUFFIX).exe
+BIN2C = ..\bin\bin2c$(LUA_SUFFIX).exe
 
 # ---------------------------------------------------------------------------
 # Use the following lines to ste the IUP, CD, and IM include and library
 # directories (only if you will use IUP)
 # ---------------------------------------------------------------------------
-IUP_INC = y:\trab\iup\include
-IUP_LIB = y:\trab\iup\lib
-CD_INC = y:\trab\cd\include
-CD_LIB = y:\trab\cd\lib
-IM_LIB = y:\trab\im\lib
-TOLUA_LIB = y:\trab\tolua-5.0\lib
+#IUP_INC = y:\trab\iup\include
+#IUP_LIB = y:\trab\iup\lib
+#CD_INC = y:\trab\cd\include
+#CD_LIB = y:\trab\cd\lib
+#IM_LIB = y:\trab\im\lib
+#TOLUA_LIB = y:\trab\tolua-5.0\lib
+IUP_INC = FooDir
+IUP_LIB = FooDir
+CD_INC = FooDir
+CD_LIB = FooDir
+IM_LIB = FooDir
+TOLUA_LIB = FooDir
 
 # ---------------------------------------------------------------------------
 # Use the new Lua package proposal (http://www.keplerproject.org/compat)
 # Comment the following line if your Lua is not compiled with compat-5.1
 # Ignored if you are compiling for Lua 4
 # ---------------------------------------------------------------------------
-COMPAT = -DCOMPAT51
+#COMPAT = -DCOMPAT51
 
 # ---------------------------------------------------------------------------
 # Compiler options
@@ -71,9 +81,11 @@ CFLAGS = $(INCS) -DWIN32 -D_CRT_SECURE_NO_DEPRECATE -nologo
 # If you want debugging information, define DEBUG in your environment
 
 !IFDEF DEBUG
-CFLAGS =$(CFLAGS) -MDd -Zi -Od -DLUA_USE_APICHECK
+#CFLAGS =$(CFLAGS) -MDd -Zi -Od -DLUA_USE_APICHECK
+CFLAGS =$(CFLAGS) -MTd -Zi -Od -DLUA_USE_APICHECK
 !ELSE
-CFLAGS =$(CFLAGS) -MD -Zi -O2 -DNDEBUG
+#CFLAGS =$(CFLAGS) -MD -Zi -O2 -DNDEBUG
+CFLAGS =$(CFLAGS) -MT -O1s -DNDEBUG
 !ENDIF
 
 # If you want IUP compiled in, define IUP
@@ -99,7 +111,9 @@ DEFAULT_LIBS = kernel32.lib user32.lib gdi32.lib shell32.lib advapi32.lib ole32.
 #				/NODEFAULTLIB:"libcmtd.lib" \
 
 
-LFLAGS = /nologo /subsystem:console /incremental:no /machine:I386 /debug \
+#LFLAGS = /nologo /subsystem:console /incremental:no /machine:I386 /debug \
+#				$(DEFAULT_LIBS) 
+LFLAGS = /nologo /subsystem:console /incremental:no /machine:I386 /release \
 				$(DEFAULT_LIBS) 
 
 !IFDEF DEBUG
@@ -108,7 +122,8 @@ LINK_USE_DEBUG = /DEBUG /PDB:NONE
 
 # Here we assume lua libs are have as a suffix the version number, like lua-5.0.lib
 LUA_LIBS = $(LUA_LIB)/lua$(LUA_SUFFIX).lib
-LUA_LIBSDLL = $(LUA_LIBDLL)/lua$(LUA_SUFFIX).lib 
+#LUA_LIBSDLL = $(LUA_LIBDLL)/lua$(LUA_SUFFIX).lib 
+LUA_LIBSDLL = $(LUA_LIBDLL)/scite.lib 
 
 # ---------------------------------------------------------------------------
 # Target options
