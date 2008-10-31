@@ -1,5 +1,5 @@
 --[[----------------------------------------------------------------------------
-HighlightLinks v1.2
+HighlightLinks v1.3
 Автор: VladVRO
 
 Подсветка линков в тексте и открытие их в броузере при клике с зажатым Ctrl
@@ -51,7 +51,7 @@ local function select_highlighted_link(is_browse)
 		if s and e then
 			editor:SetSel(s,e)
 			if is_browse then
-				browser = ('explorer "'..editor:GetSelText()..'"')
+				browser = editor:GetSelText()
 			end
 			return true
 		end
@@ -60,7 +60,7 @@ end
 
 local function launch_browse()
 	if browser then
-		shell.exec(browser, nil, true, false)
+		shell.exec(browser)
 		browser = nil
 	end
 end
