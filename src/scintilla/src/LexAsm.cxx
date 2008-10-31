@@ -114,6 +114,15 @@ static void ColouriseAsmDoc(unsigned int startPos, int length, int initStyle, Wo
 					sc.ChangeState(SCE_ASM_DIRECTIVEOPERAND);
 				} else if (extInstruction.InList(s)) {
 					sc.ChangeState(SCE_ASM_EXTINSTRUCTION);
+//!-start-[AsmLexerImprovement]
+				} else if (keywordlists[6]->len) {
+					for (int wl = 6; wl < KEYWORDSET_MAX; wl++) {
+						if (keywordlists[wl]->InList(s)) {
+							sc.ChangeState(SCE_ASM_EXTINSTRUCTION + wl - 5);
+							break;
+						}
+					}
+//!-end-[AsmLexerImprovement]
 				}
 				sc.SetState(SCE_ASM_DEFAULT);
 			}
