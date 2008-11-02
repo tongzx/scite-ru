@@ -1,16 +1,20 @@
--- Наглядная установка/снятие режима "только для чтения"
--- индикация режима ReadOnly в строке состояния, стилем поля с нумерацией строк и отключением мерцания курсора
--- VladVRO, mozers
--- version 1.2
+--[[----------------------------------------------------------------------------
+ReadOnly.lua
+Author: VladVRO, mozers
+version 1.3
 
--- Подключение:
--- В файл SciTEStartup.lua добавьте строку:
---   dofile (props["SciteDefaultHome"].."\\tools\\ReadOnly.lua")
--- включите scite.readonly в статусную строку:
---   statusbar.text.1=Line:$(LineNumber) Col:$(ColumnNumber) [$(scite.readonly)]
--- задайте в файле .properties цвет фона поля с нумерацией строк в режиме "только для чтения":
---   style.back.readonly=#F2F2F1
-------------------------------------------------
+Наглядная установка/снятие режима "только для чтения"
+индикация режима ReadOnly в строке состояния, стилем поля
+с нумерацией строк и отключением мерцания курсора
+
+Подключение:
+В файл SciTEStartup.lua добавьте строку:
+  dofile (props["SciteDefaultHome"].."\\tools\\ReadOnly.lua")
+включите scite.readonly в статусную строку:
+  statusbar.text.1=Line:$(LineNumber) Col:$(ColumnNumber) [$(scite.readonly)]
+задайте в файле .properties цвет фона поля с нумерацией строк в режиме "только для чтения":
+  style.back.readonly=#FFEEEE
+--]]----------------------------------------------------------------------------
 
 local function SetReadOnly(ro)
 	if ro then
@@ -23,20 +27,24 @@ local function SetReadOnly(ro)
 
 		props["caret.period"] = 0
 		props["caret.width"] = 0
-		props["style.*.33"] = props["style.*.33"]..",back:"..props["style.back.readonly"]
-
+		if props["style.back.readonly"] ~= "" then
+			props["style.*.33"] = props["style.*.33"]..",back:"..props["style.back.readonly"]
+		end
 		scite.Perform("reloadproperties:")
+
 		props["scite.readonly"] = "VIEW"
+
 	else
-		if props["style.back.readonly"]~='' and props["scite.readonly"] == "VIEW" then
+		if props["scite.readonly"] == "VIEW" then
+			props["style.*.33"] = props["style.*.33.normal"]
 			props["caret.period"] = props["caret.period.normal"]
 			props["caret.width"] = props["caret.width.normal"]
-			props["style.*.33"] = props["style.*.33.normal"]
-
 			scite.Perform("reloadproperties:")
 		end
+
 		props["scite.readonly"] = "EDIT"
 	end
+
 	scite.UpdateStatusBar()
 end
 
