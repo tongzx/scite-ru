@@ -42,6 +42,7 @@ function SaveSetting()
 	text = SaveKey(text, 'magnification') -- параметр изменяется в Zoom.lua
 	text = SaveKey(text, 'output.magnification') -- параметр изменяется в Zoom.lua
 	text = SaveKey(text, 'print.magnification') -- параметр изменяется в Zoom.lua
+	text = SaveKey(text, 'sidebar.show') -- параметр изменяется в SideBar.lua
 	io.output(file)
 	io.write(text)
 	io.close()
