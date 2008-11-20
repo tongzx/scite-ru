@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo
-version 1.7.2
+version 1.7.3
 ------------------------------------------------------
   Note: Needed gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
   Connection:
@@ -687,8 +687,7 @@ end)
 -- Events
 ----------------------------------------------------------
 local function OnSwitch()
-	if tonumber(props['sidebar.show'])~=1 then return end
-	if tab_index == 0 then
+	if tab0:bounds() then -- visible FileMan
 		local path = props['FileDir']
 		if path == '' then return end
 		path = path:gsub('\\$','')..'\\'
@@ -696,10 +695,10 @@ local function OnSwitch()
 			current_path = path
 			FileMan_ListFILL()
 		end
-	elseif tab_index == 1 then
+	elseif tab1:bounds() then -- visible Funk/Bmk
 		Functions_GetNames() Functions_ListFILL()
 		Bookmarks_ListFILL()
-	elseif tab_index == 2 then
+	elseif tab2:bounds() then -- visible Abbrev
 		Abbreviations_ListFILL()
 	end
 end
@@ -730,8 +729,7 @@ function SideBar_ShowHide()
 end
 
 local function OnDocumentContentsChanged()
-	if tonumber(props['sidebar.show'])~=1 then return end
-	if tab_index == 1 then
+	if tab1:bounds() then -- visible Funk/Bmk
 		Functions_GetNames() Functions_ListFILL()
 		Bookmarks_RefreshTable()
 	end
