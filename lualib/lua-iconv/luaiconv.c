@@ -88,8 +88,8 @@ static iconv_t get_iconv_t(lua_State *L, int i) {
 
 
 static int Liconv_open(lua_State *L) {
-    const char *tocode = luaL_checkstring(L, 1);
-    const char *fromcode = luaL_checkstring(L, 2);
+    const char *fromcode = luaL_checkstring(L, 1);
+    const char *tocode = luaL_checkstring(L, 2);
     iconv_t cd = iconv_open(tocode, fromcode);
     if (cd != (iconv_t)(-1))
         push_iconv_t(L, cd);    /* ok */
@@ -202,7 +202,6 @@ static int Liconv_close(lua_State *L) {
 
 static const luaL_reg inconvFuncs[] = {
     { "open",   Liconv_open },
-    { "new",    Liconv_open },
     { "iconv",  Liconv },
 #ifdef HAS_ICONVLIST
     { "list",   Liconvlist },
