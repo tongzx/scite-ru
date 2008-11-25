@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo
-version 1.7.3
+version 1.8
 ------------------------------------------------------
   Note: Needed gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
   Connection:
@@ -26,6 +26,18 @@ local win_height = props['position.height']
 if win_height == '' then win_height = 600 end
 
 ----------------------------------------------------------
+-- Common functions
+----------------------------------------------------------
+function ReplaceWithoutCase(text, s_find, s_rep)
+	local i, j = 1
+	repeat
+		i, j = text:lower():find(s_find:lower(), j, true)
+		if j == nil then return text end
+		text = text:sub(1, i-1)..s_rep..text:sub(j+1)
+	until false
+end
+
+----------------------------------------------------------
 -- Create panels
 ----------------------------------------------------------
 local tab0 = gui.panel(panel_width + 18)
@@ -43,7 +55,7 @@ local list_dir = gui.list()
 tab0:client(list_dir)
 
 tab0:context_menu {
-	'FileMan: Select Dir|FileMan_SelectDir',
+	'FileMan: Change Dir|FileMan_ChangeDir',
 	'FileMan: Show All|FileMan_MaskAllFiles',
 	'FileMan: Only current ext|FileMan_MaskOnlyCurrentExt',
 	'', -- separator
@@ -116,7 +128,7 @@ local current_path = ''
 local file_mask = '*.*'
 
 local function FileMan_ShowPath()
-	local rtf = '{\\rtf\\ansi\\ansicpg1251{\\fonttbl{\\f0\\fcharset204 Helv;}}{\\colortbl ;\\red0\\green0\\blue255;  \\red255\\green0\\blue0;}\\f0\\fs16'
+	local rtf = [[{\rtf\ansi\ansicpg1251{\fonttbl{\f0\fcharset204 Helv;}}{\colortbl;\red0\green0\blue255;\red255\green0\blue0;}\f0\fs16]]
 	local path = '\\cf1'..current_path:gsub('\\', '\\\\')
 	local mask = '\\cf2'..file_mask..'}'
 	memo_path:set_text(rtf..path..mask)
@@ -152,16 +164,15 @@ local function FileMan_GetSelectedItem()
 	return dir_or_file, attr
 end
 
-function FileMan_SelectDir()
-	local newPath = gui.select_dir_dlg('Select new directory')
-	if newPath ~= '' then
-		if newPath:match('[\\/]$') then
-			current_path = newPath
-		else
-			current_path = newPath..'\\'
-		end
-		FileMan_ListFILL()
+function FileMan_ChangeDir()
+	local newPath = gui.select_dir_dlg('Please change current directory', current_path)
+	if newPath == nil then return end
+	if newPath:match('[\\/]$') then
+		current_path = newPath
+	else
+		current_path = newPath..'\\'
 	end
+	FileMan_ListFILL()
 end
 
 function FileMan_MaskAllFiles()
@@ -237,7 +248,7 @@ function FileMan_FileExec(params)
 	if file_ext == nil then return end
 	file_ext = '%*%.'..string.lower(file_ext)
 	local cmd = ''
-	local function command_build(lng)
+	local function CommandBuild(lng)
 		local cmd = props['command.build.$(file.patterns.'..lng..')']
 		cmd = cmd:gsub(props["FilePath"], current_path..filename)
 		return cmd
@@ -248,11 +259,11 @@ function FileMan_FileExec(params)
 		dofile(current_path..filename)
 	-- Batch
 	elseif string.match(props['file.patterns.batch'], file_ext) ~= nil then
-		FileMan_FileExecWithSciTE(command_build('batch'))
+		FileMan_FileExecWithSciTE(CommandBuild('batch'))
 		return
 	-- WSH
 	elseif string.match(props['file.patterns.wscript']..props['file.patterns.wsh'], file_ext) ~= nil then
-		FileMan_FileExecWithSciTE(command_build('wscript'))
+		FileMan_FileExecWithSciTE(CommandBuild('wscript'))
 	-- Other
 	else
 		local ret, descr = shell.exec(current_path..filename..params)
@@ -328,23 +339,39 @@ local favorites_filename = props['SciteUserHome']..'\\favorites.lst'
 local list_fav_table = {}
 
 local function Favorites_ListFILL()
+	list_favorites:clear()
+	table.sort(list_fav_table,
+		function(a, b)
+			local function IsSession(filepath)
+				return filepath:upper():gsub('^.*%.','') == 'SESSION'
+			end
+			return not IsSession(a) and IsSession(b)
+		end
+	)
+	for _, s in ipairs(list_fav_table) do
+		list_favorites:add_item(s:gsub('.+\\',''), s)
+	end
+end
+
+local function Favorites_OpenList()
 	local favorites_file = io.open(favorites_filename)
 	if favorites_file then
 		for line in favorites_file:lines() do
-			if line.len ~= 0 then
-				local caption = line:gsub('.+\\','')
-				list_favorites:add_item(caption, line)
+			if #line ~= 0 then
+				line = ReplaceWithoutCase(line, '$(SciteDefaultHome)', props['SciteDefaultHome'])
 				table.insert(list_fav_table, line)
 			end
 		end
 		favorites_file:close()
 	end
+	Favorites_ListFILL()
 end
-Favorites_ListFILL()
+Favorites_OpenList()
 
 local function Favorites_SaveList()
 	io.output(favorites_filename)
 	local list_string = table.concat(list_fav_table,'\n')
+	list_string = ReplaceWithoutCase(list_string, props['SciteDefaultHome'], '$(SciteDefaultHome)')
 	io.write(list_string)
 	io.close()
 end
@@ -353,13 +380,13 @@ function Favorites_AddFile()
 	local filename, attr = FileMan_GetSelectedItem()
 	if filename == '' then return end
 	if attr == 'd' then return end
-	list_favorites:add_item(filename, current_path..filename)
 	table.insert(list_fav_table, current_path..filename)
+	Favorites_ListFILL()
 end
 
 function Favorites_AddCurrentBuffer()
-	list_favorites:add_item(props['FileNameExt'], props['FilePath'])
 	table.insert(list_fav_table, props['FilePath'])
+	Favorites_ListFILL()
 end
 
 function Favorites_DeleteItem()
@@ -375,6 +402,18 @@ local function Favorites_OpenFile()
 	local filename = list_favorites:get_item_data(idx)
 	OpenFile(filename)
 end
+
+local function Favorites_ShowFilePath()
+	local sel_item = list_favorites:get_selected_item()
+	if sel_item == -1 then return end
+	local expansion = list_favorites:get_item_data(sel_item)
+	editor:CallTipCancel()
+	editor:CallTipShow(-2, expansion)
+end
+
+list_favorites:on_select(function()
+	Favorites_ShowFilePath()
+end)
 
 list_favorites:on_double_click(function()
 	Favorites_OpenFile()
@@ -420,8 +459,14 @@ local Lang2RegEx = {
 	['Python']={"\n%s*()DEF +[%w_]-()%b():",
 				"\n%s*()CLASS +[%w_]-()%b():"},
 	['Lua']={"\n[%s%u]*FUNCTION +()[%w_]-()%b()"},
+	['nnCron']={"\n%:%s()[%w_#%-<>]+()%s"},
 	['*']={"\n%s*()[SF][U][BN][^ .]* [^ (]*()%b()"},
 }
+
+local Lang2CodeStart = {
+	['Pascal']='^IMPLEMENTATION$',
+}
+
 local Lexer2Lang = {
 	['asm']='Assembler',
 	['cpp']='C++',
@@ -432,7 +477,9 @@ local Lexer2Lang = {
 	['pascal']='Pascal',
 	['python']='Python',
 	['lua']='Lua',
+	['nncrontab']='nnCron',
 }
+
 local Ext2Lang = {}
 local function Fill_Ext2Lang()
 	local patterns = {
@@ -445,6 +492,7 @@ local function Fill_Ext2Lang()
 		[props['file.patterns.pascal']]='Pascal',
 		[props['file.patterns.py']]='Python',
 		[props['file.patterns.lua']]='Lua',
+		[props['file.patterns.nncron']]='nnCron',
 	}
 	for i,v in pairs(patterns) do
 		for ext in (i..';'):gfind("%*%.([^;]+);") do
@@ -455,31 +503,42 @@ end
 Fill_Ext2Lang()
 
 local function Functions_GetNames()
+	if editor.Length == 0 then return end
 	table_functions = {}
 	local tablePattern = Lang2RegEx[Ext2Lang[props["FileExt"]]]
+	local start_code = Lang2CodeStart[Ext2Lang[props["FileExt"]]]
 	if not tablePattern then
 		tablePattern = Lang2RegEx[Lexer2Lang[editor.LexerLanguage]]
+		start_code = Lang2CodeStart[Lexer2Lang[editor.LexerLanguage]]
 		if not tablePattern then
 			tablePattern = Lang2RegEx['*']
+			start_code = Lang2CodeStart['*']
 		end
 	end
 	local textAll = editor:GetText()
--- output:ClearAll()
+	local start_code_pos = 0
+	if start_code ~= nil then
+		start_code_pos = editor:findtext(start_code, SCFIND_REGEXP)
+		if start_code_pos ~= nil then
+			textAll = textAll:sub(start_code_pos)
+		end
+	end
+	if #textAll < 20 then return end
+
 	for _, findPattern in ipairs(tablePattern) do
 		for _start, _end in string.gmatch(textAll:upper(), findPattern) do
-			local line_number = editor:LineFromPosition(_start)
 			local findString = textAll:sub(_start, _end-1)
--- print(props['FileNameExt']..':'..(line_number+1)..':\t'..findString)
 			findString = findString:gsub("%s+", " ")
-			findString = findString:gsub("[Ss][Uu][Bb] ", "[s] ") -- VB
-			findString = findString:gsub("[Ff][Uu][Nn][Cc][Tt][Ii][Oo][Nn] ", "[f] ") -- JS, VB,...
-			findString = findString:gsub("[Pp][Rr][Oo][Cc][Ee][Dd][Uu][Rr][Ee] ", "[p] ") -- Pascal
-			findString = findString:gsub("[Pp][Rr][Oo][Ññ] ", "[p] ") -- C
-			findString = findString:gsub("[Pp][Rr][Oo][Pp][Ee][Rr][Tt][Yy] [Ll][Ee][Tt] ", "[pl] ") -- VB
-			findString = findString:gsub("[Pp][Rr][Oo][Pp][Ee][Rr][Tt][Yy] [Gg][Ee][Tt] ", "[pg] ") -- VB
-			findString = findString:gsub("[Pp][Rr][Oo][Pp][Ee][Rr][Tt][Yy] [Ss][Ee][Tt] ", "[ps] ") -- VB
-			findString = findString:gsub("[Cc][Ll][Aa][Ss][Ss] ", "[c] ") -- Phyton
-			findString = findString:gsub("[Dd][Ee][Ff] ", "[d] ") -- Phyton
+			findString = ReplaceWithoutCase(findString, "Sub ", "[s] ") -- VB
+			findString = ReplaceWithoutCase(findString, "Function ", "[f] ") -- JS, VB,...
+			findString = ReplaceWithoutCase(findString, "Procedure ", "[p] ") -- Pascal
+			findString = ReplaceWithoutCase(findString, "Proc ", "[p] ") -- C
+			findString = ReplaceWithoutCase(findString, "Property Let ", "[pl] ") -- VB
+			findString = ReplaceWithoutCase(findString, "Property Get ", "[pg] ") -- VB
+			findString = ReplaceWithoutCase(findString, "Property Set ", "[ps] ") -- VB
+			findString = ReplaceWithoutCase(findString, "CLASS ", "[c] ") -- Phyton
+			findString = ReplaceWithoutCase(findString, "DEF ", "[d] ") -- Phyton
+			local line_number = editor:LineFromPosition(_start+start_code_pos)
 			table.insert (table_functions, {findString, line_number})
 		end
 	end
