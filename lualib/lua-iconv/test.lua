@@ -1,6 +1,6 @@
 require "iconv"
 
-function Convert(text_in, code_in, code_out)
+local function Convert(text_in, code_in, code_out)
 	local cd = iconv.open(code_in, code_out)
 	assert(cd, "Failed to create a converter object.")
 	local text_out, err = cd:iconv(text_in)
@@ -17,15 +17,11 @@ function Convert(text_in, code_in, code_out)
 	return text_out
 end
 
-local text0 = editor:GetSelText()
-local text1 = Convert(text0, "cp866", "windows-1251")
--- editor:ReplaceSel(text1)
-print(text1)
+local text_dos866 = "Эта строка в кодировке OEM 866"
+local text_koi8r = "№╘┴ ╙╘╥╧╦┴ ╫ ╦╧─╔╥╧╫╦┼ KOI8-R"
+local text_utf8 = "╨н╤В╨░ ╤Б╤В╤А╨╛╨║╨░ ╨▓ ╨║╨╛╨┤╨╕╤А╨╛╨▓╨║╨╡ UTF-8"
 
---[[-------------------------------------------------
-strCaptionText - текст заголовка окна. Значение по-умолчанию равно "InputBox"
-  strPrompt - текст приглашения над полем ввода. Значение по-умолчанию равно "Enter"
-  strDefaultValue - исходное значение поля ввода. Значение по-умолчанию равно пустой строке ""
-  funcCheckInput - функция для проверки вводимого текста. Получает текст в том виде, в каком он будет вместе с только что поступившим символом и возвращает либо true - принять этот символ, либо false - отклонить ввод. Значение по-умолчанию равно nil - ввод без каких-либо ограничений
-  intMinWidth - минимальная ширина поля ввода в усреднённых символах (если strPrompt или strDefaultValue будут шире, то минимальная ширина автоматически подгоняется под большее из них). Значение по-умолчанию равно 20
---]]-------------------------------------------------
+print ("┬√тюф ёЄЁюъ, яхЁхъюфшЁютрээ√ї т WIN-1251:")
+print( Convert(text_dos866, "cp866", "windows-1251") )
+print( Convert(text_koi8r, "koi8-r", "windows-1251") )
+print( Convert(text_utf8, "utf8", "windows-1251") )

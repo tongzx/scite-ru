@@ -324,12 +324,12 @@ editor:append
 editor:insert
 editor:remove
 
-textrange(startPos, endPos)\n gets the text in the specified range
-findtext(text, [flags], [startPos, [endPos]])\n returns the start and end of the first match, or nil if no match
-match(text, [flags], [startPos])\n returns a generator that allows you to loop over the matches\ni.e. for m in output:match(text, flags) do ... end
-append(text)\n appends text to the end of the document
-insert(pos, text)\n inserts text at the specified position
-remove(startPos, endPos)\n removes the text in the range
+textrange (startPos, endPos)\n gets the text in the specified range
+findtext (text, [flags], [startPos, [endPos]])\n returns the start and end of the first match, or nil if no match
+match (text, [flags], [startPos])\n returns a generator that allows you to loop over the matches\ni.e. for m in output:match(text, flags) do ... end
+append (text)\n appends text to the end of the document
+insert (pos, text)\n inserts text at the specified position
+remove (startPos, endPos)\n removes the text in the range
 
 scite.Open
 scite.ConstantName
