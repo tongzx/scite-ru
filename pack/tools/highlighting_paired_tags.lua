@@ -1,6 +1,6 @@
 --[[--------------------------------------------------
 Highlighting Paired Tags
-Version: 1.7
+Version: 1.7.1
 Author: mozers™, VladVRO
 ------------------------------
 Подсветка парных и непарных тегов в HTML и XML
@@ -53,7 +53,7 @@ local function PairedTagsFinder()
 			local find_start = tag_start
 			local count = 1
 			repeat
-				tag_paired_start, tag_paired_end = editor:findtext("</*"..tag, find_flags, find_start, find_end)
+				tag_paired_start, tag_paired_end = editor:findtext("</*"..tag.."[ >]", find_flags, find_start, find_end)
 				if tag_paired_start == nil then break end
 				if editor.CharAt[tag_paired_start+1] == 47 then
 					count = count - dec
@@ -66,7 +66,7 @@ local function PairedTagsFinder()
 
 			if tag_paired_start ~= nil then
 				-- Paired tag to paint in Blue
-				EditorMarkText(tag_paired_start+1, tag_paired_end-tag_paired_start-1, 1)
+				EditorMarkText(tag_paired_start+1, tag_paired_end-tag_paired_start-2, 1)
 			else
 				EditorClearMarks(1)
 				EditorClearMarks(2)
