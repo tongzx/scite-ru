@@ -86,11 +86,26 @@ void TOpenFile::file_name(const char *file)
  strcpy(m_filename,file);
 }
 
+/*
 bool TSaveFile::go()
 {
  if (m_prompt) LPOPENFILENAME(m_ofn)->Flags = OFN_OVERWRITEPROMPT;
  m_path = NULL;
  return GetSaveFileName((LPOPENFILENAME)m_ofn);
+}
+*/
+
+bool TSaveFile::go()
+{
+	LPOPENFILENAME ofn = LPOPENFILENAME(m_ofn);
+	if (m_prompt) ofn->Flags = OFN_OVERWRITEPROMPT | OFN_EXPLORER | OFN_ALLOWMULTISELECT;
+	int ret = GetSaveFileName(ofn);
+	if (ofn->nFileExtension == 0) { // multiple selection
+		m_path = m_filename;
+		m_file = m_filename + ofn->nFileOffset;
+		ofn->nFileOffset = 0;
+		} else m_path = NULL;
+	return ret;
 }
 
 static COLORREF custom_colours[16];
@@ -122,13 +137,42 @@ int TColourDialog::result()
 }
 
 
-TSelectDir::TSelectDir(TWin *_parent, const char *_description)
+TSelectDir::TSelectDir(TWin *_parent, const char *_description,const char *_initialdir)
 	: parent(_parent), descr(0), dirPath(new char[MAX_PATH])
 {
 	memset(dirPath, 0, MAX_PATH);
 	descr = new char[::lstrlenA(_description)+1];
 	::lstrcpyA(descr, _description);
+
+	lpszInitialDir=new char[::lstrlenA(_initialdir)+1];
+	::lstrcpyA(lpszInitialDir, _initialdir);
 }
+
+typedef struct _SB_INITDATA
+{
+	char         *lpszInitialDir;
+	TSelectDir *pSHBrowseDlg;
+} SB_INITDATA, *LPSB_INITDATA;
+
+int WINAPI TSelectDir::SHBrowseCallBack( HWND hWnd, UINT uMsg, LPARAM lParam, LPARAM lpData )
+{
+	static TSelectDir *pSBDlg = reinterpret_cast< LPSB_INITDATA >(lpData)->pSHBrowseDlg;
+
+	if ( uMsg == BFFM_INITIALIZED )
+	{
+		// Set initial directory
+		if ( lpData && *(char *)lpData )
+		{
+		::SendMessage( hWnd,
+		BFFM_SETSELECTION,
+		TRUE,
+		LPARAM(LPSB_INITDATA(lpData)->lpszInitialDir)
+		);
+		}
+		pSBDlg->m_hWndTreeView = FindWindowEx( hWnd, NULL, WC_TREEVIEW, NULL );
+	}
+	return 0;
+} // SHBrowseCallBack()
 
 TSelectDir::~TSelectDir()
 {
@@ -139,9 +183,13 @@ TSelectDir::~TSelectDir()
 bool TSelectDir::go()
 {
 	BROWSEINFO bi = { 0 };
+	SB_INITDATA sbInit = { lpszInitialDir, this };
+
 	bi.hwndOwner = (HWND)parent->handle();
 	bi.lpszTitle = descr;
 	bi.ulFlags   = BIF_RETURNONLYFSDIRS | BIF_USENEWUI;
+	bi.lpfn = BFFCALLBACK( SHBrowseCallBack );
+	bi.lParam = LPARAM( &sbInit );
 
 	LPMALLOC shellMalloc = 0;
 	SHGetMalloc(&shellMalloc);

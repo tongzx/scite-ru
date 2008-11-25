@@ -25,22 +25,25 @@ class TSelectDir {
 	TWin *parent;
 	char *descr;
 	char *dirPath;
-
+	char *lpszInitialDir;
+	HWND m_hWndTreeView;
 	TSelectDir();
 public:
-	TSelectDir(TWin *_parent, const char *_description="");
+	TSelectDir(TWin *_parent, const char *_description="",const char *_initialdir="");
 	virtual ~TSelectDir();
 	virtual bool go();
 	const char *path() const
 		{ return dirPath; }
+private:
+	static int WINAPI SHBrowseCallBack( HWND hWnd, UINT uMsg, LPARAM lParam, LPARAM lpData );
 };
 
 class EXPORT TSaveFile: public TOpenFile {
-  public:
-  TSaveFile(TWin *parent, const char *caption, const char *filter,bool do_prompt=true)
-   : TOpenFile(parent,caption,filter,false)
-   {}
-   bool go();
+	public:
+	TSaveFile(TWin *parent, const char *caption, const char *filter,bool do_prompt=true)
+		: TOpenFile(parent,caption,filter,false)
+	{}
+	bool go();
 };
 
 class EXPORT TColourDialog {

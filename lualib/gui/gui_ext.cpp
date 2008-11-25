@@ -551,14 +551,28 @@ int do_open_dlg(lua_State* L)
 	return 1;
 }
 
-/** gui.select_dir_dlg(description)
+int do_save_dlg(lua_State* L)
+{
+	const char* caption = luaL_optstring(L,1,"Save File");
+	const char* filter = luaL_optstring(L,2,"All (*.*)|*.*");
+	TSaveFile tof (get_parent(),caption,filter);
+	if (tof.go()) {
+		lua_pushstring(L,tof.file_name());
+	} else {
+		lua_pushnil(L);
+	}
+	return 1;
+}
+
+/** gui.select_dir_dlg(description,initialdir)
 	@param description (defaults to empty string)
 	@return chosen directory
 */
 int do_select_dir_dlg(lua_State* L)
 {
 	const char* descr = luaL_optstring(L,1,"");
-	TSelectDir dir(get_parent(), descr);
+	const char* initdir = luaL_optstring(L,2,"");
+	TSelectDir dir(get_parent(), descr, initdir);
 	if (dir.go()) {
 		lua_pushstring(L, dir.path());
 	} else {
@@ -1247,6 +1261,7 @@ static const struct luaL_reg gui[] = {
 	{"message",do_message},
 	{"colour_dlg",do_colour_dlg},
 	{"open_dlg",do_open_dlg},
+	{"save_dlg",do_save_dlg},
 	{"select_dir_dlg",do_select_dir_dlg},
 	{"toolbar",new_toolbar},
 	{"window",new_window},
