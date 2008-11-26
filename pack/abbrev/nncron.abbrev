@@ -1,0 +1,20 @@
+# файл сокращений для программы nnCron
+
+BEGIN=BEGIN\n  %SEL%\nWHILE\n|  \nREPEAT
+BEGIN=BEGIN\n  %SEL%\n|UNTIL
+DO=DO\n  |\nLOOP
+DO=DO\n  |\n+LOOP
+CASE=CASE\n    n1 OF nnnn1 ENDOF\n    n2 OF nnnn2 ENDOF\n    n3 OF nnnn3 ENDOF\n    DUP OF nnnLast ENDOF\nENDCASE
+FOR=FOR-WINDOWS: "|"\n  \n;FOR-WINDOWS
+FOR=FOR-FILES: "|"\n  \n;FOR-FILES
+FOR=FOR-PROCS: "|"\n  \n;FOR-PROCS
+IF=IF\n  |\nELSE\n  \nTHEN
+IF=IF\n  |\nTHEN
+IF=IF | ELSE  THEN
+IF=IF | THEN
+MS=MSG: "|"
+TM=TMSG: "|" 15
+RE-M=RE-MATCH: "%SEL%" " "
+WIN-I=WIN-INPUT-TEXT: "заголовок окна" "запрос" "текст по умолчанию" 0
+# шаблон для новой задачи
+1=#( CLASSIC-TASK-#-Test_ttask\nNoActive\nSingleInstance\nAsLoggedUser\nTime: * * * * * *\nAction:\n  |\n)#
