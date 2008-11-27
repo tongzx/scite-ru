@@ -1,10 +1,10 @@
 --[[----------------------------------------------------------------------------
 Select_And_Open_Filename.lua
 Author: VladVRO
-version 1.2.1
+version 1.3
 
 Расширение команды "Открыть выделенный файл" для случая когда выделения нет.
-А также возможность открыть файл по клику мыши на его имени при нажатой
+А также возможность открыть файл по двойному клику мыши на его имени при нажатой
 клавише Ctrl.
 Скрипт выделяет подходящую область рядом с курсором в качестве имени искомого
 файла и пытается открыть его в текущей папке, если файл не найден, то скрипт
@@ -39,7 +39,8 @@ local function isFilenameChar(ch)
 	return false
 end
 
-local function Select_And_Open_File()
+local for_open
+local function Select_And_Open_File(immediately)
 	local sci
 	if editor.Focus then
 		sci = editor
@@ -89,13 +90,21 @@ local function Select_And_Open_File()
 			end
 			
 			if isFile then
-				scite.Open(foropen)
+				for_open = foropen
+				if immediately then
+					launch_open()
+				end
 				return true
-			else
-				sci:SetSel(cursor,cursor)
 			end
 		end
 	
+	end
+end
+
+local function launch_open()
+	if for_open then
+		scite.Open(for_open)
+		for_open = nil
 	end
 end
 
@@ -105,14 +114,23 @@ function OnMenuCommand (msg, source)
 	local result
 	if old_OnMenuCommand then result = old_OnMenuCommand(msg, source) end
 	if not result and msg == IDM_OPENSELECTED then
-		if Select_And_Open_File() then return true end
+		if Select_And_Open_File(true) then return true end
 	end
 	return result
 end
 
--- Add user event handler OnClick
-local old_OnClick = OnClick
-function OnClick(shift, ctrl, alt)
+-- Add user event handler OnMouseButtonUp
+local old_OnMouseButtonUp = OnMouseButtonUp
+function OnMouseButtonUp()
+	local result
+	if old_OnMouseButtonUp then result = old_OnMouseButtonUp() end
+	launch_open()
+	return result
+end
+
+-- Add user event handler OnDoubleClick
+local old_OnDoubleClick = OnDoubleClick
+function OnDoubleClick(shift, ctrl, alt)
 	local result
 	if ctrl and props["select.and.open.by.click"] == "1" then
 		local sci
@@ -120,11 +138,11 @@ function OnClick(shift, ctrl, alt)
 			sci = editor
 		else
 			sci = output
-		end 
+		end
 		local s = sci.CurrentPos
 		sci:SetSel(s, s)
-		if Select_And_Open_File() then return true end
+		if Select_And_Open_File(false) then return true end
 	end
-	if old_OnClick then result = old_OnClick(shift, ctrl, alt) end
+	if old_OnDoubleClick then result = old_OnDoubleClick(shift, ctrl, alt) end
 	return result
 end
