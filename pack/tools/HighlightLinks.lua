@@ -35,7 +35,7 @@ local link_mask = "https*://[^ \t\r\n\"\']+"
 function HighlightLinks()
 	EditorClearMarks(mark_number)
 	local flag = SCFIND_REGEXP
-	local s,e = editor:findtext(link_mask, flag, 1)
+	local s,e = editor:findtext(link_mask, flag, 0)
 	while s do
 		EditorMarkText(s, e-s, mark_number)
 		s,e = editor:findtext(link_mask, flag, e+1)
