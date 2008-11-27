@@ -127,12 +127,16 @@ static void ColouriseForthDoc(unsigned int startPos, int length, int, WordList *
     WordList &preword2 = *keywordLists[4];
     WordList &strings = *keywordLists[5];
 //!-start-[ForthImprovement]
-    WordList &gui = *keywordLists[8];
-    WordList &oop = *keywordLists[9];
-    WordList &word1 = *keywordLists[10];
-    WordList &word2 = *keywordLists[11];
-    WordList &word3 = *keywordLists[12];
-    WordList &word4 = *keywordLists[13];
+    WordList &startdefword = *keywordLists[6];
+    WordList &enddefword = *keywordLists[7];
+    WordList &gui = *keywordLists[10];
+    WordList &oop = *keywordLists[11];
+    WordList &word1 = *keywordLists[12];
+    WordList &word2 = *keywordLists[13];
+    WordList &word3 = *keywordLists[14];
+    WordList &word4 = *keywordLists[15];
+    
+    bool isInDefinition = false; // flag for inside definition tags state
 //!-end-[ForthImprovement]
 
     // go through all provided text segment
@@ -154,15 +158,29 @@ static void ColouriseForthDoc(unsigned int startPos, int length, int, WordList *
             if(cur_pos<lengthDoc) cur_pos++;
             styler.ColourTo(cur_pos,SCE_FORTH_COMMENT);
         }else if(strcmp("[",buffer)==0){
-            styler.ColourTo(pos1,SCE_FORTH_STRING);
 //!-start-[ForthImprovement]
+//!            styler.ColourTo(pos1,SCE_FORTH_STRING);
 //!            parse(']',true);
 //!            if(cur_pos<lengthDoc) cur_pos++;
-            while(parse(BL,true)!=0)
+//!            styler.ColourTo(cur_pos,SCE_FORTH_STRING);
+            int p1 = pos1;
+            bool isString = true;
+            while(parse(BL,true)!=0){
+                if(isInDefinition && enddefword.InList(buffer)) {
+                    isString = false;
+                    break;
+                }else
                 if(strcmp("]",buffer)==0)
                     break;
+            }
+            if(isString){
+                styler.ColourTo(p1,SCE_FORTH_STRING);
+                styler.ColourTo(cur_pos,SCE_FORTH_STRING);
+            }else{
+                cur_pos = p1+1;
+                styler.ColourTo(cur_pos,SCE_FORTH_DEFAULT);
+            }
 //!-end-[ForthImprovement]
-            styler.ColourTo(cur_pos,SCE_FORTH_STRING);
         }else if(strcmp("{",buffer)==0){
             styler.ColourTo(pos1,SCE_FORTH_LOCALE);
             parse('}',false);
@@ -179,7 +197,8 @@ static void ColouriseForthDoc(unsigned int startPos, int length, int, WordList *
         }else if(keyword.InList(buffer)) {
             styler.ColourTo(pos1,SCE_FORTH_KEYWORD);
             styler.ColourTo(pos2,SCE_FORTH_KEYWORD);
-        }else if(defword.InList(buffer)) {
+//!        }else if(defword.InList(buffer)) {
+        }else if(!isInDefinition && defword.InList(buffer)) { //!-change-[ForthImprovement]
             styler.ColourTo(pos1,SCE_FORTH_KEYWORD);
             styler.ColourTo(pos2,SCE_FORTH_KEYWORD);
             parse(BL,false);
@@ -197,10 +216,18 @@ static void ColouriseForthDoc(unsigned int startPos, int length, int, WordList *
             parse(BL,false);
             styler.ColourTo(pos1,SCE_FORTH_STRING);
             styler.ColourTo(pos2,SCE_FORTH_STRING);
-        }else if(is_number(buffer)){
-            styler.ColourTo(pos1,SCE_FORTH_NUMBER);
-            styler.ColourTo(pos2,SCE_FORTH_NUMBER);
 //!-start-[ForthImprovement]
+        }else if(!isInDefinition && startdefword.InList(buffer)) {
+            isInDefinition = true;
+            styler.ColourTo(pos1,SCE_FORTH_KEYWORD);
+            styler.ColourTo(pos2,SCE_FORTH_KEYWORD);
+            parse(BL,false);
+            styler.ColourTo(pos1-1,SCE_FORTH_DEFAULT);
+            styler.ColourTo(pos1,SCE_FORTH_DEFWORD);
+            styler.ColourTo(pos2,SCE_FORTH_DEFWORD);
+        }else if(isInDefinition && enddefword.InList(buffer)) {
+            isInDefinition = false;
+            styler.ColourTo(pos2,SCE_FORTH_KEYWORD);
         }else if(gui.InList(buffer)) {
             styler.ColourTo(pos2,SCE_FORTH_GUI);
         }else if(oop.InList(buffer)) {
@@ -214,6 +241,9 @@ static void ColouriseForthDoc(unsigned int startPos, int length, int, WordList *
         }else if(word4.InList(buffer)) {
             styler.ColourTo(pos2,SCE_FORTH_WORD4);
 //!-end-[ForthImprovement]
+        }else if(is_number(buffer)){
+            styler.ColourTo(pos1,SCE_FORTH_NUMBER);
+            styler.ColourTo(pos2,SCE_FORTH_NUMBER);
         }
     }
 #ifdef FORTH_DEBUG
@@ -368,8 +398,10 @@ static void ColouriseForthDoc(unsigned int startPos, int length, int, WordList *
 static void FoldForthDoc(unsigned int startPos, int length, int initStyle,
     WordList *keywordlists[], Accessor &styler)
 {
-    WordList &fold_begin = *keywordlists[6];
-    WordList &fold_end = *keywordlists[7];
+    WordList &startdefword = *keywordlists[6];
+    WordList &enddefword = *keywordlists[7];
+    WordList &fold_begin = *keywordlists[8];
+    WordList &fold_end = *keywordlists[9];
 
     int line = styler.GetLine(startPos);
     int level = styler.LevelAt(line);
@@ -378,6 +410,7 @@ static void FoldForthDoc(unsigned int startPos, int length, int initStyle,
     char word[256];
     int wordlen = 0;
     int style = initStyle;
+    int wordstyle = style;
     // Scan for tokens
     for (unsigned int i = startPos; i < endPos; i++) {
         int c = styler.SafeGetCharAt(i, '\n');
@@ -386,6 +419,12 @@ static void FoldForthDoc(unsigned int startPos, int length, int initStyle,
             if (wordlen) { // done with token
                 word[wordlen] = '\0';
                 // CheckFoldPoint
+                if (wordstyle == SCE_FORTH_KEYWORD && startdefword.InList(word)) {
+                    levelIndent += 1;
+                } else
+                if (wordstyle == SCE_FORTH_KEYWORD && enddefword.InList(word)) {
+                    levelIndent -= 1;
+                } else
                 if (fold_begin.InList(word)) {
                     levelIndent += 1;
                 } else
@@ -407,6 +446,7 @@ static void FoldForthDoc(unsigned int startPos, int length, int initStyle,
             } else { // start scanning at first word character
                 word[0] = c;
                 wordlen = 1;
+                wordstyle = style;
             }
         }
         if (c == '\n') { // line end
