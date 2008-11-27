@@ -101,6 +101,7 @@ OBJS=\
 	SciTEWin.obj \
 	SciTEWinBar.obj \
 	SciTEWinDlg.obj \
+	IFaceTable.obj \
 	DirectorExtension.obj \
 	MultiplexExtension.obj \
 	UniqueInstance.obj \
@@ -205,6 +206,7 @@ OBJSSTATIC=\
 	Sc1.obj \
 	SciTEWinBar.obj \
 	SciTEWinDlg.obj \
+	IFaceTable.obj \
 	DirectorExtension.obj \
 	MultiplexExtension.obj \
 	UniqueInstance.obj \
@@ -280,7 +282,7 @@ LUA_CORE_OBJS = lapi.obj lcode.obj ldebug.obj ldo.obj ldump.obj lfunc.obj lgc.ob
 LUA_LIB_OBJS =	lauxlib.obj lbaselib.obj ldblib.obj liolib.obj lmathlib.obj ltablib.obj \
                 lstrlib.obj loadlib.obj loslib.obj linit.obj
 
-LUA_OBJS = LuaExtension.obj IFaceTable.obj SingleThreadExtension.obj $(LUA_CORE_OBJS) $(LUA_LIB_OBJS)
+LUA_OBJS = LuaExtension.obj SingleThreadExtension.obj $(LUA_CORE_OBJS) $(LUA_LIB_OBJS)
 
 OBJS = $(OBJS) $(LUA_OBJS)
 OBJSSTATIC = $(OBJSSTATIC) $(LUA_OBJS)
