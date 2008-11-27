@@ -2041,11 +2041,17 @@ val SCLEX_MAGIK=87
 val SCLEX_POWERSHELL=88
 val SCLEX_MYSQL=89
 val SCLEX_PO=90
+
+
+
+val SCLEX_TAL=91
+val SCLEX_COBOL=92
+val SCLEX_TACL=93
 ##!-start-[Euphoria]
-val SCLEX_EUPHORIA=91
+val SCLEX_EUPHORIA=94
 ##!-end-[Euphoria]
 ##!-start-[ABAP]
-val SCLEX_ABAP=92
+val SCLEX_ABAP=95
 ##!-end-[ABAP]
 
 # When a lexer specifies its language as SCLEX_AUTOMATIC it receives a

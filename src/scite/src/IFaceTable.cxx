@@ -1790,7 +1790,7 @@ static IFaceConstant ifaceConstants[] = {
 	{"SCK_TAB",9},
 	{"SCK_UP",301},
 	{"SCK_WIN",313},
-	{"SCLEX_ABAP",92},
+	{"SCLEX_ABAP",95},
 	{"SCLEX_ABAQUS",84},
 	{"SCLEX_ADA",20},
 	{"SCLEX_APDL",61},
@@ -1809,6 +1809,7 @@ static IFaceConstant ifaceConstants[] = {
 	{"SCLEX_CLW",45},
 	{"SCLEX_CLWNOCASE",46},
 	{"SCLEX_CMAKE",80},
+	{"SCLEX_COBOL",92},
 	{"SCLEX_CONF",17},
 	{"SCLEX_CONTAINER",0},
 	{"SCLEX_CPP",3},
@@ -1822,7 +1823,7 @@ static IFaceConstant ifaceConstants[] = {
 	{"SCLEX_ERLANG",53},
 	{"SCLEX_ERRORLIST",10},
 	{"SCLEX_ESCRIPT",41},
-	{"SCLEX_EUPHORIA",91},
+	{"SCLEX_EUPHORIA",94},
 	{"SCLEX_F77",37},
 	{"SCLEX_FLAGSHIP",73},
 	{"SCLEX_FORTH",52},
@@ -1872,7 +1873,9 @@ static IFaceConstant ifaceConstants[] = {
 	{"SCLEX_SPECMAN",59},
 	{"SCLEX_SPICE",78},
 	{"SCLEX_SQL",7},
+	{"SCLEX_TACL",93},
 	{"SCLEX_TADS3",70},
+	{"SCLEX_TAL",91},
 	{"SCLEX_TCL",25},
 	{"SCLEX_TEX",49},
 	{"SCLEX_VB",8},
@@ -2426,7 +2429,7 @@ static IFaceProperty ifaceProperties[] = {
 
 enum {
 	ifaceFunctionCount = 247,
-	ifaceConstantCount = 1902,
+	ifaceConstantCount = 1905,
 	ifacePropertyCount = 137
 };
 

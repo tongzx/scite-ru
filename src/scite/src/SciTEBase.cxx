@@ -302,6 +302,7 @@ const char *contributors[] = {
             "alexbodn",
             "Sergiu Dotenco",
             "Anders Karlsson",
+            "ozlooper",
 //!-start-[SciTE-Ru]
             "HSolo",
             "Midas",
@@ -790,7 +791,7 @@ void SciTEBase::SetAboutMessage(WindowID wsci, const char *appTitle) {
 		SetAboutStyle(wsci, 2, ColourDesired(0, 0, 0));
 		Platform::SendScintilla(wsci, SCI_STYLESETITALIC, 2, 1);
 		AddStyledText(wsci, GetTranslationToAbout("Based on version").c_str(), trsSty); //!-add-[SciTE-Ru]
-		AddStyledText(wsci, " 1.76 ", 1); //!-add-[SciTE-Ru]
+		AddStyledText(wsci, " 1.77 ", 1); //!-add-[SciTE-Ru]
 		AddStyledText(wsci, GetTranslationToAbout("by").c_str(), trsSty);
 		AddStyledText(wsci, " Neil Hodgson.\n", 2);
 		SetAboutStyle(wsci, 3, ColourDesired(0, 0, 0));
