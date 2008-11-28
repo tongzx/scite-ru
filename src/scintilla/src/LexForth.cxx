@@ -42,6 +42,8 @@ static FILE *f_debug;
 
 #define STATE_LOCALE
 #define BL ' '
+#define DEFWORD_FLAG 0x40 //!-add-[ForthImprovement]
+#define FORTH_STYLE_MASK 0x1f //!-add-[ForthImprovement]
 
 static Accessor *st;
 static int cur_pos,pos1,pos2,pos0,lengthDoc;
@@ -109,7 +111,8 @@ bool is_number(char *s){
     return _is_number(s,10);
 }
 
-static void ColouriseForthDoc(unsigned int startPos, int length, int, WordList *keywordLists[], Accessor &styler)
+//!static void ColouriseForthDoc(unsigned int startPos, int length, int, WordList *keywordLists[], Accessor &styler)
+static void ColouriseForthDoc(unsigned int startPos, int length, int initStyle, WordList *keywordLists[], Accessor &styler) //!-change-[ForthImprovement]
 {
     st=&styler;
     cur_pos=startPos;
@@ -136,14 +139,103 @@ static void ColouriseForthDoc(unsigned int startPos, int length, int, WordList *
     WordList &word3 = *keywordLists[14];
     WordList &word4 = *keywordLists[15];
     
-    bool isInDefinition = false; // flag for inside definition tags state
+    bool isInDefinition = initStyle&DEFWORD_FLAG; // flag for inside definition tags state
 //!-end-[ForthImprovement]
 
     // go through all provided text segment
     // using the hand-written state machine shown below
-    styler.StartAt(startPos);
+//!    styler.StartAt(startPos);
+    styler.StartAt(startPos,0xff); //!-change-[ForthImprovement]
     styler.StartSegment(startPos);
-    while(parse(BL,true)!=0){
+//!    while(parse(BL,true)!=0){
+//!-start-[ForthImprovement]
+    if((initStyle&FORTH_STYLE_MASK) == SCE_FORTH_STRING){
+        // while in tags [ ]
+        while(parse(BL,true)!=0)
+            if(strcmp("]",buffer)==0)
+                break;
+        styler.ColourTo(cur_pos,SCE_FORTH_STRING|(isInDefinition?DEFWORD_FLAG:0));
+    }
+    while(parse(BL,true)!=0)
+    if(isInDefinition){
+        if(pos0!=pos1){
+            styler.ColourTo(pos0,SCE_FORTH_DEFAULT|DEFWORD_FLAG);
+            styler.ColourTo(pos1-1,SCE_FORTH_DEFAULT|DEFWORD_FLAG);
+        }
+        if(strcmp("\\",buffer)==0){
+            styler.ColourTo(pos1,SCE_FORTH_COMMENT|DEFWORD_FLAG);
+            parse(1,false);
+            styler.ColourTo(pos2,SCE_FORTH_COMMENT|DEFWORD_FLAG);
+        }else if(strcmp("(",buffer)==0){
+            styler.ColourTo(pos1,SCE_FORTH_COMMENT|DEFWORD_FLAG);
+            parse(')',true);
+            if(cur_pos<lengthDoc) cur_pos++;
+            styler.ColourTo(cur_pos,SCE_FORTH_COMMENT|DEFWORD_FLAG);
+        }else if(strcmp("[",buffer)==0){
+            int p1 = pos1;
+            bool isString = true;
+            while(parse(BL,true)!=0){
+                if(enddefword.InList(buffer)){
+                    isString = false;
+                    break;
+                }else if(strcmp("]",buffer)==0)
+                    break;
+            }
+            if(isString){
+                styler.ColourTo(p1,SCE_FORTH_STRING|DEFWORD_FLAG);
+                styler.ColourTo(cur_pos,SCE_FORTH_STRING|DEFWORD_FLAG);
+            }else{
+                cur_pos = p1+1;
+                styler.ColourTo(cur_pos,SCE_FORTH_DEFAULT|DEFWORD_FLAG);
+            }
+        }else if(strcmp("{",buffer)==0){
+            styler.ColourTo(pos1,SCE_FORTH_LOCALE|DEFWORD_FLAG);
+            parse('}',false);
+            if(cur_pos<lengthDoc) cur_pos++;
+            styler.ColourTo(cur_pos,SCE_FORTH_LOCALE|DEFWORD_FLAG);
+        }else if(strings.InList(buffer)) {
+            styler.ColourTo(pos1,SCE_FORTH_STRING|DEFWORD_FLAG);
+            parse('"',false);
+            if(cur_pos<lengthDoc) cur_pos++;
+            styler.ColourTo(cur_pos,SCE_FORTH_STRING|DEFWORD_FLAG);
+        }else if(enddefword.InList(buffer)) {
+            isInDefinition = false;
+            styler.ColourTo(pos2,SCE_FORTH_KEYWORD);
+        }else if(control.InList(buffer)) {
+            styler.ColourTo(pos1,SCE_FORTH_CONTROL|DEFWORD_FLAG);
+            styler.ColourTo(pos2,SCE_FORTH_CONTROL|DEFWORD_FLAG);
+        }else if(keyword.InList(buffer)) {
+            styler.ColourTo(pos1,SCE_FORTH_KEYWORD|DEFWORD_FLAG);
+            styler.ColourTo(pos2,SCE_FORTH_KEYWORD|DEFWORD_FLAG);
+        }else if(preword1.InList(buffer)) {
+            styler.ColourTo(pos1,SCE_FORTH_PREWORD1|DEFWORD_FLAG);
+            parse(BL,false);
+            styler.ColourTo(pos2,SCE_FORTH_PREWORD1|DEFWORD_FLAG);
+        }else if(preword2.InList(buffer)) {
+            styler.ColourTo(pos1,SCE_FORTH_PREWORD2|DEFWORD_FLAG);
+            parse(BL,false);
+            styler.ColourTo(pos2,SCE_FORTH_PREWORD2|DEFWORD_FLAG);
+            parse(BL,false);
+            styler.ColourTo(pos1,SCE_FORTH_STRING|DEFWORD_FLAG);
+            styler.ColourTo(pos2,SCE_FORTH_STRING|DEFWORD_FLAG);
+        }else if(gui.InList(buffer)) {
+            styler.ColourTo(pos2,SCE_FORTH_GUI|DEFWORD_FLAG);
+        }else if(oop.InList(buffer)) {
+            styler.ColourTo(pos2,SCE_FORTH_OOP|DEFWORD_FLAG);
+        }else if(word1.InList(buffer)) {
+            styler.ColourTo(pos2,SCE_FORTH_WORD1|DEFWORD_FLAG);
+        }else if(word2.InList(buffer)) {
+            styler.ColourTo(pos2,SCE_FORTH_WORD2|DEFWORD_FLAG);
+        }else if(word3.InList(buffer)) {
+            styler.ColourTo(pos2,SCE_FORTH_WORD3|DEFWORD_FLAG);
+        }else if(word4.InList(buffer)) {
+            styler.ColourTo(pos2,SCE_FORTH_WORD4|DEFWORD_FLAG);
+        }else if(is_number(buffer)){
+            styler.ColourTo(pos1,SCE_FORTH_NUMBER|DEFWORD_FLAG);
+            styler.ColourTo(pos2,SCE_FORTH_NUMBER|DEFWORD_FLAG);
+        }
+    }else{
+//!-end-[ForthImprovement]
         if(pos0!=pos1){
             styler.ColourTo(pos0,SCE_FORTH_DEFAULT);
             styler.ColourTo(pos1-1,SCE_FORTH_DEFAULT);
@@ -158,29 +250,15 @@ static void ColouriseForthDoc(unsigned int startPos, int length, int, WordList *
             if(cur_pos<lengthDoc) cur_pos++;
             styler.ColourTo(cur_pos,SCE_FORTH_COMMENT);
         }else if(strcmp("[",buffer)==0){
+            styler.ColourTo(pos1,SCE_FORTH_STRING);
 //!-start-[ForthImprovement]
-//!            styler.ColourTo(pos1,SCE_FORTH_STRING);
 //!            parse(']',true);
 //!            if(cur_pos<lengthDoc) cur_pos++;
-//!            styler.ColourTo(cur_pos,SCE_FORTH_STRING);
-            int p1 = pos1;
-            bool isString = true;
-            while(parse(BL,true)!=0){
-                if(isInDefinition && enddefword.InList(buffer)) {
-                    isString = false;
-                    break;
-                }else
+            while(parse(BL,true)!=0)
                 if(strcmp("]",buffer)==0)
                     break;
-            }
-            if(isString){
-                styler.ColourTo(p1,SCE_FORTH_STRING);
-                styler.ColourTo(cur_pos,SCE_FORTH_STRING);
-            }else{
-                cur_pos = p1+1;
-                styler.ColourTo(cur_pos,SCE_FORTH_DEFAULT);
-            }
 //!-end-[ForthImprovement]
+            styler.ColourTo(cur_pos,SCE_FORTH_STRING);
         }else if(strcmp("{",buffer)==0){
             styler.ColourTo(pos1,SCE_FORTH_LOCALE);
             parse('}',false);
@@ -191,14 +269,25 @@ static void ColouriseForthDoc(unsigned int startPos, int length, int, WordList *
             parse('"',false);
             if(cur_pos<lengthDoc) cur_pos++;
             styler.ColourTo(cur_pos,SCE_FORTH_STRING);
+//!-start-[ForthImprovement]
+        }else if(startdefword.InList(buffer)) {
+            isInDefinition = true;
+            styler.ColourTo(pos1,SCE_FORTH_KEYWORD);
+            styler.ColourTo(pos2,SCE_FORTH_KEYWORD);
+            if(defword.InList(buffer)) {
+                parse(BL,false);
+                styler.ColourTo(pos1-1,SCE_FORTH_DEFAULT|DEFWORD_FLAG);
+                styler.ColourTo(pos1,SCE_FORTH_DEFWORD|DEFWORD_FLAG);
+                styler.ColourTo(pos2,SCE_FORTH_DEFWORD|DEFWORD_FLAG);
+            }
+//!-end-[ForthImprovement]
         }else if(control.InList(buffer)) {
             styler.ColourTo(pos1,SCE_FORTH_CONTROL);
             styler.ColourTo(pos2,SCE_FORTH_CONTROL);
         }else if(keyword.InList(buffer)) {
             styler.ColourTo(pos1,SCE_FORTH_KEYWORD);
             styler.ColourTo(pos2,SCE_FORTH_KEYWORD);
-//!        }else if(defword.InList(buffer)) {
-        }else if(!isInDefinition && defword.InList(buffer)) { //!-change-[ForthImprovement]
+        }else if(defword.InList(buffer)) {
             styler.ColourTo(pos1,SCE_FORTH_KEYWORD);
             styler.ColourTo(pos2,SCE_FORTH_KEYWORD);
             parse(BL,false);
@@ -217,17 +306,6 @@ static void ColouriseForthDoc(unsigned int startPos, int length, int, WordList *
             styler.ColourTo(pos1,SCE_FORTH_STRING);
             styler.ColourTo(pos2,SCE_FORTH_STRING);
 //!-start-[ForthImprovement]
-        }else if(!isInDefinition && startdefword.InList(buffer)) {
-            isInDefinition = true;
-            styler.ColourTo(pos1,SCE_FORTH_KEYWORD);
-            styler.ColourTo(pos2,SCE_FORTH_KEYWORD);
-            parse(BL,false);
-            styler.ColourTo(pos1-1,SCE_FORTH_DEFAULT);
-            styler.ColourTo(pos1,SCE_FORTH_DEFWORD);
-            styler.ColourTo(pos2,SCE_FORTH_DEFWORD);
-        }else if(isInDefinition && enddefword.InList(buffer)) {
-            isInDefinition = false;
-            styler.ColourTo(pos2,SCE_FORTH_KEYWORD);
         }else if(gui.InList(buffer)) {
             styler.ColourTo(pos2,SCE_FORTH_GUI);
         }else if(oop.InList(buffer)) {
@@ -409,12 +487,12 @@ static void FoldForthDoc(unsigned int startPos, int length, int initStyle,
     unsigned int endPos = startPos + length;
     char word[256];
     int wordlen = 0;
-    int style = initStyle;
+    int style = initStyle & FORTH_STYLE_MASK;
     int wordstyle = style;
     // Scan for tokens
     for (unsigned int i = startPos; i < endPos; i++) {
         int c = styler.SafeGetCharAt(i, '\n');
-        style = styler.StyleAt(i);
+        style = styler.StyleAt(i) & FORTH_STYLE_MASK;
         if (is_whitespace(c)) {
             if (wordlen) { // done with token
                 word[wordlen] = '\0';
@@ -488,4 +566,5 @@ static const char * const forthWordLists[] = {
             0,
         };
 
-LexerModule lmForth(SCLEX_FORTH, ColouriseForthDoc, "forth",FoldForthDoc,forthWordLists);
+//!LexerModule lmForth(SCLEX_FORTH, ColouriseForthDoc, "forth",FoldForthDoc,forthWordLists,7);
+LexerModule lmForth(SCLEX_FORTH, ColouriseForthDoc, "forth",FoldForthDoc,forthWordLists, 7); //!-change-[ForthImprovement]
