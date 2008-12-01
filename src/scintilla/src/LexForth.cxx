@@ -139,7 +139,7 @@ static void ColouriseForthDoc(unsigned int startPos, int length, int initStyle, 
     WordList &word3 = *keywordLists[14];
     WordList &word4 = *keywordLists[15];
     
-    bool isInDefinition = initStyle&DEFWORD_FLAG; // flag for inside definition tags state
+    bool isInDefinition = (initStyle&DEFWORD_FLAG) == DEFWORD_FLAG; // flag for inside definition tags state
 //!-end-[ForthImprovement]
 
     // go through all provided text segment
