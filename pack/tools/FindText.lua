@@ -75,7 +75,7 @@ if string.len(sText) > 0 then
 		scite.SendOutput(SCI_SETPROPERTY, 'lexer.errorlist.findtitle.end', '"')
 		print(msg..sText..'"')
 	end
-	local s,e = editor:findtext(sText, flag0 + flag1, 1)
+	local s,e = editor:findtext(sText, flag0 + flag1, 0)
 	local count = 0
 	if(s~=nil)then
 		local m = editor:LineFromPosition(s) - 1
