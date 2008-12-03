@@ -1,5 +1,5 @@
 --[[--------------------------------------------------
-FindText v7.2
+FindText v7.2.1
 Авторы: mozers™, mimir, Алексей, codewarlock1101, VladVRO
 
 * Если текст выделен - ищется выделенная подстрока
@@ -87,7 +87,7 @@ if string.len(sText) > 0 then
 				if bookmark then editor:MarkerAdd(l,1) end
 				local str = string.gsub(' '..editor:GetLine(l),'%s+',' ')
 				if isOutput then
-					print(props['FileNameExt']..':'..(l + 1)..':\t'..str)
+					print('./'..props['FileNameExt']..':'..(l + 1)..':\t'..str)
 				end
 				m = l
 			end
