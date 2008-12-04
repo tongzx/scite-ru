@@ -111,6 +111,20 @@ bool is_number(char *s){
     return _is_number(s,10);
 }
 
+//!-start-[ForthImprovement]
+static void RollbackToDefStart(unsigned int startPos){
+    // rollback to start of definition
+    cur_pos = startPos;
+    while(cur_pos>0 && st->StyleAt(cur_pos)!=SCE_FORTH_DEFAULT){
+        cur_pos--;
+    }
+    cur_pos = st->LineStart(st->GetLine(cur_pos));
+    st->Flush();
+    st->StartAt(cur_pos,static_cast<char>(STYLE_MAX));
+    st->StartSegment(cur_pos);
+}
+//!-end-[ForthImprovement]
+
 //!static void ColouriseForthDoc(unsigned int startPos, int length, int, WordList *keywordLists[], Accessor &styler)
 static void ColouriseForthDoc(unsigned int startPos, int length, int initStyle, WordList *keywordLists[], Accessor &styler) //!-change-[ForthImprovement]
 {
@@ -140,21 +154,34 @@ static void ColouriseForthDoc(unsigned int startPos, int length, int initStyle, 
     WordList &word4 = *keywordLists[15];
     
     bool isInDefinition = (initStyle&DEFWORD_FLAG) == DEFWORD_FLAG; // flag for inside definition tags state
+    bool isPossibleRollback = isInDefinition; // flag for possible undefined state by start pos
+#ifdef FORTH_DEBUG
+    fprintf(f_debug,"\nColouriseForthDoc: %d %d %d %d\n",startPos,length,initStyle,isInDefinition);
+#endif
 //!-end-[ForthImprovement]
 
     // go through all provided text segment
     // using the hand-written state machine shown below
 //!    styler.StartAt(startPos);
-    styler.StartAt(startPos,0xff); //!-change-[ForthImprovement]
+    styler.StartAt(startPos,static_cast<char>(STYLE_MAX)); //!-change-[ForthImprovement]
     styler.StartSegment(startPos);
 //!    while(parse(BL,true)!=0){
 //!-start-[ForthImprovement]
     if((initStyle&FORTH_STYLE_MASK) == SCE_FORTH_STRING){
         // while in tags [ ]
-        while(parse(BL,true)!=0)
-            if(strcmp("]",buffer)==0)
+        while(parse(BL,true)!=0){
+            if(isInDefinition && isPossibleRollback && enddefword.InList(buffer)){
+                // rollback to start of definition because find enddefword before ]
+                RollbackToDefStart(startPos);
+                isInDefinition = false;
+                isPossibleRollback = false;
                 break;
-        styler.ColourTo(cur_pos,SCE_FORTH_STRING|(isInDefinition?DEFWORD_FLAG:0));
+            }else
+            if(strcmp("]",buffer)==0){
+                styler.ColourTo(cur_pos,SCE_FORTH_STRING|(isInDefinition?DEFWORD_FLAG:0));
+                break;
+            }
+        }
     }
     while(parse(BL,true)!=0)
     if(isInDefinition){
@@ -172,14 +199,16 @@ static void ColouriseForthDoc(unsigned int startPos, int length, int initStyle, 
             if(cur_pos<lengthDoc) cur_pos++;
             styler.ColourTo(cur_pos,SCE_FORTH_COMMENT|DEFWORD_FLAG);
         }else if(strcmp("[",buffer)==0){
+            isPossibleRollback = false;
             int p1 = pos1;
-            bool isString = true;
+            bool isString = false;
             while(parse(BL,true)!=0){
                 if(enddefword.InList(buffer)){
-                    isString = false;
                     break;
-                }else if(strcmp("]",buffer)==0)
+                }else if(strcmp("]",buffer)==0){
+                    isString = true;
                     break;
+                }
             }
             if(isString){
                 styler.ColourTo(p1,SCE_FORTH_STRING|DEFWORD_FLAG);
@@ -188,6 +217,11 @@ static void ColouriseForthDoc(unsigned int startPos, int length, int initStyle, 
                 cur_pos = p1+1;
                 styler.ColourTo(cur_pos,SCE_FORTH_DEFAULT|DEFWORD_FLAG);
             }
+        }else if(isPossibleRollback && strcmp("]",buffer)==0){
+            // rollback to start of definition because find ] before [
+            RollbackToDefStart(startPos);
+            isInDefinition = false;
+            isPossibleRollback = false;
         }else if(strcmp("{",buffer)==0){
             styler.ColourTo(pos1,SCE_FORTH_LOCALE|DEFWORD_FLAG);
             parse('}',false);
@@ -200,6 +234,7 @@ static void ColouriseForthDoc(unsigned int startPos, int length, int initStyle, 
             styler.ColourTo(cur_pos,SCE_FORTH_STRING|DEFWORD_FLAG);
         }else if(enddefword.InList(buffer)) {
             isInDefinition = false;
+            isPossibleRollback = false;
             styler.ColourTo(pos2,SCE_FORTH_KEYWORD);
         }else if(control.InList(buffer)) {
             styler.ColourTo(pos1,SCE_FORTH_CONTROL|DEFWORD_FLAG);
