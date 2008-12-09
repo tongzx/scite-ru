@@ -294,7 +294,7 @@ static IFaceConstant ifaceConstants[] = {
 	{"INDIC_STRIKE",4},
 	{"INDIC_TT",2},
 	{"INVALID_POSITION",-1},
-	{"KEYWORDSET_MAX",16},
+	{"KEYWORDSET_MAX",20},
 	{"MARKER_MAX",31},
 	{"SCEN_CHANGE",768},
 	{"SCEN_KILLFOCUS",256},

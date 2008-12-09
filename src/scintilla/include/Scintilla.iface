@@ -1855,7 +1855,7 @@ set void SetProperty=4004(string key, string value)
 # Maximum value of keywordSet parameter of SetKeyWords.
 #!-start-[VBLexerImprovement][ForthImprovement]
 #val KEYWORDSET_MAX=8
-val KEYWORDSET_MAX=16
+val KEYWORDSET_MAX=20
 #!-end-[VBLexerImprovement][ForthImprovement]
 
 # Set up the key words used by the lexer.
