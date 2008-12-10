@@ -135,6 +135,8 @@ static void ColouriseForthDoc(unsigned int startPos, int length, int initStyle, 
     int stateFlag = initStyle&FORTH_FLAG_MASK; // flag for state
     bool isInDefinition = stateFlag==FORTH_DEFINITION_FLAG; // flag for inside definition tags state
     bool isPossibleRollback = startPos>0; // flag for possible undefined state by start pos
+    bool isEq=false, isBegin=false;
+    const char *string_end;
 //!-end-[ForthImprovement]
     st=&styler;
     cur_pos=startPos;
@@ -207,9 +209,9 @@ static void ColouriseForthDoc(unsigned int startPos, int length, int initStyle, 
             parse('}',false);
             if(cur_pos<lengthDoc) cur_pos++;
             styler.ColourTo(cur_pos,SCE_FORTH_LOCALE|stateFlag);
-        }else if(strings.InList(buffer)) {
+        }else if(strings.InMultiWordsList(buffer, '~', isEq, isBegin, string_end) && isBegin) {
             styler.ColourTo(pos1,SCE_FORTH_STRING|stateFlag);
-            parse('"',false);
+            parse(*string_end,false);
             if(cur_pos<lengthDoc) cur_pos++;
             styler.ColourTo(cur_pos,SCE_FORTH_STRING|stateFlag);
         }else if(control_in.InList(buffer)) {
@@ -292,9 +294,9 @@ static void ColouriseForthDoc(unsigned int startPos, int length, int initStyle, 
             parse('}',false);
             if(cur_pos<lengthDoc) cur_pos++;
             styler.ColourTo(cur_pos,SCE_FORTH_LOCALE|stateFlag);
-        }else if(strings.InList(buffer)) {
+        }else if(strings.InMultiWordsList(buffer, '~', isEq, isBegin, string_end) && isBegin) {
             styler.ColourTo(pos1,SCE_FORTH_STRING|stateFlag);
-            parse('"',false);
+            parse(*string_end,false);
             if(cur_pos<lengthDoc) cur_pos++;
             styler.ColourTo(cur_pos,SCE_FORTH_STRING|stateFlag);
         }else if(control.InList(buffer)) {
@@ -380,12 +382,19 @@ static void ColouriseForthDoc(unsigned int startPos, int length, int initStyle, 
             parse('}',false);
             if(cur_pos<lengthDoc) cur_pos++;
             styler.ColourTo(cur_pos,SCE_FORTH_LOCALE);
+/*!
         }else if(strings.InList(buffer)) {
             styler.ColourTo(pos1,SCE_FORTH_STRING);
             parse('"',false);
             if(cur_pos<lengthDoc) cur_pos++;
             styler.ColourTo(cur_pos,SCE_FORTH_STRING);
+*/
 //!-start-[ForthImprovement]
+        }else if(strings.InMultiWordsList(buffer, '~', isEq, isBegin, string_end) && isBegin) {
+            styler.ColourTo(pos1,SCE_FORTH_STRING);
+            parse(*string_end,false);
+            if(cur_pos<lengthDoc) cur_pos++;
+            styler.ColourTo(cur_pos,SCE_FORTH_STRING);
         }else if(startdefword.InList(buffer)) {
             isInDefinition = true;
             stateFlag = FORTH_DEFINITION_FLAG;

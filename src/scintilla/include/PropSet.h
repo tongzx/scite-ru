@@ -86,7 +86,8 @@ public:
 	bool InList(const char *s);
 	bool InListAbbreviated(const char *s, const char marker);
 	bool InListPartly(const char *s, const char marker, int &mainLen, int &finLen); //!-add-[PropsKeysSets]
-	bool InMultiWordsList(const char *s, const char marker, bool &eq, bool &begin); //!-add-[ABAP]
+	bool InMultiWordsList(const char *s, const char marker, bool &eq, bool &begin, const char* &keyword_end); //!-add-[ABAP][ForthImprovement]
+	bool InMultiWordsList(const char *s, const char marker, bool &eq, bool &begin); //!-add-[ABAP][ForthImprovement]
 };
 
 inline bool IsAlphabetic(unsigned int ch) {
