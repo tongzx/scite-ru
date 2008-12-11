@@ -3517,6 +3517,7 @@ evt void Click=2026(int modifiers)
 ##!-start-[OnMouseButtonUp]
 evt void MouseButtonUp=2027(int modifiers)
 ##!-end-[OnMouseButtonUp]
+evt void AutoCUpdated=2038(void)
 
 cat Deprecated
 

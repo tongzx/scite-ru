@@ -328,6 +328,11 @@ void ScintillaBase::AutoCompleteCharacterDeleted() {
 		AutoCompleteCancel();
 	} else {
 		AutoCompleteMoveToCurrentWord();
+		SCNotification scn = {0};
+		scn.nmhdr.code = SCN_AUTOCUPDATED;
+		scn.wParam = 0;
+		scn.listType = 0;
+		NotifyParent(scn);
 	}
 }
 

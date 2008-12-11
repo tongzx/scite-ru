@@ -2475,6 +2475,10 @@ bool SciTEBase::StartAutoCompleteWord(bool onlyOneWord) {
 	SString line = GetLine();
 	int current = GetCaretInLine();
 
+	if (!current)
+	{
+		SendEditor(SCI_AUTOCCANCEL);
+	}
 	int startword = current;
 	// Autocompletion of pure numbers is mostly an annoyance
 	bool allNumber = true;
@@ -3632,7 +3636,7 @@ void SciTEBase::CharAdded(char ch) {
 					StartAutoComplete();
 				}
 			} else if (autoCCausedByOnlyOne) {
-				StartAutoCompleteWord(true);
+				StartAutoCompleteWord(!props.GetInt("autocompleteword.incremental"));
 			}
 		} else if (HandleXml(ch)) {
 			// Handled in the routine
@@ -3650,7 +3654,7 @@ void SciTEBase::CharAdded(char ch) {
 				if (autoCompleteStartCharacters.contains(ch)) {
 					StartAutoComplete();
 				} else if (props.GetInt("autocompleteword.automatic") && wordCharacters.contains(ch)) {
-					StartAutoCompleteWord(true);
+					StartAutoCompleteWord(!props.GetInt("autocompleteword.incremental"));
 					autoCCausedByOnlyOne = SendEditor(SCI_AUTOCACTIVE);
 				}
 			}
@@ -4779,6 +4783,12 @@ void SciTEBase::Notify(SCNotification *notification) {
 		}
 		break;
 
+	case SCN_AUTOCUPDATED:
+		if (props.GetInt("autocompleteword.incremental"))
+		{
+			StartAutoCompleteWord(false);
+		}
+		break;
 	case SCN_CHARADDED:
 		if (extender)
 			handled = extender->OnChar(static_cast<char>(notification->ch));
