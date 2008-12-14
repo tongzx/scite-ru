@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
-Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo
-version 1.8
+Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev
+version 1.8.2
 ------------------------------------------------------
   Note: Needed gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
   Connection:
@@ -28,13 +28,25 @@ if win_height == '' then win_height = 600 end
 ----------------------------------------------------------
 -- Common functions
 ----------------------------------------------------------
-function ReplaceWithoutCase(text, s_find, s_rep)
+local function ReplaceWithoutCase(text, s_find, s_rep)
 	local i, j = 1
 	repeat
 		i, j = text:lower():find(s_find:lower(), j, true)
 		if j == nil then return text end
 		text = text:sub(1, i-1)..s_rep..text:sub(j+1)
 	until false
+end
+
+local function ShowCompactedLine(line_num)
+	local function GetFoldLine(ln)
+		while editor.FoldExpanded[ln] do ln = ln-1 end
+		return ln
+	end
+	while not editor.LineVisible[line_num] do
+		local x = GetFoldLine(line_num)
+		editor:ToggleFold(x)
+		line_num = x - 1
+	end
 end
 
 ----------------------------------------------------------
@@ -139,8 +151,9 @@ end
 ----------------------------------------------------------
 local function FileMan_ListFILL()
 	if current_path == '' then return end
-	list_dir:clear()
 	local folders = gui.files(current_path..'*', true)
+	if folders == nil then return end
+	list_dir:clear()
 	list_dir:add_item ('[..]', {'..','d'})
 	for i, d in ipairs(folders) do
 		list_dir:add_item('['..d..']', {d,'d'})
@@ -191,18 +204,18 @@ end
 function FileMan_FileCopy()
 	local filename = FileMan_GetSelectedItem()
 	if filename == '' or filename == '..' then return end
-	local path_destantion = gui.select_dir_dlg("Copy to...")
-	if path_destantion == nil then return end
-	os_copy(current_path..filename, path_destantion..'\\'..filename)
+	local path_destination = gui.select_dir_dlg("Copy to...")
+	if path_destination == nil then return end
+	os_copy(current_path..filename, path_destination..'\\'..filename)
 	FileMan_ListFILL()
 end
 
 function FileMan_FileMove()
 	local filename = FileMan_GetSelectedItem()
 	if filename == '' or filename == '..' then return end
-	local path_destantion = gui.select_dir_dlg("Move to...")
-	if path_destantion == nil then return end
-	os.rename(current_path..filename, path_destantion..'\\'..filename)
+	local path_destination = gui.select_dir_dlg("Move to...")
+	if path_destination == nil then return end
+	os.rename(current_path..filename, path_destination..'\\'..filename)
 	FileMan_ListFILL()
 end
 
@@ -343,9 +356,15 @@ local function Favorites_ListFILL()
 	table.sort(list_fav_table,
 		function(a, b)
 			local function IsSession(filepath)
-				return filepath:upper():gsub('^.*%.','') == 'SESSION'
+				return filepath:gsub('^.*%.',''):upper() == 'SESSION'
 			end
-			return not IsSession(a) and IsSession(b)
+			local isAses = IsSession(a)
+			local isBses = IsSession(b)
+			if (isAses and isBses) or not (isAses or isBses) then
+				return a < b
+			else
+				return isAses
+			end
 		end
 	)
 	for _, s in ipairs(list_fav_table) do
@@ -572,6 +591,7 @@ local function Functions_GotoLine()
 	if sel_item == -1 then return end
 	local pos = list_func:get_item_data(sel_item)
 	if pos then
+		ShowCompactedLine(pos)
 		editor:GotoLine(pos)
 		gui.pass_focus()
 	end
@@ -644,18 +664,6 @@ local function Bookmarks_RefreshTable()
 		end
 	end
 	Bookmarks_ListFILL()
-end
-
-local function ShowCompactedLine(line_num)
-	local function GetFoldLine(ln)
-		while editor.FoldExpanded[ln] do ln = ln-1 end
-		return ln
-	end
-	while not editor.LineVisible[line_num] do
-		local x = GetFoldLine(line_num)
-		editor:ToggleFold(x)
-		line_num = x - 1
-	end
 end
 
 local function Bookmarks_GotoLine()
