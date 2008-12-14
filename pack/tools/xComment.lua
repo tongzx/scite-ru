@@ -1,6 +1,6 @@
 --[[--------------------------------------------
 xComment
-Version: 1.4
+Version: 1.4.1
 Author: mozersЩ, VladVRO
 -------------------------------------------------
   C блеском замен€ет стандартную комбинацию Ctrl+Q (комментирование|сн€тие комментари€)
@@ -107,7 +107,7 @@ local function LineComment()
 		if comment_block_at_line_start == 1 then
 			editor:GotoPos(editor:PositionFromLine(line_sel_start))
 		else
-			editor:VCHome()
+			editor:GotoPos(editor.LineIndentPosition[line_sel_start])
 		end
 		editor:ReplaceSel(comment_block)
 		editor:GotoPos(cur_pos + string.len(comment_block))
