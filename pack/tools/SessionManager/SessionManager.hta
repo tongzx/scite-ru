@@ -5,7 +5,7 @@
 <hta:application
 	id=SesMgr
 	applicationName=Session_Manager
-	version=0.95
+	version=1.0
 	maximizeButton=no
 	icon=sysedit.exe
 	innerBorder=no
@@ -120,7 +120,7 @@ function DialogLoad_SessionList(){
 		html += '<option>'+option;
 	}
 	// ќтображаем список сессий
-	select.innerHTML = '<select id="sessions_opt" style="width:100%;" size=14 ondblclick="LoadSession(this.selectedIndex)" onkeypress="LoadOnKeyPress(this.selectedIndex)" onchange="load_description.value = Descript(this.selectedIndex)" onmouseup="ShowRCMenu()">'+html+'</select>';
+	select.innerHTML = '<select id="sessions_opt" style="width:100%;" size=14 ondblclick="LoadSession(this.selectedIndex)" onkeydown="LoadOnKey(this.selectedIndex)" onchange="load_description.value = Descript(this.selectedIndex)" onmouseup="ShowRCMenu()">'+html+'</select>';
 	if (sessions_opt[0]) {sessions_opt[0].selected = true}
 }
 
@@ -310,33 +310,37 @@ function ShowRCMenu(){
 
 // ------------------------------------------------
 // ќбработка нажатий клавиш в диалоге загрузки новой сессии
-function LoadOnKeyPress(i){
+function LoadOnKey(i){
 	var keycode = event.keyCode;
 	switch(keycode){
-		case 27:
+		case 27: //Esc
 			self.close();
 			break;
-		case 32:
+		case 32: // Space
 			LoadSession(i);
 			break;
-		case 13:
-			LoadSession(i);
+		case 13: // Enter
+			if (event.ctrlKey) {
+				LoadSessionNewWindow(i);
+			}else{
+				LoadSession(i);
+			}
 			break;
-		case 10:
-			LoadSessionNewWindow(i);
+		case 46: //Delete
+			DeleteSession(i);
 			break;
 	}
 }
 
 // ------------------------------------------------
 // ќбработка нажатий клавиш в диалоге сохранени€ сессии
-function SaveOnKeyPress(){
+function SaveOnKey(){
 	var keycode = event.keyCode;
 	switch(keycode){
-		case 27:
+		case 27: //Esc
 			self.close();
 			break;
-		case 13:
+		case 13: // Enter
 			SaveSession();
 			break;
 	}
@@ -437,7 +441,7 @@ function ExistSciTEWindow(){
 			<TABLE width=100% height=94% cellpadding="0" cellspacing="4" border="0">
 			<TR><TD colspan="2" width=100%>
 				<TABLE width=100% cellpadding="0" cellspacing="0" border="0" style="margin:0px">
-					<TR><TD>Name:&nbsp;</TD><TD width=100%><INPUT id="ses_name" TYPE=text value="" style="width:100%" onkeypress="SaveOnKeyPress()" onkeyup="autoComplete(this)"></TD></TR>
+					<TR><TD>Name:&nbsp;</TD><TD width=100%><INPUT id="ses_name" TYPE=text value="" style="width:100%" onkeypress="SaveOnKey()" onkeyup="autoComplete(this)"></TD></TR>
 					<TR><TD>&nbsp;</TD><td><span id="ListSessions"></span></TD></TR>
 				</TABLE>
 			</TD></TR>

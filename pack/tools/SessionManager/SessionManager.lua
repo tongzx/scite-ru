@@ -1,18 +1,20 @@
 -- SessionManager
 -- Àâòîð: mozers™
--- Version: 0.99
+-- Version: 1.0
 -----------------------------------------------
+local sessionmanager_path = props['SciteDefaultHome']..'\\tools\\SessionManager\\SessionManager.hta'
+
 local function LoadSession()
-	shell.exec('mshta "'..props['SciteDefaultHome']..'\\tools\\SessionManager\\SessionManager.hta"', nil, true, false)
+	shell.exec('mshta "'..sessionmanager_path..'"', nil, true, false)
 end
 
 local function SaveSession()
-	shell.exec('mshta "'..props['SciteDefaultHome']..'\\tools\\SessionManager\\SessionManager.hta" '..props['FileName'], nil, true, false)
+	shell.exec('mshta "'..sessionmanager_path..'" '..props['FileName'], nil, true, false)
 end
 
 local function SaveSessionOnQuit()
 	props['save.session']=1
-	shell.exec('mshta "'..props['SciteDefaultHome']..'\\tools\\SessionManager\\SessionManager.hta" '..'QUIT '..props['FileName'], nil, true, false)
+	shell.exec('mshta "'..sessionmanager_path..'" QUIT '..props['FileName'], nil, true, false)
 end
 
 local function SaveSessionOnQuitAuto()
