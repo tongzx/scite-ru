@@ -2,7 +2,7 @@
 /** @file LexABAP.cxx
  ** Lexer for ABAP/4.
  **/
-// Copyright 2007 by Vladislav V. Vorobyev <vladvro@gmail.com>
+// Copyright 2007 by Vladislav V. Vorobyev <vladvro(a)gmail.com>
 // The License.txt file describes the conditions under which this software may be distributed.
 
 #include <stdlib.h>
@@ -224,7 +224,7 @@ static void FoldABAPDoc(unsigned int startPos, int length, int initStyle,
 
 	// go back to start of keyword
 	if (initStyle >= SCE_ABAP_WORD && initStyle <= SCE_ABAP_USER4) {
-		while (styler.StyleAt(startPos-1) >= SCE_ABAP_WORD && startPos > 0)
+		while (startPos > 0 && styler.StyleAt(startPos-1) >= SCE_ABAP_WORD)
 			startPos--;
 		initStyle = styler.StyleAt(startPos-1);
 	}
@@ -236,53 +236,117 @@ static void FoldABAPDoc(unsigned int startPos, int length, int initStyle,
 	char word[256];
 	int wordlen = 0;
 	int style = initStyle;
+	bool inPerform = false;
+	int levelNum = level & SC_FOLDLEVELNUMBERMASK;
+	if (levelNum > SC_FOLDLEVELBASE) {
+		// Find folding start if it is top
+		int lineLook = line - 1;
+		while ((lineLook > 0) && (
+				(!(styler.LevelAt(lineLook) & SC_FOLDLEVELHEADERFLAG)) ||
+				((styler.LevelAt(lineLook) & SC_FOLDLEVELNUMBERMASK) == levelNum)))
+			lineLook--;
+		if ((styler.LevelAt(lineLook) & SC_FOLDLEVELHEADERFLAG) &&
+				((styler.LevelAt(lineLook) & SC_FOLDLEVELNUMBERMASK) < levelNum))
+		{
+			// Validate folding start
+			unsigned int sPos = styler.LineStart(lineLook);
+			if (styler.StyleAt(sPos) == SCE_ABAP_WORD) {
+				while (sPos > 0 && styler.StyleAt(sPos-1) == SCE_ABAP_WORD)
+					sPos--;
+			}
+			unsigned int ePos = styler.LineStart(lineLook + 1);
+			while (ePos < endPos && styler.StyleAt(ePos) == SCE_ABAP_WORD)
+				ePos++;
+			for (unsigned int i = sPos; i < ePos; i++) {
+				int c = styler.SafeGetCharAt(i, '\n');
+				style = styler.StyleAt(i);
+				if (style == SCE_ABAP_WORD) {
+					if (IsSpace(c)) {
+						if (!IsSpace(word[wordlen - 1])) {
+							word[wordlen] = ' ';
+							if (wordlen < 255)
+								wordlen++;
+						}
+					} else {
+						word[wordlen] = static_cast<char>(LowerCase(c));
+						if (wordlen < 255)
+							wordlen++;
+					}
+				} else {
+					if (wordlen) {
+						word[wordlen] = '\0';
+						if (strcmp(word,"call function")==0 || strcmp(word,"perform")==0) {
+							// Folding for function call or perform construction
+							inPerform = true;
+						}
+						wordlen = 0;
+					}
+				}
+			}
+			wordlen = 0;
+		}
+	}
 	// Scan for tokens at the start of the line (they may include
 	// whitespace, for tokens like "End Function"
 	for (unsigned int i = startPos; i < endPos; i++) {
 		int c = styler.SafeGetCharAt(i, '\n');
 		int prevStyle = style;
 		style = styler.StyleAt(i);
-		if (style == SCE_ABAP_COMMENTLINE) {
-			if (style != prevStyle)
-				levelIndent = 1;
-		} else
-		if (!done && style != SCE_ABAP_COMMENT) {
-			if (wordlen) { // are we scanning a token already?
-				word[wordlen] = static_cast<char>(LowerCase(c));
-				if (!IsAWordChar(c)) { // done with token
-					word[wordlen] = '\0';
-					// CheckFoldPoint
-					int go = 0;
-					bool isEq, isBegin;
-					if (fold_begin.InMultiWordsList(word, '~', isEq, isBegin) && isEq) {
-						go = 1;
-					} else
-					if (fold_end.InMultiWordsList(word, '~', isEq, isBegin) && isEq) {
-						go = -1;
-					}
-					if (!go) {
-						// Treat any whitespace as single blank, for
-						// things like "end of".
-						if (IsSpace(c)) {
-							if (IsAWordChar(word[wordlen - 1])) {
-								word[wordlen] = ' ';
-								if (wordlen < 255)
-									wordlen++;
+		if(inPerform) {
+			if (style == SCE_ABAP_OPERATOR && c == '.') {
+				inPerform = false;
+				levelIndent -= 1;
+			}
+		} else {
+			if (style == SCE_ABAP_COMMENTLINE) {
+				if (style != prevStyle)
+					levelIndent = 1;
+			} else
+			if (!done && style != SCE_ABAP_COMMENT) {
+				if (wordlen) { // are we scanning a token already?
+					word[wordlen] = static_cast<char>(LowerCase(c));
+					if (!IsAWordChar(c)) { // done with token
+						word[wordlen] = '\0';
+						// CheckFoldPoint
+						int go = 0;
+						if (strcmp(word,"call function")==0 || strcmp(word,"perform")==0) {
+							// Folding for function call or perform construction
+							go = 1;
+							inPerform = true;
+						} else {
+							// Folding by settings
+							bool isEq, isBegin;
+							if (fold_begin.InMultiWordsList(word, '~', isEq, isBegin) && isEq) {
+								go = 1;
+							} else
+							if (fold_end.InMultiWordsList(word, '~', isEq, isBegin) && isEq) {
+								go = -1;
 							}
 						}
-						else // done with this operator
+						if (!go) {
+							// Treat any whitespace as single blank, for
+							// things like "end of".
+							if (IsSpace(c)) {
+								if (IsAWordChar(word[wordlen - 1])) {
+									word[wordlen] = ' ';
+									if (wordlen < 255)
+										wordlen++;
+								}
+							}
+							else // done with this operator
+								done = 1;
+						} else {
+							levelIndent += go;
 							done = 1;
-					} else {
-						levelIndent += go;
-						done = 1;
+						}
+					} else if (wordlen < 255) {
+						wordlen++;
 					}
-				} else if (wordlen < 255) {
-					wordlen++;
-				}
-			} else { // start scanning at first word character
-				if (IsAWordChar(c)) {
-					word[0] = static_cast<char>(LowerCase(c));
-					wordlen = 1;
+				} else { // start scanning at first word character
+					if (IsAWordChar(c)) {
+						word[0] = static_cast<char>(LowerCase(c));
+						wordlen = 1;
+					}
 				}
 			}
 		}
@@ -292,7 +356,7 @@ static void FoldABAPDoc(unsigned int startPos, int length, int initStyle,
 			done = 0;
 		} else
 		if (c == '\n') { // line end
-			if (style == SCE_ABAP_COMMENTLINE) {
+			if (style == SCE_ABAP_COMMENTLINE && !inPerform) {
 				if (style != styler.StyleAt(i + 1)) levelIndent--;
 			}
 			if (levelIndent > 0) {
