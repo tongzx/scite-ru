@@ -1,7 +1,7 @@
 --[[----------------------------------------------------------------------------
 Select_And_Open_Filename.lua
 Author: VladVRO
-version 1.3
+version 1.3.1
 
 Расширение команды "Открыть выделенный файл" для случая когда выделения нет.
 А также возможность открыть файл по двойному клику мыши на его имени при нажатой
@@ -40,6 +40,13 @@ local function isFilenameChar(ch)
 end
 
 local for_open
+local function launch_open()
+	if for_open then
+		scite.Open(for_open)
+		for_open = nil
+	end
+end
+
 local function Select_And_Open_File(immediately)
 	local sci
 	if editor.Focus then
@@ -98,13 +105,6 @@ local function Select_And_Open_File(immediately)
 			end
 		end
 	
-	end
-end
-
-local function launch_open()
-	if for_open then
-		scite.Open(for_open)
-		for_open = nil
 	end
 end
 
