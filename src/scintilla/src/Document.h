@@ -234,6 +234,7 @@ public:
 
 	void SetDefaultCharClasses(bool includeWordClass);
 	void SetCharClasses(const unsigned char *chars, CharClassify::cc newCharClass);
+	int GetCharClasses(unsigned char *chars, CharClassify::cc newCharClass); //-add-[GetWordChars]
 	void SetStylingBits(int bits);
 	void StartStyling(int position, char mask);
 	bool SetStyleFor(int length, char style);

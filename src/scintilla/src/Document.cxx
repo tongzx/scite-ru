@@ -1176,6 +1176,23 @@ void Document::SetCharClasses(const unsigned char *chars, CharClassify::cc newCh
     charClass.SetCharClasses(chars, newCharClass);
 }
 
+//!-start-[GetWordChars]
+// return chars count (need for allocate string)
+int Document::GetCharClasses(unsigned char *chars, CharClassify::cc newCharClass) {
+	unsigned char *ptr = chars;
+	for ( int iChar = 0; iChar < CharClassify::maxChar; iChar++ )
+	{
+		if ( charClass.GetClass( (unsigned char)iChar ) == newCharClass )
+		{
+			if ( chars != 0 ) *ptr = (unsigned char)iChar;
+			ptr++;
+		}
+	}
+	if ( chars != 0 ) *ptr = 0;
+	return ptr - chars;
+}
+//!-end-[GetWordChars]
+
 void Document::SetStylingBits(int bits) {
 	stylingBits = bits;
 	stylingBitsMask = (1 << stylingBits) - 1;

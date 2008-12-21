@@ -6472,6 +6472,14 @@ sptr_t Editor::WndProc(unsigned int iMessage, uptr_t wParam, sptr_t lParam) {
 		}
 		break;
 
+//!-start-[GetWordChars]
+	case SCI_GETWORDCHARS: {
+			return pdoc->GetCharClasses( reinterpret_cast<unsigned char *>(lParam),
+										 CharClassify::ccWord );
+		}
+		break;
+//!-end-[GetWordChars]
+
 	case SCI_SETWHITESPACECHARS: {
 			if (lParam == 0)
 				return 0;

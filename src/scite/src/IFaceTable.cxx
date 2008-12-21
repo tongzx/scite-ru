@@ -1657,6 +1657,7 @@ static IFaceConstant ifaceConstants[] = {
 	{"SCI_GETVIEWEOL",2355},
 	{"SCI_GETVIEWWS",2020},
 	{"SCI_GETVSCROLLBAR",2281},
+	{"SCI_GETWORDCHARS",2120}, //-add-[GetWordChars]
 	{"SCI_GETWRAPMODE",2269},
 	{"SCI_GETWRAPSTARTINDENT",2465},
 	{"SCI_GETWRAPVISUALFLAGS",2461},
@@ -2433,7 +2434,8 @@ static IFaceProperty ifaceProperties[] = {
 	{"ViewEOL", 2355, 2356, iface_bool, iface_void},
 	{"ViewWS", 2020, 2021, iface_int, iface_void},
 	{"WhitespaceChars", 0, 2443, iface_string, iface_void},
-	{"WordChars", 0, 2077, iface_string, iface_void},
+//!	{"WordChars", 0, 2077, iface_string, iface_void},
+	{"WordChars", 2120, 2077, iface_string, iface_void}, //-change-[GetWordChars]
 	{"WrapMode", 2269, 2268, iface_int, iface_void},
 	{"WrapStartIndent", 2465, 2464, iface_int, iface_void},
 	{"WrapVisualFlags", 2461, 2460, iface_int, iface_void},
