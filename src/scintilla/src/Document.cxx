@@ -1178,11 +1178,11 @@ void Document::SetCharClasses(const unsigned char *chars, CharClassify::cc newCh
 
 //!-start-[GetWordChars]
 // return chars count (need for allocate string)
-int Document::GetCharClasses(unsigned char *chars, CharClassify::cc newCharClass) {
+int Document::GetCharsOfClass(unsigned char *chars, CharClassify::cc chClass) {
 	unsigned char *ptr = chars;
 	for ( int iChar = 0; iChar < CharClassify::maxChar; iChar++ )
 	{
-		if ( charClass.GetClass( (unsigned char)iChar ) == newCharClass )
+		if ( charClass.GetClass( (unsigned char)iChar ) == chClass )
 		{
 			if ( chars != 0 ) *ptr = (unsigned char)iChar;
 			ptr++;
