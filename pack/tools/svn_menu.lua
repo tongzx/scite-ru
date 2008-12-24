@@ -38,7 +38,7 @@ local BranchMenuCommands =
 	"Show log for 'trunk'|9189|"
 
 local function update_svn_menu()
-	local menu = props["user.tabcontext.menu"]
+	local menu = props["user.tabcontext.menu.*"]
 	local filedir = props["FileDir"]
 	local svnroot = ""
 	local svnbranch = ""
@@ -92,7 +92,7 @@ local function update_svn_menu()
 		if not string.find(menu,"|||SVN|") then
 			menu = menu.."||SVN||"
 		end
-		props["user.tabcontext.menu"] =
+		props["user.tabcontext.menu.*"] =
 			string.gsub(menu, "||SVN|.*", 
 			string.gsub(string.gsub(string.gsub(SVNContectMenu,
 			"$%(FileMenuCommands%)", filemenu),
@@ -101,7 +101,7 @@ local function update_svn_menu()
 	else
 		-- no SVN context
 		if string.find(menu,"|||SVN|") then
-			props["user.tabcontext.menu"] = string.gsub(menu, "||SVN|.*", "")
+			props["user.tabcontext.menu.*"] = string.gsub(menu, "||SVN|.*", "")
 		end
 	end
 	-- set variables for SVN menu
