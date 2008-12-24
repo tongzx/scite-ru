@@ -102,8 +102,8 @@ dofile (props["SciteDefaultHome"].."\\tools\\FoldText.lua")
 -- Автодополнение объектов их методами и свойствами
 dofile (props["SciteDefaultHome"].."\\tools\\AutocompleteObject.lua")
 
--- При вводе слова, если это сокращение то вызывается список аббревиатур
---~ dofile (props["SciteDefaultHome"].."\\tools\\abbrevlist.lua")
+-- Вывод списка расшифровок (по Ctrl+B или автоматически) при неточном соответствии аббревиатуры
+dofile (props["SciteDefaultHome"].."\\tools\\abbrevlist.lua")
 
 -- Подсветка парных тегов в HTML
 dofile (props["SciteDefaultHome"].."\\tools\\highlighting_paired_tags.lua")

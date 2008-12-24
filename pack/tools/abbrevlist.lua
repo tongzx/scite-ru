@@ -1,87 +1,165 @@
--- SciTE Abbreviation in UserList
--- Version: 1.2
--- Author: Dmitry Maslov, frs
----------------------------------------------------
--- При вводе слова, если это сокращение то вызывается список аббревиатур
--- Подключение:
--- В файл SciTEStartup.lua добавьте строку:
---   dofile (props["SciteDefaultHome"].."\\tools\\abbrevlist.lua")
----------------------------------------------------
+--[[--------------------------------------------------
+abbrevlist.lua
+Authors: Dmitry Maslov, frs, mozers™
+version 2.0
+------------------------------------------------------
+  Если при вставке расшифровки аббревиатуры (Ctrl+B) не нашлось точного соответствия,
+  то выводится список соответствий начинающихся с этой комбинации символов.
+  Возможен автоматический режим работы (появление списка без нажатия на Ctrl+B).
+  Он включается параметром abbrev.lexer.auto=1, где lexer - имя соответсвующего лексера.
+  Подключение:
+    В файл SciTEStartup.lua добавьте строку:
+    dofile (props["SciteDefaultHome"].."\\tools\\abbrevlist.lua")
+--]]--------------------------------------------------
 
-local function GetWordLeft()
-	editor:WordLeftExtend()
-	-- обрабатываем # в cpp
-	if editor.LexerLanguage == 'cpp' and editor.CharAt[editor.SelectionStart-1] == 35 then
-		editor:CharLeftExtend()
+local table_expansions = {}   -- полный список аббревиатур и расшифровок к ним
+local get_abbrev = true       -- признак того, что этот список надо пересоздать
+local abbrev = ''             -- введеннная аббревиатура
+local event_IDM_ABBREV = true -- событие, вызвавшее срабатывание скрипта (IDM_ABBREV или OnChar)
+local sep = '•'               -- разделитель для строки раскрывающегося списка
+local typeUserList = 11       -- идентификатор раскрывающегося списка
+
+-- читает один из файлов abbrev в таблицу table_expansions
+local function ReadAbbrevFile(file)
+	local abbrev_file = io.open(file)
+	if abbrev_file then
+		for line in abbrev_file:lines() do
+			if #line ~= 0 then
+				local _abr, _exp = line:match('^([^#].-)=(.+)')
+				if _abr ~= nil then
+					table_expansions[#table_expansions+1] = {_abr, _exp}
+				else
+					local import_file = line:match('^import%s+(.+)')
+					-- если обнаружена запись import то рекурсивно вызываем эту же функцию
+					if import_file ~= nil then
+						ReadAbbrevFile(file:match('.+\\')..import_file)
+					end
+				end
+			end
+		end
+		abbrev_file:close()
 	end
-	local sel_text = editor:GetSelText()
-	editor:CharRight()
-	return sel_text
 end
 
-local function InsertProp(sel_value)
-	editor:WordLeftExtend()
-	-- обрабатываем # в cpp
-	if editor.LexerLanguage == 'cpp' and editor.CharAt[editor.SelectionStart-1] == 35 then
-		editor:CharLeftExtend()
+-- читает все подключенные файлы abbrev в таблицу table_expansions
+local function CreateExpansionList()
+	table_expansions = {}
+	local abbrev_filename = props["AbbrevPath"]
+	if #abbrev_filename == 0 then return end
+	ReadAbbrevFile(abbrev_filename)
+end
+
+-- выводит раскрывающийся список из расшифровок, соответствующих введенной аббревиатуре
+local function ShowExpansionList()
+	-- находим аббревиатуру
+	local abbr_end = editor.SelectionStart
+	local line_start_pos = editor:PositionFromLine(editor:LineFromPosition(abbr_end))
+	abbrev = editor:textrange(line_start_pos, abbr_end):match('[^ #]*$')
+
+	-- если длина аббревиатуры меньше 2х символов то выходим
+	if #abbrev < 2 then return false end
+	-- если мы переключились на другой файл, то строим таблицу table_expansions заново
+	if get_abbrev then
+		CreateExpansionList(abbrev)
+		get_abbrev = false
 	end
-	editor:DeleteBack()
-	ind = string.rep(" ",editor.Column[editor.CurrentPos])
-		scite.InsertAbbreviation(string.gsub(sel_value,'\\n','\\n'..ind))
+	if #table_expansions == 0 then return false end
+	-- выбираем из table_expansions только записи соответствующие введенной аббревиатуре
+	local table_expansions_select = {}
+	local abbrev_match = '' -- для хранения найденной аббревиатуры (используется ниже, если найден единственный вариант)
+	for i = 1, #table_expansions do
+		local abr = table_expansions[i][1]:match('^'..abbrev)
+		if abr ~= nil then
+			table_expansions_select[#table_expansions_select+1] = table_expansions[i][2]
+			abbrev_match = table_expansions[i][1]
+		end
+	end
+	if #table_expansions_select == 0 then return false end
+	-- если мы используем Ctrl+B (а не автоматическое срабатывание)
+	if (event_IDM_ABBREV)
+		-- и если найден единственный вариант расшифровки
+		and (#table_expansions_select == 1)
+		-- и аббревиатура полностью соотвествует введенной
+		and (abbrev == abbrev_match)
+			-- то вставку производим немедленно (для этого передаем на обработку стандартной функции IDM_ABBREV)
+			then return false
+	end
+	-- показываем раскрывающийся список из расшифровок, соответствующих введенной аббревиатуре
+	local table_expansions_select_string = table.concat(table_expansions_select, sep)
+	local sep_tmp = editor.AutoCSeparator
+	editor.AutoCSeparator = string.byte(sep)
+	editor:UserListShow(typeUserList, table_expansions_select_string)
+	editor.AutoCSeparator = sep_tmp
 	return true
 end
 
-local function Abbrev()
-	local abb_file = io.open(props["AbbrevPath"])
-	if not abb_file then return false end
+-- Вставка расшифровки, из раскрывающегося списка
+local function InsertExpansion(expansion)
+	editor:BeginUndoAction()
+	-- удаление введенной аббревиатуры с сохранением выделения
+	local sel_start, sel_end = editor.SelectionStart - #abbrev, editor.SelectionEnd - #abbrev
+	editor:remove(sel_start, editor.SelectionStart)
+	editor:SetSel(sel_start, sel_end)
+	-- вставка расшифровки
+	expansion = expansion:gsub('\\r','\r'):gsub('\\n','\n'):gsub('\\t','\t')
+	scite.InsertAbbreviation(expansion)
+	editor:EndUndoAction()
+end
+------------------------------------------------------
 
-	local currword = GetWordLeft()
-	local len_currword = string.len(currword)
-	if len_currword < 1 then
-		return false
+-- Add user event handler OnMenuCommand
+local old_OnMenuCommand = OnMenuCommand
+function OnMenuCommand (msg, source)
+	local result
+	if old_OnMenuCommand then result = old_OnMenuCommand(msg, source) end
+	if msg == IDM_ABBREV then
+		event_IDM_ABBREV = true
+		if ShowExpansionList() then return true end
 	end
-
-	local user_list = {}
-	for line in abb_file:lines() do
-		local abbrev_word = string.sub(line,1,len_currword)
-		if string.sub(line,len_currword+1,len_currword+1)=='=' and 
-						string.upper(abbrev_word) == string.upper(currword) then
-			local str_method = string.sub(line,len_currword+2)
-			table.insert (user_list,str_method)
-		end
-	end
-	abb_file:close()
-	local list_count = table.getn(user_list)
-	if list_count > 0 then
-		local s = table.concat(user_list, '•')
-		if s ~= '' then
-			local sep = editor.AutoCSeparator
-			editor.AutoCSeparator = string.byte('•')
-			editor:UserListShow(11, s)
-			editor.AutoCSeparator = sep
-			return true
-		end
-	end
-	return false
+	return result
 end
 
--- Добавляем свой обработчик события OnChar
+-- Add user event handler OnChar
 local old_OnChar = OnChar
 function OnChar(char)
-	if old_OnChar and old_OnChar(char) then 
-		return true
+	local result
+	if old_OnChar then result = old_OnChar(char) end
+	if tonumber(props['abbrev.'..editor.LexerLanguage..'.auto']) == 1
+		or tonumber(props['abbrev.*.auto']) == 1 then
+			event_IDM_ABBREV = false
+			if tonumber(props['macro-recording']) ~= 1
+				and ShowExpansionList() then
+					return true
+			end
 	end
-	if props['macro-recording'] ~= '1' and char ~= ' ' and Abbrev() then return true end
-	return false
+	return result
 end
 
 -- Add user event handler OnUserListSelection
 local old_OnUserListSelection = OnUserListSelection
-function OnUserListSelection(tp,sel_value)
+function OnUserListSelection(tp, sel_value)
 	local result
 	if old_OnUserListSelection then result = old_OnUserListSelection(tp,sel_value) end
-	if tp == 11 then
-		if InsertProp(sel_value) then return true end
+	if tp == typeUserList then
+		if InsertExpansion(sel_value) then return true end
 	end
+	return result
+end
+
+-- Add user event handler OnSwitchFile
+local old_OnSwitchFile = OnSwitchFile
+function OnSwitchFile(file)
+	local result
+	if old_OnSwitchFile then result = old_OnSwitchFile(file) end
+	get_abbrev = true
+	return result
+end
+
+-- Add user event handler OnOpen
+local old_OnOpen = OnOpen
+function OnOpen(file)
+	local result
+	if old_OnOpen then result = old_OnOpen(file) end
+	get_abbrev = true
 	return result
 end
