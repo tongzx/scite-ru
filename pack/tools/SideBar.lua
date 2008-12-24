@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev
-version 1.8.2
+version 1.8.3
 ------------------------------------------------------
   Note: Needed gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
   Connection:
@@ -224,7 +224,7 @@ function FileMan_FileRename()
 	if filename == '' or filename == '..' then return end
 	local filename_new = shell.inputbox("Rename", "Enter new file name:", filename, function(name) return not name:match('[\\/:|*?"<>]') end)
 	if filename_new == nil then return end
-	if filename_new.len ~= 0 and filename_new ~= filename then
+	if #filename_new ~= 0 and filename_new ~= filename then
 		os.rename(current_path..filename, current_path..filename_new)
 		FileMan_ListFILL()
 	end
@@ -378,7 +378,7 @@ local function Favorites_OpenList()
 		for line in favorites_file:lines() do
 			if #line ~= 0 then
 				line = ReplaceWithoutCase(line, '$(SciteDefaultHome)', props['SciteDefaultHome'])
-				table.insert(list_fav_table, line)
+				list_fav_table[#list_fav_table+1] = line
 			end
 		end
 		favorites_file:close()
@@ -399,12 +399,12 @@ function Favorites_AddFile()
 	local filename, attr = FileMan_GetSelectedItem()
 	if filename == '' then return end
 	if attr == 'd' then return end
-	table.insert(list_fav_table, current_path..filename)
+	list_fav_table[#list_fav_table+1] = current_path..filename
 	Favorites_ListFILL()
 end
 
 function Favorites_AddCurrentBuffer()
-	table.insert(list_fav_table, props['FilePath'])
+	list_fav_table[#list_fav_table+1] = props['FilePath']
 	Favorites_ListFILL()
 end
 
@@ -558,7 +558,7 @@ local function Functions_GetNames()
 			findString = ReplaceWithoutCase(findString, "CLASS ", "[c] ") -- Phyton
 			findString = ReplaceWithoutCase(findString, "DEF ", "[d] ") -- Phyton
 			local line_number = editor:LineFromPosition(_start+start_code_pos)
-			table.insert (table_functions, {findString, line_number})
+			table_functions[#table_functions+1] = {findString, line_number}
 		end
 	end
 end
@@ -630,7 +630,7 @@ local function Bookmark_Add(line_number)
 		line_text = ' - empty line - ('..(line_number+1)..')'
 	end
 	local buffer_number = GetBufferNumber()
-	table.insert (table_bookmarks, {props['FilePath'], buffer_number, line_number, line_text})
+	table_bookmarks[#table_bookmarks+1] = {props['FilePath'], buffer_number, line_number, line_text}
 end
 
 local function Bookmark_Delete(line_number)
@@ -696,14 +696,14 @@ local function Abbreviations_ListFILL()
 		local abbrev_file = io.open(file)
 		if abbrev_file then
 			for line in abbrev_file:lines() do
-				if string.len(line) ~= 0 then
-					local _abr, _exp = string.match(line, '(.-)=(.+)')
+				if #line ~= 0 then
+					local _abr, _exp = line:match('^([^#].-)=(.+)')
 					if _abr ~= nil then
 						list_abbrev:add_item({_abr, _exp}, _exp)
 					else
-						local import_file = string.match(line, '^import%s+(.+)')
+						local import_file = line:match('^import%s+(.+)')
 						if import_file ~= nil then
-							ReadAbbrev(string.match(file, '.+\\')..import_file)
+							ReadAbbrev(file:match('.+\\')..import_file)
 						end
 					end
 				end
