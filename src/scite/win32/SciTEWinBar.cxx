@@ -165,10 +165,10 @@ void SciTEWin::Notify(SCNotification *notification) {
 			subMenu[0].CreatePopUp();
 
 			bool isAdded = false;
-			SString userContextMenu = props.GetNewExpand("user.tabcontext.menu");
-			userContextMenu.substitute('|', '\0');
-			const char *userContextItem = userContextMenu.c_str();
-			const char *endDefinition = userContextItem + userContextMenu.length();
+			SString tabContextMenu = props.GetNewExpand("user.tabcontext.menu.", ExtensionFileName().c_str());
+			tabContextMenu.substitute('|', '\0');
+			const char *userContextItem = tabContextMenu.c_str();
+			const char *endDefinition = userContextItem + tabContextMenu.length();
 			GenerateMenu(subMenu, userContextItem, endDefinition, 
 				item, isAdded);
 
@@ -491,7 +491,9 @@ void SciTEWin::SetToolBar() {
 
 	::SendMessage(hwndToolBar, TB_BUTTONSTRUCTSIZE, sizeof(TBBUTTON), 0);
 
-	SString sIconlib = props.GetNewExpand( "user.toolbar.iconlib" );
+	SString fileNameForExtension = ExtensionFileName();
+
+	SString sIconlib = props.GetNewExpand("user.toolbar.iconlib.", fileNameForExtension.c_str());
 	HICON hIcon = NULL;
 	HICON hIconBig = NULL;
 	int iCount = 0;
@@ -520,10 +522,10 @@ void SciTEWin::SetToolBar() {
 	}
 
 	TArray<BarButtonIn,BarButtonIn> barbuttons;
-	SString userContextMenu = props.GetNewExpand("user.toolbar");
-	userContextMenu.substitute('|', '\0');
-	const char *userContextItem = userContextMenu.c_str();
-	const char *endDefinition = userContextItem + userContextMenu.length();
+	SString userToolbar = props.GetNewExpand("user.toolbar.", fileNameForExtension.c_str());
+	userToolbar.substitute('|', '\0');
+	const char *userContextItem = userToolbar.c_str();
+	const char *endDefinition = userContextItem + userToolbar.length();
 	while (userContextItem < endDefinition) {
 		const char *tips = userContextItem;
 		userContextItem += strlen(userContextItem) + 1;

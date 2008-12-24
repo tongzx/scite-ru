@@ -5132,14 +5132,16 @@ void SciTEBase::ContextMenu(Window wSource, Point pt, Window wCmd) {
 	bool isAdded = false;
 
 	if (wSource.GetID() == wOutput.GetID()) {
-		SString userContextMenu = props.GetNewExpand("user.outputcontext.menu");
+		SString userContextMenu = props.GetNewExpand("user.outputcontext.menu.", ExtensionFileName().c_str());
 		userContextMenu.substitute('|', '\0');
 		const char *userContextItem = userContextMenu.c_str();
 		const char *endDefinition = userContextItem + userContextMenu.length();
 		GenerateMenu(subMenu, userContextItem, endDefinition, 
 			item, isAdded);
 	} else {
-		SString userContextMenu = props.GetNewExpand("user.context.menu");
+		SString userContextMenu = props.GetNewExpand("user.context.menu.", ExtensionFileName().c_str());
+		if (userContextMenu.length() == 0)
+			userContextMenu = props.GetNewExpand("user.context.menu");
 		userContextMenu.substitute('|', '\0');
 		const char *userContextItem = userContextMenu.c_str();
 		const char *endDefinition = userContextItem + userContextMenu.length();
