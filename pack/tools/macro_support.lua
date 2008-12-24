@@ -1,6 +1,6 @@
 --[[
 Macros support for SciTE
-Version 2.3.1
+Version 2.3.2
 Author: VladVRO
 ---------------------------------------------------
 Description:
@@ -161,6 +161,9 @@ function MacroAddToList(macro, name, pos)
             return str ~= '' and (char == nil or char:match(macro_name_pattern))
           end
         )
+        if not name then
+          return
+        end
       end
     end
     if not glb_macros_table[name] or table.getn(glb_macros_name_table) == 0 then
