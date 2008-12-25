@@ -73,8 +73,13 @@ public:
 	
 	virtual bool SendProperty(const char *);
 
-//!	virtual bool OnKey(int, int);
-	virtual bool OnKey(int, int, char); //!-change-[OnKey]
+//!-start-[OnKey]
+#if PLAT_WIN
+	virtual bool OnKey(int, int, char);
+#else
+//!-end-[OnKey]
+	virtual bool OnKey(int, int);
+#endif //!-add-[OnKey]
 	virtual bool OnDwellStart(int, const char *);
 	virtual bool OnClose(const char *);
 

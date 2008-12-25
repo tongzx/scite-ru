@@ -5089,43 +5089,9 @@ void SciTEBase::CheckMenus() {
 	EnableAMenuItem(IDM_MACROSTOPRECORD, recording);
 }
 
-void SciTEBase::ContextMenu(Window wSource, Point pt, Window wCmd) {
-/*!
-	int currentPos = SendWindow(wSource, SCI_GETCURRENTPOS);
-	int anchor = SendWindow(wSource, SCI_GETANCHOR);
-	popup.CreatePopUp();
-	bool writable = !SendWindow(wSource, SCI_GETREADONLY);
-	AddToPopUp("Undo", IDM_UNDO, writable && SendWindow(wSource, SCI_CANUNDO));
-	AddToPopUp("Redo", IDM_REDO, writable && SendWindow(wSource, SCI_CANREDO));
-	AddToPopUp("");
-	AddToPopUp("Cut", IDM_CUT, writable && currentPos != anchor);
-	AddToPopUp("Copy", IDM_COPY, currentPos != anchor);
-	AddToPopUp("Paste", IDM_PASTE, writable && SendWindow(wSource, SCI_CANPASTE));
-	AddToPopUp("Delete", IDM_CLEAR, writable && currentPos != anchor);
-	AddToPopUp("");
-	AddToPopUp("Select All", IDM_SELECTALL);
-	AddToPopUp("");
-	if (wSource.GetID() == wOutput.GetID()) {
-		AddToPopUp("Hide", IDM_TOGGLEOUTPUT, true);
-	} else {
-		AddToPopUp("Close", IDM_CLOSE, true);
-	}
-	SString userContextMenu = props.GetNewExpand("user.context.menu");
-	userContextMenu.substitute('|', '\0');
-	const char *userContextItem = userContextMenu.c_str();
-	const char *endDefinition = userContextItem + userContextMenu.length();
-	while (userContextItem < endDefinition) {
-		const char *caption = userContextItem;
-		userContextItem += strlen(userContextItem) + 1;
-		if (userContextItem < endDefinition) {
-			int cmd = GetMenuCommandAsInt(userContextItem);
-			userContextItem += strlen(userContextItem) + 1;
-			AddToPopUp(caption, cmd);
-		}
-	}
-	popup.Show(pt, wCmd);
-*/
 //!-start-[ExtendedContextMenu]
+#if PLAT_WIN
+void SciTEBase::ContextMenu(Window wSource, Point pt, Window wCmd) {
 	int item = 0;
 	MenuEx subMenu[50];
 	subMenu[0].CreatePopUp();
@@ -5168,10 +5134,8 @@ void SciTEBase::ContextMenu(Window wSource, Point pt, Window wCmd) {
 	}	
 	
 	subMenu[0].Show(pt, wCmd);
-//!-end-[ExtendedContextMenu]
 }
 
-//!-start-[ExtendedContextMenu]
 bool SciTEBase::IsMenuItemEnabled(int cmd) {
 	switch (cmd)
 	{
@@ -5280,7 +5244,44 @@ void SciTEBase::GenerateMenu(MenuEx *subMenu, const char *&userContextItem,
 		}
 	}
 }
+#else
 //!-end-[ExtendedContextMenu]
+void SciTEBase::ContextMenu(Window wSource, Point pt, Window wCmd) {
+	int currentPos = SendWindow(wSource, SCI_GETCURRENTPOS);
+	int anchor = SendWindow(wSource, SCI_GETANCHOR);
+	popup.CreatePopUp();
+	bool writable = !SendWindow(wSource, SCI_GETREADONLY);
+	AddToPopUp("Undo", IDM_UNDO, writable && SendWindow(wSource, SCI_CANUNDO));
+	AddToPopUp("Redo", IDM_REDO, writable && SendWindow(wSource, SCI_CANREDO));
+	AddToPopUp("");
+	AddToPopUp("Cut", IDM_CUT, writable && currentPos != anchor);
+	AddToPopUp("Copy", IDM_COPY, currentPos != anchor);
+	AddToPopUp("Paste", IDM_PASTE, writable && SendWindow(wSource, SCI_CANPASTE));
+	AddToPopUp("Delete", IDM_CLEAR, writable && currentPos != anchor);
+	AddToPopUp("");
+	AddToPopUp("Select All", IDM_SELECTALL);
+	AddToPopUp("");
+	if (wSource.GetID() == wOutput.GetID()) {
+		AddToPopUp("Hide", IDM_TOGGLEOUTPUT, true);
+	} else {
+		AddToPopUp("Close", IDM_CLOSE, true);
+	}
+	SString userContextMenu = props.GetNewExpand("user.context.menu");
+	userContextMenu.substitute('|', '\0');
+	const char *userContextItem = userContextMenu.c_str();
+	const char *endDefinition = userContextItem + userContextMenu.length();
+	while (userContextItem < endDefinition) {
+		const char *caption = userContextItem;
+		userContextItem += strlen(userContextItem) + 1;
+		if (userContextItem < endDefinition) {
+			int cmd = GetMenuCommandAsInt(userContextItem);
+			userContextItem += strlen(userContextItem) + 1;
+			AddToPopUp(caption, cmd);
+		}
+	}
+	popup.Show(pt, wCmd);
+}
+#endif //!-add-[ExtendedContextMenu]
 
 /**
  * Ensure that a splitter bar position is inside the main window.

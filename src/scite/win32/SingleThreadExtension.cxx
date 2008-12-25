@@ -187,17 +187,17 @@ bool SingleThreadExtension::SendProperty(const char *prop) {
 	return ext->SendProperty(prop);
 }
 
-/*!
-bool SingleThreadExtension::OnKey(int keyval, int modifiers) {
-	return ext->OnKey(keyval, modifiers);
-}
-*/
 //!-start-[OnKey]
+#if PLAT_WIN
 bool SingleThreadExtension::OnKey(int keyval, int modifiers, char ch) {
 	return ext->OnKey(keyval, modifiers, ch);
 }
+#else
 //!-end-[OnKey]
-
+bool SingleThreadExtension::OnKey(int keyval, int modifiers) {
+	return ext->OnKey(keyval, modifiers);
+}
+#endif //!-add-[OnKey]
 bool SingleThreadExtension::OnDwellStart(int pos, const char *word) {
 	return ext->OnDwellStart(pos, word);
 }

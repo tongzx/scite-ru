@@ -254,12 +254,22 @@ bool MultiplexExtension::SendProperty(const char *prop) {
 	return false;
 }
 
-//! bool MultiplexExtension::OnKey(int keyval, int modifiers) {
-bool MultiplexExtension::OnKey(int keyval, int modifiers, char ch) {//!-change-[OnKey]
+//!-start-[OnKey]
+#if PLAT_WIN
+bool MultiplexExtension::OnKey(int keyval, int modifiers, char ch) {
+#else
+//!-end-[OnKey]
+bool MultiplexExtension::OnKey(int keyval, int modifiers) {
+#endif //!-add-[OnKey]
 	bool handled = false;
 	for (int i = 0; i < extensionCount; ++i)
-//!		if (extensions[i]->OnKey(keyval, modifiers))
-		if (extensions[i]->OnKey(keyval, modifiers, ch))//!-change-[OnKey]
+//!-start-[OnKey]
+#if PLAT_WIN
+		if (extensions[i]->OnKey(keyval, modifiers, ch))
+#else
+//!-end-[OnKey]
+		if (extensions[i]->OnKey(keyval, modifiers))
+#endif //!-add-[OnKey]
 			handled = true;
 	return handled;
 }

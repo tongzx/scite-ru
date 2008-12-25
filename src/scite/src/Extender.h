@@ -76,8 +76,13 @@ public:
 
 	virtual bool SendProperty(const char *) { return false; }
 
-//!	virtual bool OnKey(int, int) { return false; }
-	virtual bool OnKey(int, int, char) { return false; } //!-add-[OnKey]
+//!-start-[OnKey]
+#if PLAT_WIN
+	virtual bool OnKey(int, int, char) { return false; }
+#else
+//!-end-[OnKey]
+	virtual bool OnKey(int, int) { return false; }
+#endif //!-add-[OnKey]
 	virtual bool OnDwellStart(int, const char *) { return false; }
 	virtual bool OnClose(const char *) { return false; }
 };

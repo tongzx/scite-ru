@@ -7,6 +7,7 @@
 #include <string.h>
 #include <ctype.h>
 
+#include "Platform.h" //!-add-[OnKey]
 #include "Scintilla.h"
 #include "Accessor.h"
 #include "Extender.h"
@@ -1883,8 +1884,13 @@ bool LuaExtension::OnUserListSelection(int listType, const char *selection) {
 	return CallNamedFunction("OnUserListSelection", listType, selection);
 }
 
-//! bool LuaExtension::OnKey(int keyval, int modifiers) {
-bool LuaExtension::OnKey(int keyval, int modifiers, char ch) {//!-change-[OnKey]
+//!-start-[OnKey]
+#if PLAT_WIN
+bool LuaExtension::OnKey(int keyval, int modifiers, char ch) {
+#else
+//!-end-[OnKey]
+bool LuaExtension::OnKey(int keyval, int modifiers) {
+#endif //!-add-[OnKey]
 	bool handled = false;
 	if (luaState) {
 		lua_getglobal(luaState, "OnKey");
@@ -1893,12 +1899,15 @@ bool LuaExtension::OnKey(int keyval, int modifiers, char ch) {//!-change-[OnKey]
 			lua_pushboolean(luaState, (SCMOD_SHIFT & modifiers) != 0 ? 1 : 0); // shift/lock
 			lua_pushboolean(luaState, (SCMOD_CTRL  & modifiers) != 0 ? 1 : 0); // control
 			lua_pushboolean(luaState, (SCMOD_ALT   & modifiers) != 0 ? 1 : 0); // alt
-//!			handled = call_function(luaState, 4);
 //!-start-[OnKey]
+#if PLAT_WIN
 			char str[2] = {ch, 0};
 			lua_pushstring(luaState, str);
 			handled = call_function(luaState, 5);
+#else
 //!-end-[OnKey]
+			handled = call_function(luaState, 4);
+#endif //!-add-[OnKey]
 		} else {
 			lua_pop(luaState, 1);
 		}

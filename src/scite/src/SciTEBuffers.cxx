@@ -1127,13 +1127,13 @@ void SciTEBase::StackMenu(int pos) {
 	}
 }
 
-/*!-change-[SubMenu]
+#if !PLAT_WIN //!-add-[SubMenu]
 void SciTEBase::RemoveToolsMenu() {
 	for (int pos = 0; pos < toolMax; pos++) {
 		DestroyMenuItem(menuTools, IDM_TOOLS + pos);
 	}
 }
-*/
+#endif //!-add-[SubMenu]
 
 void SciTEBase::SetMenuItemLocalised(int menuNumber, int position, int itemID,
         const char *text, const char *mnemonic) {
@@ -1141,8 +1141,8 @@ void SciTEBase::SetMenuItemLocalised(int menuNumber, int position, int itemID,
 	SetMenuItem(menuNumber, position, itemID, localised.c_str(), mnemonic);
 }
 
+#if !PLAT_WIN //!-add-[SubMenu]
 void SciTEBase::SetToolsMenu() {
-/*! original
 	//command.name.0.*.py=Edit in PythonWin
 	//command.0.*.py="c:\program files\python\pythonwin\pythonwin" /edit c:\coloreditor.py
 	RemoveToolsMenu();
@@ -1185,8 +1185,10 @@ void SciTEBase::SetToolsMenu() {
 		SetMenuItemLocalised(menuTools, menuPos++, IDM_MACROSTOPRECORD,
 		        "S&top Recording Macro", "Ctrl+Shift+F9");
 	}
-*/
+}
 //!-start-[SubMenu]
+#else
+void SciTEBase::SetToolsMenu() {
 	int items;
 	MenuEx arrMenu[toolMax];
 	int menuPos = TOOLS_START+1;
@@ -1262,8 +1264,9 @@ void SciTEBase::SetToolsMenu() {
 			}
 		}
 	}
-//!-end-[SubMenu]
 }
+#endif
+//!-end-[SubMenu]
 
 JobSubsystem SciTEBase::SubsystemType(char c) {
 	if (c == '1')

@@ -39,8 +39,13 @@ public:
 	virtual bool OnUpdateUI();
 	virtual bool OnMarginClick();
 	virtual bool OnUserListSelection(int listType, const char *selection);
-//!	virtual bool OnKey(int keyval, int modifiers);
-	virtual bool OnKey(int keyval, int modifiers, char ch); //!-change-[OnKey]
+//!-start-[OnKey]
+#if PLAT_WIN
+	virtual bool OnKey(int keyval, int modifiers, char ch);
+#else
+//!-end-[OnKey]
+	virtual bool OnKey(int keyval, int modifiers);
+#endif //!-add-[OnKey]
 	virtual bool OnDwellStart(int pos, const char *word);
 	virtual bool OnClose(const char *filename);
 	virtual bool OnMacro(const char *p, const char *q); //!-add-[macro]

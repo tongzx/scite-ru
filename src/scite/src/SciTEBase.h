@@ -28,6 +28,7 @@ extern const char menuAccessIndicator[];
 #define ELEMENTS(a) (sizeof(a) / sizeof(a[0]))
 
 //!-start-[ExtendedContextMenu]
+#if PLAT_WIN
 class MenuEx : public Menu {
 public:
 	MenuEx(MenuID _id = 0) : Menu(_id) {};
@@ -36,6 +37,7 @@ public:
 	void RemoveItems(int fromID = 0, int toID = -1);
 	void RemoveItem(int itemID, bool byPos = false);
 };
+#endif
 //!-end-[ExtendedContextMenu]
 
 //!-start-[VarAbbrev]
@@ -532,7 +534,9 @@ protected:
 	Window wToolBar;
 	Window wStatusBar;
 	Window wTabBar;
-//!	Menu popup;	//!-change-[ExtendedContextMenu]
+#if !PLAT_WIN //!-add-[ExtendedContextMenu]
+	Menu popup;
+#endif //!-add-[ExtendedContextMenu]
 	SciFnDirect fnEditor;
 	long ptrEditor;
 	SciFnDirect fnOutput;
@@ -905,17 +909,25 @@ protected:
 	virtual void EnableAMenuItem(int wIDCheckItem, bool val) = 0;
 	virtual void CheckMenusClipboard();
 	virtual void CheckMenus();
-//!	virtual void AddToPopUp(const char *label, int cmd = 0, bool enabled = true) = 0;	//!-change-[ExtendedContextMenu]
+#if !PLAT_WIN //!-add-[ExtendedContextMenu]
+	virtual void AddToPopUp(const char *label, int cmd = 0, bool enabled = true) = 0;
+#endif //!-add-[ExtendedContextMenu]
 	void ContextMenu(Window wSource, Point pt, Window wCmd);
 
 	void DeleteFileStackMenu();
 	void SetFileStackMenu();
 	void DropFileStackTop();
-	virtual MenuEx GetMenu(int menuNumber) = 0; //!-add-[SubMenu]
+//!-start-[SubMenu]
+#if PLAT_WIN
+	virtual MenuEx GetMenu(int menuNumber) = 0; 
+#endif
+//!-end-[SubMenu]
 //!-start-[ExtendedContextMenu]
+#if PLAT_WIN
 	bool IsMenuItemEnabled(int cmd);
 	void GenerateMenu(MenuEx *subMenu, const char *&userContextItem,
 		const char *&endDefinition, int &item, bool &isAdded, int parent = 0);
+#endif
 //!-end-[ExtendedContextMenu]
 	void AddFileToBuffer(FilePath file, int pos);
 	void AddFileToStack(FilePath file, CharacterRange selection, int scrollPos);
@@ -926,7 +938,9 @@ protected:
 	void StackMenuNext();
 	void StackMenuPrev();
 
-//	void RemoveToolsMenu(); //!-change-[SubMenu]
+#if !PLAT_WIN //!-add-[SubMenu]
+	void RemoveToolsMenu();
+#endif //!-add-[SubMenu]
 	void SetMenuItemLocalised(int menuNumber, int position, int itemID,
 	        const char *text, const char *mnemonic);
 	void SetToolsMenu();
