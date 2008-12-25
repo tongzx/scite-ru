@@ -1,20 +1,32 @@
 --[[--------------------------------------------------
 abbrevlist.lua
 Authors: Dmitry Maslov, frs, mozers™
-version 2.0
+version 2.1
 ------------------------------------------------------
   Если при вставке расшифровки аббревиатуры (Ctrl+B) не нашлось точного соответствия,
   то выводится список соответствий начинающихся с этой комбинации символов.
   Возможен автоматический режим работы (появление списка без нажатия на Ctrl+B).
-  Он включается параметром abbrev.lexer.auto=1, где lexer - имя соответсвующего лексера.
+  Он включается параметром abbrev.lexer.auto=3,
+        где lexer - имя соответсвующего лексера,
+              а 3 - min длина введеной строки при которой она будет анализироваться как аббревиатура
   Подключение:
     В файл SciTEStartup.lua добавьте строку:
     dofile (props["SciteDefaultHome"].."\\tools\\abbrevlist.lua")
+
+------------------------------------------------------
+History:
+2.1 (mozers)
+	* при вводе символов ? * возникал список всех имеющихся расшифровок
+	* теперь при показе списка скрипт игнорирует регистр введенной аббревиатуры
+	* исправлено регулярное выражение для идентификации аббревиатуры (т.к. символы пробела и # недопустимы только в ее начале)
+	* параметр abbrev.lexer.auto теперь задает min длину введеной строки при котором она будет анализироваться как аббревиатура
+
 --]]--------------------------------------------------
 
 local table_expansions = {}   -- полный список аббревиатур и расшифровок к ним
 local get_abbrev = true       -- признак того, что этот список надо пересоздать
 local abbrev = ''             -- введеннная аббревиатура
+local chars_count_min = 0     -- сколько (min) символов надо ввести после пробела чтобы запустить анализ
 local event_IDM_ABBREV = true -- событие, вызвавшее срабатывание скрипта (IDM_ABBREV или OnChar)
 local sep = '•'               -- разделитель для строки раскрывающегося списка
 local typeUserList = 11       -- идентификатор раскрывающегося списка
@@ -54,10 +66,12 @@ local function ShowExpansionList()
 	-- находим аббревиатуру
 	local abbr_end = editor.SelectionStart
 	local line_start_pos = editor:PositionFromLine(editor:LineFromPosition(abbr_end))
-	abbrev = editor:textrange(line_start_pos, abbr_end):match('[^ #]*$')
+	abbrev = editor:textrange(line_start_pos, abbr_end):reverse():match('^.?[^#%s]+')
+	if abbrev == nil then return false end
+	abbrev = abbrev:reverse()
 
-	-- если длина аббревиатуры меньше 2х символов то выходим
-	if #abbrev < 2 then return false end
+	-- если длина аббревиатуры меньше заданного кол-ва символов то выходим
+	if #abbrev < chars_count_min then return false end
 	-- если мы переключились на другой файл, то строим таблицу table_expansions заново
 	if get_abbrev then
 		CreateExpansionList(abbrev)
@@ -68,8 +82,8 @@ local function ShowExpansionList()
 	local table_expansions_select = {}
 	local abbrev_match = '' -- для хранения найденной аббревиатуры (используется ниже, если найден единственный вариант)
 	for i = 1, #table_expansions do
-		local abr = table_expansions[i][1]:match('^'..abbrev)
-		if abr ~= nil then
+		local _isfind = table_expansions[i][1]:upper():find(abbrev:upper(), 1, true)
+		if _isfind == 1 then
 			table_expansions_select[#table_expansions_select+1] = table_expansions[i][2]
 			abbrev_match = table_expansions[i][1]
 		end
@@ -124,13 +138,14 @@ local old_OnChar = OnChar
 function OnChar(char)
 	local result
 	if old_OnChar then result = old_OnChar(char) end
-	if tonumber(props['abbrev.'..editor.LexerLanguage..'.auto']) == 1
-		or tonumber(props['abbrev.*.auto']) == 1 then
-			event_IDM_ABBREV = false
-			if tonumber(props['macro-recording']) ~= 1
-				and ShowExpansionList() then
-					return true
-			end
+	chars_count_min = tonumber(props['abbrev.'..editor.LexerLanguage..'.auto']) or 0
+	if chars_count_min == 0 then chars_count_min = tonumber(props['abbrev.*.auto']) or 0 end
+	if chars_count_min ~= 0 then
+		event_IDM_ABBREV = false
+		if tonumber(props['macro-recording']) ~= 1
+			and ShowExpansionList() then
+				return true
+		end
 	end
 	return result
 end
