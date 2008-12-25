@@ -8,6 +8,7 @@
 #ifndef EXTENDER_H
 #define EXTENDER_H
 
+#include "Platform.h" //!-add-[OnKey]
 #include "Scintilla.h"
 class Accessor;
 
