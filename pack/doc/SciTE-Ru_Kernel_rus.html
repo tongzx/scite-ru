@@ -112,38 +112,40 @@ command.name.6.*=Date and Time</div>
 пользовательская команда = 9000 + номер этой команды в меню Tools
 
 <h5 id="ExtendedContextMenu">
-[ExtendedContextMenu] <span class=desc>(Автор: Дмитрий Маслов)</span></h5>
+<sup>updated</sup>
+[ExtendedContextMenu] <span class=desc>(Автор: Дмитрий Маслов, VladVRO)</span></h5>
 Новые параметры в .properties позволяют ПОЛНОСТЬЮ настроить контекстные меню:<br>
-<span class="example">user.context.menu</span> - контекстное меню редактора<br>
-<span class="example">user.tabcontext.menu</span> - контекстное меню вкладок<br>
-<span class="example">user.outputcontext.menu</span> - контекстное меню консоли<br>
+<span class="example">user.context.menu.*</span> - контекстное меню редактора<br>
+<span class="example">user.tabcontext.menu.*</span> - контекстное меню вкладок<br>
+<span class="example">user.outputcontext.menu.*</span> - контекстное меню консоли<br>
 С помощью параметров <span class="example">POPUPBEGIN</span> и <span class="example">POPUPEND</span> возможно создание подменю!<br>
 Формат:
-<div class="example">user.context.menu=\<br>
+<div class="example">user.context.menu.*=\<br>
 Имя&nbsp;команды1|IDM_COMMAND1|\<br>
 Имя&nbsp;команды2|IDM_COMMAND2|...</div>
 Чтобы вставить разделитель нужно оба поля оставить пустыми
-<div class="example">user.context.menu=\<br>
+<div class="example">user.context.menu.*=\<br>
 Имя&nbsp;команды1|IDM_COMMAND1|\<br>
 ||\<br>
 Имя&nbsp;команды2|IDM_COMMAND2|...</div>
 Если параметр не задан в настройках, то отображается стандартное контекстное меню.
 
 <h5 id="user.toolbar">
-[user.toolbar] <span class=desc>(Автор: Дмитрий Маслов)</span></h5>
-Новый параметр <span class="example">user.toolbar</span> в .properties позволяет ПОЛНОСТЬЮ настроить панель инструментов.<br>
+<sup>updated</sup>
+[user.toolbar] <span class=desc>(Автор: Дмитрий Маслов, VladVRO)</span></h5>
+Новый параметр <span class="example">user.toolbar.*</span> в .properties позволяет ПОЛНОСТЬЮ настроить панель инструментов.<br>
 Формат:
-<div class="example">user.toolbar=\<br>
+<div class="example">user.toolbar.*=\<br>
 Всплывающая&nbsp;подсказка1|IDM_COMMAND1|номер&nbsp;иконки1|\<br>
 Всплывающая&nbsp;подсказка2|IDM_COMMAND2|номер&nbsp;иконки2|...</div>
 Чтобы вставить разделитель нужно все три поля оставить пустыми
-<div class="example">user.toolbar=\<br>
+<div class="example">user.toolbar.*=\<br>
 Всплывающая&nbsp;подсказка1|IDM_COMMAND1|номер&nbsp;иконки1|\<br>
 |||\<br>
 Всплывающая&nbsp;подсказка2|IDM_COMMAND2|номер&nbsp;иконки2|...</div>
 Если параметр не задан в настройках, то отображается стандартный тулбар.<br><br>
 Новый параметр в настройках позволяет задать пользовательскую библиотеку с иконками:
-<span class="example">user.toolbar.iconlib=$(SciteUserHome)\gnome.dll</span>
+<span class="example">user.toolbar.iconlib.*=$(SciteUserHome)\gnome.dll</span>
 
 <h5 id="FindResultListStyle">
 [FindResultListStyle] <span class=desc>(Авторы: VladVRO, Дмитрий Маслов)</span></h5>
@@ -472,6 +474,12 @@ end</div>
 [GetLexerLanguage] <span class=desc>(Автор: Дмитрий Маслов)</span></h5>
 Добавлено сообщение к Scitilla позволяющее получить имя текущего лексера:<br>
 Теперь <span class="example">editor.LexerLanguage</span> - позволяет как установить лексер, так и получить текущий
+
+<h5 id="GetWordChars">
+<sup>new</sup>
+[GetWordChars] <span class=desc>(Автор: Дмитрий Маслов, VladVRO)</span></h5>
+Добавлено сообщение к Scitilla позволяющее получить текущий набор символов являющихся частью слов:<br>
+Теперь <span class="example">editor.WordChars</span> - позволяет как задать набор, так и получить текущий
 
 <h5 id="GetAPIPath">
 [GetAPIPath] <span class=desc>(Автор: dB6)</span></h5>
