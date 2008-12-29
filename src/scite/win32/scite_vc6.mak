@@ -1,4 +1,4 @@
-# Make file for SciTE on Windows Visual C++ and Borland C++ version
+# Make file for SciTE on Windows Visual C++ VC6 and Borland C++ version
 # Copyright 1998-2001 by Neil Hodgson <neilh@scintilla.org>
 # The License.txt file describes the conditions under which this software may be distributed.
 # This makefile is for using Visual C++ with nmake or Borland C++ with make depending on
@@ -44,8 +44,8 @@ CXXDEBUG=-Od -MTd -DDEBUG
 # Don't use "-MD", even with "-D_STATIC_CPPLIB" because it links to MSVCR71.DLL
 CXXNDEBUG=-O1 -Oi -MT -DNDEBUG
 NAME=-Fo
-LDFLAGS=-OPT:NOWIN98 -OPT:REF -DEBUG
-LDDEBUG=
+LDFLAGS=-OPT:NOWIN98 -OPT:REF
+LDDEBUG=-DEBUG
 LIBS=KERNEL32.lib USER32.lib GDI32.lib COMDLG32.lib COMCTL32.lib ADVAPI32.lib IMM32.lib SHELL32.LIB OLE32.LIB
 NOLOGO=-nologo
 
@@ -295,7 +295,8 @@ CXXFLAGS=$(CXXFLAGS) $(INCLUDEDIRS)
 CCFLAGS=$(CCFLAGS) $(INCLUDEDIRS)
 
 
-ALL: $(PROG) $(PROGSTATIC) $(DLLS) $(PROPS)
+# ALL: $(PROG) $(PROGSTATIC) $(DLLS) $(PROPS)
+ALL: $(PROG) $(DLLS)
 
 clean:
 	del /q $(DIR_BIN)\*.exe *.o *.obj $(DIR_BIN)\*.dll *.res *.map $(DIR_BIN)\*.exp $(DIR_BIN)\*.lib $(DIR_BIN)\*.pdb
