@@ -119,6 +119,8 @@ bool is_number(char *s){
 static void ColouriseForthDoc(unsigned int startPos, int length, int initStyle, WordList *keywordLists[], Accessor &styler) //!-change-[ForthImprovement]
 {
 //!-start-[ForthImprovement]
+    bool stylingNoInterp = styler.GetPropertyInt("lexer.forth.no.interpretation") != 0;
+
     if((initStyle&FORTH_FLAG_MASK)==FORTH_INTERP_FLAG){
         //rollback to start of interpretation block
         while(startPos>0 && (styler.StyleAt(startPos)&FORTH_FLAG_MASK)==FORTH_INTERP_FLAG){
@@ -262,13 +264,22 @@ static void ColouriseForthDoc(unsigned int startPos, int length, int initStyle, 
             if(cur_pos<lengthDoc) cur_pos++;
             styler.ColourTo(cur_pos,SCE_FORTH_COMMENT|stateFlag);
         }else if(strcmp("[",buffer)==0){
-            styler.ColourTo(pos1,SCE_FORTH_KEYWORD|stateFlag);
-            styler.ColourTo(pos2,SCE_FORTH_KEYWORD|stateFlag);
-            stateFlag = FORTH_INTERP_FLAG;
-            interp_pos1 = pos1;
-            interp_pos2 = cur_pos;
-            isPossibleRollback = false;
+            if (stylingNoInterp) {
+                styler.ColourTo(pos1,SCE_FORTH_KEYWORD|FORTH_INTERP_FLAG);
+                styler.ColourTo(pos2,SCE_FORTH_KEYWORD|FORTH_INTERP_FLAG);
+            } else {
+                styler.ColourTo(pos1,SCE_FORTH_KEYWORD|stateFlag);
+                styler.ColourTo(pos2,SCE_FORTH_KEYWORD|stateFlag);
+                stateFlag = FORTH_INTERP_FLAG;
+                interp_pos1 = pos1;
+                interp_pos2 = cur_pos;
+                isPossibleRollback = false;
+            }
         }else if(strcmp("]",buffer)==0){
+            if (stylingNoInterp) {
+                styler.ColourTo(pos1,SCE_FORTH_KEYWORD|FORTH_INTERP_FLAG);
+                styler.ColourTo(pos2,SCE_FORTH_KEYWORD|FORTH_INTERP_FLAG);
+            } else
             if(isPossibleRollback){
                 // rollback to start of definition because find ] before [
                 cur_pos = startPos;
@@ -356,26 +367,37 @@ static void ColouriseForthDoc(unsigned int startPos, int length, int initStyle, 
 */
 //!-start-[ForthImprovement]
         }else if(strcmp("[",buffer)==0){
-            styler.ColourTo(pos1,SCE_FORTH_KEYWORD);
-            styler.ColourTo(pos2,SCE_FORTH_KEYWORD);
-            stateFlag = FORTH_INTERP_FLAG;
-            interp_pos1 = pos1;
-            interp_pos2 = cur_pos;
-        }else if(isPossibleRollback && strcmp("]",buffer)==0){
-            // rollback to [ or start
-            cur_pos = startPos;
-            while(cur_pos>0 && styler.SafeGetCharAt(cur_pos)!='['){
-                cur_pos--;
+            if (stylingNoInterp) {
+                styler.ColourTo(pos1,SCE_FORTH_KEYWORD|FORTH_INTERP_FLAG);
+                styler.ColourTo(pos2,SCE_FORTH_KEYWORD|FORTH_INTERP_FLAG);
+            } else {
+                styler.ColourTo(pos1,SCE_FORTH_KEYWORD);
+                styler.ColourTo(pos2,SCE_FORTH_KEYWORD);
+                stateFlag = FORTH_INTERP_FLAG;
+                interp_pos1 = pos1;
+                interp_pos2 = cur_pos;
             }
-            if(cur_pos>1) cur_pos-=2;
-            styler.Flush();
-            styler.StartAt(cur_pos,static_cast<char>(STYLE_MAX));
-            styler.StartSegment(cur_pos);
-            delete []buffer;
-            buffer = new char[lengthDoc - cur_pos];
-            isInDefinition = false;
-            isPossibleRollback = false;
-            stateFlag = 0;
+        }else if(strcmp("]",buffer)==0){
+            if (stylingNoInterp) {
+                styler.ColourTo(pos1,SCE_FORTH_KEYWORD|FORTH_INTERP_FLAG);
+                styler.ColourTo(pos2,SCE_FORTH_KEYWORD|FORTH_INTERP_FLAG);
+            } else
+            if (isPossibleRollback) {
+                // rollback to [ or start
+                cur_pos = startPos;
+                while(cur_pos>0 && styler.SafeGetCharAt(cur_pos)!='['){
+                    cur_pos--;
+                }
+                if(cur_pos>1) cur_pos-=2;
+                styler.Flush();
+                styler.StartAt(cur_pos,static_cast<char>(STYLE_MAX));
+                styler.StartSegment(cur_pos);
+                delete []buffer;
+                buffer = new char[lengthDoc - cur_pos];
+                isInDefinition = false;
+                isPossibleRollback = false;
+                stateFlag = 0;
+            }
 //!-end-[ForthImprovement]
         }else if(strcmp("{",buffer)==0){
             styler.ColourTo(pos1,SCE_FORTH_LOCALE);

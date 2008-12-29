@@ -602,6 +602,7 @@ static const char *propertiesToForward[] = {
 	"lexer.errorlist.findtitle.begin",
 	"lexer.errorlist.findtitle.end",
 	"lexer.errorlist.value.separate",
+	"lexer.forth.no.interpretation",
 	"lexer.metapost.comment.process",
 	"lexer.metapost.interface.default",
 	"lexer.pascal.smart.highlighting",
