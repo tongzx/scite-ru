@@ -2,6 +2,8 @@
 ### Подсказки будут работать когда будет реализовано Issue 86 <http://code.google.com/p/scite-ru/issues/detail?id=86>
 ### (или переносите все их 2й строкой вручную)
 
+#anchor=string.anchor
+#anchor=document.anchors
 anchor.name \nИмя якоря.
 anchor.text \nТекст якоря.
 anchor.x \nПозиция левого края якоря по оси х в пикселах относительно левого края документа.
@@ -32,6 +34,7 @@ boolean.toSource() \nВозвращает литерал объекта, представляющий специфицированны
 boolean.toString() \nВозвращает строку, представляющую специфицированный объект. Переопределяет метод Object.toString.
 boolean.valueOf() \nВозвращает примитивное значение Boolean-объекта. Переопределяет метод Object.valueOf.
 
+#button=form.elements
 button.form \nСпецифицирует форму, содержащую объект Button.
 button.name \nОтражает атрибут NAME.
 button.type \nОтражает атрибут TYPE.
@@ -41,6 +44,7 @@ button.click() \nСимулирует щелчок мышью по кнопке.
 button.focus() \nПередаёт фокус кнопке.
 button.handleEvent() \nВызывает обработчик специфицированного события.
 
+#checkbox=form.elements
 checkbox.checked \nБулево свойство, отражающее текущее состояние переключателя (есть ли "птичка").
 checkbox.defaultChecked \n Булево свойство, отражающее атрибут CHECKED.
 checkbox.form \nСпецифицирует форму, содержащую объект Checkbox.
@@ -98,6 +102,7 @@ date.toUTCString() \nКонвертирует дату в строку, используя соглашения по всемирн
 date.UTC() \nВозвращает количество миллисекунд в Date -объекте после 1 января 1970, 00:00:00, всемирного времени.
 date.valueOf() \nВозвращает примитивное значение Date -объекта. Переопределяет метод Object.valueOf.
 
+#document=window.document
 document.alinkColor \nСтрока, специфицирующая атрибут ALINK.
 document.anchors \nМассив, содержащий вхождение каждого якоря документа.
 document.applets \nМассив, содержащий вхождение каждого аплета документа.
@@ -151,6 +156,7 @@ event.width \nШирина окна или фрэйма.
 event.x \nСиноним для layerX.
 event.y \nСиноним для layerY.
 
+#FileUpload=form.elements
 FileUpload.form \nСпецифицирует форму, содержащую объект FileUpload.
 FileUpload.name \nОтражает атрибут NAME.
 FileUpload.type \nОтражает атрибут TYPE.
@@ -160,6 +166,7 @@ FileUpload.focus() \nПередаёт фокус объекту.
 FileUpload.handleEvent() \n Вызывает обработчик для специфицированного события.
 FileUpload.select() \nВыбирает область ввода поля загрузки файла.
 
+#form=document.forms
 form.action \nОтражает атрибут ACTION.
 form.elements \nМассив, отражающий все элементы формы.
 form.encoding \nОтражает атрибут ENCTYPE.
@@ -171,6 +178,7 @@ form.handleEvent() \nВызывает обработчик для специфицированного события.
 form.reset() \nСимулирует щелчок мыши по кнопке reset.
 form.submit() \nОтправляет форму на сервер.
 
+#hidden=form.elements
 hidden.form \nСпецифицирует форму, содержащую объект Hidden.
 hidden.name \nОтражает атрибут NAME.
 hidden.type \nОтражает атрибут TYPE.
@@ -183,6 +191,7 @@ hidden.back() \nЗагружает предыдущий URL из списка history.
 hidden.forward() \nЗагружает следующий URL из списка history.
 hidden.go() \nЗагружает URL из списка history.
 
+#image=document.images
 image.border \nОтражает атрибут BORDER.
 image.complete \nБулево значение, указывающее, завершил ли браузер попытку загрузки изображения.
 image.height \nОтражает атрибут HEIGHT.
@@ -194,9 +203,11 @@ image.vspace \nОтражает атрибут VSPACE.
 image.width \nОтражает атрибут WIDTH.
 image.handleEvent() \nВызывает обработчик для специфицированного события.
 
+#JavaArray=java.lang.String
 JavaArray.length \nКоличество элементов в Java-массиве,  представляемом объектом JavaArray.
 JavaArray.toString() \nВозвращает строку, идентифицирующую объект как JavaArray
 
+#layer=document.layers
 layer.above \nОбъект layer, расположенный выше данного объекта в порядке z-order относительно всех слоёв документа, или содержащего объекта window, если этот слой - самый верхний.
 layer.ackground \nИзображение, используемое в качестве фона канвы слоя.
 layer.bgColor \nЦвет, используемый в качестве однородного цвета фона канвы слоя.
@@ -235,6 +246,7 @@ layer.resizeBy() \nИзменяет размеры слоя на специфицированные значения height и 
 layer.resizeTo() \nИзменяет значения размеров слоя на специфицированные height и width (в пикселах).
 layer.routeEvent() \nПередаёт захваченное событие по нормальной цепи иерархии.
 
+#link=document.links
 link.hash \nСпецифицирует имя якоря в URL.
 link.host \nСпецифицирует хост и имя домена или IP-адрес сетевого хоста.
 link.hostname \nСпецифицирует часть host:port из URL.
@@ -249,6 +261,7 @@ link.x \nПозиция левого края ссылки по горизонтали в пикселах относительно левог
 link.y \nПозиция верхнего края ссылки по вертикали в пикселах относительно верхнего края документа.
 link.handleEvent() \nВызывает обработчик для специфицированного события.
 
+#location=window.location
 location.hash \nСпецифицирует имя якоря в URL.
 location.host \nСпецифицирует имя хоста и домена или IP-адрес сетевого хоста.
 location.hostname \nСпецифицирует часть host:port в URL.
@@ -260,33 +273,35 @@ location.search \nСпецифицирует запрос.
 location.reload() \nФорсирует перезагрузку текущего документа окна.
 location.replace() \nЗагружает специфицированный URL поверх текущего вхождения в списке history.
 
-math.E \nЭйлерова константа и база натуральных логарифмов, приблизительно 2.718.
-math.LN10 \nНатуральный логарифм 10, приблизительно 2.302.
-math.LN2 \nНатуральный логарифм 2, приблизительно 0.693.
-math.LOG10E \nБаза 10 логарифма E (приблизительно 0.434).
-math.LOG2E \nБаза 2 логарифма E (приблизительно 1.442).
-math.PI \nЧастное от деления длины окружности на диаметр, приблизительно 3.14159.
-math.SQRT1_2 \nКвадратный корень 1/2; эквивалентно 1 на квадратный корень 2, приблизительно 0.707.
-math.SQRT2 \nКвадратный корень2, приблизительно 1.414.
-math.abs() \nВозвращает абсолютное значение числа.
-math.acos() \nВозвращает арккосинус (в радианах) числа.
-math.asin() \nВозвращает арксинус (в радианах) числа.
-math.atan() \nВозвращает арктангенс (в радианах) числа.
-math.atan2() \nВозвращает арктангенс частного аргументов.
-math.ceil() \nВозвращает наименьшее целое, которое больше или равно.
-math.cos() \nВозвращает косинус числа.
-math.exp() \nВозвращает Enumber, где number это аргумент, а E это константа Эйлера - база натуральных логарифмов.
-math.floor() \nВозвращает наибольшее целое, которое меньше или равно.
-math.log() \nВозвращает натуральный логарифм (база E) числа.
-math.max() \nВозвращает большее из двух чисел.
-math.min() \nВозвращает меньшее из двух чисел.
-math.pow() \nВозвращает base, возведённую в степень exponent, то есть baseexponent.
-math.random() \nВозвращает псевдослучайное число в диапазоне от 0 до 1.
-math.round() \nВозвращает значение числа, округлённое до ближайшего целого.
-math.sin() \nВозвращает синус числа.
-math.sqrt() \nВозвращает квадратный корень числа.
-math.tan() \nВозвращает тангенс числа.
+Math.E \nЭйлерова константа и база натуральных логарифмов, приблизительно 2.718.
+Math.LN10 \nНатуральный логарифм 10, приблизительно 2.302.
+Math.LN2 \nНатуральный логарифм 2, приблизительно 0.693.
+Math.LOG10E \nБаза 10 логарифма E (приблизительно 0.434).
+Math.LOG2E \nБаза 2 логарифма E (приблизительно 1.442).
+Math.PI \nЧастное от деления длины окружности на диаметр, приблизительно 3.14159.
+Math.SQRT1_2 \nКвадратный корень 1/2; эквивалентно 1 на квадратный корень 2, приблизительно 0.707.
+Math.SQRT2 \nКвадратный корень2, приблизительно 1.414.
+Math.abs() \nВозвращает абсолютное значение числа.
+Math.acos() \nВозвращает арккосинус (в радианах) числа.
+Math.asin() \nВозвращает арксинус (в радианах) числа.
+Math.atan() \nВозвращает арктангенс (в радианах) числа.
+Math.atan2() \nВозвращает арктангенс частного аргументов.
+Math.ceil() \nВозвращает наименьшее целое, которое больше или равно.
+Math.cos() \nВозвращает косинус числа.
+Math.exp() \nВозвращает Enumber, где number это аргумент, а E это константа Эйлера - база натуральных логарифмов.
+Math.floor() \nВозвращает наибольшее целое, которое меньше или равно.
+Math.log() \nВозвращает натуральный логарифм (база E) числа.
+Math.max() \nВозвращает большее из двух чисел.
+Math.min() \nВозвращает меньшее из двух чисел.
+Math.pow() \nВозвращает base, возведённую в степень exponent, то есть baseexponent.
+Math.random() \nВозвращает псевдослучайное число в диапазоне от 0 до 1.
+Math.round() \nВозвращает значение числа, округлённое до ближайшего целого.
+Math.sin() \nВозвращает синус числа.
+Math.sqrt() \nВозвращает квадратный корень числа.
+Math.tan() \nВозвращает тангенс числа.
 
+#mimetype=navigator.mimeTypes
+#mimetype=Plugin.mimeTypes
 mimetype.description \nОписание MIME-типа.
 mimetype.enabledPlugin \nСсылка на Plugin-объект, сконфигурированный для данного MIME-типа.
 mimetype.suffixes \nСтрока с перечислением допустимых расширений имён файлов для данного MIME-типа, например, "mpeg, mpg, mpe, mpv, vbs, mpegv".
@@ -302,21 +317,22 @@ navigator.plugins \nМассив всех plug-in'ов, установленных на клиенте.
 navigator.userAgent \nСпецифицирует шапку/header user-agent (пользовательский агент).
 navigator.javaEnabled() \nПроверяет, включён ли Java.
 
+#plugins=navigator.plugins
 plugins.refresh() \nДелает вновь установленные plug-in'ы доступными и по выбору перезагружает открытые документы, содержащие plug-in'ы.
 plugins.preference() \nДаёт возможность помеченному скрипту получать и устанавливать определённые настройки Navigator'а.
 plugins.savePreferences() \nСохраняет настройки Navigator'а в локальном файле prefs.js.
 plugins.taintEnabled() \nСпецифицирует, включено ли разрушение данных.
 
-number.constructor \nСпецифицирует функцию, которая создаёт прототип объекта.
-number.MAX_VALUE \nНаибольшее представимое число.
-number.MIN_VALUE \nНаименьшее представимое число.
-number.NaN \nСпециальное значение "not a number".
-number.NEGATIVE_INFINITY \nСпециальное значение - отрицательная бесконечность; возвращается при переполнении.
-number.POSITIVE_INFINITY \nСпециальное значение - положительная бесконечность; возвращается при переполнении.
-number.prototype \nПозволяет добавлять свойства к Number-объекту.
-number.toSource() \nВозвращает литерал объекта, представляющий специфицированный Number-объект; Вы можете использовать это значение для создания нового объекта. Переопределяет метод Object.toSource.
-number.toString() \nВозвращает строку, представляющую специфицированный объект. Переопределяет метод Object.toString.
-number.valueOf() \nВозвращает примитивное значение специфицированного объекта. Переопределяет метод Object.valueOf.
+Number.constructor \nСпецифицирует функцию, которая создаёт прототип объекта.
+Number.MAX_VALUE \nНаибольшее представимое число.
+Number.MIN_VALUE \nНаименьшее представимое число.
+Number.NaN \nСпециальное значение "not a number".
+Number.NEGATIVE_INFINITY \nСпециальное значение - отрицательная бесконечность; возвращается при переполнении.
+Number.POSITIVE_INFINITY \nСпециальное значение - положительная бесконечность; возвращается при переполнении.
+Number.prototype \nПозволяет добавлять свойства к Number-объекту.
+Number.toSource() \nВозвращает литерал объекта, представляющий специфицированный Number-объект; Вы можете использовать это значение для создания нового объекта. Переопределяет метод Object.toSource.
+Number.toString() \nВозвращает строку, представляющую специфицированный объект. Переопределяет метод Object.toString.
+Number.valueOf() \nВозвращает примитивное значение специфицированного объекта. Переопределяет метод Object.valueOf.
 
 object.constructor \nСпецифицирует функцию, которая создаёт прототип объекта.
 object.prototype \nПозволяет добавлять свойства во все объекты.
@@ -327,6 +343,7 @@ object.unwatch() \nУдаляет точку наблюдения/watchpoint из свойства объекта.
 object.valueOf() \nВозвращает примитивное значение специфицированного объекта.
 object.watch() \nДобавляет точку наблюдения/watchpoint в свойство объекта.
 
+#option=select.options
 option.defaultSelected \nСпецифицирует статус по умолчанию опции.
 option.index \nИндекс с базой 0 элемента в массиве Select.options.
 option.length \nКоличество элементов в массиве Select.options.
@@ -334,11 +351,13 @@ option.selected \nСпецифицирует текущий статус опции (выбрана или нет).
 option.text \nСпецифицирует текст опции.
 option.value \nСпецифицирует значение, возвращаемое на сервер, когда опция выбрана и форма отправляется.
 
+#packages=Packages.java.awt.Frame
 packages.className \nПолное квалифицированное имя Java-класса в других пакетах, кроме пакетов netscape, java или sun, доступного в JavaScript.
 packages.java \nЛюбой класс Java-пакета java.*.
 packages.netscape \nЛюбой класс Java-пакета netscape.*.
 packages.sun \nЛюбой класс Java-пакета sun.*.
 
+#password=form.elements
 password.defaultValue \nОтражает атрибут VALUE.
 password.form \nСпецифицирует форму, содержащую Password-объект.
 password.name \nОтражает атрибут NAME.
@@ -349,11 +368,13 @@ password.focus() \nПередаёт объекту фокус.
 password.handleEvent() \nВызывает обработчик для специфицированного события. 
 password.select() \nВыделяет область ввода объекта.
 
+#plugin=navigator.plugins
 plugin.description \nОписание plug-in'а.
 plugin.filename \nИмя файла plug-in'а на диске.
 plugin.length \nКоличество элементов массива MimeType-объектов plug-in'а.
 plugin.name \nИмя plug-in'а.
 
+#reset=form.elements
 radio.checked \nДаёт возможность программно выбрать радио-кнопку (свойство отдельной кнопки).
 radio.defaultChecked \nОтражает атрибут CHECKED (свойство отдельной кнопки).
 radio.form \nСпецифицирует форму, содержащую Radio-объект (свойство массива кнопок).
@@ -384,6 +405,7 @@ RegExp.toSource() \nВозвращает литерал объекта, представляющий специфицированный
 RegExp.toString() \nВозвращает строку, представляющую специфицированный объект. Переопределяет метод Object.toString.
 RegExp.valueOf() \nВозвращает примитивное значение специфицированного объекта. Переопределяет метод Object.valueOf.
 
+#reset=form.elements
 reset.form \nСпецифицирует форму, содержащую объект Reset.
 reset.name \nОтражает атрибут NAME.
 reset.type \nОтражает атрибут TYPE.
@@ -402,6 +424,7 @@ screen.height \nВысота экрана монитора.
 screen.pixelDepth \nРазрешение экрана монитора (в битах на пиксел). 
 screen.width \nШирина экрана монитора.
 
+#select=form.elements
 select.form \nСпецифицирует форму, содержащую список selection.
 select.length \nОтражает количество опций в списке selection.
 select.name \nОтражает атрибут NAME.
@@ -412,6 +435,32 @@ select.blur() \nУбирает фокус со списка selection.
 select.focus() \nПередаёт фокус списку selection.
 select.handleEvent() \nВызывает обработчик для специфицированного события
 
+#string=anchor.text
+#string=link.text
+#string=option.text
+#string=window.name
+#string=form.name
+#string=image.name
+#string=array.input
+#string=RegExp.input
+#string=array.join
+#string=document.formName
+#string=document.title
+#string=document.URL
+#string=document.linkColor
+#string=document.vlinkColor
+#string=document.bgColor
+#string=layer.bgColor
+#string=array.toString
+#string=boolean.toString
+#string=JavaArray.toString
+#string=number.toString
+#string=object.toString
+#string=RegExp.toString
+#string=date.toString
+#string=date.toGMTString
+#string=date.toLocaleString
+#string=date.toUTCString
 string.constructor \nСпецифицирует функцию, которая создаёт прототип объекта.
 string.length \nОтражает длину строки.
 string.prototype \nПозволяет добавлять свойства в String-объект.
@@ -447,6 +496,9 @@ string.toString() \nВозвращает строку, представляющую специфицированный объект. 
 string.toUpperCase() \nВозвращает вызывающую строку, конвертированную в верхний регистр.
 string.valueOf() \nВозвращает примитивное значение специфицированного объекта. Переопределяет метод Object.valueOf.
 
+#style=document.classes
+#style=document.ids
+#style=document.tags
 style.align \nСпецифицирует выравнивание HTML-элемента относительно родительского элемента.
 style.backgroundColor \nСпецифицирует сплошной цвет фона элемента.
 style.backgroundImage \nСпецифицирует фоновый рисунок для HTML-элемента.
@@ -483,6 +535,7 @@ style.borderWidths() \nСпецифицирует ширину рамки HTML-элемента.
 style.margins() \nСпецифицирует минимальное расстояние между краями HTML-элемента и краями смежных элементов. 
 style.paddings() \nСпецифицирует, какое пространство вставить между краями элемента и его содержимым, таким как текст или рисунок.
 
+#submit=form.elements
 submit.form \nСпецифицирует форму, содержащую Submit-объект.
 submit.name \nОтражает атрибут NAME.
 submit.type \nОтражает атрибут TYPE.
@@ -492,6 +545,7 @@ submit.click() \nСимулирует щелчок мыши по кнопке submit.
 submit.focus() \nПередаёт фокус кнопке submit.
 submit.handleEvent() \nВызывает обработчик для специфицированного события.
 
+#text=form.elements
 text.defaultValue \nОтражает атрибут VALUE.
 text.form \nСпецифицирует форму, содержащую Text-объект.
 text.name \nОтражает атрибут NAME.
@@ -502,6 +556,7 @@ text.focus() \nПередаёт фокус объекту.
 text.handleEvent() \nВызывает обработчик для специфицированного события.
 text.select() \nВыделяет область ввода объекта.
 
+#textarea=form.elements
 textarea.defaultValue \nОтражает атрибут VALUE.
 textarea.form \nСпецифицирует форму, содержащую Textarea-объект.
 textarea.name \nОтражает атрибут NAME.
@@ -512,6 +567,9 @@ textarea.focus() \nПередаёт фокус объекту.
 textarea.handleEvent() \nВызывает обработчик для специфицированного события.
 textarea.select() \nВыделяет область ввода объекта.
 
+#window=open
+#window=opener
+#window=parent
 window.closed \nСпецифицирует, закрыто ли окно.
 window.clipboardData.getData("Text")
 window.clipboardData.setData("Text", set_text)

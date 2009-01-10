@@ -259,6 +259,20 @@ require (packagename)\n loads package, updates _LOADED, returns boolean
 setfenv (f, table)\n  sets env, f can be a function or number (stack level, default=1), 0=global env
 setmetatable (table, metatable)\n  sets metatable, nil to remove metatable
 
+string_value:byte
+string_value:char
+string_value:dump
+string_value:find
+string_value:format
+string_value:gfind
+string_value:gsub
+string_value:len
+string_value:lower
+string_value:match
+string_value:gmatch
+string_value:rep
+string_value:sub
+string_value:upper
 string.byte
 string.char
 string.dump
