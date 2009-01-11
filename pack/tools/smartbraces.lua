@@ -1,6 +1,6 @@
 -- SciTE Smart braces
--- Version: 1.2
--- Author: Dmitry Maslov
+-- Version: 1.2.1
+-- Author: Dmitry Maslov, Julgo
 ---------------------------------------------------
 -- Работает, если:
 --
@@ -315,12 +315,15 @@ local function SmartBraces( char )
 				end
 				-- если мы ставим закрывающуяся скобку
 				if ( char == braceClose ) then
-					-- по волшебному обрабатываем скобку } в cpp
-					if	( char == '}' ) and
+					-- "по волшебному" обрабатываем скобку } в cpp и css
+					if ( char == '}' ) and
 						( editor.LexerLanguage == 'cpp' or editor.LexerLanguage == 'css' )
 					then
 						editor:BeginUndoAction()
-						editor:BackTab()
+						if (IsLineStartPos( editor.CurrentPos ) )
+						then
+							editor:BackTab()
+						end
 						editor:AddText( '}' )
 						editor:EndUndoAction()
 						return true
