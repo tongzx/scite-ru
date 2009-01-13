@@ -26,7 +26,7 @@
 --  ему пара из braces.close, таким образом, курсор оказывается между скобок
 --
 --  Если мы вводим закрывающуюся скобку из braces.close и следующий символ
---  этаже закрывающаяся скобка, то ввод проглатывается и лишняя закрывающаяся
+--  эта же закрывающаяся скобка, то ввод проглатывается и лишняя закрывающаяся
 --  скобка не печатается
 --
 --  Если у нас выделен текст и мы вводим символ из braces.open
@@ -44,8 +44,8 @@
 --  автоматически уменьшается на один
 --
 --  Если мы только что вставили скобку автоматом, то после того
---  как нажимаем BACK_SPASE удаляется вставленная скобка, т.е.
---  срабатывает как DEL, а не как BACK_SPASE
+--  как нажимаем BACK_SPACE удаляется вставленная скобка, т.е.
+--  срабатывает как DEL, а не как BACK_SPACE
 --
 --  Если вставляем скобку у которой braces.open == braces.close
 --  то вставляется пара только если таких скобок четно в строке
@@ -67,34 +67,34 @@ end
 -- (фактически экранирование служебных символов)
 local function MakeFind( text )
 	local strres = ''
-	local simbol
+	local symbol
 	for i = 1, string.len(text), 1 do
-		simbol = string.format( '%c', string.byte( text, i ) )
-		if	( simbol == "(" )
+		symbol = string.format( '%c', string.byte( text, i ) )
+		if	( symbol == "(" )
 			or
-			( simbol == "[" )
+			( symbol == "[" )
 			or
-			( simbol == "." )
+			( symbol == "." )
 			or
-			( simbol == "%" )
+			( symbol == "%" )
 			or
-			( simbol == "*" )
+			( symbol == "*" )
 			or
-			( simbol == "/" )
+			( symbol == "/" )
 			or
-			( simbol == "-" )
+			( symbol == "-" )
 			or
-			( simbol == ")" )
+			( symbol == ")" )
 			or
-			( simbol == "]" )
+			( symbol == "]" )
 			or
-			( simbol == "?" )
+			( symbol == "?" )
 			or
-			( simbol == "+" )
+			( symbol == "+" )
 		then
-			simbol = string.format( "%%%s", simbol )
+			symbol = string.format( "%%%s", symbol )
 		end
-		strres = strres..simbol
+		strres = strres..symbol
 	end
 	return strres
 end
@@ -146,7 +146,7 @@ local function IsEOLlast( text )
 	return false
 end
 
--- следующий за посицией текст == text ?
+-- следующий за позицией текст == text ?
 local function nextIs(pos, text)
 	if ( string.find( editor:textrange( pos, editor:PositionAfter( pos + string.len( text ) - 1 ) ), MakeFind( text ) ) ) then
 		return true
@@ -212,7 +212,7 @@ local function GetCharInProps( value, index )
 end
 
 -- возвращает открывающуюся скобку и закрывающуюся скобку
--- по входыщему символу, т.е. например,
+-- по входящему символу, т.е. например,
 -- если на входе ')' то на выходе '(' ')'
 -- если на входе '(' то на выходе '(' ')'
 local function GetBraces( char )
@@ -241,31 +241,31 @@ end
 
 local g_isPastedBraceClose = false
 
--- "умные скобки/ковычки" 
+-- "умные скобки/кавычки" 
 -- возвращает true когда обрабатывать дальше символ не нужно
 local function SmartBraces( char )
 	if ( props['braces.autoclose'] == '1' ) then
 		local isSelection = editor.SelectionStart ~= editor.SelectionEnd
-		-- нахобим парный символ
+		-- находим парный символ
 		local braceOpen, braceClose = GetBraces(char)
 		if ( braceOpen ~= '' and braceClose ~= '' ) then
-			-- проверяем у нас выделен какой либо текст
+			-- проверяем выделен ли у нас какой либо текст
 			if ( isSelection == true ) then
 				-- делаем обработку по автозакрытию текста скобками
 				return BlockBraces( braceOpen, braceClose )
 			else
 				-- если следующий символ закрывающаяся скобка
 				-- и мы ее вводим, то ввод проглатываем
-				local nextSimbol = string.format( "%c", editor.CharAt[editor.CurrentPos] )
-				if	( GetIndexFindCharInProps( 'braces.close', nextSimbol ) ~= nil )
+				local nextsymbol = string.format( "%c", editor.CharAt[editor.CurrentPos] )
+				if	( GetIndexFindCharInProps( 'braces.close', nextsymbol ) ~= nil )
 					and
-					( nextSimbol == char )
+					( nextsymbol == char )
 				then 
 					editor:CharRight()
 					return true
 				end
 				-- если мы ставим открывающуюся скобку и 
-				-- следующий символ конец строки или это парная закпывающаяся скобка
+				-- следующий символ конец строки или это парная закрывающаяся скобка
 				-- то сразу вставляем закрывающуюся скобку
 				if	( char == braceOpen )
 					and
@@ -313,7 +313,7 @@ local function SmartBraces( char )
 					editor:EndUndoAction()
 					g_isPastedBraceClose = true
 				end
-				-- если мы ставим закрывающуяся скобку
+				-- если мы ставим закрывающуюся скобку
 				if ( char == braceClose ) then
 					-- "по волшебному" обрабатываем скобку } в cpp и css
 					if ( char == '}' ) and
