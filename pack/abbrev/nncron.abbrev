@@ -1,17 +1,17 @@
 # файл сокращений для программы nnCron
 
-BEGIN=BEGIN\n  %SEL%\nWHILE\n|  \nREPEAT
-BEGIN=BEGIN\n  %SEL%\n|UNTIL
+BEGR=BEGIN\n  %SEL%\nWHILE\n|  \nREPEAT
+BEGU=BEGIN\n  %SEL%\n|UNTIL
 DO=DO\n  |\nLOOP
-DO=DO\n  |\n+LOOP
-CASE=CASE\n    n1 OF nnnn1 ENDOF\n    n2 OF nnnn2 ENDOF\n    n3 OF nnnn3 ENDOF\n    DUP OF nnnLast ENDOF\nENDCASE
-FOR=FOR-WINDOWS: "|"\n  \n;FOR-WINDOWS
-FOR=FOR-FILES: "|"\n  \n;FOR-FILES
-FOR=FOR-PROCS: "|"\n  \n;FOR-PROCS
-IF=IF\n  |\nELSE\n  \nTHEN
-IF=IF\n  |\nTHEN
-IF=IF | ELSE  THEN
-IF=IF | THEN
+DO+=DO\n  |\n+LOOP
+CAS=CASE\n    n1 OF nnnn1 ENDOF\n    n2 OF nnnn2 ENDOF\n    n3 OF nnnn3 ENDOF\n    DUP OF nnnLast ENDOF\nENDCASE
+FORW=FOR-WINDOWS: "|"\n  \n;FOR-WINDOWS
+FORF=FOR-FILES: "|"\n  \n;FOR-FILES
+FORP=FOR-PROCS: "|"\n  \n;FOR-PROCS
+IFE=IF\n  |\nELSE\n  \nTHEN
+IFT=IF\n  |\nTHEN
+IFEL=IF | ELSE  THEN
+IFTL=IF | THEN
 MS=MSG: "|"
 TM=TMSG: "|" 15
 RE-M=RE-MATCH: "%SEL%" " "
