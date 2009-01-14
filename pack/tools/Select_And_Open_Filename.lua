@@ -1,7 +1,7 @@
 --[[----------------------------------------------------------------------------
 Select_And_Open_Filename.lua
 Author: VladVRO
-version 1.3.1
+version 1.4
 
 Расширение команды "Открыть выделенный файл" для случая когда выделения нет.
 А также возможность открыть файл по двойному клику мыши на его имени при нажатой
@@ -13,6 +13,9 @@ version 1.3.1
 будет выделен весь путь до файла, и если файл все еще не найден, то поиск
 продолжается в папке на уровень выше и т.д. до корня.
 
+Параметр select.and.open.include - определяет список дополнительных папок для
+поиска, папки перечисляются через символ ;
+
 Подключение:
 Добавить в SciTEStartup.lua строку:
   dofile (props["SciteDefaultHome"].."\\tools\\Select_And_Open_Filename.lua")
@@ -22,21 +25,37 @@ version 1.3.1
 
 local function isFilenameChar(ch)
 	if
-		ch > 32 and ch < 127
-		and ch ~= 34  -- "
-		and ch ~= 39  -- '
-		and ch ~= 42  -- *
-		and ch ~= 47  -- /
-		and ch ~= 58  -- :
-		and ch ~= 60  -- <
-		and ch ~= 62  -- >
-		and ch ~= 63  -- ?
-		and ch ~= 92  -- \
-		and ch ~= 124 -- |
+		ch < 0 or
+		( ch > 32
+			and ch ~= 34  -- "
+			and ch ~= 39  -- '
+			and ch ~= 42  -- *
+			and ch ~= 47  -- /
+			and ch ~= 58  -- :
+			and ch ~= 60  -- <
+			and ch ~= 62  -- >
+			and ch ~= 63  -- ?
+			and ch ~= 92  -- \
+			and ch ~= 124 -- |
+		)
 	then
 		return true
 	end
 	return false
+end
+
+local includes = {}
+local function loadIncludes(str)
+	while #includes > 0 do
+		table.remove(includes)
+	end
+	for path in str:gmatch('([^;]*);') do
+		local ch = path:sub(path:len())
+		if ch ~= '\\' or ch ~= '/' then
+			path = path..'\\'
+		end
+		table.insert(includes, path)
+	end
 end
 
 local for_open
@@ -55,8 +74,10 @@ local function Select_And_Open_File(immediately)
 		sci = output
 	end 
 	local filename = sci:GetSelText()
-	
+
 	if string.len(filename) == 0 then
+		loadIncludes(props['select.and.open.include'])
+		
 		-- try to select file name near current position
 		local cursor = sci.CurrentPos
 		local s = cursor
@@ -76,6 +97,17 @@ local function Select_And_Open_File(immediately)
 			foropen = dir..filename
 			local isFile = shell.fileexists(foropen)
 			
+			-- look at includes
+			if not isFile then
+				for _,path in ipairs(includes) do
+					foropen = path..filename
+					isFile = shell.fileexists(foropen)
+					if isFile then
+						break
+					end
+				end
+			end
+			
 			while not isFile do
 				ch = sci.CharAt[s-1]
 				if ch == 92 or ch == 47 then -- \ /
@@ -88,6 +120,7 @@ local function Select_And_Open_File(immediately)
 					filename = string.gsub(sci:GetSelText(), '\\\\', '\\')
 					foropen = dir..filename
 				elseif string.len(dir) > 3 then
+					-- up to parent dir
 					dir = string.gsub(dir, "(.*)\\([^\\]+)\\", "%1\\")
 					foropen = dir..filename
 				else
