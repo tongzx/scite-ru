@@ -121,17 +121,23 @@ static void ColouriseForthDoc(unsigned int startPos, int length, int initStyle, 
 //!-start-[ForthImprovement]
     bool stylingNoInterp = styler.GetPropertyInt("lexer.forth.no.interpretation") != 0;
 
-    if((initStyle&FORTH_FLAG_MASK)==FORTH_INTERP_FLAG){
-        //rollback to start of interpretation block
-        while(startPos>0 && (styler.StyleAt(startPos)&FORTH_FLAG_MASK)==FORTH_INTERP_FLAG){
+    if(startPos > 0){
+        int prevStyle = styler.StyleAt(startPos - 1);
+        if((initStyle&FORTH_FLAG_MASK)==FORTH_INTERP_FLAG ||
+            ((initStyle&FORTH_STYLE_MASK)==SCE_FORTH_KEYWORD && (prevStyle&FORTH_FLAG_MASK)==FORTH_INTERP_FLAG)){
+            //rollback to start of interpretation block
             startPos--;
             length++;
+            while(startPos>0 && (styler.StyleAt(startPos)&FORTH_FLAG_MASK)==FORTH_INTERP_FLAG){
+                startPos--;
+                length++;
+            }
+            while(startPos>0 && (styler.StyleAt(startPos)&FORTH_STYLE_MASK)==SCE_FORTH_KEYWORD){
+                startPos--;
+                length++;
+            }
+            initStyle = styler.StyleAt(startPos);
         }
-        while(startPos>0 && (styler.StyleAt(startPos)&FORTH_STYLE_MASK)==SCE_FORTH_KEYWORD){
-            startPos--;
-            length++;
-        }
-        initStyle = styler.StyleAt(startPos);
     }
     int interp_pos1=0, interp_pos2=0;
     int stateFlag = initStyle&FORTH_FLAG_MASK; // flag for state
@@ -702,6 +708,8 @@ static const char * const forthWordLists[] = {
             "prewords with two arguments",
             "string definition keywords",
 //!-start-[ForthImprovement]
+            "definition start words",
+            "definition end words",
             "folding start words",
             "folding end words",
             "GUI",
@@ -710,9 +718,12 @@ static const char * const forthWordLists[] = {
             "user defined words 2",
             "user defined words 3",
             "user defined words 4",
+            "control keywords in interpretation",
+            "keywords in interpretation",
+            "definition words in interpretation",
+            "prewords in interpretation",
 //!-end-[ForthImprovement]
             0,
         };
 
-//!LexerModule lmForth(SCLEX_FORTH, ColouriseForthDoc, "forth",FoldForthDoc,forthWordLists,7);
-LexerModule lmForth(SCLEX_FORTH, ColouriseForthDoc, "forth",FoldForthDoc,forthWordLists, 7); //!-change-[ForthImprovement]
+LexerModule lmForth(SCLEX_FORTH, ColouriseForthDoc, "forth",FoldForthDoc,forthWordLists,7);

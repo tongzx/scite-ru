@@ -898,8 +898,10 @@ bool WordList::InMultiWordsList(const char *s, const char marker, bool &eq, bool
 			}
 			if (!*b)
 				if (!*a) eq = true;
-				else if (*a == marker) begin = true;
-			if (begin) keyword_end = a+1;
+				else if (*a == marker) {
+					begin = true;
+					keyword_end = a + 1;
+				}
 			j++;
 		}
 	}
