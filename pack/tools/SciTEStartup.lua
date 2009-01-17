@@ -105,6 +105,9 @@ dofile (props["SciteDefaultHome"].."\\tools\\AutocompleteObject.lua")
 -- Вывод списка расшифровок (по Ctrl+B или автоматически) при неточном соответствии аббревиатуры
 dofile (props["SciteDefaultHome"].."\\tools\\abbrevlist.lua")
 
+-- Выводит всплывающую подсказку (Ctrl+Shift+Space) по текущему слову
+dofile (props["SciteDefaultHome"].."\\tools\\ShowCalltip.lua")
+
 -- Подсветка парных тегов в HTML
 dofile (props["SciteDefaultHome"].."\\tools\\highlighting_paired_tags.lua")
 
