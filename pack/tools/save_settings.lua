@@ -1,6 +1,6 @@
 --[[--------------------------------------------------
  Save SciTE Settings
- Version: 1.6
+ Version: 1.6.1
  Author: mozers™, Dmitry Maslov
 ---------------------------------------------------
  Save current settings on SciTE close.
@@ -25,7 +25,7 @@ local function SaveKey(text, key)
 	return string.gsub(text, regex, "%1"..value)
 end
 
-function SaveSetting()
+local function SaveSettings()
 	local file = props["scite.userhome"]..'\\SciTE.session'
 	io.input(file)
 	local text = io.read('*a')
@@ -94,7 +94,7 @@ function OnFinalise()
 	if old_OnFinalise then result = old_OnFinalise() end
 	if props['FileName'] ~= '' then
 		if tonumber(props['save.settings']) == 1 then
-			SaveSetting()
+			SaveSettings()
 		end
 	end
 	return result
