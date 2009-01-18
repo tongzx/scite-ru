@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 abbrevlist.lua
 Authors: Dmitry Maslov, frs, mozers™
-version 2.1
+version 2.1.1
 ------------------------------------------------------
   Если при вставке расшифровки аббревиатуры (Ctrl+B) не нашлось точного соответствия,
   то выводится список соответствий начинающихся с этой комбинации символов.
@@ -115,7 +115,6 @@ local function InsertExpansion(expansion)
 	editor:remove(sel_start, editor.SelectionStart)
 	editor:SetSel(sel_start, sel_end)
 	-- вставка расшифровки
-	expansion = expansion:gsub('\\r','\r'):gsub('\\n','\n'):gsub('\\t','\t')
 	scite.InsertAbbreviation(expansion)
 	editor:EndUndoAction()
 end
