@@ -19,10 +19,10 @@ xml=<?xml version="1.0" encoding="iso-8859-1"?>\n<!DOCTYPE html PUBLIC "-//W3C//
 <ac=<acronym>%SEL%|</acronym>
 <ad=<address>%SEL%|</address>
 <ap=<applet>DEPRECATED|</applet>
-<ar=<area>|
+<ar=<area>
 <b=<b>%SEL%|</b>
 <ba=<base href="|">
-<bf=<basefont>DEPRECATED|
+<bf=<basefont>DEPRECATED
 <bd=<bdo dir="">%SEL%|</bdo>
 <bi=<big>%SEL%|</big>
 <bl=<blockquote cite="">%SEL%|</blockquote>
@@ -33,7 +33,7 @@ xml=<?xml version="1.0" encoding="iso-8859-1"?>\n<!DOCTYPE html PUBLIC "-//W3C//
 <ce=<center>|</center>
 <ci=<cite>%SEL%|</cite>
 <cod=<code>%SEL%|</code>
-<col=<col>|
+<col=<col>
 <colg=<colgroup>\n\t%SEL%|\n</colgroup>
 <dd=<dd>%SEL%|</dd>
 <de=<del>%SEL%|</del>
@@ -46,7 +46,7 @@ xml=<?xml version="1.0" encoding="iso-8859-1"?>\n<!DOCTYPE html PUBLIC "-//W3C//
 <fi=<fieldset>\n<legend>|</legend>\n</fieldset>\n
 <fon=<font class="">%SEL%|</font>
 <fo=<form action="" method ="GET" name="form">\n\t%SEL%|\n</form>
-<fr=<frame src="">|
+<fr=<frame src="">
 <frames=<frameset>%SEL%|</frameset>
 <h1=<h1>%SEL%|</h1>
 <h2=<h2>%SEL%|</h2>
@@ -62,12 +62,12 @@ xml=<?xml version="1.0" encoding="iso-8859-1"?>\n<!DOCTYPE html PUBLIC "-//W3C//
 <im=<img src="%SEL%|" alt="">
 <in=<ins>%SEL%|</ins>
 <inp=<input type="|" name="" value=""></input>
-<is=<isindex>DEPRECATED|
+<is=<isindex>DEPRECATED
 <kb=<kbd>%SEL%|</kbd>
 <la=<label>%SEL%|</label>
 <le=<legend>%SEL%|</legend>
 <li=<li>%SEL%|</li>
-<lin=<link rel="" href="">|
+<lin=<link rel="" href="|">
 <ma=<map>%SEL%|</map>
 <men=<menu>DEPRECATED|</menu>
 <met=<meta content="">%SEL%|</meta>
@@ -78,7 +78,7 @@ xml=<?xml version="1.0" encoding="iso-8859-1"?>\n<!DOCTYPE html PUBLIC "-//W3C//
 <optg=<optgroup label="">%SEL%|</optgroup>
 <opt=<option value="">%SEL%|</option>
 <p=<p>%SEL%|</p>
-<pa=<param name="">|
+<pa=<param name="|">
 <pr=<pre>%SEL%|</pre>
 <q=<q>%SEL%|</q>
 <s=<s>%SEL%|</s>
