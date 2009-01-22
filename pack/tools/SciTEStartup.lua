@@ -93,8 +93,8 @@ dofile (props["SciteDefaultHome"].."\\tools\\new_file.lua")
 -- Включает HTML подсветку для файлов без расширения, открываемых из меню "просмотр HTML-кода" Internet Explorer
 dofile (props["SciteDefaultHome"].."\\tools\\set_html.lua")
 
--- Автоматическое сворачивание всех секций при открытии файлов заданного типа
-dofile (props["SciteDefaultHome"].."\\tools\\ToggleFoldAll.lua")
+-- Восстановление позиции курсора, букмарков и фолдинга при повторном открытии ЛЮБОГО файла.
+dofile (props["SciteDefaultHome"].."\\tools\\RestoreRecent.lua")
 
 -- Фолдинг для текстовых файлов
 dofile (props["SciteDefaultHome"].."\\tools\\FoldText.lua")
