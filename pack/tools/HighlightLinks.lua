@@ -1,8 +1,9 @@
 --[[----------------------------------------------------------------------------
-HighlightLinks v1.3
+HighlightLinks v1.4
 Автор: VladVRO
 
-Подсветка линков в тексте и открытие их в броузере при клике с зажатым Ctrl
+Подсветка линков в тексте, выделение всего линка при двойном клике на нем и
+открытие линка в броузере при двойном клике с зажатой клавишей Ctrl.
 
 Внимание:
 Скрипт работает только в версии SciTE-Ru.
@@ -26,13 +27,17 @@ HighlightLinks v1.3
   highlight.links.lexers=null
 или списка расширений файлов через запятую:
   highlight.links.exts=txt,htm
+
+Дополнительный параметр, позволяющий менять маску поиска линков:
+  highlight.links.mask=https*://[\w_&%?.-$+=*~/]+
 --]]----------------------------------------------------------------------------
 
 local mark_number = 3
-local link_mask = "https*://[^ \t\r\n\"\']+"
--- local link_mask = "https?://[%w_&%%%?%.%-%$%+%*]+"
+local default_link_mask = "https*://[^ \t\r\n\"\']+"
 
 function HighlightLinks()
+	local link_mask = props['highlight.links.mask']
+	if link_mask == '' then link_mask = default_link_mask end
 	EditorClearMarks(mark_number)
 	local flag = SCFIND_REGEXP
 	local s,e = editor:findtext(link_mask, flag, 0)
@@ -60,8 +65,9 @@ end
 
 local function launch_browse()
 	if browser then
-		shell.exec(browser)
+		local cmd = browser
 		browser = nil
+		shell.exec(cmd)
 	end
 end
 
@@ -73,17 +79,6 @@ local function auto_highlight()
 	then
 		HighlightLinks()
 	end
-end
-
--- Add user event handler OnClick
-local old_OnClick = OnClick
-function OnClick(shift, ctrl, alt)
-	local result
-	if ctrl and editor.Focus then
-		if select_highlighted_link(true) then return true end
-	end
-	if old_OnClick then result = old_OnClick(shift, ctrl, alt) end
-	return result
 end
 
 -- Add user event handler OnMouseButtonUp
@@ -99,7 +94,13 @@ end
 local old_OnDoubleClick = OnDoubleClick
 function OnDoubleClick(shift, ctrl, alt)
 	local result
-	select_highlighted_link(false)
+	if editor.Focus then
+		if ctrl then
+			if select_highlighted_link(true) then return true end
+		else
+			select_highlighted_link(false)
+		end
+	end
 	if old_OnDoubleClick then result = old_OnDoubleClick(shift, ctrl, alt) end
 	return result
 end
