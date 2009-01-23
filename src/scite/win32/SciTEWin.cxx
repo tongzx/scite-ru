@@ -149,7 +149,6 @@ char *SciTEWin::classNameInternal = NULL;
 SciTEWin *SciTEWin::app = NULL;
 
 SciTEWin::SciTEWin(Extension *ext) : SciTEBase(ext) {
-	tabclick = -1; //!-add-[TabsMoving]
 
 	app = this;
 	cmdShow = 0;
@@ -158,10 +157,6 @@ SciTEWin::SciTEWin(Extension *ext) : SciTEBase(ext) {
 	wFocus = 0;
 
 	winPlace.length = 0;
-
-	lbclk_x = 0; //!-add-[close_on_dbl_clk]
-	lbclk_y = 0; //!-add-[close_on_dbl_clk]
-	lbclk_t = 0; //!-add-[close_on_dbl_clk]
 
 	openWhat[0] = '\0';
 	memset(&fr, 0, sizeof(fr));
@@ -528,6 +523,16 @@ void SciTEWin::Command(WPARAM wParam, LPARAM lParam) {
 	case IDM_FULLSCREEN:
 		FullScreenToggle();
 		break;
+
+//!-start-[tab.window]
+	case IDC_TABCLOSE:
+		CloseTab( (int)lParam );
+		break;
+
+	case IDC_SHIFTTAB:
+		ShiftTab( LOWORD(lParam), HIWORD(lParam) );
+		break;
+//!-end-[tab.window]
 
 	default:
 		SciTEBase::MenuCommand(cmdID, menuSource);
@@ -1759,8 +1764,8 @@ LRESULT SciTEWin::WndProc(UINT iMessage, WPARAM wParam, LPARAM lParam) {
 		CheckMenus();
 		break;
 
+/* !-change-[tab.window]
 	case WM_PARENTNOTIFY:
-/*
 		if (LOWORD(wParam) == WM_MBUTTONDOWN) {
 			// Check if on tab bar
 			Point pt = Point::FromLong(lParam);
@@ -1776,62 +1781,8 @@ LRESULT SciTEWin::WndProc(UINT iMessage, WPARAM wParam, LPARAM lParam) {
 		} else if (LOWORD(wParam) == WM_MBUTTONUP) {
 			WindowSetFocus(wEditor);
 		}
-*/
-//!-start-[TabsMoving] [close_on_dbl_clk]
-		switch (LOWORD(wParam)) {
-		case WM_MBUTTONDOWN: {
-				// Check if on tab bar
-				Point pt = Point::FromLong(lParam);
-				TCHITTESTINFO thti;
-				thti.pt.x = pt.x;
-				thti.pt.y = pt.y;
-				::MapWindowPoints(MainHWND(), reinterpret_cast<HWND>(wTabBar.GetID()), &thti.pt, 1);
-				thti.flags = 0;
-				int tab = ::SendMessage(reinterpret_cast<HWND>(wTabBar.GetID()), TCM_HITTEST, (WPARAM)0, (LPARAM)&thti);
-				if (tab >= 0) {
-					CloseTab(tab);
-				}
-			}
-			break;
-		case WM_LBUTTONDOWN: {
-				// Check if on tab bar
-				Point pt = Point::FromLong(lParam);
-				TCHITTESTINFO thti;
-				thti.pt.x = pt.x;
-				thti.pt.y = pt.y;
-				clock_t t = clock();
-				::MapWindowPoints(MainHWND(), reinterpret_cast<HWND>(wTabBar.GetID()), &thti.pt, 1);
-				thti.flags = 0;
-				tabclick = ::SendMessage(reinterpret_cast<HWND>(wTabBar.GetID()), TCM_HITTEST, (WPARAM)0, (LPARAM)&thti);
-				if (   thti.pt.x == lbclk_x 
-					&& thti.pt.y == lbclk_y
-					&& (UINT)(t - lbclk_t) <= GetDoubleClickTime() ) { // simulate DBL CLK
-					if (tabclick >= 0) {
-						CloseTab( tabclick );
-						tabclick = -1;
-					}
-					lbclk_x = 0;
-					lbclk_y = 0;
-					lbclk_t = 0;
-				}
-				else {
-					lbclk_x = thti.pt.x;
-					lbclk_y = thti.pt.y;
-					lbclk_t = t;
-					if (tabclick >= 0 ) {
-						::SetCapture(reinterpret_cast<HWND>(wTabBar.GetID()));
-						HCURSOR hcursor = ::LoadCursor(::GetModuleHandle(NULL), MAKEINTRESOURCE(IDC_DRAGDROP));
-						if (hcursor)
-							::SetCursor(hcursor);
-						else
-							wTabBar.SetCursor(Window::cursorReverseArrow);
-					}
-				}
-			}
-			break;
-		}
-//!-end-[TabsMoving] [close_on_dbl_clk]
 		break;
+*/
 
 	case WM_CLOSE:
 		QuitProgram();

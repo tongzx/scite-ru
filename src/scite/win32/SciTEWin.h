@@ -74,10 +74,6 @@ class Dialog;
 class SciTEWin : public SciTEBase {
 
 protected:
-	int lbclk_x; //!-add-[close_on_dbl_clk]
-	int lbclk_y; //!-add-[close_on_dbl_clk]
-	clock_t lbclk_t; //!-add-[close_on_dbl_clk]
-	int tabclick; //!-add-[TabsMoving]
 	void SetToolBar();	//!-add-[user.toolbar]
 	TMap<int,int, SString, const char *> ToolBarTips; //!-add-[user.toolbar]
 

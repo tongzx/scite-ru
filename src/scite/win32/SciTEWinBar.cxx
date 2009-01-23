@@ -96,12 +96,6 @@ void SciTEWin::Notify(SCNotification *notification) {
 	case TCN_SELCHANGE:
 		// Change of tab
 		if (notification->nmhdr.idFrom == IDM_TABWIN) {
-//!-start-[TabsMoving]
-			if (tabclick > -1) {
-				tabclick = -1;
-				::SetCursor(::LoadCursor(NULL,IDC_ARROW));
-			}
-//!-end-[TabsMoving]
 			int index = Platform::SendScintilla(wTabBar.GetID(), TCM_GETCURSEL, (WPARAM)0, (LPARAM)0);
 			SetDocumentAt(index);
 			CheckReload();
@@ -203,25 +197,6 @@ void SciTEWin::Notify(SCNotification *notification) {
 				break;
 			}
 		}
-//!-start-[TabsMoving]
-		if (notification->nmhdr.idFrom == IDM_TABWIN) {
-			Point ptCursor;
-			::GetCursorPos(reinterpret_cast<POINT *>(&ptCursor));
-			Point ptClient = ptCursor;
-			::ScreenToClient(reinterpret_cast<HWND>(wTabBar.GetID()),
-				reinterpret_cast<POINT *>(&ptClient));
-			TCHITTESTINFO info;
-			info.pt.x = ptClient.x;
-			info.pt.y = ptClient.y;
-			
-			int tabbarHitLast = TabCtrl_HitTest(reinterpret_cast<HWND> (wTabBar.GetID()), &info);
-			if (tabclick > -1 && tabbarHitLast > -1 && tabclick != tabbarHitLast) {
-				ShiftTab(tabclick, tabbarHitLast);
-			}
-			::ReleaseCapture();
-			tabclick = -1;
-		}
-//!-end-[TabsMoving]
 		break;
 
 	case TTN_GETDISPINFO:
@@ -895,6 +870,174 @@ static BarButton bbs[] = {
 };
 */
 
+//!-start-[tab.window]
+static WNDPROC stDefaultTabProc = NULL;
+static LRESULT PASCAL TabWndProc( HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam ) {
+
+	LRESULT retResult = 0;
+	if ( stDefaultTabProc != NULL ) {
+		retResult = CallWindowProc( stDefaultTabProc, hWnd, iMessage, wParam, lParam );
+	}
+	else {
+		retResult = ::DefWindowProc( hWnd, iMessage, wParam, lParam );
+	}
+
+	static BOOL st_bLButtomDown = FALSE;
+	static BOOL st_bDragBegin = FALSE;
+	static int st_iDraggingTab = -1;
+	static int st_iLastClickTab = -1;
+
+	switch ( iMessage ) {
+
+	case WM_LBUTTONDBLCLK:
+	case WM_MBUTTONDOWN: {
+			// Check if on tab bar
+			Point pt = Point::FromLong( lParam );
+			TCHITTESTINFO thti;
+			thti.pt.x = pt.x;
+			thti.pt.y = pt.y;
+			thti.flags = 0;
+			int tab = ::SendMessage( hWnd, TCM_HITTEST, (WPARAM)0, (LPARAM)&thti );
+			if (tab >= 0) {
+				::SendMessage( ::GetParent( hWnd ), WM_COMMAND, IDC_TABCLOSE, (LPARAM)tab );
+			}
+		}
+		break;
+
+	case WM_LBUTTONDOWN: {
+			st_bLButtomDown = TRUE;
+
+			Point pt = Point::FromLong( lParam );
+			TCHITTESTINFO thti;
+			thti.pt.x = pt.x;
+			thti.pt.y = pt.y;
+			thti.flags = 0;
+			st_iLastClickTab = ::SendMessage( hWnd, TCM_HITTEST, (WPARAM)0, (LPARAM)&thti );
+		}
+		break;
+
+	case WM_LBUTTONUP: {
+			st_bLButtomDown = FALSE;
+			if ( st_bDragBegin == TRUE ) {
+				::ReleaseCapture();
+				::SetCursor( ::LoadCursor( NULL, IDC_ARROW ) );
+				st_bDragBegin = FALSE;
+				Point pt = Point::FromLong( lParam );
+				TCHITTESTINFO thti;
+				thti.pt.x = pt.x;
+				thti.pt.y = pt.y;
+				thti.flags = 0;
+				int tab = ::SendMessage( hWnd, TCM_HITTEST, (WPARAM)0, (LPARAM)&thti );
+				if ( tab > -1 && st_iDraggingTab > -1 && st_iDraggingTab != tab ) {
+					::SendMessage( ::GetParent( hWnd ),
+								   WM_COMMAND,
+								   IDC_SHIFTTAB,
+								   MAKELPARAM( st_iDraggingTab, tab ) );
+				}
+				st_iDraggingTab = -1;
+			}
+		}
+		break;
+
+	case WM_MOUSEMOVE: {
+
+			Point pt = Point::FromLong( lParam );
+			TCHITTESTINFO thti;
+			thti.pt.x = pt.x;
+			thti.pt.y = pt.y;
+			thti.flags = 0;
+			int tab = ::SendMessage( hWnd, TCM_HITTEST, (WPARAM)0, (LPARAM)&thti );
+
+			if ( st_bLButtomDown == TRUE &&
+				 wParam == MK_LBUTTON &&
+				 tab > -1 &&
+				 st_iLastClickTab == tab ) {
+				if ( st_bDragBegin == FALSE ) {
+					st_iDraggingTab = tab;
+					::SetCapture( hWnd );
+					st_bDragBegin = TRUE;
+					HCURSOR hcursor = ::LoadCursor( ::GetModuleHandle( NULL ),
+													MAKEINTRESOURCE( IDC_DRAGDROP ) );
+					if ( hcursor ) ::SetCursor( hcursor );
+				}
+				else {
+					// перерисовать окно
+					::InvalidateRect( hWnd, NULL, FALSE );
+				}
+			}
+			else {
+				st_bLButtomDown = FALSE;
+			}
+		}
+		break;
+
+	case WM_PAINT: {
+			if ( st_bDragBegin == TRUE && st_iDraggingTab != -1 ) {
+
+				Point ptCursor;
+				::GetCursorPos( reinterpret_cast<POINT*>(&ptCursor) );
+				Point ptClient = ptCursor;
+				::ScreenToClient( hWnd, reinterpret_cast<POINT*>(&ptClient) );
+				TCHITTESTINFO thti;
+				thti.pt.x = ptClient.x;
+				thti.pt.y = ptClient.y;
+				thti.flags = 0;
+				int tab = ::SendMessage( hWnd, TCM_HITTEST, (WPARAM)0, (LPARAM)&thti );
+
+				RECT tabrc;
+				if ( tab != -1 &&
+					 tab != st_iDraggingTab &&
+					 TabCtrl_GetItemRect( hWnd, tab, &tabrc ) ) {
+
+					HDC hDC = ::GetDC( hWnd );
+					Surface *surfaceWindow = Surface::Allocate();
+					if (surfaceWindow) {
+						surfaceWindow->Init( hDC, hWnd );
+
+						int xLeft = tabrc.left + 8;
+						int yLeft = tabrc.top + ( tabrc.bottom - tabrc.top ) / 2;
+						Point ptsLeftArrow[] =
+						{
+							Point( xLeft, yLeft - 2 ),
+							Point( xLeft - 2, yLeft - 2 ),
+							Point( xLeft - 2, yLeft - 5 ),
+							Point( xLeft - 7, yLeft ),
+							Point( xLeft - 2, yLeft + 5 ),
+							Point( xLeft - 2, yLeft + 2 ),
+							Point( xLeft, yLeft + 2 )
+						};
+
+						int xRight = tabrc.right - 10;
+						int yRight = tabrc.top + ( tabrc.bottom - tabrc.top ) / 2;
+						Point ptsRightArrow[] =
+						{
+							Point( xRight, yRight - 2 ),
+							Point( xRight + 2, yRight - 2 ),
+							Point( xRight + 2, yRight - 5 ),
+							Point( xRight + 7, yRight ),
+							Point( xRight + 2, yRight + 5 ),
+							Point( xRight + 2, yRight + 2 ),
+							Point( xRight, yRight + 2 )
+						};
+
+						surfaceWindow->Polygon( tab < st_iDraggingTab ? ptsLeftArrow : ptsRightArrow,
+												7,
+												ColourAllocated( RGB( 255, 0, 0 ) ),
+												ColourAllocated( RGB( 255, 0, 0 ) ) );
+						surfaceWindow->Release();
+						delete surfaceWindow;
+					}
+					::ReleaseDC( hWnd, hDC );
+				}
+			}
+		}
+		break;
+	}
+
+	return retResult;
+}
+//!-end-[tab.window]
+
 /**
  * Create all the needed windows.
  */
@@ -1006,9 +1149,23 @@ void SciTEWin::Creation() {
 	icce.dwSize = sizeof(icce);
 	icce.dwICC = ICC_TAB_CLASSES;
 	InitCommonControlsEx(&icce);
+
+	//!-start-[tab.window]
+	WNDCLASS wndClass = { 0 };
+	GetClassInfo( NULL, WC_TABCONTROL, &wndClass );
+	stDefaultTabProc = wndClass.lpfnWndProc;
+	wndClass.lpfnWndProc = TabWndProc;
+	wndClass.style = wndClass.style | CS_DBLCLKS;
+	wndClass.lpszClassName = "SciTeTabCtrl";
+	wndClass.hInstance = hInstance;
+	if ( RegisterClass( &wndClass ) == 0 )
+		exit(FALSE);
+	//!-end-[tab.window]
+
 	wTabBar = ::CreateWindowEx(
 	              0,
-	              WC_TABCONTROL,
+	              //WC_TABCONTROL
+	             "SciTeTabCtrl", //!-change-[tab.window]
 	              "Tab",
 	              WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS |
 	              TCS_FOCUSNEVER | TCS_TOOLTIPS,
