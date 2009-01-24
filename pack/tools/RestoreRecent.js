@@ -1,7 +1,7 @@
 /*
 RestoreRecent.js
 Authors: mozersЩ
-Version: 1.0
+Version: 1.1
 ------------------------------------------------------
 Description:
   It is started from script RestoreRecent.lua
@@ -12,6 +12,7 @@ Description:
 
 var WshShell = new ActiveXObject("WScript.Shell");
 var FSO = new ActiveXObject("Scripting.FileSystemObject");
+var params = new Array('date', 'path', 'position', 'bookmarks', 'folds');
 
 try {
 	var scite_user_home = WScript.Arguments(0); // этот параметр передаетс€ в ком.строке родительского скрипта (RestoreRecent.lua)
@@ -23,57 +24,55 @@ try {
 var session_filename = scite_user_home + '\\SciTE.session';
 var recent_filename = scite_user_home + '\\SciTE.recent';
 
-var cur_date = fDate();
+var cur_date = GetDate();
+var cur_date_string = DateFormatString(cur_date);
 var recent_arr = ReadRecentFile(recent_filename);
 ReadSessionFile(session_filename);
 RemoveWaste();
 SaveRecentFile(recent_filename);
 
-// ¬озвращает текущую дату в виде "dd.mm.yyyy"
-function fDate() {
-	var d = new Date();
-	var year = d.getYear();
-	var day = d.getDate();
-	if (day < 10){day = '0' + day};
-	var month = d.getMonth() + 1;
-	if (month < 10){month = '0' + month};
-	return day + '.' + month + '.' + year;
+// ¬озвращает массив, содержащий дату {d, m, y}
+function GetDate(obj) {
+	if (obj==undefined){
+		var d = new Date();
+	}else{
+		var d = new Date(obj);
+	}
+	var arr = new Array (d.getDate(), d.getMonth(), d.getYear());
+	return arr;
 }
 
-// ѕреобразование числового индекса в строковое им€ параметра
-function Param2Index(param){
-	var index = -1;
-	switch(param){
-		case 'date':
-			index = 0; break;
-		case 'path':
-			index = 1; break;
-		case 'position':
-			index = 2; break;
-		case 'bookmarks':
-			index = 3; break;
-		case 'folds':
-			index = 4;
-	}
-	return index;
+// ѕреобразует дату к виду "dd.mm.yyyy"
+function DateFormatString(date_arr){
+	var d = date_arr[0];
+	d = (d < 10) ? ('0' + d) : d;
+	var m = date_arr[1] + 1;
+	m = (m < 10) ? ('0' + m) : m;
+	var y = date_arr[2];
+	return d + '.' + m + '.' + y;
+}
+
+// ѕреобразует дату к числу (посольку +-1день не слишком важно, то сойдет и так)
+function DateFormatNumber(date_arr){
+	var d = date_arr[0];
+	var m = date_arr[1] * 30;
+	var y = date_arr[2] * 365;
+	return d + m + y;
+}
+
+// ѕреобразование строки даты "dd.mm.yyyy" к числу
+function DateString2Number(date_str){
+	var m = date_str.match(/(\d+)\.(\d+)\.(\d+)/);
+	var arr = new Array (Number(m[1]), Number(m[2])-1, Number(m[3]));
+	return DateFormatNumber(arr);
 }
 
 // ѕреобразование строкового имени параметра в числовой индекс
-function Index2Param(index){
-	var param = '';
-	switch(index){
-		case 0:
-			param = 'date'; break;
-		case 1:
-			param = 'path'; break;
-		case 2:
-			param = 'position'; break;
-		case 3:
-			param = 'bookmarks'; break;
-		case 4:
-			param = 'folds';
+function Param2Index(param){
+	for (var i=0; i<params.length; i++) {
+		if (param == params[i]) return i;
 	}
-	return param;
+	return -1;
 }
 
 // „итаем SciTE.recent в двухмерный массив recent_arr[номер_файла][им€_параметра] = значение
@@ -113,7 +112,7 @@ function IsRecent(filespec){
 	// если запись о файле существует - уничтожаем все прежние данные о нем
 	// если запись отсутсвует - создаем ее и возвращаем новый размер массива
 	var arr_tmp = new Array;
-	arr_tmp[0] = cur_date;
+	arr_tmp[0] = cur_date_string;
 	recent_arr[i] = arr_tmp;
 	return i;
 }
@@ -140,10 +139,27 @@ function ReadSessionFile(filename){
 
 // ”дал€ем из массива записи о файлах в которых пользователь даже курсор не сдвинул.
 function RemoveWaste(){
+	// ”дал€ем бессодержательные ссылки
 	for (var i=recent_arr.length-1; i>0; i--){
 		if ((recent_arr[i].length == 3) && (recent_arr[i][2] == 1)) {
 		// если в данных о файле только {дата,позици€,путь} и позици€=1 то:
 			recent_arr.splice(i, 1);
+		}
+	}
+
+	// ”дал€ем старые ссылки
+	var link_age = 30; // max срок жизни ссылок в SciTE.recent (дней)
+	var cur_date_number = DateFormatNumber(cur_date);
+	var recent_date = FSO.GetFile(recent_filename).DateLastModified;
+	var recent_date_number = DateFormatNumber(GetDate(recent_date));
+	// ѕроцедура очистки запускаетс€ только 1 раз в день
+	if (cur_date_number > recent_date_number) {
+		for (var i=recent_arr.length-1; i>0; i--){
+			var link_date_number = DateString2Number(recent_arr[i][0]);
+			if (cur_date_number - link_date_number > link_age) {
+			// если возраст линка больше указанного количества дней, то:
+				recent_arr.splice(i, 1);
+			}
 		}
 	}
 }
@@ -156,7 +172,7 @@ function SaveRecentFile(filename){
 			for (var j=0; j<recent_arr[i].length; j++) {
 				var value = recent_arr[i][j];
 				if (value) {
-					file.WriteLine('buffer.' + i + '.' + Index2Param(j) + '=' + value);
+					file.WriteLine('buffer.' + i + '.' + params[j] + '=' + value);
 				}
 			}
 			file.WriteLine(''); // чиста дл€ красаты :)
