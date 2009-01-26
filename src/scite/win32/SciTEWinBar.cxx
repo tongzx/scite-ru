@@ -1151,7 +1151,7 @@ void SciTEWin::Creation() {
 	InitCommonControlsEx(&icce);
 
 	//!-start-[tab.window]
-	WNDCLASS wndClass = { 0 };
+	WNDCLASS wndClass = { 0,0,0,0,0,0,0,0,0,0 };
 	GetClassInfo( NULL, WC_TABCONTROL, &wndClass );
 	stDefaultTabProc = wndClass.lpfnWndProc;
 	wndClass.lpfnWndProc = TabWndProc;
