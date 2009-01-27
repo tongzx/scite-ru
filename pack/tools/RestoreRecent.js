@@ -1,7 +1,7 @@
 /*
 RestoreRecent.js
 Authors: mozersЩ
-Version: 1.1
+Version: 1.1.1
 ------------------------------------------------------
 Description:
   It is started from script RestoreRecent.lua
@@ -117,7 +117,7 @@ function IsRecent(filespec){
 	return i;
 }
 
-// „итаем SciTE.session в массив, провер€€ наличие в массиве аналогичных записей
+// „итаем SciTE.session в массив, провер€€ наличие в нем аналогичных записей
 function ReadSessionFile(filename){
 	if (FSO.FileExists(filename)) {
 		if (FSO.GetFile(filename).Size > 0) {
@@ -142,7 +142,7 @@ function RemoveWaste(){
 	// ”дал€ем бессодержательные ссылки
 	for (var i=recent_arr.length-1; i>0; i--){
 		if ((recent_arr[i].length == 3) && (recent_arr[i][2] == 1)) {
-		// если в данных о файле только {дата,позици€,путь} и позици€=1 то:
+		// если в записи о файле только 3 параметра {дата,позици€,путь} и позици€=1 то:
 			recent_arr.splice(i, 1);
 		}
 	}
@@ -150,8 +150,11 @@ function RemoveWaste(){
 	// ”дал€ем старые ссылки
 	var link_age = 30; // max срок жизни ссылок в SciTE.recent (дней)
 	var cur_date_number = DateFormatNumber(cur_date);
-	var recent_date = FSO.GetFile(recent_filename).DateLastModified;
-	var recent_date_number = DateFormatNumber(GetDate(recent_date));
+	var recent_date_number = 0;
+	if (FSO.FileExists(recent_filename)) {
+		var recent_date = FSO.GetFile(recent_filename).DateLastModified;
+		recent_date_number = DateFormatNumber(GetDate(recent_date));
+	}
 	// ѕроцедура очистки запускаетс€ только 1 раз в день
 	if (cur_date_number > recent_date_number) {
 		for (var i=recent_arr.length-1; i>0; i--){
