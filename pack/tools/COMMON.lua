@@ -123,9 +123,10 @@ local function encodeRGB2WIN(color)
 	end
 end
 
-local function InitMarkStyle(style_number, indic_style, color)
+local function InitMarkStyle(style_number, indic_style, color, alpha_fill)
 	editor.IndicStyle[style_number] = indic_style
 	editor.IndicFore[style_number] = encodeRGB2WIN(color)
+	editor.IndicFillAlpha[style_number] = alpha_fill
 end
 
 local function style(mark_string)
@@ -146,12 +147,10 @@ local function EditorInitMarkStyles()
 	for style_number = 0, 31 do
 		local mark = props["find.mark."..style_number]
 		if mark ~= "" then
-			local mark_color = string.match(mark, "#%x%x%x%x%x%x")
-			if mark_color == nil then mark_color = props["find.mark"] end
-			if mark_color == "" then mark_color = "#0F0F0F" end
-			local mark_style = style(mark)
-			if mark_style == nil then mark_style = INDIC_ROUNDBOX end
-			InitMarkStyle(style_number, mark_style, mark_color)
+			local mark_color = mark:match("#%x%x%x%x%x%x") or (props["find.mark"]):match("#%x%x%x%x%x%x") or "#0F0F0F"
+			local mark_style = style(mark) or INDIC_ROUNDBOX
+			local alpha_fill = tonumber((mark:match("%@%d+") or ""):sub(2)) or 30
+			InitMarkStyle(style_number, mark_style, mark_color, alpha_fill)
 		end
 	end
 end
