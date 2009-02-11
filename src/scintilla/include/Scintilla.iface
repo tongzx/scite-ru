@@ -560,6 +560,14 @@ set void IndicSetFore=2082(int indic, colour fore)
 # Retrieve the foreground colour of an indicator.
 get colour IndicGetFore=2083(int indic,)
 
+##!-start-[IndicatorsFillAlpha]
+# Set the fill alpha of an indicator.
+set void IndicSetFillAlpha=2086(int indic, int alpha)
+
+# Retrieve the fill alpha of an indicator.
+get int IndicGetFillAlpha=2087(int indic,)
+##!-end-[IndicatorsFillAlpha]
+
 # Set an indicator to draw under text or over(default).
 set void IndicSetUnder=2510(int indic, bool under)
 
