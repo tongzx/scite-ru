@@ -12,7 +12,7 @@ scroll=no
 selection=no
 contextMenu=no
 singleinstance=yes
-version=2.8
+version=2.9
 >
 <meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
 <style type="text/css">
@@ -62,13 +62,15 @@ version=2.8
 		font-style:normal;
 	}
 </style>
-
 <script language="JavaScript">
+window.resizeTo(460,352);
+document.title = SWI.applicationName.replace(/_/g,' ') + ' ' + SWI.version;
+
 var WshShell = new ActiveXObject("WScript.Shell");
-var ForReading = 1, ForWriting = 2, ForAppending = 8;
 var fso = new ActiveXObject("Scripting.FileSystemObject");
 var script_path = unescape(self.location.href).replace(/file:\/\/\/([a-z]:.*)\/.*?$/i,'$1').replace(/\//g,'\\');
 var reg_backup = 'HKLM\\SOFTWARE\\SciTE\\Script\\WinIntegrator\\';
+var scite_path = '';
 
 // После нажатия на "ОК" проверяем, изменил ли пользователь установки
 // и выполняем только те позиции, в которых состояние чекбоксов изменилось
@@ -273,8 +275,8 @@ function SetAssociations(){
 	}
 	WshShell.RegWrite(reg_backup+'associations', form.associations.value);
 	WshShell.RegWrite('HKCR\\SciTE.File\\', 'SciTE file');
-	WshShell.RegWrite('HKCR\\SciTE.File\\DefaultIcon\\', form.home.value + '\\SciTE.exe,1');
-	WshShell.RegWrite('HKCR\\SciTE.File\\shell\\open\\command\\', '"' + form.home.value + '\\SciTE.exe" "%1"');
+	WshShell.RegWrite('HKCR\\SciTE.File\\DefaultIcon\\', scite_path + '\\SciTE.exe,1');
+	WshShell.RegWrite('HKCR\\SciTE.File\\shell\\open\\command\\', '"' + scite_path + '\\SciTE.exe" "%1"');
 	return true;
 }
 
@@ -308,7 +310,7 @@ function CheckOpenfor(){
 
 function SetOpenfor(){
 	WshShell.RegWrite('HKCR\\*\\shell\\Open with SciTE\\', open_with_scite_locale);
-	WshShell.RegWrite('HKCR\\*\\shell\\Open with SciTE\\command\\', '"' + form.home.value + '\\SciTE.exe" "%1"');
+	WshShell.RegWrite('HKCR\\*\\shell\\Open with SciTE\\command\\', '"' + scite_path + '\\SciTE.exe" "%1"');
 	return true;
 }
 
@@ -338,9 +340,9 @@ function CheckSession(){
 function SetSessions(){
 	WshShell.RegWrite('HKCR\\.session\\', 'SciTE.Session');
 	WshShell.RegWrite('HKCR\\SciTE.Session\\', 'SciTE session file');
-	WshShell.RegWrite('HKCR\\SciTE.Session\\DefaultIcon\\', form.home.value + '\\SciTE.exe,2');
+	WshShell.RegWrite('HKCR\\SciTE.Session\\DefaultIcon\\', scite_path + '\\SciTE.exe,2');
 	WshShell.RegWrite('HKCR\\SciTE.Session\\shell\\open\\command\\', 'wscript "' + script_path + '\\' + open_ses_file + '" "%1"');
-	var text = 'var scite = "' + form.home.value.replace(/\\/g,'\\\\') + '\\\\SciTE.exe";\n';
+	var text = 'var scite = "' + scite_path.replace(/\\/g,'\\\\') + '\\\\SciTE.exe";\n';
 	text += 'var WshShell = new ActiveXObject("WScript.Shell");\n';
 	text += 'var filename = WScript.Arguments(0);\n';
 	text += 'var opt = \'-check.if.already.open=0 \"-loadsession:\' + filename.replace(\/\\\\\/g,\"\\\\\\\\\") + \'\"\';\n'
@@ -373,7 +375,7 @@ function SetHTML_def(){
 	var current_htmldef = "";
 	try {var current_htmldef = WshShell.RegRead('HKLM\\SOFTWARE\\Microsoft\\Internet Explorer\\View Source Editor\\Editor Name\\')} catch(e) {}
 	WshShell.RegWrite(reg_backup+'Source Editor', current_htmldef);
-	WshShell.RegWrite('HKLM\\SOFTWARE\\Microsoft\\Internet Explorer\\View Source Editor\\Editor Name\\', '"' + form.home.value + '\\SciTE.exe"');
+	WshShell.RegWrite('HKLM\\SOFTWARE\\Microsoft\\Internet Explorer\\View Source Editor\\Editor Name\\', '"' + scite_path + '\\SciTE.exe"');
 	return true;
 }
 
@@ -400,11 +402,11 @@ function CheckHTML(){
 
 function SetHTML(){
 	WshShell.RegWrite('HKCR\\.htm\\OpenWithList\\SCITE.EXE\\', '');
-	WshShell.RegWrite('HKCR\\Applications\\SCITE.EXE\\shell\\edit\\command\\', form.home.value + '\\SciTE.exe "%1"');
+	WshShell.RegWrite('HKCR\\Applications\\SCITE.EXE\\shell\\edit\\command\\', scite_path + '\\SciTE.exe "%1"');
 	try {WshShell.RegDelete('HKCU\\Software\\Microsoft\\Internet Explorer\\Default HTML Editor\\shell\\edit\\ddeexec\\')} catch(e) {};
-	WshShell.RegWrite('HKCU\\Software\\Microsoft\\Internet Explorer\\Default HTML Editor\\shell\\edit\\command\\', form.home.value + '\\SciTE.exe "%1"');
+	WshShell.RegWrite('HKCU\\Software\\Microsoft\\Internet Explorer\\Default HTML Editor\\shell\\edit\\command\\', scite_path + '\\SciTE.exe "%1"');
 	WshShell.RegWrite('HKCU\\Software\\Microsoft\\Internet Explorer\\Default HTML Editor\\Description', 'SciTE - a Scintilla based Text Editor');
-	WshShell.RegWrite('HKCU\\Software\\Microsoft\\Shared\\HTML\\Default Editor\\shell\\edit\\command\\', form.home.value + '\\SciTE.exe "%1"');
+	WshShell.RegWrite('HKCU\\Software\\Microsoft\\Shared\\HTML\\Default Editor\\shell\\edit\\command\\', scite_path + '\\SciTE.exe "%1"');
 	return true;
 }
 
@@ -425,11 +427,11 @@ function CheckHelper(){
 }
 
 function SetHelper(){
-	var file_dll = form.home.value + '\\tools\\Helper\\SciTE.dll';
+	var file_dll = scite_path + '\\tools\\Helper\\SciTE.dll';
 	if (fso.FileExists(file_dll)){
 	var ret = WshShell.Run('cmd /c for /f %i in ("msvbvm50.dll") do if "%~$PATH:i"=="" exit /b 1', 0, true);
 		if (ret != 0) {
-			alert_msvbvm50();
+			AlertMSVBVM50();
 			return false;
 		} else {
 			WshShell.Run('Regsvr32 "' + file_dll + '"',0,false);
@@ -439,7 +441,7 @@ function SetHelper(){
 }
 
 function UnSetHelper(){
-	var file_dll = form.home.value + '\\tools\\Helper\\SciTE.dll';
+	var file_dll = scite_path + '\\tools\\Helper\\SciTE.dll';
 	if (fso.FileExists(file_dll)){
 		WshShell.Run('Regsvr32 /u "' + file_dll + '"',0,false);
 	}
@@ -449,40 +451,82 @@ function UnSetHelper(){
 // =============================================================
 // Окно "О программе"
 function About() {
-	atr='status:no; help:no; dialogWidth:250px; dialogHeight:150px;';
-	try {dW=PrxRealModelessDialog('dialog.htm',window,atr).document}
-	catch(e) {dW=showModelessDialog('dialog.htm',window,atr).document}
-	// -----------------------------------------------------------------------------------
-	var text = '<HTML><HEAD>\n';
-	text += '<title>' + form.btn_about.value + '</title>\n';
-	text += '<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1251">\n';
-	text += '</HEAD><style>body {font-family:verdana; font-size:x-small; background-color:black; color:white} a{color:white; text-decoration:none;} a:hover{color:#99FFFF;}</style>\n';
-	text += '<center><span style="width:240; height:30; font:40px Impact; color:#0EDA05; font-weight:bold; filter:Shadow (Color=#6699CC, Direction=135")>SciTE<\/span>\n';
-	text += '<br><span style="position: absolute; margin-top:-28px; margin-left:-85px; font-family:Arial; font-size:20px; font-style:italic; font-weight:bold; color:#E5E1B1; filter:Shadow (Color=#84602C, Direction=135")">Windows Integrator<\/span><br><font color=white>Version <b>'+SWI.version+'</b><br><b><a href="mailto:mozers@mail.ru?subject=SciTE_Windows_Integrator_'+SWI.version+'">mozers&trade;</a></b> and <b><a href="mailto:vladvro@gmail.com?subject=SciTE_Windows_Integrator_'+SWI.version+'">VladVRO</a></b></font></center>\n';
-	text += '</BODY></HTML>';
-	// -----------------------------------------------------------------------------------
-	dW.write(text);
+	var ver = SWI.version;
+	var text = '<html><head>';
+	text += '<title>'+form.btn_about.value+'</title>';
+	text += '<meta http-equiv="content-type" content="text\/html; charset=windows-1251"><style>body {font-family:arial, verdana; font-size:x-small; background-color:black; color:white; text-align:center; overflow:hidden;} h1,h2{width:100%;} h1{font:bold normal 40px impact; color:#0eda05; filter:shadow(color=#6699cc,direction=135);} h2{margin-top:-30px; margin-bottom:8px; font:bold italic 20px arial;color:#e5e1b1; filter:shadow(color=#84602c, direction=135);} a{color:white; text-decoration:none;} a:hover{color:#99ffff;} hr{width:90%;} p{margin-top:-8px;}<\/style><\/head>';
+	text += '<body><h1>SciTE<\/h1><h2>Windows Integrator<\/h2>';
+	text += 'Version <b>'+ver+'<\/b>';
+	text += '<hr size=1px><p>';
+	text += '<b><a href="mailto:mozers@mail.ru?subject=SciTE_Windows_Integrator_'+ver+'">mozers&trade;<\/a><\/b> and <b><a href="mailto:vladvro@gmail.com?subject=SciTE_Windows_Integrator_'+ver+'">VladVRO<\/a><\/b>';
+	text += '<\/body><\/html>';
+	var WinAbout = showModelessDialog('about:blank', '', 'status:no; help:no; dialogWidth:250px; dialogHeight:140px;');
+	WinAbout.document.write(text);
 }
+
 // =============================================================
 // Окно "msvbvm50.dll"
-function alert_msvbvm50() {
-	var alert_win = window.open("about:blank",null, "height=80,width=450,status=no,toolbar=no,menubar=no,location=no");
-	var html = '<HTML><HEAD>\n';
-	html += '<title>SciTE.Helper Install Error</title>\n';
-	html += '<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1251">\n';
-	html += '</HEAD><style>body {font-family:verdana; font-size:10pt; a {color:#000080; text-decoration:none;} a:hover {color:red;}</style>\n';
-	html += '<center>';
+function AlertMSVBVM50() {
+	var html = '<html><head>';
+	html += '<title>SciTE.Helper Install Error<\/title>';
+	html += '<meta http-equiv="content-type" content="text\/html; charset=windows-1251">';
+	html += '<\/head><style>body{text-align:center; background-color:infobackground; font-family:verdana; font-size:10pt; a{color:#000080; text-decoration:none;} a:hover{color:red;}<\/style><body>';
 	html += alert_msvbvm50_locale;
-	html += '</center>\n';
-	html += '</BODY></HTML>';
-	alert_win.document.write(html);
+	html += '<\/body><\/html>';
+	var WinAlert = window.open("about:blank", "", "height=80,width=450,status=no,toolbar=no,menubar=no,location=no");
+	WinAlert.document.write(html);
+}
+
+// =============================================================
+// Инициализация формы
+function CheckSciTE(scite_path){
+	if (fso.FileExists(scite_path + "\\SciTE.exe")){
+		return true;
+	}else{
+		return false;
+	}
+}
+
+function FindSciTE(){
+	var scite_path = script_path;
+	if (CheckSciTE(scite_path)){
+		return scite_path;
+	}else{
+		scite_path = scite_path.replace(/\\[^\\]+$/,'');
+		if (CheckSciTE(scite_path)){
+			return scite_path;
+		}else{
+			return "";
+		}
+	}
+}
+
+function LoadForm(){
+	scite_path = FindSciTE();
+	if (scite_path == ""){
+		alert("Can't find SciTE!\nPlease run this script from folder with SciTE");
+		self.close();
+	}
+
+	var locale_rus_exists = fso.FileExists(scite_path + "\\locale_rus.properties");
+	// при update уничтожаем старый locale.properties
+	if ((CheckRusLocaleProperties())&(locale_rus_exists)){
+		fso.DeleteFile(scite_path + "\\locale.properties", true);
+	}
+	CheckLanguage();
+	CheckAssociations();
+	CheckOpenfor();
+	CheckSession();
+	CheckHTML_def();
+	CheckHTML();
+	CheckHelper();
 }
 
 </script>
-
-</head><body>
+</head>
+<body onLoad="LoadForm()">
+<table width="100%" height="100%" cellpadding="0" cellspacing="0" border="0"><tr><td>
 <form id="form">
-<table width=100%><tr><td>
 
 <fieldset><legend id="lng_legend"></legend><table width=100%>
 	<tr>
@@ -500,9 +544,8 @@ function alert_msvbvm50() {
 		</td>
 	</tr>
 </table></fieldset>
-&nbsp;
 
-<fieldset><legend id="explorer_legend"></legend>
+<fieldset style="margin-top:4pt"><legend id="explorer_legend"></legend>
 <table width=100%>
 	<tr>
 		<td colspan="2" id="explorer_text"></td>
@@ -537,9 +580,8 @@ function alert_msvbvm50() {
 	</tr>
 </table>
 </fieldset>
-&nbsp;
 
-<fieldset><legend id="ie_legend"></legend><table width=100%>
+<fieldset style="margin-top:4pt"><legend id="ie_legend"></legend><table width=100%>
 	<tr>
 		<td>
 			<a class="help" href="#" hidefocus>
@@ -557,9 +599,8 @@ function alert_msvbvm50() {
 		</td>
 	</tr>
 </table></fieldset>
-&nbsp;
 
-<fieldset><legend id="win_legend"></legend><table width=100%>
+<fieldset style="margin-top:4pt"><legend id="win_legend"></legend><table width=100%>
 <tr>
 	<td>
 		<a class="help" href="#" hidefocus>
@@ -569,9 +610,8 @@ function alert_msvbvm50() {
 	</td>
 </tr>
 </table></fieldset>
-&nbsp;
 
-<table width=100%>
+<table style="width:100%; margin-top:4pt">
 	<tr>
 		<td align=center width=33%><input type="button" class="btn" onClick="if (!Set()){self.location.reload()}" id="btn_ok" value="OK"></td>
 		<td align=center width=33%><input type="button" class="btn" onClick="self.close();" id="btn_cancel" value=""></td>
@@ -579,53 +619,7 @@ function alert_msvbvm50() {
 	</tr>
 </table>
 </td></tr>
-</table>
 </form>
-
-<script language="JavaScript">
-function check_scite(scite_path){
-	if (fso.FileExists(scite_path + "\\SciTE.exe")){
-		return true;
-	}else{
-		return false;
-	}
-}
-
-function find_scite(){
-	var scite_path = script_path;
-	if (check_scite(scite_path)){
-		return scite_path;
-	}else{
-		scite_path = scite_path.replace(/\\[^\\]+$/,'');
-		if (check_scite(scite_path)){
-			return scite_path;
-		}else{
-			return "";
-		}
-	}
-}
-
-document.title = SWI.applicationName.replace(/_/g,' ') + ' ' + SWI.version;
-window.resizeTo(460,372);
-var scite_path = find_scite();
-if (scite_path == ""){
-	alert("Can't find SciTE!\nPlease run this script from folder with SciTE");
-	self.close();
-}
-
-var locale_rus_exists = fso.FileExists(scite_path + "\\locale_rus.properties");
-// при update уничтожаем старый locale.properties
-if ((CheckRusLocaleProperties())&(locale_rus_exists)){
-	fso.DeleteFile(scite_path + "\\locale.properties", true);
-}
-CheckLanguage();
-CheckAssociations();
-CheckOpenfor();
-CheckSession();
-CheckHTML_def();
-CheckHTML();
-CheckHelper();
-</script>
-
+</table>
 </body>
 </html>
