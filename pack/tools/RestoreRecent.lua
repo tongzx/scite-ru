@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 RestoreRecent.lua
 Authors: mozers™
-Version: 1.0.2
+Version: 1.1
 ------------------------------------------------------
 Description:
   Restore position, bookmarks, folds at opening recent file
@@ -27,13 +27,13 @@ Connection:
 ----------------------
 -- ON STARTUP SCITE --
 ----------------------
-
+os.setlocale ("Russian_Russia.1251") -- для правильной работы ф-ции string.lower() с русскими буквами
 local buffers={} -- масив {номер_файла, {имя_параметра, значение_параметра} }
 
 -- Чтение параметров SciTE.session в таблицу buffers (параметры доступны, поскольку файл подключен директивой import)
 local function ReadSessionToTable()
 	for i = 1, props['buffers'] do
-		local path = props['buffer.'..i..'.path']:lower()
+		local path = props['buffer.'..i..'.path']
 		if #path ~= 0 then
 			-- если элемент таблицы отсутствует, то создаем его (как вложенную таблицу)
 			if buffers[i] == nil then buffers[i] = {} end
@@ -90,12 +90,13 @@ end
 local function CheckSession()
 	for i = 1, #buffers do
 		-- при наличии записи возвращаем массив всех параметров (и их значений) для этого файла
-		if buffers[i]['path'] == props['FilePath']:lower() then return buffers[i] end
+		if buffers[i]['path']:lower() == props['FilePath']:lower() then return buffers[i] end
 	end
 end
 
 -- Восстановление позиции курсора, букмарков и фолдинга для заданного файла
 local function Restore(file)
+	if (#file==0) then return end
 	local FileParams = CheckSession() -- проверка наличия данных о файле в таблице buffers
 	if FileParams ~= nil then
 		-- Restore folding

@@ -1,7 +1,7 @@
 /*
 RestoreRecent.js
 Authors: mozers™
-Version: 1.1.1
+Version: 1.2
 ------------------------------------------------------
 Description:
   It is started from script RestoreRecent.lua
@@ -107,7 +107,7 @@ function ReadRecentFile(filename) {
 // Проверка наличия в массиве записи с такими же данными (recent_arr[i][1] == имя_файла ?)
 function IsRecent(filespec){
 	for (var i=1; i<recent_arr.length; i++) {
-		if (recent_arr[i][1] == filespec) break;
+		if (recent_arr[i][1].toLowerCase() == filespec.toLowerCase()) break;
 	}
 	// если запись о файле существует - уничтожаем все прежние данные о нем
 	// если запись отсутсвует - создаем ее и возвращаем новый размер массива
@@ -124,7 +124,7 @@ function ReadSessionFile(filename){
 			file = FSO.OpenTextFile(filename, 1);
 			var x;
 			while (!file.AtEndOfStream) {
-				var line = file.ReadLine().toLowerCase();
+				var line = file.ReadLine();
 				var r = line.match(/buffer\.(\d)\.([a-z]+)=(.+)$/);
 				if (r) { // r = массив: {1-номер_файла, 2-имя_параметра, 3-значение}
 					if (r[2] == 'path') x = IsRecent(r[3]);
