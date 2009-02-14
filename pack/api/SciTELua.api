@@ -49,7 +49,11 @@ io.read
 io.tmpfile
 io.type
 io.write
-#file=io.open
+#$file=io.tmpfile%b()
+#$file=io.popen%b()
+#$file=io.open%b()
+#$file=io.output%b()
+#$file=io.input%b()
 file:close ([file])\n  closes file, or the default output file
 file:flush ()\n  flushes the default output file
 file:input ([file])\n  opens file in text mode, sets as default input file, or returns current default input file
@@ -259,6 +263,10 @@ require (packagename)\n loads package, updates _LOADED, returns boolean
 setfenv (f, table)\n  sets env, f can be a function or number (stack level, default=1), 0=global env
 setmetatable (table, metatable)\n  sets metatable, nil to remove metatable
 
+#$string_value=%b''
+#$string_value=%b""
+#$string_value=%[%[.-%]%]
+#$string_value=tostring%b()
 string_value:byte
 string_value:char
 string_value:dump

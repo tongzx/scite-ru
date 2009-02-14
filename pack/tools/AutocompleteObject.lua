@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 AutocompleteObject.lua
 mozers™, Tymur Gubayev
-version 3.08
+version 3.10
 ------------------------------------------------------
 Inputting of the symbol set in autocomplete.[lexer].start.characters causes the popup list of properties and methods of input_object. They undertake from corresponding api-file.
 In the same case inputting of a separator changes the case of symbols in input_object's name according to a api-file.
@@ -74,6 +74,17 @@ History:
 3.08(mozers):
 	* Поиск в тексте определений объектов и стрингов выделен в отдельные процедуры IsObject и IsString
 	* Теперь в lua методы объекта string выводятся после точки, а аналогичные методы строковых переменных - после : (потребовалась доработка SciTELua.api)
+3.09(Tymur):
+	- IsString упразднена за ненадобностью
+	+ теперь в .api файлах допустима конструкция вида #$string_value=^'.*' и даже #$file=io.open%b(). Часть справа от знака "=" -- паттерн, используемый для распознавания объекта. Т.о. возможно расширить функциональность фичи для распознавания строк на всё, что ловиться регулярными выражениями Луа.
+	! скрипт сам по себе больше не распознаёт строковые объекты! Необходима правка .api-файлов:
+		Например, в конце lua.api необходимо поместить следующие строчки:
+			#$string_value=^".*"
+			#$string_value=^'.*'
+			#$string_value=^%[%[.*%]%]
+3.10(Tymur):
+	* пофикшен мелкий баг, когда не распознавались некоторые объекты ("azimuth:right-" не вызывал список с "side")
+	* пофикшен паттерн распознавания методов (эффект заметен только если autocomplete.lexer.start.characters пересекаются с word.characters.lexer, например, для css)
 --]]----------------------------------------------------
 
 local current_pos = 0    -- текущая позиция курсора, важно для InsertMethod
@@ -82,7 +93,8 @@ local auto_start_chars_patt = '' -- паттерн, содержащий экранированные символы и
 local get_api = true     -- флаг, определяющий необходимость перезагрузки api файла
 local api_table = {}     -- все строки api файла (очищенные от ненужной нам информации)
 local objects_table = {} -- все "объекты", найденные в api файле в виде objects_table[objname]=true
-local alias_table = {}   -- сопоставления "синоним = объект"
+local alias_table = {}   -- сопоставления "объект = синоним"
+local patterns_table = {}-- сопоставления "объект = паттерн для проверки строки"
 local methods_table = {} -- все "методы" заданного "объекта", найденные в api файле
 local object_names = {}  -- все имена имеющихся api файле "объектов", которым соответствует найденный в текущем файле "объект"
 local autocomplete_start_characters = '' -- символы разделители объектов (из параметра autocomplete.lexer.start.characters)
@@ -115,18 +127,29 @@ end
 -- Извлечение из api-файла реальных имен объектов, которые соответствуют введенному
 -- т.е. введен "объект" wShort, а методы будем искать для WshShortcut и WshURLShortcut
 local function GetObjectNames(text)
-	text = text:upper()
+	local TEXT = text:upper()
 	local obj_names = {}
 	-- Поиск по таблице имен "объектов"
-	if objects_table[text] then
-		obj_names[#obj_names+1] = objects_table[text]
-		return obj_names, objects_table[text] -- если успешен, то завершаем поиск
+	if objects_table[TEXT] then
+		obj_names[1] = objects_table[TEXT]
+		return obj_names, objects_table[TEXT] -- если успешен, то завершаем поиск
 	end
+	
 	-- Поиск по таблице сопоставлений "объект - синоним"
-	if alias_table[text] then
-		for _,v in pairs(alias_table[text]) do obj_names[#obj_names+1] = v end
+	if alias_table[TEXT] then
+		for _,v in pairs(alias_table[TEXT]) do obj_names[#obj_names+1] = v end
+		return obj_names , (alias_table[TEXT] and alias_table[TEXT]())
 	end
-	return obj_names , (alias_table[text] and alias_table[text]())
+
+	-- Проверка по паттернам:
+	for obj_name, patterns in pairs(patterns_table) do
+		for _, patt in ipairs(patterns) do
+			if text:find(patt) then
+				obj_names[#obj_names+1] = obj_name
+			end
+		end	
+	end
+	return obj_names , nil -- если нашли по паттерну, то нет "правильного" имени объекта, на которое можно было бы исправить введенное
 end
 
 ------------------------------------------------------
@@ -135,9 +158,14 @@ end
 local function GetInputObject()
 	local word_chars = editor.WordChars
 	-- добавляем разделители - они теперь тоже часть слова
-	editor.WordChars = word_chars..(autocomplete_start_characters or "")
+	editor.WordChars = word_chars..autocomplete_start_characters
+	
+	-- если разделитель стоит после скобок -- берём слово слева от скобок вместе с ними.
+	-- нужно для продвинутых алиасов-паттернов
+	local word_start_pos = editor:BraceMatch(current_pos-2)
+	if word_start_pos == -1 then word_start_pos = current_pos end
 	-- пусть за нас сделает всю работу editor:WordStartPosition
-	local word_start_pos = editor:WordStartPosition(current_pos-1)
+	word_start_pos = editor:WordStartPosition(word_start_pos-1)
 	-- возвращаем настройки назад
 	editor.WordChars = word_chars
 	return editor:textrange(word_start_pos, current_pos-1)
@@ -151,38 +179,46 @@ end
 
 ------------------------------------------------------
 -- добавлям алиас в таблицу сопоставлений "объект - синоним"
-local function AddAlias(obj, alias)
-	local OBJ = obj:upper()
+local function AddAlias(alias, obj)
+	local ALIAS = alias:upper()
 	-- если впервые такое слово, создаём таблицу
-	alias_table[OBJ] = alias_table[OBJ] or CreateAliasEntry(obj)
+	alias_table[ALIAS] = alias_table[OBJ] or CreateAliasEntry(alias)
 	-- добавляем синоним alias к объекту obj
-	alias_table[OBJ][alias:upper()] = alias
+	alias_table[ALIAS][obj:upper()] = obj
 end
 
 ------------------------------------------------------
--- проверка не является ли текст определением стринга
---@todo: Анализ на данный момент _очень_ грубый
-local function IsString(text)
-	if (editor.LexerLanguage == 'lua' or editor.LexerLanguage == 'cpp') and
-		(text:match([[^".*"]]) or text:match([[^'.*']]) or text:match("^%[%[.*%]%]")) then
-			return true
-	else
-		return false
-	end
+-- добавлям паттерн в таблицу сопоставлений "объект - паттерн"
+local function AddPattern(obj, patt)
+	-- если впервые такое слово, создаём таблицу
+	patterns_table[obj] = patterns_table[obj] or {}
+	-- добавляем паттерн patt к объекту obj
+	table.insert(patterns_table[obj], patt)
 end
 
 ------------------------------------------------------
 -- проверка не является ли текст определением объекта
 local function IsObject(text)
-	for sValue in text:gmatch(word_chars_patt) do
+	-- делаем таблицу слов для проверки. На первом месте вся строка целиком -- для проверки на паттерн.
+	local words_to_test = {text}
+	for words in text:gmatch(word_chars_patt) do
+		words_to_test[#words_to_test+1] = words
+	end
+	
+	for _, sValue in ipairs(words_to_test) do
 		local objects = GetObjectNames(sValue)
 		for i = 1, #objects do
-			if #objects[i] ~= 0 then
+			-- следующая проверка нужна чтобы вернуть действительно _имя_ объекта, а не алиас.
+			if objects_table[objects[i]:upper()] then
 				return objects[i]
 			end
 		end
-	end
-	return ''
+		--@debug: это на всякий пожарный случай.
+		if #objects > 0 then
+			print('ATTENTION: object '..sValue..' has only aliases, and no correct name!\n\tSee function IsObject from AutocompleteObject.lua')
+		end
+	end --for words in text
+	--return ''
 end
 
 ------------------------------------------------------
@@ -204,20 +240,10 @@ local function FindDeclaration()
 		sRightString = sRightString:gsub("^%s*(%S*)%s*$", "%1")
 		if #sRightString ~= 0 then
 			-- анализируем текст справа от знака "="
-				-- проверяем, строка ли там содержится?
-			if IsString(sRightString) then
-				-- если действительно, это - строковая переменная, то добавляем ее в таблицу сопоставлений "объект - синоним"
-				if editor.LexerLanguage == 'lua' then
-					AddAlias(sVar, 'string_value') -- поскольку в lua методы строковых переменных задаются через : а не через точку как все остальные, то необходимо в api их задавать отдельно от методов объекта string.
-				else
-					AddAlias(sVar, 'string')
-				end
-			else
-				-- проверяем, а не содержится ли там описанный в api объект?
-				local obj = IsObject(sRightString)
-				-- если действительно, такой "объект" существует, то добавляем его в таблицу сопоставлений "объект - синоним"
-				if #obj ~= 0 then AddAlias(sVar, obj) end
-			end
+			-- проверяем, а не содержится ли там описанный в api объект?
+			local obj = IsObject(sRightString)
+			-- если действительно, такой "объект" существует, то добавляем его в таблицу сопоставлений "объект - синоним"
+			if obj then AddAlias(sVar, obj) end
 		end
 		_start = _end + 1
 	end
@@ -227,14 +253,16 @@ end
 -- Чтение api файла в таблицу api_table (чтобы потом не опрашивать диск, а все тащить из нее)
 local function CreateAPITable()
 	api_table = {}
+	local word_patt = fPattern(editor.WordChars)
+	local word_extended_patt = '['..word_patt..auto_start_chars_patt..']'
 	for api_filename in props["APIPath"]:gmatch("[^;]+") do
 		if api_filename ~= nil then
 			local api_file = io.open(api_filename)
 			if api_file then
 				for line in api_file:lines() do
-					-- обрезаем комментарии
-					line = line:match('^[^%s%(]+')
-					if line ~= nil then
+					-- обрезаем комментарии, оставляя алиасы-паттерны без изменений
+					line = line:match('^#$%s*'..word_extended_patt..'+=.+$') or line:match('^[^%s%(]+')
+					if line then
 						api_table[#api_table+1] = line
 					end
 				end
@@ -252,16 +280,28 @@ end
 local function CreateObjectsAndAliasTables()
 	objects_table = {}
 	alias_table = {}
+	patterns_table = {}
+	local word_patt = fPattern(editor.WordChars)
+	local word_extended_patt = '['..word_patt..auto_start_chars_patt..']'
+	word_patt = '['..word_patt..']'
+	
 	for i = 1, #api_table do
 		local line = api_table[i]
 		-- здесь КРАЙНЕ ВАЖНО, чтобы в матче был именно [auto_start_chars_patt], т.е. например "[.:]" для Луа
 		-- т.к. эта таблица строится только при api_get, может выйти фигня.
-		local obj_name = line:match('^([^#]+)['..auto_start_chars_patt..']')
+		local obj_name = line:match('^[^#]') and line:match('^('..word_extended_patt..'*)['..auto_start_chars_patt..']')
 		if obj_name then objects_table[obj_name:upper()]=obj_name end
-		-- для строк вида "#a=b" записываем a,b поочерёдно в таблицу алиасов
-		local sVar, sValue = line:match('^#(%w+)=([^%s]+)$') --@todo: подумать над паттерном...
-		if sVar then
-			AddAlias(sValue, sVar)
+
+		-- для строк вида "#a=b" записываем a,b в таблицу алиасов
+		local sObj, sAlias = line:match('^#('..word_extended_patt..'+)=(%S+)$') --@todo: подумать над паттерном...
+		if sObj then
+			AddAlias(sAlias, sObj)
+		end
+
+		-- для строк вида "#$a=b" записываем a,b в таблицу паттернов
+		local sObj, sPatt = line:match('^#$%s*('..word_extended_patt..'+)=(.+)$') --@todo: подумать над паттерном...
+		if sObj then
+			AddPattern(sObj, sPatt)
 		end
 	end
 end
@@ -273,8 +313,9 @@ local function CreateMethodsTable(obj)
 		local line = api_table[i]
 		-- ищем строки, которые начинаются с заданного "объекта"
 		local _, _end = line:find(obj..sep_char, 1, 1)
-		if _end ~= nil then
-			local _start, _end, str_method = line:find('([^'..auto_start_chars_patt..']+)', _end+1)
+		if _end ~= nil and line:sub(1,1)~='#' then
+			-- local _start, _end, str_method = line:find('([^'..auto_start_chars_patt..']+)', _end+1)
+			local _start, _end, str_method = line:find('(['..fPattern(editor.WordChars)..']+)', _end+1)
 			if _start ~= nil then
 				methods_table[#methods_table+1] = str_method
 			end
@@ -347,10 +388,11 @@ local function AutocompleteObject(char)
 	if input_object == '' then return false end
 
 	object_names, object_good_name = GetObjectNames(input_object)
-
 	if object_good_name and input_object ~= object_good_name then
 		CorrectRegisterSymbols(object_good_name..char)
 	end
+	
+	-- выходим, если введенное слово не имя объекта
 	if not next(object_names) then return false end
 
 	-- убиваем остатки старых методов, заполняем новыми

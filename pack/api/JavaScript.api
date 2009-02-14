@@ -9,6 +9,7 @@ anchor.text \nТекст якоря.
 anchor.x \nПозиция левого края якоря по оси х в пикселах относительно левого края документа.
 anchor.y \nПозиция верхнего края якоря по оси у в пикселах относительно верхнего края документа.
 
+#$array=%a+%.split%b()
 array.constructor \nСпецифицирует функцию, создающую прототип объекта.
 array.index \nДля массива, созданного в результате совпадения с регулярным выражением, это индекс с базой 0 совпадения в строке.
 array.input \nДля массива, созданного в результате совпадения с регулярным выражением, отражает строку-оригинал, относительно которой выполняется подстановка регулярного выражения.
@@ -435,32 +436,22 @@ select.blur() \nУбирает фокус со списка selection.
 select.focus() \nПередаёт фокус списку selection.
 select.handleEvent() \nВызывает обработчик для специфицированного события
 
-#string=anchor.text
-#string=link.text
-#string=option.text
-#string=window.name
-#string=form.name
-#string=image.name
-#string=array.input
-#string=RegExp.input
+#$string=^%b''
+#$string=^%b""
+#$string=%a+%.text$
+#$string=%a+%.name$
+#$string=%a+%.input$
 #string=array.join
-#string=document.formName
-#string=document.title
-#string=document.URL
-#string=document.linkColor
-#string=document.vlinkColor
-#string=document.bgColor
-#string=layer.bgColor
-#string=array.toString
-#string=boolean.toString
-#string=JavaArray.toString
-#string=number.toString
-#string=object.toString
-#string=RegExp.toString
-#string=date.toString
-#string=date.toGMTString
-#string=date.toLocaleString
-#string=date.toUTCString
+#$string=%a+%.formName$
+#$string=%a+%.title$
+#$string=%a+%.URL$
+#$string=%a+%.linkColor$
+#$string=%a+%.vlinkColor$
+#$string=%a+%.bgColor$
+#$string=%a+%.toString$
+#$string=%a+%.toGMTString$
+#$string=%a+%.toLocaleString$
+#$string=%a+%.toUTCString$
 string.constructor \nСпецифицирует функцию, которая создаёт прототип объекта.
 string.length \nОтражает длину строки.
 string.prototype \nПозволяет добавлять свойства в String-объект.
