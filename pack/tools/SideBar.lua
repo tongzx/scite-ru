@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev
-version 1.8.4
+version 1.8.5
 ------------------------------------------------------
   Note: Needed gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
   Connection:
@@ -825,10 +825,12 @@ local old_OnUpdateUI = OnUpdateUI
 function OnUpdateUI()
 	local result
 	if old_OnUpdateUI then result = old_OnUpdateUI() end
-	local line_count_new = editor.LineCount
-	if line_count_new ~= line_count then
-		OnDocumentContentsChanged()
-		line_count = line_count_new
+	if #props['FileName'] ~= 0 then
+		local line_count_new = editor.LineCount
+		if line_count_new ~= line_count then
+			OnDocumentContentsChanged()
+			line_count = line_count_new
+		end
 	end
 	return result
 end

@@ -1,12 +1,16 @@
--- Показ имени текущего лексера в строке статуса
--- mozers, VladVRO
+--[[--------------------------------------------------
+lexer_name.lua
+Authors: mozers™, VladVRO
+version 1.1
+------------------------------------------------------
+Показ имени текущего лексера в строке статуса
 
--- Подключение:
--- В файл SciTEStartup.lua добавьте строку:
---   dofile (props["SciteDefaultHome"].."\\tools\\lexer_name.lua")
--- включите scite.lexer.name в статусную строку:
---   statusbar.text.1=Line:$(LineNumber) Col:$(ColumnNumber) [$(scite.lexer.name)]
------------------------------------------------
+Подключение:
+В файл SciTEStartup.lua добавьте строку:
+  dofile (props["SciteDefaultHome"].."\\tools\\lexer_name.lua")
+включите scite.lexer.name в статусную строку:
+  statusbar.text.1=Line:$(LineNumber) Col:$(ColumnNumber) [$(scite.lexer.name)]
+--]]--------------------------------------------------
 
 local last_lexer
 local function SetPropLexerName()
@@ -26,7 +30,9 @@ local old_OnUpdateUI = OnUpdateUI
 function OnUpdateUI ()
 	local result
 	if old_OnUpdateUI then result = old_OnUpdateUI() end
-	SetPropLexerName()
+	if #props['FileName'] ~= 0 then
+		SetPropLexerName()
+	end
 	return result
 end
 
