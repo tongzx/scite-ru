@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 RestoreRecent.lua
 Authors: mozers™
-Version: 1.1
+Version: 1.1.1
 ------------------------------------------------------
 Description:
   Restore position, bookmarks, folds at opening recent file
@@ -34,7 +34,7 @@ local buffers={} -- масив {номер_файла, {имя_параметра, значение_параметра} }
 local function ReadSessionToTable()
 	for i = 1, props['buffers'] do
 		local path = props['buffer.'..i..'.path']
-		if #path ~= 0 then
+		if path ~= '' then
 			-- если элемент таблицы отсутствует, то создаем его (как вложенную таблицу)
 			if buffers[i] == nil then buffers[i] = {} end
 			buffers[i].path = path
@@ -43,13 +43,13 @@ local function ReadSessionToTable()
 		end
 
 		local position = props['buffer.'..i..'.position']
-		if #position ~= 0 then buffers[i].position = position end
+		if position ~= '' then buffers[i].position = position end
 
 		local bookmarks = props['buffer.'..i..'.bookmarks']
-		if #bookmarks ~= 0 then buffers[i].bookmarks = bookmarks end
+		if bookmarks ~= '' then buffers[i].bookmarks = bookmarks end
 
 		local folds = props['buffer.'..i..'.folds']
-		if #folds ~= 0 then buffers[i].folds = folds end
+		if folds ~= '' then buffers[i].folds = folds end
 	end
 end
 
@@ -96,7 +96,7 @@ end
 
 -- Восстановление позиции курсора, букмарков и фолдинга для заданного файла
 local function Restore(file)
-	if (#file==0) then return end
+	if file == '' then return end
 	local FileParams = CheckSession() -- проверка наличия данных о файле в таблице buffers
 	if FileParams ~= nil then
 		-- Restore folding

@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev
-version 1.8.5
+version 1.8.6
 ------------------------------------------------------
   Note: Needed gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
   Connection:
@@ -224,7 +224,7 @@ function FileMan_FileRename()
 	if filename == '' or filename == '..' then return end
 	local filename_new = shell.inputbox("Rename", "Enter new file name:", filename, function(name) return not name:match('[\\/:|*?"<>]') end)
 	if filename_new == nil then return end
-	if #filename_new ~= 0 and filename_new ~= filename then
+	if filename_new ~= '' and filename_new ~= filename then
 		os.rename(current_path..filename, current_path..filename_new)
 		FileMan_ListFILL()
 	end
@@ -376,7 +376,7 @@ local function Favorites_OpenList()
 	local favorites_file = io.open(favorites_filename)
 	if favorites_file then
 		for line in favorites_file:lines() do
-			if #line ~= 0 then
+			if line ~= '' then
 				line = ReplaceWithoutCase(line, '$(SciteDefaultHome)', props['SciteDefaultHome'])
 				list_fav_table[#list_fav_table+1] = line
 			end
@@ -626,7 +626,7 @@ local function Bookmark_Add(line_number)
 	local line_text = editor:GetLine(line_number)
 	if line_text == nil then line_text = '' end
 	line_text = line_text:gsub('^%s+', ''):gsub('%s+', ' ')
-	if #line_text == 0 then
+	if line_text == '' then
 		line_text = ' - empty line - ('..(line_number+1)..')'
 	end
 	local buffer_number = GetBufferNumber()
@@ -696,7 +696,7 @@ local function Abbreviations_ListFILL()
 		local abbrev_file = io.open(file)
 		if abbrev_file then
 			for line in abbrev_file:lines() do
-				if #line ~= 0 then
+				if line ~= '' then
 					local _abr, _exp = line:match('^([^#].-)=(.+)')
 					if _abr ~= nil then
 						list_abbrev:add_item({_abr, _exp}, _exp)
@@ -825,7 +825,7 @@ local old_OnUpdateUI = OnUpdateUI
 function OnUpdateUI()
 	local result
 	if old_OnUpdateUI then result = old_OnUpdateUI() end
-	if #props['FileName'] ~= 0 then
+	if props['FileName'] ~= '' then
 		local line_count_new = editor.LineCount
 		if line_count_new ~= line_count then
 			OnDocumentContentsChanged()

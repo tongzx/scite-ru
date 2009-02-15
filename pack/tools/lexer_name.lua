@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 lexer_name.lua
 Authors: mozers™, VladVRO
-version 1.1
+version 1.1.1
 ------------------------------------------------------
 Показ имени текущего лексера в строке статуса
 
@@ -30,7 +30,7 @@ local old_OnUpdateUI = OnUpdateUI
 function OnUpdateUI ()
 	local result
 	if old_OnUpdateUI then result = old_OnUpdateUI() end
-	if #props['FileName'] ~= 0 then
+	if props['FileName'] ~= '' then
 		SetPropLexerName()
 	end
 	return result

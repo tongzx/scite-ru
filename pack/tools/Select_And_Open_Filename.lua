@@ -1,7 +1,7 @@
 --[[----------------------------------------------------------------------------
 Select_And_Open_Filename.lua
 Author: VladVRO
-version 1.4
+version 1.4.1
 
 Расширение команды "Открыть выделенный файл" для случая когда выделения нет.
 А также возможность открыть файл по двойному клику мыши на его имени при нажатой
@@ -75,7 +75,7 @@ local function Select_And_Open_File(immediately)
 	end 
 	local filename = sci:GetSelText()
 
-	if string.len(filename) == 0 then
+	if filename == '' then
 		loadIncludes(props['select.and.open.include'])
 		
 		-- try to select file name near current position

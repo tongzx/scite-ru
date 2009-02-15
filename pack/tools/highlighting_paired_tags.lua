@@ -1,6 +1,6 @@
 --[[--------------------------------------------------
 Highlighting Paired Tags
-Version: 1.7.2
+Version: 1.7.3
 Author: mozers™, VladVRO
 ------------------------------
 Подсветка парных и непарных тегов в HTML и XML
@@ -84,7 +84,7 @@ local old_OnUpdateUI = OnUpdateUI
 function OnUpdateUI ()
 	local result
 	if old_OnUpdateUI then result = old_OnUpdateUI() end
-	if #props['FileName'] ~= 0 then
+	if props['FileName'] ~= '' then
 		if tonumber(props["hypertext.highlighting.paired.tags"]) == 1 then
 			if editor.LexerLanguage == "hypertext" or editor.LexerLanguage == "xml" then
 				PairedTagsFinder()

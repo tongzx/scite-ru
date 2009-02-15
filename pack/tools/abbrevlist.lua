@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 abbrevlist.lua
 Authors: Dmitry Maslov, frs, mozers™
-version 2.1.1
+version 2.1.2
 ------------------------------------------------------
   Если при вставке расшифровки аббревиатуры (Ctrl+B) не нашлось точного соответствия,
   то выводится список соответствий начинающихся с этой комбинации символов.
@@ -36,7 +36,7 @@ local function ReadAbbrevFile(file)
 	local abbrev_file = io.open(file)
 	if abbrev_file then
 		for line in abbrev_file:lines() do
-			if #line ~= 0 then
+			if line ~= '' then
 				local _abr, _exp = line:match('^([^#].-)=(.+)')
 				if _abr ~= nil then
 					table_expansions[#table_expansions+1] = {_abr, _exp}
@@ -57,7 +57,7 @@ end
 local function CreateExpansionList()
 	table_expansions = {}
 	local abbrev_filename = props["AbbrevPath"]
-	if #abbrev_filename == 0 then return end
+	if abbrev_filename == '' then return end
 	ReadAbbrevFile(abbrev_filename)
 end
 

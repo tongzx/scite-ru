@@ -1,6 +1,6 @@
 --[[--------------------------------------------------
  Rename.lua
- Version: 2.2
+ Version: 2.2.1
  Author: mozersЩ (иде€ codewarlock1101)
  ------------------------------------------------
  ѕереименовывает текущий файл
@@ -18,7 +18,7 @@ local msg2 = scite.GetTranslation("The file with such name already exists!\nPlea
 repeat
 	filename_new = shell.inputbox(title, msg1, filename_new, function(name) return not name:match('[\\/:|*?"<>]') end)
 	if filename_new == nil then return end
-	if #filename_new == 0 then return end
+	if filename_new == '' then return end
 	if filename_new == filename then return end
 	if not shell.fileexists(filename_new) then break end
 	shell.msgbox(msg2, title)

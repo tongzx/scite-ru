@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 AutocompleteObject.lua
 mozersЩ, Tymur Gubayev
-version 3.10
+version 3.10.1
 ------------------------------------------------------
 Inputting of the symbol set in autocomplete.[lexer].start.characters causes the popup list of properties and methods of input_object. They undertake from corresponding api-file.
 In the same case inputting of a separator changes the case of symbols in input_object's name according to a api-file.
@@ -238,7 +238,7 @@ local function FindDeclaration()
 		if _start == nil then break end
 		-- убираем пробелы в начале/конце
 		sRightString = sRightString:gsub("^%s*(%S*)%s*$", "%1")
-		if #sRightString ~= 0 then
+		if sRightString ~= '' then
 			-- анализируем текст справа от знака "="
 			-- провер€ем, а не содержитс€ ли там описанный в api объект?
 			local obj = IsObject(sRightString)
