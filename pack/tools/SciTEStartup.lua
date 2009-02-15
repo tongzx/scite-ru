@@ -79,7 +79,7 @@ dofile (props["SciteDefaultHome"].."\\tools\\xComment.lua")
 dofile (props["SciteDefaultHome"].."\\tools\\Open_Selected_Filename.lua")
 
 -- Расширение стандартной команды SciTE "Открыть выделенный файл" (открывает без предварительного выделения)
--- А также возможность открыть файл по клику мыши на его имени при нажатой клавише Ctrl.
+-- А также возможность открыть файл по двойному клику мыши на его имени при нажатой клавише Ctrl.
 dofile (props["SciteDefaultHome"].."\\tools\\Select_And_Open_Filename.lua")
 
 ----[[ А В Т О М А Т И З А Ц И Я ]]-------------------------------------------

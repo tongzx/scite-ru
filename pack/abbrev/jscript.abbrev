@@ -17,7 +17,7 @@ xml=var xml = new ActiveXObject("Microsoft.XMLHTTP");\n
 #Code Snippets
 if=if (|i == 0) {\n\t\n} else {\n\t\n}\n
 do=do {\n\t|\n} while (true);\n
-for=for (i=0; i<i_max; i++) {\n\t\n}\n
+for=for (var i=0; i<i_max; i++) {\n\t\n}\n
 try=try {\n\t\n} catch(e) {\n\t\n}\n
 switch=switch(var){\n\tcase 1:\n\t\tbreak;\n\tcase 2:\n\t\tbreak;\n\tcase 3:\n\t\tbreak;\n\tdefault:\n\t\t\n};\n
 eh=WScript.Echo('|');
