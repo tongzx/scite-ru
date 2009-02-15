@@ -1,5 +1,5 @@
 -- COMMON.lua
--- Version: 1.4
+-- Version: 1.41
 ---------------------------------------------------
 -- Общие функции, использующиеся во многих скриптах
 ---------------------------------------------------
@@ -8,6 +8,55 @@
 package.cpath = props["SciteDefaultHome"].."\\tools\\LuaLib\\?.dll;"..package.cpath
 require 'shell'
 require 'gui'
+
+--------------------------------------------------------
+-- Замена ф-ций string.lower() и string.upper()
+-- Работает с любыми национальными кодировками
+-- Требует наличие корректно заданного параметра chars.accented = АаБб...
+if props["chars.accented"] ~= "" then
+	local old_lower = string.lower
+	function string.lower(s)
+		local locale = props["chars.accented"]
+		if not s:find('['..locale..']') then return old_lower(s) end -- нет нац. символов => пользуемся старой функцией
+		local res = "" -- здесь будем собирать результат
+		local ch -- символ
+		local pos -- позиция в локали
+		for i = 1, #s do
+			ch = s:sub(i,i)
+			pos = locale:find(ch,1,true)
+			if pos then
+				if pos%2==1 then res = res..locale:sub(pos+1,pos+1)
+				else res = res..ch
+				end
+			else --if not in locale
+				res = res..old_lower(ch)
+			end
+		end
+		return res
+	end
+
+	local old_upper = string.upper
+	function string.upper(s)
+		local locale = props["chars.accented"]
+		if not s:find('['..locale..']') then return old_upper(s) end -- нет нац. символов => пользуемся старой функцией
+		local res = "" -- здесь будем собирать результат
+		local ch -- символ
+		local pos -- позиция в локали
+		for i = 1, #s do
+			ch = s:sub(i,i)
+			pos = locale:find(ch,1,true)
+			if pos then
+				if pos%2==0 then res = res..locale:sub(pos-1,pos-1)
+				else res = res..ch
+				end
+			else --if not in locale
+				res = res..old_upper(ch)
+			end
+		end
+		return res
+	end
+	
+end -- IFDEF chars.accented
 
 --------------------------------------------------------
 -- Проверяет параметр на nil и если это так то возвращает default иначе возвращает сам параметр
