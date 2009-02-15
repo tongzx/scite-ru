@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 RestoreRecent.lua
 Authors: mozers™
-Version: 1.1.1
+Version: 1.1.2
 ------------------------------------------------------
 Description:
   Restore position, bookmarks, folds at opening recent file
@@ -27,7 +27,6 @@ Connection:
 ----------------------
 -- ON STARTUP SCITE --
 ----------------------
-os.setlocale ("Russian_Russia.1251") -- для правильной работы ф-ции string.lower() с русскими буквами
 local buffers={} -- масив {номер_файла, {имя_параметра, значение_параметра} }
 
 -- Чтение параметров SciTE.session в таблицу buffers (параметры доступны, поскольку файл подключен директивой import)
