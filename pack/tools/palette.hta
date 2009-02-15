@@ -262,6 +262,7 @@ a:hover{color:#FF4500;}
 	function ReturnSelectColor(){
 		var resultColor = document.getElementById('result').value;
 		if (resultColor != "") {
+			if (!/^#/.test(strInput)) resultColor = resultColor.replace(/^#/, '');
 			var strOut = strInput.replace(regEx, resultColor);
 			// ----------------------------------------------------
 			try {
