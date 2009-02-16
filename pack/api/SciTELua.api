@@ -49,11 +49,11 @@ io.read
 io.tmpfile
 io.type
 io.write
-#$file=io.tmpfile%b()
-#$file=io.popen%b()
-#$file=io.open%b()
-#$file=io.output%b()
-#$file=io.input%b()
+#$file=io%.tmpfile%s*%b()
+#$file=io%.popen%s*%b()
+#$file=io%.open%s*%b()
+#$file=io%.output%s*%b()
+#$file=io%.input%s*%b()
 file:close ([file])\n  closes file, or the default output file
 file:flush ()\n  flushes the default output file
 file:input ([file])\n  opens file in text mode, sets as default input file, or returns current default input file
@@ -206,7 +206,7 @@ message (msg,kind)\n message box with the desired message text  /extern lib "gui
 prompt_value (prompt,default)\n ask the user to enter a single string value  /extern lib "gui"/
 run (program_or_document, parameters)\n launch a program or open a document  /extern lib "gui"/
 
-#win=gui.window
+#$win=gui%.window%s*%b()
 win:add(list1, "top", height)\n "top" or "bottom"
 win:add(list1, "left", width)\n "left" or "right"
 win:client(list1)\n list or memo
@@ -217,7 +217,7 @@ win:hide()
 win:context_menu {'item1|func1', 'item2|func2'}
 win:bounds()\n return visible, x, y, width, height
 
-#pan=gui.panel
+#$pan=gui%.panel%s*%b()
 pan:add(list1, "top", height)\n "top" or "bottom"
 pan:add(list1, "left", width)\n "left" or "right"
 pan:client(list1)\n list or memo
@@ -225,12 +225,12 @@ pan:size(width, height)
 pan:context_menu {'item1|func1', 'item2|func2'}
 pan:bounds()\n return visible, x, y, width, height
 
-#tab=gui.tabbar
+#$tab=gui%.tabbar%b()
 tab:client(list1)\n list or memo
 tab:add_tab("Tab1 heading", list1)
 tab:on_select(function(index) print(index) end)
 
-#lst=gui.list
+#$lst=gui%.list%s*%b()
 lst:size(width, height)\n Note: Changes either height or width (one of parameters is ignored)
 lst:set_list_colour("#FFFFFF", "#000000")\n foreground, background
 lst:set_selected_item(index)
@@ -247,7 +247,7 @@ lst:on_select(function(index) print(index) end)
 lst:on_double_click(function(index) print(index) end)
 lst:on_key(function(key) print(key) end)
 
-#mem=gui.memo
+#$mem=gui%.memo%s*%b()
 mem:size(width, height)\n Note: Changes either height or width (one of parameters is ignored)
 mem:set_text('{\\rtf{\\fonttbl{\\f0\\fcharset0 Helv;}}\\f0\\fs16'..'sample text'..'}')
 mem:set_memo_colour("#FFFFFF", "#000000")\n foreground, background
@@ -263,10 +263,45 @@ require (packagename)\n loads package, updates _LOADED, returns boolean
 setfenv (f, table)\n  sets env, f can be a function or number (stack level, default=1), 0=global env
 setmetatable (table, metatable)\n  sets metatable, nil to remove metatable
 
-#$string_value=%b''
-#$string_value=%b""
+#$string_value='.-'
+#$string_value=".-"
 #$string_value=%[%[.-%]%]
-#$string_value=tostring%b()
+#$string_value=tostring%s*%b()
+#$string_value=[%w_]+:char%s*%b()
+#$string_value=[%w_]+:format%s*%b()
+#$string_value=[%w_]+:gsub%s*%b()
+#$string_value=[%w_]+:lower%s*%b()
+#$string_value=[%w_]+:match%s*%b()
+#$string_value=[%w_]+:rep%s*%b()
+#$string_value=[%w_]+:sub%s*%b()
+#$string_value=[%w_]+:upper%s*%b()
+#$string_value=string.char%s*%b()
+#$string_value=string.format%s*%b()
+#$string_value=string.gsub%s*%b()
+#$string_value=string.lower%s*%b()
+#$string_value=string.match%s*%b()
+#$string_value=string.rep%s*%b()
+#$string_value=string.sub%s*%b()
+#$string_value=string.upper%s*%b()
+#$string_value=table.concat%s*%b()
+#$string_value=editor:textrange%s*%b()
+#$string_value=scite%.ConstantName%s*%b()
+#$string_value=props%s%b[]
+#$string_value=editor:GetCurLine%s%b()
+#$string_value=editor:GetLine%s%b()
+#$string_value=editor:GetProperty%s%b()
+#$string_value=editor:GetPropertyExpanded%s%b()
+#$string_value=editor:GetSelText%s%b()
+#$string_value=editor:GetText%s%b()
+#$string_value=editor:TargetAsUTF%s%b()
+#string_value=editor.AutoCFillUps
+#$string_value=editor%.KeyWords%s*%b[]
+#string_value=editor.LexerLanguage
+#$string_value=editor%.Property%s*%b[]
+#$string_value=editor%.StyleFont%s*%b[]
+#string_value=editor.WhitespaceChars
+#string_value=editor.WordChars
+#$string_value=shell%.inputbox%s*%b()
 string_value:byte
 string_value:char
 string_value:dump
