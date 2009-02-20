@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 AutocompleteObject.lua
 mozersЩ, Tymur Gubayev
-version 3.10.1
+version 3.10a
 ------------------------------------------------------
 Inputting of the symbol set in autocomplete.[lexer].start.characters causes the popup list of properties and methods of input_object. They undertake from corresponding api-file.
 In the same case inputting of a separator changes the case of symbols in input_object's name according to a api-file.
@@ -85,6 +85,8 @@ History:
 3.10(Tymur):
 	* пофикшен мелкий баг, когда не распознавались некоторые объекты ("azimuth:right-" не вызывал список с "side")
 	* пофикшен паттерн распознавани€ методов (эффект заметен только если autocomplete.lexer.start.characters пересекаютс€ с word.characters.lexer, например, дл€ css)
+3.10a(Tymur):
+	* очередной патч дл€ css (в выпадающем списке больше не будут по€вл€тьс€ неправильные элементы, сравн. "text-"до и после патча)
 --]]----------------------------------------------------
 
 local current_pos = 0    -- текуща€ позици€ курсора, важно дл€ InsertMethod
@@ -238,7 +240,7 @@ local function FindDeclaration()
 		if _start == nil then break end
 		-- убираем пробелы в начале/конце
 		sRightString = sRightString:gsub("^%s*(%S*)%s*$", "%1")
-		if sRightString ~= '' then
+		if #sRightString ~= 0 then
 			-- анализируем текст справа от знака "="
 			-- провер€ем, а не содержитс€ ли там описанный в api объект?
 			local obj = IsObject(sRightString)
@@ -312,8 +314,9 @@ local function CreateMethodsTable(obj)
 	for i = 1, #api_table do
 		local line = api_table[i]
 		-- ищем строки, которые начинаютс€ с заданного "объекта"
-		local _, _end = line:find(obj..sep_char, 1, 1)
-		if _end ~= nil and line:sub(1,1)~='#' then
+		local _start, _end = line:find(obj..sep_char, 1, true)
+		if _end ~= nil and line:sub(1,1)~='#' and
+			(_start == 1 or line:gsub(_start-1,_start-1)==sep_char) then
 			-- local _start, _end, str_method = line:find('([^'..auto_start_chars_patt..']+)', _end+1)
 			local _start, _end, str_method = line:find('(['..fPattern(editor.WordChars)..']+)', _end+1)
 			if _start ~= nil then
