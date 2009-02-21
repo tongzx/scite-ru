@@ -253,13 +253,13 @@ Private Function Text2String(text As String) As String
         Case 9
             Char = "\t"
         Case 10
-            Char = "\r"
+            Char = "\n"
         Case 11
             Char = "\v"
         Case 12
             Char = "\f"
         Case 13
-            Char = "\n"
+            Char = "\r"
         Case 92
             Char = "\\"
         End Select
@@ -289,13 +289,13 @@ Private Function String2Text(str As String) As String
                     Char = Chr$(8)
                 Case "t"
                     Char = Chr$(9)
-                Case "r"
+                Case "n"
                     Char = Chr$(10)
                 Case "v"
                     Char = Chr$(11)
                 Case "f"
                     Char = Chr$(12)
-                Case "n"
+                Case "r"
                     Char = Chr$(13)
                 Case "\"
                     Char = Chr$(92)
