@@ -61,9 +61,6 @@ dofile (props["SciteDefaultHome"].."\\tools\\ROWrite.lua")
 ----[[ С К О Б К И   К О М М Е Н Т А Р И И ]]-------------------------------
 
 -- Автозакрытие скобок
---~ dofile (props["SciteDefaultHome"].."\\tools\\braces_autoclose.lua")
-
--- Автозакрытие скобок
 dofile (props["SciteDefaultHome"].."\\tools\\smartbraces.lua")
 
 -- Автозакрытие HTML тегов
@@ -138,10 +135,6 @@ dofile (props["SciteDefaultHome"].."\\tools\\Calculator\\SciTECalculatorPD.lua")
 
 -- Вставка спецсимволов (©,®,§,±,…) из раскрывающегося списка (для HTML вставляются их обозначения)
 dofile (props["SciteDefaultHome"].."\\tools\\InsertSpecialChar.lua")
-
--- Установка / снятие меток на строку (Bookmark) (то же что и Ctrl+F2)
--- с помощью клика мыши при нажатой клавише Ctrl
---~ dofile (props["SciteDefaultHome"].."\\tools\\BookmarkToggle.lua")
 
 ----[[ Н А С Т Р О Й К И   И Н Т Е Р Ф Е Й С А ]]-----------------------------
 
