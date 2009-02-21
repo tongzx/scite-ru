@@ -622,21 +622,21 @@ void SciTEWin::DestroyMenuItem(int menuNumber, int itemID) {
 	}
 }
 
-//!-start-[user.toolbar CheckButton]
+//!-start-[ToolbarButtonPressed]
 void CheckButton(HWND wTools, int id, bool enable) {
 	if (wTools) {
 		::SendMessage(wTools, TB_CHECKBUTTON, id,
 		          Platform::LongFromTwoShorts(static_cast<short>(enable ? TRUE : FALSE), 0));
 	}
 }
-//!-end-[user.toolbar CheckButton]
+//!-end-[ToolbarButtonPressed]
 
 void SciTEWin::CheckAMenuItem(int wIDCheckItem, bool val) {
 	if (val)
 		CheckMenuItem(::GetMenu(MainHWND()), wIDCheckItem, MF_CHECKED | MF_BYCOMMAND);
 	else
 		CheckMenuItem(::GetMenu(MainHWND()), wIDCheckItem, MF_UNCHECKED | MF_BYCOMMAND);
-	::CheckButton(reinterpret_cast<HWND>(wToolBar.GetID()), wIDCheckItem, val); //!-add-[user.toolbar CheckButton]
+	::CheckButton(reinterpret_cast<HWND>(wToolBar.GetID()), wIDCheckItem, val); //!-add-[ToolbarButtonPressed]
 }
 
 void EnableButton(HWND wTools, int id, bool enable) {
