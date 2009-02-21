@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SortText.lua
-Authors: Tugarinov Sergey & mozersЩ
-version 2.0
+Authors: Tugarinov Sergey, mozersЩ, Tymur Gubayev
+version 2.1
 ------------------------------------------------------
 Sorting selected lines_tbl alphabetically and vice versa
 —ортировка выделенных строк по алфавиту и наоборот
@@ -15,11 +15,12 @@ Connection:
 
 local lines_tbl = {} -- “аблица со строками нашего текста
 local sort_direction_decreasing = false -- ќбратный пор€док сортировки
+local patt = [[^[%s'"`Ђ]*]] -- патерн дл€ сортировки без учета пробелов и кавычек в начале строки
 
 -- сравниваем две строки
 local function CompareTwoLines(line1, line2)
-	line1 = line1:gsub('^%s*', '')
-	line2 = line2:gsub('^%s*', '')
+	line1 = line1:gsub(patt, '')
+	line2 = line2:gsub(patt, '')
 	if sort_direction_decreasing then
 		return (line1:lower() > line2:lower())
 	else
@@ -27,12 +28,13 @@ local function CompareTwoLines(line1, line2)
 	end
 end
 
--- автоматически определ€ем направление сортировки сравнива€ две первые неравные строки
+-- автоматически определ€ем направление сортировки, последовательно сравнива€ строки с последней строкой
 local function GetSortDirection()
-	local prev_line = lines_tbl[1]
-	for _, current_line in pairs(lines_tbl) do
-		if current_line:gsub('^%s*', '') ~= prev_line:gsub('^%s*', '') then
-			return not CompareTwoLines(current_line, prev_line)
+	local end_line = lines_tbl[#lines_tbl]:gsub(patt, '')
+	for i = 1, #lines_tbl-1 do
+		local comp_line = lines_tbl[i]:gsub(patt, '')
+		if comp_line ~= end_line then
+			return CompareTwoLines(comp_line, end_line)
 		end
 	end
 end
@@ -46,7 +48,7 @@ if sel_text ~= '' then
 	for current_line in sel_text:gmatch('[^\n]+') do
 		lines_tbl[#lines_tbl+1] = current_line
 	end
-	if #lines_tbl > 2 then
+	if #lines_tbl > 1 then
 		sort_direction_decreasing = GetSortDirection()
 		-- сортируем строки в таблице
 		table.sort(lines_tbl, CompareTwoLines)
