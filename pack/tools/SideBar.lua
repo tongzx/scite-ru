@@ -794,9 +794,17 @@ function SideBar_ShowHide()
 	end
 end
 
-local function OnDocumentContentsChanged()
+local function OnDocumentCountLinesChanged(def_line_count)
 	if tab1:bounds() then -- visible Funk/Bmk
-		Functions_GetNames() Functions_ListFILL()
+		local cur_line = editor:LineFromPosition(editor.CurrentPos)
+		for i = 1, #table_functions do
+			local table_line = table_functions[i][2]
+			if table_line > cur_line then
+				table_functions[i][2] = table_line + def_line_count
+			end
+		end
+		Functions_ListFILL()
+
 		Bookmarks_RefreshTable()
 	end
 end
@@ -819,16 +827,17 @@ function OnOpen(file)
 	return result
 end
 
--- Add user event handler OnUpdateUI
+-- Add user event handler OnKey
 local line_count = 0
-local old_OnUpdateUI = OnUpdateUI
-function OnUpdateUI()
+local old_OnKey = OnKey
+function OnKey(key, shift, ctrl, alt, char)
 	local result
-	if old_OnUpdateUI then result = old_OnUpdateUI() end
-	if props['FileName'] ~= '' then
+	if old_OnKey then result = old_OnKey(key, shift, ctrl, alt, char) end
+	if (editor.Focus) then
 		local line_count_new = editor.LineCount
-		if line_count_new ~= line_count then
-			OnDocumentContentsChanged()
+		local def_line_count = line_count_new - line_count
+		if def_line_count ~= 0 then
+			OnDocumentCountLinesChanged(def_line_count)
 			line_count = line_count_new
 		end
 	end
@@ -858,3 +867,53 @@ function OnFinalise()
 	Favorites_SaveList()
 	return result
 end
+
+----------------------------------------------------------
+-- Go to function definition
+----------------------------------------------------------
+-- Замена почему то неработаеющего props['CurrentWord']
+local function GetCurrentWord()
+	local current_pos = editor.CurrentPos
+	return editor:textrange( editor:WordStartPosition(current_pos, true),
+							editor:WordEndPosition(current_pos, true))
+end
+
+-- По имени функции находим строку с ее объявлением (инфа берется из table_functions)
+local function Func2Line(funcname)
+	if #table_functions == 0 then
+		local err1 = scite.GetTranslation("For jump to")
+		local err2 = scite.GetTranslation("function definition need once to open tab 'Func/Bmk' on SideBar")
+		print ('Error :\t'..err1..' '..funcname..' '..err2)
+	end
+	for i = 1, #table_functions do
+		local pos = table_functions[i][1]:find(funcname, 1, true)
+		if pos ~= nil then
+			if pos <= 6 then
+				return table_functions[i][2]
+			end
+		end
+	end
+end
+
+-- Переход на строку с объявлением функции
+local function JumpToFuncDefinition()
+	local funcname = GetCurrentWord()
+	local line = Func2Line(funcname)
+	if line then
+		editor:GotoLine(line)
+		return true
+	end
+	return false
+end
+
+-- Add user event handler OnClick
+local old_OnClick = OnClick
+function OnClick(shift, ctrl, alt)
+	local result
+	if old_OnClick then result = old_OnClick(shift, ctrl, alt) end
+	if ctrl then
+		if JumpToFuncDefinition() then return true end
+	end
+	return result
+end
+
