@@ -76,6 +76,7 @@ class SciTEWin : public SciTEBase {
 protected:
 	void SetToolBar();	//!-add-[user.toolbar]
 	TMap<int,int, SString, const char *> ToolBarTips; //!-add-[user.toolbar]
+	TArray<int,int> toolbarUsersPressableButtons; //!-add-[ToolbarButtonPressed]
 
 	int cmdShow;
 	static HINSTANCE hInstance;

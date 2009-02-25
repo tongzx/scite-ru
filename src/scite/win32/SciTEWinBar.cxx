@@ -450,6 +450,7 @@ struct BarButtonIn {
 
 void SciTEWin::SetToolBar() {
 	ToolBarTips.RemoveAll();
+	toolbarUsersPressableButtons.RemoveAll(); //!-add-[ToolbarButtonPressed]
 	wToolBar.Destroy();
 	HWND hwndToolBar = ::CreateWindowEx( 0,
 										 TOOLBARCLASSNAME,
@@ -512,6 +513,15 @@ void SciTEWin::SetToolBar() {
 					BarButtonIn(strlen(userContextItem)?atoi(userContextItem):-1, 
 					GetMenuCommandAsInt(command)));
 				ToolBarTips[GetMenuCommandAsInt(command)]=tips;
+//!-start-[ToolbarButtonPressed]
+				int id = atoi(command);
+				if (id > IDM_TOOLS) {
+					SString prefix = "command.checked." + SString(id - IDM_TOOLS) + ".";
+					SString val = props.GetNewExpand(prefix.c_str(), fileNameForExtension.c_str());
+					if (val != "")
+						toolbarUsersPressableButtons.Add(id);
+				}
+//!-end-[ToolbarButtonPressed]
 			}
 			userContextItem += strlen(userContextItem) + 1;
 			
@@ -655,6 +665,17 @@ void SciTEWin::EnableAMenuItem(int wIDCheckItem, bool val) {
 }
 
 void SciTEWin::CheckMenus() {
+//!-start-[ToolbarButtonPressed]
+	// check user toolbar buttons status
+	if (props.GetInt("toolbar.visible") != 0) {
+		SString fileNameForExtension = ExtensionFileName();
+		for (int i = 0; i < toolbarUsersPressableButtons.GetSize(); i++) {
+			SString prefix = "command.checked." + SString(toolbarUsersPressableButtons[i] - IDM_TOOLS) + ".";
+			int ischecked = props.GetNewExpand(prefix.c_str(), fileNameForExtension.c_str()).value();
+			::CheckButton(reinterpret_cast<HWND>(wToolBar.GetID()), toolbarUsersPressableButtons[i], ischecked);
+		}
+	}
+//!-end-[ToolbarButtonPressed]
 	SciTEBase::CheckMenus();
 	CheckMenuRadioItem(::GetMenu(MainHWND()), IDM_EOL_CRLF, IDM_EOL_LF,
 	                   SendEditor(SCI_GETEOLMODE) - SC_EOL_CRLF + IDM_EOL_CRLF, 0);
