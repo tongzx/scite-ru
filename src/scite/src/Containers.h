@@ -248,7 +248,7 @@ public:
 	
 	// Clean up
 	void RemoveAll() {
-		return m_ArrayData.RemoveAll();
+		m_ArrayData.RemoveAll();
 	}
 	
 	// Accessing elements
