@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev
-version 1.8.6
+version 1.8.7
 ------------------------------------------------------
   Note: Needed gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
   Connection:
@@ -570,6 +570,12 @@ local function Functions_ListFILL()
 	else
 		table.sort(table_functions, function(a, b) return a[1]<b[1] end)
 	end
+	-- remove duplicates
+	for i = #table_functions, 2, -1 do
+		if table_functions[i][2] == table_functions[i-1][2] then
+			table.remove (table_functions, i)
+		end
+	end
 	list_func:clear()
 	for _, a in ipairs(table_functions) do
 		list_func:add_item(a[1], a[2])
@@ -906,14 +912,13 @@ local function JumpToFuncDefinition()
 	return false
 end
 
--- Add user event handler OnClick
-local old_OnClick = OnClick
-function OnClick(shift, ctrl, alt)
+-- Add user event handler OnDoubleClick
+local old_OnDoubleClick = OnDoubleClick
+function OnDoubleClick(shift, ctrl, alt)
 	local result
-	if old_OnClick then result = old_OnClick(shift, ctrl, alt) end
-	if ctrl then
+	if old_OnDoubleClick then result = old_OnDoubleClick(shift, ctrl, alt) end
+	if shift then
 		if JumpToFuncDefinition() then return true end
 	end
 	return result
 end
-
