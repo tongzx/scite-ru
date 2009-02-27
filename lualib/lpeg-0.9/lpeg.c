@@ -20,7 +20,8 @@
 #define PATTERN_T	"pattern"
 
 /* maximum call/backtrack levels */
-#define MAXBACK		400
+/* #define MAXBACK		400 */
+#define MAXBACK		1000
 
 /* initial size for capture's list */
 #define IMAXCAPTURES	600
