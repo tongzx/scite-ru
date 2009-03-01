@@ -12,7 +12,7 @@ scroll=no
 selection=no
 contextMenu=no
 singleinstance=yes
-version=2.9
+version=3.0
 >
 <meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
 <style type="text/css">
@@ -72,66 +72,7 @@ var script_path = unescape(self.location.href).replace(/file:\/\/\/([a-z]:.*)\/.
 var reg_backup = 'HKLM\\SOFTWARE\\SciTE\\Script\\WinIntegrator\\';
 var scite_path = '';
 
-// После нажатия на "ОК" проверяем, изменил ли пользователь установки
-// и выполняем только те позиции, в которых состояние чекбоксов изменилось
-function Set(){
-	// --------------------------------
-	if (form.chk_lng[0].checked){
-		if (!SetSciteLocale('eng')){return false}
-	}else{
-		if (!SetSciteLocale('rus')){return false}
-	}
-	for (i=0;i<form.chk.length;i++){
-		if (form.chk[i].checked.toString() != form.chk[i].value.toString()){
-			if (form.chk[i].checked){
-				if (!SetValue(form.chk[i].id)) {return false}
-			}else{
-				if (!UnSetValue(form.chk[i].id)) {return false}
-			}
-		}
-	}
-	// --------------------------------
-	self.close();
-}
-
-// Установка регистрации
-function SetValue(id){
-	switch(id){
-	case "chk_associations":
-		return SetAssociations();
-	case "chk_openfor":
-		return SetOpenfor();
-	case "chk_ses":
-		return SetSessions();
-	case "chk_html_def":
-		return SetHTML_def();
-	case "chk_html":
-		return SetHTML();
-	case "chk_helper":
-		return SetHelper();
-	}
-}
-
-// Снятие регистрации
-function UnSetValue(id){
-	switch(id){
-	case "chk_associations":
-		return UnSetAssociations();
-	case "chk_openfor":
-		return UnSetOpenfor();
-	case "chk_ses":
-		return UnSetSessions();
-	case "chk_html_def":
-		return UnSetHTML_def();
-	case "chk_html":
-		return UnSetHTML();
-	case "chk_helper":
-		return UnSetHelper();
-	}
-}
-
 // Language =============================================
-
 function CheckRusLocaleProperties(){
 	var locale_file = scite_path + "\\locale.properties";
 	if (fso.FileExists(locale_file)){
@@ -147,32 +88,22 @@ function CheckRusLocaleProperties(){
 	return false;
 }
 
-function CheckLanguage(){
-	if (CheckRusLocaleProperties()){
-		form.chk_lng[1].checked = true;
-		SetInterfaceLng('rus');
-	}else{
-		form.chk_lng[0].checked = true;
-		SetInterfaceLng('eng');
-	}
-}
-
 function SetSciteLocale(lng){
 	if (lng == 'eng'){
 		if (CheckRusLocaleProperties()){
-			if (locale_rus_exists) {fso.DeleteFile(scite_path + "\\locale_rus.properties", true)};
+			if (locale_rus_exists) {fso.DeleteFile(scite_path + "\\locale_rus.properties", true);}
 			fso.MoveFile(scite_path + "\\locale.properties", scite_path + "\\locale_rus.properties");
 		}
 	}else{
 		if (!CheckRusLocaleProperties()){
 			if (locale_rus_exists){
 				if (fso.FileExists(scite_path + "\\locale.properties")) {
-					var old_name = "locale.old."
-					var n = 0
-					while (fso.FileExists(scite_path + "\\" + old_name + n + ".properties")) n++
-					fso.MoveFile(scite_path + "\\locale.properties", scite_path + "\\" + old_name + n + ".properties")
+					var old_name = "locale.old.";
+					var n = 0;
+					while (fso.FileExists(scite_path + "\\" + old_name + n + ".properties")) {n++;}
+					fso.MoveFile(scite_path + "\\locale.properties", scite_path + "\\" + old_name + n + ".properties");
 				}
-				fso.MoveFile(scite_path + "\\locale_rus.properties", scite_path + "\\locale.properties")
+				fso.MoveFile(scite_path + "\\locale_rus.properties", scite_path + "\\locale.properties");
 			}else{
 				alert("Русификация интерфейса SciTE невозможна ввиду отсутствия файла\n" + scite_path + "\\locale_rus.properties");
 				return false;
@@ -247,6 +178,16 @@ function SetInterfaceLng(lng){
 	}
 }
 
+function CheckLanguage(){
+	if (CheckRusLocaleProperties()){
+		form.chk_lng[1].checked = true;
+		SetInterfaceLng('rus');
+	}else{
+		form.chk_lng[0].checked = true;
+		SetInterfaceLng('eng');
+	}
+}
+
 // associations ============================================
 function CheckAssociations(){
 	form.chk_associations.checked = false;
@@ -266,9 +207,9 @@ function SetAssociations(){
 	var Arr_associations = form.associations.value.split(';');
 	for (var i=0;i<Arr_associations.length;i++){
 		var ext = Arr_associations[i];
-		if (ext != ''){
+		if (ext !== ''){
 			var current_association = "";
-			try {current_association = WshShell.RegRead('HKCR\\.'+ext+'\\')} catch(e) {}
+			try {current_association = WshShell.RegRead('HKCR\\.'+ext+'\\');} catch(e) {}
 			WshShell.RegWrite(reg_backup+ext, current_association);
 			WshShell.RegWrite('HKCR\\.'+ext+'\\', 'SciTE.File');
 		}
@@ -284,7 +225,7 @@ function UnSetAssociations(){
 	var Arr_associations = WshShell.RegRead(reg_backup+'associations').split(';');
 	for (var i=0;i<Arr_associations.length;i++){
 		var ext = Arr_associations[i];
-		if (ext != ''){
+		if (ext !== ''){
 			var old_association = "";
 			try {
 				old_association = WshShell.RegRead(reg_backup+ext);
@@ -319,7 +260,7 @@ function UnSetOpenfor(){
 		WshShell.RegDelete('HKCR\\*\\shell\\Open with SciTE\\command\\');
 		WshShell.RegDelete('HKCR\\*\\shell\\Open with SciTE\\');
 		return true;
-	}catch(e){return false}
+	}catch(e){return false;}
 }
 
 // session =================================================
@@ -345,7 +286,7 @@ function SetSessions(){
 	var text = 'var scite = "' + scite_path.replace(/\\/g,'\\\\') + '\\\\SciTE.exe";\n';
 	text += 'var WshShell = new ActiveXObject("WScript.Shell");\n';
 	text += 'var filename = WScript.Arguments(0);\n';
-	text += 'var opt = \'-check.if.already.open=0 \"-loadsession:\' + filename.replace(\/\\\\\/g,\"\\\\\\\\\") + \'\"\';\n'
+	text += 'var opt = \'-check.if.already.open=0 \"-loadsession:\' + filename.replace(\/\\\\\/g,\"\\\\\\\\\") + \'\"\';\n';
 	text += 'var cmd = \'\"\' + scite + \'\" \' + opt;\nWshShell.Run(cmd, 0, false);\n\n';
 	var file = fso.OpenTextFile(script_path + '\\' + open_ses_file, 2, true);
 	file.Write(text);
@@ -354,7 +295,7 @@ function SetSessions(){
 }
 
 function UnSetSessions(){
-	try{WshShell.RegDelete('HKCR\\.session\\')}catch(e){return false};
+	try{WshShell.RegDelete('HKCR\\.session\\');}catch(e){return false;}
 	return true;
 }
 
@@ -373,7 +314,7 @@ function CheckHTML_def(){
 
 function SetHTML_def(){
 	var current_htmldef = "";
-	try {var current_htmldef = WshShell.RegRead('HKLM\\SOFTWARE\\Microsoft\\Internet Explorer\\View Source Editor\\Editor Name\\')} catch(e) {}
+	try {current_htmldef = WshShell.RegRead('HKLM\\SOFTWARE\\Microsoft\\Internet Explorer\\View Source Editor\\Editor Name\\');} catch(e) {}
 	WshShell.RegWrite(reg_backup+'Source Editor', current_htmldef);
 	WshShell.RegWrite('HKLM\\SOFTWARE\\Microsoft\\Internet Explorer\\View Source Editor\\Editor Name\\', '"' + scite_path + '\\SciTE.exe"');
 	return true;
@@ -382,7 +323,7 @@ function SetHTML_def(){
 function UnSetHTML_def(){
 	var old_htmldef = "";
 	try {
-		var old_htmldef = WshShell.RegRead(reg_backup+'Source Editor');
+		old_htmldef = WshShell.RegRead(reg_backup+'Source Editor');
 		WshShell.RegDelete(reg_backup+'Source Editor');
 	} catch(e) {}
 	WshShell.RegWrite('HKLM\\SOFTWARE\\Microsoft\\Internet Explorer\\View Source Editor\\Editor Name\\', old_htmldef);
@@ -403,7 +344,7 @@ function CheckHTML(){
 function SetHTML(){
 	WshShell.RegWrite('HKCR\\.htm\\OpenWithList\\SCITE.EXE\\', '');
 	WshShell.RegWrite('HKCR\\Applications\\SCITE.EXE\\shell\\edit\\command\\', scite_path + '\\SciTE.exe "%1"');
-	try {WshShell.RegDelete('HKCU\\Software\\Microsoft\\Internet Explorer\\Default HTML Editor\\shell\\edit\\ddeexec\\')} catch(e) {};
+	try {WshShell.RegDelete('HKCU\\Software\\Microsoft\\Internet Explorer\\Default HTML Editor\\shell\\edit\\ddeexec\\');} catch(e) {}
 	WshShell.RegWrite('HKCU\\Software\\Microsoft\\Internet Explorer\\Default HTML Editor\\shell\\edit\\command\\', scite_path + '\\SciTE.exe "%1"');
 	WshShell.RegWrite('HKCU\\Software\\Microsoft\\Internet Explorer\\Default HTML Editor\\Description', 'SciTE - a Scintilla based Text Editor');
 	WshShell.RegWrite('HKCU\\Software\\Microsoft\\Shared\\HTML\\Default Editor\\shell\\edit\\command\\', scite_path + '\\SciTE.exe "%1"');
@@ -411,8 +352,21 @@ function SetHTML(){
 }
 
 function UnSetHTML(){
-	try{WshShell.RegDelete('HKCR\\.htm\\OpenWithList\\SCITE.EXE\\')}catch(e){return false};
+	try{WshShell.RegDelete('HKCR\\.htm\\OpenWithList\\SCITE.EXE\\');} catch(e) {return false;}
 	return true;
+}
+
+// =============================================================
+// Окно "msvbvm50.dll"
+function AlertMSVBVM50() {
+	var html = '<html><head>';
+	html += '<title>SciTE.Helper Install Error<\/title>';
+	html += '<meta http-equiv="content-type" content="text\/html; charset=windows-1251">';
+	html += '<\/head><style>body{text-align:center; background-color:infobackground; font-family:verdana; font-size:10pt; a{color:#000080; text-decoration:none;} a:hover{color:red;}<\/style><body>';
+	html += alert_msvbvm50_locale;
+	html += '<\/body><\/html>';
+	var WinAlert = window.open("about:blank", "", "height=80,width=450,status=no,toolbar=no,menubar=no,location=no");
+	WinAlert.document.write(html);
 }
 
 // helper ==================================================
@@ -430,7 +384,7 @@ function SetHelper(){
 	var file_dll = scite_path + '\\tools\\Helper\\SciTE.dll';
 	if (fso.FileExists(file_dll)){
 	var ret = WshShell.Run('cmd /c for /f %i in ("msvbvm50.dll") do if "%~$PATH:i"=="" exit /b 1', 0, true);
-		if (ret != 0) {
+		if (ret !== 0) {
 			AlertMSVBVM50();
 			return false;
 		} else {
@@ -449,6 +403,65 @@ function UnSetHelper(){
 }
 
 // =============================================================
+// Установка регистрации
+function SetValue(id){
+	switch(id){
+	case "chk_associations":
+		return SetAssociations();
+	case "chk_openfor":
+		return SetOpenfor();
+	case "chk_ses":
+		return SetSessions();
+	case "chk_html_def":
+		return SetHTML_def();
+	case "chk_html":
+		return SetHTML();
+	case "chk_helper":
+		return SetHelper();
+	}
+}
+
+// Снятие регистрации
+function UnSetValue(id){
+	switch(id){
+	case "chk_associations":
+		return UnSetAssociations();
+	case "chk_openfor":
+		return UnSetOpenfor();
+	case "chk_ses":
+		return UnSetSessions();
+	case "chk_html_def":
+		return UnSetHTML_def();
+	case "chk_html":
+		return UnSetHTML();
+	case "chk_helper":
+		return UnSetHelper();
+	}
+}
+
+// После нажатия на "ОК" проверяем, изменил ли пользователь установки
+// и выполняем только те позиции, в которых состояние чекбоксов изменилось
+function Set(){
+	// --------------------------------
+	if (form.chk_lng[0].checked){
+		if (!SetSciteLocale('eng')){return false;}
+	}else{
+		if (!SetSciteLocale('rus')){return false;}
+	}
+	for (i=0;i<form.chk.length;i++){
+		if (form.chk[i].checked.toString() != form.chk[i].value.toString()){
+			if (form.chk[i].checked){
+				if (!SetValue(form.chk[i].id)) {return false;}
+			}else{
+				if (!UnSetValue(form.chk[i].id)) {return false;}
+			}
+		}
+	}
+	// --------------------------------
+	self.close();
+}
+
+// =============================================================
 // Окно "О программе"
 function About() {
 	var ver = SWI.version;
@@ -462,19 +475,6 @@ function About() {
 	text += '<\/body><\/html>';
 	var WinAbout = showModelessDialog('about:blank', '', 'status:no; help:no; dialogWidth:250px; dialogHeight:140px;');
 	WinAbout.document.write(text);
-}
-
-// =============================================================
-// Окно "msvbvm50.dll"
-function AlertMSVBVM50() {
-	var html = '<html><head>';
-	html += '<title>SciTE.Helper Install Error<\/title>';
-	html += '<meta http-equiv="content-type" content="text\/html; charset=windows-1251">';
-	html += '<\/head><style>body{text-align:center; background-color:infobackground; font-family:verdana; font-size:10pt; a{color:#000080; text-decoration:none;} a:hover{color:red;}<\/style><body>';
-	html += alert_msvbvm50_locale;
-	html += '<\/body><\/html>';
-	var WinAlert = window.open("about:blank", "", "height=80,width=450,status=no,toolbar=no,menubar=no,location=no");
-	WinAlert.document.write(html);
 }
 
 // =============================================================
@@ -503,7 +503,7 @@ function FindSciTE(){
 
 function LoadForm(){
 	scite_path = FindSciTE();
-	if (scite_path == ""){
+	if (scite_path === ""){
 		alert("Can't find SciTE!\nPlease run this script from folder with SciTE");
 		self.close();
 	}

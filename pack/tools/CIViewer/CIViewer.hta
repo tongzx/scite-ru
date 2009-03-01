@@ -14,7 +14,7 @@ contextMenu=no
 caption=no
 showInTaskBar=no
 singleinstance=yes
-version=2.0
+version=2.1
 >
 <title>CI Viewer</title>
 <style type="text/css">
@@ -50,8 +50,8 @@ function ShowImage() {
 		self.ImageInfo.innerHTML = img_width + " x " + img_height;
 		var width_max = view_width - 6;
 		var height_max = view_height - 20;
-		if (img_width > width_max) {self.Picture.style.width = width_max};
-		if (img_height > height_max) {self.Picture.style.height = height_max};
+		if (img_width > width_max) {self.Picture.style.width = width_max;}
+		if (img_height > height_max) {self.Picture.style.height = height_max;}
 }
 
 // Попытка текущее слово подставить как параметр цвета
@@ -95,7 +95,7 @@ function Show() {
 		}
 	}
 	// запускаем заново эту процедуру через указанное время
-	setTimeout("Show()", check_props_timeout);
+	setTimeout(Show, check_props_timeout);
 }
 </script>
 </head>
@@ -154,7 +154,7 @@ SciTE.LUA("scite.SendEditor(SCI_SETMOUSEDWELLTIME, " + dwell_period + ")");
 // Изменение вида курсора при перетаскивании
 function cursor(c){
 	for (var i in document.all) {
-		try {document.all[i].style.cursor=c} catch(e) {}
+		try {document.all[i].style.cursor=c;} catch(e) {}
 	}
 }
 
@@ -180,16 +180,16 @@ document.onmousedown=function () {
 		SciTE.LUA("scite.SendEditor(SCI_SETMOUSEDWELLTIME, SC_TIME_FOREVER)");
 		self.close();
 	}
-}
+};
 
 document.onmouseup=function () {
 	document.onmousemove=null;
 	cursor("auto");
-}
+};
 
 document.mouseout=function () {
 	document.onmousemove=null;
 	cursor("auto");
-}
+};
 </script>
 </html>

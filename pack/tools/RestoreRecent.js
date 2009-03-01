@@ -1,7 +1,7 @@
 /*
 RestoreRecent.js
 Authors: mozers™
-Version: 1.2
+Version: 1.3
 ------------------------------------------------------
 Description:
   It is started from script RestoreRecent.lua
@@ -12,7 +12,9 @@ Description:
 
 var WshShell = new ActiveXObject("WScript.Shell");
 var FSO = new ActiveXObject("Scripting.FileSystemObject");
-var params = new Array('date', 'path', 'position', 'bookmarks', 'folds');
+
+var params = ['date', 'path', 'position', 'bookmarks', 'folds'];
+var cur_date, cur_date_string, recent_arr;
 
 try {
 	var scite_user_home = WScript.Arguments(0); // этот параметр передается в ком.строке родительского скрипта (RestoreRecent.lua)
@@ -20,25 +22,14 @@ try {
 	WScript.Echo('This script started only from RestoreRecent.lua!');
 	WScript.Quit(1);
 }
-
 var session_filename = scite_user_home + '\\SciTE.session';
 var recent_filename = scite_user_home + '\\SciTE.recent';
 
-var cur_date = GetDate();
-var cur_date_string = DateFormatString(cur_date);
-var recent_arr = ReadRecentFile(recent_filename);
-ReadSessionFile(session_filename);
-RemoveWaste();
-SaveRecentFile(recent_filename);
-
 // Возвращает массив, содержащий дату {d, m, y}
 function GetDate(obj) {
-	if (obj==undefined){
-		var d = new Date();
-	}else{
-		var d = new Date(obj);
-	}
-	var arr = new Array (d.getDate(), d.getMonth(), d.getYear());
+	var d = new Date(obj);
+	if (obj===undefined) {d = new Date();}
+	var arr = [d.getDate(), d.getMonth(), d.getYear()];
 	return arr;
 }
 
@@ -63,21 +54,21 @@ function DateFormatNumber(date_arr){
 // Преобразование строки даты "dd.mm.yyyy" к числу
 function DateString2Number(date_str){
 	var m = date_str.match(/(\d+)\.(\d+)\.(\d+)/);
-	var arr = new Array (Number(m[1]), Number(m[2])-1, Number(m[3]));
+	var arr = [Number(m[1]), Number(m[2])-1, Number(m[3])];
 	return DateFormatNumber(arr);
 }
 
 // Преобразование строкового имени параметра в числовой индекс
 function Param2Index(param){
 	for (var i=0; i<params.length; i++) {
-		if (param == params[i]) return i;
+		if (param == params[i]) {return i;}
 	}
 	return -1;
 }
 
 // Читаем SciTE.recent в двухмерный массив recent_arr[номер_файла][имя_параметра] = значение
 function ReadRecentFile(filename) {
-	var arr = new Array;
+	var arr = [];
 	if (FSO.FileExists(filename)) {
 		if (FSO.GetFile(filename).Size > 0) {
 			file = FSO.OpenTextFile(filename, 1);
@@ -89,7 +80,7 @@ function ReadRecentFile(filename) {
 					if (y != -1) {
 						var x = r[1];
 						if (!arr[x]) {
-							var arr_tmp = new Array;
+							var arr_tmp = [];
 							arr_tmp[y] = r[3];
 							arr[x] = arr_tmp;
 						}else{
@@ -107,11 +98,11 @@ function ReadRecentFile(filename) {
 // Проверка наличия в массиве записи с такими же данными (recent_arr[i][1] == имя_файла ?)
 function IsRecent(filespec){
 	for (var i=1; i<recent_arr.length; i++) {
-		if (recent_arr[i][1].toLowerCase() == filespec.toLowerCase()) break;
+		if (recent_arr[i][1].toLowerCase() == filespec.toLowerCase()) {break;}
 	}
 	// если запись о файле существует - уничтожаем все прежние данные о нем
 	// если запись отсутсвует - создаем ее и возвращаем новый размер массива
-	var arr_tmp = new Array;
+	var arr_tmp = [];
 	arr_tmp[0] = cur_date_string;
 	recent_arr[i] = arr_tmp;
 	return i;
@@ -127,7 +118,7 @@ function ReadSessionFile(filename){
 				var line = file.ReadLine();
 				var r = line.match(/buffer\.(\d)\.([a-z]+)=(.+)$/);
 				if (r) { // r = массив: {1-номер_файла, 2-имя_параметра, 3-значение}
-					if (r[2] == 'path') x = IsRecent(r[3]);
+					if (r[2] == 'path') {x = IsRecent(r[3]);}
 					var y = Param2Index(r[2]);
 					recent_arr[x][y] = r[3];
 				}
@@ -157,11 +148,11 @@ function RemoveWaste(){
 	}
 	// Процедура очистки запускается только 1 раз в день
 	if (cur_date_number > recent_date_number) {
-		for (var i=recent_arr.length-1; i>0; i--){
-			var link_date_number = DateString2Number(recent_arr[i][0]);
+		for (var j=recent_arr.length-1; j>0; j--){
+			var link_date_number = DateString2Number(recent_arr[j][0]);
 			if (cur_date_number - link_date_number > link_age) {
 			// если возраст линка больше указанного количества дней, то:
-				recent_arr.splice(i, 1);
+				recent_arr.splice(j, 1);
 			}
 		}
 	}
@@ -183,3 +174,10 @@ function SaveRecentFile(filename){
 	}
 	file.Close();
 }
+
+cur_date = GetDate();
+cur_date_string = DateFormatString(cur_date);
+recent_arr = ReadRecentFile(recent_filename);
+ReadSessionFile(session_filename);
+RemoveWaste();
+SaveRecentFile(recent_filename);

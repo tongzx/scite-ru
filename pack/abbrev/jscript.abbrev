@@ -1,7 +1,7 @@
 # JScript Abbreviations
 
 #New script file
-1=// Script Name\n// Version: 1.0\n// Author: \n// ------------------------------------------------\n// Description: \n// ------------------------------------------------\nvar WshShell = new ActiveXObject("WScript.Shell");\nvar FSO = new ActiveXObject("Scripting.FileSystemObject");\nvar ForReading = 1, ForWriting = 2, ForAppending = 8;\nvar SciTE=new ActiveXObject("SciTE.Helper");
+1=/*\nScript Name|\nVersion: 1.0\nAuthor: \n------------------------------------------------\nDescription: \n------------------------------------------------\nvar WshShell = new ActiveXObject("WScript.Shell");\nvar FSO = new ActiveXObject("Scripting.FileSystemObject");\nvar SciTE=new ActiveXObject("SciTE.Helper");\n*/\n
 
 #Object References
 wsh=var WshShell = new ActiveXObject("WScript.Shell");\n
@@ -15,20 +15,20 @@ sc=var sc = new ActiveXObject("MSScriptControl.ScriptControl");\n
 xml=var xml = new ActiveXObject("Microsoft.XMLHTTP");\n
 
 #Code Snippets
-if=if (|i == 0) {\n\t\n} else {\n\t\n}\n
+if=if (|i===0) {\n\t\n} else {\n\t\n}\n
 do=do {\n\t|\n} while (true);\n
 for=for (var i=0; i<i_max; i++) {\n\t\n}\n
 try=try {\n\t\n} catch(e) {\n\t\n}\n
-switch=switch(var){\n\tcase 1:\n\t\tbreak;\n\tcase 2:\n\t\tbreak;\n\tcase 3:\n\t\tbreak;\n\tdefault:\n\t\t\n};\n
+switch=switch(val){\n\tcase 1:\n\t\tbreak;\n\tcase 2:\n\t\tbreak;\n\tcase 3:\n\t\tbreak;\n\tdefault:\n\t\t\n}\n
 eh=WScript.Echo('|');
 
 #Functions
-fileread=// Read file\nfunction ReadFile(filename) {\n\tvar text = '';\n\tif (FSO.FileExists(filename)) {\n\t\tif (FSO.GetFile(filename).Size > 0) {\n\t\t\tvar file = FSO.OpenTextFile(filename);\n\t\t\tvar text = file.ReadAll();\n\t\t\tfile.Close();\n\t\t}\n\t}\n\treturn text;\n}\n
+fileread=// Read file\nfunction ReadFile(filename) {\n\tvar text = '';\n\tif (FSO.FileExists(filename)) {\n\t\tif (FSO.GetFile(filename).Size > 0) {\n\t\t\tvar file = FSO.OpenTextFile(filename);\n\t\t\ttext = file.ReadAll();\n\t\t\tfile.Close();\n\t\t}\n\t}\n\treturn text;\n}\n
 filewrite=// Write file\nfunction WriteFile(filename, text) {\n\tvar file = FSO.OpenTextFile(filename, 2, true);\n\tfile.Write(text);\n\tfile.Close();\n}\n
-file2arr=// Reading file to array\nfunction ReadFileToArray(filename){\n\tvar separator = "||";\n\tvar arr = new Array;\n\tif (FSO.FileExists(filename)) {\n\t\tif (FSO.GetFile(filename).Size > 0) {\n\t\t\tfile = FSO.OpenTextFile(filename, 1);\n\t\t\tvar i = 0;\n\t\t\twhile (!file.AtEndOfStream){\n\t\t\t\tvar line = file.ReadLine();\n\t\t\t\tarr[i] = line.split(separator);\n\t\t\t\ti++;\n\t\t\t}\n\t\t\tfile.Close();\n\t\t}\n\t}\n\treturn(arr);\n}\n
-arr2file=// Write array to file\nfunction WriteArrayToFile(filename, arr){\n\tvar separator = "||";\n\tvar arr_tmp = new Array;\n\tfor (var i=0; i<arr.length; i++){\n\t\tarr_tmp[i] = arr[i].join(separator);\n\t}\n\tvar file = FSO.OpenTextFile(filename, 2, true);\n\tfile.Write(arr_tmp.join("\\r\\n"));\n\tfile.Close();\n}\n
+file2arr=// Reading file to array\nfunction ReadFileToArray(filename){\n\tvar separator = "|";\n\tvar arr = [];\n\tif (FSO.FileExists(filename)) {\n\t\tif (FSO.GetFile(filename).Size > 0) {\n\t\t\tfile = FSO.OpenTextFile(filename, 1);\n\t\t\tvar i = 0;\n\t\t\twhile (!file.AtEndOfStream){\n\t\t\t\tvar line = file.ReadLine();\n\t\t\t\tarr[i] = line.split(separator);\n\t\t\t\ti++;\n\t\t\t}\n\t\t\tfile.Close();\n\t\t}\n\t}\n\treturn arr;\n}\n
+arr2file=// Write array to file\nfunction WriteArrayToFile(filename, arr){\n\tvar separator = "|";\n\tvar arr_tmp = [];\n\tfor (var i=0; i<arr.length; i++){\n\t\tarr_tmp[i] = arr[i].join(separator);\n\t}\n\tvar file = FSO.OpenTextFile(filename, 2, true);\n\tfile.Write(arr_tmp.join("\\r\\n"));\n\tfile.Close();\n}\n
 arrprint=// Print array\nfunction PrintArray(arr){\n\tvar value;\n\tfor (var i=0; i<arr.length; i++){\n\t\tif (arr[i]) {\n\t\t\tfor (var j=0; j<arr[i].length; j++){\n\t\t\t\tvalue = arr[i][j];\n\t\t\t\tWScript.Echo('arr[' + i + '][' + j + '] = ' + value);\n\t\t\t}\n\t\t}else{\n\t\t\tvalue = arr[i];\n\t\t\tWScript.Echo('arr[' + i + '] = ' + value);\n\t\t}\n\t}\n}\n
 scrpath=// Get script path (HTML document)\nvar script_path = unescape(document.URL).replace(/.*([A-Z]:\\\\.*)\\\\.*$/i, '$1');\n
-cdscr=// Change dir to script path\nvar script_path = FSO.GetParentFolderName(WScript.ScriptFullName)\nWshShell.CurrentDirectory = script_path\n
+cdscr=// Change dir to script path\nvar script_path = FSO.GetParentFolderName(WScript.ScriptFullName);\nWshShell.CurrentDirectory = script_path;\n
 download=// Download Web Page\nfunction GetXMLdata(url){\n\tvar req = new ActiveXObject("Microsoft.XMLHTTP");\n\tvar response_text = '';\n\ttry {\n\t\treq.open('GET', url, false);\n\t\treq.send(null);\n\t\tdo {\n\t\t\tif (req.status == 200) {\n\t\t\t\tresponse_text = req.responseText;\n\t\t\t} else {\n\t\t\t\tWScript.Echo ("> There was a problem retrieving the XML data: " + req.statusText);\n\t\t\t}\n\t\t\tWScript.sleep (10);\n\t\t} while (req.readyState != 4);\n\t} catch(e) {\n\t\tWScript.Echo ('Error open URL: ' + url);\n\t}\n\treturn response_text;\n}\n
-date=// Return date as "dd.mm.yyyy hh:mm:ss"\nfunction DateString(){\n\tfunction frt(x){return (x < 10) ? ('0' + x) : x}\n\tvar d = new Date();\n\tvar year = d.getYear();\n\tvar month = frt(d.getMonth()+1);\n\tvar day = frt(d.getDate());\n\tvar hours = frt(d.getHours());\n\tvar min = frt(d.getMinutes());\n\tvar sec = frt(d.getSeconds());\n\treturn (day + '.' + month + '.' + year + ' ' + hours + ':' + min + ':' + sec);\n}\n
+date=// Return date as "dd.mm.yyyy hh:mm:ss"\nfunction DateString(obj){\n\tfunction format(x){return (x < 10) ? ('0' + x) : x;}\n\tvar d = new Date();\n\tif (obj !== undefined) {d = new Date(obj);}\n\tvar year = d.getYear();\n\tvar month = format(d.getMonth()+1);\n\tvar day = format(d.getDate());\n\tvar hours = format(d.getHours());\n\tvar min = format(d.getMinutes());\n\tvar sec = format(d.getSeconds());\n\treturn (day + '.' + month + '.' + year + ' ' + hours + ':' + min + ':' + sec);\n}\n

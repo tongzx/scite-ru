@@ -15,7 +15,7 @@ contextMenu=no
 caption=no
 showInTaskBar=no
 singleinstance=yes
-version=1.1
+version=1.2
 >
 <title>html Toolbar</title>
 <style type="text/css">
@@ -30,26 +30,7 @@ try {
 	self.close();
 }
 
-var filename = SciTE.Props ("SciteUserHome") + "\\HTML_toolbar.ini";
-var Arr_BTN=new Array;
-var buttons=readfile(filename);
-if (buttons){
-	var Arr_tmp=buttons.split("\r\n");
-	for (i=0;i<Arr_tmp.length;i++){
-		Arr_BTN[i] = /(.*?)=(.*)/.exec(Arr_tmp[i]);
-	}
-}
-
-var btn_html = ""
-for (i=0;i<Arr_BTN.length;i++){
-	if (Arr_BTN[i]) {
-		btn_html += "<button onClick=\"AddTag(" + i + ")\">" + Arr_BTN[i][1] + "</button>&nbsp;";
-	}else{
-		btn_html += "<font size='3' disabled>|</font>&nbsp;";
-	}
-}
-
-function readfile(filename) {
+function ReadIniFile (filename) {
 	var fso = new ActiveXObject("Scripting.FileSystemObject");
 	if (fso.FileExists(filename)) {
 		if (fso.GetFile(filename).Size > 0) {
@@ -58,6 +39,25 @@ function readfile(filename) {
 			file.Close();
 			return text;
 		}
+	}
+}
+var filename = SciTE.Props ("SciteUserHome") + "\\HTML_toolbar.ini";
+var buttons = ReadIniFile (filename);
+var Arr_BTN = [];
+
+if (buttons){
+	var Arr_tmp=buttons.split("\r\n");
+	for (i=0;i<Arr_tmp.length;i++){
+		Arr_BTN[i] = /(.*?)=(.*)/.exec(Arr_tmp[i]);
+	}
+}
+
+var btn_html = "";
+for (i=0;i<Arr_BTN.length;i++){
+	if (Arr_BTN[i]) {
+		btn_html += "<button onClick=\"AddTag(" + i + ")\">" + Arr_BTN[i][1] + "</button>&nbsp;";
+	}else{
+		btn_html += "<font size='3' disabled>|</font>&nbsp;";
 	}
 }
 
@@ -97,7 +97,7 @@ TB.focus();
 
 function cursor(c){
 	for (var i in document.all) {
-		try {document.all[i].style.cursor=c} catch(e) {}
+		try {document.all[i].style.cursor=c;} catch(e) {}
 	}
 }
 
@@ -115,16 +115,16 @@ document.onmousedown=function () {
 		document.onmousemove=WindowDragHandler;
 		cursor("move");
 	}
-}
+};
 
 document.onmouseup=function () {
 	document.onmousemove=null;
 	cursor("auto");
-}
+};
 
 document.mouseout=function () {
 	document.onmousemove=null;
 	cursor("auto");
-}
+};
 </script>
 </html>

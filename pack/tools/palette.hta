@@ -11,7 +11,7 @@ scroll=no selection=no contextMenu=no singleinstance=yes version=0.4
 //  Copyright (c) 2002 by Fc-xix <http://xix.by.ru/utilities/cp/>, GNU Lesser General Public License
 //
 // Адаптировал HTA приложение для SciTE: mozers™
-// Версия: 0.2
+// Версия: 0.3
 // -----------------------------------------------------------------------
 // Скрипт вызывает приложение "Цветочник" для выбора цвета из нескольких доступных палитр
 // (Безопасные/Названные/Системные цвета)
@@ -34,8 +34,8 @@ function catchError(m,u,l)
 	var i = 0;
 	tmp[++i] = "В программе произошла ошибка #"+l;
 	tmp[++i] = "Причина: "+m;
-	tmp[++i] = "\nПрошу уведомить автора написав письмо на адрес eugenedest@yandex.ru. Письмо должно содержать: причину и номер возникшей ошибки, полное название вашей операционной системы и версию Internet Explorer'a."
-	tmp[++i] = "\nДля закрытия программы кликните по кнопке \"OK\"."
+	tmp[++i] = "\nПрошу уведомить автора написав письмо на адрес eugenedest@yandex.ru. Письмо должно содержать: причину и номер возникшей ошибки, полное название вашей операционной системы и версию Internet Explorer\'a.";
+	tmp[++i] = '\nДля закрытия программы кликните по кнопке \"OK\".';
 	alert(tmp.join("\n"));
 	window.close(true);
 	return true;
@@ -247,7 +247,7 @@ a:hover{color:#FF4500;}
 	// Читаем аргументы ком.строки
 	var cmd = hta_xixcp.commandLine.replace(/".*?" (.*)/g, "$1");
 	var strInput = defColor;
-	if (cmd != "") {strInput = cmd};
+	if (cmd !== "") {strInput = cmd;}
 
 	// Ищем, есть ли параметры цвета в считанном тексте
 	var regEx = /#?[0-9|A-F]{6}/i;
@@ -261,8 +261,8 @@ a:hover{color:#FF4500;}
 
 	function ReturnSelectColor(){
 		var resultColor = document.getElementById('result').value;
-		if (resultColor != "") {
-			if (!/^#/.test(strInput)) resultColor = resultColor.replace(/^#/, '');
+		if (resultColor !== "") {
+			if (!/^#/.test(strInput)) {resultColor = resultColor.replace(/^#/, '');}
 			var strOut = strInput.replace(regEx, resultColor);
 			// ----------------------------------------------------
 			try {

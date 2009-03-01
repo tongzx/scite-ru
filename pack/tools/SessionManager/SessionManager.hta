@@ -5,7 +5,7 @@
 <hta:application
 	id=SesMgr
 	applicationName=Session_Manager
-	version=1.0
+	version=1.1
 	maximizeButton=no
 	icon=sysedit.exe
 	innerBorder=no
@@ -27,17 +27,16 @@
 // Author: mozers™
 // ------------------------------------------------
 var CmdArg = SesMgr.commandLine.replace(/^".*?" */,'');
+var quit = false;
 if (/^QUIT /.test(CmdArg)) {
-	var quit = true;
 	CmdArg = CmdArg.replace(/^QUIT /,'');
-}else{
-	var quit = false;
+	quit = true;
 }
 
 // Подготовка диалогового окна
 var width = 300;
 var height = 325;
-if (CmdArg != ''){
+if (CmdArg !== ''){
 	window.resizeTo(width,212);
 }else{
 	window.resizeTo(width,height);
@@ -62,22 +61,122 @@ try {
 var WshShell = new ActiveXObject("WScript.Shell");
 var fso = new ActiveXObject("Scripting.FileSystemObject");
 var ForReading = 1, ForWriting = 2, ForAppending = 8;
-var Sessions_Arr = new Array;
+var Sessions_Arr = [];
 var save_description_edited = false;
-
 var script_path=unescape(window.document.URL).replace(/^.*(\w:\\.*\\).*?$/gi, '$1');
+
+// ------------------------------------------------
+// Получение полного пути из относительного
+function AbsolutePathName(path){
+	if (/^\w:\\/.test(path)) {
+		return path;
+	}else{
+		return script_path+path;
+	}
+}
 scite=AbsolutePathName(scite);
 scite_sessions_path=AbsolutePathName(scite_sessions_path);
+
+// ------------------------------------------------
+// Преобразование даты создания файла к виду "yy|dd|mm|hh|mm"
+function DateString (file_date){
+	function format(j){return (j < 10) ? ('0' + j) : j;}
+	var x = new Date(file_date);
+	var d = format(x.getDate());
+	var m = format(x.getMonth()+1);
+	var y = format(x.getYear()-2000);
+	var h = format(x.getHours());
+	var i = format(x.getMinutes());
+	return y + '|' + m + '|' + d + '|' + h + '|' + i;
+}
+
+// ------------------------------------------------
+// Извлекает описание из файла descript.ion
+function GetDescript(filename){
+	file_descript = scite_sessions_path + '\\descript.ion';
+	load_description.value = "";
+	if (fso.FileExists(file_descript)) {
+		var file = fso.OpenTextFile(file_descript, ForReading);
+		var text = file.ReadAll();
+		file.Close();
+		var re = new RegExp(filename+'"{0,1} ([^\r\n]*)','i');
+		if (re.test(text)) {
+			var rnl = new RegExp(chrNewLine,'g');
+			return text.match(re)[1].replace(rnl,'\r\n');
+		}
+	}
+	return "";
+}
+
+// ------------------------------------------------
+// функция для сортировки массива в убывающем порядке
+function compare(a, b) {
+	if (String(a) > String(b)) {return -1;}
+	if (String(a) < String(b)) {return 1;}
+	return 0;
+}
+
+// ------------------------------------------------
+// Создает массив сессий (в дальнейшем вся работа ведется с ним)
+function CreateSessionArray(){
+	var a_folder = fso.GetFolder(scite_sessions_path);
+	var the_files = new Enumerator(a_folder.Files);
+	for (;!the_files.atEnd();the_files.moveNext()) {
+		a_file = the_files.item();
+		if ((fso.GetExtensionName(a_file).toUpperCase()=='SESSION')&&(a_file.Name!='SciTE.session')) {
+			var session_arr = DateString(a_file.DateLastModified).split("|");
+			session_arr.push (a_file.Name.replace(/[.]\w*?$/,''));
+			session_arr.push (GetDescript(a_file.Name));
+			Sessions_Arr.push (session_arr);
+		}
+	}
+	return Sessions_Arr.sort(compare);
+}
+
+// ------------------------------------------------
+// Дата сохранения файла сессии
+function SesDate(i){
+	return Sessions_Arr[i][2]+"."+Sessions_Arr[i][1]+"."+Sessions_Arr[i][0]+" "+Sessions_Arr[i][3]+":"+Sessions_Arr[i][4];
+}
+
+// ------------------------------------------------
+// Имя файла сессии
+function SesFileName(i){
+	return Sessions_Arr[i][5];
+}
+
+// ------------------------------------------------
+// Создает листинг сохраненных сессий
+function DialogLoad_SessionList(){
+	var html = '';
+	for (var i=0; i<Sessions_Arr.length; i++) {
+		var option = SesDate(i)+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+SesFileName(i);
+		html += '<option>'+option;
+	}
+	// Отображаем список сессий
+	select.innerHTML = '<select id="sessions_opt" style="width:100%;" size=14 ondblclick="LoadSession(this.selectedIndex)" onkeydown="LoadOnKey(this.selectedIndex)" onchange="load_description.value = Descript(this.selectedIndex)" onmouseup="ShowRCMenu()">'+html+'</select>';
+	if (sessions_opt[0]) {sessions_opt[0].selected = true;}
+}
+
+// ------------------------------------------------
+// Текст описания сессии
+function Descript(i){
+	if (Sessions_Arr[i]) {
+		return Sessions_Arr[i][6];
+	} else {
+		return "";
+	}
+}
 
 // ------------------------------------------------
 // Инициализация диалогового окна открытия или сохранения сессии
 function Init(cmdline){
 	CreateSessionArray();
 	// Если в ком.строке запуска имеется параметр, то ...
-	if (CmdArg != ''){
+	if (CmdArg !== ''){
 		// ...отображаем диалог сохранения сессии
 		self.save.style.display = "inline";
-		var opt = ""
+		var opt = "";
 		for (var i=0; i<Sessions_Arr.length; i++) {
 			opt += '<OPTION>' + SesFileName(i) + '</OPTION>';
 		}
@@ -95,33 +194,16 @@ function Init(cmdline){
 }
 
 // ------------------------------------------------
-// Создает массив сессий (в дальнейшем вся работа ведется с ним)
-function CreateSessionArray(){
-	var a_folder = fso.GetFolder(scite_sessions_path);
-	var the_files = new Enumerator(a_folder.Files);
-	for (;!the_files.atEnd();the_files.moveNext()) {
-		a_file = the_files.item();
-		if ((fso.GetExtensionName(a_file).toUpperCase()=='SESSION')&&(a_file.Name!='SciTE.session')) {
-			var session_arr = DateString(a_file.DateLastModified).split("|")
-			session_arr.push (a_file.Name.replace(/[.]\w*?$/,''));
-			session_arr.push (GetDescript(a_file.Name));
-			Sessions_Arr.push (session_arr);
-		}
+// Определяет запущен SciTE или нет
+function ExistSciTEWindow(){
+	var objWMIService = GetObject("winmgmts:\\\\.\\root\\CIMV2");
+	var colItems = objWMIService.ExecQuery("SELECT * FROM Win32_Process");
+	var enumItems = new Enumerator(colItems);
+	for (; !enumItems.atEnd(); enumItems.moveNext()) {
+		var objItem = enumItems.item();
+		if (objItem.name == "SciTE.exe") {return true;}
 	}
-	return Sessions_Arr.sort(compare);
-}
-
-// ------------------------------------------------
-// Создает листинг сохраненных сессий
-function DialogLoad_SessionList(){
-	var html = '';
-	for (var i=0; i<Sessions_Arr.length; i++) {
-		var option = SesDate(i)+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+SesFileName(i);
-		html += '<option>'+option;
-	}
-	// Отображаем список сессий
-	select.innerHTML = '<select id="sessions_opt" style="width:100%;" size=14 ondblclick="LoadSession(this.selectedIndex)" onkeydown="LoadOnKey(this.selectedIndex)" onchange="load_description.value = Descript(this.selectedIndex)" onmouseup="ShowRCMenu()">'+html+'</select>';
-	if (sessions_opt[0]) {sessions_opt[0].selected = true}
+	return false;
 }
 
 // ------------------------------------------------
@@ -155,21 +237,6 @@ function DeleteSession(i){
 }
 
 // ------------------------------------------------
-// Действия при нажатии на кнопку "Save"
-function SaveSession(){
-	var ses_filename = scite_sessions_path + '\\' + ses_name.value + '.session';
-	if (!quit) {
-		// сохраняем текущую сессию
-		SciTE.Send('savesession:' + ses_filename.replace(/\\/g,"\\\\"));
-	} else {
-		fso.CopyFile(scite_sessions_path + '\\SciTE.session', ses_filename, true);
-	}
-	// обновляем descript.ion
-	SaveDescriptIon();
-	self.close();
-}
-
-// ------------------------------------------------
 // Создает одну строку для добавления в descript.ion
 function OneLineDescript(file,descr){
 	file += '.session';
@@ -182,7 +249,7 @@ function OneLineDescript(file,descr){
 // ------------------------------------------------
 // Сохранение описаний к сессиям в descript.ion
 function SaveDescriptIon(){
-	var descript_arr = new Array;
+	var descript_arr = [];
 	var new_file = true;
 	for (var i=0; i<Sessions_Arr.length; i++) {
 		if (ses_name.value != SesFileName(i)) {
@@ -198,7 +265,7 @@ function SaveDescriptIon(){
 
 	var filename = scite_sessions_path + '\\descript.ion';
 	if (fso.FileExists(filename)){
-		fso.DeleteFile(filename, true)
+		fso.DeleteFile(filename, true);
 	}
 
 	var f = fso.OpenTextFile(filename, ForWriting, true);
@@ -210,96 +277,34 @@ function SaveDescriptIon(){
 }
 
 // ------------------------------------------------
-// Получение полного пути из относительного
-function AbsolutePathName(path){
-	if (/^\w:\\/.test(path)) {
-		return path;
-	}else{
-		return script_path+path;
-	}
-}
-
-// ------------------------------------------------
-// Извлекает описание из файла descript.ion
-function GetDescript(filename){
-	file_descript = scite_sessions_path + '\\descript.ion'
-	load_description.value = "";
-	if (fso.FileExists(file_descript)) {
-		var file = fso.OpenTextFile(file_descript, ForReading);
-		var text = file.ReadAll();
-		file.Close();
-		var re = new RegExp(filename+'"{0,1} ([^\r\n]*)','i');
-		if (re.test(text)) {
-			var rnl = new RegExp(chrNewLine,'g');
-			return text.match(re)[1].replace(rnl,'\r\n');
-		}
-	}
-	return ""
-}
-
-// ------------------------------------------------
-// функция для сортировки массива в убывающем порядке
-function compare(a, b) {
-	if (String(a) > String(b)) return -1;
-	if (String(a) < String(b)) return 1;
-	return 0;
-}
-
-// ------------------------------------------------
-// Преобразование даты создания файла к нужному нам виду
-function DateString (file_date){
-	var x = new Date(file_date);
-	var d = format(x.getDate());
-	var m = format(x.getMonth()+1);
-	var y = format(x.getYear());
-	var h = format(x.getHours());
-	var i = format(x.getMinutes());
-	return y + '|' + m + '|' + d + '|' + h + '|' + i;
-}
-
-// ------------------------------------------------
-// используется в функции DateString
-function format(t){
-	t = '0'+t;
-	return t.replace(/.*(\d\d)/,'$1');
-}
-
-// ------------------------------------------------
-// Дата сохранения файла сессии
-function SesDate(i){
-	return Sessions_Arr[i][2]+"."+Sessions_Arr[i][1]+"."+Sessions_Arr[i][0]+" "+Sessions_Arr[i][3]+":"+Sessions_Arr[i][4]
-}
-
-// ------------------------------------------------
-// Имя файла сессии
-function SesFileName(i){
-	return Sessions_Arr[i][5]
-}
-
-// ------------------------------------------------
-// Текст описания сессии
-function Descript(i){
-	if (Sessions_Arr[i]) {
-		return Sessions_Arr[i][6]
+// Действия при нажатии на кнопку "Save"
+function SaveSession(){
+	var ses_filename = scite_sessions_path + '\\' + ses_name.value + '.session';
+	if (!quit) {
+		// сохраняем текущую сессию
+		SciTE.Send('savesession:' + ses_filename.replace(/\\/g,"\\\\"));
 	} else {
-		return ""
+		fso.CopyFile(scite_sessions_path + '\\SciTE.session', ses_filename, true);
 	}
+	// обновляем descript.ion
+	SaveDescriptIon();
+	self.close();
 }
 
 // ------------------------------------------------
 // Показывает контекстное меню по правой кнопке мыши на пункте из списка сессий
 function ShowRCMenu(){
-	if (event.button==1){return false}
+	if (event.button==1){return false;}
 	RCMenu=window.createPopup(); 
-	RCMenu.document.oncontextmenu = function(){return false};
-	with(RCMenu.document.body){
+	RCMenu.document.oncontextmenu = function(){return false;};
+	with (RCMenu.document.body) {
 		style.border = "2px outset";
 		bgColor = "buttonface";
 		innerHTML = right_click_menu.innerHTML;
 	}
 	for (i=0;i<RCMenu.document.all.menuitem.length;i++){
-		RCMenu.document.all.menuitem[i].onmouseover = function () {this.style.background="activecaption"; this.style.color="highlighttext"};
-		RCMenu.document.all.menuitem[i].onmouseout = function () {this.style.background="buttonface"; this.style.color="buttontext"};
+		RCMenu.document.all.menuitem[i].onmouseover = function () {this.style.background="activecaption"; this.style.color="highlighttext";};
+		RCMenu.document.all.menuitem[i].onmouseout = function () {this.style.background="buttonface"; this.style.color="buttontext";};
 	}
 	RCMenu.show(0, 0, 0, 0, document.body);
 	var w=RCMenu.document.body.scrollWidth+5;
@@ -353,7 +358,7 @@ function autoComplete (field) {
 	var found = false;
 	if (field.value.length > 0) {
 		for (var i = 0; i < self.Sessions.options.length; i++) {
-			if (self.Sessions.options[i].innerText.toUpperCase().indexOf(field.value.toUpperCase()) == 0) {
+			if (self.Sessions.options[i].innerText.toUpperCase().indexOf(field.value.toUpperCase()) === 0) {
 				found=true;
 				break;
 			}
@@ -380,19 +385,6 @@ function autoComplete (field) {
 			}
 		}
 	}
-}
-
-// ------------------------------------------------
-// Определяет запущен SciTE или нет
-function ExistSciTEWindow(){
-	var objWMIService = GetObject("winmgmts:\\\\.\\root\\CIMV2");
-	var colItems = objWMIService.ExecQuery("SELECT * FROM Win32_Process");
-	var enumItems = new Enumerator(colItems);
-	for (; !enumItems.atEnd(); enumItems.moveNext()) {
-		var objItem = enumItems.item();
-		if (objItem.name == "SciTE.exe") {return true};
-	}
-	return false;
 }
 
 </SCRIPT>
