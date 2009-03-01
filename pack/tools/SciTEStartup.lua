@@ -15,13 +15,10 @@ dofile (props["SciteDefaultHome"].."\\tools\\macro_support.lua")
 -- Автоматическое переключение кодировки в UTF-8
 dofile (props["SciteDefaultHome"].."\\tools\\UTF8_check.lua")
 
--- Смена кодировки Win1251/DOS866
-dofile (props["SciteDefaultHome"].."\\tools\\win2dos.lua")
+-- Смена кодировки Win1251/DOS866 и индикация текущей кодировки в строке состояния
+dofile (props["SciteDefaultHome"].."\\tools\\CodePage.lua")
 
 ----[[ С Т А Т У С Н А Я   С Т Р О К А ]]-----------------------------------
-
--- Индикация текущей кодировки в строке состояния
-dofile (props["SciteDefaultHome"].."\\tools\\codepage.lua")
 
 -- Показ имени текущего лексера в статусной строке
 dofile (props["SciteDefaultHome"].."\\tools\\lexer_name.lua")
