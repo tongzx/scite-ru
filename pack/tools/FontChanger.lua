@@ -11,7 +11,7 @@ local function FontChange()
 		props["font.set"]="0"
 	end
 	local nxt_font=string.char(string.byte(props["font.set"])+1)
-	if props["font."..nxt_font..".base"]=="" then  
+	if props["font."..nxt_font..".base"]=="" then
 		nxt_font="0"
 	end
 	props["font.base"] = props["font."..nxt_font..".base"]
