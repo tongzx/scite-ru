@@ -30,7 +30,7 @@ GOTO end
 
 :error_install
 ECHO Please install Python!
-ECHO For more information visit http://code.google.com/p/scite-ru/
+ECHO For more information visit http://scite.net.ru
 GOTO end
 
 :end

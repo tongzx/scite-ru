@@ -8,7 +8,7 @@ SET PATH=C:\MinGW\bin;%ProgramFiles%\CodeBlocks\bin
 CALL :check "gcc.exe"
 IF ERRORLEVEL 1 (
 	ECHO Error : Please install MinGW!
-	ECHO - For more information visit: http://code.google.com/p/scite-ru/
+	ECHO - For more information visit: http://scite.net.ru
 	GOTO error
 )
 

@@ -13,7 +13,7 @@
 
 -- ремарки по использованию:
 --  в скрипте используются функция shell.msgbox
---  (сборка Ru-Board, http://code.google.com/p/scite-ru)
+--  (сборка Ru-Board, http://scite.net.ru)
 ---------------------------------------------------
 
 function DEC_HEX(IN)

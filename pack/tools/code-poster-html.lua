@@ -13,8 +13,7 @@
 --  command.mode.125.*=subsystem:lua,savebefore:no
 
 -- ремарки по использованию:
---  - в скрипте используется функция editor.LexerLanguage (сборка Ru-Board,
---    http://scite.ruteam.ru/scite/sborki/scite-ru-board)
+--  - в скрипте используется функция editor.LexerLanguage (сборка Ru-Board, http://scite.net.ru)
 ---------------------------------------------------
 
 local STYLES = {
