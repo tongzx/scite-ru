@@ -2,6 +2,7 @@
 -- Àâòîğ: mozers™
 -- Version: 1.0
 -----------------------------------------------
+require 'shell'
 local sessionmanager_path = props['SciteDefaultHome']..'\\tools\\SessionManager\\SessionManager.hta'
 
 local function LoadSession()

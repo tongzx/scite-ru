@@ -7,6 +7,8 @@
 --   Добавьте в SciTEStartup.lua строку
 --     dofile (props["SciteDefaultHome"].."\\tools\\ROWrite.lua")
 -----------------------------------------------
+require 'shell'
+
 local function iif (expresion, onTrue, onFalse)
 	if (expresion) then return onTrue; else return onFalse; end
 end

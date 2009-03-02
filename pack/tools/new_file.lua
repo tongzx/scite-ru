@@ -18,6 +18,7 @@ Connection:
 In file SciTEStartup.lua add a line:
   dofile (props["SciteDefaultHome"].."\\tools\\new_file.lua")
 --]]----------------------------------------------------
+require 'shell'
 
 props["untitled.file.number"] = 0
 

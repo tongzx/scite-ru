@@ -12,6 +12,7 @@ add selected text to SciTE Abbreviation, enter the abbreviature in a dialog
  command.96.*=dofile $(SciteDefaultHome)\tools\MakeAbbrev.lua
  command.mode.96.*=subsystem:lua,savebefore:no
 --]]-------------------------------------------------
+require 'shell'
 
 -- Возвращает текущий символ перевода строки
 local function GetEOL()

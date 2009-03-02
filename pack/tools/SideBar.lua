@@ -16,6 +16,8 @@ version 1.8.7
     # Set show(1) or hide(0) to SciTE start
     sidebar.show=1
 --]]--------------------------------------------------
+require 'gui'
+require 'shell'
 
 -- you can choose to make it a stand-alone window; just uncomment this line:
 -- local win = true

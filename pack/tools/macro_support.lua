@@ -27,6 +27,7 @@ and next lines into SciTEUser.properties:
  command.mode.42.*=subsystem:lua,savebefore:no
 ---------------------------------------------------
 ]]
+require 'shell'
 
 scite.Perform("macroenable:1")
 

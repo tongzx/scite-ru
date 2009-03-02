@@ -15,6 +15,7 @@
 --  в скрипте используются функция shell.msgbox
 --  (сборка Ru-Board, http://scite.net.ru)
 ---------------------------------------------------
+require 'shell'
 
 function DEC_HEX(IN)
 	local B,K,OUT,I,D=16,"0123456789ABCDEF","",0

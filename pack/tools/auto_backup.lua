@@ -20,6 +20,7 @@
 --   backup.path=_bak_
 --   backup.path=$(TEMP)\SciTE
 ------------------------------------------------
+require 'shell'
 
 local function GetPath()
 	local path = props['backup.path']

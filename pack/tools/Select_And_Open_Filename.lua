@@ -22,6 +22,7 @@ version 1.4.1
 Для срабатывания по клику мыши добавить в файл настроек:
   select.and.open.by.click=1
 --]]----------------------------------------------------------------------------
+require 'shell'
 
 local function isFilenameChar(ch)
 	if

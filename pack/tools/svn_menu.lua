@@ -9,6 +9,7 @@ Add next line to lua startup file (SciTEStartup.lua):
 	dofile ("svn_menu.lua")
 ]]
 --++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+require 'shell'
 
 -- SVN menu
 local SVNContectMenu =

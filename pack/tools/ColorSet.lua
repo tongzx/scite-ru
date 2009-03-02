@@ -11,6 +11,7 @@ version 1.1
 
   Note: Needed gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
 --]]--------------------------------------------------
+require 'gui'
 
 local colour = props["CurrentSelection"]
 local prefix = false

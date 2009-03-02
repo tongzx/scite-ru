@@ -9,6 +9,7 @@
     command.31.*=dofile $(SciteDefaultHome)\tools\rename.lua
     command.mode.31.*=subsystem:lua,savebefore:no
 --]]--------------------------------------------------
+require 'shell'
 
 local filename = props["FileNameExt"]
 local filename_new = props["FileNameExt"]
