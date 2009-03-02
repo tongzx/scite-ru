@@ -173,7 +173,7 @@ end
 local function InitMarkStyle(style_number, indic_style, color, alpha_fill)
 	editor.IndicStyle[style_number] = indic_style
 	editor.IndicFore[style_number] = encodeRGB2WIN(color)
-	editor.IndicFillAlpha[style_number] = alpha_fill
+	editor.IndicAlpha[style_number] = alpha_fill
 end
 
 local function style(mark_string)

@@ -931,7 +931,7 @@ editor.HotspotActiveUnderline
 editor.HotspotSingleLine
 editor.Indent
 editor.IndentationGuides
-editor.IndicFillAlpha
+editor.IndicAlpha
 editor.IndicFore
 editor.IndicStyle
 editor.KeysUnicode
@@ -1064,7 +1064,7 @@ HotspotActiveUnderline = bool
 HotspotSingleLine = bool
 Indent = int
 IndentationGuides = bool
-IndicFillAlpha [int] = int \n Indicator (marker) fill alpha (0-255)
+IndicAlpha [int] = int \n Indicator (marker) fill alpha (0-255)
 IndicFore [int] = colour
 IndicStyle [int] = int
 KeysUnicode = bool /RW/ \n Always interpret keyboard input as Unicode
