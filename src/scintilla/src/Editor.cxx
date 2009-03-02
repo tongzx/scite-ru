@@ -7344,18 +7344,6 @@ sptr_t Editor::WndProc(unsigned int iMessage, uptr_t wParam, sptr_t lParam) {
 	case SCI_INDICGETFORE:
 		return (wParam <= INDIC_MAX) ? vs.indicators[wParam].fore.desired.AsLong() : 0;
 
-//!-start-[IndicatorsFillAlpha]
-	case SCI_INDICSETFILLALPHA:
-		if (wParam <= INDIC_MAX) {
-			vs.indicators[wParam].alphaFill = lParam;
-			InvalidateStyleRedraw();
-		}
-		break;
-
-	case SCI_INDICGETFILLALPHA:
-		return (wParam <= INDIC_MAX) ? vs.indicators[wParam].alphaFill : 0;
-//!-end-[IndicatorsFillAlpha]
-
 	case SCI_INDICSETUNDER:
 		if (wParam <= INDIC_MAX) {
 			vs.indicators[wParam].under = lParam != 0;
@@ -7365,6 +7353,17 @@ sptr_t Editor::WndProc(unsigned int iMessage, uptr_t wParam, sptr_t lParam) {
 
 	case SCI_INDICGETUNDER:
 		return (wParam <= INDIC_MAX) ? vs.indicators[wParam].under : 0;
+
+	case SCI_INDICSETALPHA:
+//!		if (wParam <= INDIC_MAX && lParam >=0 && lParam <= 100) {
+		if (wParam <= INDIC_MAX && lParam >=0 && lParam <= 255) { //!-change-[IndicatorsFillAlpha]
+			vs.indicators[wParam].fillAlpha = lParam;
+			InvalidateStyleRedraw();
+		}
+		break;
+
+	case SCI_INDICGETALPHA:
+		return (wParam <= INDIC_MAX) ? vs.indicators[wParam].fillAlpha : 0;
 
 	case SCI_SETINDICATORCURRENT:
 		pdoc->decorations.SetCurrentIndicator(wParam);

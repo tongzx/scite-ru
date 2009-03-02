@@ -210,6 +210,7 @@ int Scintilla_LinkLexers() {
 	LINK_LEXER(lmPLM);
 	LINK_LEXER(lmPo);
 	LINK_LEXER(lmPOV);
+	LINK_LEXER(lmPowerPro);
 	LINK_LEXER(lmPowerShell);
 	LINK_LEXER(lmProgress);
 	LINK_LEXER(lmProps);
@@ -221,6 +222,7 @@ int Scintilla_LinkLexers() {
 	LINK_LEXER(lmRuby);
 	LINK_LEXER(lmScriptol);
 	LINK_LEXER(lmSmalltalk);
+	LINK_LEXER(lmSorc);
 	LINK_LEXER(lmSpecman);
 	LINK_LEXER(lmSpice);
 	LINK_LEXER(lmSQL);

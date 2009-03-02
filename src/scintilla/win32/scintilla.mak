@@ -167,6 +167,7 @@ LEXOBJS=\
 	$(DIR_O)\LexPerl.obj \
 	$(DIR_O)\LexPLM.obj \
 	$(DIR_O)\LexPOV.obj \
+	$(DIR_O)\LexPowerPro.obj \
 	$(DIR_O)\LexPowerShell.obj \
 	$(DIR_O)\LexProgress.obj \
 	$(DIR_O)\LexPS.obj \
@@ -176,6 +177,7 @@ LEXOBJS=\
 	$(DIR_O)\LexRuby.obj \
 	$(DIR_O)\LexScriptol.obj \
 	$(DIR_O)\LexSmalltalk.obj \
+	$(DIR_O)\LexSorcus.obj \
 	$(DIR_O)\LexSpecman.obj \
 	$(DIR_O)\LexSpice.obj \
 	$(DIR_O)\LexSQL.obj \
@@ -419,6 +421,8 @@ $(DIR_O)\LexPLM.obj: ..\src\LexPLM.cxx $(LEX_HEADERS)
 
 $(DIR_O)\LexPOV.obj: ..\src\LexPOV.cxx $(LEX_HEADERS)
 
+$(DIR_O)\LexPowerPro.obj: ..\src\LexPowerPro.cxx $(LEX_HEADERS)
+
 $(DIR_O)\LexPowerShell.obj: ..\src\LexPowerShell.cxx $(LEX_HEADERS)
 
 $(DIR_O)\LexProgress.obj: ..\src\LexProgress.cxx $(LEX_HEADERS)
@@ -436,6 +440,8 @@ $(DIR_O)\LexRuby.obj: ..\src\LexRuby.cxx $(LEX_HEADERS)
 $(DIR_O)\LexScriptol.obj: ..\src\LexScriptol.cxx $(LEX_HEADERS)
 
 $(DIR_O)\LexSmalltalk.obj: ..\src\LexSmalltalk.cxx $(LEX_HEADERS)
+
+$(DIR_O)\LexSorcus.obj: ..\src\LexSorcus.cxx $(LEX_HEADERS)
 
 $(DIR_O)\LexSpecman.obj: ..\src\LexSpecman.cxx $(LEX_HEADERS)
 

@@ -626,7 +626,7 @@ static const char *propertiesToForward[] = {
 };
 
 /* XPM */
-static char *bookmarkBluegem[] = {
+static const char *bookmarkBluegem[] = {
 /* width height num_colors chars_per_pixel */
 "    15    15      64            1",
 /* colors */
@@ -1076,7 +1076,7 @@ void SciTEBase::ReadProperties() {
 	if (wordCharacters.length()) {
 		SendEditorString(SCI_SETWORDCHARS, 0, wordCharacters.c_str());
 	} else {
-		wordCharacters = "_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		wordCharacters = "_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 	}
 
 	whitespaceCharacters = props.GetNewExpand("whitespace.characters.", fileNameForExtension.c_str());

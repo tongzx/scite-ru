@@ -560,14 +560,6 @@ set void IndicSetFore=2082(int indic, colour fore)
 # Retrieve the foreground colour of an indicator.
 get colour IndicGetFore=2083(int indic,)
 
-##!-start-[IndicatorsFillAlpha]
-# Set the fill alpha of an indicator.
-set void IndicSetFillAlpha=2086(int indic, int alpha)
-
-# Retrieve the fill alpha of an indicator.
-get int IndicGetFillAlpha=2087(int indic,)
-##!-end-[IndicatorsFillAlpha]
-
 # Set an indicator to draw under text or over(default).
 set void IndicSetUnder=2510(int indic, bool under)
 
@@ -1847,6 +1839,12 @@ set void SetKeysUnicode=2521(bool keysUnicode,)
 # Are keys always interpreted as Unicode?
 get bool GetKeysUnicode=2522(,)
 
+# Set the alpha fill colour of the given indicator.
+set void IndicSetAlpha=2523(int indicator, int alpha)
+
+# Get the alpha fill colour of the given indicator.
+get int IndicGetAlpha=2524(int indicator,)
+
 # Start notifying the container of all key presses and commands.
 fun void StartRecord=3001(,)
 
@@ -2054,17 +2052,16 @@ val SCLEX_MAGIK=87
 val SCLEX_POWERSHELL=88
 val SCLEX_MYSQL=89
 val SCLEX_PO=90
-
-
-
 val SCLEX_TAL=91
 val SCLEX_COBOL=92
 val SCLEX_TACL=93
+val SCLEX_SORCUS=94
+val SCLEX_POWERPRO=95
 ##!-start-[Euphoria]
-val SCLEX_EUPHORIA=94
+val SCLEX_EUPHORIA=96
 ##!-end-[Euphoria]
 ##!-start-[ABAP]
-val SCLEX_ABAP=95
+val SCLEX_ABAP=97
 ##!-end-[ABAP]
 
 # When a lexer specifies its language as SCLEX_AUTOMATIC it receives a
@@ -3227,6 +3224,7 @@ val SCE_INNO_PARAMETER=3
 val SCE_INNO_SECTION=4
 val SCE_INNO_PREPROC=5
 val SCE_INNO_PREPROC_INLINE=6
+val SCE_INNO_INLINE_EXPANSION=6
 val SCE_INNO_COMMENT_PASCAL=7
 val SCE_INNO_KEYWORD_PASCAL=8
 val SCE_INNO_KEYWORD_USER=9
@@ -3457,6 +3455,36 @@ val SCE_PAS_STRINGEOL=11
 val SCE_PAS_CHARACTER=12
 val SCE_PAS_OPERATOR=13
 val SCE_PAS_ASM=14
+# Lexical state for SCLEX_SORCUS
+lex SORCUS=SCLEX_SORCUS SCE_SORCUS_
+val SCE_SORCUS_DEFAULT=0
+val SCE_SORCUS_COMMAND=1
+val SCE_SORCUS_PARAMETER=2
+val SCE_SORCUS_COMMENTLINE=3
+val SCE_SORCUS_STRING=4
+val SCE_SORCUS_STRINGEOL=5
+val SCE_SORCUS_IDENTIFIER=6
+val SCE_SORCUS_OPERATOR=7
+val SCE_SORCUS_NUMBER=8
+val SCE_SORCUS_CONSTANT=9
+# Lexical state for SCLEX_POWERPRO
+val SCE_POWERPRO_DEFAULT=0
+val SCE_POWERPRO_COMMENTBLOCK=1
+val SCE_POWERPRO_COMMENTLINE=2
+val SCE_POWERPRO_NUMBER=3
+val SCE_POWERPRO_WORD=4
+val SCE_POWERPRO_WORD2=5
+val SCE_POWERPRO_WORD3=6
+val SCE_POWERPRO_WORD4=7
+val SCE_POWERPRO_DOUBLEQUOTEDSTRING=8
+val SCE_POWERPRO_SINGLEQUOTEDSTRING=9
+val SCE_POWERPRO_LINECONTINUE=10
+val SCE_POWERPRO_OPERATOR=11
+val SCE_POWERPRO_IDENTIFIER=12
+val SCE_POWERPRO_STRINGEOL=13
+val SCE_POWERPRO_VERBATIM=14
+val SCE_POWERPRO_ALTQUOTE=15
+val SCE_POWERPRO_FUNCTION=16
 ##!-start-[Euphoria]
 # Lexical states for SCLEX_EUPHORIA
 lex Euphoria=SCLEX_EUPHORIA SCE_EUPHORIA_
@@ -3524,8 +3552,9 @@ evt void AutoCSelection=2022(string text)
 evt void IndicatorClick=2023(int modifiers, int position)
 evt void IndicatorRelease=2024(int modifiers, int position)
 evt void AutoCCancelled=2025(void)
+evt void AutoCCharDeleted=2026(void)
 ##!-start-[OnClick]
-evt void Click=2026(int modifiers)
+evt void Click=2061(int modifiers)
 ##!-end-[OnClick]
 ##!-start-[OnMouseButtonUp]
 evt void MouseButtonUp=2027(int modifiers)

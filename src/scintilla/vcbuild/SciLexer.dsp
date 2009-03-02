@@ -358,6 +358,10 @@ SOURCE=..\src\LexPOV.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\LexPowerPro.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\LexPowerShell.cxx
 # End Source File
 # Begin Source File
@@ -391,6 +395,10 @@ SOURCE=..\src\LexScriptol.cxx
 # Begin Source File
 
 SOURCE=..\src\LexSmalltalk.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\LexSorcus.cxx
 # End Source File
 # Begin Source File
 

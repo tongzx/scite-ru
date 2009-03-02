@@ -851,7 +851,7 @@ static const char *call_sfunction(lua_State *L, int nargs, bool ignoreFunctionRe
 }
 //!-end-[macro] [OnSendEditor]
 
-static bool CallNamedFunction(char *name) {
+static bool CallNamedFunction(const char *name) {
 	bool handled = false;
 	if (luaState) {
 		lua_getglobal(luaState, name);

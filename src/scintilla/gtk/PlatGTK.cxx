@@ -41,6 +41,10 @@
 #pragma warning(disable: 4505)
 #endif
 
+#ifdef SCI_NAMESPACE
+using namespace Scintilla;
+#endif
+
 enum encodingType { singleByte, UTF8, dbcs};
 
 struct LOGFONT {
@@ -673,7 +677,13 @@ void Font::Release() {
 	id = 0;
 }
 
-class SurfaceImpl : public Surface {
+// Required on OS X
+#ifdef SCI_NAMESPACE
+class Scintilla::SurfaceImpl : public Surface
+#else
+class SurfaceImpl : public Surface
+#endif
+{
 	encodingType et;
 	GdkDrawable *drawable;
 	GdkGC *gc;

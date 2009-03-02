@@ -274,17 +274,30 @@ static int classifyTagHTML(unsigned int start, unsigned int end,
 	s[i] = '\0';
 
 	// No keywords -> all are known
-	// Name of a closing tag starts at s + 1
 	char chAttr = SCE_H_TAGUNKNOWN;
 	if (s[0] == '!') {
 		chAttr = SCE_H_SGML_DEFAULT;
-	} else if (!keywords || keywords.InList(s[0] == '/' ? s + 1 : s)) {
+	} else if (!keywords || keywords.InList(s)) {
 		chAttr = SCE_H_TAG;
 	}
 	styler.ColourTo(end, chAttr);
 	if (chAttr == SCE_H_TAG) {
 		if (allowScripts && 0 == strcmp(s, "script")) {
-			chAttr = SCE_H_SCRIPT;
+			// check to see if this is a self-closing tag by sniffing ahead
+			bool isSelfClose = false;
+			for (unsigned int cPos = end; cPos <= end + 100; cPos++) {
+				char ch = styler.SafeGetCharAt(cPos, '\0');
+				if (ch == '\0' || ch == '>')
+					break;
+				else if (ch == '/' && styler.SafeGetCharAt(cPos + 1, '\0') == '>') {
+					isSelfClose = true;
+					break;
+				}
+			}
+
+			// do not enter a script state if the tag self-closed
+			if (!isSelfClose)
+				chAttr = SCE_H_SCRIPT;
 		} else if (!isXml && 0 == strcmp(s, "comment")) {
 			chAttr = SCE_H_COMMENT;
 		}
@@ -855,7 +868,7 @@ static void ColouriseHyperTextDoc(unsigned int startPos, int length, int initSty
 				state = SCE_H_SGML_COMMAND; // wait for a pending command
 			}
 			// fold whole tag (-- when closing the tag)
-			if (foldHTMLPreprocessor)
+			if (foldHTMLPreprocessor || (state == SCE_H_COMMENT))
 				levelCurrent++;
 			continue;
 		}
