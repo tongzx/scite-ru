@@ -873,6 +873,7 @@ void SciTEBase::SetOverrideLanguage(int cmdID) {
 	SendEditor(SCI_COLOURISE, 0, -1);
 	Redraw();
 	DisplayAround(rf);
+	CheckMenus(); //!-add-[Issue.115]
 }
 
 int SciTEBase::LengthDocument() {
