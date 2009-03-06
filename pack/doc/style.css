@@ -2,6 +2,7 @@ body, table, tr, th, td, span, div {font-family:Verdana;}
 body {font-size:0.8em; background-color: #FFFFFF;}
 a {color:#333399; text-decoration:none;}
 a:hover {background-color:#DDDDDD;}
+h1 {font-size:1.7em; color:#444444; border: 2px solid #FFCC00; background-color: #FFF7EE; padding: 2px 5px;}
 h3 {color:#333399; border: 2px solid #FFCC00; background-color: #FFF7EE; padding: 2px 5px;}
 h4 {font-size:1.1em;}
 h5 {background-color: #D0E8E8; margin-bottom:5pt; font-size:1em;}
@@ -68,10 +69,6 @@ DIV.highlighted {
 	border: 1px solid #C0D7C0;
 	margin: 0.3em 3em;
 	padding: 0.3em 0.6em;
-}
-
-table.tmenu {
-	border-width:0;
 }
 
 .tmenu td {
