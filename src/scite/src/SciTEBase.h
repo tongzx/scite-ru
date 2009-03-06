@@ -464,7 +464,9 @@ protected:
 	FilePath dirNameAtExecute;
 	FilePath dirNameForExecute;
 
-	enum { fileStackMax = 10 };
+//!	enum { fileStackMax = 10 };
+	enum { fileStackMax = 30 }; //!-change-[MoreRecentFiles]
+	enum { fileStackMaxDefault = 10 }; //!-add-[MoreRecentFiles]
 	RecentFile recentFileStack[fileStackMax];
 	enum { fileStackCmdID = IDM_MRUFILE, bufferCmdID = IDM_BUFFER };
 

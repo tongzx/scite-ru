@@ -966,7 +966,13 @@ void SciTEBase::DeleteFileStackMenu() {
 void SciTEBase::SetFileStackMenu() {
 	if (recentFileStack[0].IsSet()) {
 		SetMenuItem(menuFile, MRU_START, IDM_MRU_SEP, "");
-		for (int stackPos = 0; stackPos < fileStackMax; stackPos++) {
+//!		for (int stackPos = 0; stackPos < fileStackMax; stackPos++) {
+//!-start-[MoreRecentFiles]
+		int fileStackMaxToUse = props.GetInt("save.recent.max",fileStackMaxDefault); //-> props 
+		if ( fileStackMaxToUse > fileStackMax )
+			 fileStackMaxToUse = fileStackMax;
+		for (int stackPos = 0; stackPos < fileStackMaxToUse; stackPos++) {
+//!-end-[MoreRecentFiles]
 			//Platform::DebugPrintf("Setfile %d %s\n", stackPos, recentFileStack[stackPos].fileName.c_str());
 			int itemID = fileStackCmdID + stackPos;
 			if (recentFileStack[stackPos].IsSet()) {
@@ -974,7 +980,9 @@ void SciTEBase::SetFileStackMenu() {
 				entry[0] = '\0';
 #if PLAT_WIN
 
+				if ( stackPos < 10 ) //!-add-[MoreRecentFiles]
 				sprintf(entry, "&%d ", (stackPos + 1) % 10);
+				else sprintf(entry, "   "); //!-add-[MoreRecentFiles]
 #endif
 
 				strcat(entry, recentFileStack[stackPos].AsInternal());
