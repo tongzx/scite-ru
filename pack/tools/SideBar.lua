@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev
-version 1.8.7
+version 1.10.0
 ------------------------------------------------------
   Note: Needed gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
   Connection:
@@ -16,11 +16,17 @@ version 1.8.7
     # Set show(1) or hide(0) to SciTE start
     sidebar.show=1
 --]]--------------------------------------------------
+require 'lpeg'
 require 'gui'
 require 'shell'
 
 -- you can choose to make it a stand-alone window; just uncomment this line:
 -- local win = true
+
+-- local _DEBUG = true --включает вывод отладочной информации
+-- отображение флагов/параметров по умолчанию:
+local _show_flags = tonumber(props['sidebar.functions.flags']) == 1
+local _show_params = tonumber(props['sidebar.functions.params']) == 1
 
 local tab_index = 0
 local panel_width = 200
@@ -32,10 +38,12 @@ if win_height == '' then win_height = 600 end
 ----------------------------------------------------------
 local function ReplaceWithoutCase(text, s_find, s_rep)
 	local i, j = 1
+	local replaced = nil
 	repeat
 		i, j = text:lower():find(s_find:lower(), j, true)
-		if j == nil then return text end
+		if j == nil then return text, replaced end
 		text = text:sub(1, i-1)..s_rep..text:sub(j+1)
+		replaced = true
 	until false
 end
 
@@ -49,6 +57,34 @@ local function ShowCompactedLine(line_num)
 		editor:ToggleFold(x)
 		line_num = x - 1
 	end
+end
+
+if _DEBUG then
+local nametotime = {} -- maps names to starttimes
+	_DEBUG = {}
+	
+	_DEBUG.timerstart = function (name)
+		nametotime[name] = os.clock()
+	end -- _DEBUG.timerstart
+	
+	_DEBUG.timer = function (name,...)
+		if nametotime[name] then
+			local d = os.clock() - nametotime[name]
+			print(name,('%.5fs'):format(d),...)
+		end
+		return d
+	end -- _DEBUG.timer
+	
+	_DEBUG.timerstop = function (name,...)
+		local d = _DEBUG.timer(name,...)
+		nametotime[name] = nil
+		return d
+	end --_DEBUG.timerstop
+	
+else
+	_DEBUG = {}
+	local empty = function (...) end
+	_DEBUG.timer, _DEBUG.timerstart, _DEBUG.timerstop = empty, empty, empty
 end
 
 ----------------------------------------------------------
@@ -101,6 +137,8 @@ tab1:client(list_func)
 tab1:context_menu {
 	'Functions: Sort by Order|Functions_SortByOrder',
 	'Functions: Sort by Name|Functions_SortByName',
+	'Functions: Show/Hide Flags|Functions_ToggleFlags',
+	'Functions: Show/Hide Parameters|Functions_ToggleParams',
 }
 -------------------------
 local tab2 = gui.panel(panel_width + 18)
@@ -454,35 +492,320 @@ end)
 local table_functions = {}
 -- 1 - function names
 -- 2 - line number
+-- 3 - function paramaters with parentheses
 local _sort = 'order'
+local _backjumppos -- store position if jumping
 
---[[ Note:
-	- only upper char
-	- ()function name()
-	Правила создания регсепов:
-	- использовать только заглавные буквы
-	- имя функции должно быть выделено с обеих сторон парами скобок "()function name()" . Не путать с %b()!
-	- если для языка задано несколько регсепов, то функция должна находится только одним из них
-]]
+local Lang2lpeg = {}
+do
+	local P, V, Cg, Ct, Cc, S, R, C, Carg, Cf, Cb, Cp, Cmt = lpeg.P, lpeg.V, lpeg.Cg, lpeg.Ct, lpeg.Cc, lpeg.S, lpeg.R, lpeg.C, lpeg.Carg, lpeg.Cf, lpeg.Cb, lpeg.Cp, lpeg.Cmt
+	
+	--@todo: переписать с использованием lpeg.Cf
+	local function AnyCase(str)
+		local res = P'' --empty pattern to start with
+		local ch, CH
+		for i = 1, #str do
+			ch = str:sub(i,i):lower()
+			CH = ch:upper()
+			res = res * S(CH..ch)
+		end
+		assert(res:match(str))
+		return res
+	end
+	
+	local PosToLine = function (pos) return editor:LineFromPosition(pos) end
 
-local Lang2RegEx = {
-	['Assembler']={"\n%s*()%w+()%s+[FP][R][AO][MC][E%s]"},
--- 	['C++']={"()[^.,<>=\n%s]+()%([^.<>=)']-%)[%s\/}]-{",
-	['C++']={"[^.,<>=\n]-[ :]()[^.,<>=\n%s]+()%b()[%s\/\n}]-{",
-			"()[%u_]+::[%w~]+()%s*%b()[^};]-{"},
-	['JScript']={"[\n;]%s*()FUNCTION +[^ ]-()%b()%s-%b{}"},
-	['VisualBasic']={"[\n:][%s%u]*()SUB +[%w_]-()%b()",
-					"[\n:][%s%u]*()FUNCTION +[%w_]-()%b()",
-					"[\n:][%s%u]*()PROPERTY +[LGS]ET +[%w_]-()%b()"},
-	['CSS']={"()[%w.#-_]+()%s-%b{}"},
-	['Pascal']={"\n%s*()PROCEDURE +[%w_.]+()[ (;]",
-				"\n%s*()FUNCTION +[%w_.]+() *%b(): *%a+;"},
-	['Python']={"\n%s*()DEF +[%w_]-()%b():",
-				"\n%s*()CLASS +[%w_]-()%b():"},
-	['Lua']={"\n[%s%u]*FUNCTION +()[%w_]-()%b()"},
-	['nnCron']={"\n%:%s()[%w_#%-<>]+()%s"},
-	['*']={"\n%s*()[SF][U][BN][^ .]* [^ (]*()%b()"},
-}
+--v------- common patterns -------v--
+	-- basics
+	local EOF = P(-1)
+	local BOF = P(function(s,i) return (i==1) and 1 end)
+	local NL = P"\n"-- + P"\f" -- pattern matching newline, platform-specific. \f = page break marker
+	local AZ = R('AZ','az')+"_"
+	local N = R'09'
+	local ANY =  P(1)
+	local ESCANY = P'\\'*ANY + ANY
+	local SINGLESPACE = S'\n \t\r\f'
+	local SPACE = SINGLESPACE^1
+
+	-- simple tokens
+	local IDENTIFIER = AZ * (AZ+N)^0 -- simple identifier, without separators
+
+	local Str1 = P'"' * ( ESCANY - (S'"'+NL) )^0 * (P'"' + NL)--NL == error'unfinished string')
+	local Str2 = P"'" * ( ESCANY - (S"'"+NL) )^0 * (P"'" + NL)--NL == error'unfinished string')
+	local STRING = Str1 + Str2
+
+	-- c-like-comments
+	local line_comment = '//' * (ESCANY - NL)^0*NL
+	local block_comment = '/*' * (ESCANY - P'*/')^0 * (P('*/') + EOF)
+	local COMMENT = (line_comment + block_comment)^1
+
+	local SC = SPACE + COMMENT
+	local IGNORED = SPACE + COMMENT + STRING
+	-- special captures
+	local cp = Cp() -- pos capture, Carg(1) is the shift value, comes from start_code_pos
+	local cl = cp/PosToLine -- line capture, uses editor:LineFromPosition
+	local par = C(P"("*(1-P")")^0*P")") -- captures parameters in parentheses
+--^------- common patterns -------^--
+
+	do --v------- asm -------v--
+		-- redefine common patterns
+		local SPACE = S' \t'^1
+		local NL = P"\r\n"
+
+		local IGNORED = (ESCANY - NL)^0 * NL -- just skip line by line
+
+		-- define local patterns
+		local p = P"proc"
+		local F = P"FRAME"
+		-- create flags:
+		F = Cg(F*Cc(true),'F')
+		-- create additional captures
+		I = C(IDENTIFIER)*cl
+		-- definitions to capture:
+		local par = C((ESCANY - NL)^0)
+		local def1 = I*SPACE*(p+F)
+		local def2 = p*SPACE*I*P','^-1
+		local def = (SPACE+P'')*Ct((def1+def2)*(SPACE*par)^-1)*NL
+		-- resulting pattern, which does the work
+		local patt = (def + IGNORED + 1)^0 * EOF
+
+		Lang2lpeg.Assembler = lpeg.Ct(patt)
+	end --do --^------- ASM -------^--
+	
+	do --v------- Lua -------v--
+		-- redefine common patterns
+		local IDENTIFIER = IDENTIFIER*(P'.'*IDENTIFIER)^0*(P':'*IDENTIFIER)^-1
+		-- LONG BRACKETS
+		local long_brackets = #(P'[' * P'='^0 * P'[') *
+			function (subject, i1)
+				local level = _G.assert( subject:match('^%[(=*)%[', i1) )
+				local _, i2 = subject:find(']'..level..']', i1, true)  -- true = plain "find substring"
+				return (i2 and (i2+1)) or #subject+1--error('unfinished long brackets')
+				-- ^ if unfinished long brackets then capture till EOF (at #subject+1)
+		end
+		local LUALONGSTR = long_brackets
+
+		local multi  = P'--' * long_brackets
+		local single = P'--' * (1 - NL)^0 * NL
+		local COMMENT = multi + single
+		local SC = SPACE + COMMENT
+
+		local IGNORED = SPACE + COMMENT + STRING + LUALONGSTR
+
+		-- define local patterns
+		local f = P"function"
+		local l = P"local"
+		-- create flags
+		l = Cg(l*SC^1*Cc(true),'l')^-1
+		-- create additional captures
+		I = C(IDENTIFIER)*cl
+		-- definitions to capture:
+		local funcdef1 = l*f*SC^1*I*SC^0*par -- usual function declaration
+		local funcdef2 = l*I*SC^0*"="*SC^0*f*SC^0*par -- declaration through assignment
+		local def = Ct(funcdef1 + funcdef2)
+		-- resulting pattern, which does the work
+		local patt = (def + IGNORED^1 + IDENTIFIER + 1)^0 * (EOF) --+ error'invalid character')
+
+		Lang2lpeg.Lua = lpeg.Ct(patt)
+	end --do --^------- Lua -------^--
+
+	do --v----- Pascal ------v--
+		-- redefine common patterns
+		local IDENTIFIER = IDENTIFIER*(P'.'*IDENTIFIER)^0
+		local STRING = P"'" *( ANY - (P"'"+NL) )^0 *(P"'"+NL) --NL == error'unfinished string')
+		--^ there's no problem with pascal strings with double single quotes in the middle, like this:
+		--  'first''second'
+		--  in the loop, STRING just matches the 'first'-part, and then the 'second'.
+
+		local multi1  = P'(*' *(1-P'*)')^0 * (P'*)' + EOF)--unfinished long comment
+		local multi2  = P'{' *(1-P'}')^0 * (P'}' + EOF)--unfinished long comment
+		local single = P'//' * (1 - NL)^0 * NL
+		local COMMENT = multi1 + multi2 + single
+
+		local SC = SPACE + COMMENT
+		local IGNORED = SPACE + COMMENT + STRING
+
+		-- define local patterns
+		local f = AnyCase"function"
+		local p = AnyCase"procedure"
+		local c = AnyCase"constructor"
+		local d = AnyCase"destructor"
+		local restype = AZ^1
+		-- create flags:
+		-- f = Cg(f*Cc(true),'f')
+		restype = Cg(C(restype),'')
+		p = Cg(p*Cc(true),'p')
+		c = Cg(c*Cc(true),'c')
+		d = Cg(d*Cc(true),'d')
+		-- create additional captures
+		local I = C(IDENTIFIER)*cl
+		-- definitions to capture:
+		local procdef = Ct((p+c+d)*SC^1*I*SC^0*par^-1)
+		local funcdef = Ct(f*SC^1*I*SC^0*par^-1*SC^0*P':'*SC^0*restype*SC^0*P';')
+		-- resulting pattern, which does the work
+		local patt = (procdef + funcdef + IGNORED^1 + IDENTIFIER + 1)^0 * EOF
+
+		Lang2lpeg.Pascal = lpeg.Ct(patt)
+	end --^----- Pascal ------^--
+
+	do --v----- C++ ------v--
+		-- define local patterns
+		local keywords = P'if'+P'else'+P'switch'+P'case'+P'while'
+		local nokeyword = -(keywords*SC^1) 
+		local type = P"static "^-1*P"const "^-1*P"enum "^-1*P'*'^-1*IDENTIFIER*P'*'^-1
+		local funcbody = P"{"*(ESCANY-P"}")^0*P"}"
+		-- redefine common patterns
+		local IDENTIFIER = P'*'^-1*P'~'^-1*IDENTIFIER
+		IDENTIFIER = IDENTIFIER*(P"::"*IDENTIFIER)^-1
+		-- create flags:
+		type = Cg(type,'')
+		-- create additional captures
+		local I = C(IDENTIFIER)*cl
+		-- definitions to capture:
+		local funcdef = nokeyword*Ct((type*SC^1)^-1*I*SC^0*par*SC^0*(#funcbody))
+
+		-- resulting pattern, which does the work
+		local patt = (funcdef + IGNORED^1 + IDENTIFIER + ANY)^0 * EOF
+
+		Lang2lpeg['C++'] = lpeg.Ct(patt)
+	end --^----- C++ ------^--
+	
+	do --v----- JS ------v--
+		-- redefine common patterns
+		local NL = NL + P"\f"
+		local regexstr = P'/' * (ESCANY - (P'/' + NL))^0*(P'/' * S('igm')^0 + NL)
+		local STRING = STRING + regexstr
+		-- define local patterns
+		local f = P"function"
+		local funcbody = P"{"*(ESCANY-P"}")^0*P"}"
+		-- create additional captures
+		local I = C(IDENTIFIER)*cl
+		-- definitions to capture:
+		local funcdef = Ct(f*SC^1*I*SC^0*par*SC^0*(#funcbody))
+
+		-- resulting pattern, which does the work
+		local patt = (funcdef + IGNORED^1 + IDENTIFIER + 1)^0 * EOF
+
+		Lang2lpeg.JScript = lpeg.Ct(patt)
+	end --^----- JS ------^--
+
+	do --v----- VB ------v--
+		-- redefine common patterns
+		local STRING = P'"' * (ANY - (P'"' + NL))^0*(P'"' + NL)
+		local COMMENT = (P"'" + P"REM ") * (ANY - NL)^0*NL
+		local SC = SPACE
+		-- define local patterns
+		local f = AnyCase"function"
+		local p = AnyCase"property"
+			local let = AnyCase"let"
+			local get = AnyCase"get"
+			local set = AnyCase"set"
+		local s = AnyCase"sub"
+		-- create flags:
+		-- f = Cg(f*Cc(true),'f')
+		local restype = (P"As"+P"as")*SPACE*Cg(C(AZ^1),'')
+		let = Cg(let*Cc(true),'pl')
+		get = Cg(get*Cc(true),'pg')
+		set = Cg(set*Cc(true),'ps')
+		p = p*SC^1*(let+get+set)
+		-- create additional captures
+		local I = C(IDENTIFIER)*cl
+		-- definitions to capture:
+		f = f*SC^1*I*SC^0*par
+		p = p*SC^1*I*SC^0*par
+		s = s*SC^1*I*SC^0*par
+		local def = Ct((f + s + p)*(SPACE*restype)^-1)
+		-- resulting pattern, which does the work
+		local patt = (def + IGNORED^1 + IDENTIFIER + 1)^0 * EOF
+
+		Lang2lpeg.VisualBasic = lpeg.Ct(patt)
+	end --^----- VB ------^--
+
+	do --v------- Python -------v--
+		-- redefine common patterns
+		local SPACE = S' \t'^1
+		local IGNORED = (ESCANY - NL)^0 * NL -- just skip line by line
+		-- define local patterns
+		local c = P"class"
+		local d = P"def"
+		-- create flags:
+		c = Cg(c*Cc(true),'class')
+		-- create additional captures
+		I = C(IDENTIFIER)*cl
+		-- definitions to capture:
+		local def = (c+d)*SPACE*I
+		def = (SPACE+P'')*Ct(def*SPACE^-1*par)*SPACE^-1*P':'
+		-- resulting pattern, which does the work
+		local patt = (def + IGNORED + 1)^0 * EOF
+		
+		Lang2lpeg.Python = lpeg.Ct(patt)
+	end --do --^------- Python -------^--
+	
+	do --v------- nnCron -------v--
+		-- redefine common patterns
+		local IDENTIFIER = (ANY - SPACE)^1
+		local SPACE = S' \t'^1
+		local IGNORED = (ESCANY - NL)^0 * NL -- just skip line by line
+		-- define local patterns
+		local d = P":"
+		-- create additional captures
+		I = C(IDENTIFIER)*cl
+		-- definitions to capture:
+		local def = d*SPACE*I
+		def = Ct(def*(SPACE*par)^-1)*IGNORED
+		-- resulting pattern, which does the work
+		local patt = (def + IGNORED + 1)^0 * EOF
+		
+		Lang2lpeg.nnCron = lpeg.Ct(patt)
+	end --do --^------- nnCron -------^--	
+
+	do --v------- CSS -------v--
+		-- helper
+		local function clear_spaces(s)
+			return s:gsub('%s+',' ')
+		end
+ 		-- redefine common patterns
+		local IDENTIFIER = (ANY - SPACE)^1
+		local NL = P"\r\n"
+		local SPACE = S' \t'^1
+		local IGNORED = (ANY - NL)^0 * NL -- just skip line by line
+		local par = C(P"{"*(1-P"}")^0*P"}")/clear_spaces -- captures parameters in parentheses
+		-- create additional captures
+		I = C(IDENTIFIER)*cl
+		-- definitions to capture:
+		local def = Ct(I*SPACE*par)--*IGNORED
+		-- resulting pattern, which does the work
+		local patt = (def + IGNORED + 1)^0 * EOF
+		
+		Lang2lpeg.CSS = lpeg.Ct(patt)
+	end --do --^------- CSS -------^--	
+
+	do --v----- * ------v--
+		-- redefine common patterns
+		local NL = P"\r\n"+P"\n"+P"\f"
+		local SC = S" \t\160" -- без понятия что за символ с кодом 160, но он встречается в SciTEGlobal.properties непосредственно после [Warnings] 10 раз.
+		local COMMENT = P'#'*(ANY - NL)^0*NL
+		-- define local patterns
+		local somedef = S'fFsS'*S'uU'*S'bBnN'*AZ^0 --пытаемся поймать что-нибудь, похожее на определение функции...
+		local section = P'['*(ANY-P']')^1*P']'
+		-- create flags
+		local somedef = Cg(somedef, '')
+		-- create additional captures
+		local I = C(IDENTIFIER)*cl
+		section = C(section)*cl
+		local tillNL = C((ANY-NL)^0)
+		-- definitions to capture:
+		local def1 = Ct(somedef*SC^1*I*SC^0*(par+tillNL))
+		local def2 = (NL+BOF)*Ct(section*SC^0*tillNL)*NL
+
+		-- resulting pattern, which does the work
+		local patt = (def2 + def1 + COMMENT + IDENTIFIER + 1)^0 * EOF
+		-- local patt = (def2 + def1 + IDENTIFIER + 1)^0 * EOF -- чуть медленнее
+
+		Lang2lpeg['*'] = lpeg.Ct(patt)
+	end --^----- * ------^--
+
+end
 
 local Lang2CodeStart = {
 	['Pascal']='^IMPLEMENTATION$',
@@ -502,7 +825,7 @@ local Lexer2Lang = {
 }
 
 local Ext2Lang = {}
-local function Fill_Ext2Lang()
+do -- Fill_Ext2Lang
 	local patterns = {
 		[props['file.patterns.asm']]='Assembler',
 		[props['file.patterns.cpp']]='C++',
@@ -520,49 +843,60 @@ local function Fill_Ext2Lang()
 			Ext2Lang[ext] = v
 		end
 	end
+end -- Fill_Ext2Lang
+
+local function GetFlagsAndCut(findString)
+	local findString = findString
+	local t = {}
+	findString,f = ReplaceWithoutCase(findString, "Sub ", "") -- VB
+	t["s"] = f and true
+	findString,f = ReplaceWithoutCase(findString, "Function ", "") -- JS, VB,...
+	t["f"] = f and true
+	findString,f = ReplaceWithoutCase(findString, "Procedure ", "") -- Pascal
+	t["p"] = f and true
+	findString,f = ReplaceWithoutCase(findString, "Proc ", "") -- C
+	t["p"] = t.p or (f and true)
+	findString,f = ReplaceWithoutCase(findString, "Property Let ", "") -- VB
+	t["pl"] = f and true
+	findString,f = ReplaceWithoutCase(findString, "Property Get ", "") -- VB
+	t["pg"] = f and true
+	findString,f = ReplaceWithoutCase(findString, "Property Set ", "") -- VB
+	t["ps"] = f and true
+	findString,f = ReplaceWithoutCase(findString, "CLASS ", "") -- Phyton
+	t["c"] = f and true
+	findString,f = ReplaceWithoutCase(findString, "DEF ", "") -- Phyton
+	t["d"] = f and true
+	return findString, t
 end
-Fill_Ext2Lang()
 
 local function Functions_GetNames()
-	if editor.Length == 0 then return end
+	_DEBUG.timerstart('Functions_GetNames')
 	table_functions = {}
-	local tablePattern = Lang2RegEx[Ext2Lang[props["FileExt"]]]
-	local start_code = Lang2CodeStart[Ext2Lang[props["FileExt"]]]
-	if not tablePattern then
-		tablePattern = Lang2RegEx[Lexer2Lang[editor.LexerLanguage]]
-		start_code = Lang2CodeStart[Lexer2Lang[editor.LexerLanguage]]
+	if editor.Length == 0 then return end
+	
+	local ext = props["FileExt"]:lower() -- a bit unsafe...
+	local lang = Ext2Lang[ext]
+
+	local start_code = Lang2CodeStart[lang]
+	local lpegPattern = Lang2lpeg[lang]
+	if not lpegPattern then
+		lang = Lexer2Lang[editor.LexerLanguage]
+		start_code = Lang2CodeStart[lang]
+		lpegPattern = Lang2lpeg[lang]
 		if not tablePattern then
-			tablePattern = Lang2RegEx['*']
 			start_code = Lang2CodeStart['*']
+			lpegPattern = Lang2lpeg['*']
 		end
 	end
 	local textAll = editor:GetText()
 	local start_code_pos = 0
-	if start_code ~= nil then
+	if start_code then
 		start_code_pos = editor:findtext(start_code, SCFIND_REGEXP)
-		if start_code_pos ~= nil then
-			textAll = textAll:sub(start_code_pos)
-		end
 	end
-	if #textAll < 20 then return end
 
-	for _, findPattern in ipairs(tablePattern) do
-		for _start, _end in string.gmatch(textAll:upper(), findPattern) do
-			local findString = textAll:sub(_start, _end-1)
-			findString = findString:gsub("%s+", " ")
-			findString = ReplaceWithoutCase(findString, "Sub ", "[s] ") -- VB
-			findString = ReplaceWithoutCase(findString, "Function ", "[f] ") -- JS, VB,...
-			findString = ReplaceWithoutCase(findString, "Procedure ", "[p] ") -- Pascal
-			findString = ReplaceWithoutCase(findString, "Proc ", "[p] ") -- C
-			findString = ReplaceWithoutCase(findString, "Property Let ", "[pl] ") -- VB
-			findString = ReplaceWithoutCase(findString, "Property Get ", "[pg] ") -- VB
-			findString = ReplaceWithoutCase(findString, "Property Set ", "[ps] ") -- VB
-			findString = ReplaceWithoutCase(findString, "CLASS ", "[c] ") -- Phyton
-			findString = ReplaceWithoutCase(findString, "DEF ", "[d] ") -- Phyton
-			local line_number = editor:LineFromPosition(_start+start_code_pos)
-			table_functions[#table_functions+1] = {findString, line_number}
-		end
-	end
+	-- lpegPattern = nil
+	table_functions = lpegPattern:match(textAll, start_code_pos+1) -- 2nd arg is the symbol index to start with
+	_DEBUG.timerstop('Functions_GetNames','lpeg')
 end
 
 local function Functions_ListFILL()
@@ -579,8 +913,33 @@ local function Functions_ListFILL()
 		end
 	end
 	list_func:clear()
+	
+	local function emptystr(...) return '' end
+	local function GetParams (funcitem)
+		return (funcitem[3] and ' '..funcitem[3]) or ''
+	end
+	local function GetFlags (funcitem)
+		local res = ''
+		local add = ''
+		for flag,value in pairs(funcitem) do
+			if type(flag)=='string' then
+				if type(value)=='string' then	add = flag .. value
+				elseif type(value)=='number' then add = flag..':'..value
+				else add = flag end
+				res = res .. '['.. add ..']'
+			end
+		end
+		if res~='' then res = res .. ' ' end
+		return res or ''
+	end
+	if not _show_params then GetParams = emptystr end
+	if not _show_flags then GetFlags = emptystr end
+
+	local function fixname (funcitem)
+		return GetFlags(funcitem)..funcitem[1]..GetParams(funcitem)
+	end
 	for _, a in ipairs(table_functions) do
-		list_func:add_item(a[1], a[2])
+		list_func:add_item(fixname(a), a[2])
 	end
 end
 
@@ -591,6 +950,16 @@ end
 
 function Functions_SortByName()
 	_sort = 'name'
+	Functions_ListFILL()
+end
+
+function Functions_ToggleParams ()
+	_show_params = not _show_params
+	Functions_ListFILL()
+end
+
+function Functions_ToggleFlags ()
+	_show_flags = not _show_flags
 	Functions_ListFILL()
 end
 
@@ -761,6 +1130,7 @@ end)
 -- Events
 ----------------------------------------------------------
 local function OnSwitch()
+	_DEBUG.timerstart('OnSwitch')
 	if tab0:bounds() then -- visible FileMan
 		local path = props['FileDir']
 		if path == '' then return end
@@ -770,11 +1140,14 @@ local function OnSwitch()
 			FileMan_ListFILL()
 		end
 	elseif tab1:bounds() then -- visible Funk/Bmk
-		Functions_GetNames() Functions_ListFILL()
+		Functions_GetNames()
+		Functions_ListFILL()
+
 		Bookmarks_ListFILL()
 	elseif tab2:bounds() then -- visible Abbrev
 		Abbreviations_ListFILL()
 	end
+	_DEBUG.timerstop('OnSwitch')
 end
 
 tabs:on_select(function(ind)
@@ -852,6 +1225,16 @@ function OnKey(key, shift, ctrl, alt, char)
 	return result
 end
 
+-- Add user event handler OnSave
+local old_OnSave = OnSave
+function OnSave(file)
+	local result
+	if old_OnSave then result = old_OnSave(file) end
+	Functions_GetNames()
+	Functions_ListFILL()
+	return result
+end
+
 -- Add user event handler OnSendEditor
 local old_OnSendEditor = OnSendEditor
 function OnSendEditor(id_msg, wp, lp)
@@ -888,17 +1271,12 @@ end
 
 -- По имени функции находим строку с ее объявлением (инфа берется из table_functions)
 local function Func2Line(funcname)
-	if #table_functions == 0 then
-		local err1 = scite.GetTranslation("For jump to")
-		local err2 = scite.GetTranslation("function definition need once to open tab 'Func/Bmk' on SideBar")
-		print ('Error :\t'..err1..' '..funcname..' '..err2)
+	if not next(table_functions) then
+		Functions_GetNames()
 	end
 	for i = 1, #table_functions do
-		local pos = table_functions[i][1]:find(funcname, 1, true)
-		if pos ~= nil then
-			if pos <= 6 then
-				return table_functions[i][2]
-			end
+		if funcname == table_functions[i][1] then
+			return table_functions[i][2]
 		end
 	end
 end
@@ -908,10 +1286,18 @@ local function JumpToFuncDefinition()
 	local funcname = GetCurrentWord()
 	local line = Func2Line(funcname)
 	if line then
+		_backjumppos = editor.CurrentPos	
 		editor:GotoLine(line)
 		return true
 	end
 	return false
+end
+
+local function JumpBack()
+	if not _backjumppos then return false end
+	editor:GotoPos(_backjumppos)
+	_backjumppos = nil
+	return true
 end
 
 -- Add user event handler OnDoubleClick
@@ -921,6 +1307,18 @@ function OnDoubleClick(shift, ctrl, alt)
 	if old_OnDoubleClick then result = old_OnDoubleClick(shift, ctrl, alt) end
 	if shift then
 		if JumpToFuncDefinition() then return true end
+	end
+	return result
+end
+
+-- Add user event handler OnKey
+local old_OnKey = OnKey
+function OnKey(key, shift, ctrl, alt, char)
+	local result
+	if old_OnKey then result = old_OnKey(key, shift, ctrl, alt, char) end
+	if (editor.Focus) then
+		if ctrl and key == 188 and JumpBack() then return true end --char == ','
+		if ctrl and key == 190 and JumpToFuncDefinition() then return true end --char == '.'
 	end
 	return result
 end
