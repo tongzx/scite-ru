@@ -10,6 +10,6 @@ nmake -nologo -f makefile.vc
 if errorlevel 1 exit /b 1
 nmake -nologo -f makefile.vc clean
 
-set path=c:\MinGW\bin;%ProgramFiles%\CodeBlocks\bin;%path%;
-c:\MinGW\upx\upx.exe --best -f gui.dll
-
+SET PATH=C:\MinGW\bin;%ProgramFiles%\CodeBlocks\bin;C:\MinGW\upx;%PATH%
+upx.exe --best -f gui.dll
+MOVE gui.dll ..\..\Pack\tools\LuaLib\

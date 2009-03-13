@@ -18,10 +18,11 @@ ECHO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 CD /D "%~dp0"
 windres -o resfile.o toolbar.rc
 IF ERRORLEVEL 1 GOTO error
-gcc -s -shared -nostdlib -o toolbar.dll resfile.o
+gcc -s -shared -nostdlib -o gnome.dll resfile.o
 IF ERRORLEVEL 1 GOTO error
 
 DEL resfile.o
+MOVE /Y gnome.dll ..\..\pack\home\
 
 ECHO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ECHO Building successfully completed!

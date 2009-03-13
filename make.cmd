@@ -56,20 +56,26 @@ REM DEL /Q "%~dp0\src\scite\bin"\*.properties >NUL:
 :winreg
 CD %~dp0\lualib\winreg
 CALL make.cmd
-COPY winreg.dll ..\..\Pack\tools\LuaLib\
-DEL /Q winreg.dll >NUL:
 
 :shell
 CD %~dp0\lualib\shell
 CALL make.cmd
-COPY shell.dll ..\..\Pack\tools\LuaLib\
-DEL /Q shell.dll >NUL:
 
 :gui
 CD %~dp0\lualib\gui
 CALL make.cmd
-COPY gui.dll ..\..\Pack\tools\LuaLib\
-DEL /Q gui.dll >NUL:
+
+:lpeg
+CD %~dp0\lualib\lpeg
+CALL make.cmd
+
+REM :cool
+REM CD %~dp0\iconlib\cool\
+REM CALL make.cmd
+
+REM :gnome
+REM CD %~dp0\iconlib\gnome\
+REM CALL make.cmd
 
 :completed
 ECHO __________________
