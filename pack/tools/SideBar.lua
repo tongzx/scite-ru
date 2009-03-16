@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev
-version 1.10.0
+version 1.10.1
 ------------------------------------------------------
   Note: Needed gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
   Connection:
@@ -15,6 +15,9 @@ version 1.10.0
 
     # Set show(1) or hide(0) to SciTE start
     sidebar.show=1
+    # Set default settings for Functions/Procedures List
+    sidebar.functions.flags=1
+    sidebar.functions.params=1
 --]]--------------------------------------------------
 require 'lpeg'
 require 'gui'
