@@ -63,7 +63,7 @@ WshShell.SendKeys(Keys as String[, Wait as Variant])
 SendKeys(Keys as String[, Wait as Variant])
 WshShell.SpecialFolders
 
-#WshShortcut=WshShell.CreateShortcut
+#$WshShortcut=WshShell%.CreateShortcut%b()
 WshShortcut.Arguments as String
 WshShortcut.Description as String
 WshShortcut.FullName as String
@@ -75,12 +75,12 @@ WshShortcut.TargetPath as String
 WshShortcut.WindowStyle as Long
 WshShortcut.WorkingDirectory as String
 
-#WshURLShortcut=WshShell.CreateShortcut
+#$WshURLShortcut=WshShell%.CreateShortcut%b()
 WshURLShortcut.FullName as String
 WshURLShortcut.Save
 WshURLShortcut.TargetPath as String
 
-#WshEnvironment=WshShell.Environment
+#$WshEnvironment=WshShell%.Environment%b()
 WshEnvironment.Count(Name as String) as Long
 Count(Name as String) as Long
 WshEnvironment.Item(Name as String) as String
@@ -90,7 +90,7 @@ Remove(Name as String)
 WshEnvironment.length(Name as String) as Long
 length(Name as String) as Long
 
-#WshExec=WshShell.Exec
+#$WshExec=WshShell%.Exec%b()
 WshExec.Terminate
 WshExec.StdOut
 WshExec.StdIn
@@ -183,7 +183,7 @@ MoveFolder(Source as String, Destination as String)
 FSO.OpenTextFile(FileName as String[, IOMode][, Create as Boolean][, Format])
 OpenTextFile(FileName as String[, IOMode][, Create as Boolean][, Format])
 
-#Drive=FSO.GetDrive
+#$Drive=FSO%.GetDrive%b()
 Drive.AvailableSpace as Variant
 Drive.DriveLetter as String
 Drive.DriveType
@@ -201,7 +201,7 @@ Drive.VolumeName as String
 Drives.Count(Key as Variant) as Long
 Drives.Item(Key as Variant)
 
-#Folder=FSO.GetFolder
+#$Folder=FSO%.GetFolder%b()
 Folder.Attributes
 Folder.Copy(Destination as String[, OverWriteFiles as Boolean])
 Copy(Destination as String[, OverWriteFiles as Boolean])
@@ -238,7 +238,7 @@ Count(Key as Variant) as Long
 Folders.Item(Key as Variant)
 Item(Key as Variant)
 
-#File=FSO.GetFile
+#$File=FSO%.GetFile%b()
 File.Attributes
 File.Copy(Destination as String[, OverWriteFiles as Boolean])
 Copy(Destination as String[, OverWriteFiles as Boolean])
@@ -265,6 +265,9 @@ Files.Count(Key as Variant) as Long
 Count(Key as Variant) as Long
 Files.Item(Key as Variant)
 
+#$TextStream=%a+%.StdIn
+#$TextStream=%a+%.StdOut
+#$TextStream=%a+%.StdErr
 #TextStream=FSO.OpenTextFile
 TextStream=File.OpenAsTextStream
 TextStream.AtEndOfLine as Boolean
@@ -315,7 +318,7 @@ Shell.FindComputer(vDir as Variant)\n Find a computer
 Shell.RefreshMenu(vDir as Variant)\n Refresh the menu
 Shell.ControlPanelItem(szDir as String)\n Run a Control Panel Item
 
-#Folder=Shell.NameSpace
+#$Folder=Shell%.NameSpace%b()
 Folder.Title as String\n Get the display name for the window
 Folder.Application as Object\n Get Application object
 Folder.Parent as Object\n Get Parent object
@@ -333,7 +336,7 @@ FolderItems.Application as Object\n Get Application object
 FolderItems.Parent as Object\n Get Parent object
 FolderItems.Item([index as Variant])\n Return the figure for the given index
 
-#ShellFolderItem=FolderItems.Item
+#$ShellFolderItem=FolderItems%.Item%b()
 ShellFolderItem.Application as Object\n Get Application object
 ShellFolderItem.Parent as Object\n Get Parent object
 ShellFolderItem.Name as String\n Get display name for item
