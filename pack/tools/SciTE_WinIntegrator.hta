@@ -12,7 +12,7 @@ scroll=no
 selection=no
 contextMenu=no
 singleinstance=yes
-version=3.0
+version=3.0.1
 >
 <meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
 <style type="text/css">
@@ -71,6 +71,7 @@ var fso = new ActiveXObject("Scripting.FileSystemObject");
 var script_path = unescape(self.location.href).replace(/file:\/\/\/([a-z]:.*)\/.*?$/i,'$1').replace(/\//g,'\\');
 var reg_backup = 'HKLM\\SOFTWARE\\SciTE\\Script\\WinIntegrator\\';
 var scite_path = '';
+var locale_rus_exists;
 
 // Language =============================================
 function CheckRusLocaleProperties(){
@@ -508,7 +509,7 @@ function LoadForm(){
 		self.close();
 	}
 
-	var locale_rus_exists = fso.FileExists(scite_path + "\\locale_rus.properties");
+	locale_rus_exists = fso.FileExists(scite_path + "\\locale_rus.properties");
 	// при update уничтожаем старый locale.properties
 	if ((CheckRusLocaleProperties())&(locale_rus_exists)){
 		fso.DeleteFile(scite_path + "\\locale.properties", true);
