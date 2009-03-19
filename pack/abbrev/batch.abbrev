@@ -1,4 +1,4 @@
-1=@ECHO OFF\nCHCP 1251>nul\nSETLOCAL enabledelayedexpansion\nCD /D "%~dp0"\n
+1=@ECHO OFF\nTITLE %~n0\nCHCP 1251>nul\nSETLOCAL enabledelayedexpansion\nCD /D "%~dp0"\n
 forfolder=FOR /D %%i IN (%windir%\\*) DO @echo %%i\n
 forfiles=FOR /R %windir% %%i IN (*.dat) DO @echo %%i\n
 forfiles0=FOR %%i IN (%windir%\\*.dat) DO @echo %%i\n
@@ -9,6 +9,6 @@ forstring0=FOR %%i IN (%path%) DO @echo %%i\n
 foroutput=FOR /F "tokens=*" %%i IN ('dir %windir% /s /b') DO @echo %%i\n
 foroutputb=FOR /F "usebackq delims==" %%i IN (`set`) DO @echo %%i\n
 if=IF "%*"=="" (\n\tGOTO :EOF\n) ELSE (\n\tECHO %*\n)\n
-or=type %windir%\\system.ini || exit /b 1\n
+or=type %windir%\\system.ini || exit 1\n
 and=ping -n 1 ya.ru > nul && echo OK\n
 sleep=ping -n 5 -w 1000 127.0.0.1 > nul\n
