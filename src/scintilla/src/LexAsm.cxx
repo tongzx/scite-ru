@@ -157,7 +157,8 @@ static void ColouriseAsmDoc(unsigned int startPos, int length, int initStyle, Wo
 
 		// Determine if a new state should be entered.
 		if (sc.state == SCE_ASM_DEFAULT) {
-			if (sc.ch == ';'){
+//!			if (sc.ch == ';'){
+			if (sc.ch == ';' || sc.Match('/','/')){ //!-add-[GoAsmCommentStyle]
 				sc.SetState(SCE_ASM_COMMENT);
 			} else if (isascii(sc.ch) && (isdigit(sc.ch) || (sc.ch == '.' && isascii(sc.chNext) && isdigit(sc.chNext)))) {
 				sc.SetState(SCE_ASM_NUMBER);
