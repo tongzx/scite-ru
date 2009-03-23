@@ -18,7 +18,7 @@ ECHO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 CD /D "%~dp0"
 windres -o resfile.o toolbar.rc
 IF ERRORLEVEL 1 GOTO error
-gcc -s -shared -nostdlib -o cool.dll resfile.o
+ld --nmagic --strip-all --entry=0 --dll -o cool.dll resfile.o
 IF ERRORLEVEL 1 GOTO error
 
 DEL resfile.o
