@@ -913,10 +913,10 @@ static LRESULT PASCAL TabWndProc( HWND hWnd, UINT iMessage, WPARAM wParam, LPARA
 		retResult = ::DefWindowProc( hWnd, iMessage, wParam, lParam );
 	}
 
-	static BOOL st_bLButtomDown = FALSE;
 	static BOOL st_bDragBegin = FALSE;
 	static int st_iDraggingTab = -1;
 	static int st_iLastClickTab = -1;
+	static HWND st_hwndLastFocus = NULL;
 
 	switch ( iMessage ) {
 
@@ -936,8 +936,6 @@ static LRESULT PASCAL TabWndProc( HWND hWnd, UINT iMessage, WPARAM wParam, LPARA
 		break;
 
 	case WM_LBUTTONDOWN: {
-			st_bLButtomDown = TRUE;
-
 			Point pt = Point::FromLong( lParam );
 			TCHITTESTINFO thti;
 			thti.pt.x = pt.x;
@@ -948,8 +946,9 @@ static LRESULT PASCAL TabWndProc( HWND hWnd, UINT iMessage, WPARAM wParam, LPARA
 		break;
 
 	case WM_LBUTTONUP: {
-			st_bLButtomDown = FALSE;
+			st_iLastClickTab = -1;
 			if ( st_bDragBegin == TRUE ) {
+				if ( st_hwndLastFocus != NULL ) ::SetFocus( st_hwndLastFocus );
 				::ReleaseCapture();
 				::SetCursor( ::LoadCursor( NULL, IDC_ARROW ) );
 				st_bDragBegin = FALSE;
@@ -970,6 +969,21 @@ static LRESULT PASCAL TabWndProc( HWND hWnd, UINT iMessage, WPARAM wParam, LPARA
 		}
 		break;
 
+	case WM_KEYDOWN: {
+			if ( wParam == VK_ESCAPE ) {
+				if ( st_bDragBegin == TRUE ) {
+					if ( st_hwndLastFocus != NULL ) ::SetFocus( st_hwndLastFocus );
+					::ReleaseCapture();
+					::SetCursor( ::LoadCursor( NULL, IDC_ARROW ) );
+					st_bDragBegin = FALSE;
+					st_iDraggingTab = -1;
+					st_iLastClickTab = -1;
+					::InvalidateRect( hWnd, NULL, FALSE );
+				}
+			}
+		}
+		break;
+
 	case WM_MOUSEMOVE: {
 
 			Point pt = Point::FromLong( lParam );
@@ -978,26 +992,32 @@ static LRESULT PASCAL TabWndProc( HWND hWnd, UINT iMessage, WPARAM wParam, LPARA
 			thti.pt.y = pt.y;
 			thti.flags = 0;
 			int tab = ::SendMessage( hWnd, TCM_HITTEST, (WPARAM)0, (LPARAM)&thti );
+			int tabcount = ::SendMessage( hWnd, TCM_GETITEMCOUNT, (WPARAM)0, (LPARAM)0 );
 
-			if ( st_bLButtomDown == TRUE &&
-				 wParam == MK_LBUTTON &&
+			if ( wParam == MK_LBUTTON &&
+				 tabcount > 1 &&
 				 tab > -1 &&
-				 st_iLastClickTab == tab ) {
-				if ( st_bDragBegin == FALSE ) {
-					st_iDraggingTab = tab;
-					::SetCapture( hWnd );
-					st_bDragBegin = TRUE;
-					HCURSOR hcursor = ::LoadCursor( ::GetModuleHandle( NULL ),
-													MAKEINTRESOURCE( IDC_DRAGDROP ) );
-					if ( hcursor ) ::SetCursor( hcursor );
-				}
-				else {
-					// перерисовать окно
-					::InvalidateRect( hWnd, NULL, FALSE );
-				}
+				 st_iLastClickTab == tab &&
+				 st_bDragBegin == FALSE ) {
+				st_iDraggingTab = tab;
+				::SetCapture( hWnd );
+				st_hwndLastFocus = ::SetFocus( hWnd );
+				st_bDragBegin = TRUE;
+				HCURSOR hcursor = ::LoadCursor( ::GetModuleHandle( NULL ),
+												MAKEINTRESOURCE( IDC_DRAGDROP ) );
+				if ( hcursor ) ::SetCursor( hcursor );
 			}
 			else {
-				st_bLButtomDown = FALSE;
+				if ( st_bDragBegin == TRUE ) {
+					if ( tab > -1 && st_iDraggingTab > -1 /*&& st_iDraggingTab != tab*/ ) {
+						HCURSOR hcursor = ::LoadCursor( ::GetModuleHandle( NULL ),
+														MAKEINTRESOURCE( IDC_DRAGDROP ) );
+						if ( hcursor ) ::SetCursor( hcursor );
+					}
+					else {
+						::SetCursor( ::LoadCursor( NULL, IDC_NO ) );
+					}
+				}
 			}
 		}
 		break;
