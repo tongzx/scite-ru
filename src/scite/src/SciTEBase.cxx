@@ -1431,8 +1431,24 @@ void SciTEBase::SelectionIntoProperties() {
 
 //! void SciTEBase::SelectionIntoFind(bool stripEol /*=true*/) {
 void SciTEBase::SelectionIntoFind(bool stripEol /*=true*/, bool inFiles /*=false*/) { //!-add-[FindInFiles]
-	SString sel = SelectionWord(stripEol);
-	if (sel.length() && !sel.contains('\r') && !sel.contains('\n')) {
+//!	SString sel = SelectionWord(stripEol);
+//!	if (sel.length() && !sel.contains('\r') && !sel.contains('\n')) {
+//!-start-[find.fillout]
+	int findFillout = props.GetInt("find.fillout", 0);
+	SString sel;
+	switch (findFillout) { 
+		case 2:
+			; //never fill search field
+			break; 
+		case 1:	
+			sel = SelectionExtend(0, stripEol); //fill with selection, if none leave blank
+			break;
+		default: 
+			sel = SelectionWord(stripEol); //fill with word if no selection is present
+			break;
+	}
+	if ((sel.length() || findFillout) && !sel.contains('\r') && !sel.contains('\n')) {
+//!-end-[find.fillout]
 		// The selection does not include a new line, so is likely to be
 		// the expression to search...
 //!-start-[FindInFiles]
