@@ -532,8 +532,8 @@ void SciTEBase::ReadAPI(const SString &fileNameForExtension) {
 						fseek(fp, 0, SEEK_END);
 						int len = ftell(fp);
 						fseek(fp, 0, SEEK_SET);
-						fread(buffer + tlen, 1, len, fp);
-						tlen += len;
+						size_t readBytes = fread(buffer + tlen, 1, len, fp);
+						tlen += readBytes;
 						fclose(fp);
 					}
 					apiFileName += strlen(apiFileName) + 1;
@@ -580,6 +580,7 @@ static const char *propertiesToForward[] = {
 	"fold",
 	"fold.at.else",
 	"fold.comment",
+	"fold.comment.nimrod",
 	"fold.comment.yaml",
 	"fold.compact",
 	"fold.directive",
@@ -590,6 +591,7 @@ static const char *propertiesToForward[] = {
 	"fold.perl.package",
 	"fold.perl.pod",
 	"fold.preprocessor",
+	"fold.quotes.nimrod",
 	"fold.quotes.python",
 	"fold.sql.only.begin",
 	"fold.symbols",
@@ -606,6 +608,10 @@ static const char *propertiesToForward[] = {
 	"lexer.metapost.comment.process",
 	"lexer.metapost.interface.default",
 	"lexer.pascal.smart.highlighting",
+	"lexer.props.allow.initial.spaces",
+	"lexer.python.literals.binary",
+	"lexer.python.strings.b",
+	"lexer.python.strings.u",
 	"lexer.sql.backticks.identifier",
 	"lexer.tex.auto.if",
 	"lexer.tex.comment.process",
@@ -822,8 +828,8 @@ void SciTEBase::ReadProperties() {
 //!-start-[caret]
 	SString tmp_str;
 	tmp_str=props.GetNewExpand("caret.fore.", fileNameForExtension.c_str());
-	//Записываем в tmp_str параметр caret.fore.$(FilePattern)
-	//Проверяем установлен или нет
+	//Writing caret.fore.$(FilePattern) into tmp_str
+	//And test for existing
 	if(tmp_str.length())
 		SendEditor(SCI_SETCARETFORE,ColourFromString(tmp_str));
 	else

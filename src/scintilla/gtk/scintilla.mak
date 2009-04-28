@@ -189,6 +189,7 @@ LEXOBJS=\
 	$(DIR_O)\LexMPT.obj \
 	$(DIR_O)\LexMSSQL.obj \
 	$(DIR_O)\LexMySQL.obj \
+	$(DIR_O)\LexNimrod.obj \
 	$(DIR_O)\LexNsis.obj \
 	$(DIR_O)\LexOpal.obj \
 	$(DIR_O)\LexOthers.obj \
@@ -207,6 +208,7 @@ LEXOBJS=\
 	$(DIR_O)\LexRuby.obj \
 	$(DIR_O)\LexScriptol.obj \
 	$(DIR_O)\LexSmalltalk.obj \
+	$(DIR_O)\LexSML.obj \
 	$(DIR_O)\LexSorcus.obj \
 	$(DIR_O)\LexSpecman.obj \
 	$(DIR_O)\LexSpice.obj \
@@ -454,6 +456,8 @@ $(DIR_O)\LexMSSQL.obj: ..\src\LexMSSQL.cxx $(LEX_HEADERS)
 
 $(DIR_O)\LexMySQL.obj: ..\src\LexMySQL.cxx $(LEX_HEADERS)
 
+$(DIR_O)\LexNimrod.obj: ..\src\LexNimrod.cxx $(LEX_HEADERS)
+
 $(DIR_O)\LexNsis.obj: ..\src\LexNsis.cxx $(LEX_HEADERS)
 
 $(DIR_O)\LexOpal.obj: ..\src\LexOpal.cxx $(LEX_HEADERS)
@@ -489,6 +493,8 @@ $(DIR_O)\LexRuby.obj: ..\src\LexRuby.cxx $(LEX_HEADERS)
 $(DIR_O)\LexScriptol.obj: ..\src\LexScriptol.cxx $(LEX_HEADERS)
 
 $(DIR_O)\LexSmalltalk.obj: ..\src\LexSmalltalk.cxx $(LEX_HEADERS)
+
+$(DIR_O)\LexSML.obj: ..\src\LexSML.cxx $(LEX_HEADERS)
 
 $(DIR_O)\LexSorcus.obj: ..\src\LexSorcus.cxx $(LEX_HEADERS)
 

@@ -848,6 +848,9 @@ static void ColourisePoDoc(unsigned int startPos, int length, int, WordList *[],
 	}
 }
 
+static inline bool isassignchar(unsigned char ch) {
+	return (ch == '=') || (ch == ':');
+}
 
 //!static void ColourisePropsLine(
 static char ColourisePropsLine( // return last style //!-change-[PropsColouriseFix]
@@ -856,11 +859,18 @@ static char ColourisePropsLine( // return last style //!-change-[PropsColouriseF
     unsigned int startLine,
     unsigned int endPos,
     WordList *keywordlists[], //!-add-[PropsKeysSets]
-    Accessor &styler) {
+    Accessor &styler,
+    bool allowInitialSpaces) {
 
 	unsigned int i = 0;
-	while ((i < lengthLine) && isspacechar(lineBuffer[i]))	// Skip initial spaces
-		i++;
+	if (allowInitialSpaces) {
+		while ((i < lengthLine) && isspacechar(lineBuffer[i]))	// Skip initial spaces
+			i++;
+	} else {
+		if (isspacechar(lineBuffer[i])) // don't allow initial spaces
+			i = lengthLine;
+	}
+
 	if (i < lengthLine) {
 		if (lineBuffer[i] == '#' || lineBuffer[i] == '!' || lineBuffer[i] == ';') {
 			styler.ColourTo(endPos, SCE_PROPS_COMMENT);
@@ -870,7 +880,7 @@ static char ColourisePropsLine( // return last style //!-change-[PropsColouriseF
 			return SCE_PROPS_SECTION; //!-add-[PropsColouriseFix]
 		} else if (lineBuffer[i] == '@') {
 			styler.ColourTo(startLine + i, SCE_PROPS_DEFVAL);
-			if (lineBuffer[++i] == '=')
+			if (isassignchar(lineBuffer[i++]))
 				styler.ColourTo(startLine + i, SCE_PROPS_ASSIGNMENT);
 			styler.ColourTo(endPos, SCE_PROPS_DEFAULT);
 //!-start-[PropsKeywords]
@@ -883,9 +893,9 @@ static char ColourisePropsLine( // return last style //!-change-[PropsColouriseF
 //!-end-[PropsKeywords]
 		} else {
 			// Search for the '=' character
-			while ((i < lengthLine) && (lineBuffer[i] != '='))
+			while ((i < lengthLine) && !isassignchar(lineBuffer[i]))
 				i++;
-			if ((i < lengthLine) && (lineBuffer[i] == '=')) {
+			if ((i < lengthLine) && isassignchar(lineBuffer[i])) {
 //!				styler.ColourTo(startLine + i - 1, SCE_PROPS_KEY);
 //!-start-[PropsKeysSets]
 				int chAttr;
@@ -931,6 +941,13 @@ static void ColourisePropsDoc(unsigned int startPos, int length, int, WordList *
 	styler.StartSegment(startPos);
 	unsigned int linePos = 0;
 	unsigned int startLine = startPos;
+
+	// property lexer.props.allow.initial.spaces 
+	//	For properties files, set to 0 to style all lines that start with whitespace in the default style. 
+	//	This is not suitable for SciTE .properties files which use indentation for flow control but 
+	//	can be used for RFC2822 text where indentation is used for continuation lines. 
+	bool allowInitialSpaces = styler.GetPropertyInt("lexer.props.allow.initial.spaces", 1) != 0;
+
 //!-start-[PropsColouriseFix]
 	char style = 0;
 	bool continuation = false;
@@ -948,8 +965,8 @@ static void ColourisePropsDoc(unsigned int startPos, int length, int, WordList *
 				styler.ColourTo(i, SCE_PROPS_DEFAULT);
 			else
 //!-end-[PropsColouriseFix]
-//!			ColourisePropsLine(lineBuffer, linePos, startLine, i, styler);
-			style = ColourisePropsLine(lineBuffer, linePos, startLine, i, keywordlists, styler); //!-change-[PropsKeysSets][PropsColouriseFix]
+//!			ColourisePropsLine(lineBuffer, linePos, startLine, i, styler, allowInitialSpaces);
+			style = ColourisePropsLine(lineBuffer, linePos, startLine, i, keywordlists, styler, allowInitialSpaces); //!-change-[PropsKeysSets][PropsColouriseFix]
 //!-start-[PropsColouriseFix]
 			// test: is next a continuation of line
 			continuation = (linePos >= sizeof(lineBuffer) - 1) ||
@@ -966,8 +983,8 @@ static void ColourisePropsDoc(unsigned int startPos, int length, int, WordList *
 			styler.ColourTo(startPos + length - 1, SCE_PROPS_DEFAULT);
 		else
 //!-end-[PropsColouriseFix]
-//!		ColourisePropsLine(lineBuffer, linePos, startLine, startPos + length - 1, styler);
-		ColourisePropsLine(lineBuffer, linePos, startLine, startPos + length - 1, keywordlists, styler); //!-change-[PropsKeysSets]
+//!		ColourisePropsLine(lineBuffer, linePos, startLine, startPos + length - 1, styler, allowInitialSpaces);
+		ColourisePropsLine(lineBuffer, linePos, startLine, startPos + length - 1, keywordlists, styler, allowInitialSpaces); //!-change-[PropsKeysSets]
 	}
 }
 
@@ -1421,8 +1438,20 @@ static void ColouriseErrorListDoc(unsigned int startPos, int length, int, WordLi
 	styler.StartAt(startPos);
 	styler.StartSegment(startPos);
 	unsigned int linePos = 0;
+
+	// property lexer.errorlist.value.separate 
+	//	For lines in the output pane that are matches from Find in Files or GCC-style 
+	//	diagnostics, style the path and line number separately from the rest of the 
+	//	line with style 21 used for the rest of the line. 
+	//	This allows matched text to be more easily distinguished from its location. 
 //!	bool valueSeparate = styler.GetPropertyInt("lexer.errorlist.value.separate", 0) != 0;
 //!-start-[FindResultListStyle]
+
+	// property lexer.errorlist.value.separate 
+	//	For lines in the output pane that are matches from Find in Files or GCC-style 
+	//	diagnostics, style the path and line number separately from the rest of the 
+	//	line with style 21 used for the rest of the line. 
+	//	This allows matched text to be more easily distinguished from its location. 
 	bool valueSeparate = styler.GetPropertyInt("lexer.errorlist.value.separate", 1) > 0;
 	SString findTitleBegin = styler.GetProperty("lexer.errorlist.findtitle.begin");
 	SString findTitleEnd = styler.GetProperty("lexer.errorlist.findtitle.end");

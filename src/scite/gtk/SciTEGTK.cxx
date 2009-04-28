@@ -1791,11 +1791,13 @@ int xsystem(const char *s, const char *resultsFile) {
 		close(0);
 		int fh = open(resultsFile, O_WRONLY);
 		close(1);
-		dup(fh);
-		close(2);
-		dup(fh);
-		setpgid(0, 0);
-		execlp("/bin/sh", "sh", "-c", s, static_cast<char *>(NULL));
+		if (dup(fh) >= 0) {
+			close(2);
+			if (dup(fh) >= 0) {
+				setpgid(0, 0);
+				execlp("/bin/sh", "sh", "-c", s, static_cast<char *>(NULL));
+			}
+		}
 		exit(127);
 	}
 	return pid;
@@ -3154,7 +3156,7 @@ void SciTEGTK::CreateUI() {
 		"button-release-event", GTK_SIGNAL_FUNC(TabBarReleaseSignal), gthis);
 	g_signal_connect(GTK_OBJECT(PWidget(wTabBar)),
 		"scroll-event", GTK_SIGNAL_FUNC(TabBarScrollSignal), gthis);
-	//gtk_notebook_set_scrollable(GTK_NOTEBOOK(PWidget(wTabBar)), TRUE);
+	gtk_notebook_set_scrollable(GTK_NOTEBOOK(PWidget(wTabBar)), TRUE);
 #endif
 	tabVisible = false;
 
@@ -3482,7 +3484,7 @@ void SciTEGTK::Run(int argc, char *argv[]) {
 void SciTEGTK::ChildSignal(int) {
 	int status = 0;
 	int pid = wait(&status);
-	if (pid == instance->pidShell) {
+	if (instance && (pid == instance->pidShell)) {
 		// If this child is the currently running tool, save the exit status
 		instance->pidShell = 0;
 		instance->triedKill = false;

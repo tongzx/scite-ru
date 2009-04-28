@@ -326,6 +326,10 @@ SOURCE=..\src\LexMySQL.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\LexNimrod.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\LexNsis.cxx
 # End Source File
 # Begin Source File
@@ -398,6 +402,10 @@ SOURCE=..\src\LexSmalltalk.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\LexSML.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\LexSorcus.cxx
 # End Source File
 # Begin Source File
@@ -451,6 +459,10 @@ SOURCE=..\src\LexYAML.cxx
 # Begin Source File
 
 SOURCE=..\src\LineMarker.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\PerLine.cxx
 # End Source File
 # Begin Source File
 

@@ -309,6 +309,9 @@ const char *contributors[] = {
             "Christopher Bean",
             "Sergey Kishchenko",
             "Kai Liu",
+            "Andreas Rumpf",
+            "James Moffatt",
+            "Yuzhou Xin",
 //!-start-[SciTE-Ru]
             "HSolo",
             "Midas",

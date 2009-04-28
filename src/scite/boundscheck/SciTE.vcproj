@@ -367,6 +367,9 @@
 				RelativePath="..\..\scintilla\src\LexMySQL.cxx">
 			</File>
 			<File
+				RelativePath="..\..\scintilla\src\LexNimrod.cxx">
+			</File>
+			<File
 				RelativePath="..\..\scintilla\src\LexNsis.cxx">
 			</File>
 			<File
@@ -419,6 +422,9 @@
 			</File>
 			<File
 				RelativePath="..\..\scintilla\src\LexSmalltalk.cxx">
+			</File>
+			<File
+				RelativePath="..\..\scintilla\src\LexSML.cxx">
 			</File>
 			<File
 				RelativePath="..\..\scintilla\src\LexSorcus.cxx">
@@ -528,6 +534,9 @@
 			</File>
 			<File
 				RelativePath="..\src\MultiplexExtension.cxx">
+			</File>
+			<File
+				RelativePath="..\..\scintilla\Src\PerLine.cxx">
 			</File>
 			<File
 				RelativePath="..\..\scintilla\Win32\PlatWin.cxx">

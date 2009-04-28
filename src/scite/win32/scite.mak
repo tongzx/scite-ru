@@ -160,6 +160,7 @@ LEXOBJS=\
 	..\..\scintilla\win32\LexMPT.obj \
 	..\..\scintilla\win32\LexMSSQL.obj \
 	..\..\scintilla\win32\LexMySQL.obj \
+	..\..\scintilla\win32\LexNimrod.obj \
 	..\..\scintilla\win32\LexNsis.obj \
 	..\..\scintilla\win32\LexOpal.obj \
 	..\..\scintilla\win32\LexOthers.obj \
@@ -178,6 +179,7 @@ LEXOBJS=\
 	..\..\scintilla\win32\LexRuby.obj \
 	..\..\scintilla\win32\LexScriptol.obj \
 	..\..\scintilla\win32\LexSmalltalk.obj \
+	..\..\scintilla\win32\LexSML.obj \
 	..\..\scintilla\win32\LexSorcus.obj \
 	..\..\scintilla\win32\LexSpecman.obj \
 	..\..\scintilla\win32\LexSpice.obj \
@@ -226,6 +228,7 @@ OBJSSTATIC=\
 	..\..\scintilla\win32\KeyMap.obj \
 	..\..\scintilla\win32\KeyWords.obj \
 	..\..\scintilla\win32\LineMarker.obj \
+	..\..\scintilla\win32\PerLine.obj \
 	..\..\scintilla\win32\PlatWin.obj \
 	..\..\scintilla\win32\PositionCache.obj \
 	..\..\scintilla\win32\PropSet.obj \
@@ -259,14 +262,14 @@ $(DIR_BIN)\inno.properties $(DIR_BIN)\kix.properties \
 $(DIR_BIN)\latex.properties $(DIR_BIN)\lisp.properties \
 $(DIR_BIN)\lot.properties $(DIR_BIN)\lout.properties $(DIR_BIN)\lua.properties \
 $(DIR_BIN)\matlab.properties $(DIR_BIN)\metapost.properties \
-$(DIR_BIN)\mmixal.properties $(DIR_BIN)\nncrontab.properties \
-$(DIR_BIN)\nsis.properties $(DIR_BIN)\opal.properties \
-$(DIR_BIN)\others.properties $(DIR_BIN)\pascal.properties \
-$(DIR_BIN)\perl.properties $(DIR_BIN)\pov.properties \
-$(DIR_BIN)\powerpro.properties $(DIR_BIN)\powershell.properties \
-$(DIR_BIN)\ps.properties $(DIR_BIN)\purebasic.properties \
-$(DIR_BIN)\python.properties $(DIR_BIN)\r.properties \
-$(DIR_BIN)\rebol.properties $(DIR_BIN)\ruby.properties \
+$(DIR_BIN)\mmixal.properties $(DIR_BIN)\nimrod.properties \
+$(DIR_BIN)\nncrontab.properties $(DIR_BIN)\nsis.properties \
+$(DIR_BIN)\opal.properties $(DIR_BIN)\others.properties \
+$(DIR_BIN)\pascal.properties $(DIR_BIN)\perl.properties \
+$(DIR_BIN)\pov.properties $(DIR_BIN)\powerpro.properties \
+$(DIR_BIN)\powershell.properties $(DIR_BIN)\ps.properties \
+$(DIR_BIN)\purebasic.properties $(DIR_BIN)\python.properties \
+$(DIR_BIN)\r.properties $(DIR_BIN)\rebol.properties $(DIR_BIN)\ruby.properties \
 $(DIR_BIN)\scriptol.properties $(DIR_BIN)\smalltalk.properties \
 $(DIR_BIN)\sorcins.properties $(DIR_BIN)\specman.properties \
 $(DIR_BIN)\spice.properties $(DIR_BIN)\sql.properties \
@@ -391,6 +394,8 @@ $(DIR_BIN)\metapost.properties:	..\src\metapost.properties
 	copy ..\src\metapost.properties $@
 $(DIR_BIN)\mmixal.properties:	..\src\mmixal.properties
 	copy ..\src\mmixal.properties $@
+$(DIR_BIN)\nimrod.properties:	..\src\nimrod.properties
+	copy ..\src\nimrod.properties $@
 $(DIR_BIN)\nncrontab.properties:	..\src\nncrontab.properties
 	copy ..\src\nncrontab.properties $@
 $(DIR_BIN)\nsis.properties:	..\src\nsis.properties
