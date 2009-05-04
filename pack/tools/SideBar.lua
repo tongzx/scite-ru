@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev
-version 1.10.1
+version 1.10.2
 ------------------------------------------------------
   Note: Needed gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
   Connection:
@@ -905,9 +905,9 @@ end
 local function Functions_ListFILL()
 	if tonumber(props['sidebar.show'])~=1 or tab_index~=1 then return end
 	if _sort == 'order' then
-		table.sort(table_functions, function(a, b) return a[2]<b[2] end)
+		table.sort(table_functions, function(a, b) return a[2] < b[2] end)
 	else
-		table.sort(table_functions, function(a, b) return a[1]<b[1] end)
+		table.sort(table_functions, function(a, b) return a[1]:lower() < b[1]:lower() end)
 	end
 	-- remove duplicates
 	for i = #table_functions, 2, -1 do
