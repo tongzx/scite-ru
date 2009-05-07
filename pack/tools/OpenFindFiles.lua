@@ -1,5 +1,5 @@
 -- OpenFindFiles.lua
--- Version: 1.2.1
+-- Version: 1.3
 -- Author: mozers™
 ---------------------------------------------------
 -- После выполнения команды "Найти в файлах..."
@@ -54,9 +54,11 @@ end
 -- Открытие файлов, перечисленных в консоли
 function OpenFindFiles()
 	local output_text = output:GetText()
-	local str = output_text:match('"(.-)"')
+	local str, path = output_text:match('"(.-)" in "(.-)"')
+	path = path:match('^.+\\')
 	local filename_prev = ''
-	for filename in output_text:gmatch('([^\r\n]+):%d+:') do
+	for filename in output_text:gmatch('([^\r\n:]+):%d+:[^\r\n]+') do
+		filename = filename:gsub('^%.\\', path)
 		if filename ~= filename_prev then
 			scite.Open(filename)
 			local pos = editor:findtext(str)
