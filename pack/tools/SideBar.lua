@@ -195,7 +195,7 @@ end
 local function FileMan_ListFILL()
 	if current_path == '' then return end
 	local folders = gui.files(current_path..'*', true)
-	if folders == nil then return end
+	if not folders then return end
 	list_dir:clear()
 	list_dir:add_item ('[..]', {'..','d'})
 	for i, d in ipairs(folders) do
@@ -381,7 +381,7 @@ list_dir:on_key(function(key)
 	elseif key == 8 then -- BackSpace
 		list_dir:set_selected_item(0)
 		FileMan_OpenItem()
-	elseif key == 46 then -- Delele
+	elseif key == 46 then -- Delete
 		FileMan_FileDelete()
 	elseif key == 45 then -- Insert
 		Favorites_AddFile()
