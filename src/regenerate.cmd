@@ -1,20 +1,21 @@
 @ECHO OFF
-SET python=C:\MiniPy25\python.exe
+SET python=c:\Python25\python.exe
 
 IF NOT EXIST "%python%" GOTO error_install
+SET cur_path=%~dp0
 
 :: LexGen.py
-CD %~dp0\scintilla\src
+CD %cur_path%scintilla\src
 "%python%" LexGen.py
 IF ERRORLEVEL 1 GOTO error
 
 :: HFacer.py
-CD %~dp0\scintilla\include
+CD %cur_path%scintilla\include
 "%python%" HFacer.py
 IF ERRORLEVEL 1 GOTO error
 
 :: IFaceTableGen.py
-CD %~dp0\scite\scripts
+CD %cur_path%scite\scripts
 "%python%" IFaceTableGen.py
 IF ERRORLEVEL 1 GOTO error
 
@@ -34,5 +35,5 @@ ECHO For more information visit http://scite.net.ru
 GOTO end
 
 :end
-CD %~dp0
+CD %cur_path%
 PAUSE

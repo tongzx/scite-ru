@@ -41,7 +41,5 @@ libiconv.a: win_iconv.c
 	ranlib libiconv.a
 
 clean:
-	-$(RM) iconv.dll
-	-$(RM) luaiconv.o
-	-$(RM) win_iconv.o
+	-$(RM) *.o
 	-$(RM) libiconv.a

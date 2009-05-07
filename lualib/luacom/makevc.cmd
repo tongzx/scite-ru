@@ -7,8 +7,7 @@ set path=%VC8%\%Tools%;%VC71%\%Tools%;%VC7%\%Tools%;c:\MinGW\upx;%path%
 call vsvars32.bat
 
 nmake -nologo -f makefile.win lc_dll
+if errorlevel 1 exit
 
-if errorlevel 1 exit /b 1
 nmake -nologo -f makefile.win clean-obj
-
 upx.exe --best -f bin\luacom.dll

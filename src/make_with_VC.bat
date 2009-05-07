@@ -8,6 +8,8 @@ call vsvars32.bat
 
 cd scintilla\win32
 nmake -f scintilla.mak
+if errorlevel 1 exit
+
 cd ..\..
 cd scite\win32
 nmake -f scite.mak

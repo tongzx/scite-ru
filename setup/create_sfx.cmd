@@ -19,7 +19,7 @@ REN "%distrib_path%\locale_rus.properties" "locale.properties"
 IF ERRORLEVEL 1 GOTO error
 
 DEL %sfx_filename%.rar
-EXIT /B
+EXIT
 
 :error
 ECHO Error create SFX file!

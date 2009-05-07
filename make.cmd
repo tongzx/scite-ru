@@ -1,98 +1,119 @@
 @ECHO OFF
+SET root=%~dp0
 MODE CON COLS=120 LINES=2000
-
-:check_upx
-SET NO_UPX=0
-IF EXIST C:\MinGW\upx GOTO check_mingw
-SET NO_UPX=1
-:check_mingw
-IF EXIST C:\MinGW GOTO clear_pre
-:check_mingw_codeblocks
-IF EXIST "C:\Program Files\CodeBlocks\bin" GOTO clear_pre
-GOTO error_install
-
-:clear_pre
-IF "%1"=="/build" GOTO main
-
-CD %~dp0\src\scintilla
-CALL delbin.bat
-CD %~dp0\src\scite
-CALL delbin.bat
-REM del /Q "%~dp0\src\scite\bin"\*.properties >NUL:
-
-:main
 SET PATH=C:\MinGW\bin\;C:\Program Files\CodeBlocks\bin;C:\MinGW\upx\;%PATH%
-CD %~dp0\src\scintilla\win32
-TITLE SciTE-Ru make scintilla
+
+rem -----------------------------------------------------
+CALL :if_exist "gcc.exe"
+IF ERRORLEVEL 1 (
+	ECHO Error : Please install MinGW!
+	ECHO - For more information visit: http://scite.net.ru
+	GOTO error
+)
+
+IF NOT "%1"=="/build" CALL :clear
+
+rem -----------------------------------------------------
+CALL :header Make Scintilla
+CD %root%src\scintilla\win32
 mingw32-make
 IF ERRORLEVEL 1 GOTO error
 
-CD %~dp0\src\scite\win32
-TITLE SciTE-Ru make scite
+rem -----------------------------------------------------
+CALL :header Make SciTE
+CD %root%src\scite\win32
 mingw32-make
 IF ERRORLEVEL 1 GOTO error
 
 CD ..\bin
-REM IF NOT EXIST Sc1.exe PAUSE
+IF NOT EXIST Sc1.exe PAUSE
 
-IF %NO_UPX%==1 GOTO copy_to_pack
-TITLE SciTE-Ru packing
-upx --best --compress-icons=0 SciLexer.dll SciTE.exe
+rem -----------------------------------------------------
+CALL :if_exist "upx.exe"
+IF NOT ERRORLEVEL 1 (
+	CALL :header Packing
+	upx --best --compress-icons=0 SciLexer.dll SciTE.exe
+) ELSE (
+	ECHO WARNING: UPX not found! SciTE.exe and SciLexer.dll not packing
+)
 
-:copy_to_pack
-COPY SciTE.exe ..\..\..\Pack\
-COPY SciLexer.dll ..\..\..\Pack\
+rem -----------------------------------------------------
+MOVE /Y SciTE.exe ..\..\..\pack\
+MOVE /Y SciLexer.dll ..\..\..\pack\
 IF ERRORLEVEL 1 GOTO error
 
-:clear_after
 IF "%1"=="/build" GOTO completed
 
-CD %~dp0\src\scintilla
-CALL delbin.bat
-CD %~dp0\src\scite
-CALL delbin.bat
-REM DEL /Q "%~dp0\src\scite\bin"\*.properties >NUL:
+rem -----------------------------------------------------
+CALL :clear
 
-:winreg
-CD %~dp0\lualib\winreg
+rem -----------------------------------------------------
+CALL :header Make SHELL.DLL
+CD %root%lualib\shell
 CALL make.cmd
+MOVE /Y *.dll ..\..\pack\tools\LuaLib\
 
-:shell
-CD %~dp0\lualib\shell
+rem -----------------------------------------------------
+CALL :header Make GUI.DLL
+CD %root%lualib\gui
 CALL make.cmd
+MOVE /Y *.dll ..\..\pack\tools\LuaLib\
 
-:gui
-CD %~dp0\lualib\gui
+rem -----------------------------------------------------
+CALL :header Make LPEG.DLL
+CD %root%lualib\lpeg
 CALL make.cmd
+MOVE /Y *.dll ..\..\pack\tools\LuaLib\
 
-:lpeg
-CD %~dp0\lualib\lpeg
+rem -----------------------------------------------------
+CALL :header Make COOL.DLL
+CD %root%iconlib\cool
 CALL make.cmd
+MOVE /Y *.dll ..\..\pack\home\
 
-REM :cool
-REM CD %~dp0\iconlib\cool\
-REM CALL make.cmd
-
-REM :gnome
-REM CD %~dp0\iconlib\gnome\
-REM CALL make.cmd
+rem -----------------------------------------------------
+CALL :header Make GNOME.DLL
+CD %root%iconlib\gnome\
+CALL make.cmd
+MOVE /Y *.dll ..\..\pack\home\
 
 :completed
-ECHO __________________
+ECHO.
+ECHO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ECHO Building SciTE-Ru successfully completed!
 TITLE SciTE-Ru completed
 GOTO end
 
 :error
-ECHO __________________
+ECHO.
+ECHO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ECHO Errors were found!
 GOTO end
 
 :error_install
+ECHO.
+ECHO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ECHO Please install MinGW + UPX!
 ECHO For more information visit http://scite.net.ru
 GOTO end
 
+:if_exist
+FOR /f %%i IN (%1) DO IF "%%~$PATH:i"=="" EXIT /b 1
+EXIT /b 0
+
+:header
+ECHO.
+ECHO ^> ~~~~~~ [ %* ] ~~~~~~
+TITLE Create SciTE-Ru: %*
+GOTO :EOF
+
+:clear
+CD %root%src\scintilla
+DEL /S /Q *.a *.aps *.bsc *.dll *.dsw *.exe *.idb *.ilc *.ild *.ilf *.ilk *.ils *.lib *.map *.ncb *.obj *.o *.opt *.pdb *.plg *.res *.sbr *.tds *.exp > NUL 2<&1
+CD %root%src\scite
+DEL /S /Q *.a *.aps *.bsc *.dll *.dsw *.exe *.idb *.ilc *.ild *.ilf *.ilk *.ils *.lib *.map *.ncb *.obj *.o *.opt *.pdb *.plg *.res *.sbr *.tds *.exp > NUL 2<&1
+DEL /Q %root%src\scite\bin\*.properties > NUL 2<&1
+GOTO :EOF
+
 :end
-CD %~dp0
-PAUSE
+CD %root%
