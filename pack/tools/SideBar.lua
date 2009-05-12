@@ -65,11 +65,11 @@ end
 if _DEBUG then
 local nametotime = {} -- maps names to starttimes
 	_DEBUG = {}
-	
+
 	_DEBUG.timerstart = function (name)
 		nametotime[name] = os.clock()
 	end -- _DEBUG.timerstart
-	
+
 	_DEBUG.timer = function (name,...)
 		if nametotime[name] then
 			local d = os.clock() - nametotime[name]
@@ -77,13 +77,13 @@ local nametotime = {} -- maps names to starttimes
 		end
 		return d
 	end -- _DEBUG.timer
-	
+
 	_DEBUG.timerstop = function (name,...)
 		local d = _DEBUG.timer(name,...)
 		nametotime[name] = nil
 		return d
 	end --_DEBUG.timerstop
-	
+
 else
 	_DEBUG = {}
 	local empty = function (...) end
@@ -484,7 +484,7 @@ end)
 list_favorites:on_key(function(key)
 	if key == 13 then -- Enter
 		Favorites_OpenFile()
-	elseif key == 46 then -- Delele
+	elseif key == 46 then -- Delete
 		Favorites_DeleteItem()
 	end
 end)
@@ -502,7 +502,7 @@ local _backjumppos -- store position if jumping
 local Lang2lpeg = {}
 do
 	local P, V, Cg, Ct, Cc, S, R, C, Carg, Cf, Cb, Cp, Cmt = lpeg.P, lpeg.V, lpeg.Cg, lpeg.Ct, lpeg.Cc, lpeg.S, lpeg.R, lpeg.C, lpeg.Carg, lpeg.Cf, lpeg.Cb, lpeg.Cp, lpeg.Cmt
-	
+
 	--@todo: переписать с использованием lpeg.Cf
 	local function AnyCase(str)
 		local res = P'' --empty pattern to start with
@@ -515,7 +515,7 @@ do
 		assert(res:match(str))
 		return res
 	end
-	
+
 	local PosToLine = function (pos) return editor:LineFromPosition(pos) end
 
 --v------- common patterns -------v--
@@ -574,7 +574,7 @@ do
 
 		Lang2lpeg.Assembler = lpeg.Ct(patt)
 	end --do --^------- ASM -------^--
-	
+
 	do --v------- Lua -------v--
 		-- redefine common patterns
 		local IDENTIFIER = IDENTIFIER*(P'.'*IDENTIFIER)^0*(P':'*IDENTIFIER)^-1
@@ -654,7 +654,7 @@ do
 	do --v----- C++ ------v--
 		-- define local patterns
 		local keywords = P'if'+P'else'+P'switch'+P'case'+P'while'
-		local nokeyword = -(keywords*SC^1) 
+		local nokeyword = -(keywords*SC^1)
 		local type = P"static "^-1*P"const "^-1*P"enum "^-1*P'*'^-1*IDENTIFIER*P'*'^-1
 		local funcbody = P"{"*(ESCANY-P"}")^0*P"}"
 		-- redefine common patterns
@@ -672,7 +672,7 @@ do
 
 		Lang2lpeg['C++'] = lpeg.Ct(patt)
 	end --^----- C++ ------^--
-	
+
 	do --v----- JS ------v--
 		-- redefine common patterns
 		local NL = NL + P"\f"
@@ -740,10 +740,10 @@ do
 		def = (SPACE+P'')*Ct(def*SPACE^-1*par)*SPACE^-1*P':'
 		-- resulting pattern, which does the work
 		local patt = (def + IGNORED + 1)^0 * EOF
-		
+
 		Lang2lpeg.Python = lpeg.Ct(patt)
 	end --do --^------- Python -------^--
-	
+
 	do --v------- nnCron -------v--
 		-- redefine common patterns
 		local IDENTIFIER = (ANY - SPACE)^1
@@ -758,9 +758,9 @@ do
 		def = Ct(def*(SPACE*par)^-1)*IGNORED
 		-- resulting pattern, which does the work
 		local patt = (def + IGNORED + 1)^0 * EOF
-		
+
 		Lang2lpeg.nnCron = lpeg.Ct(patt)
-	end --do --^------- nnCron -------^--	
+	end --do --^------- nnCron -------^--
 
 	do --v------- CSS -------v--
 		-- helper
@@ -779,9 +779,9 @@ do
 		local def = Ct(I*SPACE*par)--*IGNORED
 		-- resulting pattern, which does the work
 		local patt = (def + IGNORED + 1)^0 * EOF
-		
+
 		Lang2lpeg.CSS = lpeg.Ct(patt)
-	end --do --^------- CSS -------^--	
+	end --do --^------- CSS -------^--
 
 	do --v----- * ------v--
 		-- redefine common patterns
@@ -876,7 +876,7 @@ local function Functions_GetNames()
 	_DEBUG.timerstart('Functions_GetNames')
 	table_functions = {}
 	if editor.Length == 0 then return end
-	
+
 	local ext = props["FileExt"]:lower() -- a bit unsafe...
 	local lang = Ext2Lang[ext]
 
@@ -916,7 +916,7 @@ local function Functions_ListFILL()
 		end
 	end
 	list_func:clear()
-	
+
 	local function emptystr(...) return '' end
 	local function GetParams (funcitem)
 		return (funcitem[3] and ' '..funcitem[3]) or ''
@@ -1289,7 +1289,7 @@ local function JumpToFuncDefinition()
 	local funcname = GetCurrentWord()
 	local line = Func2Line(funcname)
 	if line then
-		_backjumppos = editor.CurrentPos	
+		_backjumppos = editor.CurrentPos
 		editor:GotoLine(line)
 		return true
 	end
