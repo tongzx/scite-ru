@@ -108,9 +108,7 @@ TITLE Create SciTE-Ru: %*
 GOTO :EOF
 
 :clear
-CD %root%src\scintilla
-DEL /S /Q *.a *.aps *.bsc *.dll *.dsw *.exe *.idb *.ilc *.ild *.ilf *.ilk *.ils *.lib *.map *.ncb *.obj *.o *.opt *.pdb *.plg *.res *.sbr *.tds *.exp > NUL 2<&1
-CD %root%src\scite
+CD %root%src
 DEL /S /Q *.a *.aps *.bsc *.dll *.dsw *.exe *.idb *.ilc *.ild *.ilf *.ilk *.ils *.lib *.map *.ncb *.obj *.o *.opt *.pdb *.plg *.res *.sbr *.tds *.exp > NUL 2<&1
 DEL /Q %root%src\scite\bin\*.properties > NUL 2<&1
 GOTO :EOF
