@@ -312,6 +312,9 @@ const char *contributors[] = {
             "Andreas Rumpf",
             "James Moffatt",
             "Yuzhou Xin",
+            "Nic Jansma",
+            "Evan Jones",
+            "Mike Lischke",
 //!-start-[SciTE-Ru]
             "HSolo",
             "Midas",
@@ -590,7 +593,11 @@ static bool isNotStringParams(unsigned int msg) {
 
 /*!
 sptr_t SciTEBase::SendEditor(unsigned int msg, uptr_t wParam, sptr_t lParam) {
-	return fnEditor(ptrEditor, msg, wParam, lParam);
+	sptr_t retVal = fnEditor(ptrEditor, msg, wParam, lParam);
+	sptr_t status = fnEditor(ptrEditor, SCI_GETSTATUS, 0, 0);
+	if (status > 0)
+		throw ScintillaFailure(status);
+	return retVal;
 }
 */
 //!-start-[OnSendEditor]
@@ -639,7 +646,11 @@ sptr_t SciTEBase::SendEditorString(unsigned int msg, uptr_t wParam, const char *
 }
 
 sptr_t SciTEBase::SendOutput(unsigned int msg, uptr_t wParam, sptr_t lParam) {
-	return fnOutput(ptrOutput, msg, wParam, lParam);
+	sptr_t retVal = fnOutput(ptrOutput, msg, wParam, lParam);
+	sptr_t status = fnOutput(ptrOutput, SCI_GETSTATUS, 0, 0);
+	if (status > 0)
+		throw ScintillaFailure(status);
+	return retVal;
 }
 
 sptr_t SciTEBase::SendOutputString(unsigned int msg, uptr_t wParam, const char *s) {
@@ -677,7 +688,8 @@ void SciTEBase::SendChildren(unsigned int msg, uptr_t wParam, sptr_t lParam) {
 sptr_t SciTEBase::SendOutputEx(unsigned int msg, uptr_t wParam /*= 0*/, sptr_t lParam /*= 0*/, bool direct /*= true*/) {
 	if (direct)
 		return SendOutput(msg, wParam, lParam);
-	return Platform::SendScintilla(wOutput.GetID(), msg, wParam, lParam);
+	return Platform::SendScintillaPointer(wOutput.GetID(), msg, wParam,
+		reinterpret_cast<void*>(lParam));
 }
 
 #if PLAT_WIN

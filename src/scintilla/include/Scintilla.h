@@ -26,7 +26,7 @@ int Scintilla_LinkLexers();
  * hold a pointer and sptr_t, a signed integer large enough to hold a pointer.
  * May need to be changed for 64 bit platforms. */
 #if defined(_WIN32)
-#include <BaseTsd.h>
+#include <basetsd.h>
 #endif
 #ifdef MAXULONG_PTR
 typedef ULONG_PTR uptr_t;
@@ -565,6 +565,9 @@ typedef sptr_t (*SciFnDirect)(sptr_t ptr, unsigned int iMessage, uptr_t wParam, 
 #define SCI_GETMODEVENTMASK 2378
 #define SCI_SETFOCUS 2380
 #define SCI_GETFOCUS 2381
+#define SC_STATUS_OK 0
+#define SC_STATUS_FAILURE 1
+#define SC_STATUS_BADALLOC 2
 #define SCI_SETSTATUS 2382
 #define SCI_GETSTATUS 2383
 #define SCI_SETMOUSEDOWNCAPTURES 2384
@@ -709,6 +712,8 @@ typedef sptr_t (*SciFnDirect)(sptr_t ptr, unsigned int iMessage, uptr_t wParam, 
 #define SCI_ANNOTATIONGETSTYLEOFFSET 2551
 #define UNDO_MAY_COALESCE 1
 #define SCI_ADDUNDOACTION 2560
+#define SCI_CHARPOSITIONFROMPOINT 2561
+#define SCI_CHARPOSITIONFROMPOINTCLOSE 2562
 #define SCI_STARTRECORD 3001
 #define SCI_STOPRECORD 3002
 #define SCI_SETLEXER 4001
@@ -856,7 +861,7 @@ struct SCNotification {
 	int ch;		/* SCN_CHARADDED, SCN_KEY */
 	int modifiers;	/* SCN_KEY */
 	int modificationType;	/* SCN_MODIFIED */
-	const char *text;	// SCN_MODIFIED, SCN_USERLISTSELECTION, SCN_AUTOCSELECTION */
+	const char *text;	/* SCN_MODIFIED, SCN_USERLISTSELECTION, SCN_AUTOCSELECTION */
 	int length;		/* SCN_MODIFIED */
 	int linesAdded;	/* SCN_MODIFIED */
 	int message;	/* SCN_MACRORECORD */

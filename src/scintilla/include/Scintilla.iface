@@ -1505,6 +1505,11 @@ set void SetFocus=2380(bool focus,)
 # Get internal focus flag.
 get bool GetFocus=2381(,)
 
+enu Status=SC_STATUS_
+val SC_STATUS_OK=0
+val SC_STATUS_FAILURE=1
+val SC_STATUS_BADALLOC=2
+
 # Change error status - 0 = OK.
 set void SetStatus=2382(int statusCode,)
 # Get error status.
@@ -1930,6 +1935,13 @@ val UNDO_MAY_COALESCE=1
 
 # Add a container action to the undo stack
 fun void AddUndoAction=2560(int token, int flags)
+
+# Find the position of a character from a point within the window.
+fun position CharPositionFromPoint=2561(int x, int y)
+
+# Find the position of a character from a point within the window.
+# Return INVALID_POSITION if not close to text.
+fun position CharPositionFromPointClose=2562(int x, int y)
 
 # Start notifying the container of all key presses and commands.
 fun void StartRecord=3001(,)
@@ -3519,6 +3531,7 @@ val SCE_MYSQL_QUOTEDIDENTIFIER=17
 val SCE_MYSQL_USER1=18
 val SCE_MYSQL_USER2=19
 val SCE_MYSQL_USER3=20
+val SCE_MYSQL_HIDDENCOMMAND=21
 # Lexical state for SCLEX_PO
 lex Po=SCLEX_PO SCE_PO_
 val SCE_PO_DEFAULT=0

@@ -1083,6 +1083,7 @@ static IFaceConstant ifaceConstants[] = {
 	{"SCE_MYSQL_DEFAULT",0},
 	{"SCE_MYSQL_DQSTRING",13},
 	{"SCE_MYSQL_FUNCTION",15},
+	{"SCE_MYSQL_HIDDENCOMMAND",21},
 	{"SCE_MYSQL_IDENTIFIER",16},
 	{"SCE_MYSQL_KEYWORD",8},
 	{"SCE_MYSQL_KNOWNSYSTEMVARIABLE",5},
@@ -2098,6 +2099,9 @@ static IFaceConstant ifaceConstants[] = {
 	{"SC_SEL_RECTANGLE",1},
 	{"SC_SEL_STREAM",0},
 	{"SC_STARTACTION",0x2000},
+	{"SC_STATUS_BADALLOC",2},
+	{"SC_STATUS_FAILURE",1},
+	{"SC_STATUS_OK",0},
 	{"SC_TIME_FOREVER",10000000},
 	{"SC_WRAPVISUALFLAGLOC_DEFAULT",0x0000},
 	{"SC_WRAPVISUALFLAGLOC_END_BY_TEXT",0x0001},
@@ -2164,6 +2168,8 @@ static IFaceFunction ifaceFunctions[] = {
 	{"CharLeft", 2304, iface_void, {iface_void, iface_void}},
 	{"CharLeftExtend", 2305, iface_void, {iface_void, iface_void}},
 	{"CharLeftRectExtend", 2428, iface_void, {iface_void, iface_void}},
+	{"CharPositionFromPoint", 2561, iface_position, {iface_int, iface_int}},
+	{"CharPositionFromPointClose", 2562, iface_position, {iface_int, iface_int}},
 	{"CharRight", 2306, iface_void, {iface_void, iface_void}},
 	{"CharRightExtend", 2307, iface_void, {iface_void, iface_void}},
 	{"CharRightRectExtend", 2429, iface_void, {iface_void, iface_void}},
@@ -2534,8 +2540,8 @@ static IFaceProperty ifaceProperties[] = {
 };
 
 enum {
-	ifaceFunctionCount = 259,
-	ifaceConstantCount = 1990,
+	ifaceFunctionCount = 261,
+	ifaceConstantCount = 1994,
 	ifacePropertyCount = 146
 };
 
