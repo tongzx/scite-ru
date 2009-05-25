@@ -16,12 +16,6 @@
 
 #include "Platform.h"
 
-#if PLAT_FOX
-
-#include <unistd.h>
-
-#endif
-
 #if PLAT_GTK
 
 #include <unistd.h>
@@ -315,6 +309,7 @@ const char *contributors[] = {
             "Nic Jansma",
             "Evan Jones",
             "Mike Lischke",
+            "Eric Kidd",
 //!-start-[SciTE-Ru]
             "HSolo",
             "Midas",
@@ -2512,10 +2507,12 @@ bool SciTEBase::StartAutoCompleteWord(bool onlyOneWord) {
 	SString line = GetLine();
 	int current = GetCaretInLine();
 
+//!-start-[autocompleteword.incremental]
 	if (!current)
 	{
 		SendEditor(SCI_AUTOCCANCEL);
 	}
+//!-end-[autocompleteword.incremental]
 	int startword = current;
 	// Autocompletion of pure numbers is mostly an annoyance
 	bool allNumber = true;
@@ -3673,7 +3670,8 @@ void SciTEBase::CharAdded(char ch) {
 					StartAutoComplete();
 				}
 			} else if (autoCCausedByOnlyOne) {
-				StartAutoCompleteWord(!props.GetInt("autocompleteword.incremental"));
+//!				StartAutoCompleteWord(true);
+				StartAutoCompleteWord(!props.GetInt("autocompleteword.incremental")); //!-change-[autocompleteword.incremental]
 			}
 		} else if (HandleXml(ch)) {
 			// Handled in the routine
@@ -3691,7 +3689,8 @@ void SciTEBase::CharAdded(char ch) {
 				if (autoCompleteStartCharacters.contains(ch)) {
 					StartAutoComplete();
 				} else if (props.GetInt("autocompleteword.automatic") && wordCharacters.contains(ch)) {
-					StartAutoCompleteWord(!props.GetInt("autocompleteword.incremental"));
+//!					StartAutoCompleteWord(true);
+					StartAutoCompleteWord(!props.GetInt("autocompleteword.incremental")); //!-change-[autocompleteword.incremental]
 					autoCCausedByOnlyOne = SendEditor(SCI_AUTOCACTIVE);
 				}
 			}
@@ -3743,8 +3742,7 @@ bool SciTEBase::HandleXml(char ch) {
 	}
 
 	// This may make sense only in certain languages
-	if (lexLanguage != SCLEX_HTML && lexLanguage != SCLEX_XML &&
-	        lexLanguage != SCLEX_ASP && lexLanguage != SCLEX_PHP) {
+	if (lexLanguage != SCLEX_HTML && lexLanguage != SCLEX_XML) {
 		return false;
 	}
 
@@ -4820,12 +4818,15 @@ void SciTEBase::Notify(SCNotification *notification) {
 		}
 		break;
 
+//!-start-[autocompleteword.incremental]
 	case SCN_AUTOCUPDATED:
 		if (props.GetInt("autocompleteword.incremental"))
 		{
 			StartAutoCompleteWord(false);
 		}
 		break;
+//!-end-[autocompleteword.incremental]
+
 	case SCN_CHARADDED:
 		if (extender)
 			handled = extender->OnChar(static_cast<char>(notification->ch));

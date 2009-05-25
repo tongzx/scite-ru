@@ -2237,6 +2237,11 @@ val SCE_D_IDENTIFIER=14
 val SCE_D_COMMENTLINEDOC=15
 val SCE_D_COMMENTDOCKEYWORD=16
 val SCE_D_COMMENTDOCKEYWORDERROR=17
+val SCE_D_STRINGB=18
+val SCE_D_STRINGR=19
+val SCE_D_WORD5=20
+val SCE_D_WORD6=21
+val SCE_D_WORD7=22
 # Lexical states for SCLEX_TCL
 lex TCL=SCLEX_TCL SCE_TCL_
 val SCE_TCL_DEFAULT=0
@@ -3682,27 +3687,6 @@ evt void Click=2061(int modifiers)
 ##!-start-[OnMouseButtonUp]
 evt void MouseButtonUp=2027(int modifiers)
 ##!-end-[OnMouseButtonUp]
+##!-start-[autocompleteword.incremental]
 evt void AutoCUpdated=2038(void)
-
-cat Deprecated
-
-# CARET_POLICY changed in 1.47
-fun void SetCaretPolicy=2369(int caretPolicy, int caretSlop)
-val CARET_CENTER=0x02
-val CARET_XEVEN=0x08
-val CARET_XJUMPS=0x10
-
-# The old name for SCN_UPDATEUI
-val SCN_CHECKBRACE=2007
-evt void PosChanged=2012(int position)
-
-# Box folding support
-val SC_FOLDFLAG_BOX=0x0001
-val SC_FOLDLEVELBOXHEADERFLAG=0x4000
-val SC_FOLDLEVELBOXFOOTERFLAG=0x8000
-val SC_FOLDLEVELCONTRACTED=0x10000
-val SC_FOLDLEVELUNINDENT=0x20000
-
-# SCLEX_HTML should be used in preference to these.
-val SCLEX_ASP=29
-val SCLEX_PHP=30
+##!-end-[autocompleteword.incremental]
