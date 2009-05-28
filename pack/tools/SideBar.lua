@@ -1,9 +1,11 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev
-version 1.10.3
+version 1.11
 ------------------------------------------------------
-  Note: Needed gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
+  Note: Require gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
+               lpeg.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/lpeg/>
+              shell.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/shell/>
   Connection:
    In file SciTEStartup.lua add a line:
       dofile (props["SciteDefaultHome"].."\\tools\\SideBar.lua")
@@ -19,8 +21,8 @@ version 1.10.3
     sidebar.functions.flags=1
     sidebar.functions.params=1
 --]]--------------------------------------------------
-require 'lpeg'
 require 'gui'
+require 'lpeg'
 require 'shell'
 
 -- you can choose to make it a stand-alone window; just uncomment this line:
@@ -991,10 +993,6 @@ end)
 -- tab1:list_bookmarks   Bookmarks
 ----------------------------------------------------------
 local table_bookmarks = {}
--- 1 - file path
--- 2 - buffer number
--- 3 - line number
--- 4 - line text
 
 local function GetBufferNumber()
 	local buf = props['BufferNumber']
@@ -1009,17 +1007,24 @@ local function Bookmark_Add(line_number)
 	if line_text == '' then
 		line_text = ' - empty line - ('..(line_number+1)..')'
 	end
-	local buffer_number = GetBufferNumber()
-	table_bookmarks[#table_bookmarks+1] = {props['FilePath'], buffer_number, line_number, line_text}
+	for _, a in ipairs(table_bookmarks) do
+		if a.FilePath == props['FilePath'] and a.LineNumber == line_number then
+		return end
+	end
+	local bmk = {}
+	bmk.FilePath = props['FilePath']
+	bmk.BufferNumber = GetBufferNumber()
+	bmk.LineNumber = line_number
+	bmk.LineText = line_text
+	table_bookmarks[#table_bookmarks+1] = bmk
 end
 
 local function Bookmark_Delete(line_number)
 	for i = #table_bookmarks, 1, -1 do
-		local a = table_bookmarks[i]
-		if a[1] == props['FilePath'] then
+		if table_bookmarks[i].FilePath == props['FilePath'] then
 			if line_number == nil then
 				table.remove(table_bookmarks, i)
-			elseif a[3] == line_number then
+			elseif table_bookmarks[i].LineNumber == line_number then
 				table.remove(table_bookmarks, i)
 				break
 			end
@@ -1029,10 +1034,14 @@ end
 
 local function Bookmarks_ListFILL()
 	if tonumber(props['sidebar.show'])~=1 or tab_index~=1 then return end
-	table.sort(table_bookmarks, function(a, b) return a[2]<b[2] or a[2]==b[2] and a[3]<b[3] end)
+	table.sort(table_bookmarks, function(a, b)
+									return a.BufferNumber < b.BufferNumber or
+											a.BufferNumber == b.BufferNumber and
+											a.LineNumber < b.LineNumber
+								end)
 	list_bookmarks:clear()
-	for _, a in ipairs(table_bookmarks) do
-		list_bookmarks:add_item({a[2], a[4]}, {a[1], a[3]})
+	for _, bmk in ipairs(table_bookmarks) do
+		list_bookmarks:add_item({bmk.BufferNumber, bmk.LineText}, {bmk.FilePath, bmk.LineNumber})
 	end
 end
 
@@ -1051,8 +1060,8 @@ local function Bookmarks_GotoLine()
 	if sel_item == -1 then return end
 	local pos = list_bookmarks:get_item_data(sel_item)
 	if pos then
-		scite.Open(pos[1])
-		ShowCompactedLine(pos[2])
+		scite.Open(pos[1]) -- FilePath
+		ShowCompactedLine(pos[2]) -- LineNumber
 		editor:GotoLine(pos[2])
 		gui.pass_focus()
 	end
@@ -1067,6 +1076,20 @@ list_bookmarks:on_key(function(key)
 		Bookmarks_GotoLine()
 	end
 end)
+
+-- Add user event handler OnClose
+local old_OnClose = OnClose
+function OnClose(file)
+	local result
+	if old_OnClose then result = old_OnClose(file) end
+	for i = #table_bookmarks, 1, -1 do
+		if table_bookmarks[i].FilePath == file then
+			table.remove(table_bookmarks, i)
+		end
+	end
+	Bookmarks_ListFILL()
+	return result
+end
 
 ----------------------------------------------------------
 -- tab2:list_abbrev   Abbreviations
@@ -1132,8 +1155,11 @@ end)
 ----------------------------------------------------------
 -- Events
 ----------------------------------------------------------
+local line_count
+
 local function OnSwitch()
 	_DEBUG.timerstart('OnSwitch')
+	line_count = editor.LineCount
 	if tab0:bounds() then -- visible FileMan
 		local path = props['FileDir']
 		if path == '' then return end
@@ -1145,7 +1171,6 @@ local function OnSwitch()
 	elseif tab1:bounds() then -- visible Funk/Bmk
 		Functions_GetNames()
 		Functions_ListFILL()
-
 		Bookmarks_ListFILL()
 	elseif tab2:bounds() then -- visible Abbrev
 		Abbreviations_ListFILL()
@@ -1211,12 +1236,11 @@ function OnOpen(file)
 	return result
 end
 
--- Add user event handler OnKey
-local line_count = 0
-local old_OnKey = OnKey
-function OnKey(key, shift, ctrl, alt, char)
+-- Add user event handler OnUpdateUI
+local old_OnUpdateUI = OnUpdateUI
+function OnUpdateUI()
 	local result
-	if old_OnKey then result = old_OnKey(key, shift, ctrl, alt, char) end
+	if old_OnUpdateUI then result = old_OnUpdateUI() end
 	if (editor.Focus) then
 		local line_count_new = editor.LineCount
 		local def_line_count = line_count_new - line_count
