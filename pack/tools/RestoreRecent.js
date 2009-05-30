@@ -1,7 +1,7 @@
 /*
 RestoreRecent.js
 Authors: mozers™
-Version: 1.5
+Version: 1.5.1
 ------------------------------------------------------
 Description:
   It is started on close SciTE (from RestoreRecent.lua)
@@ -47,7 +47,7 @@ function ReadSessionFile(filename){
 		return day + '.' + month + '.' + year;
 	}
 
-	// Проверка наличия в массиве записи с такими же данными (recent_arr[i][1] == имя_файла ?)
+	// Проверка наличия в массиве записи о данном файле
 	function IsRecent(filespec){
 		for (var i=1; i<recent_arr.length; i++) {
 			if (recent_arr[i].path.toLowerCase() == filespec.toLowerCase()) {
@@ -122,9 +122,11 @@ function RemoveWaste(){
 	// Удаляем старые ссылки
 	if (!IsTodaysRecent()) { // Процедура очистки запускается только 1 раз в день
 		for (var j in recent_arr){
-			if (LinkAge(recent_arr[j].date) > link_age_max){
-				// если возраст линка больше указанного количества дней, то:
-				recent_arr[j] = null;
+			if (recent_arr[j]){
+				if (LinkAge(recent_arr[j].date) > link_age_max){
+					// если возраст линка больше указанного количества дней, то:
+					recent_arr[j] = null;
+				}
 			}
 		}
 	}
