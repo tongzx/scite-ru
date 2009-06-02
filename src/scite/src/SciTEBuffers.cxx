@@ -409,7 +409,7 @@ void SciTEBase::LoadSessionFile(const char *sessionName) {
 }
 
 void SciTEBase::RestoreRecentMenu() {
-	CharacterRange cr;
+	Sci_CharacterRange cr;
 	cr.cpMin = cr.cpMax = 0;
 
 	DeleteFileStackMenu();
@@ -1008,7 +1008,7 @@ void SciTEBase::AddFileToBuffer(FilePath file, int pos) {
 	}
 }
 
-void SciTEBase::AddFileToStack(FilePath file, CharacterRange selection, int scrollPos) {
+void SciTEBase::AddFileToStack(FilePath file, Sci_CharacterRange selection, int scrollPos) {
 	if (!file.IsSet())
 		return;
 	DeleteFileStackMenu();
@@ -1805,7 +1805,7 @@ int DecodeMessage(const char *cdoc, char *sourcePath, int format, int &column) {
 
 //!void SciTEBase::GoMessage(int dir) {
 bool SciTEBase::GoMessage(int dir) { //!-change-[GoMessageImprovement]
-	CharacterRange crange;
+	Sci_CharacterRange crange;
 	crange.cpMin = SendOutput(SCI_GETSELECTIONSTART);
 	crange.cpMax = SendOutput(SCI_GETSELECTIONEND);
 	int selStart = crange.cpMin;
