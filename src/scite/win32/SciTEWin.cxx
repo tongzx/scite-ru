@@ -149,6 +149,7 @@ char *SciTEWin::classNameInternal = NULL;
 SciTEWin *SciTEWin::app = NULL;
 
 SciTEWin::SciTEWin(Extension *ext) : SciTEBase(ext) {
+
 	app = this;
 	cmdShow = 0;
 	heightBar = 7;
