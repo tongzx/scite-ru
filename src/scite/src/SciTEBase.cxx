@@ -2427,7 +2427,7 @@ bool SciTEBase::StartAutoComplete() {
 	}
 	SString root = line.substr(startword, current - startword);
 	int doclen = LengthDocument();
-	TextToFind ft = {{0, 0}, 0, {0, 0}};
+	Sci_TextToFind ft = {{0, 0}, 0, {0, 0}};
 	ft.lpstrText = const_cast<char*>(root.c_str());
 	ft.chrg.cpMin = 0;
 	ft.chrgText.cpMin = 0;
