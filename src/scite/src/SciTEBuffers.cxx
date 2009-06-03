@@ -424,7 +424,7 @@ void SciTEBase::RestoreRecentMenu() {
 }
 
 void SciTEBase::RestoreSession() {
-	props.Set("scite.state.loadsession", "1"); //!-add-[scite.state.loadsession]
+	props.Set("scite.state.loadsession", "1"); //!-add-[session.load.forced]
 	if (props.GetInt("session.close.buffers.onload", 1) == 1) //!-add-[session.close.buffers.onload]
 	// Comment next line if you don't want to close all buffers before restoring session
 	CloseAllBuffers(true);
@@ -479,9 +479,9 @@ void SciTEBase::RestoreSession() {
 			}
 		}
 	}
-//!-start-[scite.state.loadsession]	
+//!-start-[session.load.forced]	
 	props.Set("scite.state.loadsession", "0");
-	if (curr != -1) {
+	if (props.GetInt("session.load.forced", 0) == 1 && curr != -1) {
 		ReadProperties();
 		SetIndentSettings();
 		UpdateBuffersCurrent();
@@ -491,7 +491,7 @@ void SciTEBase::RestoreSession() {
 			SetLineNumberWidth();
 		UpdateStatusBar(true);
 	}
-//!-end-[scite.state.loadsession]
+//!-end-[session.load.forced]
 
 	if (curr != -1)
 		SetDocumentAt(curr);

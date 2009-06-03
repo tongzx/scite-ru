@@ -457,12 +457,16 @@ bool SciTEBase::Open(FilePath file, OpenFlags of) {
 	//Platform::DebugPrintf("Opening %s\n", file);
 	SetFileName(absPath);
 	CurrentBuffer()->overrideExtension = "";
-	if(props.GetInt("scite.state.loadsession", 0) != 1) { //!-add-[scite.state.loadsession]
+	if(props.GetInt("session.load.forced", 0) != 1 || props.GetInt("scite.state.loadsession", 0) != 1) { //!-add-[session.load.forced]
 	ReadProperties();
 	SetIndentSettings();
 	UpdateBuffersCurrent();
 	SizeSubWindows();
-	} //!-add-[scite.state.loadsession]
+//!-start-[session.load.forced]
+	} else {
+		SetIndentSettings();
+	}
+//!-end-[session.load.forced]
 
 	if (!filePath.IsUntitled()) {
 		SendEditor(SCI_SETREADONLY, 0);
@@ -486,12 +490,12 @@ bool SciTEBase::Open(FilePath file, OpenFlags of) {
 	RemoveFileFromStack(filePath);
 	DeleteFileStackMenu();
 	SetFileStackMenu();
-	if(props.GetInt("scite.state.loadsession", 0) != 1) { //!-add-[scite.state.loadsession]
+	if(props.GetInt("session.load.forced", 0) != 1 || props.GetInt("scite.state.loadsession", 0) != 1) { //!-add-[session.load.forced]
 	SetWindowName();
 	if (lineNumbers && lineNumbersExpand)
 		SetLineNumberWidth();
 	UpdateStatusBar(true);
-	} //!-add-[scite.state.loadsession]
+	} //!-add-[session.load.forced]
 	if (extender)
 		extender->OnOpen(filePath.AsFileSystem());
 	return true;
