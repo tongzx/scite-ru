@@ -1172,7 +1172,6 @@ void SciTEWin::Creation() {
 	wToolBar = hwndToolBar;
 
 	::SendMessage(hwndToolBar, TB_BUTTONSTRUCTSIZE, sizeof(TBBUTTON), 0);
-
 	::SendMessage(hwndToolBar, TB_LOADIMAGES, IDB_STD_SMALL_COLOR,
 	              reinterpret_cast<LPARAM>(HINST_COMMCTRL));
 

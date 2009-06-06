@@ -5,7 +5,7 @@
 // Copyright 1998-2003 by Neil Hodgson <neilh@scintilla.org>
 // The License.txt file describes the conditions under which this software may be distributed.
 
-//! #include <time.h> //!-change-[close_on_dbl_clk]
+//! #include <time.h> //!-change-[tab.window]
 
 #include "SciTEWin.h"
 
@@ -149,7 +149,6 @@ char *SciTEWin::classNameInternal = NULL;
 SciTEWin *SciTEWin::app = NULL;
 
 SciTEWin::SciTEWin(Extension *ext) : SciTEBase(ext) {
-
 	app = this;
 	cmdShow = 0;
 	heightBar = 7;
@@ -1637,7 +1636,7 @@ LRESULT SciTEWin::KeyUp(WPARAM wParam) {
 	return 0l;
 }
 
-/*!
+/*!-change-[ExtendedContextMenu]
 void SciTEWin::AddToPopUp(const char *label, int cmd, bool enabled) {
 	SString localised = localiser.Text(label);
 	HMENU menu = reinterpret_cast<HMENU>(popup.GetID());
