@@ -63,6 +63,7 @@
 Кроме того, во время загрузки сессии новый параметр <span class="example">scite.state.loadsession</span> равен 1. Теперь в скрипте можно определить в какой момент вызван <span class="example">OnOpen</span>, во время загрузки сессии или одиночного файла.
 
 <h5 id="find.fillout">
+<sup>new</sup>
 [find.fillout] <span class=desc>(Авторы: Frank Wunderlich, VladVRO)</span></h5>
 Новый параметр <span class="example">find.fillout</span> в .properties, который позволяет задать способ начального заполнения поля в диалоге поиска:<br>
 &nbsp; 0 (по умолчанию) - если есть выделение и оно не содержит переводов строк, то использовать его, иначе взять слово рядом с курсором (как это и было ранее),<br>
@@ -70,6 +71,7 @@
 &nbsp; 2 - всегда оставлять поле пустым.
 
 <h5 id="MoreRecentFiles">
+<sup>new</sup>
 [MoreRecentFiles] <span class=desc>(Автор: Daniel Cardenas)</span></h5>
 Список последних открывавшихся файлов можно расширить до 30 пунктов используя новый параметр: <div class="example">save.recent.max=30</div>
 
@@ -129,6 +131,7 @@ command.name.6.*=Date and Time</div>
 пользовательская команда = 9000 + номер этой команды в меню Tools
 
 <h5 id="ExtendedContextMenu">
+<sup>updated</sup>
 [ExtendedContextMenu] <span class=desc>(Автор: Дмитрий Маслов, VladVRO)</span></h5>
 Новые параметры в .properties позволяют ПОЛНОСТЬЮ настроить контекстные меню:<br>
 <span class="example">user.context.menu.*</span> - контекстное меню редактора<br>
@@ -147,6 +150,7 @@ command.name.6.*=Date and Time</div>
 Если параметр не задан в настройках, то отображается стандартное контекстное меню.
 
 <h5 id="user.toolbar">
+<sup>updated</sup>
 [user.toolbar] <span class=desc>(Автор: Дмитрий Маслов, VladVRO)</span></h5>
 Новый параметр <span class="example">user.toolbar.*</span> в .properties позволяет ПОЛНОСТЬЮ настроить панель инструментов.<br>
 Формат:
@@ -163,6 +167,7 @@ command.name.6.*=Date and Time</div>
 <span class="example">user.toolbar.iconlib.*=$(SciteUserHome)\gnome.dll</span>
 
 <h5 id="ToolbarButtonPressed">
+<sup>new</sup>
 [ToolbarButtonPressed] <span class=desc>(Авторы: UR4LTZ, VladVRO)</span></h5>
 Кнопки на панели инструментов теперь могут отображать состояние вкл/откл в зависимости от текущего значения изменяемого кнопкой параметра.<br>
 Так по виду (нажата/отжата) таких кнопок как IDM_WRAP, IDM_READONLY, IDM_VIEWSPACE и т.п. можно видеть текущее состояние соответствующих им установок - wrap, read.only, view.whitespace.
@@ -199,10 +204,14 @@ command.name.6.*=Date and Time</div>
 <span class="example">find.mark.delete=1</span><br>
 Если 1, то при нажатии на кнопку "Пометить все" удаляются все установленные ранее метки (bookmarks) и маркеры.
 
+<h5 id="tab.window">
+[tab.window] <span class=desc>(Автор: Дмитрий Маслов, VladVRO)</span></h5>
+Добавлен функционал: Перетаскивание вкладок с помощью мыши.<br>
+Добавлен функционал: Закрытие активной вкладки по двойному клику мыши на ней.
+
 <h5 id="TabsMoving">
-[TabsMoving] <span class=desc>(Автор: VladVRO и Дмитрий Маслов)</span></h5>
+[TabsMoving] <span class=desc>(Автор: VladVRO)</span></h5>
 В редактор добавлены две новых команды <span class="example">IDM_MOVETABLEFT</span> и <span class="example">IDM_MOVETABRIGHT</span> позволяющие перемещать текущую вкладку. Они доступны в меню Вкладки.<br>
-Кроме того реализовано перемещение вкладок с помощью мыши.
 
 <h5 id="TabbarTitleMaxLength">
 [TabbarTitleMaxLength] <span class=desc>(Автор: VladVRO)</span></h5>
@@ -231,10 +240,6 @@ command.name.6.*=Date and Time</div>
 <h5 id="new_on_dbl_clk">
 [new_on_dbl_clk] <span class=desc>(Автор: Дмитрий Маслов)</span></h5>
 Добавлен функционал: На двойной клик по свободному месту справа от вкладок открывается новый файл (а ля FireFox)
-
-<h5 id="close_on_dbl_clk">
-[close_on_dbl_clk] <span class=desc>(Автор: Дмитрий Маслов, Moon_aka_Sun, VladVRO)</span></h5>
-Добавлен функционал: Закрытие активной вкладки по двойному клику мыши на ней
 
 <h5 id="SetBookmark">
 [SetBookmark] <span class=desc>(Автор: Midas)</span></h5>
@@ -384,6 +389,7 @@ calltip.*.word.wrap</div>
     </h3>
 
 <h5 id="IndicatorsFillAlpha">
+<sup>new</sup>
 [IndicatorsFillAlpha] <span class=desc>(Автор: VladVRO)</span></h5>
 Поправлен диапазон значений параметра прозрачности заливки метки (mark) для стиля ROUNDBOX, который может принимать значения от 0 до 255 под Windows OS.<br>
 Для работы с ним добавлен интерфейс в API редактора <span class="example">editor.IndicAlpha[num]</span>.
@@ -501,6 +507,7 @@ end</div>
 Теперь <span class="example">editor.LexerLanguage</span> - позволяет как установить лексер, так и получить текущий
 
 <h5 id="GetWordChars">
+<sup>new</sup>
 [GetWordChars] <span class=desc>(Автор: Дмитрий Маслов, VladVRO)</span></h5>
 Добавлено сообщение к Scitilla позволяющее получить текущий набор символов являющихся частью слов:<br>
 Теперь <span class="example">editor.WordChars</span> - позволяет как задать набор, так и получить текущий
@@ -585,6 +592,7 @@ Tеперь можно задавать до 4х дополнительных наборов слов с разной подсветкой, при
     </h3>
 
 <h5 id="ReloadsIfOldTime">
+<sup>new</sup>
 [Reloads if old time] <span class=desc>(Автор: UR4LTZ)</span></h5>
 Если отредактированный файл был заменен первоначальной (более ранней по времени) версией, то SciTE не замечал подмены, несмотря на установку load.on.activate=1
 

@@ -23,7 +23,7 @@ try=try {\n\t\n} catch(e) {\n\t\n}\n
 switch=switch(val){\n\tcase 1:\n\t\tbreak;\n\tcase 2:\n\t\tbreak;\n\tcase 3:\n\t\tbreak;\n\tdefault:\n\t\t\n}\n
 eh=WScript.Echo('|');
 prompt=prompt('', |string);\n
-match=var Arr_match = text.match(/(\\w)(\\d)/g);\n
+match=var Arr_match = text.match(/(\\w+)=(\\d+)/);\n
 
 #Functions
 fileread=// Read file\nfunction ReadFile(filename) {\n\tvar text = '';\n\tif (FSO.FileExists(filename)) {\n\t\tif (FSO.GetFile(filename).Size > 0) {\n\t\t\tvar file = FSO.OpenTextFile(filename);\n\t\t\ttext = file.ReadAll();\n\t\t\tfile.Close();\n\t\t}\n\t}\n\treturn text;\n}\n

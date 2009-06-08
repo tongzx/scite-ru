@@ -62,6 +62,7 @@ Added new property <span class="example">session.load.forced</span> to do load s
 And one more while load session new property <span class="example">scite.state.loadsession</span> is set to 1. It can be used in script <span class="example">OnOpen</span> for determine is session load now or not.
 
 <h5 id="find.fillout">
+<sup>new</sup>
 [find.fillout] <span class=desc>(Authors: Frank Wunderlich, VladVRO)</span></h5>
 New property <span class="example">find.fillout</span> is to define how will be filled input field in find dialog on start:<br>
 &nbsp; 0 (default) - if a selection exists and it hasn't got line breaks then fill field with the selection otherwise fill field with a word near cursor (as it was),<br>
@@ -69,6 +70,7 @@ New property <span class="example">find.fillout</span> is to define how will be 
 &nbsp; 2 - never fill search field.
 
 <h5 id="MoreRecentFiles">
+<sup>new</sup>
 [MoreRecentFiles] <span class=desc>(Author: Daniel Cardenas)</span></h5>
 Recent files list can be expanded up to 30 items by new property: <div class="example">save.recent.max=30</div>
 
@@ -128,6 +130,7 @@ For creation of the user commands in <span class="example">user.context.menu</sp
 User command = 9000 + number of this command in menu Tools
 
 <h5 id="ExtendedContextMenu">
+<sup>updated</sup>
 [ExtendedContextMenu] <span class=desc>(Author: Dmitry Maslov, VladVRO)</span></h5>
 You can setup each context menu now by using new parameters in .properties file:<br>
 <span class="example">user.context.menu.*</span> - editor context menu<br>
@@ -146,6 +149,7 @@ Command&nbsp;name2|IDM_COMMAND2|...</div><br>
 If parameter absent or empty then context menu will standard.
 
 <h5 id="user.toolbar">
+<sup>updated</sup>
 [user.toolbar] <span class=desc>(Author: Dmitry Maslov, VladVRO)</span></h5>
 You can setup toolbar now by using new parameter <span class="example">user.toolbar.*</span> in .properties file:<br>
 Format:
@@ -162,6 +166,7 @@ New property for setup user library with icons:
 <span class="example">user.toolbar.iconlib.*=$(SciteUserHome)\gnome.dll</span>
 
 <h5 id="ToolbarButtonPressed">
+<sup>new</sup>
 [ToolbarButtonPressed] <span class=desc>(Authors: UR4LTZ, VladVRO)</span></h5>
 Toolbar buttons can display status on/off now based on the current state of parameter that switched by the button.<br>
 For example state of such parameters as wrap, read.only, view.whitespace displayed now by status pressed/released of related buttons IDM_WRAP, IDM_READONLY, IDM_VIEWSPACE.
@@ -198,10 +203,14 @@ New variable in properties files<br>
 <span class="example">find.mark.delete=1</span><br>
 If 1, then pressing the button "Mark all" removed any earlier bookmarks.
 
+<h5 id="tab.window">
+[tab.window] <span class=desc>(Author: Dmitry Maslov, VladVRO)</span></h5>
+You can move tab by mouse now.<br>
+You can close current buffer now by double click on tabs.
+
 <h5 id="TabsMoving">
-[TabsMoving] <span class=desc>(Authors: VladVRO, Dmitry Maslov)</span></h5>
-You can move tabs now. In editor added two new commands <span class="example">IDM_MOVETABLEFT</span> and <span class="example">IDM_MOVETABRIGHT</span> for shift current tab left or right and added identical commands in menu Buffers.<br>
-And also you can move tab by mouse now.
+[TabsMoving] <span class=desc>(Authors: VladVRO)</span></h5>
+You can move tabs now. In editor added two new commands <span class="example">IDM_MOVETABLEFT</span> and <span class="example">IDM_MOVETABRIGHT</span> for shift current tab left or right and added identical commands in menu Buffers.
 
 <h5 id="TabbarTitleMaxLength">
 [TabbarTitleMaxLength] <span class=desc>(Author: VladVRO)</span></h5>
@@ -230,10 +239,6 @@ if option is present then after closing buffer current buffer will be next in bu
 <h5 id="new_on_dbl_clk">
 [new_on_dbl_clk] <span class=desc>(Author: Dmitry Maslov)</span></h5>
 You can open new buffer now by double click on empty space on right of tabs (a-la FireFox).
-
-<h5 id="close_on_dbl_clk">
-[close_on_dbl_clk] <span class=desc>(Author: Dmitry Maslov, Moon_aka_Sun, VladVRO)</span></h5>
-You can close current buffer now by double click on tabs.
 
 <h5 id="SetBookmark">
 [SetBookmark] <span class=desc>(Author: Midas)</span></h5>
@@ -384,6 +389,7 @@ It is possible to set this parameter through SCI_SETOVERTYPE<br>
     </h3>
 
 <h5 id="IndicatorsFillAlpha">
+<sup>new</sup>
 [IndicatorsFillAlpha] <span class=desc>(Author: VladVRO)</span></h5>
 Changed values range of parameter for setup filling alpha of indicators (marks) with style ROUNDBOX, that can be from 0 to 255 on Windows OS.<br>
 For access to parameter was made new property in editor API - <span class="example">editor.IndicAlpha[num]</span>.
@@ -501,6 +507,7 @@ Added Scitilla message allowing to receive a name current lexers:<br>
 Now <span class="example">editor.LexerLanguage</span> - allows both to set lexer, and to receive current
 
 <h5 id="GetWordChars">
+<sup>new</sup>
 [GetWordChars] <span class=desc>(Автор: Dmitry Maslov, VladVRO)</span></h5>
 Added Scitilla message allowing to receive a name current word chars:<br>
 Now <span class="example">editor.WordChars</span> - allows both to set word chars, and to receive current
@@ -583,6 +590,7 @@ Now OnSendEditor can trace event SCI_SETZOOM arising at change of the size of a 
     </h3>
 
 <h5 id="ReloadsIfOldTime">
+<sup>new</sup>
 [Reloads if old time] <span class=desc>(Author: UR4LTZ)</span></h5>
 If the edited file has been replaced with the initial (earlier) version then SciTE did not noticed substitution, despite of setting load.on.activate=1
 
