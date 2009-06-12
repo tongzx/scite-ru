@@ -1,6 +1,6 @@
 --[[--------------------------------------------------
  Save SciTE Settings
- Version: 1.6.1
+ Version: 1.7
  Author: mozersЩ, Dmitry Maslov
 ---------------------------------------------------
  Save current settings on SciTE close.
@@ -14,45 +14,51 @@ Set in a file .properties:
   import home\SciTE.session
 --]]----------------------------------------------------
 
+local text = ''
+
 -- установить в text текущее значение проперти key
-local function SaveKey(text, key)
+local function SaveKey(key)
 	local value = props[key]
-	local regex = '([^%w.]'..key..'=)%-?%d+'
-	local find = string.find(text, regex)
-	if find == nil then
-		return text..'\n'..key..'='..value
+	if tonumber(value) then
+		local regex = '([^%w.]'..key..'=)%-?%d+'
+		if text:find(regex) == nil then
+			text = text..'\n'..key..'='..value
+			return
+		end
+		text = text:gsub(regex, "%1"..value)
 	end
-	return string.gsub(text, regex, "%1"..value)
+	return
 end
 
 local function SaveSettings()
 	local file = props["scite.userhome"]..'\\SciTE.session'
 	io.input(file)
-	local text = io.read('*a')
-	text = SaveKey(text, 'toolbar.visible')
-	text = SaveKey(text, 'tabbar.visible')
-	text = SaveKey(text, 'statusbar.visible')
-	text = SaveKey(text, 'view.whitespace')
-	text = SaveKey(text, 'view.eol')
-	text = SaveKey(text, 'view.indentation.guides')
-	text = SaveKey(text, 'line.margin.visible')
-	text = SaveKey(text, 'split.vertical')
-	text = SaveKey(text, 'wrap')
-	text = SaveKey(text, 'output.wrap')
-	text = SaveKey(text, 'magnification') -- параметр измен€етс€ в Zoom.lua
-	text = SaveKey(text, 'output.magnification') -- параметр измен€етс€ в Zoom.lua
-	text = SaveKey(text, 'print.magnification') -- параметр измен€етс€ в Zoom.lua
-	text = SaveKey(text, 'sidebar.show') -- параметр измен€етс€ в SideBar.lua
+	text = io.read('*a')
+	SaveKey('toolbar.visible')
+	SaveKey('tabbar.visible')
+	SaveKey('statusbar.visible')
+	SaveKey('view.whitespace')
+	SaveKey('view.eol')
+	SaveKey('view.indentation.guides')
+	SaveKey('line.margin.visible')
+	SaveKey('split.vertical')
+	SaveKey('wrap')
+	SaveKey('output.wrap')
+	SaveKey('magnification') -- параметр измен€етс€ в Zoom.lua
+	SaveKey('output.magnification') -- параметр измен€етс€ в Zoom.lua
+	SaveKey('print.magnification') -- параметр измен€етс€ в Zoom.lua
+	SaveKey('sidebar.show') -- параметр измен€етс€ в SideBar.lua
 	io.output(file)
 	io.write(text)
 	io.close()
 end
 
-local function fNOT (val)
-	if val=='0' then
-		return '1'
-	elseif val=='1' then
-		return '0'
+local function ToggleProp(prop_name)
+	local prop_value = tonumber(props[prop_name])
+	if prop_value==0 then
+		props[prop_name] = '1'
+	elseif prop_value==1 then
+		props[prop_name] = '0'
 	end
 end
 
@@ -63,25 +69,25 @@ function OnMenuCommand(cmd, source)
 	local result
 	if old_OnMenuCommand then result = old_OnMenuCommand(cmd, source) end
 	if cmd == IDM_VIEWTOOLBAR then
-		props['toolbar.visible'] = fNOT(props['toolbar.visible'])
+		ToggleProp('toolbar.visible')
 	elseif cmd == IDM_VIEWTABBAR then
-		props['tabbar.visible'] = fNOT(props['tabbar.visible'])
+		ToggleProp('tabbar.visible')
 	elseif cmd == IDM_VIEWSTATUSBAR then
-		props['statusbar.visible'] = fNOT(props['statusbar.visible'])
+		ToggleProp('statusbar.visible')
 	elseif cmd == IDM_VIEWSPACE then
-		props['view.whitespace'] = fNOT(props['view.whitespace'])
+		ToggleProp('view.whitespace')
 	elseif cmd == IDM_VIEWEOL then
-		props['view.eol'] = fNOT(props['view.eol'])
+		ToggleProp('view.eol')
 	elseif cmd == IDM_VIEWGUIDES then
-		props['view.indentation.guides'] = fNOT(props['view.indentation.guides'])
+		ToggleProp('view.indentation.guides')
 	elseif cmd == IDM_LINENUMBERMARGIN then
-		props['line.margin.visible'] = fNOT(props['line.margin.visible'])
+		ToggleProp('line.margin.visible')
 	elseif cmd == IDM_SPLITVERTICAL then
-		props['split.vertical'] = fNOT(props['split.vertical'])
+		ToggleProp('split.vertical')
 	elseif cmd == IDM_WRAP then
-		props['wrap'] = fNOT(props['wrap'])
+		ToggleProp('wrap')
 	elseif cmd == IDM_WRAPOUTPUT then
-		props['output.wrap'] = fNOT(props['output.wrap'])
+		ToggleProp('output.wrap')
 	end
 	return result
 end
@@ -92,10 +98,8 @@ local old_OnFinalise = OnFinalise
 function OnFinalise()
 	local result
 	if old_OnFinalise then result = old_OnFinalise() end
-	if props['FileName'] ~= '' then
-		if tonumber(props['save.settings']) == 1 then
-			SaveSettings()
-		end
+	if tonumber(props['save.settings']) == 1 then
+		SaveSettings()
 	end
 	return result
 end
