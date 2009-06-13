@@ -903,66 +903,68 @@ static BarButton bbs[] = {
 
 //!-start-[tab.window]
 static WNDPROC stDefaultTabProc = NULL;
-static LRESULT PASCAL TabWndProc( HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam ) {
-
-	LRESULT retResult = 0;
-	if ( stDefaultTabProc != NULL ) {
-		retResult = CallWindowProc( stDefaultTabProc, hWnd, iMessage, wParam, lParam );
-	}
-	else {
-		retResult = ::DefWindowProc( hWnd, iMessage, wParam, lParam );
-	}
+static LRESULT PASCAL TabWndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam) {
 
 	static BOOL st_bDragBegin = FALSE;
 	static int st_iDraggingTab = -1;
 	static int st_iLastClickTab = -1;
 	static HWND st_hwndLastFocus = NULL;
 
-	switch ( iMessage ) {
+	switch (iMessage) {
+
+	case WM_LBUTTONDOWN: {
+			Point pt = Point::FromLong(lParam);
+			TCHITTESTINFO thti;
+			thti.pt.x = pt.x;
+			thti.pt.y = pt.y;
+			thti.flags = 0;
+			st_iLastClickTab = ::SendMessage(hWnd, TCM_HITTEST, (WPARAM)0, (LPARAM) & thti);
+		}
+		break;
+	}
+
+	LRESULT retResult;
+	if (stDefaultTabProc != NULL) {
+		retResult = CallWindowProc(stDefaultTabProc, hWnd, iMessage, wParam, lParam);
+	} else {
+		retResult = ::DefWindowProc(hWnd, iMessage, wParam, lParam);
+	}
+
+	switch (iMessage) {
 
 	case WM_LBUTTONDBLCLK:
 	case WM_MBUTTONDOWN: {
 			// Check if on tab bar
-			Point pt = Point::FromLong( lParam );
+			Point pt = Point::FromLong(lParam);
 			TCHITTESTINFO thti;
 			thti.pt.x = pt.x;
 			thti.pt.y = pt.y;
 			thti.flags = 0;
-			int tab = ::SendMessage( hWnd, TCM_HITTEST, (WPARAM)0, (LPARAM)&thti );
+			int tab = ::SendMessage(hWnd, TCM_HITTEST, (WPARAM)0, (LPARAM) & thti);
 			if (tab >= 0) {
-				::SendMessage( ::GetParent( hWnd ), WM_COMMAND, IDC_TABCLOSE, (LPARAM)tab );
+				::SendMessage(::GetParent(hWnd), WM_COMMAND, IDC_TABCLOSE, (LPARAM)tab);
 			}
-		}
-		break;
-
-	case WM_LBUTTONDOWN: {
-			Point pt = Point::FromLong( lParam );
-			TCHITTESTINFO thti;
-			thti.pt.x = pt.x;
-			thti.pt.y = pt.y;
-			thti.flags = 0;
-			st_iLastClickTab = ::SendMessage( hWnd, TCM_HITTEST, (WPARAM)0, (LPARAM)&thti );
 		}
 		break;
 
 	case WM_LBUTTONUP: {
 			st_iLastClickTab = -1;
-			if ( st_bDragBegin == TRUE ) {
-				if ( st_hwndLastFocus != NULL ) ::SetFocus( st_hwndLastFocus );
+			if (st_bDragBegin == TRUE) {
+				if (st_hwndLastFocus != NULL) ::SetFocus(st_hwndLastFocus);
 				::ReleaseCapture();
-				::SetCursor( ::LoadCursor( NULL, IDC_ARROW ) );
+				::SetCursor(::LoadCursor(NULL, IDC_ARROW));
 				st_bDragBegin = FALSE;
-				Point pt = Point::FromLong( lParam );
+				Point pt = Point::FromLong(lParam);
 				TCHITTESTINFO thti;
 				thti.pt.x = pt.x;
 				thti.pt.y = pt.y;
 				thti.flags = 0;
-				int tab = ::SendMessage( hWnd, TCM_HITTEST, (WPARAM)0, (LPARAM)&thti );
-				if ( tab > -1 && st_iDraggingTab > -1 && st_iDraggingTab != tab ) {
-					::SendMessage( ::GetParent( hWnd ),
-								   WM_COMMAND,
-								   IDC_SHIFTTAB,
-								   MAKELPARAM( st_iDraggingTab, tab ) );
+				int tab = ::SendMessage(hWnd, TCM_HITTEST, (WPARAM)0, (LPARAM) & thti);
+				if (tab > -1 && st_iDraggingTab > -1 && st_iDraggingTab != tab) {
+					::SendMessage(::GetParent(hWnd),
+					        WM_COMMAND,
+					        IDC_SHIFTTAB,
+					        MAKELPARAM(st_iDraggingTab, tab));
 				}
 				st_iDraggingTab = -1;
 			}
@@ -970,15 +972,15 @@ static LRESULT PASCAL TabWndProc( HWND hWnd, UINT iMessage, WPARAM wParam, LPARA
 		break;
 
 	case WM_KEYDOWN: {
-			if ( wParam == VK_ESCAPE ) {
-				if ( st_bDragBegin == TRUE ) {
-					if ( st_hwndLastFocus != NULL ) ::SetFocus( st_hwndLastFocus );
+			if (wParam == VK_ESCAPE) {
+				if (st_bDragBegin == TRUE) {
+					if (st_hwndLastFocus != NULL) ::SetFocus(st_hwndLastFocus);
 					::ReleaseCapture();
-					::SetCursor( ::LoadCursor( NULL, IDC_ARROW ) );
+					::SetCursor(::LoadCursor(NULL, IDC_ARROW));
 					st_bDragBegin = FALSE;
 					st_iDraggingTab = -1;
 					st_iLastClickTab = -1;
-					::InvalidateRect( hWnd, NULL, FALSE );
+					::InvalidateRect(hWnd, NULL, FALSE);
 				}
 			}
 		}
@@ -986,36 +988,34 @@ static LRESULT PASCAL TabWndProc( HWND hWnd, UINT iMessage, WPARAM wParam, LPARA
 
 	case WM_MOUSEMOVE: {
 
-			Point pt = Point::FromLong( lParam );
+			Point pt = Point::FromLong(lParam);
 			TCHITTESTINFO thti;
 			thti.pt.x = pt.x;
 			thti.pt.y = pt.y;
 			thti.flags = 0;
-			int tab = ::SendMessage( hWnd, TCM_HITTEST, (WPARAM)0, (LPARAM)&thti );
-			int tabcount = ::SendMessage( hWnd, TCM_GETITEMCOUNT, (WPARAM)0, (LPARAM)0 );
+			int tab = ::SendMessage(hWnd, TCM_HITTEST, (WPARAM)0, (LPARAM) & thti);
+			int tabcount = ::SendMessage(hWnd, TCM_GETITEMCOUNT, (WPARAM)0, (LPARAM)0);
 
-			if ( wParam == MK_LBUTTON &&
-				 tabcount > 1 &&
-				 tab > -1 &&
-				 st_iLastClickTab == tab &&
-				 st_bDragBegin == FALSE ) {
+			if (wParam == MK_LBUTTON &&
+			        tabcount > 1 &&
+			        tab > -1 &&
+			        st_iLastClickTab == tab &&
+			        st_bDragBegin == FALSE) {
 				st_iDraggingTab = tab;
-				::SetCapture( hWnd );
-				st_hwndLastFocus = ::SetFocus( hWnd );
+				::SetCapture(hWnd);
+				st_hwndLastFocus = ::SetFocus(hWnd);
 				st_bDragBegin = TRUE;
-				HCURSOR hcursor = ::LoadCursor( ::GetModuleHandle( NULL ),
-												MAKEINTRESOURCE( IDC_DRAGDROP ) );
-				if ( hcursor ) ::SetCursor( hcursor );
-			}
-			else {
-				if ( st_bDragBegin == TRUE ) {
-					if ( tab > -1 && st_iDraggingTab > -1 /*&& st_iDraggingTab != tab*/ ) {
-						HCURSOR hcursor = ::LoadCursor( ::GetModuleHandle( NULL ),
-														MAKEINTRESOURCE( IDC_DRAGDROP ) );
-						if ( hcursor ) ::SetCursor( hcursor );
-					}
-					else {
-						::SetCursor( ::LoadCursor( NULL, IDC_NO ) );
+				HCURSOR hcursor = ::LoadCursor(::GetModuleHandle(NULL),
+				        MAKEINTRESOURCE(IDC_DRAGDROP));
+				if (hcursor) ::SetCursor(hcursor);
+			} else {
+				if (st_bDragBegin == TRUE) {
+					if (tab > -1 && st_iDraggingTab > -1 /*&& st_iDraggingTab != tab*/) {
+						HCURSOR hcursor = ::LoadCursor(::GetModuleHandle(NULL),
+						        MAKEINTRESOURCE(IDC_DRAGDROP));
+						if (hcursor) ::SetCursor(hcursor);
+					} else {
+						::SetCursor(::LoadCursor(NULL, IDC_NO));
 					}
 				}
 			}
@@ -1023,62 +1023,60 @@ static LRESULT PASCAL TabWndProc( HWND hWnd, UINT iMessage, WPARAM wParam, LPARA
 		break;
 
 	case WM_PAINT: {
-			if ( st_bDragBegin == TRUE && st_iDraggingTab != -1 ) {
+			if (st_bDragBegin == TRUE && st_iDraggingTab != -1) {
 
 				Point ptCursor;
-				::GetCursorPos( reinterpret_cast<POINT*>(&ptCursor) );
+				::GetCursorPos(reinterpret_cast<POINT*>(&ptCursor));
 				Point ptClient = ptCursor;
-				::ScreenToClient( hWnd, reinterpret_cast<POINT*>(&ptClient) );
+				::ScreenToClient(hWnd, reinterpret_cast<POINT*>(&ptClient));
 				TCHITTESTINFO thti;
 				thti.pt.x = ptClient.x;
 				thti.pt.y = ptClient.y;
 				thti.flags = 0;
-				int tab = ::SendMessage( hWnd, TCM_HITTEST, (WPARAM)0, (LPARAM)&thti );
+				int tab = ::SendMessage(hWnd, TCM_HITTEST, (WPARAM)0, (LPARAM) & thti);
 
 				RECT tabrc;
-				if ( tab != -1 &&
-					 tab != st_iDraggingTab &&
-					 TabCtrl_GetItemRect( hWnd, tab, &tabrc ) ) {
+				if (tab != -1 &&
+				        tab != st_iDraggingTab &&
+				        TabCtrl_GetItemRect(hWnd, tab, &tabrc)) {
 
-					HDC hDC = ::GetDC( hWnd );
+					HDC hDC = ::GetDC(hWnd);
 					Surface *surfaceWindow = Surface::Allocate();
 					if (surfaceWindow) {
-						surfaceWindow->Init( hDC, hWnd );
+						surfaceWindow->Init(hDC, hWnd);
 
 						int xLeft = tabrc.left + 8;
-						int yLeft = tabrc.top + ( tabrc.bottom - tabrc.top ) / 2;
-						Point ptsLeftArrow[] =
-						{
-							Point( xLeft, yLeft - 2 ),
-							Point( xLeft - 2, yLeft - 2 ),
-							Point( xLeft - 2, yLeft - 5 ),
-							Point( xLeft - 7, yLeft ),
-							Point( xLeft - 2, yLeft + 5 ),
-							Point( xLeft - 2, yLeft + 2 ),
-							Point( xLeft, yLeft + 2 )
+						int yLeft = tabrc.top + (tabrc.bottom - tabrc.top) / 2;
+						Point ptsLeftArrow[] = {
+							Point(xLeft, yLeft - 2),
+							Point(xLeft - 2, yLeft - 2),
+							Point(xLeft - 2, yLeft - 5),
+							Point(xLeft - 7, yLeft),
+							Point(xLeft - 2, yLeft + 5),
+							Point(xLeft - 2, yLeft + 2),
+							Point(xLeft, yLeft + 2)
 						};
 
 						int xRight = tabrc.right - 10;
-						int yRight = tabrc.top + ( tabrc.bottom - tabrc.top ) / 2;
-						Point ptsRightArrow[] =
-						{
-							Point( xRight, yRight - 2 ),
-							Point( xRight + 2, yRight - 2 ),
-							Point( xRight + 2, yRight - 5 ),
-							Point( xRight + 7, yRight ),
-							Point( xRight + 2, yRight + 5 ),
-							Point( xRight + 2, yRight + 2 ),
-							Point( xRight, yRight + 2 )
+						int yRight = tabrc.top + (tabrc.bottom - tabrc.top) / 2;
+						Point ptsRightArrow[] = {
+							Point(xRight, yRight - 2),
+							Point(xRight + 2, yRight - 2),
+							Point(xRight + 2, yRight - 5),
+							Point(xRight + 7, yRight),
+							Point(xRight + 2, yRight + 5),
+							Point(xRight + 2, yRight + 2),
+							Point(xRight, yRight + 2)
 						};
 
-						surfaceWindow->Polygon( tab < st_iDraggingTab ? ptsLeftArrow : ptsRightArrow,
-												7,
-												ColourAllocated( RGB( 255, 0, 0 ) ),
-												ColourAllocated( RGB( 255, 0, 0 ) ) );
+						surfaceWindow->Polygon(tab < st_iDraggingTab ? ptsLeftArrow : ptsRightArrow,
+						        7,
+						        ColourAllocated(RGB(255, 0, 0)),
+						        ColourAllocated(RGB(255, 0, 0)));
 						surfaceWindow->Release();
 						delete surfaceWindow;
 					}
-					::ReleaseDC( hWnd, hDC );
+					::ReleaseDC(hWnd, hDC);
 				}
 			}
 		}
@@ -1205,14 +1203,14 @@ void SciTEWin::Creation() {
 	InitCommonControlsEx(&icce);
 
 	//!-start-[tab.window]
-	WNDCLASS wndClass = { 0,0,0,0,0,0,0,0,0,0 };
-	GetClassInfo( NULL, WC_TABCONTROL, &wndClass );
+	WNDCLASS wndClass = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+	GetClassInfo(NULL, WC_TABCONTROL, &wndClass);
 	stDefaultTabProc = wndClass.lpfnWndProc;
 	wndClass.lpfnWndProc = TabWndProc;
 	wndClass.style = wndClass.style | CS_DBLCLKS;
 	wndClass.lpszClassName = "SciTeTabCtrl";
 	wndClass.hInstance = hInstance;
-	if ( RegisterClass( &wndClass ) == 0 )
+	if (RegisterClass(&wndClass) == 0)
 		exit(FALSE);
 	//!-end-[tab.window]
 
