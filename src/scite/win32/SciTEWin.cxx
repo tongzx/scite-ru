@@ -527,11 +527,11 @@ void SciTEWin::Command(WPARAM wParam, LPARAM lParam) {
 
 //!-start-[tab.window]
 	case IDC_TABCLOSE:
-		CloseTab( (int)lParam );
+		CloseTab((int)lParam);
 		break;
 
 	case IDC_SHIFTTAB:
-		ShiftTab( LOWORD(lParam), HIWORD(lParam) );
+		ShiftTab(LOWORD(lParam), HIWORD(lParam));
 		break;
 //!-end-[tab.window]
 

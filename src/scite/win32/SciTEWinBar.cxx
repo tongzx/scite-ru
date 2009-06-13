@@ -453,7 +453,7 @@ void SciTEWin::SetToolBar() {
 	if ( hwndToolBar == 0 ) return;
 
 	ToolBarTips.RemoveAll();
-	toolbarUsersPressableButtons.RemoveAll(); //!-add-[ToolbarButtonPressed]
+	toolbarUsersPressableButtons.RemoveAll();
 
 	// удаляем все кнопки
 	while ( ::SendMessage(hwndToolBar,TB_DELETEBUTTON,0,0) );
@@ -536,7 +536,6 @@ void SciTEWin::SetToolBar() {
 					BarButtonIn(strlen(userContextItem)?atoi(userContextItem):-1, 
 					GetMenuCommandAsInt(command)));
 				ToolBarTips[GetMenuCommandAsInt(command)]=tips;
-//!-start-[ToolbarButtonPressed]
 				int id = atoi(command);
 				if (id > IDM_TOOLS) {
 					SString prefix = "command.checked." + SString(id - IDM_TOOLS) + ".";
@@ -544,7 +543,6 @@ void SciTEWin::SetToolBar() {
 					if (val != "")
 						toolbarUsersPressableButtons.Add(id);
 				}
-//!-end-[ToolbarButtonPressed]
 			}
 			userContextItem += strlen(userContextItem) + 1;
 			
@@ -653,21 +651,21 @@ void SciTEWin::DestroyMenuItem(int menuNumber, int itemID) {
 	}
 }
 
-//!-start-[ToolbarButtonPressed]
+//!-start-[user.toolbar]
 static void CheckToolbarButton(HWND wTools, int id, bool enable) {
 	if (wTools) {
 		::SendMessage(wTools, TB_CHECKBUTTON, id,
 		          Platform::LongFromTwoShorts(static_cast<short>(enable ? TRUE : FALSE), 0));
 	}
 }
-//!-end-[ToolbarButtonPressed]
+//!-end-[user.toolbar]
 
 void SciTEWin::CheckAMenuItem(int wIDCheckItem, bool val) {
 	if (val)
 		CheckMenuItem(::GetMenu(MainHWND()), wIDCheckItem, MF_CHECKED | MF_BYCOMMAND);
 	else
 		CheckMenuItem(::GetMenu(MainHWND()), wIDCheckItem, MF_UNCHECKED | MF_BYCOMMAND);
-	::CheckToolbarButton(reinterpret_cast<HWND>(wToolBar.GetID()), wIDCheckItem, val); //!-add-[ToolbarButtonPressed]
+	::CheckToolbarButton(reinterpret_cast<HWND>(wToolBar.GetID()), wIDCheckItem, val); //!-add-[user.toolbar]
 }
 
 void EnableButton(HWND wTools, int id, bool enable) {
@@ -686,7 +684,7 @@ void SciTEWin::EnableAMenuItem(int wIDCheckItem, bool val) {
 }
 
 void SciTEWin::CheckMenus() {
-//!-start-[ToolbarButtonPressed]
+//!-start-[user.toolbar]
 	// check user toolbar buttons status
 	if (props.GetInt("toolbar.visible") != 0) {
 		SString fileNameForExtension = ExtensionFileName();
@@ -696,7 +694,7 @@ void SciTEWin::CheckMenus() {
 			::CheckToolbarButton(reinterpret_cast<HWND>(wToolBar.GetID()), toolbarUsersPressableButtons[i], ischecked);
 		}
 	}
-//!-end-[ToolbarButtonPressed]
+//!-end-[user.toolbar]
 	SciTEBase::CheckMenus();
 	CheckMenuRadioItem(::GetMenu(MainHWND()), IDM_EOL_CRLF, IDM_EOL_LF,
 	                   SendEditor(SCI_GETEOLMODE) - SC_EOL_CRLF + IDM_EOL_CRLF, 0);
