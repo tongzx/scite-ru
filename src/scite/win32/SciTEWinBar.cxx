@@ -449,52 +449,75 @@ struct BarButtonIn {
 };
 
 void SciTEWin::SetToolBar() {
+	HWND hwndToolBar = (HWND)wToolBar.GetID();
+	if ( hwndToolBar == 0 ) return;
+
 	ToolBarTips.RemoveAll();
 	toolbarUsersPressableButtons.RemoveAll(); //!-add-[ToolbarButtonPressed]
-	wToolBar.Destroy();
-	HWND hwndToolBar = ::CreateWindowEx( 0,
-										 TOOLBARCLASSNAME,
-										 "",
-										 WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS |
-										 TBSTYLE_FLAT | TBSTYLE_TOOLTIPS | CCS_NORESIZE,
-										 0, 0,
-										 100, heightTools,
-										 MainHWND(),
-										 reinterpret_cast<HMENU>(IDM_TOOLWIN),
-										 hInstance,
-										 0 );
-	wToolBar = hwndToolBar;
 
-	::SendMessage(hwndToolBar, TB_BUTTONSTRUCTSIZE, sizeof(TBBUTTON), 0);
+	// удаляем все кнопки
+	while ( ::SendMessage(hwndToolBar,TB_DELETEBUTTON,0,0) );
 
 	SString fileNameForExtension = ExtensionFileName();
 
 	SString sIconlib = props.GetNewExpand("user.toolbar.iconlib.", fileNameForExtension.c_str());
 	HICON hIcon = NULL;
 	HICON hIconBig = NULL;
-	int iCount = 0;
-	HDC hDesktopDC = ::GetDC( NULL );
-	RECT rect = { 0, 0, 16, 16 };
-	HBRUSH hBrashBack = ::GetSysColorBrush( COLOR_BTNFACE );
-	while ( (int)::ExtractIconEx( sIconlib.c_str(), iCount++, &hIconBig, &hIcon, 1 ) > 0 ) {
-		if ( hIconBig != NULL )::DestroyIcon( hIconBig );
-		if ( hIcon != NULL ) {
-			HDC hDC = ::CreateCompatibleDC( hDesktopDC );
-			HBITMAP hbm = ::CreateCompatibleBitmap( hDesktopDC, 16, 16 );
-			::SelectObject( hDC, hbm );
-			::FillRect( hDC, &rect, hBrashBack );
-			::DrawIconEx( hDC, 0, 0, hIcon, 16, 16, 0, NULL, DI_NORMAL );
-			::DeleteDC( hDC );
-			::DestroyIcon( hIcon );
-			TBADDBITMAP bitmap = { NULL, (UINT)hbm };
-			::SendMessage( hwndToolBar, TB_ADDBITMAP, 1, (LPARAM)&bitmap );
-		}
+	int iIconsCount = 0;
+	TArray<HICON,HICON> arrIcons;
+	while ( (int)::ExtractIconEx( sIconlib.c_str(), iIconsCount++, &hIconBig, &hIcon, 1 ) > 0 ) {
+		if ( hIconBig != NULL ) ::DestroyIcon( hIconBig );
+		if ( hIcon != NULL ) arrIcons.Add( hIcon );
 	}
-	::DeleteDC( hDesktopDC );
-	if ( iCount == 1 )
-	{
-		TBADDBITMAP addbmp = { hInstance, IDR_BUTTONS };
-		::SendMessage( hwndToolBar, TB_ADDBITMAP, 31, (LPARAM)&addbmp );
+
+	HBITMAP hToolbarBitmapNew = 0;
+	iIconsCount = arrIcons.GetSize();
+	if (iIconsCount>0) {
+		SIZE szIcon = {16, 16};
+		SIZE szBitmap = {szIcon.cx*iIconsCount, szIcon.cy};
+		RECT rcBitmap = {0, 0, szBitmap.cx, szBitmap.cy};
+		HBRUSH hBrashBack = ::GetSysColorBrush(COLOR_BTNFACE);
+		HDC hDesktopDC = ::GetDC(NULL);
+		HDC hCompatibleDC = ::CreateCompatibleDC(hDesktopDC);
+		hToolbarBitmapNew = ::CreateCompatibleBitmap(hDesktopDC, szBitmap.cx, szBitmap.cy);
+		::SelectObject(hCompatibleDC,hToolbarBitmapNew);
+		::FillRect(hCompatibleDC,&rcBitmap,hBrashBack);
+		for (int iIcon=0;iIcon<iIconsCount;iIcon++) {
+			hIcon = arrIcons.GetAt(iIcon);
+			::DrawIconEx(hCompatibleDC,szIcon.cx*iIcon,0,hIcon,szIcon.cx,szIcon.cy,0,NULL,DI_NORMAL);
+			::DestroyIcon(hIcon);
+		}
+		::DeleteDC(hCompatibleDC);
+		::DeleteDC(hDesktopDC);
+		if ( oldToolbarBitmapID == 0 ) {
+			TBADDBITMAP addbmp = {0,(UINT)hToolbarBitmapNew};
+			if ( ::SendMessage(hwndToolBar,TB_ADDBITMAP,iIconsCount,(LPARAM)&addbmp) != (LRESULT)-1 ) {
+				oldToolbarBitmapID = (UINT)hToolbarBitmapNew;
+			}
+		} else {
+			HINSTANCE hInstanceOld = 0;
+			if ( oldToolbarBitmapID == IDR_BUTTONS ) hInstanceOld = hInstance;
+			TBREPLACEBITMAP repBmp = { hInstanceOld, oldToolbarBitmapID, 0, (UINT)hToolbarBitmapNew, iIconsCount };
+			if ( ::SendMessage(hwndToolBar,TB_REPLACEBITMAP,0,(LPARAM)&repBmp) ) {
+				oldToolbarBitmapID = (UINT)hToolbarBitmapNew;
+			}
+		}
+		if ( hToolbarBitmap != 0 ) ::DeleteObject( hToolbarBitmap );
+		hToolbarBitmap = hToolbarBitmapNew;
+	} else {
+		if ( oldToolbarBitmapID == 0 ) {
+			TBADDBITMAP addbmp = { hInstance, IDR_BUTTONS };
+			if ( ::SendMessage( hwndToolBar, TB_ADDBITMAP, 31, (LPARAM)&addbmp ) != (LRESULT)-1 ) {
+				oldToolbarBitmapID = (UINT)IDR_BUTTONS;
+			}
+		} else if ( oldToolbarBitmapID != IDR_BUTTONS ) {
+			TBREPLACEBITMAP repBmp = { 0, oldToolbarBitmapID, hInstance, IDR_BUTTONS, 31 };
+			if ( ::SendMessage(hwndToolBar,TB_REPLACEBITMAP,0,(LPARAM)&repBmp) ) {
+				oldToolbarBitmapID = (UINT)IDR_BUTTONS;
+			}
+		}
+		if ( hToolbarBitmap != 0 ) ::DeleteObject( hToolbarBitmap );
+		hToolbarBitmap = 0;
 	}
 
 	TArray<BarButtonIn,BarButtonIn> barbuttons;
@@ -527,7 +550,7 @@ void SciTEWin::SetToolBar() {
 			
 		}
 	}
-	
+
 	if (!barbuttons.GetSize()) {
 		ToolBarTips[IDM_NEW]			= "New";
 		ToolBarTips[IDM_OPEN]			= "Open";
@@ -571,11 +594,9 @@ void SciTEWin::SetToolBar() {
 		tbb[i].dwData = 0;
 		tbb[i].iString = 0;
 	}
-	::SendMessage( hwndToolBar, TB_ADDBUTTONS, barbuttons.GetSize(), reinterpret_cast<LPARAM>(tbb) );
+	::SendMessage(hwndToolBar, TB_BUTTONSTRUCTSIZE, sizeof(TBBUTTON), 0);
+	::SendMessage(hwndToolBar, TB_ADDBUTTONS, barbuttons.GetSize(), reinterpret_cast<LPARAM>(tbb));
 	delete []tbb;
-
-	wToolBar.Show();
-	SizeSubWindows();
 }
 //!-end-[user.toolbar]
 
@@ -633,7 +654,7 @@ void SciTEWin::DestroyMenuItem(int menuNumber, int itemID) {
 }
 
 //!-start-[ToolbarButtonPressed]
-void CheckButton(HWND wTools, int id, bool enable) {
+static void CheckToolbarButton(HWND wTools, int id, bool enable) {
 	if (wTools) {
 		::SendMessage(wTools, TB_CHECKBUTTON, id,
 		          Platform::LongFromTwoShorts(static_cast<short>(enable ? TRUE : FALSE), 0));
@@ -646,7 +667,7 @@ void SciTEWin::CheckAMenuItem(int wIDCheckItem, bool val) {
 		CheckMenuItem(::GetMenu(MainHWND()), wIDCheckItem, MF_CHECKED | MF_BYCOMMAND);
 	else
 		CheckMenuItem(::GetMenu(MainHWND()), wIDCheckItem, MF_UNCHECKED | MF_BYCOMMAND);
-	::CheckButton(reinterpret_cast<HWND>(wToolBar.GetID()), wIDCheckItem, val); //!-add-[ToolbarButtonPressed]
+	::CheckToolbarButton(reinterpret_cast<HWND>(wToolBar.GetID()), wIDCheckItem, val); //!-add-[ToolbarButtonPressed]
 }
 
 void EnableButton(HWND wTools, int id, bool enable) {
@@ -672,7 +693,7 @@ void SciTEWin::CheckMenus() {
 		for (int i = 0; i < toolbarUsersPressableButtons.GetSize(); i++) {
 			SString prefix = "command.checked." + SString(toolbarUsersPressableButtons[i] - IDM_TOOLS) + ".";
 			int ischecked = props.GetNewExpand(prefix.c_str(), fileNameForExtension.c_str()).value();
-			::CheckButton(reinterpret_cast<HWND>(wToolBar.GetID()), toolbarUsersPressableButtons[i], ischecked);
+			::CheckToolbarButton(reinterpret_cast<HWND>(wToolBar.GetID()), toolbarUsersPressableButtons[i], ischecked);
 		}
 	}
 //!-end-[ToolbarButtonPressed]
@@ -1154,7 +1175,6 @@ void SciTEWin::Creation() {
 	SendOutput(SCI_USEPOPUP, 0);
 	::DragAcceptFiles(MainHWND(), true);
 
-/*!-change-[user.toolbar]
 	HWND hwndToolBar = ::CreateWindowEx(
 	               0,
 	               TOOLBARCLASSNAME,
@@ -1169,6 +1189,7 @@ void SciTEWin::Creation() {
 	               0);
 	wToolBar = hwndToolBar;
 
+/*!-change-[user.toolbar]
 	::SendMessage(hwndToolBar, TB_BUTTONSTRUCTSIZE, sizeof(TBBUTTON), 0);
 	::SendMessage(hwndToolBar, TB_LOADIMAGES, IDB_STD_SMALL_COLOR,
 	              reinterpret_cast<LPARAM>(HINST_COMMCTRL));
@@ -1193,9 +1214,9 @@ void SciTEWin::Creation() {
 	}
 
 	::SendMessage(hwndToolBar, TB_ADDBUTTONS, ELEMENTS(bbs), reinterpret_cast<LPARAM>(tbb));
+*/
 
 	wToolBar.Show();
-*/
 
 	INITCOMMONCONTROLSEX icce;
 	icce.dwSize = sizeof(icce);

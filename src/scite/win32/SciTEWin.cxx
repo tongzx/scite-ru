@@ -214,6 +214,8 @@ SciTEWin::SciTEWin(Extension *ext) : SciTEBase(ext) {
 	uniqueInstance.Init(this);
 
 	hAccTable = ::LoadAccelerators(hInstance, "ACCELS"); // md
+	hToolbarBitmap = 0; //!-add-[user.toolbar]
+	oldToolbarBitmapID = 0; //!-add-[user.toolbar]
 }
 
 SciTEWin::~SciTEWin() {
