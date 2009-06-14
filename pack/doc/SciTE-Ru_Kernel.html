@@ -150,7 +150,7 @@ If parameter absent or empty then context menu will standard.
 
 <h5 id="user.toolbar">
 <sup>updated</sup>
-[user.toolbar] <span class=desc>(Author: Dmitry Maslov, VladVRO)</span></h5>
+[user.toolbar] <span class=desc>(Author: Dmitry Maslov, VladVRO, UR4LTZ)</span></h5>
 You can setup toolbar now by using new parameter <span class="example">user.toolbar.*</span> in .properties file:<br>
 Format:
 <div class="example">user.toolbar.*=\<br>
@@ -163,11 +163,7 @@ Hint1|IDM_COMMAND1|icon&nbsp;number1|\<br>
 Hint2|IDM_COMMAND2|icon&nbsp;number2|...</div>
 If parameter absent or empty then toolbar will standard.<br><br>
 New property for setup user library with icons:
-<span class="example">user.toolbar.iconlib.*=$(SciteUserHome)\gnome.dll</span>
-
-<h5 id="ToolbarButtonPressed">
-<sup>new</sup>
-[ToolbarButtonPressed] <span class=desc>(Authors: UR4LTZ, VladVRO)</span></h5>
+<span class="example">user.toolbar.iconlib.*=$(SciteUserHome)\gnome.dll</span><br>
 Toolbar buttons can display status on/off now based on the current state of parameter that switched by the button.<br>
 For example state of such parameters as wrap, read.only, view.whitespace displayed now by status pressed/released of related buttons IDM_WRAP, IDM_READONLY, IDM_VIEWSPACE.
 
