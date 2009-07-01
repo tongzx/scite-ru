@@ -920,7 +920,6 @@ static BarButton bbs[] = {
 };
 */
 
-//!-start-[tab.window]
 static WNDPROC stDefaultTabProc = NULL;
 static LRESULT PASCAL TabWndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam) {
 
@@ -1104,7 +1103,6 @@ static LRESULT PASCAL TabWndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM
 
 	return retResult;
 }
-//!-end-[tab.window]
 
 /**
  * Create all the needed windows.
@@ -1221,7 +1219,6 @@ void SciTEWin::Creation() {
 	icce.dwICC = ICC_TAB_CLASSES;
 	InitCommonControlsEx(&icce);
 
-	//!-start-[tab.window]
 	WNDCLASS wndClass = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 	GetClassInfo(NULL, WC_TABCONTROL, &wndClass);
 	stDefaultTabProc = wndClass.lpfnWndProc;
@@ -1231,12 +1228,10 @@ void SciTEWin::Creation() {
 	wndClass.hInstance = hInstance;
 	if (RegisterClass(&wndClass) == 0)
 		exit(FALSE);
-	//!-end-[tab.window]
 
 	wTabBar = ::CreateWindowEx(
 	              0,
-	              //WC_TABCONTROL
-	             "SciTeTabCtrl", //!-change-[tab.window]
+	              "SciTeTabCtrl",
 	              "Tab",
 	              WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS |
 	              TCS_FOCUSNEVER | TCS_TOOLTIPS,

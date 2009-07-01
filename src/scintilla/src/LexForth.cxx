@@ -1,11 +1,11 @@
 // Scintilla source code edit control
-/** @file LexCrontab.cxx
- ** Lexer to use with extended crontab files used by a powerful
- ** Windows scheduler/event monitor/automation manager nnCron.
- ** (http://nemtsev.eserv.ru/)
+/** @file LexForth.cxx
+ ** Lexer for FORTH
  **/
 // Copyright 1998-2001 by Neil Hodgson <neilh@scintilla.org>
 // The License.txt file describes the conditions under which this software may be distributed.
+// Modified by SciTE-Ru (http://scite.net.ru)
+//!-start-[ForthImprovement]
 
 #include <stdlib.h>
 #include <string.h>
@@ -42,12 +42,10 @@ static FILE *f_debug;
 
 #define STATE_LOCALE
 #define BL ' '
-//!-start-[ForthImprovement]
 #define FORTH_DEFINITION_FLAG 0x40
 #define FORTH_INTERP_FLAG 0x60
 #define FORTH_FLAG_MASK 0xE0
 #define FORTH_STYLE_MASK 0x1F
-//!-end-[ForthImprovement]
 
 static Accessor *st;
 static int cur_pos,pos1,pos2,pos0,lengthDoc;
@@ -115,10 +113,8 @@ bool is_number(char *s){
     return _is_number(s,10);
 }
 
-//!static void ColouriseForthDoc(unsigned int startPos, int length, int, WordList *keywordLists[], Accessor &styler)
-static void ColouriseForthDoc(unsigned int startPos, int length, int initStyle, WordList *keywordLists[], Accessor &styler) //!-change-[ForthImprovement]
+static void ColouriseForthDoc(unsigned int startPos, int length, int initStyle, WordList *keywordLists[], Accessor &styler)
 {
-//!-start-[ForthImprovement]
     bool stylingNoInterp = styler.GetPropertyInt("lexer.forth.no.interpretation") != 0;
 
     if(startPos > 0){
@@ -145,7 +141,6 @@ static void ColouriseForthDoc(unsigned int startPos, int length, int initStyle, 
     bool isPossibleRollback = startPos>0; // flag for possible undefined state by start pos
     bool isEq=false, isBegin=false;
     const char *string_end;
-//!-end-[ForthImprovement]
     st=&styler;
     cur_pos=startPos;
     lengthDoc = startPos + length;
@@ -161,7 +156,6 @@ static void ColouriseForthDoc(unsigned int startPos, int length, int initStyle, 
     WordList &preword1 = *keywordLists[3];
     WordList &preword2 = *keywordLists[4];
     WordList &strings = *keywordLists[5];
-//!-start-[ForthImprovement]
     WordList &startdefword = *keywordLists[6];
     WordList &enddefword = *keywordLists[7];
     WordList &gui = *keywordLists[10];
@@ -177,15 +171,11 @@ static void ColouriseForthDoc(unsigned int startPos, int length, int initStyle, 
 #ifdef FORTH_DEBUG
     fprintf(f_debug,"\nColouriseForthDoc: %d %d %d %d %d\n",startPos,length,initStyle,stateFlag,isInDefinition);
 #endif
-//!-end-[ForthImprovement]
 
     // go through all provided text segment
     // using the hand-written state machine shown below
-//!    styler.StartAt(startPos);
-    styler.StartAt(startPos,static_cast<char>(STYLE_MAX)); //!-change-[ForthImprovement]
+    styler.StartAt(startPos,static_cast<char>(STYLE_MAX));
     styler.StartSegment(startPos);
-//!    while(parse(BL,true)!=0){
-//!-start-[ForthImprovement]
     while(parse(BL,true)!=0)
     if(stateFlag==FORTH_INTERP_FLAG){
         if(pos0!=pos1){
@@ -350,7 +340,6 @@ static void ColouriseForthDoc(unsigned int startPos, int length, int initStyle, 
             styler.ColourTo(pos2,SCE_FORTH_NUMBER|stateFlag);
         }
     }else{
-//!-end-[ForthImprovement]
         if(pos0!=pos1){
             styler.ColourTo(pos0,SCE_FORTH_DEFAULT);
             styler.ColourTo(pos1-1,SCE_FORTH_DEFAULT);
@@ -364,14 +353,6 @@ static void ColouriseForthDoc(unsigned int startPos, int length, int initStyle, 
             parse(')',true);
             if(cur_pos<lengthDoc) cur_pos++;
             styler.ColourTo(cur_pos,SCE_FORTH_COMMENT);
-/*!-[ForthImprovement]
-        }else if(strcmp("[",buffer)==0){
-            styler.ColourTo(pos1,SCE_FORTH_STRING);
-            parse(']',true);
-            if(cur_pos<lengthDoc) cur_pos++;
-            styler.ColourTo(cur_pos,SCE_FORTH_STRING);
-*/
-//!-start-[ForthImprovement]
         }else if(strcmp("[",buffer)==0){
             if (stylingNoInterp) {
                 styler.ColourTo(pos1,SCE_FORTH_KEYWORD|FORTH_INTERP_FLAG);
@@ -404,20 +385,11 @@ static void ColouriseForthDoc(unsigned int startPos, int length, int initStyle, 
                 isPossibleRollback = false;
                 stateFlag = 0;
             }
-//!-end-[ForthImprovement]
         }else if(strcmp("{",buffer)==0){
             styler.ColourTo(pos1,SCE_FORTH_LOCALE);
             parse('}',false);
             if(cur_pos<lengthDoc) cur_pos++;
             styler.ColourTo(cur_pos,SCE_FORTH_LOCALE);
-/*!
-        }else if(strings.InList(buffer)) {
-            styler.ColourTo(pos1,SCE_FORTH_STRING);
-            parse('"',false);
-            if(cur_pos<lengthDoc) cur_pos++;
-            styler.ColourTo(cur_pos,SCE_FORTH_STRING);
-*/
-//!-start-[ForthImprovement]
         }else if(strings.InMultiWordsList(buffer, '~', isEq, isBegin, string_end) && isBegin) {
             styler.ColourTo(pos1,SCE_FORTH_STRING);
             parse(*string_end,false);
@@ -434,7 +406,6 @@ static void ColouriseForthDoc(unsigned int startPos, int length, int initStyle, 
                 styler.ColourTo(pos1,SCE_FORTH_DEFWORD|stateFlag);
                 styler.ColourTo(pos2,SCE_FORTH_DEFWORD|stateFlag);
             }
-//!-end-[ForthImprovement]
         }else if(control.InList(buffer)) {
             styler.ColourTo(pos1,SCE_FORTH_CONTROL);
             styler.ColourTo(pos2,SCE_FORTH_CONTROL);
@@ -459,7 +430,6 @@ static void ColouriseForthDoc(unsigned int startPos, int length, int initStyle, 
             parse(BL,false);
             styler.ColourTo(pos1,SCE_FORTH_STRING);
             styler.ColourTo(pos2,SCE_FORTH_STRING);
-//!-start-[ForthImprovement]
         }else if(gui.InList(buffer)) {
             styler.ColourTo(pos2,SCE_FORTH_GUI);
         }else if(oop.InList(buffer)) {
@@ -472,7 +442,6 @@ static void ColouriseForthDoc(unsigned int startPos, int length, int initStyle, 
             styler.ColourTo(pos2,SCE_FORTH_WORD3);
         }else if(word4.InList(buffer)) {
             styler.ColourTo(pos2,SCE_FORTH_WORD4);
-//!-end-[ForthImprovement]
         }else if(is_number(buffer)){
             styler.ColourTo(pos1,SCE_FORTH_NUMBER);
             styler.ColourTo(pos2,SCE_FORTH_NUMBER);
@@ -483,150 +452,8 @@ static void ColouriseForthDoc(unsigned int startPos, int length, int initStyle, 
 #endif
     delete []buffer;
     return;
-/*
-                        if(control.InList(buffer)) {
-                            styler.ColourTo(i,SCE_FORTH_CONTROL);
-                        } else if(keyword.InList(buffer)) {
-                            styler.ColourTo(i-1,SCE_FORTH_KEYWORD );
-                        } else if(defword.InList(buffer)) {
-                            styler.ColourTo(i-1,SCE_FORTH_DEFWORD );
-//                            prev_state=SCE_FORTH_DEFWORD
-                        } else if(preword1.InList(buffer)) {
-                            styler.ColourTo(i-1,SCE_FORTH_PREWORD1 );
-//                            state=SCE_FORTH_PREWORD1;
-                        } else if(preword2.InList(buffer)) {
-                            styler.ColourTo(i-1,SCE_FORTH_PREWORD2 );
-                         } else {
-                            styler.ColourTo(i-1,SCE_FORTH_DEFAULT);
-                        }
-*/
-/*
-    chPrev=' ';
-    for (int i = startPos; i < lengthDoc; i++) {
-        char ch = chNext;
-        chNext = styler.SafeGetCharAt(i + 1);
-        if(i!=startPos) chPrev=styler.SafeGetCharAt(i - 1);
-
-        if (styler.IsLeadByte(ch)) {
-            chNext = styler.SafeGetCharAt(i + 2);
-            i++;
-            continue;
-        }
-#ifdef FORTH_DEBUG
-        fprintf(f_debug,"%c %d ",ch,state);
-#endif
-        switch(state) {
-            case SCE_FORTH_DEFAULT:
-                if(is_whitespace(ch)) {
-                    // whitespace is simply ignored here...
-                    styler.ColourTo(i,SCE_FORTH_DEFAULT);
-                    break;
-                } else if( ch == '\\' && is_blank(chNext)) {
-                    // signals the start of an one line comment...
-                    state = SCE_FORTH_COMMENT;
-                    styler.ColourTo(i,SCE_FORTH_COMMENT);
-                } else if( is_whitespace(chPrev) &&  ch == '(' &&  is_whitespace(chNext)) {
-                    // signals the start of a plain comment...
-                    state = SCE_FORTH_COMMENT_ML;
-                    styler.ColourTo(i,SCE_FORTH_COMMENT_ML);
-                } else if( isdigit(ch) ) {
-                    // signals the start of a number
-                    bufferCount = 0;
-                    buffer[bufferCount++] = ch;
-                    state = SCE_FORTH_NUMBER;
-                } else if( !is_whitespace(ch)) {
-                    // signals the start of an identifier
-                    bufferCount = 0;
-                    buffer[bufferCount++] = ch;
-                    state = SCE_FORTH_IDENTIFIER;
-                } else {
-                    // style it the default style..
-                    styler.ColourTo(i,SCE_FORTH_DEFAULT);
-                }
-                break;
-
-            case SCE_FORTH_COMMENT:
-                // if we find a newline here,
-                // we simply go to default state
-                // else continue to work on it...
-                if( ch == '\n' || ch == '\r' ) {
-                    state = SCE_FORTH_DEFAULT;
-                } else {
-                    styler.ColourTo(i,SCE_FORTH_COMMENT);
-                }
-                break;
-
-            case SCE_FORTH_COMMENT_ML:
-                if( ch == ')') {
-                    state = SCE_FORTH_DEFAULT;
-                } else {
-                    styler.ColourTo(i+1,SCE_FORTH_COMMENT_ML);
-                }
-                break;
-
-            case SCE_FORTH_IDENTIFIER:
-                // stay  in CONF_IDENTIFIER state until we find a non-alphanumeric
-                if( !is_whitespace(ch) ) {
-                    buffer[bufferCount++] = ch;
-                } else {
-                    state = SCE_FORTH_DEFAULT;
-                    buffer[bufferCount] = '\0';
-#ifdef FORTH_DEBUG
-        fprintf(f_debug,"\nid %s\n",buffer);
-#endif
-
-                    // check if the buffer contains a keyword,
-                    // and highlight it if it is a keyword...
-//                    switch(prev_state)
-//                    case SCE_FORTH_DEFAULT:
-                        if(control.InList(buffer)) {
-                            styler.ColourTo(i,SCE_FORTH_CONTROL);
-                        } else if(keyword.InList(buffer)) {
-                            styler.ColourTo(i-1,SCE_FORTH_KEYWORD );
-                        } else if(defword.InList(buffer)) {
-                            styler.ColourTo(i-1,SCE_FORTH_DEFWORD );
-//                            prev_state=SCE_FORTH_DEFWORD
-                        } else if(preword1.InList(buffer)) {
-                            styler.ColourTo(i-1,SCE_FORTH_PREWORD1 );
-//                            state=SCE_FORTH_PREWORD1;
-                        } else if(preword2.InList(buffer)) {
-                            styler.ColourTo(i-1,SCE_FORTH_PREWORD2 );
-                         } else {
-                            styler.ColourTo(i-1,SCE_FORTH_DEFAULT);
-                        }
-//                        break;
-//                    case
-
-                    // push back the faulty character
-                    chNext = styler[i--];
-                }
-                break;
-
-            case SCE_FORTH_NUMBER:
-                // stay  in CONF_NUMBER state until we find a non-numeric
-                if( isdigit(ch) ) {
-                    buffer[bufferCount++] = ch;
-                } else {
-                    state = SCE_FORTH_DEFAULT;
-                    buffer[bufferCount] = '\0';
-                    // Colourize here... (normal number)
-                    styler.ColourTo(i-1,SCE_FORTH_NUMBER);
-                    // push back a character
-                    chNext = styler[i--];
-                }
-                break;
-        }
-    }
-#ifdef FORTH_DEBUG
-    fclose(f_debug);
-#endif
-    delete []buffer;
-*/
 }
 
-//!static void FoldForthDoc(unsigned int, int, int, WordList *[],
-//!                       Accessor &) {
-//!-start-[ForthImprovement]
 static void FoldForthDoc(unsigned int startPos, int length, int initStyle,
     WordList *keywordlists[], Accessor &styler)
 {
@@ -697,7 +524,6 @@ static void FoldForthDoc(unsigned int startPos, int length, int initStyle,
             level &= ~SC_FOLDLEVELWHITEFLAG;
         }
     }
-//!-end-[ForthImprovement]
 }
 
 static const char * const forthWordLists[] = {
@@ -707,7 +533,6 @@ static const char * const forthWordLists[] = {
             "prewords with one argument",
             "prewords with two arguments",
             "string definition keywords",
-//!-start-[ForthImprovement]
             "definition start words",
             "definition end words",
             "folding start words",
@@ -722,8 +547,8 @@ static const char * const forthWordLists[] = {
             "keywords in interpretation",
             "definition words in interpretation",
             "prewords in interpretation",
-//!-end-[ForthImprovement]
             0,
         };
 
 LexerModule lmForth(SCLEX_FORTH, ColouriseForthDoc, "forth",FoldForthDoc,forthWordLists,7);
+//!-end-[ForthImprovement]

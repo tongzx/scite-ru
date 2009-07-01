@@ -586,11 +586,11 @@ IDR_BUTTONS BITMAP "buttons.bmp"	//!-add-[user.toolbar]
 Embedded Properties Embedded.properties
 IDC_MARGIN         CURSOR  DISCARDABLE     "Margin.cur"
 #endif
-IDC_DRAGDROP       CURSOR  DISCARDABLE     "DragDrop.cur" //!-add-[tab.window]
+IDC_DRAGDROP       CURSOR  DISCARDABLE     "DragDrop.cur"
 
 VS_VERSION_INFO VERSIONINFO
-FILEVERSION	1, 7, 8, 64
-PRODUCTVERSION	1, 7, 8, 64
+FILEVERSION	1, 7, 9, 64
+PRODUCTVERSION	1, 7, 9, 64
 FILEFLAGSMASK	0x3fL
 FILEFLAGS 0
 FILEOS VOS_NT_WINDOWS32
@@ -607,12 +607,12 @@ BEGIN
 		BEGIN
 			VALUE	"CompanyName",	"scite.net.ru\0"
 			VALUE	"FileDescription",	"SciTE - a Scintilla based Text Editor\0"
-			VALUE	"FileVersion",	"1.78 .64Ru\0"
+			VALUE	"FileVersion",	"1.79 .64Ru\0"
 			VALUE	"InternalName",	"SciTE\0"
 			VALUE	"LegalCopyright",	"Copyright 1998-2009 by Neil Hodgson\0"
 			VALUE	"OriginalFilename",	"SciTE.EXE\0"
 			VALUE	"ProductName",	"SciTE\0"
-			VALUE	"ProductVersion",	"1.78 .64Ru\0"
+			VALUE	"ProductVersion",	"1.79 .64Ru\0"
 		END
 	END
 END

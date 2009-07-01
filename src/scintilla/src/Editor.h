@@ -236,7 +236,8 @@ protected:	// ScintillaBase subclass needs access to much of Editor
 	int wrapVisualFlags;
 	int wrapVisualFlagsLocation;
 	int wrapVisualStartIndent;
-	int actualWrapVisualStartIndent;
+	int wrapAddIndent; // This will be added to initial indent of line
+	int wrapIndentMode; // SC_WRAPINDENT_FIXED, _SAME, _INDENT
 
 	bool convertPastes;
 
@@ -284,7 +285,7 @@ protected:	// ScintillaBase subclass needs access to much of Editor
 	void SetEmptySelection(int currentPos_);
 	bool RangeContainsProtected(int start, int end) const;
 	bool SelectionContainsProtected();
-	int MovePositionOutsideChar(int pos, int moveDir, bool checkLineEnd=true);
+	int MovePositionOutsideChar(int pos, int moveDir, bool checkLineEnd=true) const;
 	int MovePositionTo(int newPos, selTypes sel=noSel, bool ensureVisible=true);
 	int MovePositionSoVisible(int pos, int moveDir);
 	void SetLastXChosen();

@@ -1160,6 +1160,17 @@ set void SetWrapStartIndent=2464(int indent,)
 # Retrive the start indent for wrapped lines.
 get int GetWrapStartIndent=2465(,)
 
+enu WrapIndentMode=SC_WRAPINDENT_
+val SC_WRAPINDENT_FIXED=0
+val SC_WRAPINDENT_SAME=1
+val SC_WRAPINDENT_INDENT=2
+
+# Sets how wrapped sublines are placed. Default is fixed.
+set void SetWrapIndentMode=2472(int mode,)
+
+# Retrieve how wrapped sublines are placed. Default is fixed.
+get int GetWrapIndentMode=2473(,)
+
 enu LineCache=SC_CACHE_
 val SC_CACHE_NONE=0
 val SC_CACHE_CARET=1
@@ -2228,7 +2239,7 @@ val SCE_D_COMMENTNESTED=4
 val SCE_D_NUMBER=5
 val SCE_D_WORD=6
 val SCE_D_WORD2=7
-val SCE_D_WORD5=8
+val SCE_D_WORD3=8
 val SCE_D_TYPEDEF=9
 val SCE_D_STRING=10
 val SCE_D_STRINGEOL=11
@@ -2240,8 +2251,9 @@ val SCE_D_COMMENTDOCKEYWORD=16
 val SCE_D_COMMENTDOCKEYWORDERROR=17
 val SCE_D_STRINGB=18
 val SCE_D_STRINGR=19
-val SCE_D_WORD6=20
-val SCE_D_WORD7=21
+val SCE_D_WORD5=20
+val SCE_D_WORD6=21
+val SCE_D_WORD7=22
 # Lexical states for SCLEX_TCL
 lex TCL=SCLEX_TCL SCE_TCL_
 val SCE_TCL_DEFAULT=0
@@ -3159,6 +3171,7 @@ val SCE_CAML_LINENUM=6
 val SCE_CAML_OPERATOR=7
 val SCE_CAML_NUMBER=8
 val SCE_CAML_CHAR=9
+val SCE_CAML_WHITE=10
 val SCE_CAML_STRING=11
 val SCE_CAML_COMMENT=12
 val SCE_CAML_COMMENT1=13

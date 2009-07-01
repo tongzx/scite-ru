@@ -185,7 +185,8 @@ Editor::Editor() {
 	wrapVisualFlags = 0;
 	wrapVisualFlagsLocation = 0;
 	wrapVisualStartIndent = 0;
-	actualWrapVisualStartIndent = 0;
+	wrapIndentMode = SC_WRAPINDENT_FIXED;
+	wrapAddIndent = 0;
 
 	convertPastes = true;
 
@@ -252,6 +253,15 @@ void Editor::RefreshStyleData() {
 			RefreshColourPalette(palette, true);
 			palette.Allocate(wMain);
 			RefreshColourPalette(palette, false);
+		}
+		if (wrapIndentMode == SC_WRAPINDENT_INDENT) {
+			wrapAddIndent = pdoc->IndentSize() * vs.spaceWidth;
+		} else if (wrapIndentMode == SC_WRAPINDENT_SAME) {
+			wrapAddIndent = 0;
+		} else { //SC_WRAPINDENT_FIXED
+			wrapAddIndent = wrapVisualStartIndent * vs.aveCharWidth;
+			if ((wrapVisualFlags & SC_WRAPVISUALFLAG_START) && (wrapAddIndent <= 0))
+				wrapAddIndent = vs.aveCharWidth; // must indent to show start visual
 		}
 		SetScrollBars();
 	}
@@ -449,10 +459,10 @@ Point Editor::LocationFromPosition(int pos) {
 		for (int subLine = 0; subLine < ll->lines; subLine++) {
 			if ((posInLine >= ll->LineStart(subLine)) && (posInLine <= ll->LineStart(subLine + 1))) {
 				pt.x = ll->positions[posInLine] - ll->positions[ll->LineStart(subLine)];
-				if (actualWrapVisualStartIndent != 0) {
+				if (ll->wrapIndent != 0) {
 					int lineStart = ll->LineStart(subLine);
 					if (lineStart != 0)	// Wrapped
-						pt.x += actualWrapVisualStartIndent * vs.aveCharWidth;
+						pt.x += ll->wrapIndent;
 				}
 			}
 			if (posInLine >= ll->LineStart(subLine)) {
@@ -514,9 +524,9 @@ int Editor::PositionFromLocation(Point pt, bool canReturnInvalid, bool charPosit
 			int lineEnd = ll->LineLastVisible(subLine);
 			int subLineStart = ll->positions[lineStart];
 
-			if (actualWrapVisualStartIndent != 0) {
+			if (ll->wrapIndent != 0) {
 				if (lineStart != 0)	// Wrapped
-					pt.x -= actualWrapVisualStartIndent * vs.aveCharWidth;
+					pt.x -= ll->wrapIndent;
 			}
 			int i = ll->FindBefore(pt.x + subLineStart, lineStart, lineEnd);
 			while (i < lineEnd) {
@@ -566,9 +576,9 @@ int Editor::PositionFromLineX(int lineDoc, int x) {
 		int lineEnd = ll->LineLastVisible(subLine);
 		int subLineStart = ll->positions[lineStart];
 
-		if (actualWrapVisualStartIndent != 0) {
+		if (ll->wrapIndent != 0) {
 			if (lineStart != 0)	// Wrapped
-				x -= actualWrapVisualStartIndent * vs.aveCharWidth;
+				x -= ll->wrapIndent;
 		}
 		int i = ll->FindBefore(x + subLineStart, lineStart, lineEnd);
 		while (i < lineEnd) {
@@ -781,7 +791,7 @@ bool Editor::SelectionContainsProtected() {
 /**
  * Asks document to find a good position and then moves out of any invisible positions.
  */
-int Editor::MovePositionOutsideChar(int pos, int moveDir, bool checkLineEnd) {
+int Editor::MovePositionOutsideChar(int pos, int moveDir, bool checkLineEnd) const {
 	pos = pdoc->MovePositionOutsideChar(pos, moveDir, checkLineEnd);
 	if (vs.ProtectionActive()) {
 		int mask = pdoc->stylingBitsMask;
@@ -2059,6 +2069,20 @@ void Editor::LayoutLine(int line, Surface *surface, ViewStyle &vstyle, LineLayou
 			if (wrapVisualFlags & SC_WRAPVISUALFLAG_END) {
 				width -= vstyle.aveCharWidth; // take into account the space for end wrap mark
 			}
+			ll->wrapIndent = wrapAddIndent;
+			if (wrapIndentMode != SC_WRAPINDENT_FIXED)
+				for (int i = 0; i < ll->numCharsInLine; i++) {
+					if (!IsSpaceOrTab(ll->chars[i])) {
+						ll->wrapIndent += ll->positions[i]; // Add line indent
+						break;
+					}
+				}
+			// Check for text width minimum
+			if (ll->wrapIndent > width - static_cast<int>(vstyle.aveCharWidth) * 15)
+				ll->wrapIndent = wrapAddIndent;
+			// Check for wrapIndent minimum
+			if ((wrapVisualFlags & SC_WRAPVISUALFLAG_START) && (ll->wrapIndent < static_cast<int>(vstyle.aveCharWidth)))
+				ll->wrapIndent = vstyle.aveCharWidth; // Indent to show start visual
 			ll->lines = 0;
 			// Calculate line start positions based upon width.
 			int lastGoodBreak = 0;
@@ -2084,7 +2108,7 @@ void Editor::LayoutLine(int line, Surface *surface, ViewStyle &vstyle, LineLayou
 					ll->SetLineStart(ll->lines, lastGoodBreak);
 					startOffset = ll->positions[lastGoodBreak];
 					// take into account the space for start wrap mark and indent
-					startOffset -= actualWrapVisualStartIndent * vstyle.aveCharWidth;
+					startOffset -= ll->wrapIndent;
 					p = lastGoodBreak + 1;
 					continue;
 				}
@@ -2188,6 +2212,30 @@ static void SimpleAlphaRectangle(Surface *surface, PRectangle rc, ColourAllocate
 	if (alpha != SC_ALPHA_NOALPHA) {
 		surface->AlphaRectangle(rc, 0, fill, alpha, fill, alpha, 0);
 	}
+}
+
+void DrawTextBlob(Surface *surface, ViewStyle &vsDraw, PRectangle rcSegment,
+				  const char *s, ColourAllocated textBack, ColourAllocated textFore, bool twoPhaseDraw) {
+	if (!twoPhaseDraw) {
+		surface->FillRectangle(rcSegment, textBack);
+	}
+	Font &ctrlCharsFont = vsDraw.styles[STYLE_CONTROLCHAR].font;
+	int normalCharHeight = surface->Ascent(ctrlCharsFont) -
+	        surface->InternalLeading(ctrlCharsFont);
+	PRectangle rcCChar = rcSegment;
+	rcCChar.left = rcCChar.left + 1;
+	rcCChar.top = rcSegment.top + vsDraw.maxAscent - normalCharHeight;
+	rcCChar.bottom = rcSegment.top + vsDraw.maxAscent + 1;
+	PRectangle rcCentral = rcCChar;
+	rcCentral.top++;
+	rcCentral.bottom--;
+	surface->FillRectangle(rcCentral, textFore);
+	PRectangle rcChar = rcCChar;
+	rcChar.left++;
+	rcChar.right--;
+	surface->DrawTextClipped(rcChar, ctrlCharsFont,
+	        rcSegment.top + vsDraw.maxAscent, s, istrlen(s),
+	        textBack, textFore);
 }
 
 void Editor::DrawEOL(Surface *surface, ViewStyle &vsDraw, PRectangle rcLine, LineLayout *ll,
@@ -2317,30 +2365,6 @@ void Editor::DrawIndicators(Surface *surface, ViewStyle &vsDraw, int line, int x
 			}
 		}
 	}
-}
-
-void DrawTextBlob(Surface *surface, ViewStyle &vsDraw, PRectangle rcSegment,
-				  const char *s, ColourAllocated textBack, ColourAllocated textFore, bool twoPhaseDraw) {
-	if (!twoPhaseDraw) {
-		surface->FillRectangle(rcSegment, textBack);
-	}
-	Font &ctrlCharsFont = vsDraw.styles[STYLE_CONTROLCHAR].font;
-	int normalCharHeight = surface->Ascent(ctrlCharsFont) -
-	        surface->InternalLeading(ctrlCharsFont);
-	PRectangle rcCChar = rcSegment;
-	rcCChar.left = rcCChar.left + 1;
-	rcCChar.top = rcSegment.top + vsDraw.maxAscent - normalCharHeight;
-	rcCChar.bottom = rcSegment.top + vsDraw.maxAscent + 1;
-	PRectangle rcCentral = rcCChar;
-	rcCentral.top++;
-	rcCentral.bottom--;
-	surface->FillRectangle(rcCentral, textFore);
-	PRectangle rcChar = rcCChar;
-	rcChar.left++;
-	rcChar.right--;
-	surface->DrawTextClipped(rcChar, ctrlCharsFont,
-	        rcSegment.top + vsDraw.maxAscent, s, istrlen(s),
-	        textBack, textFore);
 }
 
 void Editor::DrawAnnotation(Surface *surface, ViewStyle &vsDraw, int line, int xStart,
@@ -2477,7 +2501,7 @@ void Editor::DrawLine(Surface *surface, ViewStyle &vsDraw, int line, int lineVis
 		}
 	}
 
-	if (actualWrapVisualStartIndent != 0) {
+	if (ll->wrapIndent != 0) {
 
 		bool continuedWrapLine = false;
 		if (subLine < ll->lines) {
@@ -2489,7 +2513,7 @@ void Editor::DrawLine(Surface *surface, ViewStyle &vsDraw, int line, int lineVis
 			PRectangle rcPlace = rcSegment;
 
 			rcPlace.left = ll->positions[startseg] + xStart - subLineStart;
-			rcPlace.right = rcPlace.left + actualWrapVisualStartIndent * vsDraw.aveCharWidth;
+			rcPlace.right = rcPlace.left + ll->wrapIndent;
 
 			// default bgnd here..
 			surface->FillRectangle(rcSegment, overrideBackground ? background :
@@ -2510,7 +2534,7 @@ void Editor::DrawLine(Surface *surface, ViewStyle &vsDraw, int line, int lineVis
 				DrawWrapMarker(surface, rcPlace, false, wrapColour);
 			}
 
-			xStart += actualWrapVisualStartIndent * vsDraw.aveCharWidth;
+			xStart += ll->wrapIndent;
 		}
 	}
 
@@ -2892,8 +2916,8 @@ void Editor::DrawBlockCaret(Surface *surface, ViewStyle &vsDraw, LineLayout *ll,
 	rcCaret.right = ll->positions[offsetFirstChar+numCharsToDraw] - ll->positions[lineStart] + xStart;
 
 	// Adjust caret position to take into account any word wrapping symbols.
-	if ((actualWrapVisualStartIndent != 0) && (lineStart != 0)) {
-		int wordWrapCharWidth = actualWrapVisualStartIndent * vs.aveCharWidth;
+	if ((ll->wrapIndent != 0) && (lineStart != 0)) {
+		int wordWrapCharWidth = ll->wrapIndent;
 		rcCaret.left += wordWrapCharWidth;
 		rcCaret.right += wordWrapCharWidth;
 	}
@@ -3174,10 +3198,10 @@ void Editor::Paint(Surface *surfaceWindow, PRectangle rcArea) {
 					if (ll->InLine(offset, subLine)) {
 						int xposCaret = ll->positions[offset] - ll->positions[ll->LineStart(subLine)] + xStart;
 
-						if (actualWrapVisualStartIndent != 0) {
+						if (ll->wrapIndent != 0) {
 							int lineStart = ll->LineStart(subLine);
 							if (lineStart != 0)	// Wrapped
-								xposCaret += actualWrapVisualStartIndent * vs.aveCharWidth;
+								xposCaret += ll->wrapIndent;
 						}
 						if ((xposCaret >= 0) && (vs.caretWidth > 0) && (vs.caretStyle != CARETSTYLE_INVISIBLE) &&
 						        ((posDrag >= 0) || (caret.active && caret.on))) {
@@ -3714,7 +3738,7 @@ void Editor::PasteRectangular(int pos, const char *ptr, int len) {
 			// Pad the end of lines with spaces if required
 			currentPos = PositionFromLineX(line, xInsert);
 			if ((XFromPosition(currentPos) < xInsert) && (i + 1 < len)) {
-				for (int i = 0; i < xInsert - XFromPosition(currentPos); i++) {
+				while (XFromPosition(currentPos) < xInsert) {
 					pdoc->InsertChar(currentPos, ' ');
 					currentPos++;
 				}
@@ -6911,9 +6935,6 @@ sptr_t Editor::WndProc(unsigned int iMessage, uptr_t wParam, sptr_t lParam) {
 
 	case SCI_SETWRAPVISUALFLAGS:
 		wrapVisualFlags = wParam;
-		actualWrapVisualStartIndent = wrapVisualStartIndent;
-		if ((wrapVisualFlags & SC_WRAPVISUALFLAG_START) && (actualWrapVisualStartIndent == 0))
-			actualWrapVisualStartIndent = 1; // must indent to show start visual
 		InvalidateStyleRedraw();
 		ReconfigureScrollBars();
 		break;
@@ -6931,15 +6952,21 @@ sptr_t Editor::WndProc(unsigned int iMessage, uptr_t wParam, sptr_t lParam) {
 
 	case SCI_SETWRAPSTARTINDENT:
 		wrapVisualStartIndent = wParam;
-		actualWrapVisualStartIndent = wrapVisualStartIndent;
-		if ((wrapVisualFlags & SC_WRAPVISUALFLAG_START) && (actualWrapVisualStartIndent == 0))
-			actualWrapVisualStartIndent = 1; // must indent to show start visual
 		InvalidateStyleRedraw();
 		ReconfigureScrollBars();
 		break;
 
 	case SCI_GETWRAPSTARTINDENT:
 		return wrapVisualStartIndent;
+
+	case SCI_SETWRAPINDENTMODE:
+		wrapIndentMode = wParam;
+		InvalidateStyleRedraw();
+		ReconfigureScrollBars();
+		break;
+
+	case SCI_GETWRAPINDENTMODE:
+		return wrapIndentMode;
 
 	case SCI_SETLAYOUTCACHE:
 		llc.SetLevel(wParam);

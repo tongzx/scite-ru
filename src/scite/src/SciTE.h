@@ -190,8 +190,8 @@
 // Windows specific windowing options
 #define IDM_ONTOP			960
 #define IDM_FULLSCREEN		961
-#define IDC_TABCLOSE		962 //!-add-[tab.window]
-#define IDC_SHIFTTAB		963 //!-add-[tab.window]
+#define IDC_TABCLOSE		962
+#define IDC_SHIFTTAB		963
 
 // Dialog control IDs
 #define IDFINDCLOSE			219 //!-add-[close.find.window]
@@ -250,5 +250,5 @@
 // Resource IDs
 //! #define IDR_CLOSEFILE 100
 #define IDR_BUTTONS			100	//!-change-[user.toolbar]
-#define IDC_DRAGDROP        401 //!-add-[tab.window]
+#define IDC_DRAGDROP        401
 #endif
