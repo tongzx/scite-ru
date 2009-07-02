@@ -57,3 +57,4 @@
 #define ICO_TRIM_TRAL_SPACES             56
 #define ICO_FAVORITE_FOLDERS             57
 #define ICO_VIEWSPACE                    58
+#define ICO_STOPEXECUTE                  59
