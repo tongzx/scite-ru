@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev
-version 1.11
+version 1.12
 ------------------------------------------------------
   Note: Require gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
                lpeg.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/lpeg/>
@@ -37,6 +37,14 @@ local tab_index = 0
 local panel_width = 200
 local win_height = props['position.height']
 if win_height == '' then win_height = 600 end
+
+local style = props['style.*.32']
+local colorback = style:match('back:(#%x%x%x%x%x%x)')
+local colorfore
+if colorback then
+	colorfore = style:match('fore:(#%x%x%x%x%x%x)')
+	if colorfore == nil then colorfore = '' end
+end
 
 ----------------------------------------------------------
 -- Common functions
@@ -99,15 +107,18 @@ local tab0 = gui.panel(panel_width + 18)
 
 local memo_path = gui.memo()
 tab0:add(memo_path, "top", 22)
+if colorback then memo_path:set_memo_colour('', colorback) end
 
 local list_dir_height = win_height/3
 if list_dir_height <= 0 then list_dir_height = 200 end
 local list_favorites = gui.list(true)
 list_favorites:add_column("Favorites", 600)
 tab0:add(list_favorites, "bottom", list_dir_height)
+if colorback then list_favorites:set_list_colour(colorfore,colorback) end
 
 local list_dir = gui.list()
 tab0:client(list_dir)
+if colorback then list_dir:set_list_colour(colorfore,colorback) end
 
 tab0:context_menu {
 	'FileMan: Change Dir|FileMan_ChangeDir',
@@ -134,10 +145,12 @@ local list_bookmarks = gui.list(true)
 list_bookmarks:add_column("@", 24)
 list_bookmarks:add_column("Bookmarks", 600)
 tab1:add(list_bookmarks, "bottom", list_func_height)
+if colorback then list_bookmarks:set_list_colour(colorfore,colorback) end
 
 local list_func = gui.list(true)
 list_func:add_column("Functions/Procedures", 600)
 tab1:client(list_func)
+if colorback then list_func:set_list_colour(colorfore,colorback) end
 
 tab1:context_menu {
 	'Functions: Sort by Order|Functions_SortByOrder',
@@ -152,6 +165,7 @@ local list_abbrev = gui.list(true)
 list_abbrev:add_column("Abbrev", 60)
 list_abbrev:add_column("Expansion", 600)
 tab2:client(list_abbrev)
+if colorback then list_abbrev:set_list_colour(colorfore,colorback) end
 
 -------------------------
 local win_parent
@@ -1241,7 +1255,7 @@ local old_OnUpdateUI = OnUpdateUI
 function OnUpdateUI()
 	local result
 	if old_OnUpdateUI then result = old_OnUpdateUI() end
-	if (editor.Focus) then
+	if (editor.Focus and line_count) then
 		local line_count_new = editor.LineCount
 		local def_line_count = line_count_new - line_count
 		if def_line_count ~= 0 then
