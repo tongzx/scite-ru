@@ -922,29 +922,31 @@ static char ColourisePropsLine( // return last style //!-change-[PropsColouriseF
 			if ((i < lengthLine) && isassignchar(lineBuffer[i])) {
 //!				styler.ColourTo(startLine + i - 1, SCE_PROPS_KEY);
 //!-start-[PropsKeysSets]
-				int chAttr;
-				lineBuffer[i] = '\0';
-				// remove trailing spaces
-				int indent = 0;
-				while (lineBuffer[0] == ' ' || lineBuffer[0] == '\t') {
-					lineBuffer++;
-					indent++;
+				if (i > 0) {
+					int chAttr;
+					lineBuffer[i] = '\0';
+					// remove trailing spaces
+					int indent = 0;
+					while (lineBuffer[0] == ' ' || lineBuffer[0] == '\t') {
+						lineBuffer++;
+						indent++;
+					}
+					int len=0, fin=0;
+					if (keywordlists[0]->InListPartly(lineBuffer, '~', len, fin)) {
+						chAttr = SCE_PROPS_KEYSSET0;
+					} else if (keywordlists[1]->InListPartly(lineBuffer, '~', len, fin)) {
+						chAttr = SCE_PROPS_KEYSSET1;
+					} else if (keywordlists[2]->InListPartly(lineBuffer, '~', len, fin)) {
+						chAttr = SCE_PROPS_KEYSSET2;
+					} else if (keywordlists[3]->InListPartly(lineBuffer, '~', len, fin)) {
+						chAttr = SCE_PROPS_KEYSSET3;
+					} else {
+						chAttr = SCE_PROPS_KEY;
+					}
+					styler.ColourTo(startLine + indent + len, chAttr);
+					styler.ColourTo(startLine + i - 1 - fin, SCE_PROPS_KEY);
+					styler.ColourTo(startLine + i - 1, chAttr);
 				}
-				int len, fin;
-				if (keywordlists[0]->InListPartly(lineBuffer, '~', len, fin)) {
-					chAttr = SCE_PROPS_KEYSSET0;
-				} else if (keywordlists[1]->InListPartly(lineBuffer, '~', len, fin)) {
-					chAttr = SCE_PROPS_KEYSSET1;
-				} else if (keywordlists[2]->InListPartly(lineBuffer, '~', len, fin)) {
-					chAttr = SCE_PROPS_KEYSSET2;
-				} else if (keywordlists[3]->InListPartly(lineBuffer, '~', len, fin)) {
-					chAttr = SCE_PROPS_KEYSSET3;
-				} else {
-					chAttr = SCE_PROPS_KEY;
-				}
-				styler.ColourTo(startLine + indent + len, chAttr);
-				styler.ColourTo(startLine + i - 1 - fin, SCE_PROPS_KEY);
-				styler.ColourTo(startLine + i - 1, chAttr);
 //!-end-[PropsKeysSets]
 				styler.ColourTo(startLine + i, SCE_PROPS_ASSIGNMENT);
 				styler.ColourTo(endPos, SCE_PROPS_DEFAULT);
