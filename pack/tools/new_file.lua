@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 new_file.lua
-mozersЩ (при активном участии dB6)
-version 2.1
+mozersЩ, VladVRO (при активном участии dB6)
+version 2.2
 ----------------------------------------------
 «амен€ет стандартную команду SciTE "File|New" (Ctrl+N)
 —оздает новый буфер в текущем каталоге с расширением текущего файла
@@ -26,7 +26,7 @@ local function CreateUntitledFile()
 	local file_ext = "."..props["FileExt"]
 	if file_ext == "." then file_ext = props["default.file.ext"] end
 	repeat
-		local file_path = props["FileDir"].."\\"..'Untitled'..props["untitled.file.number"]..file_ext
+		local file_path = props["FileDir"].."\\"..scite.GetTranslation('Untitled')..props["untitled.file.number"]..file_ext
 		props["untitled.file.number"] = tonumber(props["untitled.file.number"]) + 1
 		if not shell.fileexists(file_path) then
 			local warning_couldnotopenfile_disable = props['warning.couldnotopenfile.disable']
