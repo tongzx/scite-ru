@@ -1846,15 +1846,10 @@ bool SciTEBase::GoMessage(int dir) { //!-change-[GoMessageImprovement]
 			SendOutput(SCI_MARKERDELETEALL, static_cast<uptr_t>(-1));
 			SendOutput(SCI_MARKERDEFINE, 0, SC_MARK_SMALLRECT);
 			SendOutput(SCI_MARKERSETFORE, 0, ColourOfProperty(props,
-			         "error.marker.fore", ColourDesired(0x7f, 0, 0)));
-/*!
+			        "error.marker.fore", ColourDesired(0x7f, 0, 0)));
 			SendOutput(SCI_MARKERSETBACK, 0, ColourOfProperty(props,
-			         "error.marker.back", ColourDesired(0xff, 0xff, 0)));
-*/
-//!-start-[ErrorLineBack]
-			SendOutput(SCI_MARKERSETBACK, 0, ColourOfProperty(props,
-			        "error.line.back", ColourOfProperty(props, "error.marker.back", ColourDesired(0xff, 0xff, 0)))); //!-change-[ErrorMarkerLine]
-//!-end-[ErrorLineBack]
+//!			        "error.marker.back", ColourDesired(0xff, 0xff, 0)));
+			        "error.line.back", ColourOfProperty(props, "error.marker.back", ColourDesired(0xff, 0xff, 0)))); //!-change-[ErrorLineBack]
 			SendOutput(SCI_MARKERADD, lookLine, 0);
 			SendOutput(SCI_SETSEL, startPosLine, startPosLine);
 			SString message = GetRange(wOutput, startPosLine, startPosLine + lineLength);
