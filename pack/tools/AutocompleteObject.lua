@@ -104,15 +104,6 @@ local object_good_name = '' -- "хорошее" имя объекта, так, как указано в api-фай
 local word_chars_patt = ''
 
 ------------------------------------------------------
--- Преобразовывает стринг в паттерн для поиска
-local function fPattern(str)
-	-- паттерн для ловли управляющих паттернами символов Луа:
-	local lua_patt_chars = "[%(%)%.%+%-%*%?%[%]%^%$]"
-	-- return str:gsub('.','%%%0') -- можно конечно и так, но заэскейпить всё подряд - некошерно.
-	return str:gsub(lua_patt_chars,'%%%0')
-end
-
-------------------------------------------------------
 -- Сортирует таблицу по алфавиту и удаляет дубликаты
 local function TableSort(table_name)
 	table.sort(table_name, function(a, b) return a:upper() < b:upper() end)
@@ -230,7 +221,7 @@ local function FindDeclaration()
 	local text_all = editor:GetText()
 	local _start, _end, sVar, sRightString
 	-- берём то, что хранится в, например, word.characters.$(file.patterns.lua)
-	word_chars_patt = '['..fPattern(editor.WordChars)..auto_start_chars_patt..']+'
+	word_chars_patt = '['..editor.WordChars:pattern()..auto_start_chars_patt..']+'
 
 	-- @todo: правую часть также хорошо бы слегка поправить.
 	local pattern = '('..word_chars_patt..')%s*=%s*(%C+)'
@@ -255,7 +246,7 @@ end
 -- Чтение api файла в таблицу api_table (чтобы потом не опрашивать диск, а все тащить из нее)
 local function CreateAPITable()
 	api_table = {}
-	local word_patt = fPattern(editor.WordChars)
+	local word_patt = editor.WordChars:pattern()
 	local word_extended_patt = '['..word_patt..auto_start_chars_patt..']'
 	for api_filename in props["APIPath"]:gmatch("[^;]+") do
 		if api_filename ~= nil then
@@ -283,7 +274,7 @@ local function CreateObjectsAndAliasTables()
 	objects_table = {}
 	alias_table = {}
 	patterns_table = {}
-	local word_patt = fPattern(editor.WordChars)
+	local word_patt = editor.WordChars:pattern()
 	local word_extended_patt = '['..word_patt..auto_start_chars_patt..']'
 	word_patt = '['..word_patt..']'
 	
@@ -318,7 +309,7 @@ local function CreateMethodsTable(obj)
 		if _end ~= nil and line:sub(1,1)~='#' and
 			(_start == 1 or line:gsub(_start-1,_start-1)==sep_char) then
 			-- local _start, _end, str_method = line:find('([^'..auto_start_chars_patt..']+)', _end+1)
-			local _start, _end, str_method = line:find('(['..fPattern(editor.WordChars)..']+)', _end+1)
+			local _start, _end, str_method = line:find('(['..editor.WordChars:pattern()..']+)', _end+1)
 			if _start ~= nil then
 				methods_table[#methods_table+1] = str_method
 			end
@@ -370,7 +361,7 @@ local function AutocompleteObject(char)
 
 	-- Наконец то мы поняли что введенный символ - именно тот разделитель!
 	sep_char = char
-	auto_start_chars_patt = fPattern(autocomplete_start_characters)
+	auto_start_chars_patt = autocomplete_start_characters:pattern()
 
 	if get_api then
 		CreateAPITable()

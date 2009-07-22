@@ -1,6 +1,6 @@
 -- SciTE Smart braces
--- Version: 1.2.1
--- Author: Dmitry Maslov, Julgo
+-- Version: 1.2.2
+-- Author: Dmitry Maslov, Julgo, TymurGubayev
 ---------------------------------------------------
 -- Работает, если:
 --
@@ -63,45 +63,9 @@ local function GetEOL()
 	return eol
 end
 
--- сделать текст шаблоном для поиска
--- (фактически экранирование служебных символов)
-local function MakeFind( text )
-	local strres = ''
-	local symbol
-	for i = 1, string.len(text), 1 do
-		symbol = string.format( '%c', string.byte( text, i ) )
-		if	( symbol == "(" )
-			or
-			( symbol == "[" )
-			or
-			( symbol == "." )
-			or
-			( symbol == "%" )
-			or
-			( symbol == "*" )
-			or
-			( symbol == "/" )
-			or
-			( symbol == "-" )
-			or
-			( symbol == ")" )
-			or
-			( symbol == "]" )
-			or
-			( symbol == "?" )
-			or
-			( symbol == "+" )
-		then
-			symbol = string.format( "%%%s", symbol )
-		end
-		strres = strres..symbol
-	end
-	return strres
-end
-
 local function FindCount( text, textToFind )
 	local count = 0;
-	for w in string.gmatch( text, MakeFind( textToFind ) )
+	for w in string.gmatch( text, textToFind:pattern() )
 	do
 		count = count + 1
 	end
@@ -130,7 +94,7 @@ local function IsInLineEnd( num_line, text )
 	local endpos = editor.LineEndPosition[num_line]
 	if	( endpos >= string.len( text ) )
 		and
-		string.find( editor:textrange( editor:PositionBefore( endpos - string.len( text ) + 1 ), endpos ), MakeFind( text ) )
+		string.find( editor:textrange( editor:PositionBefore( endpos - string.len( text ) + 1 ), endpos ), text:pattern() )
 	then
 		return true
 	end
@@ -140,15 +104,16 @@ end
 -- последний символ в строке - конец строки?
 local function IsEOLlast( text )
 	-- в луа конец строки всегда один символ
-	if string.find( text, GetEOL(), string.len( text ) - 1 ) then
+--[[	if string.find( text, GetEOL(), string.len( text ) - 1 ) then
 		return true
 	end
-	return false
+	return false]]
+	return (text:sub(-1) == GetEOL())
 end
 
 -- следующий за позицией текст == text ?
 local function nextIs(pos, text)
-	if ( string.find( editor:textrange( pos, editor:PositionAfter( pos + string.len( text ) - 1 ) ), MakeFind( text ) ) ) then
+	if ( string.find( editor:textrange( pos, editor:PositionAfter( pos + string.len( text ) - 1 ) ), text:pattern() ) ) then
 		return true
 	end
 	return false
@@ -165,38 +130,47 @@ local function nextIsEOL(pos)
 	return false
 end
 
+-----------------------------------------------------------------
+-- проверяет скобки, заданные bracebegin и braceend в строке s на 
+-- сбалансированность: "(x)y(z)" -> true, "x)y(z" -> false
+local function BracesBalanced (s, bracebegin, braceend)
+	if (#bracebegin + #braceend) > 2 then
+		--@warn: данная функция не будет работать со "скобками" больше одного символа.
+		--@todo: для "длинных" скобок нужно переписать эту функцию на lpeg. Но кому оно надо?..
+		return true
+	end
+	local b,e    = s:find("%b"..bracebegin..braceend)
+	local b2 = s:find(bracebegin, 1, true)
+	local e2 = s:find(braceend, 1, true)
+	return (b == b2) and (e == e2)
+end -- BracesBalanced
+
 local function BlockBraces( bracebegin, braceend )
 	local text, lenght = editor:GetSelText()
 	local selbegin = editor.SelectionStart
 	local selend = editor.SelectionEnd
-	local b, e = string.find(text, MakeFind( bracebegin ) )
-	local b2, e2
-	local add = ''
-	if IsEOLlast( text ) then
-		b2, e2 = string.find( text, MakeFind( braceend ), 
-			string.len( text ) - string.len( braceend..GetEOL() ) )
-		add = GetEOL()
-	else
-		b2, e2 = string.find( text, MakeFind( braceend ), 
-			string.len( text ) - string.len( braceend ) )
-	end
+	local b, e   = string.find( text, "^%s*"..bracebegin:pattern() )
+	local b2, e2 = string.find( text, braceend:pattern().."%s*$" )
+	local add = ( IsEOLlast( text ) and GetEOL() ) or ""
+	
 	editor:BeginUndoAction()
-	if (b and b2) then
+	if (b and b2) and BracesBalanced( text:sub( e+1, b2-1 ) , bracebegin, braceend ) then
 		text = string.sub( text, e+1, b2-1 )
 		editor:ReplaceSel( text..add )
-		editor:SetSel( selbegin, selbegin + string.len( text..add ) )
+		editor:SetSel( selbegin, selbegin + #( text..add ) )
 	else
-		editor:insert( selend - string.len( add ), braceend )
+		editor:insert( selend - #add, braceend )
 		editor:insert( selbegin, bracebegin )
-		editor:SetSel( selbegin, selend + string.len( bracebegin..braceend ) )
+		editor:SetSel( selbegin, selend + #( bracebegin..braceend ) )
 	end
 	editor:EndUndoAction()
+	
 	return true
 end
 
 local function GetIndexFindCharInProps( value, findchar )
 	if findchar then
-		local resIndex = string.find( props[value], MakeFind( findchar ), 1 )
+		local resIndex = string.find( props[value], findchar:pattern() , 1 )
 		if	( resIndex ~= nil )
 			and
 			( string.sub( props[value], resIndex,resIndex ) == findchar )

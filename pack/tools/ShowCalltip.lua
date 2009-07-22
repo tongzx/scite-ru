@@ -1,17 +1,17 @@
 --[[--------------------------------------------------
 ShowCalltip.lua
 Show calltip for current word
-Authors: mozers™
-version 1.0
+Authors: mozers™, TymurGubayev
+version 1.1
 ------------------------------------------------------
 Выводит всплывающую подсказку по слову на котором стоит курсор
-  по команде меню "Показать подсказку" (Ctrl+Shift+Space) 
-  (если, конечно, соотвествующий каллтип задан в api-файле).
+    по команде меню "Показать подсказку" (Ctrl+Shift+Space) 
+    (если, конечно, соотвествующий каллтип задан в api-файле).
 Если вывод подсказки возможен внутренними средствами SciTE,
-  то скриптовый вариант игнорируется.
+    то скриптовый вариант игнорируется.
 ------------------------------------------------------
 Для подключения добавьте в свой SciTEStartup.lua строку:
-  dofile (props["SciteDefaultHome"].."\\tools\\ShowCalltip.lua")
+    dofile (props["SciteDefaultHome"].."\\tools\\ShowCalltip.lua")
 --]]--------------------------------------------------
 
 local function GetCurrentWord()
@@ -26,17 +26,18 @@ local function ShowCalltip()
 	for api_filename in string.gmatch(props["APIPath"], "[^;]+") do
 		if api_filename ~= '' then
 			local api_file = io.open(api_filename)
-			if not api_file then return end
-			for line in api_file:lines() do
-				local _start, _end, calltip = line:find('^('..word..'[^%w%.%_%:].+)')
-				if _start == 1 then
-					editor:CallTipCancel()
-					editor:CallTipShow(editor.CurrentPos, calltip:gsub('\\n','\n'))
-					editor:CallTipSetHlt(0, #word)
-					break
+			if api_file then
+				for line in api_file:lines() do
+					local _start, _end, calltip = line:find('^('..word:pattern()..'[^%w%.%_%:].+)')
+					if _start == 1 then
+						editor:CallTipCancel()
+						editor:CallTipShow(editor.CurrentPos, calltip:gsub('\\n','\n'))
+						editor:CallTipSetHlt(0, #word)
+						break
+					end
 				end
+				api_file:close()
 			end
-			api_file:close()
 		end
 	end
 end
