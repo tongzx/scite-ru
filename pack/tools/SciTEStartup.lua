@@ -102,8 +102,8 @@ dofile (props["SciteDefaultHome"].."\\tools\\abbrevlist.lua")
 -- Выводит всплывающую подсказку (Ctrl+Shift+Space) по текущему слову
 dofile (props["SciteDefaultHome"].."\\tools\\ShowCalltip.lua")
 
--- Подсветка парных тегов в HTML
-dofile (props["SciteDefaultHome"].."\\tools\\highlighting_paired_tags.lua")
+-- Подсветка, копирование, вставка, удаление парных тегов в HTML
+dofile (props["SciteDefaultHome"].."\\tools\\paired_tags.lua")
 
 -- Подсветка линков в тексте и открытие их в броузере при клике с зажатым Ctrl
 dofile (props["SciteDefaultHome"].."\\tools\\HighlightLinks.lua")
