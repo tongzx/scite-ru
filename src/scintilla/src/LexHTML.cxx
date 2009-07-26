@@ -1097,7 +1097,6 @@ static void ColouriseHyperTextDoc(unsigned int startPos, int length, int initSty
 			if ((scriptLanguage != eScriptComment) && (chPrev2 == '-') && (chPrev == '-') && (ch == '>')) {
 				styler.ColourTo(i, StateToPrint);
 				state = SCE_H_DEFAULT;
-				if (foldHTMLPreprocessor) //!-add-[XMLLexerFix]
 				levelCurrent--;
 			}
 			break;
