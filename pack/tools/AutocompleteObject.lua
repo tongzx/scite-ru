@@ -1,12 +1,13 @@
 --[[--------------------------------------------------
 AutocompleteObject.lua
 mozers™, Tymur Gubayev
-version 3.10.2
+version 3.10.3
 ------------------------------------------------------
 Inputting of the symbol set in autocomplete.[lexer].start.characters causes the popup list of properties and methods of input_object. They undertake from corresponding api-file.
 In the same case inputting of a separator changes the case of symbols in input_object's name according to a api-file.
 (for example "ucase" is automatically replaced on "UCase".)
-Warning: This script needed function IsComment (COMMON.lua)
+
+Warning: This script needed function IsComment and string.pattern (COMMON.lua)
 props["APIPath"] available only in SciTE-Ru
 
 Connection:
@@ -19,7 +20,8 @@ Set in a file .properties:
 Ввод разделителя, заданного в autocomplete.[lexer].start.characters
 вызывает список свойств и медодов объекта из соответствующего api файла
 Ввод разделителя изменяют регистр символов в имени объекта в соответствии с записью в api файле (например "ucase" при вводе автоматически заменяется на "UCase")
-Внимание: В скрипте используется функция IsComment (обязательно подключение COMMON.lua)
+
+Внимание: В скрипте используется функция IsComment и string.pattern из COMMON.lua
 props["APIPath"] доступно только в SciTE-Ru
 
 Подключение:
@@ -46,6 +48,8 @@ mydoc = document
 document - имя этого же объекта, заданное в api файле
 ------------------------------------------------------
 History:
+3.10.3 (Tymur):
+	- функция преобразования стринга в паттерн для поиска вынесена в COMMON.lua
 3.0 (Tymur):
 	- скрипт стал чуть более case sensitive по сравнению со старым
 	* переписал таблицы objects_table, alias_table из массивов строк в таблицы со строковыми ключами
