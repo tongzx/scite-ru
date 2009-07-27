@@ -1,6 +1,6 @@
 --[[--------------------------------------------------
  Save SciTE Settings
- Version: 1.7
+ Version: 1.7.1
  Author: mozersЩ, Dmitry Maslov
 ---------------------------------------------------
  Save current settings on SciTE close.
@@ -48,6 +48,7 @@ local function SaveSettings()
 	SaveKey('output.magnification') -- параметр измен€етс€ в Zoom.lua
 	SaveKey('print.magnification') -- параметр измен€етс€ в Zoom.lua
 	SaveKey('sidebar.show') -- параметр измен€етс€ в SideBar.lua
+	SaveKey('highlighting.identical.text') -- параметр измен€етс€ в highlighting_identical_text.lua
 	io.output(file)
 	io.write(text)
 	io.close()
