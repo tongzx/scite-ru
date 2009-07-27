@@ -1,6 +1,6 @@
 --[[--------------------------------------------------
 Paired Tags (логическое продолжение скриптов highlighting_paired_tags.lua и HTMLFormatPainter.lua)
-Version: 2.0
+Version: 2.1
 Author: mozers™, VladVRO
 ------------------------------
 Подсветка парных и непарных тегов в HTML и XML
@@ -11,31 +11,40 @@ Author: mozers™, VladVRO
 
 Внимание:
 В скрипте используются функции из COMMON.lua (EditorMarkText, EditorClearMarks)
+
 ------------------------------
 Подключение:
 Добавить в SciTEStartup.lua строку:
 	dofile (props["SciteDefaultHome"].."\\tools\\paired_tags.lua")
 Добавить в файл настроек параметр:
 	hypertext.highlighting.paired.tags=1
-Дополнительно можно задать в файле стили используемых маркеров (1 и 2):
+Дополнительно можно задать стили используемых маркеров (1 и 2):
 	find.mark.1=#0099FF
 	find.mark.2=#FF0000 (если этот параметр не задан, то непарные теги не подсвечиваются)
 
 Команды копирования, вставки, удаления тегов добавляются в меню Tools обычным порядком:
-	command.name.5.$(file.patterns.html)=Copy Tags
-	command.5.$(file.patterns.html)=CopyTags
-	command.mode.5.$(file.patterns.html)=subsystem:lua,savebefore:no
-	command.shortcut.5.$(file.patterns.html)=Alt+C
+	tagfiles=$(file.patterns.html);$(file.patterns.xml)
 
-	command.name.6.$(file.patterns.html)=Paste Tags
-	command.6.$(file.patterns.html)=PasteTags
-	command.mode.6.$(file.patterns.html)=subsystem:lua,savebefore:no
-	command.shortcut.6.$(file.patterns.html)=Alt+P
+	command.name.5.$(tagfiles)=Copy Tags
+	command.5.$(tagfiles)=CopyTags
+	command.mode.5.$(tagfiles)=subsystem:lua,savebefore:no
+	command.shortcut.5.$(tagfiles)=Alt+C
 
-	command.name.7.$(file.patterns.html)=Delete Tags
-	command.7.$(file.patterns.html)=DeleteTags
-	command.mode.7.$(file.patterns.html)=subsystem:lua,savebefore:no
-	command.shortcut.7.$(file.patterns.html)=Alt+D
+	command.name.6.$(tagfiles)=Paste Tags
+	command.6.$(tagfiles)=PasteTags
+	command.mode.6.$(tagfiles)=subsystem:lua,savebefore:no
+	command.shortcut.6.$(tagfiles)=Alt+P
+
+	command.name.7.$(tagfiles)=Delete Tags
+	command.7.$(tagfiles)=DeleteTags
+	command.mode.7.$(tagfiles)=subsystem:lua,savebefore:no
+	command.shortcut.7.$(tagfiles)=Alt+D
+
+Для быстрого включения/отключения подсветки можно добавить команду:
+	command.checked.8.$(tagfiles)=$(hypertext.highlighting.paired.tags)
+	command.name.8.$(tagfiles)=Highlighting Paired Tags
+	command.8.$(tagfiles)=highlighting_paired_tags_switch
+	command.mode.8.$(tagfiles)=subsystem:lua,savebefore:no
 --]]----------------------------------------------------
 
 local tags = {}
@@ -95,6 +104,13 @@ function DeleteTags()
 	end
 end
 
+function highlighting_paired_tags_switch()
+	local prop_name = 'hypertext.highlighting.paired.tags'
+	props[prop_name] = 1 - tonumber(props[prop_name])
+	EditorClearMarks(1)
+	EditorClearMarks(2)
+end
+
 local function PairedTagsFinder()
 	local current_pos = editor.CurrentPos
 	if current_pos == old_current_pos then return end
@@ -110,7 +126,7 @@ local function PairedTagsFinder()
 	tags.paired_start = nil
 	tags.paired_end = nil
 	if tag_start ~= nil and tag_end ~= nil then
-		if editor.CharAt[tag_start] == 60 and editor.CharAt[tag_end] == 62 then
+		if editor.CharAt[tag_start] == 60 and editor.CharAt[tag_end] == 62 and editor.StyleAt[tag_start+1] == 1 then
 			local tag_paired_start, tag_paired_end, dec, find_end
 			if editor.CharAt[tag_start+1] == 47 then
 				dec = -1
