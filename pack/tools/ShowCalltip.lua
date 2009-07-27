@@ -13,14 +13,8 @@ version 1.2
 Для подключения добавьте в свой SciTEStartup.lua строку:
   dofile (props["SciteDefaultHome"].."\\tools\\ShowCalltip.lua")
 
-ВНИМАНИЕ: В скрипте используется ф-ция string.pattern из COMMON.lua
+ВНИМАНИЕ: В скрипте используются функции из COMMON.lua (string.pattern, GetCurrentWord)
 --]]--------------------------------------------------
-
-local function GetCurrentWord()
-	local current_pos = editor.CurrentPos
-	return editor:textrange( editor:WordStartPosition(current_pos, true),
-							editor:WordEndPosition(current_pos, true))
-end
 
 local function ShowCalltip()
 	local word = GetCurrentWord()

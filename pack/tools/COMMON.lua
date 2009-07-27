@@ -1,11 +1,19 @@
 -- COMMON.lua
--- Version: 1.4.3
+-- Version: 1.4.4
 ---------------------------------------------------
 -- Общие функции, использующиеся во многих скриптах
 ---------------------------------------------------
 
 -- Пути поиска подключаемых lua-библиотек
 package.cpath = props["SciteDefaultHome"].."\\tools\\LuaLib\\?.dll;"..package.cpath
+
+--------------------------------------------------------
+-- Замена порой неработающего props['CurrentWord']
+function GetCurrentWord()
+	local current_pos = editor.CurrentPos
+	return editor:textrange(editor:WordStartPosition(current_pos, true),
+							editor:WordEndPosition(current_pos, true))
+end
 
 --------------------------------------------------------
 -- Замена ф-ций string.lower() и string.upper()
@@ -227,11 +235,7 @@ end
 ----------------------------------------------------------------------------
 -- Инвертирование состояния заданного параметра (используется для снятия/установки "галок" в меню)
 function CheckChange(prop_name)
-	if tonumber(props[prop_name]) == 1 then
-		props[prop_name] = 0
-	else
-		props[prop_name] = 1
-	end
+	props[prop_name] = 1 - tonumber(props[prop_name])
 end
 
 -- ==============================================================

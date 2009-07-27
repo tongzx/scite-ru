@@ -1,11 +1,12 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev
-version 1.12
+version 1.13
 ------------------------------------------------------
   Note: Require gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
                lpeg.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/lpeg/>
               shell.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/shell/>
+             COMMON.lua (function GetCurrentWord)
   Connection:
    In file SciTEStartup.lua add a line:
       dofile (props["SciteDefaultHome"].."\\tools\\SideBar.lua")
@@ -1303,12 +1304,6 @@ end
 ----------------------------------------------------------
 -- Go to function definition
 ----------------------------------------------------------
--- Замена почему то неработаеющего props['CurrentWord']
-local function GetCurrentWord()
-	local current_pos = editor.CurrentPos
-	return editor:textrange( editor:WordStartPosition(current_pos, true),
-							editor:WordEndPosition(current_pos, true))
-end
 
 -- По имени функции находим строку с ее объявлением (инфа берется из table_functions)
 local function Func2Line(funcname)
