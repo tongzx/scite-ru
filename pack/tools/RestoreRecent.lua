@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 RestoreRecent.lua
 Authors: mozers™
-Version: 1.1.2
+Version: 1.1.3
 ------------------------------------------------------
 Description:
   Restore position, bookmarks, folds at opening recent file
@@ -142,8 +142,8 @@ local function Restore(file)
 	else
 		local toggle_foldall_ext = props['fold.on.open.ext']:lower()
 		local current_ext = props['FileExt']:lower()
-		if toggle_foldall_ext:find(current_ext, 1, true) then
-			scite.MenuCommand (IDM_TOGGLE_FOLDALL)
+		for ext in toggle_foldall_ext:gmatch("%w+") do
+			if current_ext == ext then scite.MenuCommand (IDM_TOGGLE_FOLDALL) end
 		end
 	end
 end
