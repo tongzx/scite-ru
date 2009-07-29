@@ -1,6 +1,6 @@
 --[[--------------------------------------------------
 Paired Tags (логическое продолжение скриптов highlighting_paired_tags.lua и HTMLFormatPainter.lua)
-Version: 2.1
+Version: 2.2
 Author: mozersЩ, VladVRO
 ------------------------------
 ѕодсветка парных и непарных тегов в HTML и XML
@@ -47,57 +47,59 @@ Author: mozersЩ, VladVRO
 	command.mode.8.$(tagfiles)=subsystem:lua,savebefore:no
 --]]----------------------------------------------------
 
-local tags = {}
+local t = {}
+-- t.tag_start, t.tag_end, t.paired_start, t.paired_end  -- positions
+-- t.begin, t.finish  -- contents of tags (when copying)
 local old_current_pos
 
 function CopyTags()
-	local tag = editor:textrange(tags.tag_start, tags.tag_end+1)
-	if tags.paired_start~=nil then
-		local paired = editor:textrange(tags.paired_start, tags.paired_end+1)
-		if tags.tag_start < tags.paired_start then
-			tags.begin = tag
-			tags.finish = paired
+	local tag = editor:textrange(t.tag_start, t.tag_end+1)
+	if t.paired_start~=nil then
+		local paired = editor:textrange(t.paired_start, t.paired_end+1)
+		if t.tag_start < t.paired_start then
+			t.begin = tag
+			t.finish = paired
 		else
-			tags.begin = paired
-			tags.finish = tag
+			t.begin = paired
+			t.finish = tag
 		end
 	else
-		tags.begin = tag
-		tags.finish = nil
+		t.begin = tag
+		t.finish = nil
 	end
 end
 
 function PasteTags()
-	if tags.begin~=nil then
-		if tags.finish~=nil then
+	if t.begin~=nil then
+		if t.finish~=nil then
 			local sel_text = editor:GetSelText()
-			editor:ReplaceSel(tags.begin..sel_text..tags.finish)
+			editor:ReplaceSel(t.begin..sel_text..t.finish)
 			if sel_text == '' then
-				editor:GotoPos(editor.CurrentPos-#tags.finish)
+				editor:GotoPos(editor.CurrentPos - #t.finish)
 			end
 		else
-			editor:ReplaceSel(tags.begin)
+			editor:ReplaceSel(t.begin)
 		end
 	end
 end
 
 function DeleteTags()
-	if tags.tag_start~=nil then
+	if t.tag_start~=nil then
 		editor:BeginUndoAction()
-		if tags.paired_start~=nil then
-			if tags.tag_start < tags.paired_start then
-				editor:SetSel(tags.paired_start, tags.paired_end+1)
+		if t.paired_start~=nil then
+			if t.tag_start < t.paired_start then
+				editor:SetSel(t.paired_start, t.paired_end+1)
 				editor:DeleteBack()
-				editor:SetSel(tags.tag_start, tags.tag_end+1)
+				editor:SetSel(t.tag_start, t.tag_end+1)
 				editor:DeleteBack()
 			else
-				editor:SetSel(tags.tag_start, tags.tag_end+1)
+				editor:SetSel(t.tag_start, t.tag_end+1)
 				editor:DeleteBack()
-				editor:SetSel(tags.paired_start, tags.paired_end+1)
+				editor:SetSel(t.paired_start, t.paired_end+1)
 				editor:DeleteBack()
 			end
 		else
-			editor:SetSel(tags.tag_start, tags.tag_end+1)
+			editor:SetSel(t.tag_start, t.tag_end+1)
 			editor:DeleteBack()
 		end
 		editor:EndUndoAction()
@@ -115,58 +117,58 @@ local function PairedTagsFinder()
 	local current_pos = editor.CurrentPos
 	if current_pos == old_current_pos then return end
 	old_current_pos = current_pos
-	local find_flags = SCFIND_REGEXP
-	local tag_start = editor:findtext("[<>]", find_flags, current_pos, 0)
-	local tag_end = editor:findtext("[<>]", find_flags, current_pos, editor.Length)
-	local current_mark_number = scite.SendEditor(SCI_GETINDICATORCURRENT)
+
 	EditorClearMarks(1)
 	EditorClearMarks(2)
-	tags.tag_start = nil
-	tags.tag_end = nil
-	tags.paired_start = nil
-	tags.paired_end = nil
-	if tag_start ~= nil and tag_end ~= nil then
-		if editor.CharAt[tag_start] == 60 and editor.CharAt[tag_end] == 62 and editor.StyleAt[tag_start+1] == 1 then
-			local tag_paired_start, tag_paired_end, dec, find_end
-			if editor.CharAt[tag_start+1] == 47 then
-				dec = -1
-				find_end = 0
-			else
-				dec = 1
-				find_end = editor.Length
-			end
-			EditorMarkText(tag_start+1, tag_end-tag_start-1, 1) -- Start tag to paint in Blue
-			tags.tag_start = tag_start
-			tags.tag_end = tag_end
 
-			-- Find paired tag
-			local tag = editor:textrange(editor:findtext("\\w+", find_flags, tag_start, tag_end))
-			local find_start = tag_start+dec
-			local count = 1
-			repeat
-				tag_paired_start, tag_paired_end = editor:findtext("</*"..tag.."[^>]*", find_flags, find_start, find_end)
-				if tag_paired_start == nil then break end
-				if editor.CharAt[tag_paired_start+1] == 47 then
-					count = count - dec
-				else
-					count = count + dec
-				end
-				if count == 0 then break end
-				find_start = tag_paired_start + dec
-			until false
+	t.tag_start = nil
+	t.tag_end = nil
+	t.paired_start = nil
+	t.paired_end = nil
 
-			if tag_paired_start ~= nil then
-				-- Paired tag to paint in Blue
-				EditorMarkText(tag_paired_start+1, tag_paired_end-tag_paired_start-1, 1)
-				tags.paired_start = tag_paired_start
-				tags.paired_end = tag_paired_end
-			else
-				EditorClearMarks(1)
-				EditorClearMarks(2)
-				if props["find.mark.2"] ~= '' then
-					EditorMarkText(tag_start+1, tag_end-tag_start-1, 2) -- Start tag to paint in Red
-				end
-			end
+	local tag_start = editor:findtext("[<>]", SCFIND_REGEXP, current_pos, 0)
+	if tag_start == nil then return end
+	if editor.CharAt[tag_start] ~= 60 then return end
+	if editor.StyleAt[tag_start+1] ~= 1 then return end
+	if tag_start == t.tag_start then return end
+	t.tag_start = tag_start
+
+	t.tag_end = editor:findtext("[<>]", SCFIND_REGEXP, current_pos, editor.Length)
+	if t.tag_end == nil then return end
+	if editor.CharAt[t.tag_end] ~= 62 then t.tag_end = nil return end
+
+	local dec, find_end
+	if editor.CharAt[t.tag_start+1] == 47 then
+		dec, find_end = -1, 0
+	else
+		dec, find_end =  1, editor.Length
+	end
+
+	-- Find paired tag
+	local tag = editor:textrange(editor:findtext("\\w+", SCFIND_REGEXP, t.tag_start, t.tag_end))
+	local count = 1
+	local find_start = t.tag_start+dec
+	repeat
+		t.paired_start, t.paired_end = editor:findtext("</*"..tag.."[^>]*", SCFIND_REGEXP, find_start, find_end)
+		if t.paired_start == nil then break end
+		if editor.CharAt[t.paired_start+1] == 47 then
+			count = count - dec
+		else
+			count = count + dec
+		end
+		if count == 0 then break end
+		find_start = t.paired_start + dec
+	until false
+
+	local current_mark_number = scite.SendEditor(SCI_GETINDICATORCURRENT)
+	if t.paired_start ~= nil then
+		-- paint in Blue
+		EditorMarkText(t.tag_start + 1, t.tag_end - t.tag_start - 1, 1)
+		EditorMarkText(t.paired_start + 1, t.paired_end - t.paired_start - 1, 1)
+	else
+		if props["find.mark.2"] ~= '' then
+			-- paint in Red
+			EditorMarkText(t.tag_start + 1, t.tag_end - t.tag_start - 1, 2)
 		end
 	end
 	scite.SendEditor(SCI_SETINDICATORCURRENT, current_mark_number)
