@@ -69,13 +69,13 @@ rem -----------------------------------------------------
 CALL :header Make COOL.DLL
 CD %root%iconlib\cool
 CALL make.cmd
-MOVE /Y *.dll ..\..\pack\home\
+MOVE /Y *.dll ..\..\pack\toolbar\
 
 rem -----------------------------------------------------
 CALL :header Make GNOME.DLL
 CD %root%iconlib\gnome\
 CALL make.cmd
-MOVE /Y *.dll ..\..\pack\home\
+MOVE /Y *.dll ..\..\pack\toolbar\
 
 :completed
 ECHO.
