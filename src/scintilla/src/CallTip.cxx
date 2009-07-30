@@ -289,7 +289,7 @@ PRectangle CallTip::PaintContents(Surface *surfaceWindow, bool draw) {
 			// draw definition part (not highlighted)
 			int wrapPos = off;
 			for (i = 0; i < wrapPosList.Length(); i++) {
-				if ((wrapPosList[i] >= off) && (wrapPosList[i] <= hlStart)) {
+				if ((wrapPosList[i] >= off) && (wrapPosList[i] <= hlStart) && (wrapPos != wrapPosList[i])) {
 					// line wrap is needed here
 					DrawChunk(surfaceWindow, x, chunkVal, wrapPos - chunkOffset, wrapPosList[i] - chunkOffset,
 						ytext, rcClient, false, draw);
@@ -306,7 +306,7 @@ PRectangle CallTip::PaintContents(Surface *surfaceWindow, bool draw) {
 			// draw definition part (highlighted)
 			wrapPos = hlStart;
 			for (i = 0; i < wrapPosList.Length(); i++) {
-				if ((wrapPosList[i] >= hlStart) && (wrapPosList[i] <= hlEnd)) {
+				if ((wrapPosList[i] >= hlStart) && (wrapPosList[i] <= hlEnd) && (wrapPos != wrapPosList[i])) {
 					DrawChunk(surfaceWindow, x, chunkVal, wrapPos - chunkOffset, wrapPosList[i] - chunkOffset,
 						ytext, rcClient, true, draw);
 					wrapPos = wrapPosList[i];
