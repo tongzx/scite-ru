@@ -1,6 +1,6 @@
 --[[--------------------------------------------------
 Highlighting Identical Text
-Version: 1.1
+Version: 1.1.1
 Author: mozersЩ
 ------------------------------
 јвто подсветка текста, который совпадает с текущим словом или выделением
@@ -102,12 +102,10 @@ local function IdenticalTextFinder()
 		TextMatch(cur_text)
 	end
 	if #match_table > 1 then
-		local current_mark_number = scite.SendEditor(SCI_GETINDICATORCURRENT)
 		for i = 1, #match_table do
 			-- ќтмечаем все слова, бер€ данные из таблицы match_table
 			EditorMarkText(match_table[i][1], match_table[i][2]-match_table[i][1], mark_num)
 		end
-		scite.SendEditor(SCI_SETINDICATORCURRENT, current_mark_number)
 	end
 
 end

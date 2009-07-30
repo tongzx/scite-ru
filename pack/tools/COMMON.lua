@@ -1,5 +1,5 @@
 -- COMMON.lua
--- Version: 1.4.4
+-- Version: 1.4.5
 ---------------------------------------------------
 -- Общие функции, использующиеся во многих скриптах
 ---------------------------------------------------
@@ -152,8 +152,10 @@ end
 
 -- Выделение текста маркером определенного стиля
 function EditorMarkText(start, length, style_number)
+	local current_mark_number = scite.SendEditor(SCI_GETINDICATORCURRENT)
 	scite.SendEditor(SCI_SETINDICATORCURRENT, style_number)
 	scite.SendEditor(SCI_INDICATORFILLRANGE, start, length)
+	scite.SendEditor(SCI_SETINDICATORCURRENT, current_mark_number)
 end
 
 -- Очистка текста от маркерного выделения заданного стиля
@@ -161,6 +163,7 @@ end
 --   если не указана позиция и длина - очищается весь текст
 function EditorClearMarks(style_number, start, length)
 	local _first_style, _end_style, style
+	local current_mark_number = scite.SendEditor(SCI_GETINDICATORCURRENT)
 	if style_number == nil then
 		_first_style, _end_style = 0, 31
 	else
@@ -173,6 +176,7 @@ function EditorClearMarks(style_number, start, length)
 		scite.SendEditor(SCI_SETINDICATORCURRENT, style)
 		scite.SendEditor(SCI_INDICATORCLEARRANGE, start, length)
 	end
+	scite.SendEditor(SCI_SETINDICATORCURRENT, current_mark_number)
 end
 
 ----------------------------------------------------------------------------

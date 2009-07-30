@@ -1,6 +1,6 @@
 --[[--------------------------------------------------
 Paired Tags (логическое продолжение скриптов highlighting_paired_tags.lua и HTMLFormatPainter.lua)
-Version: 2.2
+Version: 2.2.1
 Author: mozers™, VladVRO
 ------------------------------
 Подсветка парных и непарных тегов в HTML и XML
@@ -160,7 +160,6 @@ local function PairedTagsFinder()
 		find_start = t.paired_start + dec
 	until false
 
-	local current_mark_number = scite.SendEditor(SCI_GETINDICATORCURRENT)
 	if t.paired_start ~= nil then
 		-- paint in Blue
 		EditorMarkText(t.tag_start + 1, t.tag_end - t.tag_start - 1, 1)
@@ -171,7 +170,6 @@ local function PairedTagsFinder()
 			EditorMarkText(t.tag_start + 1, t.tag_end - t.tag_start - 1, 2)
 		end
 	end
-	scite.SendEditor(SCI_SETINDICATORCURRENT, current_mark_number)
 end
 
 -- Add user event handler OnUpdateUI
