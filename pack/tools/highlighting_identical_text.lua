@@ -1,6 +1,6 @@
 --[[--------------------------------------------------
 Highlighting Identical Text
-Version: 1.2
+Version: 1.2.1
 Author: mozersЩ
 ------------------------------
 јвто подсветка текста, который совпадает с текущим словом или выделением
@@ -86,6 +86,7 @@ local function IdenticalTextFinder()
 	repeat
 		local ident_text_start, ident_text_end = all_text:find(cur_text, find_start, true)
 		if ident_text_start == nil then break end
+		if ident_text_end == 0 then break end
 		if ( not wholeword ) or
 			( wholeword and isWord(all_text, ident_text_start, ident_text_end) ) then
 				-- загон€ем все результаты поиска в таблицу match_table
