@@ -455,7 +455,7 @@ void SciTEWin::SetToolBar() {
 	ToolBarTips.RemoveAll();
 	toolbarUsersPressableButtons.RemoveAll();
 
-	// удаляем все кнопки
+	// erasing all buttons
 	while ( ::SendMessage(hwndToolBar,TB_DELETEBUTTON,0,0) );
 
 	SString fileNameForExtension = ExtensionFileName();

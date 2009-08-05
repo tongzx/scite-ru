@@ -2405,10 +2405,10 @@ bool SciTEBase::StartAutoComplete() {
 */
 //!-start-[AutoComplete]
 bool SciTEBase::StartAutoComplete() {
-/* Собрано содержимое StartAutoComplete и StartAutoCompleteWord */
+/* Collected content of StartAutoComplete and StartAutoCompleteWord */
 
 	SString line = GetLine();
-	int current = GetCaretInLine();//Текущая колонка
+	int current = GetCaretInLine();//Current column
 //	if (current >= line.size())
 //		return false;
 
@@ -2459,7 +2459,7 @@ bool SciTEBase::StartAutoComplete() {
 		wordstart[0] = ' ';
 		GetRange(wEditor, posFind, Platform::Minimum(posFind + wordMaxSize - 3, doclen), wordstart + 1);
 		char *wordend = wordstart + 1 + root.length();
-		while (iswordcharforsel(*wordend)) { //Проверка на разделитель
+		while (iswordcharforsel(*wordend)) { //Check for separator
 			wordend++;
 		}
 		*wordend++ = ' ';

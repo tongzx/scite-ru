@@ -1218,12 +1218,12 @@ void SciTEBase::SetToolsMenu() {
 	MenuEx arrMenu[toolMax];
 	int menuPos = TOOLS_START+1;
 
-	// очищаем меню tools
+	// erasing menu tools
 	arrMenu[0] = GetMenu(menuTools);
 	arrMenu[0].RemoveItems(IDM_TOOLS);
 	arrMenu[0].RemoveItems(IDM_MACRO_SEP, IDM_MACROLIST);
 
-	// формируем меню
+	// menu creation
 	for (items = 0; items < toolMax; items++) {
 		int itemID = IDM_TOOLS + items;
 		SString prefix = "command.name." + SString(items) + ".";
@@ -1255,7 +1255,7 @@ void SciTEBase::SetToolsMenu() {
 		}
 	}
 
-	// добавляем макросы
+	// adding macro's menu items
 	if (macrosEnabled) {
 		SetMenuItem(menuTools, menuPos++, IDM_MACRO_SEP, "");
 		SetMenuItemLocalised(menuTools, menuPos++, IDM_MACROLIST,
@@ -1268,7 +1268,7 @@ void SciTEBase::SetToolsMenu() {
 			"S&top Recording Macro", "Ctrl+Shift+F9");
 	}
 
-	// вставляем вложенные меню в начало
+	// inserting submenus to the top
 	menuPos = TOOLS_START+1;
 	for (items = 1; items < toolMax; items++) {
 		if (arrMenu[items].GetID() != 0) {
