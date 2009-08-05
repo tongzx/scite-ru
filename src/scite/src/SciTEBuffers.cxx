@@ -490,6 +490,8 @@ void SciTEBase::RestoreSession() {
 		if (lineNumbers && lineNumbersExpand)
 			SetLineNumberWidth();
 		UpdateStatusBar(true);
+		if (extender)
+			extender->OnOpen(filePath.AsFileSystem());
 	}
 //!-end-[session.load.forced]
 
