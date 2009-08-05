@@ -291,6 +291,7 @@ void SciTEBase::UpdateBuffersCurrent() {
 		buffers.buffers[currentbuf].selection = GetSelection();
 		buffers.buffers[currentbuf].scrollPosition = GetCurrentScrollPosition();
 
+		if(props.GetInt("session.load.forced", 0) != 1 || props.GetInt("scite.state.loadsession", 0) != 1) { //!-add-[session.load.forced]
 		// Retrieve fold state and store in buffer state info
 		int maxLine = SendEditor(SCI_GETLINECOUNT);
 		int foldPoints = 0;
@@ -317,6 +318,7 @@ void SciTEBase::UpdateBuffersCurrent() {
 				}
 			}
 		}
+		} //!-add-[session.load.forced]
 	}
 }
 
@@ -466,7 +468,9 @@ void SciTEBase::RestoreSession() {
 			propKey = IndexPropKey("buffer", i, "folds");
 			propStr = propsSession.Get(propKey.c_str());
 			if (propStr.length()) {
+				if (props.GetInt("session.load.forced", 0) != 1) { //!-add-[session.load.forced]
 				SendEditor(SCI_COLOURISE, 0, -1);
+				CurrentBuffer()->isColorized = true; //!-add-[session.load.forced]
 				char *buf = new char[propStr.length() + 1];
 				strcpy(buf, propStr.c_str());
 				char *p = strtok(buf, ",");
@@ -476,6 +480,36 @@ void SciTEBase::RestoreSession() {
 					p = strtok(NULL, ",");
 				}
 				delete [] buf;
+//!-start-[session.load.forced]
+				} else {
+					// Retrieve fold state and store in buffer state info
+					int foldPoints = 0;
+
+					char *buf = new char[propStr.length() + 1];
+					strcpy(buf, propStr.c_str());
+					char *p = strtok(buf, ",");
+					while (p != NULL) {
+						foldPoints++;
+						p = strtok(NULL, ",");
+					}
+
+					FoldState *f = &buffers.buffers[buffers.Current()].foldState;
+					f->Clear();
+
+					if (foldPoints > 0) {
+						f->Alloc(foldPoints);
+
+						strcpy(buf, propStr.c_str());
+						p = strtok(buf, ",");
+						while (p != NULL) {
+							int line = atoi(p) - 1;
+							f->Append(line);
+							p = strtok(NULL, ",");
+						}
+					}
+					delete [] buf;
+				}
+//!-end-[session.load.forced]
 			}
 		}
 	}
@@ -484,7 +518,7 @@ void SciTEBase::RestoreSession() {
 	if (props.GetInt("session.load.forced", 0) == 1 && curr != -1) {
 		ReadProperties();
 		SetIndentSettings();
-		UpdateBuffersCurrent();
+		RestoreState(buffers.buffers[curr]);
 		SizeSubWindows();
 		SetWindowName();
 		if (lineNumbers && lineNumbersExpand)
@@ -698,6 +732,12 @@ void SciTEBase::RestoreState(const Buffer &buffer) {
 	isReadOnly = SendEditor(SCI_GETREADONLY);
 
 	// check to see whether there is saved fold state, restore
+//!-start-[session.load.forced]
+	if (!CurrentBuffer()->isColorized) {
+		SendEditor(SCI_COLOURISE, 0, -1);
+		CurrentBuffer()->isColorized = true;
+	}
+//!-end-[session.load.forced]
 	for (int fold = 0; fold < buffer.foldState.Folds(); fold++) {
 		SendEditor(SCI_TOGGLEFOLD, buffer.foldState.Line(fold));
 	}

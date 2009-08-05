@@ -464,6 +464,7 @@ bool SciTEBase::Open(FilePath file, OpenFlags of) {
 	SizeSubWindows();
 //!-start-[session.load.forced]
 	} else {
+		CurrentBuffer()->isColorized = false;
 		SetIndentSettings();
 	}
 //!-end-[session.load.forced]

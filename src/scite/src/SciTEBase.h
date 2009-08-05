@@ -312,6 +312,7 @@ class Buffer : public RecentFile {
 public:
 	sptr_t doc;
 	bool isDirty;
+	bool isColorized; //!-add-[session.load.forced]
 	char *ROMarker; //!-add-[ReadOnlyTabMarker]
 	bool useMonoFont;
 	UniMode unicodeMode;
@@ -327,6 +328,7 @@ public:
 	void Init() {
 		RecentFile::Init();
 		isDirty = false;
+		isColorized = false; //!-add-[session.load.forced]
 		ROMarker = NULL; //!-add-[ReadOnlyTabMarker]
 		useMonoFont = false;
 		unicodeMode = uni8Bit;
