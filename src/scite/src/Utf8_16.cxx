@@ -33,7 +33,18 @@ Utf8_16_Read::Utf8_16_Read() {
 	m_nBufSize = 0;
 	m_pNewBuf = NULL;
 	m_bFirstRead = true;
+	m_nAutoCheckUtf8 = false;//!-[utf8.auto.check] [mhb] 07/05/09: by default, not auto check utf8 
 }
+
+//!-start-[utf8.auto.check]
+Utf8_16_Read::Utf8_16_Read(bool AutoCheckUtf8) {
+	m_eEncoding = eUnknown;
+	m_nBufSize = 0;
+	m_pNewBuf = NULL;
+	m_bFirstRead = true;
+	m_nAutoCheckUtf8 = AutoCheckUtf8;//[mhb] 07/05/09: by default, not auto check utf8 
+}
+//!-end-[utf8.auto.check]
 
 Utf8_16_Read::~Utf8_16_Read() {
 	if ((m_eEncoding != eUnknown) && (m_eEncoding != eUtf8)) {
@@ -87,6 +98,51 @@ size_t Utf8_16_Read::convert(char* buf, size_t len) {
 	return pCur - m_pNewBuf;
 }
 
+//!-start-[utf8.auto.check]
+//[mhb] 07/05/09 : check whether a data block contains UTF8 chars
+int Has_UTF8_Char(unsigned char *buf,int size) {
+	if (!buf||size<2) {return 0;}
+	unsigned char *p=buf;
+	int i=0,cnt=0;
+	while (p[0] && i<size) {
+		if (p[0]>>7==0x01) {
+			if (p[0]>>5==0x06) {
+				if (p[1]>>6!=0x02) {return 0;} //not utf8
+				cnt++;p++;i++;//UTF-8: U-00000080 每 U-000007FF
+			}
+			else if (p[0]>>4==0x0e) {
+				if (p[1]>>6!=0x02) 	{return 0;} //not utf8
+				if (p[2]>>6!=0x02) 	{return 0;} //not utf8
+				cnt++;p+=2;i+=2;//UTF-8: U-00000800 每 U-0000FFFF
+			}
+			else if (p[0]>>3==0x1e) {
+				if (p[1]>>6!=0x02) 	{return 0;} //not utf8
+				if (p[2]>>6!=0x02) 	{return 0;} //not utf8
+				if (p[3]>>6!=0x02) 	{return 0;} //not utf8
+				cnt++;p+=3;i+=3;//UTF-8: U-00010000 每 U-001FFFFF
+			}
+			else if (p[0]>>2==0x3e) {
+				if (p[1]>>6!=0x02) 	{return 0;} //not utf8
+				if (p[2]>>6!=0x02) 	{return 0;} //not utf8
+				if (p[3]>>6!=0x02) 	{return 0;} //not utf8
+				if (p[4]>>6!=0x02) 	{return 0;} //not utf8
+				cnt++;p+=4;i+=4;//UTF-8: U-00200000 每 U-03FFFFFF
+			}
+			else if (p[0]>>1==0x7e) {
+				if (p[1]>>6!=0x02) 	{return 0;} //not utf8
+				if (p[2]>>6!=0x02) 	{return 0;} //not utf8
+				if (p[3]>>6!=0x02) 	{return 0;} //not utf8
+				if (p[4]>>6!=0x02) 	{return 0;} //not utf8
+				if (p[5]>>6!=0x02) 	{return 0;} //not utf8
+				cnt++;p+=5;i+=5;//UTF-8: U-04000000 每 U-7FFFFFFF
+			}
+		}
+		p++;i++;
+	}
+	return cnt>0 ? 1 : 0;
+}
+//!-end-[utf8.auto.check]
+
 int Utf8_16_Read::determineEncoding() {
 	m_eEncoding = eUnknown;
 
@@ -103,6 +159,15 @@ int Utf8_16_Read::determineEncoding() {
 			m_eEncoding = eUtf8;
 			nRet = 3;
 		}
+//!-start-[utf8.auto.check]
+		//[mhb] 07/05/09 :to support checking utf-8 from raw chars; 07/07/09 : method 1
+		else if (m_nLen>2 && m_nAutoCheckUtf8==1 ) {
+			if (Has_UTF8_Char(m_pBuf,m_nLen)) {
+				m_eEncoding = eUtf8;
+				nRet=0;
+			}
+		}
+//!-end-[utf8.auto.check]
 	}
 
 	return nRet;

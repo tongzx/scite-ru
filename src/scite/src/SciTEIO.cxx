@@ -330,7 +330,7 @@ void SciTEBase::DiscoverIndentSetting() {
 }
 
 void SciTEBase::OpenFile(int fileSize, bool suppressMessage) {
-	Utf8_16_Read convert;
+//!-[utf8.auto.check]	Utf8_16_Read convert;
 
 	FILE *fp = filePath.Open(fileRead);
 	if (fp) {
@@ -340,6 +340,18 @@ void SciTEBase::OpenFile(int fileSize, bool suppressMessage) {
 		char data[blockSize];
 		size_t lenFile = fread(data, 1, sizeof(data), fp);
 		UniMode codingCookie = CodingCookieValue(data, lenFile);
+
+//!-start-[utf8.auto.check]
+		//[mhb] 07/07/09 
+		int check_utf8=props.GetInt("utf8.auto.check");
+		if (codingCookie==uni8Bit && check_utf8==2) {
+			if (Has_UTF8_Char((unsigned char*)(data),lenFile)) {
+				codingCookie=uniCookie;
+			}
+		}
+		Utf8_16_Read convert(codingCookie==uni8Bit && check_utf8==1);//[mhb] 07/05/09 : Utf8_16_Read convert;
+//!-end-[utf8.auto.check]
+
 		SendEditor(SCI_ALLOCATE, fileSize + 1000);
 		SString languageOverride;
 		bool firstBlock = true;

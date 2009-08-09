@@ -101,6 +101,7 @@ class Utf8_16_Read : public Utf8_16 {
 public:
 	Utf8_16_Read();
 	~Utf8_16_Read();
+	Utf8_16_Read(bool AutoCheckUtf8); //!-[utf8.auto.check] [mhb] 07/05/09 
 
 	size_t convert(char* buf, size_t len);
 	char* getNewBuf() { return reinterpret_cast<char*>(m_pNewBuf); }
@@ -116,6 +117,7 @@ private:
 	bool m_bFirstRead;
 	size_t m_nLen;
 	Utf16_Iter m_Iter16;
+	int m_nAutoCheckUtf8;//!-[utf8.auto.check] [mhb] 07/05/09: to support auto check utf8
 };
 
 // Read in a UTF-8 buffer and write out to UTF-16 or UTF-8
@@ -136,3 +138,5 @@ protected:
 	size_t m_nBufSize;
 	bool m_bFirstWrite;
 };
+
+int Has_UTF8_Char(unsigned char *buf,int size);//!-[utf8.auto.check] [mhb] 07/07/09 exported
