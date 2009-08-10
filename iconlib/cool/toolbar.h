@@ -58,4 +58,4 @@
 #define ICO_FAVORITE_FOLDERS             57
 #define ICO_VIEWSPACE                    58
 #define ICO_STOPEXECUTE                  59
-#define ICO_HIGHLIGHT                    60
+#define ICO_HIGHLIGHTIDENTICAL           60

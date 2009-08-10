@@ -61,11 +61,11 @@ ICO_TRIM_TRAL_SPACES                ICON DISCARDABLE "ico/trim_tral_spaces.ico"
 ICO_FAVORITE_FOLDERS                ICON DISCARDABLE "ico/favorite_folders.ico"
 ICO_VIEWSPACE                       ICON DISCARDABLE "ico/view_space.ico"
 ICO_STOPEXECUTE                     ICON DISCARDABLE "ico/stop_execute.ico"
-ICO_HIGHLIGHT                       ICON DISCARDABLE "ico/highlight.ico"
+ICO_HIGHLIGHTIDENTICAL              ICON DISCARDABLE "ico/highlightidentical.ico"
 
 VS_VERSION_INFO VERSIONINFO
-FILEVERSION 1,0,2,1
-PRODUCTVERSION 1,0,2,1
+FILEVERSION 1,0,2,2
+PRODUCTVERSION 1,0,2,2
 FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
 FILEFLAGS 0x1L
