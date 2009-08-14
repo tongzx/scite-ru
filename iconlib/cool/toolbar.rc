@@ -62,10 +62,11 @@ ICO_FAVORITE_FOLDERS                ICON DISCARDABLE "ico/favorite_folders.ico"
 ICO_VIEWSPACE                       ICON DISCARDABLE "ico/view_space.ico"
 ICO_STOPEXECUTE                     ICON DISCARDABLE "ico/stop_execute.ico"
 ICO_HIGHLIGHTIDENTICAL              ICON DISCARDABLE "ico/highlightidentical.ico"
+ICO_HIGHLIGHT                       ICON DISCARDABLE "ico/highlight.ico"
 
 VS_VERSION_INFO VERSIONINFO
-FILEVERSION 1,0,2,2
-PRODUCTVERSION 1,0,2,2
+FILEVERSION 1,0,3,0
+PRODUCTVERSION 1,0,3,0
 FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
 FILEFLAGS 0x1L
@@ -83,12 +84,12 @@ BEGIN
             VALUE "Comments", "COOL Toolbar - SciTE Ru-Board toolbar icons Lib\0"
             VALUE "CompanyName", "SciTE Ru-Board\0"
             VALUE "FileDescription", "COOL Toolbar - SciTE Ru-Board toolbar icons Lib\0"
-            VALUE "FileVersion", "1.0.2\0"
+            VALUE "FileVersion", "1.0.3\0"
             VALUE "InternalName", "COOL Toolbar\0"
             VALUE "LegalCopyright", "Copyright © ur4ltz\0"
             VALUE "OriginalFilename", "cool.dll\0"
             VALUE "ProductName", "COOL Toolbar - SciTE Ru-Board toolbar icons Lib\0"
-            VALUE "ProductVersion", "1.0.2\0"
+            VALUE "ProductVersion", "1.0.3\0"
         END
     END
     BLOCK "VarFileInfo"
