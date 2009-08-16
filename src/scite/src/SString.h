@@ -8,12 +8,6 @@
 #ifndef SSTRING_H
 #define SSTRING_H
 
-
-// These functions are implemented because each platform calls them something different.
-int CompareCaseInsensitive(const char *a, const char *b);
-int CompareNCaseInsensitive(const char *a, const char *b, size_t len);
-bool EqualCaseInsensitive(const char *a, const char *b);
-
 #ifdef SCI_NAMESPACE
 namespace Scintilla {
 #endif
@@ -343,6 +337,10 @@ inline char *StringDup(
 {
 	return SContainer::StringAllocate(s, len);
 }
+
+bool isprefix(const char *target, const char *prefix);
+int CompareNoCase(const char *a, const char *b);
+bool EqualCaseInsensitive(const char *a, const char *b);
 
 #ifdef SCI_NAMESPACE
 }

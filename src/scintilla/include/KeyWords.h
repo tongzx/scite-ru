@@ -9,6 +9,32 @@
 namespace Scintilla {
 #endif
 
+/**
+ */
+class WordList {
+public:
+	// Each word contains at least one character - a empty word acts as sentinel at the end.
+	char **words;
+	char *list;
+	int len;
+	bool onlyLineEnds;	///< Delimited by any white space or only line ends
+	bool sorted;
+	int starts[256];
+	WordList(bool onlyLineEnds_ = false) :
+		words(0), list(0), len(0), onlyLineEnds(onlyLineEnds_),
+		sorted(false)
+		{}
+	~WordList() { Clear(); }
+	operator bool() { return len ? true : false; }
+	void Clear();
+	void Set(const char *s);
+	bool InList(const char *s);
+	bool InListAbbreviated(const char *s, const char marker);
+	bool InListPartly(const char *s, const char marker, int &mainLen, int &finLen); //!-add-[PropsKeysSets]
+	bool InMultiWordsList(const char *s, const char marker, bool &eq, bool &begin, const char* &keyword_end); //!-add-[ABAP][ForthImprovement]
+	bool InMultiWordsList(const char *s, const char marker, bool &eq, bool &begin); //!-add-[ABAP][ForthImprovement]
+};
+
 typedef void (*LexerFunction)(unsigned int startPos, int lengthDoc, int initStyle,
                   WordList *keywordlists[], Accessor &styler);
                   

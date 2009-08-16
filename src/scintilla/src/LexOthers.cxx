@@ -14,6 +14,7 @@
 
 #include "Platform.h"
 
+#include "CharClassify.h"
 #include "PropSet.h"
 #include "Accessor.h"
 #include "KeyWords.h"
@@ -876,6 +877,21 @@ static inline bool isassignchar(unsigned char ch) {
 	return (ch == '=') || (ch == ':');
 }
 
+//!-start-[PropsKeywords]
+static bool isprefix(const char *target, const char *prefix) {
+	while (*target && *prefix) {
+		if (*target != *prefix)
+			return false;
+		target++;
+		prefix++;
+	}
+	if (*prefix)
+		return false;
+	else
+		return true;
+}
+//!-end-[PropsKeywords]
+
 //!static void ColourisePropsLine(
 static char ColourisePropsLine( // return last style //!-change-[PropsColouriseFix]
     char *lineBuffer,
@@ -1479,13 +1495,8 @@ static void ColouriseErrorListDoc(unsigned int startPos, int length, int, WordLi
 	//	line with style 21 used for the rest of the line. 
 	//	This allows matched text to be more easily distinguished from its location. 
 	bool valueSeparate = styler.GetPropertyInt("lexer.errorlist.value.separate", 1) > 0;
-	SString findTitleBegin = styler.GetProperty("lexer.errorlist.findtitle.begin");
-	SString findTitleEnd = styler.GetProperty("lexer.errorlist.findtitle.end");
-	const char *findTitleB = NULL, *findTitleE = NULL;
-	if (findTitleBegin.length() > 0) {
-		findTitleB = findTitleBegin.c_str();
-		findTitleE = findTitleEnd.c_str();
-	}
+	const char *findTitleB = styler.GetProperty("lexer.errorlist.findtitle.begin");
+	const char *findTitleE = styler.GetProperty("lexer.errorlist.findtitle.end");
 //!-end-[FindResultListStyle]
 	for (unsigned int i = startPos; i < startPos + length; i++) {
 		lineBuffer[linePos++] = styler[i];

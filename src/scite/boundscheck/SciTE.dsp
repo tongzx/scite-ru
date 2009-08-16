@@ -675,6 +675,10 @@ SOURCE=..\win32\SciTEWinDlg.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\scintilla\src\Selection.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\win32\SingleThreadExtension.cxx
 # End Source File
 # Begin Source File

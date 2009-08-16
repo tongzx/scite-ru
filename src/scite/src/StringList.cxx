@@ -8,11 +8,49 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <string>
+#include <map>
+
 #include "SString.h"
 #include "StringList.h"
+#include "PropSet.h"
 
 static inline bool IsASpace(unsigned int ch) {
     return (ch == ' ') || ((ch >= 0x09) && (ch <= 0x0d));
+}
+
+static inline char MakeUpperCase(char ch) {
+//!-start-[LowerUpperCase]
+#if PLAT_WIN
+	char str[2] = {ch, 0};
+	::CharUpper(str);
+	return str[0];
+#else
+//!-end-[LowerUpperCase]
+	if (ch < 'a' || ch > 'z')
+		return ch;
+	else
+		return static_cast<char>(ch - 'a' + 'A');
+#endif //!-add-[LowerUpperCase]
+}
+
+static int CompareNCaseInsensitive(const char *a, const char *b, size_t len) {
+	while (*a && *b && len) {
+		if (*a != *b) {
+			char upperA = MakeUpperCase(*a);
+			char upperB = MakeUpperCase(*b);
+			if (upperA != upperB)
+				return upperA - upperB;
+		}
+		a++;
+		b++;
+		len--;
+	}
+	if (len == 0)
+		return 0;
+	else
+		// Either *a or *b is nul
+		return *a - *b;
 }
 
 /**
@@ -41,26 +79,22 @@ static char **ArrayFromStringList(char *StringList, int *len, bool onlyLineEnds 
 		prev = curr;
 	}
 	char **keywords = new char *[words + 1];
-	if (keywords) {
-		words = 0;
-		prev = '\0';
-		size_t slen = strlen(StringList);
-		for (size_t k = 0; k < slen; k++) {
-			if (!wordSeparator[static_cast<unsigned char>(StringList[k])]) {
-				if (!prev) {
-					keywords[words] = &StringList[k];
-					words++;
-				}
-			} else {
-				StringList[k] = '\0';
+	words = 0;
+	prev = '\0';
+	size_t slen = strlen(StringList);
+	for (size_t k = 0; k < slen; k++) {
+		if (!wordSeparator[static_cast<unsigned char>(StringList[k])]) {
+			if (!prev) {
+				keywords[words] = &StringList[k];
+				words++;
 			}
-			prev = StringList[k];
+		} else {
+			StringList[k] = '\0';
 		}
-		keywords[words] = &StringList[slen];
-		*len = words;
-	} else {
-		*len = 0;
+		prev = StringList[k];
 	}
+	keywords[words] = &StringList[slen];
+	*len = words;
 	return keywords;
 }
 
@@ -108,7 +142,7 @@ extern "C" int slCmpString(const void *a1, const void *a2) {
 
 extern "C" int slCmpStringNoCase(const void *a1, const void *a2) {
 	// Can't work out the correct incantation to use modern casts here
-	return CompareCaseInsensitive(*(char**)(a1), *(char**)(a2));
+	return CompareNoCase(*(char**)(a1), *(char**)(a2));
 }
 
 static void SortStringList(char **words, unsigned int len) {

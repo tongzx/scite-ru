@@ -9,6 +9,20 @@
 #include <stdio.h>
 #include <time.h>
 
+#ifdef _MSC_VER
+#pragma warning(disable: 4786)
+#endif
+
+#include <string>
+#include <map>
+
+#ifdef __BORLANDC__
+// Borland includes Windows.h for STL and defaults to different API number
+#ifdef _WIN32_WINNT
+#undef _WIN32_WINNT
+#endif
+#endif
+
 #define _WIN32_WINNT  0x0400
 #ifdef _MSC_VER
 // windows.h, et al, use a lot of nameless struct/unions - can't fix it, so allow it
@@ -24,6 +38,7 @@
 #include "Platform.h"
 
 #include "PropSet.h"
+#include "SString.h"
 #include "StringList.h"
 
 #include "Scintilla.h"
@@ -106,12 +121,10 @@ static LRESULT HandleCopyData(LPARAM lParam) {
 	// Copy into an temporary buffer to ensure \0 terminated
 	if (pcds->lpData) {
 		char *dataCopy = new char[pcds->cbData + 1];
-		if (dataCopy) {
-			strncpy(dataCopy, reinterpret_cast<char *>(pcds->lpData), pcds->cbData);
-			dataCopy[pcds->cbData] = '\0';
-			DirectorExtension::Instance().HandleStringMessage(dataCopy);
-			delete []dataCopy;
-		}
+		strncpy(dataCopy, reinterpret_cast<char *>(pcds->lpData), pcds->cbData);
+		dataCopy[pcds->cbData] = '\0';
+		DirectorExtension::Instance().HandleStringMessage(dataCopy);
+		delete []dataCopy;
 	}
 	return 0;
 }

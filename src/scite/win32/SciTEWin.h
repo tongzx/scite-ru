@@ -13,8 +13,22 @@
 #include <stdarg.h>
 #include <sys/stat.h>
 
+#ifdef _MSC_VER
+#pragma warning(disable: 4786)
+#endif
+
+#include <string>
+#include <map>
+
 #ifdef __MINGW_H
 #define _WIN32_IE	0x0400
+#endif
+
+#ifdef __BORLANDC__
+// Borland includes Windows.h for STL and defaults to different API number
+#ifdef _WIN32_WINNT
+#undef _WIN32_WINNT
+#endif
 #endif
 
 #ifndef _WIN32_WINNT //!-add-[SubMenu]
@@ -51,9 +65,9 @@
 #include "SciTE.h"
 #include "PropSet.h"
 #include "Accessor.h"
-#include "KeyWords.h"
 #include "Scintilla.h"
 #include "Extender.h"
+#include "SString.h"
 #include "FilePath.h"
 #include "PropSetFile.h"
 #include "StringList.h"

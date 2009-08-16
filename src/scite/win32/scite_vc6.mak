@@ -229,6 +229,7 @@ OBJSSTATIC=\
 	..\..\scintilla\win32\KeyMap.obj \
 	..\..\scintilla\win32\KeyWords.obj \
 	..\..\scintilla\win32\LineMarker.obj \
+	..\..\scintilla\win32\PerLine.obj \
 	..\..\scintilla\win32\PlatWin.obj \
 	..\..\scintilla\win32\PositionCache.obj \
 	..\..\scintilla\win32\PropSet.obj \
@@ -236,6 +237,7 @@ OBJSSTATIC=\
 	..\..\scintilla\win32\RunStyles.obj \
 	..\..\scintilla\win32\ScintillaBaseL.obj \
 	..\..\scintilla\win32\ScintillaWinL.obj \
+	..\..\scintilla\win32\Selection.obj \
 	..\..\scintilla\win32\Style.obj \
 	..\..\scintilla\win32\StyleContext.obj \
 	..\..\scintilla\win32\UniConversion.obj \
@@ -509,7 +511,7 @@ DirectorExtension.obj: \
 	DirectorExtension.cxx \
 	../../scintilla/include/Platform.h \
 	../../scintilla/include/PropSet.h \
-	../../scintilla/include/SString.h \
+	../src/SString.h \
 	../../scintilla/include/Scintilla.h \
 	../../scintilla/include/Accessor.h \
 	../src/Extender.h \
@@ -541,7 +543,7 @@ UniqueInstance.obj: \
 	../src/SciTEBase.h \
 	../src/SciTEKeys.h \
 	../../scintilla/include/PropSet.h \
-	../../scintilla/include/SString.h \
+	../src/SString.h \
 	../../scintilla/include/Accessor.h \
 	../../scintilla/include/KeyWords.h \
 	../../scintilla/include/Scintilla.h \
@@ -555,7 +557,7 @@ SciTEWin.obj: \
 	../../scintilla/include/Platform.h \
 	../src/SciTE.h \
 	../../scintilla/include/PropSet.h \
-	../../scintilla/include/SString.h \
+	../src/SString.h \
 	../../scintilla/include/Accessor.h \
 	../../scintilla/include/KeyWords.h \
 	../../scintilla/include/Scintilla.h \
@@ -577,7 +579,7 @@ Sc1.obj: \
 	../../scintilla/include/Platform.h \
 	../src/SciTE.h \
 	../../scintilla/include/PropSet.h \
-	../../scintilla/include/SString.h \
+	../src/SString.h \
 	../../scintilla/include/Accessor.h \
 	../../scintilla/include/KeyWords.h \
 	../../scintilla/include/Scintilla.h \
@@ -598,7 +600,7 @@ SciTEWinBar.obj: \
 	../../scintilla/include/Platform.h \
 	../src/SciTE.h \
 	../../scintilla/include/PropSet.h \
-	../../scintilla/include/SString.h \
+	../src/SString.h \
 	../../scintilla/include/Accessor.h \
 	../../scintilla/include/KeyWords.h \
 	../../scintilla/include/Scintilla.h \
@@ -616,7 +618,7 @@ SciTEWinDlg.obj: \
 	../../scintilla/include/Platform.h \
 	../src/SciTE.h \
 	../../scintilla/include/PropSet.h \
-	../../scintilla/include/SString.h \
+	../src/SString.h \
 	../../scintilla/include/Accessor.h \
 	../../scintilla/include/KeyWords.h \
 	../../scintilla/include/Scintilla.h \
@@ -633,7 +635,7 @@ Exporters.obj: \
 	../../scintilla/include/Platform.h \
 	../src/SciTE.h \
 	../../scintilla/include/PropSet.h \
-	../../scintilla/include/SString.h \
+	../src/SString.h \
 	../../scintilla/include/Accessor.h \
 	../../scintilla/include/WindowAccessor.h \
 	../../scintilla/include/Scintilla.h \
@@ -646,14 +648,14 @@ Exporters.obj: \
 PropSetFile.obj: \
 	../src/PropSetFile.cxx \
 	../src/PropSetFile.h \
-	../../scintilla/include/SString.h
+	../src/SString.h
 SciTEBase.obj: \
 	../src/SciTEBase.cxx \
 	../../scintilla/include/Platform.h \
 	../src/SciTE.h \
 	../src/PropSetFile.h \
 	../../scintilla/include/PropSet.h \
-	../../scintilla/include/SString.h \
+	../src/SString.h \
 	../../scintilla/include/Accessor.h \
 	../../scintilla/include/WindowAccessor.h \
 	../../scintilla/include/KeyWords.h \
@@ -669,14 +671,14 @@ FilePath.obj: \
 	../src/FilePath.cxx \
 	../../scintilla/include/Platform.h \
 	../../scintilla/include/PropSet.h \
-	../../scintilla/include/SString.h \
+	../src/SString.h \
 	../src/FilePath.h
 SciTEBuffers.obj: \
 	../src/SciTEBuffers.cxx \
 	../../scintilla/include/Platform.h \
 	../src/SciTE.h \
 	../../scintilla/include/PropSet.h \
-	../../scintilla/include/SString.h \
+	../src/SString.h \
 	../../scintilla/include/Accessor.h \
 	../../scintilla/include/WindowAccessor.h \
 	../../scintilla/include/KeyWords.h \
@@ -693,7 +695,7 @@ SciTEIO.obj: \
 	../../scintilla/include/Platform.h \
 	../src/SciTE.h \
 	../../scintilla/include/PropSet.h \
-	../../scintilla/include/SString.h \
+	../src/SString.h \
 	../../scintilla/include/Accessor.h \
 	../../scintilla/include/WindowAccessor.h \
 	../../scintilla/include/Scintilla.h \
@@ -707,13 +709,13 @@ SciTEIO.obj: \
 StringList.obj: \
 	../src/StringList.cxx \
 	../src/StringList.h \
-	../../scintilla/include/SString.h
+	../src/SString.h
 SciTEProps.obj: \
 	../src/SciTEProps.cxx \
 	../../scintilla/include/Platform.h \
 	../src/SciTE.h \
 	../../scintilla/include/PropSet.h \
-	../../scintilla/include/SString.h \
+	../src/SString.h \
 	../../scintilla/include/Accessor.h \
 	../../scintilla/include/Scintilla.h \
 	../../scintilla/include/SciLexer.h \
@@ -735,7 +737,7 @@ LuaExtension.obj: \
 	../src/SciTEKeys.h \
 	../src/IFaceTable.h \
 	../../scintilla/include/Platform.h \
-	../../scintilla/include/SString.h \
+	../src/SString.h \
 	../../scintilla/include/PropSet.h \
 	../../scintilla/include/Accessor.h \
 	../../scintilla/include/Scintilla.h

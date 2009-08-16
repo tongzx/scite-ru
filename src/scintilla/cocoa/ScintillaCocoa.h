@@ -19,9 +19,12 @@
 #include <ctype.h>
 #include <time.h>
 
+#include <vector>
+
 #ifdef SCI_LEXER
 #include "SciLexer.h"
 #include "PropSet.h"
+#include "PropSetSimple.h"
 #include "Accessor.h"
 #include "KeyWords.h"
 #endif
@@ -43,9 +46,9 @@
 #include "CharClassify.h"
 #include "Decoration.h"
 #include "Document.h"
+#include "Selection.h"
 #include "PositionCache.h"
 #include "Editor.h"
-#include "SString.h"
 //#include "ScintillaCallTip.h"
 
 #include "ScintillaBase.h"

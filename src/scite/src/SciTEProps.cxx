@@ -13,6 +13,13 @@
 #include <time.h>
 #include <locale.h>
 
+#ifdef _MSC_VER
+#pragma warning(disable: 4786)
+#endif
+
+#include <string>
+#include <map>
+
 #include "Platform.h"
 
 #if PLAT_GTK
@@ -25,6 +32,13 @@ const char menuAccessIndicator[] = "_";
 #endif
 
 #if PLAT_WIN
+
+#ifdef __BORLANDC__
+// Borland includes Windows.h for STL and defaults to different API number
+#ifdef _WIN32_WINNT
+#undef _WIN32_WINNT
+#endif
+#endif
 
 #ifndef _WIN32_WINNT //!-add-[SubMenu]
 #define _WIN32_WINNT  0x0400
@@ -46,6 +60,7 @@ const char menuAccessIndicator[] = "&";
 
 #include "SciTE.h"
 #include "PropSet.h"
+#include "SString.h"
 #include "StringList.h"
 #include "Accessor.h"
 #include "Scintilla.h"
@@ -221,7 +236,7 @@ static long ColourFromString(const SString &s) {
 	}
 }
 
-long ColourOfProperty(PropSet &props, const char *key, ColourDesired colourDefault) {
+long ColourOfProperty(PropSetFile &props, const char *key, ColourDesired colourDefault) {
 	SString colour = props.GetExpanded(key);
 	if (colour.length()) {
 		return ColourFromString(colour);
@@ -829,6 +844,11 @@ void SciTEBase::ReadProperties() {
 	SendChildren(SCI_SETCARETFORE,
 	           ColourOfProperty(props, "caret.fore", ColourDesired(0, 0, 0)));
 
+	SendChildren(SCI_SETMULTIPLESELECTION, props.GetInt("selection.multiple", 1));
+	SendChildren(SCI_SETADDITIONALSELECTIONTYPING, props.GetInt("selection.additional.typing", 1));
+	SendChildren(SCI_SETADDITIONALCARETSBLINK, props.GetInt("caret.additional.blinks", 1));
+	SendChildren(SCI_SETVIRTUALSPACEOPTIONS, props.GetInt("virtual.space"));
+
 	SendEditor(SCI_SETMOUSEDWELLTIME,
 	           props.GetInt("dwell.period", SC_TIME_FOREVER), 0);
 
@@ -926,8 +946,19 @@ void SciTEBase::ReadProperties() {
 		else	// Have to show selection somehow
 			SendChildren(SCI_SETSELBACK, 1, ColourDesired(0xC0, 0xC0, 0xC0).AsLong());
 	}
-	SendChildren(SCI_SETSELALPHA,
-		allowAlpha ? props.GetInt("selection.alpha", SC_ALPHA_NOALPHA) : SC_ALPHA_NOALPHA);
+	int selectionAlpha = allowAlpha ? props.GetInt("selection.alpha", SC_ALPHA_NOALPHA) : SC_ALPHA_NOALPHA;
+	SendChildren(SCI_SETSELALPHA, selectionAlpha);
+
+	SString selAdditionalFore = props.Get("selection.additional.fore");
+	if (selAdditionalFore.length()) {
+		SendChildren(SCI_SETADDITIONALSELFORE, ColourFromString(selAdditionalFore));
+	}
+	SString selAdditionalBack = props.Get("selection.additional.back");
+	if (selAdditionalBack.length()) {
+		SendChildren(SCI_SETADDITIONALSELBACK, ColourFromString(selAdditionalBack));
+	}
+	int selectionAdditionalAlpha = (selectionAlpha == SC_ALPHA_NOALPHA) ? SC_ALPHA_NOALPHA : selectionAlpha / 2;
+	SendChildren(SCI_SETADDITIONALSELALPHA, props.GetInt("selection.additional.alpha", selectionAdditionalAlpha));
 
 	SString foldColour = props.Get("fold.margin.colour");
 	if (foldColour.length()) {

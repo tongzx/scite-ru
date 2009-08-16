@@ -400,6 +400,13 @@ void SciTEWin::SaveSessionDialog() {
 	}
 }
 
+static void DeleteFontObject(HFONT &font) {
+	if (font) {
+		::DeleteObject(font);
+		font = 0;
+	}
+}
+
 /**
  * Display the Print dialog (if @a showDialog asks it),
  * allowing it to choose what to print on which printer.
@@ -574,6 +581,9 @@ void SciTEWin::Print(
 	di.lpszDatatype = 0;
 	di.fwType = 0;
 	if (::StartDoc(hdc, &di) < 0) {
+		::DeleteDC(hdc);
+		DeleteFontObject(fontHeader);
+		DeleteFontObject(fontFooter);
 		SString msg = LocaliseMessage("Can not start printer document.");
 		WindowMessageBox(wSciTE, msg, MB_OK);
 		return;
@@ -698,12 +708,8 @@ void SciTEWin::Print(
 
 	::EndDoc(hdc);
 	::DeleteDC(hdc);
-	if (fontHeader) {
-		::DeleteObject(fontHeader);
-	}
-	if (fontFooter) {
-		::DeleteObject(fontFooter);
-	}
+	DeleteFontObject(fontHeader);
+	DeleteFontObject(fontFooter);
 }
 
 void SciTEWin::PrintSetup() {
@@ -845,11 +851,11 @@ public:
 };
 
 static void FillComboFromProps(HWND combo, PropSetFile &props) {
-	char *key;
-	char *val;
-	if (props.GetFirst(&key, &val)) {
+	const char *key;
+	const char *val;
+	if (props.GetFirst(key, val)) {
 		::SendMessage(combo, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(key));
-		while (props.GetNext(&key, &val)) {
+		while (props.GetNext(key, val)) {
 			::SendMessage(combo, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(key));
 		}
 	}

@@ -61,6 +61,7 @@
 
 #endif
 
+#include "SString.h"
 #include "PropSet.h"
 #include "FilePath.h"
 
