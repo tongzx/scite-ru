@@ -168,8 +168,7 @@ char *PropSetSimple::ToString() const {
 int PropSetSimple::GetInt(const char *key, int defaultValue) const {
 	char *val = Expanded(key);
 	if (val) {
-//!		int retVal = atoi(val);
-		int retVal = strlen(val) ? atoi(val) : defaultValue; //!-change-[hot.fix]
+		int retVal = val[0] ? atoi(val) : defaultValue;
 		delete []val;
 		return retVal;
 	}

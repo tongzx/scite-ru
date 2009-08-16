@@ -12,6 +12,7 @@
 
 #include <string>
 #include <vector>
+#include <algorithm>
 
 // With Borland C++ 5.5, including <string> includes Windows.h leading to defining
 // FindText to FindTextA which makes calls here to Document::FindText fail.
@@ -3821,7 +3822,8 @@ void Editor::AddCharUTF(char *s, unsigned int len, bool treatAsDBCS) {
 }
 
 void Editor::ClearSelection() {
-	FilterSelections();
+	if (!sel.IsRectangular())
+		FilterSelections();
 	UndoGroup ug(pdoc);
 	for (size_t r=0; r<sel.Count(); r++) {
 		if (!sel.Range(r).Empty()) {
@@ -3898,6 +3900,8 @@ void Editor::PasteRectangular(SelectionPosition pos, const char *ptr, int len) {
 		InsertSpace(sel.RangeMain().caret.Position(), sel.RangeMain().caret.VirtualSpace()));
 	int xInsert = XFromPosition(sel.RangeMain().caret);
 	bool prevCr = false;
+	while ((len > 0) && IsEOLChar(ptr[len-1]))
+		len--;
 	for (int i = 0; i < len; i++) {
 		if (IsEOLChar(ptr[i])) {
 			if ((ptr[i] == '\r') || (!prevCr))
@@ -3983,7 +3987,8 @@ void Editor::DelChar() {
 }
 
 void Editor::DelCharBack(bool allowLineStartDeletion) {
-	FilterSelections();
+	if (!sel.IsRectangular())
+		FilterSelections();
 	if (sel.IsRectangular())
 		allowLineStartDeletion = false;
 	UndoGroup ug(pdoc, (sel.Count() > 1) || !sel.Empty());
@@ -5427,8 +5432,11 @@ void Editor::CopySelectionRange(SelectionText *ss, bool allowLineCopy) {
 		int size = sel.Length() + delimiterLength * sel.Count();
 		char *text = new char[size + 1];
 		int j = 0;
-		for (size_t r=0; r<sel.Count(); r++) {
-			SelectionRange current = sel.Range(r);
+		std::vector<SelectionRange> rangesInOrder = sel.RangesCopy();
+		if (sel.selType == Selection::selRectangle)
+			std::sort(rangesInOrder.begin(), rangesInOrder.end());
+		for (size_t r=0; r<rangesInOrder.size(); r++) {
+			SelectionRange current = rangesInOrder[r];
 			for (int i = current.Start().Position();
 			        i < current.End().Position();
 			        i++) {
@@ -6864,18 +6872,30 @@ sptr_t Editor::WndProc(unsigned int iMessage, uptr_t wParam, sptr_t lParam) {
 		return pdoc->CharAt(wParam);
 
 	case SCI_SETCURRENTPOS:
-		SetSelection(wParam, sel.MainAnchor());
+		if (sel.IsRectangular()) {
+			sel.Rectangular().caret.SetPosition(wParam);
+			SetRectangularRange();
+			Redraw();
+		} else {
+			SetSelection(wParam, sel.MainAnchor());
+		}
 		break;
 
 	case SCI_GETCURRENTPOS:
-		return sel.MainCaret();
+		return sel.IsRectangular() ? sel.Rectangular().caret.Position() : sel.MainCaret();
 
 	case SCI_SETANCHOR:
-		SetSelection(sel.MainCaret(), wParam);
+		if (sel.IsRectangular()) {
+			sel.Rectangular().anchor.SetPosition(wParam);
+			SetRectangularRange();
+			Redraw();
+		} else {
+			SetSelection(sel.MainCaret(), wParam);
+		}
 		break;
 
 	case SCI_GETANCHOR:
-		return sel.MainAnchor();
+		return sel.IsRectangular() ? sel.Rectangular().anchor.Position() : sel.MainAnchor();
 
 	case SCI_SETSELECTIONSTART:
 		SetSelection(Platform::Maximum(sel.MainCaret(), wParam), wParam);
