@@ -54,7 +54,6 @@
     </h3>
 
 <h5 id="session.load.forced">
-<sup>new</sup>
 [session.load.forced] <span class=desc>(Автор: VladVRO)</span></h5>
 Добавлен новый параметр <span class="example">session.load.forced</span> в .properties, который позволяет ускорить загрузку и сохранение сессии:<br>
 &nbsp; 0 (по умолчанию) - обычная загрузка,<br>
@@ -62,7 +61,6 @@
 Кроме того, во время загрузки сессии новый параметр <span class="example">scite.state.loadsession</span> равен 1. Теперь в скрипте можно определить в какой момент вызван обработчик <span class="example">OnOpen</span>, во время загрузки сессии или одиночного файла.
 
 <h5 id="find.fillout">
-<sup>new</sup>
 [find.fillout] <span class=desc>(Авторы: Frank Wunderlich, VladVRO)</span></h5>
 Новый параметр <span class="example">find.fillout</span> в .properties, который позволяет задать способ начального заполнения поля в диалоге поиска:<br>
 &nbsp; 0 (по умолчанию) - если есть выделение и оно не содержит переводов строк, то использовать его, иначе взять слово рядом с курсором (как это и было ранее),<br>
@@ -70,7 +68,6 @@
 &nbsp; 2 - всегда оставлять поле пустым.
 
 <h5 id="MoreRecentFiles">
-<sup>new</sup>
 [MoreRecentFiles] <span class=desc>(Автор: Daniel Cardenas)</span></h5>
 Список последних открывавшихся файлов можно расширить до 30 пунктов используя новый параметр: <div class="example">save.recent.max=30</div>
 
@@ -130,7 +127,6 @@ command.name.6.*=Date and Time</div>
 пользовательская команда = 9000 + номер этой команды в меню Tools
 
 <h5 id="ExtendedContextMenu">
-<sup>updated</sup>
 [ExtendedContextMenu] <span class=desc>(Автор: Дмитрий Маслов, VladVRO)</span></h5>
 Новые параметры в .properties позволяют ПОЛНОСТЬЮ настроить контекстные меню:<br>
 <span class="example">user.context.menu.*</span> - контекстное меню редактора<br>
@@ -149,7 +145,6 @@ command.name.6.*=Date and Time</div>
 Если параметр не задан в настройках, то отображается стандартное контекстное меню.
 
 <h5 id="user.toolbar">
-<sup>updated</sup>
 [user.toolbar] <span class=desc>(Автор: Дмитрий Маслов, VladVRO, UR4LTZ)</span></h5>
 Новый параметр <span class="example">user.toolbar.*</span> в .properties позволяет ПОЛНОСТЬЮ настроить панель инструментов.<br>
 Формат:
@@ -182,7 +177,6 @@ command.name.6.*=Date and Time</div>
 Новые параметры в .properties <span class="example">lexer.errorlist.findtitle.begin</span> и <span class="example">lexer.errorlist.findtitle.end</span> позволяют задать формат заголовка поиска.
 
 <h5 id="error.line.back">
-<sup>new</sup>
 [ErrorLineBack] <span class=desc>(Автор: UR4LTZ)</span></h5>
 Новый параметр в .properties<br>
 <span class="example">error.line.back</span><br>
@@ -340,6 +334,13 @@ command.name.6.*=Date and Time</div>
 [AutoComplete] <span class=desc>(Автор: mimir, VladVRO)</span></h5>
 Функция автозавершения (Ctrl+I, Ctrl+Space) берет варианты завершения слова не только из соответствующего .api файла (как в оригинальном SciTE), но и из редактируемого текста.
 
+<h5 id="utf8.auto.check">
+<sup>new</sup>
+[utf8.auto.check] <span class=desc>(Автор: mhb)</span></h5>
+Новый параметр в .properties<br>
+<span class="example">utf8.auto.check</span> позволяет автоматически детектировать текст в кодировке UTF-8 не снабженный BOM заголовком.<br>
+Значение 1 включает детектирование и автоматически добавляет BOM заголовок к редактируемому тексту, 2 - включает детектирование, но не добавляет BOM.
+
 <h5 id="oem2ansi">
 [oem2ansi] <span class=desc>(Автор: gansA)</span></h5>
 Параметр <span class="example">output.code.page.oem2ansi=1</span> включает перекодировку текста, выводимого в окно консоли, из OEM в ANSI.<br>
@@ -391,7 +392,6 @@ calltip.*.word.wrap</div>
     </h3>
 
 <h5 id="IndicatorsFillAlpha">
-<sup>new</sup>
 [IndicatorsFillAlpha] <span class=desc>(Автор: VladVRO)</span></h5>
 Поправлен диапазон значений параметра прозрачности заливки метки (mark) для стиля ROUNDBOX, который может принимать значения от 0 до 255 под Windows OS.<br>
 Для работы с ним добавлен интерфейс в API редактора <span class="example">editor.IndicAlpha[num]</span>.
@@ -509,7 +509,6 @@ end</div>
 Теперь <span class="example">editor.LexerLanguage</span> - позволяет как установить лексер, так и получить текущий
 
 <h5 id="GetWordChars">
-<sup>new</sup>
 [GetWordChars] <span class=desc>(Автор: Дмитрий Маслов, VladVRO)</span></h5>
 Добавлено сообщение к Scitilla позволяющее получить текущий набор символов являющихся частью слов:<br>
 Теперь <span class="example">editor.WordChars</span> - позволяет как задать набор, так и получить текущий
@@ -594,7 +593,6 @@ Tеперь можно задавать до 4х дополнительных наборов слов с разной подсветкой, при
     </h3>
 
 <h5 id="ReloadsIfOldTime">
-<sup>new</sup>
 [Reloads if old time] <span class=desc>(Автор: UR4LTZ)</span></h5>
 Если отредактированный файл был заменен первоначальной (более ранней по времени) версией, то SciTE не замечал подмены, несмотря на установку load.on.activate=1
 

@@ -54,7 +54,6 @@
     </h3>
 
 <h5 id="session.load.forced">
-<sup>new</sup>
 [session.load.forced] <span class=desc>(Author: VladVRO)</span></h5>
 Added new property <span class="example">session.load.forced</span> to do load or save a session quickly:<br>
 &nbsp; 0 (default) - normal load,<br>
@@ -62,7 +61,6 @@ Added new property <span class="example">session.load.forced</span> to do load o
 And one more new property <span class="example">scite.state.loadsession</span> is set to 1 while loading session . It can be used in script function <span class="example">OnOpen</span> for determine is loading session now or not.
 
 <h5 id="find.fillout">
-<sup>new</sup>
 [find.fillout] <span class=desc>(Authors: Frank Wunderlich, VladVRO)</span></h5>
 New property <span class="example">find.fillout</span> is to define how will be filled input field in find dialog on start:<br>
 &nbsp; 0 (default) - if a selection exists and it hasn't got line breaks then fill field with the selection otherwise fill field with a word near cursor (as it was),<br>
@@ -70,7 +68,6 @@ New property <span class="example">find.fillout</span> is to define how will be 
 &nbsp; 2 - never fill search field.
 
 <h5 id="MoreRecentFiles">
-<sup>new</sup>
 [MoreRecentFiles] <span class=desc>(Author: Daniel Cardenas)</span></h5>
 Recent files list can be expanded up to 30 items by new property: <div class="example">save.recent.max=30</div>
 
@@ -130,7 +127,6 @@ For creation of the user commands in <span class="example">user.context.menu</sp
 User command = 9000 + number of this command in menu Tools
 
 <h5 id="ExtendedContextMenu">
-<sup>updated</sup>
 [ExtendedContextMenu] <span class=desc>(Author: Dmitry Maslov, VladVRO)</span></h5>
 You can setup each context menu now by using new parameters in .properties file:<br>
 <span class="example">user.context.menu.*</span> - editor context menu<br>
@@ -149,7 +145,6 @@ Command&nbsp;name2|IDM_COMMAND2|...</div><br>
 If parameter absent or empty then context menu will standard.
 
 <h5 id="user.toolbar">
-<sup>updated</sup>
 [user.toolbar] <span class=desc>(Author: Dmitry Maslov, VladVRO, UR4LTZ)</span></h5>
 You can setup toolbar now by using new parameter <span class="example">user.toolbar.*</span> in .properties file:<br>
 Format:
@@ -182,7 +177,6 @@ You can switch off this feature by setup new parameter in properties:<br>
 And now you can highlight searched string in result of external search. You can setup format of title of the external search by two new properties <span class="example">lexer.errorlist.findtitle.begin</span> and <span class="example">lexer.errorlist.findtitle.end</span>.
 
 <h5 id="error.line.back">
-<sup>new</sup>
 [ErrorLineBack] <span class=desc>(Author: UR4LTZ)</span></h5>
 New variable in properties files<br>
 <span class="example">error.line.back</span><br>
@@ -342,6 +336,13 @@ Now can to set up alert with warning message for each warning type:<br>
 [AutoComplete] <span class=desc>(Author: mimir, VladVRO)</span></h5>
 Autocomplete function (Ctrl+I, Ctrl+Space) takes variants of end of a word not only from appropriate ".api" a file (as in original SciTE), but also from the edited text.
 
+<h5 id="utf8.auto.check">
+<sup>new</sup>
+[utf8.auto.check] <span class=desc>(Author: mhb)</span></h5>
+Enhance function of auto checking utf8: providing two methods<br>
+<span class="example">utf8.auto.check=1</span>: detect utf8 and add BOM automatically<br>
+<span class="example">utf8.auto.check=2</span>: detect utf8 and do not add BOM
+
 <h5 id="oem2ansi">
 [oem2ansi] <span class=desc>(Author: gansA)</span></h5>
 Parameter <span class="example">output.code.page.oem2ansi=1</span> turn on console output text encoding from OEM to ANSI.<br>
@@ -392,7 +393,6 @@ It is possible to set this parameter through SCI_SETOVERTYPE<br>
     </h3>
 
 <h5 id="IndicatorsFillAlpha">
-<sup>new</sup>
 [IndicatorsFillAlpha] <span class=desc>(Author: VladVRO)</span></h5>
 Changed values range of parameter for setup filling alpha of indicators (marks) with style ROUNDBOX, that can be from 0 to 255 on Windows OS.<br>
 For access to parameter was made new property in editor API - <span class="example">editor.IndicAlpha[num]</span>.
@@ -510,7 +510,6 @@ Added Scitilla message allowing to receive a name current lexers:<br>
 Now <span class="example">editor.LexerLanguage</span> - allows both to set lexer, and to receive current
 
 <h5 id="GetWordChars">
-<sup>new</sup>
 [GetWordChars] <span class=desc>(Author: Dmitry Maslov, VladVRO)</span></h5>
 Added Scitilla message allowing to receive a name current word chars:<br>
 Now <span class="example">editor.WordChars</span> - allows both to set word chars, and to receive current
@@ -593,7 +592,6 @@ Now OnSendEditor can trace event SCI_SETZOOM arising at change of the size of a 
     </h3>
 
 <h5 id="ReloadsIfOldTime">
-<sup>new</sup>
 [Reloads if old time] <span class=desc>(Author: UR4LTZ)</span></h5>
 If the edited file has been replaced with the initial (earlier) version then SciTE did not noticed substitution, despite of setting load.on.activate=1
 
