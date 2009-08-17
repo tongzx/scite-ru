@@ -293,6 +293,12 @@ NameError: mistake
     </tr>
 
     <tr>
+      <td>loadsession:</td>
+
+      <td>имя файла</td>
+    </tr>
+
+    <tr>
       <td>quit:</td>
 
       <td></td>
@@ -1213,7 +1219,7 @@ NameError: mistake
       tabbar.hide.one</a></dfn></td>
 
       <td>Задайте переменной <code>tabbar.visible</code> значение <var>1</var>, чтобы сделать видимой панель файловых вкладок (tab bar). Чтобы эта опция работала, необходимо свойству <dfn><a href="#buffers">buffers</a></dfn> присвоить значение, превышающее <var>1</var>.<br>
-      Задайте переменной <code>tabbar.hide.one</code> значение <var>1</var>, чтобы спрятать панель файловых вкладок до тех пор, пока не появится больше одной вкладки. Данная переменная работает под Windows и GTK+ 2.x. GTK+ 1.x ее не поддерживает.</td>
+      Задайте переменной <code>tabbar.hide.one</code> значение <var>1</var>, чтобы спрятать панель файловых вкладок до тех пор, пока не появится больше одной вкладки.</td>
     </tr>
 
     <tr class="windowsonly">
@@ -1238,6 +1244,13 @@ NameError: mistake
       <td><dfn><a name="toolbar.usestockicons">toolbar.usestockicons</a></dfn></td>
 
       <td>В SciTE имеются встроенные иконки для панели инструментов. Если задать данной переменной значение <var>1</var>, будут использоваться иконки темы, заданной в данный момент для рабочего стола GNOME.</td>
+    </tr>
+
+    <tr class="gtkonly">
+      <td><dfn><a name="pathbar.visible">pathbar.visible</a></dfn></td>
+
+      <td>PathBar - линия текста под файловыми вкладками, показывающая полный путь текущей вкладки. Установка <dfn>pathbar.visible</dfn>=<var>1</var> делает эту информационную линию видимой на GTK+.
+      </td>
     </tr>
 
     <tr class="gtkonly">
@@ -1324,18 +1337,49 @@ NameError: mistake
       <td>Если задана эта переменная, при закрытии последней вкладки (напр. с помощью &quot;<cite>File | Close</cite>&quot;) закрывается весь SciTE. (Если данная опция не задана, по умолчанию, после закрытия последней вкладки, SciTE не завершает работу, а создает пустой документ.)</td>
     </tr>
 
+    <tr class="gtkonly">
+      <td><dfn><a name="rectangular.selection.modifier">rectangular.selection.modifier</a></dfn></td>
+      <td>
+      On GTK+, the modifier key used to make rectangular selections can be set with this
+      property. Valid options are 2 (Ctrl), 4 (Alt) or 8 (Super). Super is often assigned to the
+      Windows/Start key on Windows keyboards or the Command key on Mac keyboards.
+      <br />
+      Since the Alt key is often used by window managers to move windows, this will need to
+      be configured off to use the combination in SciTE. This can be done for Metacity using
+      gconf-editor to modify the /apps/metacity/general/mouse_button_modifier. A valid value here
+      is &lt;Super&gt;.
+      </td>
+    </tr>
+
     <tr>
       <td><dfn><a name="selection">selection.fore<br>
       selection.back<br>
       selection.alpha</a></dfn></td>
 
-      <td>Задают цвета, используемые для отображения выделенного текста. По умолчанию, фон выделенного текста – светло-серый, а передний план остается таким же, как до выделения. Опция <code>selection.alpha</code> задает степень прозрачности выделенного текста. Значение <code>256</code> соответствует полной непрозрачности.</td>
+      <td>Задают цвета, используемые для отображения выделенного текста. По умолчанию, фон выделенного текста – светло-серый, а передний план остается таким же, как до выделения. Опция <dfn>selection.alpha</dfn> задает степень прозрачности выделенного текста. Значение <code>256</code> соответствует полной непрозрачности.</td>
     </tr>
 
     <tr>
       <td><dfn><a name="caret.fore">caret.fore</a></dfn></td>
 
       <td>Задает цвет курсора вставки.</td>
+    </tr>
+
+    <tr>
+      <td><dfn><a name="selection.additional">selection.additional.fore<br />
+         selection.additional.back<br />
+         selection.additional.alpha</dfn></td>
+
+      <td>Действует подобно <dfn>selection.fore</dfn>, <dfn>selection.back</dfn>, <dfn>selection.alpha</dfn>
+      для задания цветов и прозрачности при многократном выделении или при выделении прямоугольной области.</td>
+    </tr>
+
+    <tr>
+      <td><dfn><a name="caret.additional.blinks">caret.additional.blinks</a></dfn></td>
+
+      <td>
+        При установке <var>0</var> мерцает только главный значок каретки. При установке <var>1</var> мерцают все символы каретки во всех выделенных областях. Установка по умолчанию - <var>1</var>.
+      </td>
     </tr>
 
     <tr>
@@ -1360,6 +1404,27 @@ NameError: mistake
       <td><dfn><a name="caret.width">caret.width</a></dfn></td>
 
       <td>Задает ширину курсора вставки в пикселях. Возможны значения <var>1</var>, <var>2</var> и <var>3</var>.</td>
+    </tr>
+
+    <tr>
+      <td><dfn><a name="selection.multiple">selection.multiple<br />
+        selection.additional.typing</a></dfn>
+      </td>
+
+      <td>Установка <dfn>selection.multiple</dfn> позволяет делать многкратные выделения мышью, удерживая клавишу Ctrl<br />
+      При <dfn>selection.additional.typing</dfn>=<var>1</var> печать текста, нажатие на клавиши <code>BackSpace</code> или <code>Delete</code> будет одновременно применятся на все выделенные части текста.<br />
+      При <dfn>selection.additional.typing</dfn>=<var>0</var> эффект будет распостранятся только на главное выделение.</td>
+    </tr>
+
+    <tr>
+      <td><dfn><a name="virtual.space">virtual.space</a></dfn></td>
+
+      <td>
+        Позволяет перемещать каретку дальше последнего символа на линии (в т.н. "виртуальное пространство").<br />
+        Установка параметра на <var>1</var> разрешает виртуальные пробелы при прямоугольном выделении.<br />
+        <var>2</var> - разрешает использовать курсорные клавиши или мышь для перемещения каретки в виртуальное пространство.<br />
+        <var>3</var> - разрешает и то и другое.
+      </td>
     </tr>
 
     <tr>
@@ -2201,7 +2266,7 @@ style the path and line number separately from the rest of the line with style 2
         Если диалог &quot;<cite>Параметры</cite>&quot; уже открыт, то символ &#39;<code>*</code>&#39; в командной строке просто игнорируется (т.е. второго диалогового окна при повторном вызове этой же команды не появится).</p>
 
         <p>Если переменная <dfn>command.name</dfn> не имеет значения, то соответсвующие пункты в меню <cite>Tools</cite> не отображаются. Независимо от того, отображается команда в меню <cite>Tools</cite> или нет, ее можно вызвать с помощью <a href="#user.shortcuts">быстрых клавиш</a> или использовать для задания собственных <a href="#user.context.menu">пунктов в контекстном меню</a>.<br>
-        Для задания пользовательской комманды в <dfn>user.context.menu</dfn> к номеру этой команды в меню Tools, который располагается в диапазоне от <var>0</var> до <var>99</var> (<span class="ruboardonly">от <var>0</var> до <var>299</var> для SciTE-Ru</span>), прибавляется начальный <code>ID</code> (<code>IDM_TOOLS</code>) равный <var>1100</var> (<span class="ruboardonly"><var>9000</var> для SciTE-Ru</span>).<br>
+        Для задания пользовательской комманды в <dfn>user.context.menu</dfn> к номеру этой команды в меню Tools, который располагается в диапазоне от <var>0</var> до <var>49</var> (<span class="ruboardonly">от <var>0</var> до <var>299</var> для SciTE-Ru</span>), прибавляется начальный <code>ID</code> (<code>IDM_TOOLS</code>) равный <var>1100</var> (<span class="ruboardonly"><var>9000</var> для SciTE-Ru</span>).<br>
         Например, добавим команду <cite>Indent</cite> (которая у нас находится под номером <var>3</var>) в контекстное меню и зададим комбинацию клавиш для ее быстрого вызова:</p>
 
         <div class="example">
