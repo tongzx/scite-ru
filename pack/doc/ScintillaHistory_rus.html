@@ -339,6 +339,7 @@
       </tr><tr>
 	<td>Eric Kidd</td>
 	<td>maXmo</td>
+	<td>David Severwright</td>
     </tr>
     </table>
 	<p>
@@ -350,6 +351,29 @@
 			<a href="http://sourceforge.net/projects/icon-collection/">
 			Icons</a> Copyright(C) 1998 by Dean S. Jones<br />
 		</li>
+	</ul>
+
+	<h3>
+		<a href="http://prdownloads.sourceforge.net/scintilla/scite200.zip?download">Release 2.0</a>
+	</h3>
+	<ul>
+	<li>Версия 2.00 от 11 августа 2009 г.</li>
+	<li>C помощью мыши и клавиши Ctrl можно выделить нескольких несмежных частей текста.<br />
+	Ввод символов, нажатие на BackSpace или Delete может действовать одновременно на все выделенные области.</li>
+	<li>Виртуальные пробелы позволяют устанавливать каретку правее последнего символа в строке.</li>
+	<li>На GTK+ индикатор текущего пути (path bar) теперь опционален и по умолчанию выключен.</li>
+	<li>MagikSF lexer корректно распознает числа.</li>
+	<li>Улучшилась свертка пустых линий и комментариев для Python. Bug #210240.</li>
+	<li>Исправлена ошибка с исчезновением фонового цвета последнего символа в документе.</li>
+	<li>Ликвидировано падение SciTE при добавлении маркера ниже последней линии в документе. Bug #2830307.</li>
+	<li>Ликвидирована утечка ресурсов в SciTE для Windows при неудачной печати документа. Bug #2816524.</li>
+	<li>Bug fixed on Windows where the system caret was destroyed during destruction when another window was using the system caret. Bug #2830223.</li>
+	<li>Bug fixed where indentation guides were drawn over text when the indentation used a style with a different space width to the default style.</li>
+	<li>SciTE bug fixed where box comment added a bare line feed rather than the chosen line end. Bug #2818104.</li>
+	<li>Reverted fix that led to wrapping whole document when displaying the first line of the document.</li>
+	<li>Export to LaTeX in SciTE fixed to work in more cases and not use as much space. Bug #1286548.</li>
+	<li>Bug fixed where EN_CHANGE notification was sent when performing a paste operation in a read-only document. Bug #2825485.</li>
+	<li>Refactored code so that Scintilla exposes less of its internal implementation and uses the C++ standard library for some basic collections. Projects that linked to Scintilla's SString or PropSet classes should copy this code from a previous version of Scintilla or from SciTE.</li>
 	</ul>
 
 	<h3>
