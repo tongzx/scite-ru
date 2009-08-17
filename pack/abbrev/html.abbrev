@@ -83,7 +83,7 @@ xml=<?xml version="1.0" encoding="iso-8859-1"?>\n<!DOCTYPE html PUBLIC "-//W3C//
 <q=<q>%SEL%|</q>
 <s=<s>%SEL%|</s>
 <sa=<samp>%SEL%|</samp>
-<sc=<script language="JavaScript">%SEL%|\n</script>
+<sc=<script language="JavaScript" src="|">%SEL%\n</script>
 <se=<select>\n\t<option value="">|</option>\n\t<option value=""></option>\n</select>
 <sm=<small>%SEL%|</small>
 <sp=<span id="">%SEL%|</span>

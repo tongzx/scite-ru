@@ -286,7 +286,7 @@ setmetatable (table, metatable)\n  sets metatable, nil to remove metatable
 #$string_value=table%.concat%s*%b()
 #$string_value=editor:textrange%s*%b()
 #$string_value=scite%.ConstantName%s*%b()
-#$string_value=props%s%b[]
+#$string_value=props%s*%b[]
 #$string_value=editor:GetCurLine%s%b()
 #$string_value=editor:GetLine%s%b()
 #$string_value=editor:GetProperty%s%b()
