@@ -26,7 +26,8 @@ mingw32-make
 IF ERRORLEVEL 1 GOTO error
 
 CD ..\bin
-IF NOT EXIST Sc1.exe PAUSE
+REM IF NOT EXIST Sc1.exe PAUSE
+IF NOT EXIST SciTE.exe PAUSE
 
 rem -----------------------------------------------------
 CALL :if_exist "upx.exe"
