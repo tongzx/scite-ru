@@ -786,9 +786,7 @@ void SciTEBase::ReadProperties() {
 		apisFileNames = props.GetNewExpand("api.", fileNameForExtension.c_str());
 	}
 
-//!-start-[GetAPIPath]
 	props.Set("APIPath", apisFileNames.c_str());
-//!-end-[GetAPIPath]
 
 	FilePath fileAbbrev = props.GetNewExpand("abbreviations.", fileNameForExtension.c_str()).c_str();
 	if (!fileAbbrev.IsSet())
@@ -800,13 +798,8 @@ void SciTEBase::ReadProperties() {
 	}
 
 	DiscoverEOLSetting();
-//!-start-[GetAbbrevPath]
-	props.Set("AbbrevPath", pathAbbreviations.AsFileSystem());
-//!-end-[GetAbbrevPath]
 
-	if (!props.GetInt("eol.auto")) {
-		SetEol();
-	}
+	props.Set("AbbrevPath", pathAbbreviations.AsFileSystem());
 
 	SendEditor(SCI_SETOVERTYPE, props.GetInt("change.overwrite.enable", 1) + 2); //-add-[ignore_overstrike_change]
 

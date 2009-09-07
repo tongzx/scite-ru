@@ -576,6 +576,12 @@ fun void SetWhitespaceFore=2084(bool useSetting, colour fore)
 # Set the background colour of all whitespace and whether to use this setting.
 fun void SetWhitespaceBack=2085(bool useSetting, colour back)
 
+# Set the size of the dots used to mark space characters.
+fun void SetWhitespaceSize=2086(int size,)
+
+# Get the size of the dots used to mark space characters.
+fun void GetWhitespaceSize=2087(,)
+
 # Divide each styling byte into lexical class bits (default: 5) and indicator
 # bits (default: 3). If a lexer requires more than 32 lexical states, then this
 # is used to expand the possible states.
@@ -2284,11 +2290,12 @@ val SCLEX_SORCUS=94
 val SCLEX_POWERPRO=95
 val SCLEX_NIMROD=96
 val SCLEX_SML=97
+val SCLEX_MARKDOWN=98
 ##!-start-[Euphoria]
-val SCLEX_EUPHORIA=98
+val SCLEX_EUPHORIA=99
 ##!-end-[Euphoria]
 ##!-start-[ABAP]
-val SCLEX_ABAP=99
+val SCLEX_ABAP=100
 ##!-end-[ABAP]
 
 # When a lexer specifies its language as SCLEX_AUTOMATIC it receives a
@@ -3738,6 +3745,30 @@ val SCE_SML_COMMENT=12
 val SCE_SML_COMMENT1=13
 val SCE_SML_COMMENT2=14
 val SCE_SML_COMMENT3=15
+# Lexical state for SCLEX_MARKDOWN
+lex Markdown=SCLEX_MARKDOWN SCE_MARKDOWN_
+val SCE_MARKDOWN_DEFAULT=0
+val SCE_MARKDOWN_LINE_BEGIN=1
+val SCE_MARKDOWN_STRONG1=2
+val SCE_MARKDOWN_STRONG2=3
+val SCE_MARKDOWN_EM1=4
+val SCE_MARKDOWN_EM2=5
+val SCE_MARKDOWN_HEADER1=6
+val SCE_MARKDOWN_HEADER2=7
+val SCE_MARKDOWN_HEADER3=8
+val SCE_MARKDOWN_HEADER4=9
+val SCE_MARKDOWN_HEADER5=10
+val SCE_MARKDOWN_HEADER6=11
+val SCE_MARKDOWN_PRECHAR=12
+val SCE_MARKDOWN_ULIST_ITEM=13
+val SCE_MARKDOWN_OLIST_ITEM=14
+val SCE_MARKDOWN_BLOCKQUOTE=15
+val SCE_MARKDOWN_STRIKEOUT=16
+val SCE_MARKDOWN_HRULE=17
+val SCE_MARKDOWN_LINK=18
+val SCE_MARKDOWN_CODE=19
+val SCE_MARKDOWN_CODE2=20
+val SCE_MARKDOWN_CODEBK=21
 ##!-start-[Euphoria]
 # Lexical states for SCLEX_EUPHORIA
 lex Euphoria=SCLEX_EUPHORIA SCE_EUPHORIA_

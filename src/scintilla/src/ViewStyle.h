@@ -96,6 +96,7 @@ public:
 	int fixedColumnWidth;
 	int zoomLevel;
 	WhiteSpaceVisibility viewWhitespace;
+	int whitespaceSize;
 	IndentView viewIndentationGuides;
 	bool viewEOL;
 	bool showMarkedLines;

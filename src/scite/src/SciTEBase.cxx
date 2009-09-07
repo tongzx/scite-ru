@@ -326,6 +326,7 @@ const char *contributors[] = {
             "Eric Kidd",
             "maXmo",
             "David Severwright",
+            "Jon Strait",
 //!-start-[SciTE-Ru]
             "HSolo",
             "Midas",
@@ -1844,10 +1845,8 @@ int SciTEBase::DoReplaceAll(bool inSelection) {
 	int startPosition = cr.cpMin;
 	int endPosition = cr.cpMax;
 	int selType = SC_SEL_STREAM;
+	int countSelections = SendEditor(SCI_GETSELECTIONS);
 	if (inSelection) {
-		if (startPosition == endPosition) {
-			return -2;
-		}
 		selType = SendEditor(SCI_GETSELECTIONMODE);
 		if (selType == SC_SEL_LINES) {
 			// Take care to replace in whole lines
@@ -1855,6 +1854,14 @@ int SciTEBase::DoReplaceAll(bool inSelection) {
 			startPosition = SendEditor(SCI_POSITIONFROMLINE, startLine);
 			int endLine = SendEditor(SCI_LINEFROMPOSITION, endPosition);
 			endPosition = SendEditor(SCI_POSITIONFROMLINE, endLine + 1);
+		} else {
+			for (int i=0; i<countSelections; i++) {
+				startPosition = Platform::Minimum(startPosition, SendEditor(SCI_GETSELECTIONNSTART, i));
+				endPosition = Platform::Maximum(endPosition, SendEditor(SCI_GETSELECTIONNEND, i));
+			}
+		}
+		if (startPosition == endPosition) {
+			return -2;
 		}
 	} else {
 		endPosition = LengthDocument();
@@ -1886,15 +1893,17 @@ int SciTEBase::DoReplaceAll(bool inSelection) {
 		// Replacement loop
 		while (posFind != -1) {
 			int lenTarget = SendEditor(SCI_GETTARGETEND) - SendEditor(SCI_GETTARGETSTART);
-			if (inSelection && selType == SC_SEL_RECTANGLE) {
-				// We must check that the found target is entirely inside the rectangular selection:
-				// it must fit in one line, and inside the selection bounds of this line.
-				int line = SendEditor(SCI_LINEFROMPOSITION, posFind);
-				int startPos = SendEditor(SCI_GETLINESELSTARTPOSITION, line);
-				int endPos = SendEditor(SCI_GETLINESELENDPOSITION, line);
-				if (startPos == INVALID_POSITION ||	// No selection on this line (?)
-				        posFind < startPos || posFind + lenTarget > endPos) {
-					// Found target is totally or partly outside the rectangular selection
+			if (inSelection && countSelections > 1) {
+				// We must check that the found target is entirely inside a selection
+				bool insideASelection = false;
+				for (int i=0; i<countSelections && !insideASelection; i++) {
+					int startPos= SendEditor(SCI_GETSELECTIONNSTART, i);
+					int endPos = SendEditor(SCI_GETSELECTIONNEND, i);
+					if (posFind >= startPos && posFind + lenTarget <= endPos)
+						insideASelection = true;
+				}
+				if (!insideASelection) {
+					// Found target is totally or partly outside the selections
 					lastMatch = posFind + 1;
 					if (lastMatch >= endPosition) {
 						// Run off the end of the document/selection with an empty match
@@ -1935,7 +1944,8 @@ int SciTEBase::DoReplaceAll(bool inSelection) {
 			replacements++;
 		}
 		if (inSelection) {
-			SetSelection(startPosition, endPosition);
+			if (countSelections == 1) 
+				SetSelection(startPosition, endPosition);
 		} else {
 			SetSelection(lastMatch, lastMatch);
 		}
@@ -2591,7 +2601,7 @@ bool SciTEBase::StartAutoCompleteWord(bool onlyOneWord) {
 	// at the start and end. This makes it easy to search for words.
 	SString wordsNear;
 	wordsNear.setsizegrowth(1000);
-	wordsNear.append(" ");
+	wordsNear.append("\n");
 
 	int posFind = SendEditorString(SCI_FINDTEXT, flags, reinterpret_cast<char *>(&ft));
 	WindowAccessor acc(wEditor.GetID(), props);
@@ -2603,8 +2613,8 @@ bool SciTEBase::StartAutoCompleteWord(bool onlyOneWord) {
 			size_t wordLength = wordEnd - posFind;
 			if (wordLength > root.length()) {
 				SString word = GetRange(wEditor, posFind, wordEnd);
-				word.insert(0, " ");
-				word.append(" ");
+				word.insert(0, "\n");
+				word.append("\n");
 				if (!wordsNear.contains(word.c_str())) {	// add a new entry
 					wordsNear += word.c_str() + 1;
 					if (minWordLength < wordLength)
@@ -2622,10 +2632,18 @@ bool SciTEBase::StartAutoCompleteWord(bool onlyOneWord) {
 	}
 	size_t length = wordsNear.length();
 	if ((length > 2) && (!onlyOneWord || (minWordLength > root.length()))) {
-		StringList wl;
+		// Protect spaces by temporrily transforming to \001
+		wordsNear.substitute(' ', '\001');
+		StringList wl(true);
 		wl.Set(wordsNear.c_str());
 		char *words = wl.GetNearestWords("", 0, autoCompleteIgnoreCase);
-		SendEditorString(SCI_AUTOCSHOW, root.length(), words);
+		SString acText(words);
+		// Use \n as word separator
+		acText.substitute(' ', '\n');
+		// Return spaces from \001
+		acText.substitute('\001', ' ');
+		SendEditor(SCI_AUTOCSETSEPARATOR, '\n');
+		SendEditorString(SCI_AUTOCSHOW, root.length(), acText.c_str());
 		delete []words;
 	} else {
 		SendEditor(SCI_AUTOCCANCEL);

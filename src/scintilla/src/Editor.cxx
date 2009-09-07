@@ -2660,11 +2660,15 @@ void Editor::DrawLine(Surface *surface, ViewStyle &vsDraw, int line, int lineVis
 		}
 	}
 
+	bool selBackDrawn = vsDraw.selbackset && 
+		((vsDraw.selAlpha == SC_ALPHA_NOALPHA) || (vsDraw.selAdditionalAlpha == SC_ALPHA_NOALPHA));
+
 	// Does not take margin into account but not significant
 	int xStartVisible = subLineStart - xStart;
 
 	ll->psel = &sel;
-	BreakFinder bfBack(ll, lineStart, lineEnd, posLineStart, IsUnicodeMode(), xStartVisible);
+
+	BreakFinder bfBack(ll, lineStart, lineEnd, posLineStart, IsUnicodeMode(), xStartVisible, selBackDrawn);
 	int next = bfBack.First();
 
 	// Background drawing loop
@@ -2754,7 +2758,8 @@ void Editor::DrawLine(Surface *surface, ViewStyle &vsDraw, int line, int lineVis
 
 	inIndentation = subLine == 0;	// Do not handle indentation except on first subline.
 	// Foreground drawing loop
-	BreakFinder bfFore(ll, lineStart, lineEnd, posLineStart, IsUnicodeMode(), xStartVisible);
+	BreakFinder bfFore(ll, lineStart, lineEnd, posLineStart, IsUnicodeMode(), xStartVisible,
+		((!twoPhaseDraw && selBackDrawn) || vsDraw.selforeset));
 	next = bfFore.First();
 
 	while (next < lineEnd) {
@@ -2862,8 +2867,8 @@ void Editor::DrawLine(Surface *surface, ViewStyle &vsDraw, int line, int lineVis
 										surface->FillRectangle(rcSpace, textBack);
 									}
 									PRectangle rcDot(xmid + xStart - subLineStart, rcSegment.top + vsDraw.lineHeight / 2, 0, 0);
-									rcDot.right = rcDot.left + 1;
-									rcDot.bottom = rcDot.top + 1;
+									rcDot.right = rcDot.left + vs.whitespaceSize;
+									rcDot.bottom = rcDot.top + vs.whitespaceSize;
 									surface->FillRectangle(rcDot, textFore);
 								}
 							}
@@ -3152,7 +3157,7 @@ void Editor::DrawCarets(Surface *surface, ViewStyle &vsDraw, int lineDoc, int xS
 		const int spaceWidth = static_cast<int>(vsDraw.styles[ll->EndLineStyle()].spaceWidth);
 		const int virtualOffset = posCaret.VirtualSpace() * spaceWidth;
 		if (ll->InLine(offset, subLine) && offset <= ll->numCharsBeforeEOL) {
-			int xposCaret = ll->positions[offset] + virtualOffset - ll->positions[ll->LineStart(subLine)] + xStart;
+			int xposCaret = ll->positions[offset] + virtualOffset - ll->positions[ll->LineStart(subLine)];
 			if (ll->wrapIndent != 0) {
 				int lineStart = ll->LineStart(subLine);
 				if (lineStart != 0)	// Wrapped
@@ -3179,8 +3184,9 @@ void Editor::DrawCarets(Surface *surface, ViewStyle &vsDraw, int lineDoc, int xS
 				if (widthOverstrikeCaret < 3)	// Make sure its visible
 					widthOverstrikeCaret = 3;
 
-				if (posCaret > SelectionPosition(ll->LineStart(subLine) + posLineStart))
+				if (xposCaret > 0)
 					caretWidthOffset = 1;	// Move back so overlaps both character cells.
+				xposCaret += xStart;
 				if (posDrag.IsValid()) {
 					/* Dragging text, use a line caret */
 					rcCaret.left = xposCaret - caretWidthOffset;
@@ -6979,6 +6985,14 @@ sptr_t Editor::WndProc(unsigned int iMessage, uptr_t wParam, sptr_t lParam) {
 
 	case SCI_SETVIEWWS:
 		vs.viewWhitespace = static_cast<WhiteSpaceVisibility>(wParam);
+		Redraw();
+		break;
+
+	case SCI_GETWHITESPACESIZE:
+		return vs.whitespaceSize;
+
+	case SCI_SETWHITESPACESIZE:
+		vs.whitespaceSize = static_cast<int>(wParam);
 		Redraw();
 		break;
 
