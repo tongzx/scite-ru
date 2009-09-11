@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 Highlighting Identical Text
-Version: 1.3
-Author: mozersЩ
+Version: 1.3.1
+Author: mozersЩ, TymurGubayev
 ------------------------------
 јвто подсветка текста, который совпадает с текущим словом или выделением
 ¬ файле настроек задаетс€ стиль подсветки
@@ -83,6 +83,7 @@ local function IdenticalTextFinder()
 
 	local wholeword = false
 	local cur_text = editor:GetSelText()
+	if cur_text:find('^%s+$') then return end
 	if cur_text == '' then
 		cur_text = GetCurrentWord()
 		wholeword = true
