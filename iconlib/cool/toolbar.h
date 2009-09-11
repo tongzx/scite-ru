@@ -61,3 +61,5 @@
 #define ICO_HIGHLIGHTIDENTICAL           60
 #define ICO_HIGHLIGHT                    61
 #define ICO_FIND_AND_HIGHLIGHT           62
+#define ICO_ASTYLE                       63
+#define ICO_TIDY                         64
