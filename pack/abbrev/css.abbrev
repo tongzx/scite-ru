@@ -30,6 +30,7 @@ bss=border-style:solid;\n|
 bsdo=border-style:dotted;\n|
 bsda=border-style:dashed;\n|
 bsdl=border-style:double;\n|
+bw=border-width:|;\n
 bwtn=border-width:thin;\n|
 bwm=border-width:medium;\n|
 bwtk=border-width:thick;\n|
@@ -180,3 +181,7 @@ nobr=white-space:nowrap;\n|
 z=zoom:1;\n|
 zi=z-index:|;\n
 tr=transparent|
+fao=filter:alpha(Opacity=|0);\n
+@c=@charset {|};\n
+@i=@import url('|');\n
+@p=@page {\n|\n};\n
