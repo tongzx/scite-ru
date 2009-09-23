@@ -108,6 +108,9 @@ dofile (props["SciteDefaultHome"].."\\tools\\paired_tags.lua")
 -- Подсветка линков в тексте и открытие их в броузере при клике с зажатым Ctrl
 dofile (props["SciteDefaultHome"].."\\tools\\HighlightLinks.lua")
 
+-- Подставляет адекватный символ комментария для ini, inf, reg файлов
+dofile (props["SciteDefaultHome"].."\\tools\\ChangeCommentChar.lua")
+
 ----[[ Д О П О Л Н И Т Е Л Ь Н Ы Е  М Е Н Ю ]]--------------------------------
 
 -- После выполнения команды "Найти в файлах..." создает пункт в контекстном меню консоли - "Открыть найденные файлы"
