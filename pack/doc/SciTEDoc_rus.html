@@ -21,6 +21,7 @@
       Документация&nbsp;&nbsp;
       <a href="SciTEFAQ_rus.html">FAQ</a>&nbsp;&nbsp;
       <a href="SciTERegEx_rus.html">Регулярные выражения</a>&nbsp;&nbsp;
+      <a href="SciTEExtension_rus.html">SciTE Extension</a>&nbsp;&nbsp;
       <a href="SciTELua_rus.html">LUA</a>&nbsp;&nbsp;
       <a href="SciTEDirector_rus.html">SciTE Director</a>&nbsp;&nbsp;
       <a href="CommandValuesExt_rus.html">Команды SciTE и Scintilla</a>&nbsp;&nbsp;
@@ -2674,7 +2675,7 @@ style the path and line number separately from the rest of the line with style 2
       ext.lua.reset<br>
       extension.<i>filepattern</i></a></dfn></td>
 
-      <td>Переменные <dfn>ext.lua</dfn> используются исключительно для <a href="SciTELua_rus.html">SciTE Lua Scripting Extension</a>. Переменная <dfn>extension.<i>filepattern</i></dfn> является частью общего <a href="SciTEExtension.html">интерфейса расширений SciTE (SciTE Extension Interface)</a>, но в настоящее время используется только в <a href="SciTELua_rus.html">Lua Scripting Extension</a><br>
+      <td>Переменные <dfn>ext.lua</dfn> используются исключительно для <a href="SciTELua_rus.html">SciTE Lua Scripting Extension</a>. Переменная <dfn>extension.<i>filepattern</i></dfn> является частью общего <a href="SciTEExtension_rus.html">интерфейса расширений SciTE (SciTE Extension Interface)</a>, но в настоящее время используется только в <a href="SciTELua_rus.html">Lua Scripting Extension</a><br>
       Переменная <dfn>ext.lua.startup.script</dfn> задает имя файла скрипта Lua, который будет загружаться вместе со SciTE и настраивать глобальное окружение для Lua. В этой переменной необходимо использовать абсолютный путь, однако можно ссылаться на <code>$(SciteDefaultHome)</code> или <code>$(SciteUserHome)</code>. Здесь могут быть объявлены обработчики глобальных событий, командные функции, а также другие функции и объекты.<br>
       Переменная <dfn>ext.lua.auto.reload</dfn> определяет, что случится, если вы сохраните загрузочный скрипт или скрипт для активного расширения из SciTE. Если значение переменной равно <var>0</var> (по умолчанию), загрузочный скрипт будет запускаться только во время загрузки или при переключении вкладок (в зависимости от <dfn>ext.lua.reset</dfn>), а изменения в скрипте для расширения будут применяться только при переключении вкладок. Если значение переменной <dfn>ext.lua.auto.reload</dfn> равно <var>1</var>, SciTE заново инициализирует глобальное окружение непосредственно после того, как какой-либо скрипт будет сохранен в пределах SciTE. <i>Однако даже если опция <dfn>ext.lua.auto.reload</dfn> включена, SciTE не посылает уведомления, если файлы были изменены другой программой (см. ниже <dfn>ext.lua.reset</dfn>.)</i><br>
       Опция <dfn>ext.lua.reset</dfn> используется в основном для отладки. Если значение переменной <dfn>ext.lua.reset</dfn> равно <var>0</var> (по умолчанию), переменная <dfn>ext.lua.startup.script</dfn> будет проверяться только один раз, при запуске SciTE. Если значение переменной <dfn>ext.lua.reset</dfn> изменить на <var>1</var>, SciTE будет проверять переменную <dfn>ext.lua.startup.script</dfn> и перезагружать загрузочный скрипт при каждом переключении вкладок. Опция <dfn>ext.lua.reset</dfn> обладает большим набором побочных эффектов, чем опция <dfn>ext.lua.auto.reload</dfn>. В некоторых ситуациях имеет смысл включить обе опции (<dfn>auto.reload</dfn> и <dfn>reset</dfn>), однако обычно одной <dfn>ext.lua.auto.reload</dfn> вполне достаточно. <i>В будущих версиях SciTE опция <dfn>ext.lua.reset</dfn> может быть убрана. Возможно, ее заменят опцией <dfn>ext.lua.auto.reload</dfn> со значением <var>2</var></i>.<br>
@@ -2937,7 +2938,7 @@ style the path and line number separately from the rest of the line with style 2
   <h3><a name="extend">Расширения SciTE</a></h3>
 
   <p>Существует 2 пути расширения SciTE:<br>
-    <a href="SciTEExtension.html">SciTE Extension Interface</a> - расширяет возможности SciTE с помощью дополнительного в исполняемом файле SciTE (<em><a href="SciTELua_rus.html">SciTE Lua Scripting Extension</a>, позволяющее исполнять сценарии на языке LUA внутри SciTE, использует именно его</em>) и<br>
+    <a href="SciTEExtension_rus.html">SciTE Extension Interface</a> - расширяет возможности SciTE с помощью дополнительного в исполняемом файле SciTE (<em><a href="SciTELua_rus.html">SciTE Lua Scripting Extension</a>, позволяющее исполнять сценарии на языке LUA внутри SciTE, использует именно его</em>) и<br>
     <a href="SciTEDirector_rus.html">SciTE Director Interface</a> для управления SciTE из других программ Windows.</p>
   <hr>
 
