@@ -358,14 +358,15 @@
 	</h3>
 	<ul>
 	<li>Версия от 19 августа 2009 г.</li>
-	<li>Fix to positioning rectangular paste when viewing line ends.</li>
-	<li>Don't insert new lines and indentation for line ends at end of rectangular paste.</li>
-	<li>When not in additional selection typing mode, cutting a rectangular selection removes all of the selected text.</li>
-	<li>Rectangular selections are copied to the clipboard in document order, not in the order of selection.</li>
-	<li>SCI_SETCURRENTPOS and SCI_SETANCHOR work in rectangular mode.</li>
-	<li>On GTK+, drag and drop to a later position in the document now drops at the position.</li>
-	<li>Fix bug where missing property did not use default value.</li>
+	<li>Исправлено размещение прямоугольной области при вставке в конце просматриваемой строки.</li>
+	<li>В конец прямоугольной вставки теперь не вставляются новые строки и отступы в конце строки.</li>
+	<li>При отключенном режиме многократного выделения, вырезание прямоугольного выделения удаляет весь выделенный текст.</li>
+	<li>Прямоугольные выделения копировались в буфер обмена в порядке размещения в тексте, а не в порядке выбора.</li>
+	<li>SCI_SETCURRENTPOS и SCI_SETANCHOR работают в режиме прямоугольного выделения.</li>
+	<li>В GTK+ перетаскивание в более позднюю позицию документа теперь вставляется в указанное место.</li>
+	<li>Исправлена ошибка, при которой для пустых параметров не использовались значения по умолчанию.</li>
 	</ul>
+	<li>Перевод: <b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=ALeXkRU" target=_blank>ALeXkRU</a></b>
 
 	<h3>
 		<a href="http://prdownloads.sourceforge.net/scintilla/scite200.zip?download">Release 2.0</a>
@@ -381,14 +382,15 @@
 	<li>Исправлена ошибка с исчезновением фонового цвета последнего символа в документе.</li>
 	<li>Ликвидировано падение SciTE при добавлении маркера ниже последней линии в документе. Bug #2830307.</li>
 	<li>Ликвидирована утечка ресурсов в SciTE для Windows при неудачной печати документа. Bug #2816524.</li>
-	<li>Bug fixed on Windows where the system caret was destroyed during destruction when another window was using the system caret. Bug #2830223.</li>
-	<li>Bug fixed where indentation guides were drawn over text when the indentation used a style with a different space width to the default style.</li>
-	<li>SciTE bug fixed where box comment added a bare line feed rather than the chosen line end. Bug #2818104.</li>
-	<li>Reverted fix that led to wrapping whole document when displaying the first line of the document.</li>
-	<li>Export to LaTeX in SciTE fixed to work in more cases and not use as much space. Bug #1286548.</li>
-	<li>Bug fixed where EN_CHANGE notification was sent when performing a paste operation in a read-only document. Bug #2825485.</li>
-	<li>Refactored code so that Scintilla exposes less of its internal implementation and uses the C++ standard library for some basic collections. Projects that linked to Scintilla's SString or PropSet classes should copy this code from a previous version of Scintilla or from SciTE.</li>
+	<li>Исправлена ошибка в Windows, при которой системная каретка (курсор) уничтожалась во время уничтожения, если другое окно использует системную каретку. Bug #2830223.</li>
+	<li>Исправлена ошибка, при которой направляющая линия отступов рисовалась поверх текста, если отступ использовал стиль с другой шириной просветов, чем в стиле по умолчанию.</li>
+	<li>В SciTE исправлена ошибка, при которой блок комментариев добавлял пустой перевод строки вместо конца выбранной строки. Bug #2818104.</li>
+	<li>Восстановлено исправление, приводившее к свертке всего документа при отображении первой строки документа.</li>
+	<li>При экспорте из SciTE в LaTeX исправлена работа в большинстве случаев и не используется столько места. Bug #1286548.</li>
+	<li>Исправлена ошибка, когда уведомление EN_CHANGE отправлялось при выполнении вставки в документ в режиме "только для чтения". Bug #2825485.</li>
+	<li>Переработан код Scintilla, чтобы снизить влияние ее внутренней реализации и использовать стандартную библиотеку C++ для некоторых базовых коллекций. В проекты, использующие классы SString или PropSet в Scintilla, необходимо скопировать этот код из предыдущих версий Scintilla или SciTE.</li>
 	</ul>
+	<li>Перевод: <b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=ALeXkRU" target=_blank>ALeXkRU</a></b>
 
 	<h3>
 		<a href="http://prdownloads.sourceforge.net/scintilla/scite178.zip?download">Release 1.79</a>
