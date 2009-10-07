@@ -17,6 +17,7 @@ xml=var xml = new ActiveXObject("Microsoft.XMLHTTP");\n
 #Code Snippets
 if=if (|i===0) {\n\t\n} else {\n\t\n}\n
 do=do {\n\t|\n} while (true);\n
+while=while (true){\n\t|\n}\n
 for=for (var i=0; i<i_max; i++) {\n\t\n}\n
 forin=for (var prop in object){\n}\n
 try=try {\n\t\n} catch(e) {\n\t\n}\n
@@ -26,11 +27,12 @@ prompt=prompt('', |string);\n
 re=var re = new RegExp("\\w+", "g");\n
 test=if (re.test(str))
 exec=var arr = re.exec(str);\n
+exec2=var re = /(\\w+)/g;\nwhile (re.exec(text)){\n\tWScript.Echo(RegExp.lastParen);\n}\n
 match=var arr = str.match(re);\n
 
 #Functions
-fileread=// Read file\nfunction ReadFile(filename) {\n\tvar text = '';\n\tif (FSO.FileExists(filename)) {\n\t\tif (FSO.GetFile(filename).Size > 0) {\n\t\t\twith (FSO.OpenTextFile(filename)) {\n\t\t\t\ttext = ReadAll();\n\t\t\t\tClose();\n\t\t\t}\n\t\t}\n\t}\n\treturn text;\n}\n
-filewrite=// Write file\nfunction WriteFile(filename, text) {\n\twith (FSO.OpenTextFile(filename, 2, true)) {\n\t\tWrite(text);\n\t\tClose();\n\t}\n}\n
+fileread=// Read text file\nfunction ReadTextFile(filename) {\n\tvar text = '';\n\tif (FSO.FileExists(filename)) {\n\t\tif (FSO.GetFile(filename).Size > 0) {\n\t\t\twith (FSO.OpenTextFile(filename)) {\n\t\t\t\ttext = ReadAll();\n\t\t\t\tClose();\n\t\t\t}\n\t\t}\n\t}\n\treturn text;\n}\n
+filewrite=// Write text file\nfunction WriteTextFile(filename, text) {\n\twith (FSO.OpenTextFile(filename, 2, true)) {\n\t\tWrite(text);\n\t\tClose();\n\t}\n}\n
 file2arr=// Reading file to 2D array\nfunction ReadFileToArray(filename){\n\tvar separator = "|";\n\tvar arr = [];\n\tif (FSO.FileExists(filename)) {\n\t\tif (FSO.GetFile(filename).Size > 0) {\n\t\t\tfile = FSO.OpenTextFile(filename, 1);\n\t\t\tvar i = 0;\n\t\t\twhile (!file.AtEndOfStream){\n\t\t\t\tvar line = file.ReadLine();\n\t\t\t\tarr[i] = line.split(separator);\n\t\t\t\ti++;\n\t\t\t}\n\t\t\tfile.Close();\n\t\t}\n\t}\n\treturn arr;\n}\n
 arr2file=// Write 2D array to file\nfunction WriteArrayToFile(filename, arr){\n\tvar separator = "|";\n\tvar arr_tmp = [];\n\tfor (var i=0; i<arr.length; i++){\n\t\tarr_tmp[i] = arr[i].join(separator);\n\t}\n\tvar file = FSO.OpenTextFile(filename, 2, true);\n\tfile.Write(arr_tmp.join("\\r\\n"));\n\tfile.Close();\n}\n
 arrprint=// Print multi-dimensional array\nfunction PrintArray(arr, base){\n\tif (base == undefined) base = '';\n\tfor (var i in arr){\n\t\tvar value = arr[i];\n\t\tif (typeof(value) == 'object') {\n\t\t\tPrintArray(value, base + "['" + i + "']");\n\t\t}else{\n\t\t\tWScript.Echo(base + "['" + i + "'] = " + value);\n\t\t}\n\t}\n}\n
