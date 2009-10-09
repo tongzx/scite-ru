@@ -670,8 +670,8 @@ do
 
 	do --v----- C++ ------v--
 		-- define local patterns
-		local keywords = P'if'+P'else'+P'switch'+P'case'+P'while'
-		local nokeyword = -(keywords*SC^1)
+		local keywords = P'if'+P'else'+P'switch'+P'case'+P'while'+P'for'
+		local nokeyword = -(keywords)
 		local type = P"static "^-1*P"const "^-1*P"enum "^-1*P'*'^-1*IDENTIFIER*P'*'^-1
 		local funcbody = P"{"*(ESCANY-P"}")^0*P"}"
 		-- redefine common patterns
@@ -680,12 +680,12 @@ do
 		-- create flags:
 		type = Cg(type,'')
 		-- create additional captures
-		local I = C(IDENTIFIER)*cl
+		local I = nokeyword*C(IDENTIFIER)*cl
 		-- definitions to capture:
 		local funcdef = nokeyword*Ct((type*SC^1)^-1*I*SC^0*par*SC^0*(#funcbody))
-
+		local classconstr = nokeyword*Ct((type*SC^1)^-1*I*SC^0*par*SC^0*P':'*SC^0*IDENTIFIER*SC^0*(P"("*(1-P")")^0*P")")*SC^0*(#funcbody)) -- this matches smthing like PrefDialog::PrefDialog(QWidget *parent, blabla) : QDialog(parent)
 		-- resulting pattern, which does the work
-		local patt = (funcdef + IGNORED^1 + IDENTIFIER + ANY)^0 * EOF
+		local patt = (classconstr + funcdef + IGNORED^1 + IDENTIFIER + ANY)^0 * EOF
 
 		Lang2lpeg['C++'] = lpeg.Ct(patt)
 	end --^----- C++ ------^--
