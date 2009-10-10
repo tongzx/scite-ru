@@ -1509,11 +1509,25 @@ void ScintillaWin::Paste() {
 					delete []uptr;
 
 					if (putf) {
-						InsertPasteText(putf, mlen, selStart, isRectangular, isLine);
+//!						InsertPasteText(putf, mlen, selStart, isRectangular, isLine);
+//!-begin-[InsertMultiPasteText]
+						if(!isMultiPaste) {
+							InsertPasteText(putf, mlen, selStart, isRectangular, isLine);
+						} else {
+							InsertMultiPasteText(putf, mlen);
+						}
+//!-end-[InsertMultiPasteText]
 						delete []putf;
 					}
 				} else {
-					InsertPasteText(ptr, len, selStart, isRectangular, isLine);
+//!					InsertPasteText(ptr, len, selStart, isRectangular, isLine);
+//!-begin-[InsertMultiPasteText]
+					if(!isMultiPaste) {
+						InsertPasteText(ptr, len, selStart, isRectangular, isLine);
+					} else {
+						InsertMultiPasteText(ptr, len);
+					}
+//!-end-[InsertMultiPasteText]
 				}
 			}
 			memSelection.Unlock();
