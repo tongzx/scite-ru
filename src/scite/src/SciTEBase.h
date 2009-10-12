@@ -318,12 +318,14 @@ public:
 	UniMode unicodeMode;
 	time_t fileModTime;
 	time_t fileModLastAsk;
+	bool fileMovedAsked; //!-add-[CheckFileExist]
 	enum { fmNone, fmMarked, fmModified} findMarks;
 	SString overrideExtension;	///< User has chosen to use a particular language
 	FoldState foldState;
 	Buffer() :
 			RecentFile(), doc(0), isDirty(false), ROMarker(0), useMonoFont(false),  //!-change-[ReadOnlyTabMarker]
-			unicodeMode(uni8Bit), fileModTime(0), fileModLastAsk(0), findMarks(fmNone), foldState() {}
+			unicodeMode(uni8Bit), fileModTime(0), fileModLastAsk(0), findMarks(fmNone), foldState(),
+			fileMovedAsked(false) {} //!-add-[CheckFileExist]
 
 	void Init() {
 		RecentFile::Init();

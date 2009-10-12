@@ -653,7 +653,28 @@ void SciTEBase::Revert() {
 }
 
 void SciTEBase::CheckReload() {
-	if (props.GetInt("load.on.activate")) {
+//!	if (props.GetInt("load.on.activate")) {
+//!-start-[CheckFileExist]
+	if ( filePath.IsUntitled() || 
+		(CurrentBuffer()->fileOpenMethod > Buffer::omOpenExistent)) return; //!-change-[OpenNonExistent]
+	if (CurrentBuffer()->fileMovedAsked) CurrentBuffer()->fileMovedAsked = CurrentBuffer()->isDirty;
+	if ((!CurrentBuffer()->fileMovedAsked)&&(!filePath.Exists())) {
+		CurrentBuffer()->fileMovedAsked = true;
+		CurrentBuffer()->isDirty = true;
+		SString msg = LocaliseMessage(
+				"File '^0' is missing or not available.\nDo you wish to keep the file open in the editor?",
+				filePath.AsFileSystem());
+		int decision = WindowMessageBox(wSciTE, msg, MB_YESNO + MB_DEFBUTTON1);
+		if (decision == IDNO) {
+			Close();
+			return;
+		}
+		CheckMenus();
+		SetWindowName();
+		BuffersMenu();
+	} else
+	if (filePath.Exists()&&props.GetInt("load.on.activate")) {
+//!-end-[CheckFileExist]
 		// Make a copy of fullPath as otherwise it gets aliased in Open
 		time_t newModTime = filePath.ModifiedTime();
 		//Platform::DebugPrintf("Times are %d %d\n", CurrentBuffer()->fileModTime, newModTime);
@@ -677,6 +698,14 @@ void SciTEBase::CheckReload() {
 						Open(filePath, static_cast<OpenFlags>(of | ofForceLoad));
 						DisplayAround(rf);
 					}
+					//!-start-[CheckFileExist]
+					else {
+						CurrentBuffer()->isDirty = true;
+						CheckMenus();
+						SetWindowName();
+						BuffersMenu();
+					}
+					//!-end-[CheckFileExist]
 					CurrentBuffer()->fileModLastAsk = newModTime;
 				}
 			} else {
