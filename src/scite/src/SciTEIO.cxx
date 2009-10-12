@@ -347,6 +347,7 @@ void SciTEBase::DiscoverIndentSetting() {
 void SciTEBase::OpenFile(int fileSize, bool suppressMessage) {
 //!-[utf8.auto.check]	Utf8_16_Read convert;
 
+	CurrentBuffer()->fileOpenMethod = Buffer::omOpenNonExistent; //!-add-[OpenNonExistent]
 	FILE *fp = filePath.Open(fileRead);
 	if (fp) {
 		CurrentBuffer()->SetTimeFromFile();
@@ -357,14 +358,13 @@ void SciTEBase::OpenFile(int fileSize, bool suppressMessage) {
 		UniMode codingCookie = CodingCookieValue(data, lenFile);
 
 //!-start-[utf8.auto.check]
-		//[mhb] 07/07/09 
 		int check_utf8=props.GetInt("utf8.auto.check");
 		if (codingCookie==uni8Bit && check_utf8==2) {
 			if (Has_UTF8_Char((unsigned char*)(data),lenFile)) {
 				codingCookie=uniCookie;
 			}
 		}
-		Utf8_16_Read convert(codingCookie==uni8Bit && check_utf8==1);//[mhb] 07/05/09 : Utf8_16_Read convert;
+		Utf8_16_Read convert(codingCookie==uni8Bit && check_utf8==1);
 //!-end-[utf8.auto.check]
 
 		SendEditor(SCI_ALLOCATE, fileSize + 1000);
@@ -407,11 +407,13 @@ void SciTEBase::OpenFile(int fileSize, bool suppressMessage) {
 		if (props.GetInt("indent.auto")) {
 			DiscoverIndentSetting();
 		}
+		CurrentBuffer()->fileOpenMethod = Buffer::omOpenExistent; //!-add-[OpenNonExistent]
 
 	} else if (!suppressMessage) {
 		if (props.GetInt("warning.couldnotopenfile.disable") != 1) { //!-add-[warning.couldnotopenfile.disable]
 			SString msg = LocaliseMessage("Could not open file '^0'.", filePath.AsFileSystem());
 			WindowMessageBox(wSciTE, msg, MB_OK | MB_ICONWARNING);
+			CurrentBuffer()->fileOpenMethod = Buffer::omOpenNonExistentWarned; //!-add-[OpenNonExistent]
 		}
 	}
 	if (!SendEditor(SCI_GETUNDOCOLLECTION)) {
@@ -923,13 +925,15 @@ void SciTEBase::ReloadProperties() {
 
 // Returns false if cancelled or failed to save
 bool SciTEBase::Save() {
-	if (!filePath.IsUntitled()) {
+//!	if (!filePath.IsUntitled()) {
+	if (!filePath.IsUntitled()&&(CurrentBuffer()->fileOpenMethod < Buffer::omOpenNonExistent)) {//!-change-[OpenNonExistent]
 		if (props.GetInt("save.deletes.first")) {
 			filePath.Remove();
 		}
 
 		if (SaveBuffer(filePath)) {
 			CurrentBuffer()->SetTimeFromFile();
+			CurrentBuffer()->fileOpenMethod = Buffer::omOpenExistent; //!-add-[OpenNonExistent]
 			SendEditor(SCI_SETSAVEPOINT);
 			if (IsPropertiesFile(filePath)) {
 				ReloadProperties();
@@ -945,6 +949,15 @@ bool SciTEBase::Save() {
 		}
 		return true;
 	} else {
+//!-start-[OpenNonExistent]
+		if (CurrentBuffer()->fileOpenMethod == Buffer::omOpenNonExistent) {
+			CurrentBuffer()->fileOpenMethod = Buffer::omOpenNonExistentWarned;
+			if (!SaveAsDialog()) {
+				CurrentBuffer()->fileOpenMethod = Buffer::omOpenNonExistent; // return method back
+				return false;
+			} else return true;
+		} else
+//!-end-[OpenNonExistent]
 		return SaveAsDialog();
 	}
 }
