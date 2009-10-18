@@ -1,18 +1,22 @@
--- Перемещение выделенных строк (или 1 строки) вверх, вниз, вправо, влево
--- перемещение выделенного стринга по строке вправо и влево
--- codewarlock1101
--- http://forum.ru-board.com/topic.cgi?forum=5&topic=3215&start=1140#6
-
---[[*********************************************************************************************** 
+--[[--------------------------------------------------
+MoveLines.lua
+Authors: codewarlock1101
+Version: 1.1
+------------------------------------------------------
+Description:
+ Перемещение выделенных строк (или 1 строки) вверх, вниз, вправо, влево
+ перемещение выделенного стринга по строке вправо и влево
+------------------------------------------------------
 *  PIE_MOVE_TYPE
 *     0 Не премещать
 *     1 Для цикличного перемещения по соседним строкам
 *     2 Для цикличного перемещения по одной строке
 *     3 блокировка цикличности
-*************************************************************************************************]]
+--]]--------------------------------------------------
+
     local PIE_MOVE_TYPE=2
     local sel_start_line = editor:LineFromPosition(editor.SelectionStart)
-    local sel_end_line = editor:LineFromPosition(editor.SelectionEnd)
+    local sel_end_line = editor:LineFromPosition(editor.SelectionEnd-1)
     local slend=editor:GetLineSelEndPosition(sel_end_line)
     local slend2=editor:GetLineSelEndPosition(sel_end_line-1)
     local sel_txt=editor:GetSelText()
@@ -78,7 +82,7 @@
     else
 
       if (sel_start_line>0 and vertical==-1) or (sel_end_line-nap<editor.LineCount-1 and vertical==1) then
-        editor:BeginUndoAction()
+        -- editor:BeginUndoAction()
         if vertical==1 then
         -- Down
             editor:GotoLine(sel_end_line+anti_nap)
@@ -97,7 +101,7 @@
         local sel_start = editor:PositionFromLine(sel_start_line+vertical)
         local sel_end = editor:PositionFromLine(sel_end_line+vertical+anti_nap)
         editor:SetSel(sel_start,sel_end)
-        editor:EndUndoAction()
+        -- editor:EndUndoAction()
       end
     end
   end
