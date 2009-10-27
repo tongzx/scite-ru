@@ -1,5 +1,5 @@
 -- COMMON.lua
--- Version: 1.4.6
+-- Version: 1.4.7
 ---------------------------------------------------
 -- Общие функции, использующиеся во многих скриптах
 ---------------------------------------------------
@@ -204,11 +204,7 @@ local function style(mark_string)
 	strike   = INDIC_STRIKE,   hidden   = INDIC_HIDDEN,
 	roundbox = INDIC_ROUNDBOX, box      = INDIC_BOX
 	}
-	for st,st_num in pairs(mark_style_table) do
-		if string.match(mark_string, st) ~= nil then
-			return st_num
-		end
-	end
+	return mark_style_table[mark_string]
 end
 
 local function EditorInitMarkStyles()
@@ -216,7 +212,7 @@ local function EditorInitMarkStyles()
 		local mark = props["find.mark."..style_number]
 		if mark ~= "" then
 			local mark_color = mark:match("#%x%x%x%x%x%x") or (props["find.mark"]):match("#%x%x%x%x%x%x") or "#0F0F0F"
-			local mark_style = style(mark) or INDIC_ROUNDBOX
+			local mark_style = style(mark:match("%l+")) or INDIC_ROUNDBOX
 			local alpha_fill = tonumber((mark:match("%@%d+") or ""):sub(2)) or 30
 			InitMarkStyle(style_number, mark_style, mark_color, alpha_fill)
 		end
