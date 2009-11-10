@@ -657,6 +657,7 @@ void SciTEBase::Revert() {
 void SciTEBase::CheckReload() {
 //!	if (props.GetInt("load.on.activate")) {
 //!-start-[CheckFileExist]
+	if (!props.GetInt("load.on.activate")) return; //!-add-[Fix load.on.activate option]
 	if ( filePath.IsUntitled() || 
 		(CurrentBuffer()->fileOpenMethod > Buffer::omOpenExistent)) return; //!-change-[OpenNonExistent]
 	if (CurrentBuffer()->fileMovedAsked) CurrentBuffer()->fileMovedAsked = CurrentBuffer()->isDirty;
@@ -675,7 +676,7 @@ void SciTEBase::CheckReload() {
 		SetWindowName();
 		BuffersMenu();
 	} else
-	if (filePath.Exists()&&props.GetInt("load.on.activate")) {
+	if (filePath.Exists()) { //!-change-[Fix load.on.activate option]
 //!-end-[CheckFileExist]
 		// Make a copy of fullPath as otherwise it gets aliased in Open
 		time_t newModTime = filePath.ModifiedTime();
