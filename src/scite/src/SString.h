@@ -322,6 +322,34 @@ public:
 		}	
 	}
 //!-end-[FindResultListStyle]
+
+	//!-start-[LowerUpperCase]
+	static inline char MakeUpperCase(char ch) {
+	#if PLAT_WIN
+		char str[2] = {ch, 0};
+		::CharUpper(str);
+		return str[0];
+	#else
+		if (ch < 'a' || ch > 'z')
+			return ch;
+		else
+			return static_cast<char>(ch - 'a' + 'A');
+	#endif
+	}
+
+	static inline char MakeLowerCase(char ch) {
+	#if PLAT_WIN
+		char str[2] = {ch, 0};
+		::CharLower(str);
+		return str[0];
+	#else
+		if (ch < 'A' || ch > 'Z')
+			return ch;
+		else
+			return static_cast<char>(ch - 'A' + 'a');
+	#endif
+	}
+	//!-end-[LowerUpperCase]
 };
 
 

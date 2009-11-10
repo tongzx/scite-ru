@@ -37,12 +37,14 @@
 // The comparison and case changing functions here assume ASCII
 // or extended ASCII such as the normal Windows code page.
 
+/*!-change-[LowerUpperCase]
 static inline char MakeUpperCase(char ch) {
 	if (ch < 'a' || ch > 'z')
 		return ch;
 	else
 		return static_cast<char>(ch - 'a' + 'A');
 }
+*/
 
 inline bool IsASpace(unsigned int ch) {
     return (ch == ' ') || ((ch >= 0x09) && (ch <= 0x0d));
@@ -353,7 +355,8 @@ static bool StringEqual(const char *a, const char *b, size_t len, bool caseSensi
 		}
 	} else {
 		for (size_t i = 0; i < len; i++) {
-			if (MakeUpperCase(a[i]) != MakeUpperCase(b[i]))
+			//!if (MakeUpperCase(a[i]) != MakeUpperCase(b[i]))
+			if (SString::MakeUpperCase(a[i]) != SString::MakeUpperCase(b[i])) //!-change-[LowerUpperCase]
 				return false;
 		}
 	}
@@ -512,8 +515,13 @@ static inline bool IsLetter(char ch) {
 int CompareNoCase(const char *a, const char *b) {
 	while (*a && *b) {
 		if (*a != *b) {
+			/*!-start-[LowerUpperCase]
 			char upperA = MakeUpperCase(*a);
 			char upperB = MakeUpperCase(*b);
+			*/
+			char upperA = SString::MakeUpperCase(*a);
+			char upperB = SString::MakeUpperCase(*b);
+			//!-end-[LowerUpperCase]
 			if (upperA != upperB)
 				return upperA - upperB;
 		}
@@ -619,6 +627,7 @@ SString &SString::lowercase(lenpos_t subPos, lenpos_t subLen) {
 	if ((subLen == measure_length) || (subPos + subLen > sLen)) {
 		subLen = sLen - subPos;		// don't apply past end of string
 	}
+	/*!-start-[LowerUpperCase]
 	for (lenpos_t i = subPos; i < subPos + subLen; i++) {
 		if (s[i] < 'A' || s[i] > 'Z')
 			continue;
@@ -626,12 +635,19 @@ SString &SString::lowercase(lenpos_t subPos, lenpos_t subLen) {
 			s[i] = static_cast<char>(s[i] - 'A' + 'a');
 	}
 	return *this;
+	*/
+	for (lenpos_t i = subPos; i < subPos + subLen; i++) {
+		s[i] = MakeLowerCase(s[i]);
+	}
+	return *this;
+	//!-end-[LowerUpperCase]
 }
 
 SString &SString::uppercase(lenpos_t subPos, lenpos_t subLen) {
 	if ((subLen == measure_length) || (subPos + subLen > sLen)) {
 		subLen = sLen - subPos;		// don't apply past end of string
 	}
+	/*!-start-[LowerUpperCase]
 	for (lenpos_t i = subPos; i < subPos + subLen; i++) {
 		if (s[i] < 'a' || s[i] > 'z')
 			continue;
@@ -639,6 +655,12 @@ SString &SString::uppercase(lenpos_t subPos, lenpos_t subLen) {
 			s[i] = static_cast<char>(s[i] - 'a' + 'A');
 	}
 	return *this;
+	*/
+	for (lenpos_t i = subPos; i < subPos + subLen; i++) {
+		s[i] = MakeUpperCase(s[i]);
+	}
+	return *this;
+	//!-end-[LowerUpperCase]
 }
 
 SString &SString::append(const char *sOther, lenpos_t sLenOther, char sep) {

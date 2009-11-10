@@ -19,26 +19,25 @@ static inline bool IsASpace(unsigned int ch) {
     return (ch == ' ') || ((ch >= 0x09) && (ch <= 0x0d));
 }
 
+/*!-change-[LowerUpperCase]
 static inline char MakeUpperCase(char ch) {
-//!-start-[LowerUpperCase]
-#if PLAT_WIN
-	char str[2] = {ch, 0};
-	::CharUpper(str);
-	return str[0];
-#else
-//!-end-[LowerUpperCase]
 	if (ch < 'a' || ch > 'z')
 		return ch;
 	else
 		return static_cast<char>(ch - 'a' + 'A');
-#endif //!-add-[LowerUpperCase]
 }
+*/
 
 static int CompareNCaseInsensitive(const char *a, const char *b, size_t len) {
 	while (*a && *b && len) {
 		if (*a != *b) {
+			/*!-start-[LowerUpperCase]
 			char upperA = MakeUpperCase(*a);
 			char upperB = MakeUpperCase(*b);
+			*/
+			char upperA = SString::MakeUpperCase(*a);
+			char upperB = SString::MakeUpperCase(*b);
+			//!-end-[LowerUpperCase]
 			if (upperA != upperB)
 				return upperA - upperB;
 		}

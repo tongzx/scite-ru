@@ -1100,20 +1100,14 @@ bool Document::IsWordAt(int start, int end) {
 	return IsWordStartAt(start) && IsWordEndAt(end);
 }
 
+/*!-change-[LowerUpperCase]
 static inline char MakeLowerCase(char ch) {
-//!-start-[LowerUpperCase]
-#if PLAT_WIN
-	char str[2] = {ch, 0};
-	::CharLower(str);
-	return str[0];
-#else
-//!-end-[LowerUpperCase]
 	if (ch < 'A' || ch > 'Z')
 		return ch;
 	else
 		return static_cast<char>(ch - 'A' + 'a');
-#endif //!-add-[LowerUpperCase]
 }
+*/
 
 /**
  * Find text in document, supporting both forward and backward

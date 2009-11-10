@@ -438,9 +438,13 @@ void SciTEBase::SetStyleFor(Window &win, const char *lang) {
 
 void LowerCaseString(char *s) {
 	while (*s) {
+		/*!-start-[LowerUpperCase]
 		if ((*s >= 'A') && (*s <= 'Z')) {
 			*s = static_cast<char>(*s - 'A' + 'a');
 		}
+		*/
+		*s = SString::MakeLowerCase( *s );
+		//!-end-[LowerUpperCase]
 		s++;
 	}
 }
