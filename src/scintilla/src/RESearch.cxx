@@ -200,6 +200,7 @@
 
 #include <stdlib.h>
 
+#include "Platform.h" //!-add-[LowerUpperCase]
 #include "CharClassify.h"
 #include "RESearch.h"
 
@@ -296,13 +297,7 @@ void RESearch::ChSet(unsigned char c) {
 	bittab[((c) & BLKIND) >> 3] |= bitarr[(c) & BITIND];
 }
 
-//!-start-[LowerUpperCase]
-static inline bool IsInRange( unsigned char ch, unsigned char ch_min, unsigned char cm_max )
-{
-	return ((ch >= ch_min) && (ch <= cm_max));
-}
-//!-end-[LowerUpperCase]
-
+/*!-start-[LowerUpperCase]
 void RESearch::ChSetWithCase(unsigned char c, bool caseSensitive) {
 	if (caseSensitive) {
 		ChSet(c);
@@ -313,19 +308,35 @@ void RESearch::ChSetWithCase(unsigned char c, bool caseSensitive) {
 		} else if ((c >= 'A') && (c <= 'Z')) {
 			ChSet(c);
 			ChSet(static_cast<unsigned char>(c - 'A' + 'a'));
-//!-start-[LowerUpperCase]
-		} else if (IsInRange(c, static_cast<unsigned char>('à'), static_cast<unsigned char>('ÿ'))) {
-			ChSet(c);
-			ChSet(static_cast<unsigned char>(c - 'à' + 'À'));
-		} else if (IsInRange(c, static_cast<unsigned char>('À'), static_cast<unsigned char>('ß'))) {
-			ChSet(c);
-			ChSet(static_cast<unsigned char>(c - 'À' + 'à'));
-//!-end-[LowerUpperCase]
 		} else {
 			ChSet(c);
 		}
 	}
 }
+*/
+void RESearch::ChSetWithCase(unsigned char c, bool caseSensitive) {
+	ChSet(c);
+	if (!caseSensitive) {
+#if PLAT_WIN
+		char ch = static_cast<char>(c);
+		if ( IsCharAlphaA(ch) ) {
+			if ( IsCharLowerA(ch)!=0 ) {
+				ChSet(static_cast<unsigned char>( MakeUpperCase(ch) ));
+			}
+			else if ( IsCharUpperA(ch)!=0 ) {
+				ChSet(static_cast<unsigned char>( MakeLowerCase(ch) ));
+			}
+		}
+#else
+		if ((c >= 'a') && (c <= 'z')) {
+			ChSet(static_cast<unsigned char>(c - 'a' + 'A'));
+		} else if ((c >= 'A') && (c <= 'Z')) {
+			ChSet(static_cast<unsigned char>(c - 'A' + 'a'));
+		}
+#endif
+	}
+}
+//!-end-[LowerUpperCase]
 
 const unsigned char escapeValue(unsigned char ch) {
 	switch (ch) {
