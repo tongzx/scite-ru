@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev
-version 1.14
+version 1.14a
 ------------------------------------------------------
   Note: Require gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
                lpeg.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/lpeg/>
@@ -909,10 +909,7 @@ local function Functions_GetNames()
 		end
 	end
 	local textAll = editor:GetText()
-	local start_code_pos = 0
-	if start_code then
-		start_code_pos = editor:findtext(start_code, SCFIND_REGEXP)
-	end
+	local start_code_pos = start_code and editor:findtext(start_code, SCFIND_REGEXP) or 0
 
 	-- lpegPattern = nil
 	table_functions = lpegPattern:match(textAll, start_code_pos+1) -- 2nd arg is the symbol index to start with
