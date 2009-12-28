@@ -29,6 +29,8 @@ test=if (re.test(str))
 exec=var arr = re.exec(str);\n
 exec2=var re = /(\\w+)/g;\nwhile (re.exec(text)){\n\tWScript.Echo(RegExp.lastParen);\n}\n
 match=var arr = str.match(re);\n
+dec=// Convert hex to decimal value\nfunction Dec(hex){\n\treturn parseInt(hex, 16);\n}\n
+hex=// Convert decimal to hex value\nfunction Hex(decimal){\n\tvar hex = Number(decimal).toString(16).toUpperCase();\n\tif (hex.length % 2) hex = "0" + hex;\n\treturn hex;\n}\n
 
 #Functions
 fileread=// Read text file\nfunction ReadTextFile(filename) {\n\tvar text = '';\n\tif (FSO.FileExists(filename)) {\n\t\tif (FSO.GetFile(filename).Size > 0) {\n\t\t\twith (FSO.OpenTextFile(filename)) {\n\t\t\t\ttext = ReadAll();\n\t\t\t\tClose();\n\t\t\t}\n\t\t}\n\t}\n\treturn text;\n}\n
