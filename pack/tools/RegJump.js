@@ -1,6 +1,6 @@
 /*
 Registry Jump
-Version: 1.2
+Version: 1.3
 Author: mozersЩ
 ------------------------------------------------
 ќткрывает выделенную ветвь в редакторе реестра
@@ -29,16 +29,18 @@ var key = WScript.StdIn.ReadAll();
 if (key === "") {
 	WScript.Quit();
 }
+var WshShell = new ActiveXObject("WScript.Shell");
 
+var LastKey = 'HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Applets\\Regedit\\Lastkey';
 key = key.replace(/^HKLM\\/,'HKEY_LOCAL_MACHINE\\');
 key = key.replace(/^HKCR\\/,'HKEY_CLASSES_ROOT\\');
 key = key.replace(/^HKCU\\/,'HKEY_CURRENT_USER\\');
 key = key.replace(/\\\\/g,'\\');
-key = "My Computer\\" + key;
+key = WshShell.RegRead(LastKey).match(/^[^\\]+/) + '\\' + key;
 
 TaskKill ("regedit.exe");
 
-var WshShell = new ActiveXObject("WScript.Shell");
-WshShell.RegWrite ('HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Applets\\Regedit\\Lastkey',key,'REG_SZ');
+WshShell.RegWrite (LastKey, key,'REG_SZ');
 WshShell.Run('regedit', 1, false);
 WScript.Quit();
+
