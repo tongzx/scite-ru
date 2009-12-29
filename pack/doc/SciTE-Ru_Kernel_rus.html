@@ -54,6 +54,16 @@
       Интерфейс
     </h3>
 
+<h5 id="InsertMultiPasteText">
+<sup>new</sup>
+[InsertMultiPasteText] <span class=desc>(Автор: neo4max)</span></h5>
+Добавлена возможность вставки текста из буфера обмена одновременно во все выделенные области (при <span class="example">selection.additional.typing=1</span>).
+
+<h5 id="CheckFileExist">
+<sup>new</sup>
+[CheckFileExist] <span class=desc>(Автор: neo4max)</span></h5>
+Теперь SciTE проверяет наличие редактируемого файла на диске и при его отсутствии выводит соответствующее предупреждение. Кроме этого исправлено детектирование изменения даты редактируемого файла. Подробности в <a href="http://code.google.com/p/scite-ru/issues/detail?id=172">Issue 172</a>.
+
 <h5 id="session.load.forced">
 [session.load.forced] <span class=desc>(Автор: VladVRO)</span></h5>
 Добавлен новый параметр <span class="example">session.load.forced</span> в .properties, который позволяет ускорить загрузку и сохранение сессии:<br>
@@ -103,12 +113,6 @@
 
 <h5 id="SubMenu">
 [SubMenu] <span class=desc>(Автор: HSolo, Доработка: Дмитрий Маслов)</span></h5>
-Немного изменен вид меню Tools. Теперь встроенные команды отделены от пользовательских разделителями.<br>
-В меню Tools теперь возможно вставлять разделители.<br>
-Например, <span class="example">command.separator.34.*=1</span> вставляет разделитель перед командой 34.<br>
-Так же возможна установка отметки перед выбранным пунктом меню.<br>
-Например, так: <span class="example">command.checked.34.*=1</span>.<br>
-<br>
 Добавлена возможность создания вложенных подменю в меню Tools.<br>
 Они создаются вначале меню и отделены от остальных пунктов разделителем.<br>
 Сначала задаются названия подменю:
@@ -118,6 +122,11 @@
 Затем для команд, входящих в подменю, задается номер родительского меню:
 <div class="example">command.parent.6.*=2<br>
 command.name.6.*=Date and Time</div>
+<br>
+В меню Tools возможно вставлять разделители.<br>
+Например, <span class="example">command.separator.34.*=1</span> вставляет разделитель перед командой 34.<br>
+Так же возможна установка отметки перед выбранным пунктом меню.<br>
+Например, так: <span class="example">command.checked.34.*=1</span>.<br>
 <br>
 Текст всех пунктов меню и подменю Tools русифицируется так же как и основное меню - через файл locale.properties.
 
@@ -336,7 +345,6 @@ command.name.6.*=Date and Time</div>
 Функция автозавершения (Ctrl+I, Ctrl+Space) берет варианты завершения слова не только из соответствующего .api файла (как в оригинальном SciTE), но и из редактируемого текста.
 
 <h5 id="utf8.auto.check">
-<sup>new</sup>
 [utf8.auto.check] <span class=desc>(Автор: mhb)</span></h5>
 Новый параметр в .properties<br>
 <span class="example">utf8.auto.check</span> позволяет автоматически детектировать текст в кодировке UTF-8 не снабженный BOM заголовком.<br>
@@ -585,6 +593,21 @@ Tеперь можно задавать до 4х дополнительных наборов слов с разной подсветкой, при
       Устранение ошибок
     </h3>
 
+<h5 id="OpenNonExistent">
+<sup>new</sup>
+[OpenNonExistent] <span class=desc>(Автор: neo4max)</span></h5>
+Исправлена ошибка связанная с открытием несуществующего файла. Подробности в <a href="http://code.google.com/p/scite-ru/issues/detail?id=174">Issue 174</a>.
+
+<h5 id="FixWideStringHandler">
+<sup>new</sup>
+[FixWideStringHandler] <span class=desc>(Автор: neo4max)</span></h5>
+Исправлена ошибка в диалоговом окне "Параметры" не позволявшая вводить не латинские буквы (<a href="http://code.google.com/p/scite-ru/issues/detail?id=177">Issue 177</a>).
+
+<h5 id="Fix_load.on.activate_option">
+<sup>new</sup>
+[Fix load.on.activate option] <span class=desc>(Автор: neo4max)</span></h5>
+Восстановлена работоспособность параметра <span class="example">load.on.activate</span>.
+
 <h5 id="ExtensionThreadFix">
 [ExtensionThreadFix] <span class=desc>(Автор: qvaclav)</span></h5>
 Исправлено ошибочное размножение запущенного скрипта Lua
@@ -627,7 +650,8 @@ Tеперь можно задавать до 4х дополнительных наборов слов с разной подсветкой, при
 Если в <span class="example">style.*.32</span> явно не задан цвет символов и фона, то эти параметры берутся из настроек Windows, т.е. равными системным Window Text/Background.
 
 <h5 id="LowerUpperCase">
-[LowerUpperCase] <span class=desc>(Автор: Midas, VladVRO)</span></h5>
+<sup>updated</sup>
+[LowerUpperCase] <span class=desc>(Автор: Midas, VladVRO, Дмитрий Маслов)</span></h5>
 Корректная работа с русскими символами<br>
 - при переводе в нижний/верхний регистр,<br>
 - при поиске без учета регистра<br>

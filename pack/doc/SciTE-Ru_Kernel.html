@@ -53,6 +53,16 @@
       Interface
     </h3>
 
+<h5 id="InsertMultiPasteText">
+<sup>new</sup>
+[InsertMultiPasteText] <span class=desc>(Author: neo4max)</span></h5>
+Added possibility of paste text from the clipboard to affect all selections including each line of rectangular selections (if <span class="example">selection.additional.typing</span> is <span class="example">1</span>).
+
+<h5 id="CheckFileExist">
+<sup>new</sup>
+[CheckFileExist] <span class=desc>(Автор: neo4max)</span></h5>
+Now SciTE checks the edited file on disk and in its absence, displays a warning. Besides fixed detection of change in the date the edited file. For more information look at <a href="http://code.google.com/p/scite-ru/issues/detail?id=172">Issue 172</a>.
+
 <h5 id="session.load.forced">
 [session.load.forced] <span class=desc>(Author: VladVRO)</span></h5>
 Added new property <span class="example">session.load.forced</span> to do load or save a session quickly:<br>
@@ -102,12 +112,6 @@ Cursor is set as inverse arrow when we realy can to select text otherwise used d
 
 <h5 id="SubMenu">
 [SubMenu] <span class=desc>(Author: HSolo, Updated by: Dmitry Maslov)</span></h5>
-User's commands in menu Tools separated from other commands now by line.<br>
-And you can insert separator between any new commands in menu Tools.<br>
-For example, <span class="example">command.separator.34.*=1</span> adding separator before command 34.<br>
-Added possibility of a set check before command item of the menu.<br>
-For example: <span class="example">command.checked.34.*=1</span>.<br>
-<br>
 Added possibility of creation submenu in Tools menu.<br>
 All submenu items located on top of menu and separated by line from other.<br>
 For define submenu you should set up name first:
@@ -117,6 +121,11 @@ If it is part of another menu then you should setup parent's menu number:
 And next for all subitems of this menu you should setup parent's menu number:
 <div class="example">command.parent.6.*=2<br>
 command.name.6.*=Date and Time</div>
+<br>
+Can insert separator between any new commands in menu Tools.<br>
+For example, <span class="example">command.separator.34.*=1</span> adding separator before command 34.<br>
+Added possibility of a set check before command item of the menu.<br>
+For example: <span class="example">command.checked.34.*=1</span>.<br>
 <br>
 All menu items text can be localized same as other menu command by file locale.properties.
 
@@ -337,7 +346,6 @@ Now can to set up alert with warning message for each warning type:<br>
 Autocomplete function (Ctrl+I, Ctrl+Space) takes variants of end of a word not only from appropriate ".api" a file (as in original SciTE), but also from the edited text.
 
 <h5 id="utf8.auto.check">
-<sup>new</sup>
 [utf8.auto.check] <span class=desc>(Author: mhb)</span></h5>
 Enhance function of auto checking utf8: providing two methods<br>
 <span class="example">utf8.auto.check=1</span>: detect utf8 and add BOM automatically<br>
@@ -583,6 +591,21 @@ Now OnSendEditor can trace event SCI_SETZOOM arising at change of the size of a 
       Bug fix
     </h3>
 
+<h5 id="OpenNonExistent">
+<sup>new</sup>
+[OpenNonExistent] <span class=desc>(Автор: neo4max)</span></h5>
+Fixed bug associated with opening a nonexistent file. For more information look at <a href="http://code.google.com/p/scite-ru/issues/detail?id=174">Issue 174</a>.
+
+<h5 id="FixWideStringHandler">
+<sup>new</sup>
+[FixWideStringHandler] <span class=desc>(Автор: neo4max)</span></h5>
+Fixed a bug in "Parameters" dialog not allow to enter non-latin letters.
+
+<h5 id="Fix_load.on.activate_option">
+<sup>new</sup>
+[Fix load.on.activate option] <span class=desc>(Автор: neo4max)</span></h5>
+Fix work parameter <span class="example">load.on.activate</span>.
+
 <h5 id="ExtensionThreadFix">
 [ExtensionThreadFix] <span class=desc>(Author: qvaclav)</span></h5>
 Fixed incorrect cloning of running Lua script.
@@ -625,7 +648,8 @@ Are removed default values of symbols color (black) and a background (white), th
 If the <span class="example">style.*.32</span> do not raised characters and the background color, these parameters are collected from your Windows, i.e. equal system Window Text/Background.
 
 <h5 id="LowerUpperCase">
-[LowerUpperCase] <span class=desc>(Author: Midas, VladVRO)</span></h5>
+<sup>updated</sup>
+[LowerUpperCase] <span class=desc>(Author: Midas, VladVRO, Dmitry Maslov)</span></h5>
 Correct working with national characters<br>
 - for Make Lower / Upper Case,<br>
 - for Search without match case,<br>
