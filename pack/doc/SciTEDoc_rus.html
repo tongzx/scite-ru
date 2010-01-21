@@ -418,7 +418,9 @@ NameError: mistake
 
   <h3><a name="buffer">Вкладки</a></h3>
 
-  <p>SciTE может использовать от 1 до 100 вкладок, каждая из которых содержит файл. По умолчанию количество вкладок равно 1, при этом вкладки полностью отключаются. Если вкладок несколько, то для переключения между ними можно использовать меню &quot;<cite>Вкладки</cite>&quot; (Buffers), либо выбрать определенное имя файла, либо использовать команды &quot;<cite>Предыдущая</cite>&quot; (Previous - F6) и &quot;<cite>Следующая</cite>&quot; (Next - Shift+F6). [<em>В Windows также можно использовать Ctrl+Tab/Ctrl+Shift+Tab</em>]. Для доступа к первым десяти вкладкам можно использовать сочетания клавиш <code>Atl+[номер вкладки]</code>, где <code>[номер вкладки]</code> - числа от 0 до 9 (0 соответствует десятой вкладке). Использование более десяти вкладок может создать определенные проблемы, так как количество файлов, которые могут отобразить некоторые меню, ограничено, и файлы, превышающие эту планку, будут недоступны.</p>
+  <p>SciTE может использовать от 1 до 100 вкладок, каждая из которых содержит файл. По умолчанию количество вкладок равно 1, при этом вкладки полностью отключаются. Если вкладок несколько, то для переключения между ними можно использовать меню &quot;<cite>Вкладки</cite>&quot; (Buffers), либо выбрать определенное имя файла, либо использовать команды &quot;<cite>Предыдущая</cite>&quot; (Previous - F6) и &quot;<cite>Следующая</cite>&quot; (Next - Shift+F6). [<em>В Windows также можно использовать Ctrl+Tab/Ctrl+Shift+Tab</em>]. Для доступа к первым десяти вкладкам можно использовать сочетания клавиш <code>Atl+[номер вкладки]</code>, где <code>[номер вкладки]</code> - числа от 0 до 9 (0 соответствует десятой вкладке).<br>
+  Вкладки отображается для каждого буфера в панели вкладок, хотя это может быть отключено через пункт меню &quot;<cite>Вид | Вкладки</cite>&quot;. Вкладка может быть закрыта, щелчком по ней средней кнопкой мыши.<br>
+  Использование более десяти вкладок может создать определенные проблемы, так как количество файлов, которые могут отобразить некоторые меню, ограничено, и файлы, превышающие эту планку, будут недоступны.</p>
 
   <p>Когда все доступные вкладки заняты файлами, то при открытии новых файлов вкладки будут использоваться повторно, для чего может потребоваться сохранение ранее содержащихся в этих вкладках файлов. В этом случае на экран будет выведено предупреждение для подтверждения действий пользователем.</p>
 
@@ -1730,6 +1732,36 @@ NameError: mistake
 style the path and line number separately from the rest of the line with style 21 used for the rest of the line. This allows matched text to be more easily distinguished from its location.</td>
     </tr>
 
+	<tr>
+      <td><dfn><a name="lexer.html.mako">lexer.html.mako</a></dfn></td>
+	<td>Set to 1 to enable the mako template language.</td>
+	</tr>
+
+	<tr>
+      <td><dfn><a name="lexer.props.allow.initial.spaces">lexer.props.allow.initial.spaces</a></dfn></td>
+	<td>For properties files, set to 0 to style all lines that start with whitespace in the default style. This is not suitable for SciTE .properties files which use indentation for flow control but can be used for RFC2822 text where indentation is used for continuation lines.</td>
+	</tr>
+
+	<tr>
+      <td><dfn><a name="lexer.python.literals.binary">lexer.python.literals.binary</a></dfn></td>
+	<td>Set to 0 to not recognise Python 3 binary and octal literals: 0b1011 0o712.</td>
+	</tr>
+
+	<tr>
+      <td><dfn><a name="lexer.python.strings.b">lexer.python.strings.b</a></dfn></td>
+	<td>Set to 0 to not recognise Python 3 bytes literals b"x".</td>
+	</tr>
+
+	<tr>
+      <td><dfn><a name="lexer.python.strings.u">lexer.python.strings.u</a></dfn></td>
+	<td>Set to 0 to not recognise Python Unicode literals u"x" as used before Python 3.</td>
+	</tr>
+
+	<tr>
+      <td><dfn><a name="lexer.xml.allow.scripts">lexer.xml.allow.scripts</a></dfn></td>
+	<td>Set to 0 to disable scripts in XML.</td>
+	</tr>
+
     <tr>
       <td><dfn><a name="sql.backslash.escapes">sql.backslash.escapes</a></dfn></td>
 
@@ -2488,6 +2520,12 @@ style the path and line number separately from the rest of the line with style 2
       <td><dfn><a name="fold.quotes.python">fold.quotes.python</a></dfn></td>
 
       <td>При использовании лексера Python данная переменная разрешает использовать свертку для многострочных фрагментов текста, заключенных в кавычки.</td>
+    </tr>
+
+    <tr>
+      <td><dfn><a name="fold.sql.exists">fold.sql.exists</a></dfn></td>
+
+      <td>Enables "EXISTS" to end a fold as is started by "IF" in "DROP TABLE IF EXISTS".</td>
     </tr>
 
     <tr>
