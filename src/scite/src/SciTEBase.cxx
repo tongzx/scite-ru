@@ -2553,6 +2553,7 @@ bool SciTEBase::StartAutoComplete() {
 		wl.Set(wordsNear.c_str());
 		char *words = wl.GetNearestWords("", 0, autoCompleteIgnoreCase);
 		EliminateDuplicateWords(words);
+		SendEditor(SCI_AUTOCSETSEPARATOR, ' ');
 		SendEditorString(SCI_AUTOCSHOW, root.length(), words);
 		delete []words;
 	} else {
