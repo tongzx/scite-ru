@@ -1,5 +1,5 @@
 -- Code Poster HTML
--- Version: 1.4.4
+-- Version: 1.4.5
 -- Author: VladVRO
 ---------------------------------------------------
 -- Description:
@@ -11,9 +11,6 @@
 --  command.name.125.*=Преобразовать в HTML
 --  command.125.*=dofile $(SciteDefaultHome)\tools\code-poster.lua
 --  command.mode.125.*=subsystem:lua,savebefore:no
-
--- ремарки по использованию:
---  - в скрипте используется функция editor.LexerLanguage (сборка Ru-Board, http://scite.net.ru)
 ---------------------------------------------------
 
 local STYLES = {
@@ -106,7 +103,7 @@ STYLES.cpp = {
 STYLES.cppnocase = STYLES.cpp
 
 local LEXSTYLES
-local lex = editor.LexerLanguage
+local lex = editor:GetLexerLanguage()
 if lex == nil then
   LEXSTYLES = STYLES.others
 else

@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev
-version 1.14a
+version 1.14.1a
 ------------------------------------------------------
   Note: Require gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
                lpeg.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/lpeg/>
@@ -900,7 +900,7 @@ local function Functions_GetNames()
 	local start_code = Lang2CodeStart[lang]
 	local lpegPattern = Lang2lpeg[lang]
 	if not lpegPattern then
-		lang = Lexer2Lang[editor.LexerLanguage]
+		lang = Lexer2Lang[editor:GetLexerLanguage()]
 		start_code = Lang2CodeStart[lang]
 		lpegPattern = Lang2lpeg[lang]
 		if not tablePattern then

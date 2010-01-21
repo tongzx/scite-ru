@@ -1,6 +1,6 @@
 --[[--------------------------------------------------
 Highlighting Identical Text
-Version: 1.3.1
+Version: 1.3.2
 Author: mozersЩ, TymurGubayev
 ------------------------------
 јвто подсветка текста, который совпадает с текущим словом или выделением
@@ -147,7 +147,7 @@ function OnUpdateUI ()
 			if editor.Length ~= chars_count then
 				all_text = editor:GetText()
 				chars_count = editor.Length
-				reserved_words = props['highlighting.identical.text.reserved.words.' .. editor.LexerLanguage]
+				reserved_words = props['highlighting.identical.text.reserved.words.' .. editor:GetLexerLanguage()]
 				if reserved_words == '' then reserved_words = props['highlighting.identical.text.reserved.words.*'] end
 			end
 			IdenticalTextFinder()

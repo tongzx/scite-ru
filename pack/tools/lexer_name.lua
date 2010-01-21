@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 lexer_name.lua
 Authors: mozers™, VladVRO
-version 1.1.1
+version 1.1.2
 ------------------------------------------------------
 Показ имени текущего лексера в строке статуса
 
@@ -14,7 +14,7 @@ version 1.1.1
 
 local last_lexer
 local function SetPropLexerName()
-	local cur_lexer = editor.LexerLanguage
+	local cur_lexer = editor:GetLexerLanguage()
 	if cur_lexer ~= last_lexer then
 		if cur_lexer == "hypertext" then
 			props["scite.lexer.name"] = "html"

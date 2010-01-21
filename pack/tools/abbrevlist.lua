@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 abbrevlist.lua
 Authors: Dmitry Maslov, frs, mozers™
-version 2.1.2
+version 2.1.3
 ------------------------------------------------------
   Если при вставке расшифровки аббревиатуры (Ctrl+B) не нашлось точного соответствия,
   то выводится список соответствий начинающихся с этой комбинации символов.
@@ -137,7 +137,7 @@ local old_OnChar = OnChar
 function OnChar(char)
 	local result
 	if old_OnChar then result = old_OnChar(char) end
-	chars_count_min = tonumber(props['abbrev.'..editor.LexerLanguage..'.auto']) or 0
+	chars_count_min = tonumber(props['abbrev.'..editor:GetLexerLanguage()..'.auto']) or 0
 	if chars_count_min == 0 then chars_count_min = tonumber(props['abbrev.*.auto']) or 0 end
 	if chars_count_min ~= 0 then
 		event_IDM_ABBREV = false

@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 ChangeCommentChar.lua
 Authors: VladVRO, mozers™
-Version: 1.0
+Version: 1.0.1
 ------------------------------------------------------
 Подставляет адекватный символ комментария для файлов обрабатываемых лексером props
 (*.properties;*.abbrev;*.session;*.ini;*.inf;*.reg;*.url;*.cfg;*.cnf;*.aut;*.m3u)
@@ -20,7 +20,7 @@ local function ChangeCommentChar()
 		end
 		return false
 	end
-	if editor.LexerLanguage == 'props' then
+	if editor:GetLexerLanguage() == 'props' then
 		if IsINI() then
 			props['comment.block.props']=';'
 		else

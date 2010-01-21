@@ -1,5 +1,5 @@
 -- SciTE Smart comment
--- Version: 2.7
+-- Version: 2.7.1
 -- Author: Dmitry Maslov
 ---------------------------------------------------
 -- Веделяем текст нажимаем на клавиатуре символ 
@@ -198,12 +198,12 @@ local function SmartComment(char)
 	if (editor.SelectionStart~=editor.SelectionEnd)
 	then
 		-- делаем индивидуальную обработку по лексерам
-		if (editor.LexerLanguage == 'cpp')
+		if (editor:GetLexerLanguage() == 'cpp')
 		then
 			if (char == '*' ) then return StrimComment('/*', '*/') end
 		end
 		-- делаем проверку на блочный комментарий
-		if GetIndexFindCharInProps('comment.block.'..editor.LexerLanguage, char) == 1
+		if GetIndexFindCharInProps('comment.block.'..editor:GetLexerLanguage(), char) == 1
 		then
 			return BlockComment()
 		end

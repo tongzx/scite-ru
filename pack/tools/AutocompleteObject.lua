@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 AutocompleteObject.lua
 mozers™, Tymur Gubayev
-version 3.10.4
+version 3.10.5
 ------------------------------------------------------
 Inputting of the symbol set in autocomplete.[lexer].start.characters causes the popup list of properties and methods of input_object. They undertake from corresponding api-file.
 In the same case inputting of a separator changes the case of symbols in input_object's name according to a api-file.
@@ -353,7 +353,7 @@ end
 local function AutocompleteObject(char)
 	if IsComment(editor.CurrentPos-2) then return false end  -- Если строка закомментирована, то выходим
 
-	autocomplete_start_characters = props["autocomplete."..editor.LexerLanguage..".start.characters"]
+	autocomplete_start_characters = props["autocomplete."..editor:GetLexerLanguage()..".start.characters"]
 	-- Если в параметр autocomplete.lexer.start.characters пустой, то выходим
 	if autocomplete_start_characters == '' then return false end
 

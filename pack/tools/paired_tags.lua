@@ -1,6 +1,6 @@
 --[[--------------------------------------------------
 Paired Tags (логическое продолжение скриптов highlighting_paired_tags.lua и HTMLFormatPainter.lua)
-Version: 2.2.1
+Version: 2.2.2
 Author: mozers™, VladVRO
 ------------------------------
 Подсветка парных и непарных тегов в HTML и XML
@@ -179,7 +179,7 @@ function OnUpdateUI ()
 	if old_OnUpdateUI then result = old_OnUpdateUI() end
 	if props['FileName'] ~= '' then
 		if tonumber(props["hypertext.highlighting.paired.tags"]) == 1 then
-			if editor.LexerLanguage == "hypertext" or editor.LexerLanguage == "xml" then
+			if editor:GetLexerLanguage() == "hypertext" or editor:GetLexerLanguage() == "xml" then
 				PairedTagsFinder()
 			end
 		end

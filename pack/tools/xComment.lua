@@ -1,6 +1,6 @@
 --[[--------------------------------------------
 xComment
-Version: 1.4.1
+Version: 1.4.2
 Author: mozersЩ, VladVRO
 -------------------------------------------------
   C блеском замен€ет стандартную комбинацию Ctrl+Q (комментирование|сн€тие комментари€)
@@ -222,7 +222,7 @@ end
 ---------------------------------------------
 local function xComment()
 -- ќбработка нажати€ на Ctrl+Q
-	lexer = editor.LexerLanguage
+	lexer = editor:GetLexerLanguage()
 	sel_text = editor:GetSelText()
 	sel_start = editor.SelectionStart
 	sel_end = editor.SelectionEnd

@@ -1,6 +1,6 @@
 --[[--------------------------------------------------
 SciTE Smart braces
-Version: 1.2.2
+Version: 1.2.3
 Authors: Dmitry Maslov, Julgo, TymurGubayev
 -------------------------------------------------
 Работает, если:
@@ -249,7 +249,7 @@ local function SmartBraces( char )
 				then
 					-- по волшебному обрабатываем скобку { в cpp
 					if	( char == '{' ) and
-						( editor.LexerLanguage == 'cpp' or editor.LexerLanguage == 'css' )
+						( editor:GetLexerLanguage() == 'cpp' or editor:GetLexerLanguage() == 'css' )
 					then
 						editor:BeginUndoAction()
 						local ln = GetCurrLineNumber()
@@ -293,7 +293,7 @@ local function SmartBraces( char )
 				if ( char == braceClose ) then
 					-- "по волшебному" обрабатываем скобку } в cpp и css
 					if ( char == '}' ) and
-						( editor.LexerLanguage == 'cpp' or editor.LexerLanguage == 'css' )
+						( editor:GetLexerLanguage() == 'cpp' or editor:GetLexerLanguage() == 'css' )
 					then
 						editor:BeginUndoAction()
 						if (IsLineStartPos( editor.CurrentPos ) )

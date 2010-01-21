@@ -1,5 +1,5 @@
 --[[----------------------------------------------------------------------------
-HighlightLinks v1.4
+HighlightLinks v1.4.1
 Автор: VladVRO
 
 Подсветка линков в тексте, выделение всего линка при двойном клике на нем и
@@ -74,7 +74,7 @@ end
 local function auto_highlight()
 	local list_lexers = props['highlight.links.lexers']
 	local list_exts = props['highlight.links.exts']
-	if (list_lexers ~= '' and string.find(','..list_lexers..',', ','..editor.LexerLanguage..',')) or
+	if (list_lexers ~= '' and string.find(','..list_lexers..',', ','..editor:GetLexerLanguage()..',')) or
 	   (list_exts ~= '' and string.find(','..list_exts..',', ','..props['FileExt']..','))
 	then
 		HighlightLinks()

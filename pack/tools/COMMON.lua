@@ -1,5 +1,5 @@
 -- COMMON.lua
--- Version: 1.4.7
+-- Version: 1.4.8
 ---------------------------------------------------
 -- Общие функции, использующиеся во многих скриптах
 ---------------------------------------------------
@@ -87,7 +87,7 @@ end
 -- Определение соответствует ли стиль символа стилю комментария
 function IsComment(pos)
 	local style = editor.StyleAt[pos]
-	local lexer = editor.LexerLanguage
+	local lexer = editor:GetLexerLanguage()
 	local comment = {
 		abap = {1, 2},
 		ada = {10},
