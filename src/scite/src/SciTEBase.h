@@ -936,7 +936,7 @@ protected:
 		const char *&endDefinition, int &item, bool &isAdded, int parent = 0);
 #endif
 //!-end-[ExtendedContextMenu]
-	void AddFileToBuffer(FilePath file, int pos);
+	bool AddFileToBuffer(FilePath file, int pos);
 	void AddFileToStack(FilePath file, Sci_CharacterRange selection, int scrollPos);
 	void RemoveFileFromStack(FilePath file);
 	RecentFile GetFilePosition();

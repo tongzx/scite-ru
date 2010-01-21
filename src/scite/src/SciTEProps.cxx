@@ -458,11 +458,13 @@ SString SciTEBase::ExtensionFileName() {
 		if (name.IsSet()) {
 			// Force extension to lower case
 			char fileNameWithLowerCaseExtension[MAX_PATH];
-				strcpy(fileNameWithLowerCaseExtension, name.AsInternal());
+			strcpy(fileNameWithLowerCaseExtension, name.AsInternal());
+#if PLAT_WIN
 			char *extension = strrchr(fileNameWithLowerCaseExtension, '.');
 			if (extension) {
 				LowerCaseString(extension);
 			}
+#endif
 			return SString(fileNameWithLowerCaseExtension);
 		} else {
 			return props.Get("default.file.ext");
@@ -604,6 +606,7 @@ static const char *propertiesToForward[] = {
 	"fold.preprocessor",
 	"fold.quotes.nimrod",
 	"fold.quotes.python",
+	"fold.sql.exists",
 	"fold.sql.only.begin",
 	"fold.symbols",
 	"fold.verilog.flags",
@@ -616,6 +619,7 @@ static const char *propertiesToForward[] = {
 	"lexer.errorlist.findtitle.end",
 	"lexer.errorlist.value.separate",
 	"lexer.forth.no.interpretation",
+	"lexer.html.mako",
 	"lexer.metapost.comment.process",
 	"lexer.metapost.interface.default",
 	"lexer.pascal.smart.highlighting",

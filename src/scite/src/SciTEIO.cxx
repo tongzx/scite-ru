@@ -239,11 +239,11 @@ static UniMode CodingCookieValue(const char *buf, size_t length) {
 }
 
 void SciTEBase::DiscoverEOLSetting() {
-	int linesCR;
-	int linesLF;
-	int linesCRLF;
 	SetEol();
 	if (props.GetInt("eol.auto")) {
+		int linesCR;
+		int linesLF;
+		int linesCRLF;
 		CountLineEnds(linesCR, linesLF, linesCRLF);
 		if (((linesLF >= linesCR) && (linesLF > linesCRLF)) || ((linesLF > linesCR) && (linesLF >= linesCRLF)))
 			SendEditor(SCI_SETEOLMODE, SC_EOL_LF);
@@ -345,11 +345,10 @@ void SciTEBase::DiscoverIndentSetting() {
 }
 
 void SciTEBase::OpenFile(int fileSize, bool suppressMessage) {
-//!-[utf8.auto.check]	Utf8_16_Read convert;
-
 	CurrentBuffer()->fileOpenMethod = Buffer::omOpenNonExistent; //!-add-[OpenNonExistent]
 	FILE *fp = filePath.Open(fileRead);
 	if (fp) {
+//!-[utf8.auto.check]		Utf8_16_Read convert;
 		CurrentBuffer()->SetTimeFromFile();
 		SendEditor(SCI_BEGINUNDOACTION);	// Group together clear and insert
 		SendEditor(SCI_CLEARALL);
@@ -681,7 +680,7 @@ void SciTEBase::CheckReload() {
 		// Make a copy of fullPath as otherwise it gets aliased in Open
 		time_t newModTime = filePath.ModifiedTime();
 		//Platform::DebugPrintf("Times are %d %d\n", CurrentBuffer()->fileModTime, newModTime);
-		if (newModTime != CurrentBuffer()->fileModTime) {
+		if ((newModTime != 0) && (newModTime != CurrentBuffer()->fileModTime)) {
 			RecentFile rf = GetFilePosition();
 			OpenFlags of = props.GetInt("reload.preserves.undo") ? ofPreserveUndo : ofNone;
 			if (CurrentBuffer()->isDirty || props.GetInt("are.you.sure.on.reload") != 0) {

@@ -327,6 +327,7 @@ const char *contributors[] = {
             "maXmo",
             "David Severwright",
             "Jon Strait",
+            "Oliver Kiddle",
 //!-start-[SciTE-Ru]
             "HSolo",
             "Midas",
@@ -366,7 +367,9 @@ SciTEBase::SciTEBase(Extension *ext) : apis(true), extender(ext) {
 	functionDefinition = 0;
 	indentOpening = true;
 	indentClosing = true;
+	indentMaintain = false;
 	statementLookback = 10;
+	preprocessorSymbol = '\0';
 
 	fnEditor = 0;
 	ptrEditor = 0;
@@ -379,6 +382,7 @@ SciTEBase::SciTEBase(Extension *ext) : apis(true), extender(ext) {
 	tabMultiLine = false;
 	sbNum = 1;
 	visHeightTools = 0;
+	visHeightTab = 0;
 	visHeightStatus = 0;
 	visHeightEditor = 1;
 	heightBar = 7;
@@ -392,6 +396,7 @@ SciTEBase::SciTEBase(Extension *ext) : apis(true), extender(ext) {
 	fullScreen = false;
 
 	heightOutput = 0;
+	heightOutputStartDrag = 0;
 	previousHeightOutput = 0;
 
 	allowMenuActions = true;
@@ -817,18 +822,18 @@ void SciTEBase::SetAboutMessage(WindowID wsci, const char *appTitle) {
 		}
 #endif
 		AddStyledText(wsci, GetTranslationToAbout("Version").c_str(), trsSty);
-		AddStyledText(wsci, " 2.01 .71Ru\n", 1);
+		AddStyledText(wsci, " 2.02 .71Ru\n", 1);
 		AddStyledText(wsci, "    " __DATE__ " " __TIME__ "\n", 1);
 		SetAboutStyle(wsci, 4, ColourDesired(0, 0x7f, 0x7f)); //!-add-[SciTE-Ru]
 		AddStyledText(wsci, "http://scite.net.ru\n", 4); //!-add-[SciTE-Ru]
 		SetAboutStyle(wsci, 2, ColourDesired(0, 0, 0));
 		Platform::SendScintilla(wsci, SCI_STYLESETITALIC, 2, 1);
 		AddStyledText(wsci, GetTranslationToAbout("Based on version").c_str(), trsSty); //!-add-[SciTE-Ru]
-		AddStyledText(wsci, " 2.01 ", 1); //!-add-[SciTE-Ru]
+		AddStyledText(wsci, " 2.02 ", 1); //!-add-[SciTE-Ru]
 		AddStyledText(wsci, GetTranslationToAbout("by").c_str(), trsSty);
 		AddStyledText(wsci, " Neil Hodgson.\n", 2);
 		SetAboutStyle(wsci, 3, ColourDesired(0, 0, 0));
-		AddStyledText(wsci, "December 1998-August 2009.\n", 3);
+		AddStyledText(wsci, "December 1998-January 2010.\n", 3);
 		SetAboutStyle(wsci, 4, ColourDesired(0, 0x7f, 0x7f));
 		AddStyledText(wsci, "http://www.scintilla.org\n", 4);
 		AddStyledText(wsci, "Lua scripting language by TeCGraf, PUC-Rio\n", 3);
@@ -1107,6 +1112,11 @@ bool SciTEBase::FindMatchingBracePosition(bool editor, int &braceAtCaret, int &b
 	int maskStyle = (1 << SendEditor(SCI_GETSTYLEBITSNEEDED)) - 1;
 	bool isInside = false;
 	Window &win = editor ? wEditor : wOutput;
+
+	int mainSel = Platform::SendScintilla(win.GetID(), SCI_GETMAINSELECTION, 0, 0);
+	if (Platform::SendScintilla(win.GetID(), SCI_GETSELECTIONNCARETVIRTUALSPACE, mainSel, 0) > 0)
+		return false;
+
 	int bracesStyleCheck = editor ? bracesStyle : 0;
 	int caretPos = Platform::SendScintilla(win.GetID(), SCI_GETCURRENTPOS, 0, 0);
 	braceAtCaret = -1;
@@ -1845,10 +1855,9 @@ int SciTEBase::DoReplaceAll(bool inSelection) {
 	Sci_CharacterRange cr = GetSelection();
 	int startPosition = cr.cpMin;
 	int endPosition = cr.cpMax;
-	int selType = SC_SEL_STREAM;
 	int countSelections = SendEditor(SCI_GETSELECTIONS);
 	if (inSelection) {
-		selType = SendEditor(SCI_GETSELECTIONMODE);
+		int selType = SendEditor(SCI_GETSELECTIONMODE);
 		if (selType == SC_SEL_LINES) {
 			// Take care to replace in whole lines
 			int startLine = SendEditor(SCI_LINEFROMPOSITION, startPosition);
@@ -3661,7 +3670,6 @@ void SciTEBase::MaintainIndentation(char ch) {
 	int eolMode = SendEditor(SCI_GETEOLMODE);
 	int curLine = GetCurrentLineNumber();
 	int lastLine = curLine - 1;
-	int indentAmount = 0;
 
 	if (((eolMode == SC_EOL_CRLF || eolMode == SC_EOL_LF) && ch == '\n') ||
 	        (eolMode == SC_EOL_CR && ch == '\r')) {
@@ -3669,6 +3677,7 @@ void SciTEBase::MaintainIndentation(char ch) {
 			while (lastLine >= 0 && GetLineLength(lastLine) == 0)
 				lastLine--;
 		}
+		int indentAmount = 0;
 		if (lastLine >= 0) {
 			indentAmount = GetLineIndentation(lastLine);
 		}
@@ -5759,8 +5768,7 @@ void SciTEBase::ExecuteMacroCommand(const char *command) {
 	if (*params == '0') {
 		// no answer ...
 		SendEditor(message, wParam, lParam);
-		if (string1 != NULL)
-			delete []string1;
+		delete []string1;
 		return;
 	}
 

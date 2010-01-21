@@ -255,7 +255,7 @@ void ViewStyle::Init(size_t stylesSize_) {
 	viewIndentationGuides = ivNone;
 	viewEOL = false;
 	showMarkedLines = true;
-	extraFontFlag = false;
+	extraFontFlag = 0;
 	extraAscent = 0;
 	extraDescent = 0;
 	marginStyleOffset = 0;

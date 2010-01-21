@@ -1338,8 +1338,7 @@ static int LuaPanicFunction(lua_State *L) {
 // using it.
 
 static char *CheckStartupScript() {
-	if (startupScript)
-		delete[] startupScript;
+	delete[] startupScript;
 
 	startupScript = host->Property("ext.lua.startup.script");
 

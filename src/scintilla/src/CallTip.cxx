@@ -371,8 +371,7 @@ void CallTip::MouseClick(Point pt) {
                                  const char *faceName, int size,
                                  int codePage_, int characterSet, Window &wParent) {
 	clickPlace = 0;
-	if (val)
-		delete []val;
+	delete []val;
 	val = 0;
 	val = new char[strlen(defn) + 1];
 	strcpy(val, defn);

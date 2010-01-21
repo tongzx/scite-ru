@@ -31,8 +31,10 @@ enum { SURROGATE_FIRST_VALUE = 0x10000 };
 Utf8_16_Read::Utf8_16_Read() {
 	m_eEncoding = eUnknown;
 	m_nBufSize = 0;
+	m_pBuf = NULL;
 	m_pNewBuf = NULL;
 	m_bFirstRead = true;
+	m_nLen = 0;
 	m_nAutoCheckUtf8 = false;//!-[utf8.auto.check] [mhb] 07/05/09: by default, not auto check utf8 
 }
 
@@ -108,25 +110,25 @@ int Has_UTF8_Char(unsigned char *buf,int size) {
 		if (p[0]>>7==0x01) {
 			if (p[0]>>5==0x06) {
 				if (p[1]>>6!=0x02) {return 0;} //not utf8
-				cnt++;p++;i++;//UTF-8: U-00000080 每 U-000007FF
+				cnt++;p++;i++;//UTF-8: U-00000080 ?C U-000007FF
 			}
 			else if (p[0]>>4==0x0e) {
 				if (p[1]>>6!=0x02) 	{return 0;} //not utf8
 				if (p[2]>>6!=0x02) 	{return 0;} //not utf8
-				cnt++;p+=2;i+=2;//UTF-8: U-00000800 每 U-0000FFFF
+				cnt++;p+=2;i+=2;//UTF-8: U-00000800 ?C U-0000FFFF
 			}
 			else if (p[0]>>3==0x1e) {
 				if (p[1]>>6!=0x02) 	{return 0;} //not utf8
 				if (p[2]>>6!=0x02) 	{return 0;} //not utf8
 				if (p[3]>>6!=0x02) 	{return 0;} //not utf8
-				cnt++;p+=3;i+=3;//UTF-8: U-00010000 每 U-001FFFFF
+				cnt++;p+=3;i+=3;//UTF-8: U-00010000 ?C U-001FFFFF
 			}
 			else if (p[0]>>2==0x3e) {
 				if (p[1]>>6!=0x02) 	{return 0;} //not utf8
 				if (p[2]>>6!=0x02) 	{return 0;} //not utf8
 				if (p[3]>>6!=0x02) 	{return 0;} //not utf8
 				if (p[4]>>6!=0x02) 	{return 0;} //not utf8
-				cnt++;p+=4;i+=4;//UTF-8: U-00200000 每 U-03FFFFFF
+				cnt++;p+=4;i+=4;//UTF-8: U-00200000 ?C U-03FFFFFF
 			}
 			else if (p[0]>>1==0x7e) {
 				if (p[1]>>6!=0x02) 	{return 0;} //not utf8
@@ -134,7 +136,7 @@ int Has_UTF8_Char(unsigned char *buf,int size) {
 				if (p[3]>>6!=0x02) 	{return 0;} //not utf8
 				if (p[4]>>6!=0x02) 	{return 0;} //not utf8
 				if (p[5]>>6!=0x02) 	{return 0;} //not utf8
-				cnt++;p+=5;i+=5;//UTF-8: U-04000000 每 U-7FFFFFFF
+				cnt++;p+=5;i+=5;//UTF-8: U-04000000 ?C U-7FFFFFFF
 			}
 		}
 		p++;i++;

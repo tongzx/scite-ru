@@ -399,6 +399,23 @@ int ScintillaBase::AutoCompleteGetCurrent() {
 	return ac.lb->GetSelection();
 }
 
+int ScintillaBase::AutoCompleteGetCurrentText(char *buffer) {
+	if (ac.Active()) {
+		int item = ac.lb->GetSelection();
+		char selected[1000];
+		selected[0] = '\0';
+		if (item != -1) {
+			ac.lb->GetValue(item, selected, sizeof(selected));
+			if (buffer != NULL)
+				strcpy(buffer, selected);
+			return strlen(selected);
+		}
+	}
+	if (buffer != NULL)
+		*buffer = '\0';
+	return 0;
+}
+
 void ScintillaBase::CallTipShow(Point pt, const char *defn) {
 	ac.Cancel();
 	pt.y += vs.lineHeight;
@@ -478,6 +495,8 @@ void ScintillaBase::SetLexer(uptr_t wParam) {
 	lexCurrent = LexerModule::Find(lexLanguage);
 	if (!lexCurrent)
 		lexCurrent = LexerModule::Find(SCLEX_NULL);
+	int bits = lexCurrent ? lexCurrent->GetStyleBitsNeeded() : 5;
+	vs.EnsureStyle((1 << bits) - 1);
 }
 
 void ScintillaBase::SetLexerLanguage(const char *languageName) {
@@ -487,6 +506,8 @@ void ScintillaBase::SetLexerLanguage(const char *languageName) {
 		lexCurrent = LexerModule::Find(SCLEX_NULL);
 	if (lexCurrent)
 		lexLanguage = lexCurrent->GetLanguage();
+	int bits = lexCurrent ? lexCurrent->GetStyleBitsNeeded() : 5;
+	vs.EnsureStyle((1 << bits) - 1);
 }
 
 void ScintillaBase::Colourise(int start, int end) {
@@ -577,6 +598,9 @@ sptr_t ScintillaBase::WndProc(unsigned int iMessage, uptr_t wParam, sptr_t lPara
 
 	case SCI_AUTOCGETCURRENT:
 		return AutoCompleteGetCurrent();
+
+	case SCI_AUTOCGETCURRENTTEXT:
+		return AutoCompleteGetCurrentText(reinterpret_cast<char *>(lParam));
 
 	case SCI_AUTOCSETCANCELATSTART:
 		ac.cancelAtStartPos = wParam != 0;
@@ -741,15 +765,8 @@ sptr_t ScintillaBase::WndProc(unsigned int iMessage, uptr_t wParam, sptr_t lPara
 		          reinterpret_cast<const char *>(lParam));
 		break;
 
-	case SCI_GETPROPERTY: {
-			const char *val = props.Get(reinterpret_cast<const char *>(wParam));
-			const int n = strlen(val);
-			if (lParam != 0) {
-				char *ptr = reinterpret_cast<char *>(lParam);
-				strcpy(ptr, val);
-			}
-			return n;	// Not including NUL
-		}
+	case SCI_GETPROPERTY:
+			return StringResult(lParam, props.Get(reinterpret_cast<const char *>(wParam)));
 
 	case SCI_GETPROPERTYEXPANDED: {
 			char *val = props.Expanded(reinterpret_cast<const char *>(wParam));
@@ -776,20 +793,12 @@ sptr_t ScintillaBase::WndProc(unsigned int iMessage, uptr_t wParam, sptr_t lPara
 		SetLexerLanguage(reinterpret_cast<const char *>(lParam));
 		break;
 
-//!-start-[GetLexerLanguage]
-	case SCI_GETLEXERLANGUAGE: {
-			const char *val = lexCurrent->languageName;
-			const int n = strlen(val);
-			if (lParam != 0) {
-				char *ptr = reinterpret_cast<char *>(lParam);
-				strcpy(ptr, val);
-			}
-			return n;
-		}
-//!-end-[GetLexerLanguage]
+	case SCI_GETLEXERLANGUAGE:
+		return StringResult(lParam, lexCurrent ? lexCurrent->languageName : "");
 
 	case SCI_GETSTYLEBITSNEEDED:
 		return lexCurrent ? lexCurrent->GetStyleBitsNeeded() : 5;
+
 #endif
 
 	default:
