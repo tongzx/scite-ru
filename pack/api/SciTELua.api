@@ -941,7 +941,6 @@ editor.KeyWords
 editor.LayoutCache
 editor.Length
 editor.Lexer
-editor.LexerLanguage
 editor.LineCount
 editor.LineEndPosition
 editor.LineIndentPosition
@@ -1074,7 +1073,6 @@ KeyWords [int] = string
 LayoutCache = int
 Length = int
 Lexer = int
-LexerLanguage = string
 LineCount = int
 LineEndPosition [line_number] = int
 LineIndentPosition [line_number] = position
