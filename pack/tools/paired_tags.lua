@@ -1,6 +1,6 @@
 --[[--------------------------------------------------
 Paired Tags (логическое продолжение скриптов highlighting_paired_tags.lua и HTMLFormatPainter.lua)
-Version: 2.2.2
+Version: 2.2.3
 Author: mozers™, VladVRO
 ------------------------------
 Подсветка парных и непарных тегов в HTML и XML
@@ -53,6 +53,10 @@ local t = {}
 local old_current_pos
 
 function CopyTags()
+	if t.tag_start == nil then
+		print("Error : "..scite.GetTranslation("Move the cursor on a tag to copy it!"))
+		return 
+	end
 	local tag = editor:textrange(t.tag_start, t.tag_end+1)
 	if t.paired_start~=nil then
 		local paired = editor:textrange(t.paired_start, t.paired_end+1)
@@ -103,6 +107,8 @@ function DeleteTags()
 			editor:DeleteBack()
 		end
 		editor:EndUndoAction()
+	else
+		print("Error : "..scite.GetTranslation("Move the cursor on a tag to delete it!"))
 	end
 end
 
