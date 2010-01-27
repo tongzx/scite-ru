@@ -950,7 +950,8 @@ static LRESULT PASCAL TabWndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM
 
 	switch (iMessage) {
 
-	case WM_MBUTTONDOWN: {
+		case WM_LBUTTONDBLCLK:	//!-add-[Restore double click on tab]
+		case WM_MBUTTONDOWN: {
 			// Check if on tab bar
 			Point pt = Point::FromLong(lParam);
 			TCHITTESTINFO thti;
