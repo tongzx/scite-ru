@@ -364,161 +364,50 @@
 	<li>
 	Версия от 25 января 2010 г.
 	</li>
-	<li>
-	Markdown lexer added.
-	<a href="https://sourceforge.net/tracker/?func=detail&atid=352439&aid=2844081&group_id=2439">Feature #2844081.</a>
+	<li>Добавлен лексер Markdown. <a href="https://sourceforge.net/tracker/?func=detail&atid=352439&aid=2844081&group_id=2439">Feature #2844081.</a></li>
+	<li>В GTK+ добавлен код распознавания диапазона ведущих байтов для кодовых страниц 932, 936, и 950, что позволяет большинство китайских и японских текстов использовать в системах, в которых не установлены соответствующие локали.</li>
+	<li>Разрешено изменение размера точки, отображающей пробелы, с помощью параметра SCI_SETWHITESPACESIZE. <a href="https://sourceforge.net/tracker/?func=detail&atid=352439&aid=2839427&group_id=2439">Feature #2839427.</a></li>
+	<li>Дополнительный курсор вставки может быть скрыт с помощью параметра SCI_SETADDITIONALCARETSVISIBLE.</li>
+	<li>С помощью параметра SCI_SETFONTQUALITY можно выбрать способ отображения текста: сглаженный, несглаженный или оптимизированный для ЖК-мониторов.</li>
+	<li>Получение выделенного текста в списке автозавершения (параметр SCI_AUTOCGETCURRENTTEXT).</li>
+	<li>Получение имени используемого лексера с помощью параметра SCI_GETLEXERLANGUAGE.</li>
+	<li>В лексере Progress 4GL улучшена обработка комментариев в объявлениях препроцессора. <a href="https://sourceforge.net/tracker/?func=detail&atid=352439&aid=2902206&group_id=2439">Feature #2902206.</a></li>
+	<li>Лексер HTML расширен для обработки языка шаблонов Mako.</li>
+	<li>Папка SQL расширена для обработки ключевых слов "EXISTS" и "ENDIF" в SQL Anywhere. <a href="https://sourceforge.net/tracker/?func=detail&atid=352439&aid=2887524&group_id=2439">Feature #2887524.</a></li>
+	<li>В SciTE добавлены переменные APIPath и AbbrevPath.</li>
+	<li>SciTE в GTK+ использует конвейеры вместо временных файлов при запуске инструментов для повышения безопасности.</li>
+	<li>Исправлено падение при вызове SCI_STYLEGETFONT для стиля с незаданным шрифтом. <a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2857425&group_id=2439">Bug #2857425.</a></li>
+	<li>Исправлено падение, вызванное отсутствием достаточного числа вхождений стилей после выбора лексера. <a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2881279&group_id=2439">Bug #2881279.</a></li>
+	<li>Исправлено падение SciTE при автозавершении слов, содержащих пробелы. <a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2840141&group_id=2439">Bug #2840141.</a></li>
+	<li>Исправлена ошибка в SciTE на GTK+ при обработке файлов с расширением в верхнем регистре.</li>
+	<li>В SciTE исправлена ошибка загрузки файлов, содержащих свёрнутые блоки, из сессий, при которой они не прокручивались до нужного места. <a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2882775&group_id=2439">Bug #2882775.</a></li>
+	<li>В SciTE исправлена загрузка несуществующих уже файлов из сессий. <a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2883437&group_id=2439">Bug #2883437.</a></li>
+	<li>В SciTE исправлен экспорт в HTML при использовании неправильного цвета фона.</li>
+	<li>Исправлено падение, если после добавления аннотации, за ней вставляется новая строка. <a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2929708&group_id=2439">Bug #2929708.</a></li>
+	<li>Исправлен крах SciTE при установке из Lua значения свойства в nil.</li>
+	<li>Исправлена ошибка с возвратом правильного значения длины выделенного текста в SCI_GETSELTEXT. <a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2929441&group_id=2439">Bug #2929441.</a></li>
+	<li>Исправлены проблемы позиционирования текста с выделением в отдельных случаях.</li>
+	<li>В GTK+ исправлены проблемы позиционирования текста с лигатурами.</li>
+	<li>Исправлена проблема вставки в прямоугольное выделение с кареткой внизу, когда текст перемещается от каретки ниже заменяемого выделения.</li>
+	<li>Исправлена проблема при замене только последней строки в прямоугольном выделении.</li>
+	<li>Исправлена невозможность выделить прямоугольную область указанием двух углов с помощью Alt+Shift+Click. <a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2899746&group_id=2439">Bug #2899746.</a>
 	</li>
-	<li>
-	On GTK+, include code that understands the ranges of lead bytes for code pages 932, 936, and 950
-	so that most Chinese and Japanese text can be used on systems that are not set to the corresponding locale.
-	</li>
-	<li>
-	Allow changing the size of dots in visible whitespace using SCI_SETWHITESPACESIZE.
-	<a href="https://sourceforge.net/tracker/?func=detail&atid=352439&aid=2839427&group_id=2439">Feature #2839427.</a>
-	</li>
-	<li>
-	Additional carets can be hidden with SCI_SETADDITIONALCARETSVISIBLE.
-	</li>
-	<li>
-	Can choose anti-aliased, non-anti-aliased or lcd-optimized text using SCI_SETFONTQUALITY.
-	</li>
-	<li>
-	Retrieve the current selected text in the autocompletion list with SCI_AUTOCGETCURRENTTEXT.
-	</li>
-	<li>
-	Retrieve the name of the current lexer with SCI_GETLEXERLANGUAGE.
-	</li>
-	<li>
-	Progress 4GL lexer improves handling of comments in preprocessor declaration.
-	<a href="https://sourceforge.net/tracker/?func=detail&atid=352439&aid=2902206&group_id=2439">Feature #2902206.</a>
-	</li>
-	<li>
-	HTML lexer extended to handle Mako template language.
-	</li>
-	<li>
-	SQL folder extended for SQL Anywhere "EXISTS" and "ENDIF" keywords.
-	<a href="https://sourceforge.net/tracker/?func=detail&atid=352439&aid=2887524&group_id=2439">Feature #2887524.</a>
-	</li>
-	<li>
-	SciTE adds APIPath and AbbrevPath variables.
-	</li>
-	<li>
-	SciTE on GTK+ uses pipes instead of temporary files for running tools. This should be more secure.
-	</li>
-	<li>
-	Fixed crash when calling SCI_STYLEGETFONT for a style which does not have a font set.
-	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2857425&group_id=2439">Bug #2857425.</a>
-	</li>
-	<li>
-	Fixed crash caused by not having sufficient styles allocated after choosing a lexer.
-	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2881279&group_id=2439">Bug #2881279.</a>
-	</li>
-	<li>
-	Fixed crash in SciTE using autocomplete word when word characters includes space.
-	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2840141&group_id=2439">Bug #2840141.</a>
-	</li>
-	<li>
-	Fixed bug with handling upper-case file extensions SciTE on GTK+.
-	</li>
-	<li>
-	Fixed SciTE loading files from sessions with folded folds where it would not 
-	be scrolled to the correct location.
-	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2882775&group_id=2439">Bug #2882775.</a>
-	</li>
-	<li>
-	Fixed SciTE loading files from sessions when file no longer exists.
-	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2883437&group_id=2439">Bug #2883437.</a>
-	</li>
-	<li>
-	Fixed SciTE export to HTML using the wrong background colour.
-	</li>
-	<li>
-	Fixed crash when adding an annotation and then adding a new line after the annotation.
-	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2929708&group_id=2439">Bug #2929708.</a>
-	</li>
-	<li>
-	Fixed crash in SciTE setting a property to nil from Lua.
-	</li>
-	<li>
-	SCI_GETSELTEXT fixed to return correct length.
-	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2929441&group_id=2439">Bug #2929441.</a>
-	</li>
-	<li>
-	Fixed text positioning problems with selection in some circumstances.
-	</li>
-	<li>
-	Fixed text positioning problems with ligatures on GTK+.
-	</li>
-	<li>
-	Fixed problem pasting into rectangular selection with caret at bottom caused text to go from the caret down
-	rather than replacing the selection.
-	</li>
-	<li>
-	Fixed problem replacing in a rectangular selection where only the final line was changed.
-	</li>
-	<li>
-	Fixed inability to select a rectangular area using Alt+Shift+Click at both corners.
-	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2899746&group_id=2439">Bug #2899746.</a>
-	</li>
-	<li>
-	Fixed problem moving to start/end of a rectangular selection with left/right key.
-	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2871358&group_id=2439">Bug #2871358.</a>
-	</li>
-	<li>
-	Fixed problem with Select All when there's a rectangular selection.
-	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2930488&group_id=2439">Bug #2930488.</a>
-	</li>
-	<li>
-	Fixed SCI_LINEDUPLICATE on a rectangular selection to not produce multiple discontinuous selections.
-	</li>
-	<li>
-	Virtual space removed when performing delete word left or delete line left.
-	Virtual space converted to real space for delete word right.
-	Preserve virtual space when pressing Delete key.
-	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2882566&group_id=2439">Bug #2882566.</a>
-	</li>
-	<li>
-	Fixed problem where Shift+Alt+Down did not move through wrapped lines.
-	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2871749&group_id=2439">Bug #2871749.</a>
-	</li>
-	<li>
-	Fixed incorrect background colour when using coloured lines with virtual space.
-	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2914691&group_id=2439">Bug #2914691.</a>
-	</li>
-	<li>
-	Fixed failure to display wrap symbol for SC_WRAPVISUALFLAGLOC_END_BY_TEXT.
-	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2936108&group_id=2439">Bug #2936108.</a>
-	</li>
-	<li>
-	Fixed blank background colour with EOLFilled style on last line.
-	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2890105&group_id=2439">Bug #2890105.</a>
-	</li>
-	<li>
-	Fixed problem in VB lexer with keyword at end of file.
-	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2901239&group_id=2439">Bug #2901239.</a>
-	</li>
-	<li>
-	Fixed SciTE bug where double clicking on a tab closed the file.
-	</li>
-	<li>
-	Fixed SciTE brace matching commands to only work when the caret is next to the brace, not when 
-	it is in virtual space.
-	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2885560&group_id=2439">Bug #2885560.</a>
-	</li>
-	<li>
-	Fixed SciTE on Windows Vista to access files in the Program Files directory rather than allow Windows
-	to virtualize access.
-	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2916685&group_id=2439">Bug #2916685.</a>
-	</li>
-	<li>
-	Fixed NSIS folder to handle keywords that start with '!'.
-	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2872157&group_id=2439">Bug #2872157.</a>
-	</li>
-	<li>
-	Changed linkage of Scintilla_LinkLexers to "C" so that it can be used by clients written in C.
-	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2844718&group_id=2439">Bug #2844718.</a>
-	</li>
+	<li>Исправлена проблема перемещения в начало/конец прямоугольного выделения с помощью клавиш влево/вправо. <a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2871358&group_id=2439">Bug #2871358.</a></li>
+	<li>Исправлена проблема выбора команды "Выделить все" при наличии прямоугольного выделения. <a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2930488&group_id=2439">Bug #2930488.</a></li>
+	<li>Исправлена ошибка с SCI_LINEDUPLICATE в прямоугольном выделении, приводившая к к образованию нескольких выделений с разрывами.</li>
+	<li>Виртуальные пробелы удаляются при выполнении удаления слова слева или удалении строки слева. Виртуальные пробелы преобразуются в реальные пробелы при удалении слова справа. Сохраняются виртуальные пробелы при нажатии клавиши Delete. <a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2882566&group_id=2439">Bug #2882566.</a></li>
+	<li>Исправлена проблема, из-за которой при нажатии Shift+Alt+Down не было перемещения через свёрнутые строки. <a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2871749&group_id=2439">Bug #2871749.</a></li>
+	<li>Исправлена ошибка отображения цвета фона при использовании подсвеченных строк, содержащих виртуальные пробелы. <a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2914691&group_id=2439">Bug #2914691.</a></li>
+	<li>Исправлена ошибка отображения символа свёртки при использовании SC_WRAPVISUALFLAGLOC_END_BY_TEXT. <a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2936108&group_id=2439">Bug #2936108.</a></li>
+	<li>Исправлено отображение пустого цвета фона для стиля EOLFilled в последней строке. <a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2890105&group_id=2439">Bug #2890105.</a></li>
+	<li>В лексере VB исправлена проблема с ключевым словом в конце файла. <a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2901239&group_id=2439">Bug #2901239.</a></li>
+	<li>В SciTE исправлена ошибка, из-за которой двойной клик по вкладке закрывал файл.</li>
+	<li>В SciTE исправлена ошибка, при которой команды подсветки скобок работали только, если курсор находится следом за скобкой, а не когда он в виртуальном пробеле. <a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2885560&group_id=2439">Bug #2885560.</a></li>
+	<li>В SciTE исправлена ошибка с получением доступа к файлам в папке Program Files в Windows Vista до разрешения Windows виртуализировать доступ. <a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2916685&group_id=2439">Bug #2916685.</a></li>
+	<li>В блоках NSIS исправлена ошибка обработки ключевых слов, начинающихся с '!'. <a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2872157&group_id=2439">Bug #2872157.</a></li>
+	<li>Изменена компоновка Scintilla_LinkLexers на "C", для возможности использования клиентами, написанными на C. <a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2844718&group_id=2439">Bug #2844718.</a></li>
 	</ul>
+	<li>Перевод: <b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=ALeXkRU" target=_blank>ALeXkRU</a></b>
 
 	<h3>
 		<a href="http://prdownloads.sourceforge.net/scintilla/scite201.zip?download">Release 2.01</a>
