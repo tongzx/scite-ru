@@ -880,7 +880,8 @@ int SciTEBase::SaveAllBuffers(bool forceQuestion, bool alwaysYes) {
 	UpdateBuffersCurrent();
 	int currentBuffer = buffers.Current();
 	for (int i = 0; (i < buffers.length) && (choice != IDCANCEL); i++) {
-		if (buffers.buffers[i].DocumentNotSaved()) { //-change-[fixgonefile]
+//!		if (buffers.buffers[i].isDirty) {
+		if (buffers.buffers[i].DocumentNotSaved()) { //-change-[OpenNonExistent]
 			SetDocumentAt(i);
 			if (alwaysYes) {
 				if (!Save()) {
@@ -899,7 +900,8 @@ void SciTEBase::SaveTitledBuffers() {
 	UpdateBuffersCurrent();
 	int currentBuffer = buffers.Current();
 	for (int i = 0; i < buffers.length; i++) {
-		if (buffers.buffers[i].DocumentNotSaved() && !buffers.buffers[i].IsUntitled()) { //-change-[fixgonefile]
+//!		if (buffers.buffers[i].isDirty && !buffers.buffers[i].IsUntitled()) {
+		if (buffers.buffers[i].DocumentNotSaved() && !buffers.buffers[i].IsUntitled()) { //-change-[OpenNonExistent]
 			SetDocumentAt(i);
 			Save();
 		}
@@ -1026,7 +1028,8 @@ void SciTEBase::BuffersMenu() {
 			//char *cpDirEnd = strrchr(buffers.buffers[pos]->fileName, pathSepChar);
 			//strcat(entry, cpDirEnd + 1);
 
-			if (buffers.buffers[pos].DocumentNotSaved()) { //-change-[fixgonefile]
+//!			if (buffers.buffers[pos].isDirty) {
+			if (buffers.buffers[pos].DocumentNotSaved()) { //-change-[OpenNonExistent]
 				strcat(entry, " *");
 				strcat(titleTab, " *");
 			}
@@ -1512,7 +1515,8 @@ void SciTEBase::ToolsMenu(int item) {
 		if (props.GetWild(propName.c_str(), FileNameExt().AsInternal()).length())
 			saveBefore = props.GetNewExpand(propName.c_str(), FileNameExt().AsInternal()).value();
 
-		if (saveBefore == 2 || (saveBefore == 1 && (!(CurrentBuffer()->DocumentNotSaved()) || Save())) || SaveIfUnsure() != IDCANCEL) { //-change-[fixgonefile]
+//!		if (saveBefore == 2 || (saveBefore == 1 && (!(CurrentBuffer()->isDirty) || Save())) || SaveIfUnsure() != IDCANCEL) {
+		if (saveBefore == 2 || (saveBefore == 1 && (!(CurrentBuffer()->DocumentNotSaved()) || Save())) || SaveIfUnsure() != IDCANCEL) { //-change-[OpenNonExistent]
 			int flags = 0;
 
 			propName = "command.is.filter.";

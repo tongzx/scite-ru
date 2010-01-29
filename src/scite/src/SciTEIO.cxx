@@ -345,7 +345,6 @@ void SciTEBase::DiscoverIndentSetting() {
 }
 
 void SciTEBase::OpenFile(int fileSize, bool suppressMessage) {
-	//!CurrentBuffer()->fileOpenMethod = Buffer::omOpenNonExistent; //!-add-[OpenNonExistent]
 	FILE *fp = filePath.Open(fileRead);
 	if (fp) {
 //!-[utf8.auto.check]		Utf8_16_Read convert;
@@ -406,13 +405,11 @@ void SciTEBase::OpenFile(int fileSize, bool suppressMessage) {
 		if (props.GetInt("indent.auto")) {
 			DiscoverIndentSetting();
 		}
-		//CurrentBuffer()->fileOpenMethod = Buffer::omOpenExistent; //!-add-[OpenNonExistent]
 
 	} else if (!suppressMessage) {
 		if (props.GetInt("warning.couldnotopenfile.disable") != 1) { //!-add-[warning.couldnotopenfile.disable]
 			SString msg = LocaliseMessage("Could not open file '^0'.", filePath.AsFileSystem());
 			WindowMessageBox(wSciTE, msg, MB_OK | MB_ICONWARNING);
-			//CurrentBuffer()->fileOpenMethod = Buffer::omOpenNonExistentWarned; //!-add-[OpenNonExistent]
 		}
 	}
 	if (!SendEditor(SCI_GETUNDOCOLLECTION)) {
@@ -654,32 +651,11 @@ void SciTEBase::Revert() {
 }
 
 void SciTEBase::CheckReload() {
-	/*!if (props.GetInt("load.on.activate")) { //-change-[rollback-174]
-//!-start-[CheckFileExist]
-	if (!props.GetInt("load.on.activate")) return;
-	if ( filePath.IsUntitled() || 
-		(CurrentBuffer()->fileOpenMethod > Buffer::omOpenExistent)) return; //!-change-[OpenNonExistent]
-	if (CurrentBuffer()->fileMovedAsked) CurrentBuffer()->fileMovedAsked = CurrentBuffer()->isDirty;
-	if ((!CurrentBuffer()->fileMovedAsked)&&(!filePath.Exists())) {
-		CurrentBuffer()->fileMovedAsked = true;
-		CurrentBuffer()->isDirty = true;
-		SString msg = LocaliseMessage(
-				"File '^0' is missing or not available.\nDo you wish to keep the file open in the editor?",
-				filePath.AsFileSystem());
-		int decision = WindowMessageBox(wSciTE, msg, MB_YESNO + MB_DEFBUTTON1);
-		if (decision == IDNO) {
-			Close();
-			return;
-		}
-		CheckMenus();
-		SetWindowName();
-		BuffersMenu();
-	} else
-	if (filePath.Exists()) {
-//!-end-[CheckFileExist]
+	if (props.GetInt("load.on.activate")) {
 		// Make a copy of fullPath as otherwise it gets aliased in Open
 		time_t newModTime = filePath.ModifiedTime();
 		//Platform::DebugPrintf("Times are %d %d\n", CurrentBuffer()->fileModTime, newModTime);
+/*!
 		if ((newModTime != 0) && (newModTime != CurrentBuffer()->fileModTime)) {
 			RecentFile rf = GetFilePosition();
 			OpenFlags of = props.GetInt("reload.preserves.undo") ? ofPreserveUndo : ofNone;
@@ -700,14 +676,6 @@ void SciTEBase::CheckReload() {
 						Open(filePath, static_cast<OpenFlags>(of | ofForceLoad));
 						DisplayAround(rf);
 					}
-					//!-start-[CheckFileExist]
-					else {
-						CurrentBuffer()->isDirty = true;
-						CheckMenus();
-						SetWindowName();
-						BuffersMenu();
-					}
-					//!-end-[CheckFileExist]
 					CurrentBuffer()->fileModLastAsk = newModTime;
 				}
 			} else {
@@ -715,11 +683,8 @@ void SciTEBase::CheckReload() {
 				DisplayAround(rf);
 			}
 		}
-	}*/
-	if (props.GetInt("load.on.activate")){
-		// Make a copy of fullPath as otherwise it gets aliased in Open
-		time_t newModTime = filePath.ModifiedTime();
-		//Platform::DebugPrintf("Times are %d %d\n", CurrentBuffer()->fileModTime, newModTime);
+*/
+//!-start-[CheckFileExist]
 		if (newModTime != CurrentBuffer()->fileModTime) {
 			if (newModTime != 0) {
 				RecentFile rf = GetFilePosition();
@@ -729,12 +694,12 @@ void SciTEBase::CheckReload() {
 						SString msg;
 						if (CurrentBuffer()->isDirty) {
 							msg = LocaliseMessage(
-									  "The file '^0' has been modified. Should it be reloaded?",
-									  filePath.AsFileSystem());
+									"The file '^0' has been modified. Should it be reloaded?",
+									filePath.AsFileSystem());
 						} else {
 							msg = LocaliseMessage(
-									  "The file '^0' has been modified outside SciTE. Should it be reloaded?",
-									  FileNameExt().AsFileSystem());
+									"The file '^0' has been modified outside SciTE. Should it be reloaded?",
+									FileNameExt().AsFileSystem());
 						}
 						int decision = WindowMessageBox(wSciTE, msg, MB_YESNO);
 						if (decision == IDYES) {
@@ -754,8 +719,8 @@ void SciTEBase::CheckReload() {
 				if (0 == dialogsOnScreen) {
 						SString msg;
 						msg = LocaliseMessage(
-								  "File '^0' is missing or not available.\nDo you wish to keep the file open in the editor?",
-								  filePath.AsFileSystem());
+								"File '^0' is missing or not available.\nDo you wish to keep the file open in the editor?",
+								filePath.AsFileSystem());
 						int decision = WindowMessageBox(wSciTE, msg, MB_YESNO);
 						if (decision == IDNO) {
 							Close();
@@ -763,6 +728,7 @@ void SciTEBase::CheckReload() {
 					}
  			}
  		}
+//!-end-[CheckFileExist]
 	}
 }
 
@@ -853,7 +819,8 @@ int SciTEBase::SaveIfUnsureForBuilt() {
 	if (props.GetInt("save.all.for.build")) {
 		return SaveAllBuffers(false, !props.GetInt("are.you.sure.for.build"));
 	}
-	if (CurrentBuffer()->DocumentNotSaved()) { //-change-[fixgonefile]
+//!	if (CurrentBuffer()->isDirty) {
+	if (CurrentBuffer()->DocumentNotSaved()) { //-change-[OpenNonExistent]
 		if (props.GetInt("are.you.sure.for.build"))
 			return SaveIfUnsure(true);
 
@@ -973,14 +940,13 @@ void SciTEBase::ReloadProperties() {
 
 // Returns false if cancelled or failed to save
 bool SciTEBase::Save() {
-	if (!filePath.IsUntitled()) { //-change-[rollback-174]
+	if (!filePath.IsUntitled()) {
 		if (props.GetInt("save.deletes.first")) {
 			filePath.Remove();
 		}
 
 		if (SaveBuffer(filePath)) {
 			CurrentBuffer()->SetTimeFromFile();
-			//!CurrentBuffer()->fileOpenMethod = Buffer::omOpenExistent; //!-add-[OpenNonExistent]
 			SendEditor(SCI_SETSAVEPOINT);
 			if (IsPropertiesFile(filePath)) {
 				ReloadProperties();
@@ -996,15 +962,6 @@ bool SciTEBase::Save() {
 		}
 		return true;
 	} else {
-/*!-change-[rollback-174]
-		if (CurrentBuffer()->fileOpenMethod == Buffer::omOpenNonExistent) {
-			CurrentBuffer()->fileOpenMethod = Buffer::omOpenNonExistentWarned;
-			if (!SaveAsDialog()) {
-				CurrentBuffer()->fileOpenMethod = Buffer::omOpenNonExistent; // return method back
-				return false;
-			} else return true;
-		} else
-*/
 		return SaveAsDialog();
 	}
 }

@@ -1229,7 +1229,8 @@ void SciTEBase::SetWindowName() {
 	} else {
 		windowName = FileNameExt().AsInternal();
 	}
-	if (CurrentBuffer()->DocumentNotSaved()) //!-change-[fixgonefile]
+//!	if (CurrentBuffer()->isDirty)
+	if (CurrentBuffer()->DocumentNotSaved()) //!-change-[OpenNonExistent]
 		windowName += " * ";
 	else
 		windowName += " - ";
@@ -5144,7 +5145,8 @@ void SciTEBase::CheckMenus() {
 	}
 	EnableAMenuItem(IDM_SAVEALL, bSaveAllEnabled);
 //!-end-[SaveAllEnabled]
-	EnableAMenuItem(IDM_SAVE, CurrentBuffer()->DocumentNotSaved()); //-change-[fixgonefile]
+//!	EnableAMenuItem(IDM_SAVE, CurrentBuffer()->isDirty);
+	EnableAMenuItem(IDM_SAVE, CurrentBuffer()->DocumentNotSaved()); //-change-[OpenNonExistent]
 	EnableAMenuItem(IDM_UNDO, SendFocused(SCI_CANUNDO));
 	EnableAMenuItem(IDM_REDO, SendFocused(SCI_CANREDO));
 	EnableAMenuItem(IDM_DUPLICATE, !isReadOnly);
