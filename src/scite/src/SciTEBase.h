@@ -318,15 +318,15 @@ public:
 	UniMode unicodeMode;
 	time_t fileModTime;
 	time_t fileModLastAsk;
-	bool fileMovedAsked; //!-add-[CheckFileExist]
-	enum { omOpenExistent, omOpenNonExistentWarned, omOpenNonExistent} fileOpenMethod; //!-add-[OpenNonExistent]
+	//!bool fileMovedAsked; //!-change-[rollback-174]
+	//!enum { omOpenExistent, omOpenNonExistentWarned, omOpenNonExistent} fileOpenMethod; //!-change-[rollback-174]
 	enum { fmNone, fmMarked, fmModified} findMarks;
 	SString overrideExtension;	///< User has chosen to use a particular language
 	FoldState foldState;
 	Buffer() :
 			RecentFile(), doc(0), isDirty(false), ROMarker(0), useMonoFont(false),  //!-change-[ReadOnlyTabMarker]
-			unicodeMode(uni8Bit), fileModTime(0), fileModLastAsk(0), findMarks(fmNone), foldState(),
-			fileMovedAsked(false), fileOpenMethod(omOpenExistent) {} //!-add-[CheckFileExist, OpenNonExistent]
+			unicodeMode(uni8Bit), fileModTime(0), fileModLastAsk(0), findMarks(fmNone), foldState()/*!,
+			fileMovedAsked(false), fileOpenMethod(omOpenExistent)*/ {} //!-change-[rollback-174]
 
 	void Init() {
 		RecentFile::Init();
@@ -346,6 +346,11 @@ public:
 		fileModTime = ModifiedTime();
 		fileModLastAsk = fileModTime;
 	}
+	//-start-[fixgonefile]
+	bool DocumentNotSaved() const {
+		return (isDirty || (!IsUntitled() && (fileModTime == 0)));
+	}
+	//-end-[fixgonefile]
 };
 
 class BufferList {
