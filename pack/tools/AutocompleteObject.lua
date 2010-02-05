@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 AutocompleteObject.lua
 mozers™, Tymur Gubayev
-version 3.10.5
+version 3.10.6
 ------------------------------------------------------
 Inputting of the symbol set in autocomplete.[lexer].start.characters causes the popup list of properties and methods of input_object. They undertake from corresponding api-file.
 In the same case inputting of a separator changes the case of symbols in input_object's name according to a api-file.
@@ -48,6 +48,8 @@ mydoc = document
 document - имя этого же объекта, заданное в api файле
 ------------------------------------------------------
 History:
+3.10.6 (Tymur):
+	- функция FindDeclaration вызывается теперь лишь при открытии и после сохранения файла, что значительно ускоряет работу скрипта для больших файлов.
 3.10.4 (mozers):
 	- исправлена ошибка приводившая к раскрытию раскрывающегося списка в одну строку
 3.10.3 (Tymur):
@@ -376,11 +378,10 @@ local function AutocompleteObject(char)
 	if get_api then
 		CreateAPITable()
 		CreateObjectsAndAliasTables()
+		FindDeclaration() -- таблица сопоставлений объект-синоним пересоздаётся только после сохранения
 	end
 	-- если в api_table пусто - выходим.
 	if not next(api_table) then return false end
-
-	FindDeclaration()
 
 	-- Важно: запоминаем текщую позицию курсора (Иначе "string.b|[Enter]" превратиться в "string.bbyte")
 	current_pos = editor.CurrentPos
