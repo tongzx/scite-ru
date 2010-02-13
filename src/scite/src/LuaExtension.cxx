@@ -7,7 +7,6 @@
 #include <string.h>
 #include <ctype.h>
 
-#include "Platform.h" //!-add-[OnKey]
 #include "Scintilla.h"
 #include "Accessor.h"
 #include "Extender.h"
@@ -30,11 +29,15 @@ extern "C" {
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
+//!-start-[no_wornings]
+/*
 #ifdef _MSC_VER
 // MSVC looks deeper into the code than other compilers, sees that
 // lua_error calls longjmp, and complains about unreachable code.
 #pragma warning(disable: 4702)
 #endif
+*/
+//!-end-[no_wornings]
 
 #else
 
@@ -1954,7 +1957,11 @@ static int cf_editor_reload_startup_script(lua_State*) {
 }
 //!-end-[StartupScriptReload]
 
+//!-start-[no_wornings]
+/*
 #ifdef _MSC_VER
 // Unreferenced inline functions are OK
 #pragma warning(disable: 4514)
 #endif
+*/
+//!-end-[no_wornings]

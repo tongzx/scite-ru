@@ -11,13 +11,20 @@
 #include <string.h>
 #include <stdio.h>
 
+//!-start-[no_wornings]
+/*
 #ifdef _MSC_VER
 // Visual C++ doesn't like unreachable code or long decorated names in its own headers.
 #pragma warning(disable: 4018 4100 4245 4511 4512 4663 4702 4786)
 #endif
+*/
+#ifdef _MSC_VER
+#pragma warning( disable: 4786 )
+#endif
+//!-end-[no_wornings]
 
-#include <string>
-#include <map>
+//#include <string> //!-change-[no_wornings]
+//#include <map> //!-change-[no_wornings]
 
 #include "Platform.h"
 

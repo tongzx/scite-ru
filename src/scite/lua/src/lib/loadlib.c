@@ -92,8 +92,17 @@ static lua_CFunction ll_sym (lua_State *L, void *lib, const char *sym) {
 ** =======================================================================
 */
 
+//!-start-[no_wornings]
+#ifdef _MSC_VER
+#pragma warning( disable : 4115 ) // warning C4115: '_RPC_ASYNC_STATE' : named type definition in parentheses
+#endif
+//!-end-[no_wornings]
 #include <windows.h>
-
+//!-start-[no_wornings]
+#ifdef _MSC_VER
+#pragma warning( default : 4115 )
+#endif
+//!-end-[no_wornings]
 
 #undef setprogdir
 

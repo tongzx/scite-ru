@@ -268,11 +268,11 @@ static void FoldNncrontabDoc(unsigned int startPos, int length, int initStyle,
 		else if (!(style == SCE_NNCRONTAB_COMMENT || style == SCE_NNCRONTAB_STRING)) {
 			if (wordlen) {
 				if (wordlen < 255) {
-					word[wordlen] = c;
+					word[wordlen] = static_cast<char>(c);
 					wordlen++;
 				}
 			} else { // start scanning at first word character
-				word[0] = c;
+				word[0] = static_cast<char>(c);
 				wordlen = 1;
 			}
 		}

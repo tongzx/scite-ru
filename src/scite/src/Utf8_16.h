@@ -15,9 +15,13 @@
 #include <stdio.h>
 #include <assert.h>
 
+//!-start-[no_wornings]
+/*
 #ifdef _MSC_VER
 #pragma warning(disable: 4514) // nreferenced inline function has been removed
 #endif
+*/
+//!-end-[no_wornings]
 
 class Utf8_16 {
 public:

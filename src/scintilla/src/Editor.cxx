@@ -10,8 +10,8 @@
 #include <stdio.h>
 #include <ctype.h>
 
-#include <string>
-#include <vector>
+//#include <string> //!-change-[no_wornings]
+//#include <vector> //!-change-[no_wornings]
 #include <algorithm>
 
 // With Borland C++ 5.5, including <string> includes Windows.h leading to defining
@@ -3668,10 +3668,9 @@ int Editor::TextWidth(int style, const char *text) {
 	AutoSurface surface(this);
 	if (surface) {
 		return surface->WidthText(vs.styles[style].font, text, istrlen(text));
-//!	} else {
-//!		return 1;
+	} else {
+		return 1;
 	}
-	return 1;	//!-change-[no_wornings]
 }
 
 // Empty method is overridden on GTK+ to show / hide scrollbars
@@ -4743,10 +4742,9 @@ int Editor::StartEndDisplayLine(int pos, bool start) {
 	}
 	if (posRet == INVALID_POSITION) {
 		return pos;
-//!	} else {
-//!		return posRet;
+	} else {
+		return posRet;
 	}
-	return posRet;	//!-change-[no_wornings]
 }
 
 int Editor::KeyCommand(unsigned int iMessage) {
@@ -6390,10 +6388,9 @@ int Editor::WrapCount(int line) {
 	if (surface && ll) {
 		LayoutLine(line, surface, vs, ll, wrapWidth);
 		return ll->lines;
-//!	} else {
-//!		return 1;
+	} else {
+		return 1;
 	}
-	return 1;	//!-change-[no_wornings]
 }
 
 void Editor::AddStyledText(char *buffer, int appendLength) {

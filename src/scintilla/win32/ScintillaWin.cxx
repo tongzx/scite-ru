@@ -13,8 +13,8 @@
 #include <assert.h>
 #include <limits.h>
 
-#include <string>
-#include <vector>
+//#include <string> //!-change-[no_wornings]
+//#include <vector> //!-change-[no_wornings]
 
 #define _WIN32_WINNT  0x0500
 #include <windows.h>
@@ -777,7 +777,8 @@ sptr_t ScintillaWin::WndProc(unsigned int iMessage, uptr_t wParam, sptr_t lParam
 		case WM_CHAR:
 			if (((wParam >= 128) || !iscntrl(wParam)) || !lastKeyDownConsumed) {
 				if (::IsWindowUnicode(MainHWND()) || keysAlwaysUnicode) {
-					wchar_t wcs[2] = {wParam, 0};
+//					wchar_t wcs[2] = {wParam, 0}; //!-change-[no_wornings]
+					wchar_t wcs[2] = {static_cast<wchar_t>(wParam), 0};
 					if (IsUnicodeMode()) {
 						// For a wide character version of the window:
 						char utfval[4];

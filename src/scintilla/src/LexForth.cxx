@@ -499,11 +499,11 @@ static void FoldForthDoc(unsigned int startPos, int length, int initStyle,
             || style == SCE_FORTH_PREWORD2)) {
             if (wordlen) {
                 if (wordlen < 255) {
-                    word[wordlen] = c;
+                    word[wordlen] = static_cast<char>(c);
                     wordlen++;
                 }
             } else { // start scanning at first word character
-                word[0] = c;
+                word[0] = static_cast<char>(c);
                 wordlen = 1;
                 wordstyle = style;
             }

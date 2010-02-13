@@ -25,7 +25,7 @@ public:
 	void Unset(const char *key, int lenKey=-1);
 	void SetMultiple(const char *s);
 	SString Get(const char *key) const;
-	const char *GetString(const char *key) const { return Get(key).c_str(); } //!-add-[FindResultListStyle]
+	const char *GetString(const char *key) const; //!-add-[FindResultListStyle]
 	SString GetExpanded(const char *key) const;
 	SString Expand(const char *withVars, int maxExpands=100) const;
 	int GetInt(const char *key, int defaultValue=0) const;
@@ -40,9 +40,7 @@ public:
 	SString GetNewExpand(const char *keybase, const char *filename="");
 	bool GetFirst(const char *&key, const char *&val);
 	bool GetNext(const char *&key, const char *&val);
-	static void SetCaseSensitiveFilenames(bool caseSensitiveFilenames_) {
-		caseSensitiveFilenames = caseSensitiveFilenames_;
-	}
+	static void SetCaseSensitiveFilenames(bool caseSensitiveFilenames_); //!-change-[no_wornings]
 
 private:
 	// copy-value semantics not implemented

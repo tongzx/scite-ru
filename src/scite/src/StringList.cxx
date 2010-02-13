@@ -8,8 +8,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <string>
-#include <map>
+//#include <string> //!-change-[no_wornings]
+//#include <map> //!-change-[no_wornings]
+
+#include "Platform.h" //!-add-[no_wornings]
 
 #include "SString.h"
 #include "StringList.h"
@@ -419,7 +421,11 @@ char *StringList::GetNearestWords(
 	return NULL;
 }
 
+//!-start-[no_wornings]
+/*
 #ifdef _MSC_VER
 // Unreferenced inline functions are OK
 #pragma warning(disable: 4514)
 #endif
+*/
+//!-end-[no_wornings]

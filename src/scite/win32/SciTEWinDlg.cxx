@@ -1303,11 +1303,7 @@ BOOL SciTEWin::GrepMessage(HWND hDlg, UINT message, WPARAM wParam) {
 			::EndDialog(hDlg, IDCANCEL);
 			wFindInFiles.Destroy();
 			return FALSE;
-//!		} else if (ControlIDOfCommand(wParam) == IDOK) {
-//!-start-[no_wornings]
-		}
-		if (ControlIDOfCommand(wParam) == IDOK) {
-//!-end-[no_wornings]
+		} else if (ControlIDOfCommand(wParam) == IDOK) {
 			findWhat = dlg.ItemText(IDFINDWHAT);
 			if ( findWhat.length() == 0 ) return FALSE; //-add-[find_in_files_no_empty]
 			props.Set("find.what", findWhat.c_str());
@@ -1331,15 +1327,10 @@ BOOL SciTEWin::GrepMessage(HWND hDlg, UINT message, WPARAM wParam) {
 				::EndDialog(hDlg, IDOK);
 				wFindInFiles.Destroy();
 				return TRUE;
-//!			} else {
-//!				return FALSE;
+			} else {
+				return FALSE;
 			}
-//!		} else if (ControlIDOfCommand(wParam) == IDDOTDOT) {
-//!-start-[no_wornings]			}
-			return FALSE;
-		} 
-		if (ControlIDOfCommand(wParam) == IDDOTDOT) {
-//!-end-[no_wornings]
+		} else if (ControlIDOfCommand(wParam) == IDDOTDOT) {
 			FilePath directory(dlg.ItemText(IDDIRECTORY).c_str());
 			directory = directory.Directory();
 			dlg.SetItemText(IDDIRECTORY, directory.AsInternal());

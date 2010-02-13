@@ -13,8 +13,8 @@
 #pragma warning(disable: 4786)
 #endif
 
-#include <string>
-#include <map>
+//#include <string> //!-change-[no_wornings]
+//#include <map> //!-change-[no_wornings]
 
 #ifdef __BORLANDC__
 // Borland includes Windows.h for STL and defaults to different API number
@@ -24,6 +24,8 @@
 #endif
 
 #define _WIN32_WINNT  0x0400
+//!-start-[no_wornings]
+/*
 #ifdef _MSC_VER
 // windows.h, et al, use a lot of nameless struct/unions - can't fix it, so allow it
 #pragma warning(disable: 4201)
@@ -34,6 +36,8 @@
 #pragma warning(default: 4201)
 #endif
 #include <commctrl.h>
+*/
+//!-end-[no_wornings]
 
 #include "Platform.h"
 
@@ -330,7 +334,11 @@ void DirectorExtension::HandleStringMessage(const char *message) {
 	}
 }
 
+//!-start-[no_wornings]
+/*
 #ifdef _MSC_VER
 // Unreferenced inline functions are OK
 #pragma warning(disable: 4514)
 #endif
+*/
+//!-end-[no_wornings]

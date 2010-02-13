@@ -14,12 +14,16 @@ extern const char propAbbrevFileName[];
 extern const char menuAccessIndicator[];
 
 #ifdef WIN32
+//!-start-[no_wornings]
+/*
 #ifdef _MSC_VER
 // Shut up level 4 warning:
 // warning C4710: function 'void whatever(...)' not inlined
 // warning C4800: forcing value to bool 'true' or 'false' (performance warning)
 #pragma warning(disable: 4710 4800)
 #endif
+*/
+//!-end-[no_wornings]
 #ifdef __DMC__
 #include <time.h>
 #endif

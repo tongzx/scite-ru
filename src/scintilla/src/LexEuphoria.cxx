@@ -23,22 +23,26 @@
 #include "Scintilla.h"
 #include "SciLexer.h"
 
-static inline bool IsAWordChar(const char ch) {
+//static inline bool IsAWordChar(const char ch) { //!-change-[no_wornings]
+static inline bool IsAWordChar(int ch) {
 	// '.' prevents filenames like get.e from being evaluated as a keyword
 	return (isalnum(ch) || ch == '_');
 }
 
-static inline bool IsAHexChar(const char ch) {
+//static inline bool IsAHexChar(const char ch) { //!-change-[no_wornings]
+static inline bool IsAHexChar(int ch) {
 	return (isdigit(ch) || 
 		ch == 'A' || ch == 'B' || ch == 'C' ||
 		ch == 'D' || ch == 'E' || ch == 'F' );
 }
 
-static inline bool IsEscapedChar(const char ch) {
+//static inline bool IsEscapedChar(const char ch) { //!-change-[no_wornings]
+static inline bool IsEscapedChar(int ch) {
 	return (ch == '\\' || ch == '\'' || ch == '\"' || ch == 'r' || ch == 'n' || ch == 't');
 }
 
-static inline bool IsEuphoriaOperator(const char ch) {
+//static inline bool IsEuphoriaOperator(const char ch) { //!-change-[no_wornings]
+static inline bool IsEuphoriaOperator(int ch) {
 	return (ch == '*' || ch == '/' || ch == '-' || ch == '+' || ch == '(' || ch == ')' ||
 		ch == '=' || ch == '!' || ch == '{' || ch == '}' || ch == ',' || ch == '&' || ch == '$' ||
 		ch == '[' || ch == ']' || ch == '<' || ch == '>'  || ch == '?' || ch == '.');

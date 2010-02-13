@@ -17,8 +17,8 @@
 #pragma warning(disable: 4786)
 #endif
 
-#include <string>
-#include <map>
+//#include <string> //!-change-[no_wornings]
+//#include <map> //!-change-[no_wornings]
 
 #include "Platform.h"
 
@@ -507,6 +507,20 @@ bool PropSetFile::GetNext(const char *&key, const char *&val) {
 		return false;
 	}
 }
+
+//!-start-[FindResultListStyle]
+const char * PropSetFile::GetString( const char *key ) const
+{
+	return Get(key).c_str();
+}
+//!-end-[FindResultListStyle]
+
+//!-start-[no_wornings]
+void PropSetFile::SetCaseSensitiveFilenames( bool caseSensitiveFilenames_ )
+{
+	caseSensitiveFilenames = caseSensitiveFilenames_;
+}
+//!-end-[no_wornings]
 
 static inline bool IsLetter(char ch) {
 	return ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z'));

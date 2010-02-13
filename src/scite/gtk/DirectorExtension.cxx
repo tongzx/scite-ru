@@ -481,7 +481,11 @@ void DirectorExtension::CreatePipe(bool) {
 	fdReceiver = 0;
 }
 
+//!-start-[no_wornings]
+/*
 #ifdef _MSC_VER
 // Unreferenced inline functions are OK
 #pragma warning(disable: 4514)
 #endif
+*/
+//!-end-[no_wornings]

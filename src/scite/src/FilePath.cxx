@@ -32,6 +32,8 @@
 #ifndef _WIN32_WINNT //!-add-[SubMenu]
 #define _WIN32_WINNT  0x0400
 #endif //!-add-[SubMenu]
+//!-start-[no_wornings]
+/*
 #ifdef _MSC_VER
 // windows.h, et al, use a lot of nameless struct/unions - can't fix it, so allow it
 #pragma warning(disable: 4201)
@@ -44,6 +46,8 @@
 #pragma warning(disable: 4996)
 #endif
 #include <commctrl.h>
+*/
+//!-end-[no_wornings]
 
 // For chdir
 #ifdef _MSC_VER

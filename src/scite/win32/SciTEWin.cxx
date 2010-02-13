@@ -286,7 +286,6 @@ void SciTEWin::ReadProperties() {
 }
 
 static FilePath GetSciTEPath(FilePath home) {
-/*!
 	if (home.IsSet()) {
 		return FilePath(home);
 	} else {
@@ -298,19 +297,6 @@ static FilePath GetSciTEPath(FilePath home) {
 			*lastSlash = '\0';
 		return FilePath(path);
 	}
-*/
-//!-start-[no_wornings]
-	if (home.IsSet())
-		return FilePath(home);
-
-	char path[MAX_PATH];
-	::GetModuleFileName(0, path, sizeof(path));
-	// Remove the SciTE.exe
-	char *lastSlash = strrchr(path, pathSepChar);
-	if (lastSlash)
-		*lastSlash = '\0';
-	return FilePath(path);
-//!-end-[no_wornings]
 }
 
 FilePath SciTEWin::GetDefaultDirectory() {

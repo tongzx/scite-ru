@@ -388,7 +388,8 @@ static const char *match (MatchState *ms, const char *s, const char *p) {
             luaL_error(ms->L, "missing " LUA_QL("[") " after "
                                LUA_QL("%%f") " in pattern");
           ep = classend(ms, p);  /* points to what is next */
-          previous = (s == ms->src_init) ? '\0' : *(s-1);
+//        previous = (s == ms->src_init) ? '\0' : *(s-1); //!-change-[no_wornings]
+          previous = (char)( (s == ms->src_init) ? '\0' : *(s-1) );
           if (matchbracketclass(uchar(previous), p, ep-1) ||
              !matchbracketclass(uchar(*s), p, ep-1)) return NULL;
           p=ep; goto init;  /* else return match(ms, s, ep); */

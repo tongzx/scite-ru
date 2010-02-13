@@ -225,7 +225,7 @@ static void ColouriseLuaDoc(
 							isObjectStart = false;
 						}
 						sc.SetState(SCE_LUA_OPERATOR);
-						s[0] = sc.ch;
+						s[0] = static_cast<char>(sc.ch);
 						sc.Forward();
 						sc.SetState(SCE_LUA_IDENTIFIER);
 						sc.MoveTo(currPos);
@@ -354,7 +354,7 @@ static void ColouriseLuaDoc(
 			else
 			if (isSubObject && sc.state != SCE_LUA_IDENTIFIER)
 				if (setWordStart.Contains(sc.chNext) && (sc.ch == '.' || sc.ch == ':'))
-					sChar = sc.ch;
+					sChar = static_cast<char>(sc.ch);
 				else
 					isSubObject = false;
 //!-end-[LuaLexerImprovement]

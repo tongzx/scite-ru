@@ -17,8 +17,8 @@
 #pragma warning(disable: 4786)
 #endif
 
-#include <string>
-#include <map>
+//#include <string> //!-change-[no_wornings]
+//#include <map> //!-change-[no_wornings]
 
 #ifdef __MINGW_H
 #define _WIN32_IE	0x0400
@@ -34,6 +34,8 @@
 #ifndef _WIN32_WINNT //!-add-[SubMenu]
 #define _WIN32_WINNT  0x0400
 #endif //!-add-[SubMenu]
+//!-start-[no_wornings]
+/*
 #ifdef _MSC_VER
 // windows.h, et al, use a lot of nameless struct/unions - can't fix it, so allow it
 #pragma warning(disable: 4201)
@@ -45,8 +47,12 @@
 #endif
 #include <commctrl.h>
 #include <richedit.h>
+*/
+//!-end-[no_wornings]
 
 #include "Platform.h"
+
+#include <richedit.h> //!-change-[no_wornings]
 
 #include <io.h>
 #include <process.h>

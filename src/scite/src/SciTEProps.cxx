@@ -17,8 +17,8 @@
 #pragma warning(disable: 4786)
 #endif
 
-#include <string>
-#include <map>
+//#include <string> //!-change-[no_wornings]
+//#include <map> //!-change-[no_wornings]
 
 #include "Platform.h"
 
@@ -43,6 +43,8 @@ const char menuAccessIndicator[] = "_";
 #ifndef _WIN32_WINNT //!-add-[SubMenu]
 #define _WIN32_WINNT  0x0400
 #endif //!-add-[SubMenu]
+//!-start-[no_wornings]
+/*
 #ifdef _MSC_VER
 // windows.h, et al, use a lot of nameless struct/unions - can't fix it, so allow it
 #pragma warning(disable: 4201)
@@ -53,6 +55,8 @@ const char menuAccessIndicator[] = "_";
 #pragma warning(default: 4201)
 #endif
 #include <commctrl.h>
+*/
+//!-end-[no_wornings]
 
 const char menuAccessIndicator[] = "&";
 
@@ -450,7 +454,6 @@ void LowerCaseString(char *s) {
 }
 
 SString SciTEBase::ExtensionFileName() {
-/*!
 	if (CurrentBuffer()->overrideExtension.length()) {
 		return CurrentBuffer()->overrideExtension;
 	} else {
@@ -470,25 +473,6 @@ SString SciTEBase::ExtensionFileName() {
 			return props.Get("default.file.ext");
 		}
 	}
-*/
-//!-start-[no_wornings]
-	if (CurrentBuffer()->overrideExtension.length())
-		return CurrentBuffer()->overrideExtension;
-
-	FilePath name = FileNameExt();
-	if (name.IsSet()) {
-		// Force extension to lower case
-		char fileNameWithLowerCaseExtension[MAX_PATH];
-			strcpy(fileNameWithLowerCaseExtension, name.AsInternal());
-		char *extension = strrchr(fileNameWithLowerCaseExtension, '.');
-		if (extension) {
-			LowerCaseString(extension);
-		}
-		return SString(fileNameWithLowerCaseExtension);
-	}
-
-	return props.Get("default.file.ext");
-//!-end-[no_wornings]
 }
 
 void SciTEBase::ForwardPropertyToEditor(const char *key) {
