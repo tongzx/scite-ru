@@ -35,8 +35,8 @@ class CallTip {
 //!-end-[BetterCalltips]
 
 	// Private so CallTip objects can not be copied
-	CallTip(const CallTip &) {}
-	CallTip &operator=(const CallTip &) { return *this; }
+	CallTip(const CallTip &);
+	CallTip &operator=(const CallTip &);
 	void DrawChunk(Surface *surface, int &x, const char *s,
 		int posStart, int posEnd, int ytext, PRectangle rcClient,
 		bool highlight, bool draw);

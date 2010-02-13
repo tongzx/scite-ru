@@ -31,7 +31,7 @@ public:
 	virtual bool OnExecute(const char *s);
 	virtual bool OnSavePointReached();
 	virtual bool OnSavePointLeft();
-	//virtual bool OnStyle(unsigned int startPos, int lengthDoc, int initStyle, Accessor *styler);
+	virtual bool OnStyle(unsigned int startPos, int lengthDoc, int initStyle, Accessor *styler);
 //!	virtual bool OnDoubleClick();
 	virtual bool OnDoubleClick(int modifiers); //!-add-[OnDoubleClick]
 	virtual bool OnClick(int modifiers); //!-add-[OnClick]

@@ -332,6 +332,7 @@ const char *contributors[] = {
             "David Severwright",
             "Jon Strait",
             "Oliver Kiddle",
+            "Etienne Girondel",
 //!-start-[SciTE-Ru]
             "HSolo",
             "Midas",
@@ -453,6 +454,8 @@ SciTEBase::SciTEBase(Extension *ext) : apis(true), extender(ext) {
 	findInStyle = false;
 	closeFind = true; //!-add-[close.find.window]
 	findStyle = 0;
+
+	abbrevInsert[0] = '\0';
 
 	languageMenu = 0;
 	languageItems = 0;
@@ -826,18 +829,18 @@ void SciTEBase::SetAboutMessage(WindowID wsci, const char *appTitle) {
 		}
 #endif
 		AddStyledText(wsci, GetTranslationToAbout("Version").c_str(), trsSty);
-		AddStyledText(wsci, " 2.02 .73Ru\n", 1);
+		AddStyledText(wsci, " 2.03 .73Ru\n", 1);
 		AddStyledText(wsci, "    " __DATE__ " " __TIME__ "\n", 1);
 		SetAboutStyle(wsci, 4, ColourDesired(0, 0x7f, 0x7f)); //!-add-[SciTE-Ru]
 		AddStyledText(wsci, "http://scite.net.ru\n", 4); //!-add-[SciTE-Ru]
 		SetAboutStyle(wsci, 2, ColourDesired(0, 0, 0));
 		Platform::SendScintilla(wsci, SCI_STYLESETITALIC, 2, 1);
 		AddStyledText(wsci, GetTranslationToAbout("Based on version").c_str(), trsSty); //!-add-[SciTE-Ru]
-		AddStyledText(wsci, " 2.02 ", 1); //!-add-[SciTE-Ru]
+		AddStyledText(wsci, " 2.03 ", 1); //!-add-[SciTE-Ru]
 		AddStyledText(wsci, GetTranslationToAbout("by").c_str(), trsSty);
 		AddStyledText(wsci, " Neil Hodgson.\n", 2);
 		SetAboutStyle(wsci, 3, ColourDesired(0, 0, 0));
-		AddStyledText(wsci, "December 1998-January 2010.\n", 3);
+		AddStyledText(wsci, "December 1998-February 2010.\n", 3);
 		SetAboutStyle(wsci, 4, ColourDesired(0, 0x7f, 0x7f));
 		AddStyledText(wsci, "http://www.scintilla.org\n", 4);
 		AddStyledText(wsci, "Lua scripting language by TeCGraf, PUC-Rio\n", 3);
@@ -1959,7 +1962,7 @@ int SciTEBase::DoReplaceAll(bool inSelection) {
 			replacements++;
 		}
 		if (inSelection) {
-			if (countSelections == 1) 
+			if (countSelections == 1)
 				SetSelection(startPosition, endPosition);
 		} else {
 			SetSelection(lastMatch, lastMatch);
@@ -2468,6 +2471,7 @@ bool SciTEBase::StartAutoComplete() {
 			calltipParametersStart.c_str(), autoCompleteIgnoreCase);
 		if (words) {
 			EliminateDuplicateWords(words);
+			SendEditor(SCI_AUTOCSETSEPARATOR, ' ');
 			SendEditorString(SCI_AUTOCSHOW, root.length(), words);
 			delete []words;
 		}
@@ -3577,7 +3581,7 @@ inline bool IsAlphabetic(unsigned int ch) {
 	return ((ch >= 'A') && (ch <= 'Z')) || ((ch >= 'a') && (ch <= 'z'));
 }
 
-static bool includes(const StyleAndWords &symbols, const SString value) {
+static bool includes(const StyleAndWords &symbols, const SString &value) {
 	if (symbols.words.length() == 0) {
 		return false;
 	} else if (IsAlphabetic(symbols.words[0])) {
@@ -3821,6 +3825,7 @@ void SciTEBase::CharAddedOutput(int ch) {
 			symList.Set(symbols.c_str());
 			char *words = symList.GetNearestWords("", 0, true);
 			if (words) {
+				SendEditor(SCI_AUTOCSETSEPARATOR, ' ');
 				SendOutputString(SCI_AUTOCSHOW, 0, words);
 				delete []words;
 			}

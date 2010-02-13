@@ -610,6 +610,7 @@ static const char *propertiesToForward[] = {
 	"lexer.props.allow.initial.spaces",
 	"lexer.python.literals.binary",
 	"lexer.python.strings.b",
+	"lexer.python.strings.over.newline",
 	"lexer.python.strings.u",
 	"lexer.sql.backticks.identifier",
 	"lexer.tex.auto.if",
@@ -741,10 +742,12 @@ void SciTEBase::ReadProperties() {
 	if (modulePath.length())
 	    SendEditorString(SCI_LOADLEXERLIBRARY, 0, modulePath.c_str());
 	language = props.GetNewExpand("lexer.", fileNameForExtension.c_str());
-	if (language.length())
+	if (language.length() && !language.startswith("script_"))
 	    SendEditorString(SCI_SETLEXERLANGUAGE, 0, language.c_str());
 	else
 	    SendEditorString(SCI_SETLEXER, 0, SCLEX_CONTAINER);
+
+	props.Set("Language", language.c_str());
 
 	lexLanguage = SendEditor(SCI_GETLEXER);
 
