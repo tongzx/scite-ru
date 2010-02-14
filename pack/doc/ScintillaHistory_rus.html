@@ -344,6 +344,7 @@
 	<td>Jon Strait</td>
       </tr><tr>
 	<td>Oliver Kiddle</td>
+	<td>Etienne Girondel</td>
     </tr>
     </table>
 	<p>
@@ -356,6 +357,25 @@
 			Icons</a> Copyright(C) 1998 by Dean S. Jones<br />
 		</li>
 	</ul>
+
+	<h3>
+		<a href="http://prdownloads.sourceforge.net/scintilla/scite203.zip?download">Release 2.03</a>
+	</h3>
+	<ul>
+	<li>Версия от 14 февраля 2010 г.</li>
+	<li>Добавлено SCI_SETFIRSTVISIBLELINE для соответствия с SCI_GETFIRSTVISIBLELINE.</li>
+	<li>Лексер Erlang расширен распознаванием базы (системы счисления) численных значений, заданных в виде base#value; отдельные стили для module:function_name; распознает встроенные функции, атрибуты известных модулей и инструкций препроцессора; распознает EDoc и EDoc макросы; различает типы комментариев. <a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2942448&group_id=2439">Bug #2942448.</a></li>
+	<li>В лексер Python добавлена опция lexer.python.strings.over.newline, которая разрешает в строках без тройных кавычек продлевать действие за символом конца строки. Это позволяет использовать язык Ren'Py. <a href="https://sourceforge.net/tracker/?func=detail&atid=352439&aid=2945550&group_id=2439">Feature #2945550.</a></li>
+	<li>Исправлены ошибки при перемещении курсора после удаления прямоугольного выделения. <a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2942131&group_id=2439">Bug #2942131.</a>
+	</li>
+	<li>Исправлена ошибка, при которой вызов SCI_SETSEL при прямоугольном выборе вызывал дополнительное выделение. <a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2947064&group_id=2439">Bug #2947064.</a></li>
+	<li>Исправлена ошибка записи макроса, когда не все вставляемые байты в многобайтных символах были отражены в SCI_REPLACESEL.</li>
+	<li><font color=#CC00CC>Исправлена ошибка SciTE, при которой использование Ctrl+Enter после Ctrl+Пробел приводила к раскрытию списка автозавершения с одной строкой, содержащей все идентификаторы.</font></li>
+	<li>Исправлена ошибка в SciTE на GTK+, при которой запуск инструмента из Tools блокировал пользовательский интерфейс.</li>
+	<li>Исправлена ошибка в SciTE под Windows, возникавшая при копировании в RTF. <a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2108574&group_id=2439">Bug #2108574.</a></li>
+	</ul>
+	<li>Перевод: <b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=ALeXkRU" target=_blank>ALeXkRU</a></b>
+	<li><font color=#CC00CC>Цветом выделены изменения, внесенные участниками команды Ru-Board</font>
 
 	<h3>
 		<a href="http://prdownloads.sourceforge.net/scintilla/scite202.zip?download">Release 2.02</a>
@@ -373,8 +393,8 @@
 	<li>Получение имени используемого лексера с помощью параметра SCI_GETLEXERLANGUAGE.</li>
 	<li>В лексере Progress 4GL улучшена обработка комментариев в объявлениях препроцессора. <a href="https://sourceforge.net/tracker/?func=detail&atid=352439&aid=2902206&group_id=2439">Feature #2902206.</a></li>
 	<li>Лексер HTML расширен для обработки языка шаблонов Mako.</li>
-	<li>Папка SQL расширена для обработки ключевых слов "EXISTS" и "ENDIF" в SQL Anywhere. <a href="https://sourceforge.net/tracker/?func=detail&atid=352439&aid=2887524&group_id=2439">Feature #2887524.</a></li>
-	<li>В SciTE добавлены переменные APIPath и AbbrevPath.</li>
+	<li>Расширена свёртка блоков SQL для обработки ключевых слов "EXISTS" и "ENDIF" в SQL Anywhere. <a href="https://sourceforge.net/tracker/?func=detail&atid=352439&aid=2887524&group_id=2439">Feature #2887524.</a></li>
+	<li><font color=#CC00CC>В SciTE добавлены переменные APIPath и AbbrevPath.</font></li>
 	<li>SciTE в GTK+ использует конвейеры вместо временных файлов при запуске инструментов для повышения безопасности.</li>
 	<li>Исправлено падение при вызове SCI_STYLEGETFONT для стиля с незаданным шрифтом. <a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2857425&group_id=2439">Bug #2857425.</a></li>
 	<li>Исправлено падение, вызванное отсутствием достаточного числа вхождений стилей после выбора лексера. <a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2881279&group_id=2439">Bug #2881279.</a></li>
@@ -384,7 +404,7 @@
 	<li>В SciTE исправлена загрузка несуществующих уже файлов из сессий. <a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2883437&group_id=2439">Bug #2883437.</a></li>
 	<li>В SciTE исправлен экспорт в HTML при использовании неправильного цвета фона.</li>
 	<li>Исправлено падение, если после добавления аннотации, за ней вставляется новая строка. <a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2929708&group_id=2439">Bug #2929708.</a></li>
-	<li>Исправлен крах SciTE при установке из Lua значения свойства в nil.</li>
+	<li><font color=#CC00CC>Исправлен крах SciTE при установке из Lua значения свойства в nil.</font></li>
 	<li>Исправлена ошибка с возвратом правильного значения длины выделенного текста в SCI_GETSELTEXT. <a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2929441&group_id=2439">Bug #2929441.</a></li>
 	<li>Исправлены проблемы позиционирования текста с выделением в отдельных случаях.</li>
 	<li>В GTK+ исправлены проблемы позиционирования текста с лигатурами.</li>
@@ -408,6 +428,7 @@
 	<li>Изменена компоновка Scintilla_LinkLexers на "C", для возможности использования клиентами, написанными на C. <a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2844718&group_id=2439">Bug #2844718.</a></li>
 	</ul>
 	<li>Перевод: <b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=ALeXkRU" target=_blank>ALeXkRU</a></b>
+	<li><font color=#CC00CC>Цветом выделены изменения, внесенные при участии команды Ru-Board</font>
 
 	<h3>
 		<a href="http://prdownloads.sourceforge.net/scintilla/scite201.zip?download">Release 2.01</a>
