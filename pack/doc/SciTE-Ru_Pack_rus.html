@@ -58,6 +58,7 @@
 	<br><b><a href="http://www.fw-web.de/" target=_blank>Frank Wunderlich</a></b> - LUA-скрипты, доработка ядра программы
 	<br><b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=tilarids" target=_blank>tilarids (Сергей Кищенко)</a></b> - доработка ядра программы
 	<br><b><a href="http://erendir.livejournal.com/" target=_blank>Тимур Губаев</a></b> - LUA-скрипты
+	<br><b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=Bonart" target=_blank>leo.bonart</a></b> - правка ядра программы
 	<br><b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=alrusdi81" target=_blank>alrusdi81</a></b> - доработка ядра программы для работы в gtk
 	<br><b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=cvaqlav" target=_blank>QVaclav</a></b> - доработка ядра программы и библиотеки gui
 	<br><b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=mirk" target=_blank>mirk</a> (Сергей Тугаринов)</b> - русификация HELP, настройки, скрипты и конечно сайт <a href="http://scite.ruteam.ru" target=_blank>scite.ruteam.ru</a>
@@ -96,27 +97,27 @@
 	<p>
 		Все основные настройки редактора сосредоточены в файле <span class=name>SciTEGlobal.properties</span> и разбиты по логическим секциям.
 		<br>У всех секций и большинства ключей имеются подсказки объясняющие их назначение.
-		<br>При открытии файла <span class=name>SciTEGlobal.properties</span> или при первом переходе на его вкладку, все секции автоматически сворачиваются, что облегчает навигацию по файлу <span class=desc>[работа скрипта SciTEGlobal_ToggleFold.lua]</span>
+		<br>При открытии файла <span class=name>SciTEGlobal.properties</span> или при первом переходе на его вкладку, все секции автоматически сворачиваются, что облегчает навигацию по файлу <span class=desc>[работа скрипта RestoreRecent.lua]</span>
 		<br> Если выделить незнакомый ключ и нажать <span class=name>F1</span>, то откроется файл справки в окне без излишеств и курсор будет перемещен в то место текста, где этот ключ упоминается. Все вхождения заданного текста будут выделены и можно будет быстро перемещаться между ними с помощью клавиши Enter. Если после выделения текста, клавишу <span class=name>F1</span> нажимать при зажатом <span class=name>Shift</span> то откроется самая последняя версия справки (на английском языке). <span class=desc>[HTML_help.hta]</span><br>
 	</p>
 	<p>
 		В сборке используется ветвистое многоуровневое меню Tools, содержащее множество полезных команд. <span class=desc>[Потребовалась доработка исходного кода]</span>
 	</p>
 	<p>
-		Статусная строка редактора, помимо стандартных параметров, отображает текущий размер основного шрифта, используемый лексер, кодировку текста, режим <span class=name>EDIT/VIEW</span> для текущего буфера. <span class=desc>[Zoom.lua lexer_name.lua codepage.lua ReadOnly.lua]</span>
+		Статусная строка редактора, помимо стандартных параметров, отображает текущий размер основного шрифта, используемый лексер, кодировку текста, режим <span class=name>EDIT/VIEW</span> для текущего буфера. <span class=desc>[CodePage.lua Zoom.lua ReadOnly.lua]</span>
 	</p>
 	<p>
 		Возможна запись файлов, защищенных атрибутами RO/Hidden/System. <span class=desc>[корректива исходного кода + ROWrite.lua]</span>
 	</p>
 	<p>
-		Возможен просмотр и редактирование файлов в кодировке DOS866 <span class=desc>[win2dos.lua]</span>
+		Возможен просмотр и редактирование файлов в кодировке DOS866 <span class=desc>[CodePage.lua]</span>
 		<br>Текст, выводимый в окно консоли, всегда преобразуется в кодировку win1251, поэтому, независимо от кодировки окна редактирования, в окне консоли всегда будет читабельный текст. За это поведение отвечает ключ <span class=name>output.code.page.oem2ansi=1</span> <span class=desc>[Потребовалась доработка исходного кода]</span>
 	</p>
 	<p>
 		Возможна запись и воспроизведение макро-команд. Так же можно просматривать и редактировать записанные вами макросы. <span class=desc>[корректива исходного кода + macro_support.lua]</span>
 	</p>
 	<p>
-		Пункт меню "Открыть выделенный файл" (Ctrl+Shift+O), в отличии от встроенной команды SciTE понимающей только явно заданный путь, обрабатывает переменные SciTE, переменные окружения, конструкции LUA <span class=desc>[Open_Selected_Filename.lua]</span>
+		Пункт меню "Открыть выделенный файл" (Ctrl+Shift+O), в отличии от встроенной команды SciTE понимающей только явно заданный путь, обрабатывает переменные SciTE, переменные окружения, конструкции LUA <span class=desc>[Open_Selected_Filename.lua Select_And_Open_Filename.lua]</span>
 	</p>
 	<p>
 		При редактировании файлов в SciTE, в заданном каталоге автоматически создаются их резервные копии. Возможно задание кол-ва сохраняемых файлов и места сохранения (Смотрите ключи <span class=name>backup.files</span> в <span class=name>SciTEGlobal.properties</span>) <span class=desc>[auto_backup.lua]</span>
@@ -125,16 +126,13 @@
 		Автодополнение кода работает как в классическом варианте (по <span class=name>Ctrl+Space</span>), когда SciTE выводит список всех вариантов завершения полу-набранного слова, так и в модернизированном, автоматическом, когда после ввода разделителя (точка, двоеточие) после имени объекта, возникает список всех его свойств и методов. Также автоматически изменяется регистр символов в имени объекта (например <span class=name>&quot;ucase&quot;</span> при вводе автоматически заменяется на <span class=name>&quot;UCase&quot;</span>) <span class=desc>[Используются подключенные API файлы для соответствующих языков и скрипт AutocompleteObject.lua]</span>
 	</p>
 	<p>
-		Быстро установить/снять метку со строки можно с помощью двойного клика мышью при зажатой клавише <span class=name>Ctrl</span>. <span class=desc>[BookmarkToggle.lua + доработка исходного кода]</span>
+		Возможно использование интеллектуального автозакрытия для любых скобок. Работает, если параметр <span class=name>braces.autoclose=1</span> <span class=desc>[smartbraces.lua]</span>
 	</p>
 	<p>
-		Возможно использование интеллектуального автозакрытия для любых скобок. Работает, если параметр в файле <span class=name>SciTEGlobal.properties braces.autoclose=1</span> <span class=desc>[braces_autoclose.lua]</span>
+		Возможно использование интеллектуального автозакрытия для HTML тегов. Работает, если параметр <span class=name>tags.autoclose=1</span> <span class=desc>[html_tags_autoclose.lua]</span>
 	</p>
 	<p>
-		Возможно использование интеллектуального автозакрытия для HTML тегов. Работает, если параметр в файле <span class=name>SciTEGlobal.properties tags.autoclose=1</span> <span class=desc>[html_tags_autoclose.lua]</span>
-	</p>
-	<p>
-		Можно управлять SciTE из любых программ и скриптов, используя методы COM-объекта <span class=name>&quot;SciTE.Helper&quot;</span> <span class=desc>[подробности - в каталоге Helper]</span>
+		Можно управлять SciTE из любых программ и скриптов, используя методы COM-объекта <span class=name>&quot;<a href="../tools/Helper/SciTE.Helper_rus.html">SciTE.Helper</a>&quot;</span>
 	</p>
 	<h4>Добавлено много других полезных скриптов:</h4>
 	<ul>
@@ -150,16 +148,14 @@
 
 	<li>Скрипт для смены текущих шрифтов. C блеском заменяет <span class=name>Ctrl+F11</span>. Действует одновременно на все отрытые буфера. Можно задать любые комбинации шрифтов. <span class=desc>[настройки в SciTEGlobal.properties, FontChanger.lua]</span>
 
-	<li>Скрипт позволяет свободно работать с файлами в кодировке <span class=name>dos866</span>, переключая текущую кодировку ввода и отображения символов. <span class=desc>[win2dos.lua]</span>
+	<li>Скрипт позволяет свободно работать с файлами в кодировке <span class=name>dos866</span>, переключая текущую кодировку ввода и отображения символов. <span class=desc>[CodePage.lua]</span>
 
 	<li>Скрипт - альтернатива стандартной команды Zoom (<span class=name>Ctrl+KeypadPlus</span>, <span class=name>Ctrl+KeypadMinus</span>, <span class=name>Ctrl+KeypadDivide</span>) <span class=desc>[Zoom.lua]</span>
 	<br>Достоинство: вместе с отображаемыми шрифтами, масштабируется и выводимый на принтер шрифт. Кроме этого, в строке состояния отображается текущий размер основного шрифта.
 
 	<li>Скрипт осуществляет поиск текста в окне редактора (или консоли), отмечает маркерами все найденные вхождения, кроме того, выводит все строки, содержащие текст, в консоль. Очень удобно. <span class=desc>[FindText.lua]</span>
 
-	<li>Установка / снятие меток на строку (Bookmark) (то же что и <span class=name>Ctrl+F2</span>) с помощью двойного клика мыши при нажатой клавише <span class=name>Ctrl</span> <span class=desc>[корректива ядра, BookmarkToggle.lua]</span>
-
-	<li>Скрипт позволяет вставить в текущую позицию отмеченные cтроки. Строки для вставки, предварительно должны быть отмечены (по <span class=name>Ctrl+F2</span> или <span class=name>Ctrl+DoubleClick</span> или автоматически по результату поиска). <span class=desc>[CopyMarkedLines.lua]</span>
+	<li>Скрипт позволяет вставить в текущую позицию отмеченные cтроки. Строки для вставки, предварительно должны быть отмечены букмарками вручную или автоматически по результату поиска. <span class=desc>[CopyMarkedLines.lua]</span>
 
 	<li>Сортировка выделенных строк (если выделение отсутствует – сортируется весь текст) по алфавиту и наоборот. Скрипт пытается угадать в каком порядке вам необходимо отсортировать текст. Если он с первого раза не угадал направление сортировки, то запустите его повторно – теперь он точно не ошибется :) <span class=desc>[SortText.lua]</span>
 
@@ -169,12 +165,10 @@
 	нескольких доступных палитр (Безопасные/Названные/Системные цвета).
 	<br>Возможна вставка HEX, RGB, WIN и именного значения <span class=desc>[palette.hta, SciTE.Helper]</span>
 
-	<li>Вывод списка функций / процедур, имеющихся в коде для быстрого перехода между ними. Понимает ВСЕ языки программирования. Для понимания конструкций нового языка достаточно лишь добавить одну строчку в код скрипта. <span class=desc>[FuncProcList.lua]</span>
-
 	<li>Трассировка выделенного текста в коды ASCII <span class=desc>[ascii.lua]</span>
 
-	<li>Форматирование кода программы для более наглядной его публикации в форуме <span class=desc>[code-poster.lua]</span>
-	
+	<li>Форматирование кода программы для более наглядной его публикации в форуме <span class=desc>[code-poster2.lua]</span>
+
 	<li>Замена отступов в виде табуляторов на пробелы и наоборот. Полный автомат.
 	<br>Если строки выделены – то замена производится только в них.
 	<br>Соответствие количества пробелов заменяющих знак табуляции берется из ваших установок в <span class=name>.properties</span> <span class=desc>[IndentTabToSpace.lua]</span>
@@ -197,7 +191,7 @@
 
 	<li>HEX редактор. Вначале откройте файл в SciTE, спозиционируйте курсор в нужное место (приблизительно), затем запустите соответствующую команду меню "Tools". "Кнопки" в редакторе работают по двойному клику мыши (альтернативный способ - установить курсор на "кнопку" и вызвать команду "HEX Editor" повторно). Так же очень интересен для изучения LUA. <span class=desc>[SciTE_HexEdit.lua]</span>
 
-	<li>Для гипертекстовых документов работает команда, действие которой, аналогично кнопке "Формат по образцу" MS Word. Т.е. сначала выделяем текст уже оформленный необходимыми тегами и выбираем "Запомнить теги". Затем, выделяем неоформленный текст и используем "Оформить в этих тегах" какое угодно количество раз. <span class=desc>[HTMLFormatPainter.lua]</span>
+	<li>Для гипертекстовых документов работает команда, действие которой, аналогично кнопке "Формат по образцу" MS Word. Т.е. сначала выделяем текст уже оформленный необходимыми тегами и выбираем "Запомнить теги". Затем, выделяем неоформленный текст и используем "Оформить в этих тегах" какое угодно количество раз. <span class=desc>[paired_tags.lua]</span>
 
 	<li>Для гипертекстовых документов создан новый тулбар (вызов - через меню "Tools" - имя файла - "HTML Toolbar") с помощью которого можно с удобством вставлять выбранные теги в документ. Настройка тулбара осуществляется посредством редактирования файла SciTE\home\HTML_toolbar.ini, формат записей которого подобен записям в html.abbrev файле (и так же поддерживаются параметры "|", %SEL%, %CLP%). Перемещение тулбара осуществляется при нажатой правой кнопке мыши.<span class=desc>[HTML_toolbar.hta]</span>
 
@@ -228,7 +222,7 @@
 <h3>История версий</h3>
 
 <h5><span class=desc>[15.02.2010]</span> Сборка (ядро 2.03 .74Ru)</h5>
-Ревизия: <a href="http://code.google.com/p/scite-ru/source/list?start=1318" target="_blank">1318</a>
+Ревизия: <a href="http://code.google.com/p/scite-ru/source/list?start=1320" target="_blank">1320</a>
 
 <h5><span class=desc>[28.01.2010]</span> Сборка (ядро 2.02 .73Ru)</h5>
 Ревизия: <a href="http://code.google.com/p/scite-ru/source/list?start=1295" target="_blank">1295</a>
