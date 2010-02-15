@@ -144,4 +144,9 @@ if tab_width ~= nil then
 	scite.SendOutput(SCI_SETTABWIDTH, tab_width)
 end
 
+----[[ В Н Е Ш Н И Е  Л Е К С Е Р Ы ]]-----------------------------
+
+-- Тестовый лексер для выдуманного языка программирования zog
+dofile (props["SciteDefaultHome"].."\\languages\\zog.lua")
+
 ------------------------------------------------------------------------------
