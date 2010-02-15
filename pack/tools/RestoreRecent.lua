@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 RestoreRecent.lua
 Authors: mozers™
-Version: 1.1.3
+Version: 1.2.0
 ------------------------------------------------------
 Description:
   Restore position, bookmarks, folds at opening recent file
@@ -27,7 +27,8 @@ Connection:
 ----------------------
 -- ON STARTUP SCITE --
 ----------------------
-local buffers={} -- масив {номер_файла, {имя_параметра, значение_параметра} }
+local buffers = {} -- масив {номер_файла, {имя_параметра, значение_параметра} }
+local opened = {} -- массив в который заносятся пути ко всем открываемым файлам
 
 -- Чтение параметров SciTE.session в таблицу buffers (параметры доступны, поскольку файл подключен директивой import)
 local function ReadSessionToTable()
@@ -95,7 +96,6 @@ end
 
 -- Восстановление позиции курсора, букмарков и фолдинга для заданного файла
 local function Restore(file)
-	if file == '' then return end
 	local FileParams = CheckSession() -- проверка наличия данных о файле в таблице buffers
 	if FileParams ~= nil then
 		-- Restore folding
@@ -105,20 +105,7 @@ local function Restore(file)
 				for line_num in string.gmatch(folds, "%d+") do
 					line_num = tonumber(line_num)-1
 					if editor.FoldExpanded[line_num] then
-						-- Строки ниже - полная лажа :( Восстановление фолдинга НЕ РАБОТАЕТ.
-						-- editor:GotoLine(line_num) scite.MenuCommand(IDM_EXPAND) -- Такая комбинация отрабатывает, но дико тяжело и крайне нестабильно
-						-- editor:ToggleFold(line_num) -- На такую команду SciTE не реагирует (БАГ?)
-						-- scite.SendEditor(SCI_TOGGLEFOLD, line_num) -- И на такую команду SciTE не реагирует (БАГ?)
-
-						--[[--------------------------------------------------------------------------------------
-						Если вы придумаете как заставить SciTE отрабатывать эту команду, то озадачтесь еще одной проблемой:
-						Если файл открывается при старте SciTE, то после того как сработает editor:ToggleFold из этого скрипта,
-						SciTE будет заниматься восстановлением фолдинга, используя свой внутренний механизм.
-						Тем самым он похерит всю работу скрипта и блок останется развернутым.
-						Таким образом встает задача: Как отличить файлы, которые грузится при старте SciTE, от всех остальных открываемых файлов?
-						Можно, конечно, проверять наличие записи о файле в SciTE.session, но как быть если после открытия этот файл закрыли, а потом вновь решили открыть?
-						В общем, проблем, возникающих при решении этой, на первый взгляд, тривиальной задачи, всплывает предостаточно...
-						--]]--------------------------------------------------------------------------------------
+						editor:ToggleFold(line_num)
 					end
 				end
 			end
@@ -146,6 +133,7 @@ local function Restore(file)
 			if current_ext == ext then scite.MenuCommand (IDM_TOGGLE_FOLDALL) end
 		end
 	end
+	opened[file] = nil
 end
 
 -- Add user event handler OnOpen
@@ -154,8 +142,18 @@ function OnOpen(file)
 	local result
 	if old_OnOpen then result = old_OnOpen(file) end
 	if tonumber(props['save.session']) == 1 then
-		Restore(file)
+		if file ~= '' then opened[file] = true end
 	end
+	return result
+end
+
+-- Add user event handler OnUpdateUI
+local old_OnUpdateUI = OnUpdateUI
+function OnUpdateUI ()
+	local result
+	if old_OnUpdateUI then result = old_OnUpdateUI() end
+	local file = props["FilePath"]
+	if opened[file] then Restore(file) end
 	return result
 end
 
