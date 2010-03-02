@@ -1,5 +1,5 @@
 --[[----------------------------------------------------------------------------
-HighlightLinks v1.4.1
+HighlightLinks v1.4.2
 Автор: VladVRO
 
 Подсветка линков в тексте, выделение всего линка при двойном клике на нем и
@@ -62,6 +62,15 @@ local function select_highlighted_link(is_browse)
 		end
 	end
 end
+AddEventHandler("OnDoubleClick", function(shift, ctrl, alt)
+	if editor.Focus then
+		if ctrl then
+			return select_highlighted_link(true)
+		else
+			select_highlighted_link(false)
+		end
+	end
+end)
 
 local function launch_browse()
 	if browser then
@@ -70,6 +79,7 @@ local function launch_browse()
 		shell.exec(cmd)
 	end
 end
+AddEventHandler("OnMouseButtonUp", launch_browse)
 
 local function auto_highlight()
 	local list_lexers = props['highlight.links.lexers']
@@ -80,45 +90,5 @@ local function auto_highlight()
 		HighlightLinks()
 	end
 end
-
--- Add user event handler OnMouseButtonUp
-local old_OnMouseButtonUp = OnMouseButtonUp
-function OnMouseButtonUp()
-	local result
-	if old_OnMouseButtonUp then result = old_OnMouseButtonUp() end
-	launch_browse()
-	return result
-end
-
--- Add user event handler OnDoubleClick
-local old_OnDoubleClick = OnDoubleClick
-function OnDoubleClick(shift, ctrl, alt)
-	local result
-	if editor.Focus then
-		if ctrl then
-			if select_highlighted_link(true) then return true end
-		else
-			select_highlighted_link(false)
-		end
-	end
-	if old_OnDoubleClick then result = old_OnDoubleClick(shift, ctrl, alt) end
-	return result
-end
-
--- Add user event handler OnOpen
-local old_OnOpen = OnOpen
-function OnOpen(file)
-	local result
-	if old_OnOpen then result = old_OnOpen(file) end
-	auto_highlight()
-	return result
-end
-
--- Add user event handler OnSave
-local old_OnSave = OnSave
-function OnSave(file)
-	local result
-	if old_OnSave then result = old_OnSave(file) end
-	auto_highlight()
-	return result
-end
+AddEventHandler("OnOpen", auto_highlight)
+AddEventHandler("OnSave", auto_highlight)

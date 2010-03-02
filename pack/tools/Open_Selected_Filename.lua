@@ -1,19 +1,20 @@
--- Open_Selected_Filename.lua
--- mozers™, vladvro
--- version 1.2
----------------------------------------
--- Замена команды "Открыть выделенный файл"
--- В отличии от встроенной команды SciTE, понимающей только явно заданный путь и относительные пути
--- обрабатывает переменные SciTE, переменные окружения, конструкции LUA
----------------------------------------
--- Connection:
--- In file SciTEStartup.lua add a line:
--- dofile (props["SciteDefaultHome"].."\\tools\\Open_Selected_Filename.lua")
----------------------------------------
--- Подключение:
--- Добавьте в SciTEStartup.lua строку
--- dofile (props["SciteDefaultHome"].."\\tools\\Open_Selected_Filename.lua")
---------------------------------------------------------------
+--[[--------------------------------------------------
+Open_Selected_Filename.lua
+Authors: mozers™, vladvro
+Version: 1.2.1
+------------------------------------------------------
+Замена команды "Открыть выделенный файл"
+В отличии от встроенной команды SciTE, понимающей только явно заданный путь и относительные пути
+обрабатывает переменные SciTE, переменные окружения, конструкции LUA
+-------------------------------------
+Подключение:
+Добавьте в SciTEStartup.lua строку
+dofile (props["SciteDefaultHome"].."\\tools\\Open_Selected_Filename.lua")
+-------------------------------------
+Connection:
+In file SciTEStartup.lua add a line:
+dofile (props["SciteDefaultHome"].."\\tools\\Open_Selected_Filename.lua")
+--]]--------------------------------------------------
 
 local function Open_Selected_Filename()
 	local filename
@@ -54,13 +55,8 @@ local function Open_Selected_Filename()
 	end
 end
 
--- Add user event handler OnMenuCommand
-local old_OnMenuCommand = OnMenuCommand
-function OnMenuCommand (msg, source)
-	local result
-	if old_OnMenuCommand then result = old_OnMenuCommand(msg, source) end
+AddEventHandler("OnMenuCommand", function(msg, source)
 	if msg == IDM_OPENSELECTED then
-		if Open_Selected_Filename() then return true end
+		return Open_Selected_Filename()
 	end
-	return result
-end
+end)

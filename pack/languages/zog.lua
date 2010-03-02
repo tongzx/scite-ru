@@ -94,11 +94,8 @@ local function ZogLexer(styler) -- by Philippe Lhoste
    styler:EndStyling()
 end
 
--- Add user event handler OnStyle
-local old_OnStyle = OnStyle
-function OnStyle(styler)
-  if old_OnStyle then old_OnStyle(styler) end
+AddEventHandler("OnStyle", function(styler)
   if styler.language == "script_zog" then
     ZogLexer(styler)
   end
-end
+end)

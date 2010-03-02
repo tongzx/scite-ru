@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 abbrevlist.lua
 Authors: Dmitry Maslov, frs, mozers™
-version 2.1.3
+version 2.1.4
 ------------------------------------------------------
   Если при вставке расшифровки аббревиатуры (Ctrl+B) не нашлось точного соответствия,
   то выводится список соответствий начинающихся с этой комбинации символов.
@@ -120,60 +120,34 @@ local function InsertExpansion(expansion)
 end
 ------------------------------------------------------
 
--- Add user event handler OnMenuCommand
-local old_OnMenuCommand = OnMenuCommand
-function OnMenuCommand (msg, source)
-	local result
-	if old_OnMenuCommand then result = old_OnMenuCommand(msg, source) end
+AddEventHandler("OnMenuCommand", function(msg, source)
 	if msg == IDM_ABBREV then
 		event_IDM_ABBREV = true
-		if ShowExpansionList() then return true end
+		return ShowExpansionList()
 	end
-	return result
-end
+end)
 
--- Add user event handler OnChar
-local old_OnChar = OnChar
-function OnChar(char)
-	local result
-	if old_OnChar then result = old_OnChar(char) end
+AddEventHandler("OnChar", function(char)
 	chars_count_min = tonumber(props['abbrev.'..editor:GetLexerLanguage()..'.auto']) or 0
 	if chars_count_min == 0 then chars_count_min = tonumber(props['abbrev.*.auto']) or 0 end
 	if chars_count_min ~= 0 then
 		event_IDM_ABBREV = false
-		if tonumber(props['macro-recording']) ~= 1
-			and ShowExpansionList() then
-				return true
+		if tonumber(props['macro-recording']) ~= 1 then
+			ShowExpansionList()
 		end
 	end
-	return result
-end
+end)
 
--- Add user event handler OnUserListSelection
-local old_OnUserListSelection = OnUserListSelection
-function OnUserListSelection(tp, sel_value)
-	local result
-	if old_OnUserListSelection then result = old_OnUserListSelection(tp,sel_value) end
+AddEventHandler("OnUserListSelection", function(tp, sel_value)
 	if tp == typeUserList then
-		if InsertExpansion(sel_value) then return true end
+		InsertExpansion(sel_value)
 	end
-	return result
-end
+end)
 
--- Add user event handler OnSwitchFile
-local old_OnSwitchFile = OnSwitchFile
-function OnSwitchFile(file)
-	local result
-	if old_OnSwitchFile then result = old_OnSwitchFile(file) end
+AddEventHandler("OnSwitchFile", function(file)
 	get_abbrev = true
-	return result
-end
+end)
 
--- Add user event handler OnOpen
-local old_OnOpen = OnOpen
-function OnOpen(file)
-	local result
-	if old_OnOpen then result = old_OnOpen(file) end
+AddEventHandler("OnOpen", function(file)
 	get_abbrev = true
-	return result
-end
+end)

@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 new_file.lua
 mozers™, VladVRO, mhb
-version 3.0
+version 3.0.1
 ----------------------------------------------
 Заменяет стандартную команду SciTE "File|New" (Ctrl+N)
 Создает новый буфер в текущем каталоге с расширением текущего файла
@@ -50,15 +50,10 @@ local function SaveUntitledFile()
 	end
 end
 
--- Add user event handler OnMenuCommand
-local old_OnMenuCommand = OnMenuCommand
-function OnMenuCommand (msg, source)
-	local result
-	if old_OnMenuCommand then result = old_OnMenuCommand(msg, source) end
+AddEventHandler("OnMenuCommand", function(msg, source)
 	if msg == IDM_NEW then
-		if CreateUntitledFile() then return true end
+		return CreateUntitledFile()
 	elseif msg == IDM_SAVE then
-		if SaveUntitledFile() then return true end
+		return SaveUntitledFile()
 	end
-	return result
-end
+end)

@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozersЩ, VladVRO, frs, BioInfo, Tymur Gubayev
-version 1.15
+Version 1.16.1
 ------------------------------------------------------
   Note: Require gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
                lpeg.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/lpeg/>
@@ -454,6 +454,7 @@ local function Favorites_SaveList()
 	io.write(list_string)
 	io.close()
 end
+AddEventHandler("OnFinalise", Favorites_SaveList)
 
 function Favorites_AddFile()
 	local filename, attr = FileMan_GetSelectedItem()
@@ -1089,19 +1090,24 @@ list_bookmarks:on_key(function(key)
 	end
 end)
 
--- Add user event handler OnClose
-local old_OnClose = OnClose
-function OnClose(file)
-	local result
-	if old_OnClose then result = old_OnClose(file) end
+AddEventHandler("OnSendEditor", function(id_msg, wp, lp)
+	if id_msg == SCI_MARKERADD then
+		if lp == 1 then Bookmark_Add(wp) Bookmarks_ListFILL() end
+	elseif id_msg == SCI_MARKERDELETE then
+		if lp == 1 then Bookmark_Delete(wp) Bookmarks_ListFILL() end
+	elseif id_msg == SCI_MARKERDELETEALL then
+		if wp == 1 then Bookmark_Delete() Bookmarks_ListFILL() end
+	end
+end)
+
+AddEventHandler("OnClose", function(file)
 	for i = #table_bookmarks, 1, -1 do
 		if table_bookmarks[i].FilePath == file then
 			table.remove(table_bookmarks, i)
 		end
 	end
 	Bookmarks_ListFILL()
-	return result
-end
+end)
 
 ----------------------------------------------------------
 -- tab2:list_abbrev   Abbreviations
@@ -1189,6 +1195,9 @@ local function OnSwitch()
 	end
 	_DEBUG.timerstop('OnSwitch')
 end
+AddEventHandler("OnSwitchFile", OnSwitch)
+AddEventHandler("OnOpen", OnSwitch)
+AddEventHandler("OnSave", OnSwitch)
 
 tabs:on_select(function(ind)
 	tab_index=ind
@@ -1215,88 +1224,27 @@ function SideBar_ShowHide()
 	end
 end
 
-local function OnDocumentCountLinesChanged(def_line_count)
-	if tab1:bounds() then -- visible Funk/Bmk
-		local cur_line = editor:LineFromPosition(editor.CurrentPos)
-		for i = 1, #table_functions do
-			local table_line = table_functions[i][2]
-			if table_line > cur_line then
-				table_functions[i][2] = table_line + def_line_count
-			end
-		end
-		Functions_ListFILL()
-
-		Bookmarks_RefreshTable()
-	end
-end
-
--- Add user event handler OnSwitchFile
-local old_OnSwitchFile = OnSwitchFile
-function OnSwitchFile(file)
-	local result
-	if old_OnSwitchFile then result = old_OnSwitchFile(file) end
-	OnSwitch()
-	return result
-end
-
--- Add user event handler OnOpen
-local old_OnOpen = OnOpen
-function OnOpen(file)
-	local result
-	if old_OnOpen then result = old_OnOpen(file) end
-	OnSwitch()
-	return result
-end
-
--- Add user event handler OnUpdateUI
-local old_OnUpdateUI = OnUpdateUI
-function OnUpdateUI()
-	local result
-	if old_OnUpdateUI then result = old_OnUpdateUI() end
+-- ќбновление списков Functions и Bookmarks при изменении кол-ва строк в активном документе
+AddEventHandler("OnUpdateUI", function()
 	if (editor.Focus and line_count) then
 		local line_count_new = editor.LineCount
 		local def_line_count = line_count_new - line_count
 		if def_line_count ~= 0 then
-			OnDocumentCountLinesChanged(def_line_count)
+			if tab1:bounds() then -- visible Funk/Bmk
+				local cur_line = editor:LineFromPosition(editor.CurrentPos)
+				for i = 1, #table_functions do
+					local table_line = table_functions[i][2]
+					if table_line > cur_line then
+						table_functions[i][2] = table_line + def_line_count
+					end
+				end
+				Functions_ListFILL()
+				Bookmarks_RefreshTable()
+			end
 			line_count = line_count_new
 		end
 	end
-	return result
-end
-
--- Add user event handler OnSave
-local old_OnSave = OnSave
-function OnSave(file)
-	local result
-	if old_OnSave then result = old_OnSave(file) end
-	Functions_GetNames()
-	Functions_ListFILL()
-	return result
-end
-
--- Add user event handler OnSendEditor
-local old_OnSendEditor = OnSendEditor
-function OnSendEditor(id_msg, wp, lp)
-	local result
-	if old_OnSendEditor then result = old_OnSendEditor(id_msg, wp, lp) end
-	if id_msg == SCI_MARKERADD then
-		if lp == 1 then Bookmark_Add(wp) Bookmarks_ListFILL() end
-	elseif id_msg == SCI_MARKERDELETE then
-		if lp == 1 then Bookmark_Delete(wp) Bookmarks_ListFILL() end
-	elseif id_msg == SCI_MARKERDELETEALL then
-		if wp == 1 then Bookmark_Delete() Bookmarks_ListFILL() end
-	end
-	return result
-end
-
--- Add user event handler OnFinalise
-local old_OnFinalise = OnFinalise
-function OnFinalise()
-	local result
-	if old_OnFinalise then result = old_OnFinalise() end
-	Favorites_SaveList()
-	return result
-end
+end)
 
 ----------------------------------------------------------
 -- Go to function definition
@@ -1321,37 +1269,29 @@ local function JumpToFuncDefinition()
 	if line then
 		_backjumppos = editor.CurrentPos
 		editor:GotoLine(line)
-		return true
+		return true -- обрываем дальнейшую обработку OnDoubleClick (выделение слова и пр.)
 	end
-	return false
 end
 
 local function JumpBack()
-	if not _backjumppos then return false end
-	editor:GotoPos(_backjumppos)
-	_backjumppos = nil
-	return true
+	if _backjumppos then
+		editor:GotoPos(_backjumppos)
+		_backjumppos = nil
+	end
 end
 
--- Add user event handler OnDoubleClick
-local old_OnDoubleClick = OnDoubleClick
-function OnDoubleClick(shift, ctrl, alt)
-	local result
-	if old_OnDoubleClick then result = old_OnDoubleClick(shift, ctrl, alt) end
+AddEventHandler("OnDoubleClick", function(shift, ctrl, alt)
 	if shift then
-		if JumpToFuncDefinition() then return true end
+		return JumpToFuncDefinition()
 	end
-	return result
-end
+end)
 
--- Add user event handler OnKey
-local old_OnKey = OnKey
-function OnKey(key, shift, ctrl, alt, char)
-	local result
-	if old_OnKey then result = old_OnKey(key, shift, ctrl, alt, char) end
-	if (editor.Focus) then
-		if ctrl and key == 188 and JumpBack() then return true end --char == ','
-		if ctrl and key == 190 and JumpToFuncDefinition() then return true end --char == '.'
+AddEventHandler("OnKey", function(key, shift, ctrl, alt, char)
+	if editor.Focus and ctrl then
+		if key == 188 then -- '<'
+			JumpBack()
+		elseif key == 190 then -- '>'
+			JumpToFuncDefinition()
+		end
 	end
-	return result
-end
+end)

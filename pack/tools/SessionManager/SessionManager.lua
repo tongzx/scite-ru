@@ -1,16 +1,20 @@
--- SessionManager
--- Автор: mozers™
--- Version: 1.0
------------------------------------------------
+--[[--------------------------------------------------
+SessionManager
+Authors: mozers™
+Version: 1.0.1
+--]]--------------------------------------------------
+
 require 'shell'
 local sessionmanager_path = props['SciteDefaultHome']..'\\tools\\SessionManager\\SessionManager.hta'
 
 local function LoadSession()
 	shell.exec('mshta "'..sessionmanager_path..'"', nil, true, false)
+	return true
 end
 
 local function SaveSession()
 	shell.exec('mshta "'..sessionmanager_path..'" '..props['FileName'], nil, true, false)
+	return true
 end
 
 local function SaveSessionOnQuit()
@@ -32,28 +36,19 @@ local function SaveSessionOnQuitAuto()
 end
 
 -- Добавляем свой обработчик события OnMenuCommand
-local old_OnMenuCommand = OnMenuCommand
-function OnMenuCommand (msg, source)
-	local result
-	if old_OnMenuCommand then result = old_OnMenuCommand(msg, source) end
+AddEventHandler("OnMenuCommand", function(msg, source)
 	if tonumber(props['session.manager'])==1 then
 		if msg == IDM_SAVESESSION then
-			SaveSession()
-			return true
+			return SaveSession()
 		elseif msg == IDM_LOADSESSION then
-			LoadSession()
-			return true
+			return LoadSession()
 		end
 	end
-	return result
-end
+end)
 
 -- Добавляем свой обработчик события OnFinalise
 -- Сохранение текущей сессиии при закрытии SciTE
-local old_OnFinalise = OnFinalise
-function OnFinalise()
-	local result
-	if old_OnFinalise then result = old_OnFinalise() end
+AddEventHandler("OnFinalise", function()
 	if props['FileName'] ~= '' then
 		if tonumber(props['session.manager'])==1 then
 			if tonumber(props['save.session.manager.on.quit'])==1 then
@@ -62,9 +57,7 @@ function OnFinalise()
 				else
 					SaveSessionOnQuit()
 				end
-				return false
 			end
 		end
 	end
-	return result
-end
+end)

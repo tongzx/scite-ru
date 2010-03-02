@@ -1,13 +1,16 @@
--- OpenFindFiles.lua
--- Version: 1.3
--- Author: mozers™
----------------------------------------------------
--- После выполнения команды "Найти в файлах..."
--- создает пункт в контекстном меню консоли - "Открыть найденные файлы"
--- Подключение:
--- В файл SciTEStartup.lua добавьте строку:
---   dofile (props["SciteDefaultHome"].."\\tools\\OpenFindFiles.lua")
----------------------------------------------------
+--[[--------------------------------------------------
+OpenFindFiles.lua
+Author: mozers™
+Version: 1.3.1
+------------------------------------------------------
+После выполнения команды "Найти в файлах..."
+создает пункт в контекстном меню консоли - "Открыть найденные файлы"
+------------------------------------------------------
+Подключение:
+В файл SciTEStartup.lua добавьте строку:
+  dofile (props["SciteDefaultHome"].."\\tools\\OpenFindFiles.lua")
+--]]--------------------------------------------------
+
 local user_outputcontext_menu           -- исходное контекстное меню консоли
 local clear_before_execute              -- исходное значение параметра clear.before.execute
 local outputcontextmenu_changed = false -- признак модификации контекстного меню
@@ -70,15 +73,10 @@ function OpenFindFiles()
 end
 
 --------------------------------------------------
--- Add user event handler OnMenuCommand
-local old_OnMenuCommand = OnMenuCommand
-function OnMenuCommand (msg, source)
-	local result
-	if old_OnMenuCommand then result = old_OnMenuCommand(msg, source) end
+AddEventHandler("OnMenuCommand", function(msg, source)
 	if outputcontextmenu_changed then
 		if msg ~= IDM_TOOLS+command_num and msg ~= IDM_FINDINFILES then RemoveMenu() end
 	else
 		if msg == IDM_FINDINFILES then CreateMenu() end
 	end
-	return result
-end
+end)

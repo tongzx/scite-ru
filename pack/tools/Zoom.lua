@@ -1,6 +1,6 @@
 --[[-------------------------------------------------
 Zoom.lua
-Version: 1.2.1
+Version: 1.2.2
 Authors: mozers™, Дмитрий Маслов
 -----------------------------------------------------
 Обработка стандартной команды Zoom
@@ -28,12 +28,8 @@ local function ChangeFontSize(zoom)
 end
 
 -- Добавляем свой обработчик события OnSendEditor
-local old_OnSendEditor = OnSendEditor
-function OnSendEditor(id_msg, wp, lp)
-	local result
-	if old_OnSendEditor then result = old_OnSendEditor(id_msg, wp, lp) end
+AddEventHandler("OnSendEditor", function(id_msg, wp, lp)
 	if id_msg == SCI_SETZOOM then
 		ChangeFontSize(lp)
 	end
-	return result
-end
+end)

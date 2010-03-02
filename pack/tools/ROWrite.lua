@@ -1,12 +1,15 @@
--- ROWrite
--- Version: 1.1
--- Автор: Midas, VladVRO
------------------------------------------------
--- Скрипт для поддержки сохранения RO/Hidden/System файлов
--- Подключение:
---   Добавьте в SciTEStartup.lua строку
---     dofile (props["SciteDefaultHome"].."\\tools\\ROWrite.lua")
------------------------------------------------
+--[[--------------------------------------------------
+ROWrite.lua
+Authors: Midas, VladVRO
+Version: 1.1.1
+------------------------------------------------------
+Скрипт для поддержки сохранения RO/Hidden/System файлов
+------------------------------------------------------
+Подключение:
+  Добавьте в SciTEStartup.lua строку
+    dofile (props["SciteDefaultHome"].."\\tools\\ROWrite.lua")
+--]]--------------------------------------------------
+
 require 'shell'
 
 local function iif (expresion, onTrue, onFalse)
@@ -42,19 +45,7 @@ local function AfterSave(FN)
 end
 
 -- Добавляем свой обработчик события OnBeforeSave
-local old_OnBeforeSave = OnBeforeSave
-function OnBeforeSave(file)
-	local result
-	if old_OnBeforeSave then result = old_OnBeforeSave(file) end
-	if BSave(file) then return true end
-	return result
-end
+AddEventHandler("OnBeforeSave", BSave)
 
 -- Добавляем свой обработчик события OnSave
-local old_OnSave = OnSave
-function OnSave(file)
-	local result
-	if old_OnSave then result = old_OnSave(file) end
-	if AfterSave(file) then return true end
-	return result
-end
+AddEventHandler("OnSave", AfterSave)

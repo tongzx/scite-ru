@@ -1,7 +1,11 @@
--- ¬ставка спецсимволов (©,Ѓ,І,±,Е) из раскрывающегос€ списка (дл€ HTML вставл€ютс€ их обозначени€)
--- mozersЩ icq#256106175
--- version 0.4
------------------------------------------------
+--[[--------------------------------------------------
+InsertSpecialChar.lua
+Authors: mozersЩ
+Version: 0.4.1
+------------------------------------------------------
+¬ставка спецсимволов (©,Ѓ,І,±,Е) из раскрывающегос€ списка (дл€ HTML вставл€ютс€ их обозначени€)
+--]]--------------------------------------------------
+
 local cp=1
 
 local char2html = {
@@ -58,7 +62,6 @@ local function InsertSpecialChar(sel_value)
 	editor:InsertText(pos, sel_value)
 	pos = pos + string.len(sel_value)
 	editor:SetSel(pos, pos)
-	return true
 end
 
 function SpecialChar()
@@ -80,12 +83,8 @@ function SpecialChar()
 end
 
 -- ƒобавл€ем свой обработчик событи€ OnUserListSelection
-local old_OnUserListSelection = OnUserListSelection
-function OnUserListSelection(tp,sel_value)
-	local result
-	if old_OnUserListSelection then result = old_OnUserListSelection(tp,sel_value) end
+AddEventHandler("OnUserListSelection", function(tp, sel_value)
 	if tp == 12 then
-		if InsertSpecialChar(sel_value) then return true end
+		InsertSpecialChar(sel_value)
 	end
-	return result
-end
+end)

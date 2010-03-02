@@ -1,7 +1,7 @@
 --[[----------------------------------------------------------------------------
 Select_And_Open_Filename.lua
 Author: VladVRO
-version 1.4.1
+version 1.4.2
 
 Расширение команды "Открыть выделенный файл" для случая когда выделения нет.
 А также возможность открыть файл по двойному клику мыши на его имени при нажатой
@@ -78,7 +78,7 @@ local function Select_And_Open_File(immediately)
 
 	if filename == '' then
 		loadIncludes(props['select.and.open.include'])
-		
+
 		-- try to select file name near current position
 		local cursor = sci.CurrentPos
 		local s = cursor
@@ -89,7 +89,7 @@ local function Select_And_Open_File(immediately)
 		while isFilenameChar(sci.CharAt[e]) do -- find end
 			e = e + 1
 		end
-		
+
 		if s ~= e then
 			-- set selection and try to find file
 			sci:SetSel(s,e)
@@ -97,7 +97,7 @@ local function Select_And_Open_File(immediately)
 			filename = string.gsub(sci:GetSelText(), '\\\\', '\\')
 			foropen = dir..filename
 			local isFile = shell.fileexists(foropen)
-			
+
 			-- look at includes
 			if not isFile then
 				for _,path in ipairs(includes) do
@@ -108,7 +108,7 @@ local function Select_And_Open_File(immediately)
 					end
 				end
 			end
-			
+
 			while not isFile do
 				ch = sci.CharAt[s-1]
 				if ch == 92 or ch == 47 then -- \ /
@@ -129,7 +129,7 @@ local function Select_And_Open_File(immediately)
 				end
 				isFile = shell.fileexists(foropen)
 			end
-			
+
 			if isFile then
 				for_open = foropen
 				if immediately then
@@ -138,34 +138,19 @@ local function Select_And_Open_File(immediately)
 				return true
 			end
 		end
-	
+
 	end
 end
 
--- Add user event handler OnMenuCommand
-local old_OnMenuCommand = OnMenuCommand
-function OnMenuCommand (msg, source)
-	local result
-	if old_OnMenuCommand then result = old_OnMenuCommand(msg, source) end
-	if not result and msg == IDM_OPENSELECTED then
-		if Select_And_Open_File(true) then return true end
+AddEventHandler("OnMenuCommand", function(msg, source)
+	if msg == IDM_OPENSELECTED then
+		return Select_And_Open_File(true)
 	end
-	return result
-end
+end)
 
--- Add user event handler OnMouseButtonUp
-local old_OnMouseButtonUp = OnMouseButtonUp
-function OnMouseButtonUp()
-	local result
-	if old_OnMouseButtonUp then result = old_OnMouseButtonUp() end
-	launch_open()
-	return result
-end
+AddEventHandler("OnMouseButtonUp", launch_open)
 
--- Add user event handler OnDoubleClick
-local old_OnDoubleClick = OnDoubleClick
-function OnDoubleClick(shift, ctrl, alt)
-	local result
+AddEventHandler("OnDoubleClick", function(shift, ctrl, alt)
 	if ctrl and props["select.and.open.by.click"] == "1" then
 		local sci
 		if editor.Focus then
@@ -175,8 +160,6 @@ function OnDoubleClick(shift, ctrl, alt)
 		end
 		local s = sci.CurrentPos
 		sci:SetSel(s, s)
-		if Select_And_Open_File(false) then return true end
+		return Select_And_Open_File(false)
 	end
-	if old_OnDoubleClick then result = old_OnDoubleClick(shift, ctrl, alt) end
-	return result
-end
+end)

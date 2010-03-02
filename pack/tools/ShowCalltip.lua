@@ -2,7 +2,7 @@
 ShowCalltip.lua
 Show calltip for current word
 Authors: mozers™, TymurGubayev
-version 1.2
+version 1.2.1
 ------------------------------------------------------
 Выводит всплывающую подсказку по слову на котором стоит курсор
   по команде меню "Показать подсказку" (Ctrl+Shift+Space) 
@@ -38,13 +38,8 @@ local function ShowCalltip()
 	end
 end
 
--- Add user event handler OnMenuCommand
-local old_OnMenuCommand = OnMenuCommand
-function OnMenuCommand (msg, source)
-	local result
-	if old_OnMenuCommand then result = old_OnMenuCommand(msg, source) end
+AddEventHandler("OnMenuCommand", function(msg, source)
 	if msg == IDM_SHOWCALLTIP then
 		ShowCalltip()
 	end
-	return result
-end
+end)

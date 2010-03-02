@@ -1,11 +1,16 @@
--- Смена текущих установок шрифта
--- C блеском заменяет Ctrl+F11.
--- Действует одновременно на все отрытые буфера, циклически переключая заданные наборы шрифтов
--- Можно задать любое количество комбинаций шрифтов
--- mozers, codewarlock1101
+--[[--------------------------------------------------
+FontChanger.lua
+Authors: mozers™, codewarlock1101
+Version: 1.1.1
+------------------------------------------------------
+Смена текущих установок шрифта
+C блеском заменяет Ctrl+F11.
+Действует одновременно на все отрытые буфера, циклически переключая заданные наборы шрифтов
+Можно задать любое количество комбинаций шрифтов
+------------------------------------------------------
+Для подключения добавьте в свой файл .properties наборы необходимых шрифтов (font.0.*, font.1.*, font.2.*,...)
+--]]--------------------------------------------------
 
--- Для подключения добавьте в свой файл .properties наборы необходимых шрифтов (font.0.*, font.1.*, font.2.*,...)
-------------------------------------------------
 local function FontChange()
 	if props["font.set"]=="" then
 		props["font.set"]="0"
@@ -22,15 +27,11 @@ end
 
 -- Добавляем свой обработчик события, возникающего при вызове пункта меню "Use Monospaced Font"
 local enable_idm=true
-local old_OnMenuCommand = OnMenuCommand
-function OnMenuCommand (msg, source)
-	local result=false
-	if old_OnMenuCommand then result = old_OnMenuCommand(msg, source) end
+AddEventHandler("OnMenuCommand", function(msg, source)
 	if enable_idm==true and msg == IDM_MONOFONT then
 		FontChange()
 		enable_idm=false
 		scite.MenuCommand(IDM_MONOFONT)
 		enable_idm=true
 	end
-	return result
-end
+end)

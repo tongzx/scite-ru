@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 ChangeCommentChar.lua
 Authors: VladVRO, mozers™
-Version: 1.0.1
+Version: 1.0.2
 ------------------------------------------------------
 Подставляет адекватный символ комментария для файлов обрабатываемых лексером props
 (*.properties;*.abbrev;*.session;*.ini;*.inf;*.reg;*.url;*.cfg;*.cnf;*.aut;*.m3u)
@@ -30,19 +30,7 @@ local function ChangeCommentChar()
 end
 
 -- Добавляем свой обработчик события OnSwitchFile
-local old_OnSwitchFile = OnSwitchFile
-function OnSwitchFile(file)
-	local result
-	if old_OnSwitchFile then result = old_OnSwitchFile(file) end
-	ChangeCommentChar()
-	return result
-end
+AddEventHandler("OnSwitchFile", ChangeCommentChar)
 
 -- Добавляем свой обработчик события OnOpen
-local old_OnOpen = OnOpen
-function OnOpen(file)
-	local result
-	if old_OnOpen then result = old_OnOpen(file) end
-	ChangeCommentChar()
-	return result
-end
+AddEventHandler("OnOpen", ChangeCommentChar)

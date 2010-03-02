@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 CodePage.lua
 Authors: YuriNB, VladVRO, mozers™
-Version: 2.1
+Version: 2.1.1
 ------------------------------------------------------
 Гибрид 2х скриптов:
 win1251 to cp866 keyboard mapper (YuriNB icq#2614215)
@@ -89,37 +89,25 @@ local function CharsetDetect()
 end
 
 -- Добавляем свой обработчик события OnSwitchFile
-local old_OnSwitchFile = OnSwitchFile
-function OnSwitchFile(file)
-	local result
-	if old_OnSwitchFile then result = old_OnSwitchFile(file) end
+AddEventHandler("OnSwitchFile", function(file)
 	if not CharsetDetect() then
 		UpdateStatusCodePage(tonumber(props["editor.unicode.mode"]))
 	end
-	return result
-end
+end)
 
 -- Добавляем свой обработчик события OnOpen
-local old_OnOpen = OnOpen
-function OnOpen(file)
-	local result
-	if old_OnOpen then result = old_OnOpen(file) end
+AddEventHandler("OnOpen", function(file)
 	if not CharsetDetect() then
 		UpdateStatusCodePage(tonumber(props["editor.unicode.mode"]))
 	end
-	return result
-end
+end)
 
 -- Добавляем свой обработчик события OnMenuCommand
-local old_OnMenuCommand = OnMenuCommand
-function OnMenuCommand(cmd, source)
-	local result
-	if old_OnMenuCommand then result = old_OnMenuCommand(cmd, source) end
+AddEventHandler("OnMenuCommand", function(cmd, source)
 	if cmd > 149 and cmd < 155 then -- IDM_ENCODING_DEFAULT, IDM_ENCODING_UCS2BE, IDM_ENCODING_UCS2LE, IDM_ENCODING_UTF8, IDM_ENCODING_UCOOKIE
 		UpdateStatusCodePage(cmd)
 	end
-	return result
-end
+end)
 
 -------------------------------------------------------------
 -- win1251 to cp866 keyboard mapper
@@ -166,12 +154,8 @@ local function Win2DOS(charAdded)
 end
 
 -- Добавляем свой обработчик события OnChar
-local old_OnChar = OnChar
-function OnChar(char)
-	local result
-	if old_OnChar then result = old_OnChar(char) end
+AddEventHandler("OnChar", function(char)
 	if props["character.set"]=='255' then
 		Win2DOS(char)
 	end
-	return result
-end
+end)

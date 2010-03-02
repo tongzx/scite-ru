@@ -1,7 +1,7 @@
 --[[
 Eng: Creating SVN commands submenu in tab context menu
 Rus: Создает в контекстном меню таба (вкладки) подменю для команд SVN
-Version: 1.2
+Version: 1.2.1
 Author: VladVRO
 
 Using:
@@ -111,19 +111,7 @@ local function update_svn_menu()
 end
 
 -- Добавляем свой обработчик события OnOpen
-local old_OnOpen = OnOpen
-function OnOpen(file)
-	local result
-	if old_OnOpen then result = old_OnOpen(file) end
-	update_svn_menu()
-	return result
-end
+AddEventHandler("OnOpen", update_svn_menu)
 
 -- Добавляем свой обработчик события OnSwitchFile
-local old_OnSwitchFile = OnSwitchFile
-function OnSwitchFile(file)
-	local result
-	if old_OnSwitchFile then result = old_OnSwitchFile(file) end
-	update_svn_menu()
-	return result
-end
+AddEventHandler("OnSwitchFile", update_svn_menu)

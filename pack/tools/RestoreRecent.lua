@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 RestoreRecent.lua
 Authors: mozers™
-Version: 1.2.0
+Version: 1.2.1
 ------------------------------------------------------
 Description:
   Restore position, bookmarks, folds at opening recent file
@@ -136,35 +136,22 @@ local function Restore(file)
 	opened[file] = nil
 end
 
--- Add user event handler OnOpen
-local old_OnOpen = OnOpen
-function OnOpen(file)
-	local result
-	if old_OnOpen then result = old_OnOpen(file) end
+AddEventHandler("OnOpen", function(file)
 	if tonumber(props['save.session']) == 1 then
 		if file ~= '' then opened[file] = true end
 	end
-	return result
-end
+end)
 
--- Add user event handler OnUpdateUI
-local old_OnUpdateUI = OnUpdateUI
-function OnUpdateUI ()
-	local result
-	if old_OnUpdateUI then result = old_OnUpdateUI() end
+AddEventHandler("OnUpdateUI", function()
 	local file = props["FilePath"]
 	if opened[file] then Restore(file) end
-	return result
-end
+end)
 
 -----------------------
 -- ON FINALISE SCITE --
 -----------------------
 
-local old_OnFinalise = OnFinalise
-function OnFinalise()
-	local result
-	if old_OnFinalise then result = old_OnFinalise() end
+AddEventHandler("OnFinalise", function()
 	if props['FileName'] ~= '' then
 		if tonumber(props['save.session.recent']) == 1 then
 			-- Запуск вспомогательного скрипта для сохранения данных в SciTE.recent
@@ -174,5 +161,4 @@ function OnFinalise()
 			shell.exec(cmd, nil, true, false)
 		end
 	end
-	return result
-end
+end)

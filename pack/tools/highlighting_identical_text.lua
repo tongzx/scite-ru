@@ -1,6 +1,6 @@
 --[[--------------------------------------------------
 Highlighting Identical Text
-Version: 1.3.2
+Version: 1.3.3
 Author: mozersЩ, TymurGubayev
 ------------------------------
 јвто подсветка текста, который совпадает с текущим словом или выделением
@@ -137,11 +137,7 @@ local function IdenticalTextFinder()
 
 end
 
--- Add user event handler OnUpdateUI
-local old_OnUpdateUI = OnUpdateUI
-function OnUpdateUI ()
-	local result
-	if old_OnUpdateUI then result = old_OnUpdateUI() end
+AddEventHandler("OnUpdateUI", function()
 	if props['FileName'] ~= '' then
 		if tonumber(props["highlighting.identical.text"]) == 1 then
 			if editor.Length ~= chars_count then
@@ -153,5 +149,4 @@ function OnUpdateUI ()
 			IdenticalTextFinder()
 		end
 	end
-	return result
-end
+end)

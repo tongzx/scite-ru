@@ -1,9 +1,9 @@
 --[[--------------------------------------------------
 goto_line.lua
 Author: mozers™
-version: 1.0
+version: 1.1.1
 ------------------------------------------------------
-При переходе на букмарк, текущее положение курсора на экране сохраняется
+При переходе на линию, текущее положение курсора на экране сохраняется
 для чего текст прокручивается на нужное количество строк.
 Теперь вам не придется искать курсор по всему экрану!
 (Реализация Issue 21 http://code.google.com/p/scite-ru/issues/detail?id=21)
@@ -12,8 +12,10 @@ version: 1.0
    In file SciTEStartup.lua add a line:
       dofile (props["SciteDefaultHome"].."\\tools\\goto_line.lua")
 --]]--------------------------------------------------
+local bypass = false
 
 local function GotoLine(line)
+	bypass = true
 	local linecur = editor:LineFromPosition(editor.CurrentPos)
 	local linecur_onscreen = linecur - editor.FirstVisibleLine
 	editor:GotoLine(line)
@@ -21,16 +23,11 @@ local function GotoLine(line)
 	if line_onscreen ~= linecur_onscreen then
 		editor:LineScroll(0, line_onscreen - linecur_onscreen)
 	end
-	return 0
+	bypass = false
 end
 
--- Add user event handler OnSendEditor
-local old_OnSendEditor = OnSendEditor
-function OnSendEditor(id_msg, wp, lp)
-	local result
-	if old_OnSendEditor then result = old_OnSendEditor(id_msg, wp, lp) end
-	if id_msg == SCI_GOTOLINE then
+AddEventHandler("OnSendEditor", function(id_msg, wp, lp)
+	if id_msg == SCI_GOTOLINE and not bypass then
 		GotoLine(wp)
 	end
-	return result
-end
+end)

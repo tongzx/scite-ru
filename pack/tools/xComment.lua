@@ -1,6 +1,6 @@
 --[[--------------------------------------------
 xComment
-Version: 1.4.2
+Version: 1.4.3
 Author: mozersЩ, VladVRO
 -------------------------------------------------
   C блеском замен€ет стандартную комбинацию Ctrl+Q (комментирование|сн€тие комментари€)
@@ -279,14 +279,8 @@ local function xComment()
 	return true
 end
 
---------------------------------------------------
--- Add user event handler OnMenuCommand
-local old_OnMenuCommand = OnMenuCommand
-function OnMenuCommand (msg, source)
-	local result
-	if old_OnMenuCommand then result = old_OnMenuCommand(msg, source) end
+AddEventHandler("OnMenuCommand", function(msg, source)
 	if msg == IDM_BLOCK_COMMENT then -- (Ctrl+Q)
-		if xComment() then return true end
+		return xComment() -- true не дает выполнитс€ встроенной команде
 	end
-	return result
-end
+end)

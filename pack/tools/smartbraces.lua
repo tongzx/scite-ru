@@ -1,6 +1,6 @@
 --[[--------------------------------------------------
 SciTE Smart braces
-Version: 1.2.3
+Version: 1.2.4
 Authors: Dmitry Maslov, Julgo, TymurGubayev
 -------------------------------------------------
 Работает, если:
@@ -312,13 +312,7 @@ local function SmartBraces( char )
 end
 
 -- Перехватываем функцию редактора OnKey
-local old_OnKey = OnKey
-function OnKey( key, shift, ctrl, alt, char )
-	-- если кто-то уже обработал символ то мы не обрабатываем
-	if ( old_OnKey and old_OnKey( key, shift, ctrl, alt, char ) ) then
-		return true
-	end
-
+AddEventHandler("OnKey", function(key, shift, ctrl, alt, char)
 	if ( editor.Focus ) then
 		if ( key == 8 and g_isPastedBraceClose == true ) then -- VK_BACK (08)
 			g_isPastedBraceClose = false
@@ -328,13 +322,11 @@ function OnKey( key, shift, ctrl, alt, char )
 			editor:EndUndoAction()
 			return true
 		end
-		
+
 		g_isPastedBraceClose = false
-		
+
 		if ( char ~= '' ) then
 			return SmartBraces( char )
 		end
 	end
-
-	return false
-end
+end)

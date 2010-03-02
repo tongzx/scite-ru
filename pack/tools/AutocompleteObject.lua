@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 AutocompleteObject.lua
 mozers™, Tymur Gubayev
-version 3.10.6
+version 3.10.7
 ------------------------------------------------------
 Inputting of the symbol set in autocomplete.[lexer].start.characters causes the popup list of properties and methods of input_object. They undertake from corresponding api-file.
 In the same case inputting of a separator changes the case of symbols in input_object's name according to a api-file.
@@ -48,6 +48,8 @@ mydoc = document
 document - имя этого же объекта, заданное в api файле
 ------------------------------------------------------
 History:
+3.10.7 (mozers):
+	- для подключения обработчиков событий SciTE теперь используется ф-ция AddEventHandler из COMMON.lua
 3.10.6 (Tymur):
 	- функция FindDeclaration вызывается теперь лишь при открытии и после сохранения файла, что значительно ускоряет работу скрипта для больших файлов.
 3.10.4 (mozers):
@@ -135,7 +137,7 @@ local function GetObjectNames(text)
 		obj_names[1] = objects_table[TEXT]
 		return obj_names, objects_table[TEXT] -- если успешен, то завершаем поиск
 	end
-	
+
 	-- Поиск по таблице сопоставлений "объект - синоним"
 	if alias_table[TEXT] then
 		for _,v in pairs(alias_table[TEXT]) do obj_names[#obj_names+1] = v end
@@ -160,7 +162,7 @@ local function GetInputObject()
 	local word_chars = editor.WordChars
 	-- добавляем разделители - они теперь тоже часть слова
 	editor.WordChars = word_chars..autocomplete_start_characters
-	
+
 	-- если разделитель стоит после скобок -- берём слово слева от скобок вместе с ними.
 	-- нужно для продвинутых алиасов-паттернов
 	local word_start_pos = editor:BraceMatch(current_pos-2)
@@ -285,7 +287,7 @@ local function CreateObjectsAndAliasTables()
 	local word_patt = editor.WordChars:pattern()
 	local word_extended_patt = '['..word_patt..auto_start_chars_patt..']'
 	word_patt = '['..word_patt..']'
-	
+
 	for i = 1, #api_table do
 		local line = api_table[i]
 		-- здесь КРАЙНЕ ВАЖНО, чтобы в матче был именно [auto_start_chars_patt], т.е. например "[.:]" для Луа
@@ -336,16 +338,20 @@ local function ShowUserList()
 	editor.AutoCSeparator = string.byte(sep)
 	editor:UserListShow(7, methods_list)
 	editor.AutoCSeparator = sep_tmp
-	return true
+	return true -- обрываем дальнейшую обработку OnChar (автокомплит и пр.)
 end
 
 ------------------------------------------------------
 -- Вставляет выбранный из раскрывающегося списка метод в редактируемую строку
-local function InsertMethod(str)
-	-- current_pos указывает, где мы были при вводе разделителя, editor.CurrentPos сейчас - это начало слова слева от current_pos, str содержит это слово+разделитель+что надо добавить.
-	editor:SetSel(current_pos, editor.CurrentPos)
-	editor:ReplaceSel(--[[object_good_name..]]str)
-end
+AddEventHandler("OnUserListSelection", function(tp, sel_value)
+	if tp == 7 then
+		-- current_pos указывает, где мы были при вводе разделителя,
+		-- editor.CurrentPos сейчас - это начало слова слева от current_pos,
+		-- sel_value содержит это слово+разделитель+что надо добавить.
+		editor:SetSel(current_pos, editor.CurrentPos)
+		editor:ReplaceSel(--[[object_good_name..]]sel_value)
+	end
+end)
 
 -- Заменяет введенное имя объекта на его имя из api файла (например, 'wscript' на 'WScript'))
 local function CorrectRegisterSymbols(object_name)
@@ -396,7 +402,7 @@ local function AutocompleteObject(char)
 	if object_good_name and input_object ~= object_good_name then
 		CorrectRegisterSymbols(object_good_name..char)
 	end
-	
+
 	-- выходим, если введенное слово не имя объекта
 	if not next(object_names) then return false end
 
@@ -410,49 +416,20 @@ local function AutocompleteObject(char)
 end
 
 ------------------------------------------------------
--- Add user event handler OnChar
-local old_OnChar = OnChar
-function OnChar(char)
-	local result
-	if old_OnChar then result = old_OnChar(char) end
-	if props['macro-recording'] ~= '1' and AutocompleteObject(char) then return true end
-	return result
-end
-
--- Add user event handler OnUserListSelection
-local old_OnUserListSelection = OnUserListSelection
-function OnUserListSelection(tp,sel_value)
-	local result
-	if old_OnUserListSelection then result = old_OnUserListSelection(tp,sel_value) end
-	if tp == 7 then
-		if InsertMethod(sel_value) then return true end
+AddEventHandler("OnChar", function(char)
+	if props['macro-recording'] ~= '1' then
+		return AutocompleteObject(char)
 	end
-	return result
-end
+end)
 
--- Add user event handler OnSwitchFile
-local old_OnSwitchFile = OnSwitchFile
-function OnSwitchFile(file)
-	local result
-	if old_OnSwitchFile then result = old_OnSwitchFile(file) end
+AddEventHandler("OnSwitchFile", function(file)
 	get_api = true
-	return result
-end
+end)
 
--- Add user event handler OnOpen
-local old_OnOpen = OnOpen
-function OnOpen(file)
-	local result
-	if old_OnOpen then result = old_OnOpen(file) end
+AddEventHandler("OnOpen", function(file)
 	get_api = true
-	return result
-end
+end)
 
--- Add user event handler OnBeforeSave
-local old_OnBeforeSave = OnBeforeSave
-function OnBeforeSave(file)
-	local result
-	if old_OnBeforeSave then result = old_OnBeforeSave(file) end
+AddEventHandler("OnBeforeSave", function(file)
 	get_api = true
-	return result
-end
+end)

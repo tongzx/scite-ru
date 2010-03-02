@@ -1332,29 +1332,10 @@ end
 ------------------------------------------------------------------------
 -- hex editor initialization
 ------------------------------------------------------------------------
-  local old_OnDoubleClick = OnDoubleClick
-  function OnDoubleClick(shift, ctrl, alt)
-      local result
-      if old_OnDoubleClick then result = old_OnDoubleClick(shift, ctrl, alt) end
-      if HandleClick() then return true end
-      return result
-  end
-  
-  local old_OnChar = OnChar
-  function OnChar(char)
-      local result
-      if old_OnChar then result = old_OnChar(char) end
-      if HandleChar(char) then return true end
-      return result
-  end
-  
-  local old_OnSwitchFile = OnSwitchFile
-  function OnSwitchFile(file)
-      local result
-      if old_OnSwitchFile then result = old_OnSwitchFile(file) end
-      if HandleSwitchFile() then return true end
-      return result
-  end
+AddEventHandler("OnDoubleClick", HandleClick)
+AddEventHandler("OnChar", HandleChar)
+AddEventHandler("OnSwitchFile", HandleSwitchFile)
+
 ------------------------------------------------------------------------
 
 -- simply call HexEditor() for normal behaviour (open current viewed file)

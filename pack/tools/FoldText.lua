@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 FoldText.lua
 mozers™
-version 1.1
+version 1.1.1
 ------------------------------------------------------
 It is primitive variant of Steve Donovan's script <http://lua-users.org/wiki/SciteTextFolding>
 extman.lua is not required.
@@ -148,13 +148,9 @@ local function fold()
 	end
 end
 
--- Add user event handler OnOpen
-local old_OnOpen = OnOpen
-function OnOpen(file)
-	local result
-	if old_OnOpen then result = old_OnOpen(file) end
+AddEventHandler("OnOpen", function(file)
 	if string.find(props['fold.text.ext'], string.lower(props['FileExt']), 1, true) ~= nil then
 		fold()
 	end
-	return result
-end
+end)
+

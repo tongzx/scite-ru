@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 lexer_name.lua
 Authors: mozers™, VladVRO
-version 1.1.2
+version 1.1.3
 ------------------------------------------------------
 Показ имени текущего лексера в строке статуса
 
@@ -14,6 +14,7 @@ version 1.1.2
 
 local last_lexer
 local function SetPropLexerName()
+	if props['FileName'] == '' then return end
 	local cur_lexer = editor:GetLexerLanguage()
 	if cur_lexer ~= last_lexer then
 		if cur_lexer == "hypertext" then
@@ -26,21 +27,7 @@ local function SetPropLexerName()
 end
 
 -- Добавляем свой обработчик события OnUpdateUI
-local old_OnUpdateUI = OnUpdateUI
-function OnUpdateUI ()
-	local result
-	if old_OnUpdateUI then result = old_OnUpdateUI() end
-	if props['FileName'] ~= '' then
-		SetPropLexerName()
-	end
-	return result
-end
+AddEventHandler("OnUpdateUI", SetPropLexerName)
 
 -- Добавляем свой обработчик события OnSwitchFile
-local old_OnSwitchFile = OnSwitchFile
-function OnSwitchFile(file)
-	local result
-	if old_OnSwitchFile then result = old_OnSwitchFile(file) end
-	SetPropLexerName()
-	return result
-end
+AddEventHandler("OnSwitchFile", SetPropLexerName)

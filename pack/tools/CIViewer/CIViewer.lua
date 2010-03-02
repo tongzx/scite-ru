@@ -1,7 +1,8 @@
 --[[--------------------------------------------------
-CIViewer (Color Image Viewer) v2.0.1
-Автор: mozers™
-
+CIViewer (Color Image Viewer)
+Author: mozers™
+Version: 2.0.2
+------------------------------------------------------
 * Preview of color or image under mouse cursor
 * Предпросмотр цвета, заданного значением в виде "#6495ED" или "red" или рисунка по его URI
 * Данный скрипт служит для обеспечения работоспособности основного приложения CIViewer.hta
@@ -46,16 +47,11 @@ local function GetURI(pos)
 	return URI
 end
 
--- Add user event handler OnDwellStart
-local old_OnDwellStart = OnDwellStart
-function OnDwellStart(pos, word)
-	local result
-	if old_OnDwellStart then result = old_OnDwellStart(pos, word) end
+AddEventHandler("OnDwellStart", function(pos, word)
 	if pos ~= 0 then
 		-- Присваиваем значения переменным (CIViewer.hta будет периодически их проверять)
 		props["civiewer.word"] = word
 		props["civiewer.pos"] = pos
 		props["civiewer.uri"] = GetURI(pos)
 	end
-	return result
-end
+end)

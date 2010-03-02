@@ -1,6 +1,6 @@
 --[[--------------------------------------------------
  Save SciTE Settings
- Version: 1.7.1
+ Version: 1.7.2
  Author: mozers™, Dmitry Maslov
 ---------------------------------------------------
  Save current settings on SciTE close.
@@ -65,10 +65,7 @@ end
 
 -- Добавляем свой обработчик события OnMenuCommand
 -- При изменении параметров через меню, меняются и соответствующие значения props[]
-local old_OnMenuCommand = OnMenuCommand
-function OnMenuCommand(cmd, source)
-	local result
-	if old_OnMenuCommand then result = old_OnMenuCommand(cmd, source) end
+AddEventHandler("OnMenuCommand", function(cmd, source)
 	if cmd == IDM_VIEWTOOLBAR then
 		ToggleProp('toolbar.visible')
 	elseif cmd == IDM_VIEWTABBAR then
@@ -90,17 +87,12 @@ function OnMenuCommand(cmd, source)
 	elseif cmd == IDM_WRAPOUTPUT then
 		ToggleProp('output.wrap')
 	end
-	return result
-end
+end)
 
 -- Добавляем свой обработчик события OnFinalise
 -- Сохранение настроек при закрытии SciTE
-local old_OnFinalise = OnFinalise
-function OnFinalise()
-	local result
-	if old_OnFinalise then result = old_OnFinalise() end
+AddEventHandler("OnFinalise", function()
 	if tonumber(props['save.settings']) == 1 then
 		SaveSettings()
 	end
-	return result
-end
+end)

@@ -1,7 +1,7 @@
 --[[----------------------------------------------------------------------------
 ReadOnly.lua
 Author: VladVRO, mozers
-version 1.3
+version 1.3.1
 
 Наглядная установка/снятие режима "только для чтения"
 индикация режима ReadOnly в строке состояния, стилем поля
@@ -49,30 +49,18 @@ local function SetReadOnly(ro)
 end
 
 -- Добавляем свой обработчик события OnSwitchFile
-local old_OnSwitchFile = OnSwitchFile
-function OnSwitchFile(file)
-	local result
-	if old_OnSwitchFile then result = old_OnSwitchFile(file) end
-	if SetReadOnly(editor.ReadOnly) then return true end
-	return result
-end
+AddEventHandler("OnSwitchFile", function(file)
+	SetReadOnly(editor.ReadOnly)
+end)
 
 -- Добавляем свой обработчик события OnOpen
-local old_OnOpen = OnOpen
-function OnOpen(file)
-	local result
-	if old_OnOpen then result = old_OnOpen(file) end
-	if SetReadOnly(editor.ReadOnly) then return true end
-	return result
-end
+AddEventHandler("OnOpen", function(file)
+	SetReadOnly(editor.ReadOnly)
+end)
 
 -- Добавляем свой обработчик события, возникающего при вызове пункта меню "Read-Only"
-local old_OnSendEditor = OnSendEditor
-function OnSendEditor(id_msg, wp, lp)
-	local result
-	if old_OnSendEditor then result = old_OnSendEditor(id_msg, wp, lp) end
+AddEventHandler("OnSendEditor", function(id_msg, wp, lp)
 	if id_msg == SCI_SETREADONLY then
-		if SetReadOnly(wp~=0) then return true end
+		SetReadOnly(wp~=0)
 	end
-	return result
-end
+end)
