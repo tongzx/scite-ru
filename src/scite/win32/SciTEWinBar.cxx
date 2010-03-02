@@ -535,7 +535,7 @@ void SciTEWin::SetToolBar() {
 				barbuttons.Add(
 					BarButtonIn(strlen(userContextItem)?atoi(userContextItem):-1, 
 					GetMenuCommandAsInt(command)));
-				ToolBarTips[GetMenuCommandAsInt(command)]=tips;
+				if(GetMenuCommandAsInt(command) != 0) ToolBarTips[GetMenuCommandAsInt(command)]=tips;
 				int id = atoi(command);
 				if (id > IDM_TOOLS) {
 					SString prefix = "command.checked." + SString(id - IDM_TOOLS) + ".";
