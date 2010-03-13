@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
-Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev
-Version 1.16.1
+Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev, ur4ltz
+Version 1.17.0
 ------------------------------------------------------
   Note: Require gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
                lpeg.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/lpeg/>
@@ -21,6 +21,9 @@ Version 1.16.1
     # Set default settings for Functions/Procedures List
     sidebar.functions.flags=1
     sidebar.functions.params=1
+
+    sidebar.width=250 (default = 230)
+    sidebar.position=left or right (default = right)
 --]]--------------------------------------------------
 require 'gui'
 require 'lpeg'
@@ -35,9 +38,10 @@ local _show_flags = tonumber(props['sidebar.functions.flags']) == 1
 local _show_params = tonumber(props['sidebar.functions.params']) == 1
 
 local tab_index = 0
-local panel_width = 200
-local win_height = props['position.height']
-if win_height == '' then win_height = 600 end
+local panel_width = tonumber(props['sidebar.width']) or 230
+local win_height = tonumber(props['position.height']) or 600
+local sidebar_position = 'right'
+if props['sidebar.position']=='left' then sidebar_position = 'left' end
 
 local style = props['style.*.32']
 local colorback = style:match('back:(#%x%x%x%x%x%x)')
@@ -104,7 +108,7 @@ end
 ----------------------------------------------------------
 -- Create panels
 ----------------------------------------------------------
-local tab0 = gui.panel(panel_width + 18)
+local tab0 = gui.panel(panel_width)
 
 local memo_path = gui.memo()
 tab0:add(memo_path, "top", 22)
@@ -138,7 +142,7 @@ tab0:context_menu {
 	'Favorites: Delete item\tDel|Favorites_DeleteItem',
 }
 -------------------------
-local tab1 = gui.panel(panel_width + 18)
+local tab1 = gui.panel(panel_width)
 
 local list_func_height = win_height/3
 if list_func_height <= 0 then list_func_height = 200 end
@@ -160,7 +164,7 @@ tab1:context_menu {
 	'Functions: Show/Hide Parameters|Functions_ToggleParams',
 }
 -------------------------
-local tab2 = gui.panel(panel_width + 18)
+local tab2 = gui.panel(panel_width)
 
 local list_abbrev = gui.list(true)
 list_abbrev:add_column("Abbrev", 60)
@@ -189,7 +193,7 @@ if tonumber(props['sidebar.show'])==1 then
 		win_parent:size(panel_width + 24, 600)
 		win_parent:show()
 	else
-		gui.set_panel(win_parent,"right")
+		gui.set_panel(win_parent, sidebar_position)
 	end
 end
 
@@ -1217,7 +1221,7 @@ function SideBar_ShowHide()
 		if win then
 			win_parent:show()
 		else
-			gui.set_panel(win_parent,"right")
+			gui.set_panel(win_parent, sidebar_position)
 		end
 		props['sidebar.show']=1
 		OnSwitch()
