@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 CodePage.lua
 Authors: YuriNB, VladVRO, mozers™
-Version: 2.1.2
+Version: 2.2.0
 ------------------------------------------------------
 Гибрид 2х скриптов:
 win1251 to cp866 keyboard mapper (YuriNB icq#2614215)
@@ -25,11 +25,6 @@ Connection:
 
     code.page.866.detect=1
 --]]--------------------------------------------------
-
-local function UpdateToolBar() -- лучшего способа обновить тулбар не нашел :(
-	scite.MenuCommand(IDM_TOGGLEOUTPUT)
-	scite.MenuCommand(IDM_TOGGLEOUTPUT)
-end
 
 local function UpdateStatusCodePage(mode)
 	local code_page_name = props["code.page.name"]
@@ -61,7 +56,7 @@ local function UpdateStatusCodePage(mode)
 		end
 	end
 	if props["code.page.name"] ~= code_page_name then
-		UpdateToolBar()
+		scite.CheckMenus()
 		scite.UpdateStatusBar()
 	end
 end
