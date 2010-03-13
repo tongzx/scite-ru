@@ -197,6 +197,13 @@ New variable in properties files<br>
 <span class="example">find.replace.closefind=&lt;number value&gt;</span><br>
 Set to 0 to prevent the Find dialog from closing when "Find" pressed.
 
+<h5 id="ReturnBackAfterRALL">
+<sup>new</sup>
+[ReturnBackAfterRALL] <span class=desc>(Author: neo4max)</span></h5>
+New variable in properties files<br>
+<span class="example">find.replace.return.to.start=1</span><br>
+If 1, then pressing the button "Replace All" (or "Replace in Buffers") cursor after the replace back to its start position.
+
 <h5 id="find.bookmark.disable">
 [find.bookmark.disable] <span class=desc>(Author: dB6)</span></h5>
 New variable in properties files<br>
@@ -499,6 +506,12 @@ Added new message <span class="example">SCI_SETMOUSECAPTURE</span> to the Scinti
 This message let to inform the Scintilla that mouse click handled.<br>
 Example: <span class="example">SendEditor(SCI_SETMOUSECAPTURE, 0)</span> <br>
 And this message will be sent if <span class="example">OnClick()</span> or <span class="example">OnDoubleClick()</span> returns <span class="example"><i>true</i></span>.
+
+<h5 id="CheckMenus">
+<sup>new</sup>
+[CheckMenus] <span class=desc>(Author: neo4max)</span></h5>
+In SciTE Lua Scripting Extension added new command<br>
+<span class="example">scite.CheckMenus()</span> - that allows to update the state of the menu and toolbar SciTE.
 
 <h5 id="Perform">
 [Perform] <span class=desc>(Author: VladVRO)</span></h5>

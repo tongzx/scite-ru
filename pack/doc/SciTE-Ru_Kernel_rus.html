@@ -198,6 +198,13 @@ command.name.6.*=Date and Time</div>
 <span class="example">find.replace.closefind=число</span><br>
 0 - предотвращает закрытие окна поиска после нажатия на кнопку "Найти", 1 - закрыть окно (обычное поведение по умолчанию).
 
+<h5 id="ReturnBackAfterRALL">
+<sup>new</sup>
+[ReturnBackAfterRALL] <span class=desc>(Автор: neo4max)</span></h5>
+Новый параметр в .properties<br>
+<span class="example">find.replace.return.to.start=1</span><br>
+Если 1, то при нажатии на кнопку "Заменить все" (или "Заменить во всех файлах") курсор после замены возвращается на исходную позицию.
+
 <h5 id="find.bookmark.disable">
 [find.bookmark.disable] <span class=desc>(Автор: dB6)</span></h5>
 Новый параметр в .properties<br>
@@ -499,6 +506,12 @@ end</div>
 С его помощью можно сообщить ядру, что нажатие кнопки мыши обработано.<br>
 Пример: <span class="example">SendEditor(SCI_SETMOUSECAPTURE, 0)</span> <br>
 Такое сообщение теперь отправляется, если <span class="example">OnClick()</span> или <span class="example">OnDoubleClick()</span> возвращает <span class="example"><i>true</i></span>.
+
+<h5 id="CheckMenus">
+<sup>new</sup>
+[CheckMenus] <span class=desc>(Автор: neo4max)</span></h5>
+В SciTE Lua Scripting Extension добавлена новая команда<br>
+<span class="example">scite.CheckMenus()</span> - которая позволяет обновить состояние меню и тулбара SciTE
 
 <h5 id="Perform">
 [Perform] <span class=desc>(Автор: VladVRO)</span></h5>

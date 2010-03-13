@@ -396,6 +396,7 @@ scite.MenuCommand
 scite.SendEditor
 scite.SendOutput
 scite.ShowParametersDialog
+scite.CheckMenus
 scite.Perform
 scite.UpdateStatusBar
 scite.ReloadStartupScript
@@ -406,6 +407,7 @@ MenuCommand(IDM_constant)\n run specifed menu command
 SendEditor(SCI_constant, ...)\n sends a message to the editor pane
 SendOutput(SCI_constant, ...)\n sends a message to the output pane
 ShowParametersDialog(text)\n show parametrs dialog with message (txt) and return result action (only SciTE-Ru)
+CheckMenus()\n allows to update the state of the menu and toolbar (only SciTE-Ru)
 Perform("action")\n execute commands of SciTE Director Interface (only SciTE-Ru)
 UpdateStatusBar([bUpdateSlowData])\n perform update status bar
 ReloadStartupScript()\n reload startup script
