@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 CodePage.lua
 Authors: YuriNB, VladVRO, mozers™
-Version: 2.1.1
+Version: 2.1.2
 ------------------------------------------------------
 Гибрид 2х скриптов:
 win1251 to cp866 keyboard mapper (YuriNB icq#2614215)
@@ -32,6 +32,7 @@ local function UpdateToolBar() -- лучшего способа обновить тулбар не нашел :(
 end
 
 local function UpdateStatusCodePage(mode)
+	local code_page_name = props["code.page.name"]
 	props["code.page.866"]='0'
 	if mode == IDM_ENCODING_UCS2BE then
 		props["code.page.name"]='UCS-2 BE'
@@ -59,8 +60,10 @@ local function UpdateStatusCodePage(mode)
 			props["code.page.name"]='???'
 		end
 	end
-	UpdateToolBar()
-	scite.UpdateStatusBar()
+	if props["code.page.name"] ~= code_page_name then
+		UpdateToolBar()
+		scite.UpdateStatusBar()
+	end
 end
 
 local function CharsetDetect()
