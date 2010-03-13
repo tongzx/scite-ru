@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev, ur4ltz
-Version 1.17.1
+Version 1.17.2
 ------------------------------------------------------
   Note: Require gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
                lpeg.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/lpeg/>
@@ -466,7 +466,9 @@ function Favorites_AddFile()
 	local fname, attr = FileMan_GetSelectedItem()
 	if fname == '' then return end
 	fname = current_path..fname
-	if attr == 'd' then fname = fname..'\\' end
+	if attr == 'd' then
+		fname = fname:gsub('\\\.\.$', '')..'\\'
+	end
 	list_fav_table[#list_fav_table+1] = fname
 	Favorites_ListFILL()
 end
