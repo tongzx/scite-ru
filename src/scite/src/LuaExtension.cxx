@@ -326,6 +326,13 @@ static int cf_editor_get_translation(lua_State *L) {
 }
 //!-end-[LocalizationFromLua]
 
+//!-start-[CheckMenus]
+static int cf_scite_check_menus(lua_State *L) {
+	host->CheckMenus();
+	return 0;
+}
+//!-end-[CheckMenus]
+
 static int cf_scite_update_status_bar(lua_State *L) {
 	bool bUpdateSlowData = (lua_gettop(L) > 0 ? lua_toboolean(L, 1) : false) != 0;
 	host->UpdateStatusBar(bUpdateSlowData);
@@ -1511,6 +1518,11 @@ static bool InitGlobalScope(bool checkProperties, bool forceReload = false) {
 
 	lua_pushcfunction(luaState, cf_scite_menu_command);
 	lua_setfield(luaState, -2, "MenuCommand");
+
+	//!-start-[CheckMenus]
+	lua_pushcfunction(luaState, cf_scite_check_menus);
+	lua_setfield(luaState, -2, "CheckMenus");
+	//!-end-[CheckMenus]
 
 	lua_pushcfunction(luaState, cf_scite_update_status_bar);
 	lua_setfield(luaState, -2, "UpdateStatusBar");
