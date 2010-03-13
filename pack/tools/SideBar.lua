@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev, ur4ltz
-Version 1.17.0
+Version 1.17.1
 ------------------------------------------------------
   Note: Require gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
                lpeg.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/lpeg/>
@@ -38,7 +38,7 @@ local _show_flags = tonumber(props['sidebar.functions.flags']) == 1
 local _show_params = tonumber(props['sidebar.functions.params']) == 1
 
 local tab_index = 0
-local panel_width = tonumber(props['sidebar.width']) or 230
+local panel_width = tonumber(props['sidebar.width']) or 216
 local win_height = tonumber(props['position.height']) or 600
 local sidebar_position = 'right'
 if props['sidebar.position']=='left' then sidebar_position = 'left' end
@@ -432,7 +432,9 @@ local function Favorites_ListFILL()
 		end
 	)
 	for _, s in ipairs(list_fav_table) do
-		list_favorites:add_item(s:gsub('.+\\',''), s)
+		local fname = s:gsub('.+\\','')
+		if fname == '' then fname = s:gsub('.+\\(.-)\\','[%1]') end
+		list_favorites:add_item(fname, s)
 	end
 end
 
@@ -461,10 +463,11 @@ end
 AddEventHandler("OnFinalise", Favorites_SaveList)
 
 function Favorites_AddFile()
-	local filename, attr = FileMan_GetSelectedItem()
-	if filename == '' then return end
-	if attr == 'd' then return end
-	list_fav_table[#list_fav_table+1] = current_path..filename
+	local fname, attr = FileMan_GetSelectedItem()
+	if fname == '' then return end
+	fname = current_path..fname
+	if attr == 'd' then fname = fname..'\\' end
+	list_fav_table[#list_fav_table+1] = fname
 	Favorites_ListFILL()
 end
 
@@ -483,8 +486,14 @@ end
 local function Favorites_OpenFile()
 	local idx = list_favorites:get_selected_item()
 	if idx == -1 then return end
-	local filename = list_favorites:get_item_data(idx)
-	OpenFile(filename)
+	local fname = list_favorites:get_item_data(idx)
+	if fname:match('\\$') then
+		gui.chdir(fname)
+		current_path = fname
+		FileMan_ListFILL()
+	else
+		OpenFile(fname)
+	end
 end
 
 local function Favorites_ShowFilePath()
