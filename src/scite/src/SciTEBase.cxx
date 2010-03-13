@@ -1862,7 +1862,6 @@ int SciTEBase::DoReplaceAll(bool inSelection) {
 
 	Sci_CharacterRange cr = GetSelection();
 	int startPosition = cr.cpMin;
-	int startPositionToReturn = startPosition; //!-add-[ReturnBackAfterRALL]
 	int endPosition = cr.cpMax;
 	int countSelections = SendEditor(SCI_GETSELECTIONS);
 	if (inSelection) {
@@ -1948,10 +1947,6 @@ int SciTEBase::DoReplaceAll(bool inSelection) {
 			}
 			// Modify for change caused by replacement
 			endPosition += lenReplaced - lenTarget;
-			//!-start-[ReturnBackAfterRALL]
-			if (startPositionToReturn > posFind)
-				startPositionToReturn += lenReplaced - lenTarget;
-			//!-end-[ReturnBackAfterRALL]
 			// For the special cases of start of line and end of line
 			// something better could be done but there are too many special cases
 			lastMatch = posFind + lenReplaced + movepastEOL;
@@ -1970,11 +1965,7 @@ int SciTEBase::DoReplaceAll(bool inSelection) {
 			if (countSelections == 1)
 				SetSelection(startPosition, endPosition);
 		} else {
-			//!-start-[ReturnBackAfterRALL]
-			if(props.GetInt("find.replace.return.to.start"))
-				SetSelection(startPositionToReturn, startPositionToReturn);
-			else
-			//!-end-[ReturnBackAfterRALL]
+			if(!props.GetInt("find.replace.return.to.start"))//!-add-[ReturnBackAfterRALL]
 			SetSelection(lastMatch, lastMatch);
 		}
 		SendEditor(SCI_ENDUNDOACTION);
