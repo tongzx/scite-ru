@@ -596,7 +596,7 @@ do
 		-- create flags:
 		F = Cg(F*Cc(true),'F')
 		-- create additional captures
-		I = C(IDENTIFIER)*cl
+		local I = C(IDENTIFIER)*cl
 		-- definitions to capture:
 		local par = C((ESCANY - NL)^0)
 		local def1 = I*SPACE*(p+F)
@@ -634,7 +634,7 @@ do
 		-- create flags
 		l = Cg(l*SC^1*Cc(true),'l')^-1
 		-- create additional captures
-		I = C(IDENTIFIER)*cl
+		local I = C(IDENTIFIER)*cl
 		-- definitions to capture:
 		local funcdef1 = l*f*SC^1*I*SC^0*par -- usual function declaration
 		local funcdef2 = l*I*SC^0*"="*SC^0*f*SC^0*par -- declaration through assignment
@@ -767,7 +767,7 @@ do
 		-- create flags:
 		c = Cg(c*Cc(true),'class')
 		-- create additional captures
-		I = C(IDENTIFIER)*cl
+		local I = C(IDENTIFIER)*cl
 		-- definitions to capture:
 		local def = (c+d)*SPACE*I
 		def = (SPACE+P'')*Ct(def*SPACE^-1*par)*SPACE^-1*P':'
@@ -785,7 +785,7 @@ do
 		-- define local patterns
 		local d = P":"
 		-- create additional captures
-		I = C(IDENTIFIER)*cl
+		local I = C(IDENTIFIER)*cl
 		-- definitions to capture:
 		local def = d*SPACE*I
 		def = Ct(def*(SPACE*par)^-1)*IGNORED
@@ -807,7 +807,7 @@ do
 		local IGNORED = (ANY - NL)^0 * NL -- just skip line by line
 		local par = C(P"{"*(1-P"}")^0*P"}")/clear_spaces -- captures parameters in parentheses
 		-- create additional captures
-		I = C(IDENTIFIER)*cl
+		local I = C(IDENTIFIER)*cl
 		-- definitions to capture:
 		local def = Ct(I*SPACE*par)--*IGNORED
 		-- resulting pattern, which does the work
@@ -841,6 +841,18 @@ do
 		Lang2lpeg['*'] = lpeg.Ct(patt)
 	end --^----- * ------^--
 
+	do --v------- autohotkey -------v--
+		-- identifier
+		local I = C( (ANY-(NL+':'))^1 )*P'::'*cl -- anything followed by '::'
+		local line = (ANY-NL)^0*NL
+		-- definitions to capture:
+		local def = Ct( I ) * ((ANY-NL )^0)
+		-- resulting pattern, which does the work
+		local patt = (def + line)^0 * (EOF) --+ error'invalid character')
+
+		Lang2lpeg.autohotkey = lpeg.Ct(patt)
+	end --do --^------- autohotkey -------^--
+	
 end
 
 local Lang2CodeStart = {
@@ -873,6 +885,7 @@ do -- Fill_Ext2Lang
 		[props['file.patterns.py']]='Python',
 		[props['file.patterns.lua']]='Lua',
 		[props['file.patterns.nncron']]='nnCron',
+		['*.ahk']='autohotkey',
 	}
 	for i,v in pairs(patterns) do
 		for ext in (i..';'):gfind("%*%.([^;]+);") do
