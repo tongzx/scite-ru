@@ -5216,6 +5216,25 @@ void SciTEBase::CheckMenus() {
 	EnableAMenuItem(IDM_MACROPLAY, !recording);
 	EnableAMenuItem(IDM_MACRORECORD, !recording);
 	EnableAMenuItem(IDM_MACROSTOPRECORD, recording);
+	//!-start-[LangMenuChecker]
+	static SString last_lang = "";
+	if(language != last_lang) {
+		for (int i = 0; i < languageItems; i++) {
+			CheckAMenuItem(IDM_LANGUAGE + i, false);
+		}
+		for (int item = 0; item < languageItems; item++) {
+			if (languageMenu[item].menuItem[0] == '#') continue;
+			int itemID = IDM_LANGUAGE + item;
+			SString fn = "x.";
+			fn += languageMenu[item].extension;
+			if(language == props.GetNewExpand("lexer.", fn.c_str())) {
+				CheckAMenuItem(itemID, true);
+				last_lang = language;
+				//break;
+			}
+		}
+	}
+	//!-end-[LangMenuChecker]
 }
 
 //!-start-[ExtendedContextMenu]
