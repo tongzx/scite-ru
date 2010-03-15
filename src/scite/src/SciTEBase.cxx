@@ -5216,7 +5216,7 @@ void SciTEBase::CheckMenus() {
 	EnableAMenuItem(IDM_MACROPLAY, !recording);
 	EnableAMenuItem(IDM_MACRORECORD, !recording);
 	EnableAMenuItem(IDM_MACROSTOPRECORD, recording);
-	//!-start-[LangMenuChecker]
+//!-start-[LangMenuChecker]
 	static SString last_lang = "";
 	if(language != last_lang) {
 		for (int i = 0; i < languageItems; i++) {
@@ -5234,7 +5234,7 @@ void SciTEBase::CheckMenus() {
 			}
 		}
 	}
-	//!-end-[LangMenuChecker]
+//!-end-[LangMenuChecker]
 }
 
 //!-start-[ExtendedContextMenu]

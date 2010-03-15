@@ -979,8 +979,10 @@ void SciTEBase::SaveAs(const char *file, bool fixCase) {
 	Redraw();
 	SetWindowName();
 	BuffersMenu();
-	/*!if (extender)
-		extender->OnSave(filePath.AsFileSystem());*/
+/*!-del-[EventInvalid]
+	if (extender)
+		extender->OnSave(filePath.AsFileSystem());
+*/
 }
 
 void SciTEBase::SaveIfNotOpen(const FilePath &destFile, bool fixCase) {
