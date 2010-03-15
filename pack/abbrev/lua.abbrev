@@ -23,23 +23,22 @@ filewrite=-- Write file\nlocal function file_write(filename, text)\n\tio.output(
 #Event handlers
 onopen=AddEventHandler("OnOpen", function(file)\n|\tMyHandler(file)\nend)\n
 onclose=AddEventHandler("OnClose", function(file)\n|\tMyHandler(file)\nend)\n
-onswitchfile=AddEventHandler("OnSwitchFile", function(file)\n|\tMyHandler(file)\nend)\n
-onbeforesave=AddEventHandler("OnBeforeSave", function(file)\n|\treturn MyHandler(file)\nend)\n
 onsave=AddEventHandler("OnSave", function(file)\n|\tMyHandler(file)\nend)\n
-onsavepointreached=AddEventHandler("OnSavePointReached", function()\n|\treturn MyHandler()\nend)\n
-onsavepointleft=AddEventHandler("OnSavePointLeft", function()\n|\treturn MyHandler()\nend)\n
-onupdateui=AddEventHandler("OnUpdateUI", function()\n|\tif props['FileName'] ~= '' then\n\t\treturn MyHandler()\n\tend\nend)\n
-onchar=AddEventHandler("OnChar", function(char)\n|\treturn MyHandler(char)\nend)\n
-onkey=AddEventHandler("OnKey", function(key, shift, ctrl, alt, char)\n|\tif editor.Focus then\n\t\treturn MyHandler(key, shift, ctrl, alt, char)\n\tend\nend)\n
-onmenucommand=AddEventHandler("OnMenuCommand", function(msg, source)\n|\tif msg == IDM_MONOFONT then\n\t\treturn MyHandler()\n\tend\nend)\n
-onstyle=AddEventHandler("OnStyle", function(styler)\n|\tMyHandler(styler)\nend)\n
-onmarginclick=AddEventHandler("OnMarginClick", function()\n|\treturn MyHandler()\nend)\n
-onclick=AddEventHandler("OnClick", function(shift, ctrl, alt)\n|\treturn MyHandler(shift, ctrl, alt)\nend)\n
-ondoubleclick=AddEventHandler("OnDoubleClick", function(shift, ctrl, alt)\n|\treturn MyHandler(shift, ctrl, alt)\nend)\n
+onbeforesave=AddEventHandler("OnBeforeSave", function(file)\n|\treturn MyHandler(file) -- true - break event\nend)\n
+onsavepointreached=AddEventHandler("OnSavePointReached", function()\n|\treturn MyHandler() -- true - break event\nend)\n
+onsavepointleft=AddEventHandler("OnSavePointLeft", function()\n|\treturn MyHandler() -- true - break event\nend)\n
+onswitchfile=AddEventHandler("OnSwitchFile", function(file)\n|\tMyHandler(file)\nend)\n
+onchar=AddEventHandler("OnChar", function(char)\n|\treturn MyHandler(char) -- true - break event\nend)\n
+onkey=AddEventHandler("OnKey", function(key, shift, ctrl, alt, char)\n|\tif editor.Focus then\n\t\treturn MyHandler(key, shift, ctrl, alt, char) -- true - break event\n\tend\nend)\n
+onclick=AddEventHandler("OnClick", function(shift, ctrl, alt)\n|\treturn MyHandler(shift, ctrl, alt) -- true - break event\nend)\n
+ondoubleclick=AddEventHandler("OnDoubleClick", function(shift, ctrl, alt)\n|\treturn MyHandler(shift, ctrl, alt) -- true - break event\nend)\n
+onmarginclick=AddEventHandler("OnMarginClick", function()\n|\treturn MyHandler() -- true - break event\nend)\n
 onmousebuttonup=AddEventHandler("OnMouseButtonUp", function(ctrl)\n|\tMyHandler(ctrl)\nend)\n
+onmenucommand=AddEventHandler("OnMenuCommand", function(msg, source)\n|\tif msg == IDM_MONOFONT then\n\t\treturn MyHandler() -- true - break event\n\tend\nend)\n
+onsendeditor=AddEventHandler("OnSendEditor", function(id_msg, wp, lp)\n|\tif id_msg == SCI_SETREADONLY then\n\t\treturn MyHandler(wp, lp) -- number or string - break event\n\tend\nend)\n
+onstyle=AddEventHandler("OnStyle", function(styler)\n|\tMyHandler(styler)\nend)\n
 ondwellstart=AddEventHandler("OnDwellStart", function(pos, word)\n|\tMyHandler(pos, word)\nend)\nprops["dwell.period"] = 50\n
-onexecute=AddEventHandler("OnExecute", function(cmd)\n|\tMyHandler(cmd)\nend)\n
 onmacro=AddEventHandler("OnMacro", function(cmd, msg)\n|\tMyHandler(cmd, msg)\nend)\n
-onfinalise=AddEventHandler("OnFinalise", function()\n|\tif props['FileName'] ~= '' then\n\t\tMyHandler()\n\tend\nend)\n
+onupdateui=AddEventHandler("OnUpdateUI", function()\n|\tif props['FileName'] ~= '' then\n\t\treturn MyHandler() -- true - break event\n\tend\nend)\n
 onuserlistselection=AddEventHandler("OnUserListSelection", function(tp, sel_value)\n|\tif tp == 12 then\n\t\tMyHandler(sel_value)\n\tend\nend)\n
-onsendeditor=AddEventHandler("OnSendEditor", function(id_msg, wp, lp)\n|\tif id_msg == SCI_SETREADONLY then\n\t\treturn MyHandler(wp, lp)\n\tend\nend)\n
+onfinalise=AddEventHandler("OnFinalise", function()\n|\tif props['FileName'] ~= '' then\n\t\tMyHandler()\n\tend\nend)\n
