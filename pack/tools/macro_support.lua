@@ -1,6 +1,6 @@
 --[[
 Macros support for SciTE
-Version 2.3.2
+Version 2.4.0
 Author: VladVRO
 ---------------------------------------------------
 Description:
@@ -25,6 +25,14 @@ and next lines into SciTEUser.properties:
  command.name.42.*=Macro Fill To Buffer (LUA code)
  command.42.*=MacroFillToBuffer LUA
  command.mode.42.*=subsystem:lua,savebefore:no
+
+ command.name.43.*=Open File with Macro
+ command.43.*=dostring scite.Open(macro_file_path())
+ command.mode.43.*=subsystem:lua,savebefore:no
+
+ command.name.44.*=Reload Macro from File
+ command.44.*=dostring MacroClearList() MacroLoadFromFile(macro_file_path())
+ command.mode.44.*=subsystem:lua,savebefore:no
 ---------------------------------------------------
 ]]
 require 'shell'
@@ -55,7 +63,7 @@ local function macro_new_record_position()
 end
 
 -- path to file with macros
-local function macro_file_path()
+function macro_file_path()
   local path = props['macro.file.path']
   if path == "" then
     path = props['scite.userhome']
@@ -65,30 +73,31 @@ local function macro_file_path()
   return path
 end
 
+-- play macro by name
+function MacroPlay(name)
+  local macro = glb_macros_table[name]
+  if macro then
+    scite.SendEditor(SCI_AUTOCCANCEL)
+    editor:BeginUndoAction()
+    for _,val in pairs(macro) do
+      local c,lp,wp = unpack(val)
+      if IFACE_FUNCTIONS_USE_WP[c] then
+        scite.SendEditor(c,wp,lp)
+      else
+        scite.SendEditor(c,lp,0)
+      end
+    end
+    editor:EndUndoAction()
+  end
+end
+
 
 function OnMacro(cmd, msg)
   if cmd == "macro:run" then
     if msg == "<clean list>" then
-      scite.Perform("currentmacro:")
-      while table.getn(glb_macros_name_table) > 0 do
-        glb_macros_table[glb_macros_name_table[1]] = nil
-        table.remove(glb_macros_name_table,1)
-      end
+      MacroClearList()
     else
-      local macro = glb_macros_table[msg]
-      if macro then
-        scite.SendEditor(SCI_AUTOCCANCEL)
-        editor:BeginUndoAction()
-        for _,val in pairs(macro) do
-          local c,lp,wp = unpack(val)
-          if IFACE_FUNCTIONS_USE_WP[c] then
-            scite.SendEditor(c,wp,lp)
-          else
-            scite.SendEditor(c,lp,0)
-          end
-        end
-        editor:EndUndoAction()
-      end
+      MacroPlay(msg)
     end
   elseif cmd == "macro:record" then
     for c,wp,_,lp in string.gfind(msg, "(%d+);(%d+);(%d+);(.*)") do
@@ -136,9 +145,12 @@ function OnMacro(cmd, msg)
   end
 end
 
-local function str_to_macro_name(str)
-  for a in string.gfind(str, macro_name_pattern) do
-    return a
+
+function MacroClearList()
+  scite.Perform("currentmacro:")
+  while table.getn(glb_macros_name_table) > 0 do
+    glb_macros_table[glb_macros_name_table[1]] = nil
+    table.remove(glb_macros_name_table,1)
   end
 end
 
@@ -218,6 +230,12 @@ local function macro_to_string(mode)
     end
   end
   return text
+end
+
+local function str_to_macro_name(str)
+  for a in string.gfind(str, macro_name_pattern) do
+    return a
+  end
 end
 
 local function macro_load(text)
