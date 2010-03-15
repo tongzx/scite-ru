@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 new_file.lua
 mozers™, VladVRO
-version 3.0.3
+version 3.1.0
 ----------------------------------------------
 Заменяет стандартную команду SciTE "File|New" (Ctrl+N)
 Создает новый буфер в текущем каталоге с расширением текущего файла
@@ -21,8 +21,8 @@ In file SciTEStartup.lua add a line:
 require 'shell'
 
 props["untitled.file.number"] = 0
-local not_saved_files = {}
 
+-- Создает новый буфер в текущем каталоге с расширением текущего файла
 local function CreateUntitledFile()
 	local file_ext = "."..props["FileExt"]
 	if file_ext == "." then file_ext = props["default.file.ext"] end
@@ -33,7 +33,6 @@ local function CreateUntitledFile()
 			local warning_couldnotopenfile_disable = props['warning.couldnotopenfile.disable']
 			props['warning.couldnotopenfile.disable'] = 1
 			scite.Open(file_path)
-			not_saved_files[file_path] = true
 			props['warning.couldnotopenfile.disable'] = warning_couldnotopenfile_disable
 			return true
 		end
@@ -45,15 +44,14 @@ AddEventHandler("OnMenuCommand", function(msg, source)
 	end
 end)
 
--- Файл, созданный функцией CreateUntitledFile имеет имя, поэтому SciTE его новым не считает и будет сохранять молча
--- Функция ниже служит для того, чтобы при сохранении такого файла всетаки появлялся запрос с выбором пути и имени
-local bypass
+-- Новый буфер, созданный функцией CreateUntitledFile имеет полное имя, поэтому при сохранении SciTE будет сохранять его молча по заданному пути (без вывода диалогового окна "SaveAs")
+-- Функция ниже выводит диалоговое окно "SaveAs" при сохранении любого буфера, если такой файл отсутствует на диске
+local bypass = false
 local function SaveUntitledFile(file)
-	if not_saved_files[file] and not bypass then
+	if not shell.fileexists(file) and not bypass then
 		bypass = true
 		scite.MenuCommand(IDM_SAVEAS)
 		bypass = false
-		not_saved_files[file] = nil
 		return true
 	end
 end
