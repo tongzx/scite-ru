@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev, ur4ltz
-Version 1.17.3
+Version 1.18.0
 ------------------------------------------------------
   Note: Require gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
                lpeg.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/lpeg/>
@@ -1323,3 +1323,25 @@ AddEventHandler("OnKey", function(key, shift, ctrl, alt, char)
 		end
 	end
 end)
+
+----------------------------------------------------------
+-- Show Current Colour
+----------------------------------------------------------
+local function ShowCurrentColour(pos, word)
+	if pos ~= 0 then
+		if word:match('%x%x%x%x%x%x') then
+			memo_path:set_memo_colour("", "#"..word)
+		else
+			local def_bg = editor.StyleBack[32]
+			local b = math.floor(def_bg / 65536)
+			local g = math.floor((def_bg - b*65536) / 256)
+			local r = def_bg - b*65536 - g*256
+			local rgb_hex = string.format('#%2X%2X%2X', r, g, b)
+			memo_path:set_memo_colour("", rgb_hex)
+		end
+	end
+end
+AddEventHandler("OnDwellStart", function(pos, word)
+		ShowCurrentColour(pos, word)
+end)
+props["dwell.period"] = 50
