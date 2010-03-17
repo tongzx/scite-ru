@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 new_file.lua
 mozers™, VladVRO
-version 3.1.0
+version 3.1.2
 ----------------------------------------------
 Заменяет стандартную команду SciTE "File|New" (Ctrl+N)
 Создает новый буфер в текущем каталоге с расширением текущего файла
@@ -21,6 +21,7 @@ In file SciTEStartup.lua add a line:
 require 'shell'
 
 props["untitled.file.number"] = 0
+local unsaved_files = {}
 
 -- Создает новый буфер в текущем каталоге с расширением текущего файла
 local function CreateUntitledFile()
@@ -33,6 +34,7 @@ local function CreateUntitledFile()
 			local warning_couldnotopenfile_disable = props['warning.couldnotopenfile.disable']
 			props['warning.couldnotopenfile.disable'] = 1
 			scite.Open(file_path)
+			unsaved_files[file_path:upper()] = true --сохраняем путь к созданному буферу в таблице
 			props['warning.couldnotopenfile.disable'] = warning_couldnotopenfile_disable
 			return true
 		end
@@ -41,20 +43,16 @@ end
 AddEventHandler("OnMenuCommand", function(msg, source)
 	if msg == IDM_NEW then
 		return CreateUntitledFile()
+	elseif msg == IDM_SAVEAS then
+		unsaved_files[props["FilePath"]:upper()] = nil --удаляем запись о буфере из таблицы
 	end
 end)
 
 -- Новый буфер, созданный функцией CreateUntitledFile имеет полное имя, поэтому при сохранении SciTE будет сохранять его молча по заданному пути (без вывода диалогового окна "SaveAs")
--- Функция ниже выводит диалоговое окно "SaveAs" при сохранении любого буфера, если такой файл отсутствует на диске
-local bypass = false
-local function SaveUntitledFile(file)
-	if not shell.fileexists(file) and not bypass then
-		bypass = true
+-- Обработчик события OnBeforeSave при сохранении такого буфера выводит диалоговое окно "SaveAs"
+AddEventHandler("OnBeforeSave", function(file)
+	if unsaved_files[file:upper()] then -- если это созданный нами несохраненный буфер
 		scite.MenuCommand(IDM_SAVEAS)
-		bypass = false
 		return true
 	end
-end
-AddEventHandler("OnBeforeSave", function(file)
-	return SaveUntitledFile(file)
 end)
