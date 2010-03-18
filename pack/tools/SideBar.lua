@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev, ur4ltz
-Version 1.18.0
+Version 1.18.1
 ------------------------------------------------------
   Note: Require gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
                lpeg.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/lpeg/>
@@ -549,7 +549,7 @@ do
 		return res
 	end
 
-	local PosToLine = function (pos) return editor:LineFromPosition(pos) end
+	local PosToLine = function (pos) return editor:LineFromPosition(pos-1) end
 
 --v------- common patterns -------v--
 	-- basics
@@ -842,13 +842,27 @@ do
 	end --^----- * ------^--
 
 	do --v------- autohotkey -------v--
-		-- identifier
-		local I = C( (ANY-(NL+':'))^1 )*P'::'*cl -- anything followed by '::'
-		local line = (ANY-NL)^0*NL
+		-- redefine
+		local NL = P'\n'+P'\r\n'
+		-- local NL = S'\r\n'
+		local ESCANY = P'`'*ANY + ANY
+		
+		-- helper
+		local I = (ESCANY-S'(){},=:;\r\n')^1
+		local LINE = (ESCANY-NL)^0
+		local block_comment = '/*' * (ESCANY - P'*/')^0 * (P('*/') + EOF)
+		local line_comment  = P';'*LINE*(NL + EOF)
+		local COMMENT = line_comment + block_comment
+		local BALANCED = P{ "{" * ((1 - S"{}") + V(1))^0 * "}" } -- capture balanced {}
 		-- definitions to capture:
-		local def = Ct( I ) * ((ANY-NL )^0)
+		local label     = C( I*P':'*#(1-S'=:'))*cl*LINE
+		local keystroke = C( I*P'::' )*cl*LINE
+		local hotstring = C( P'::'*I*P'::'*LINE )*cl
+		local directive = C( P'#'*I )*cl*LINE
+		local func      = C( I )*cl*par*(COMMENT+NL)^0*BALANCED
+		local def = Ct( keystroke + label + hotstring + directive + func )
 		-- resulting pattern, which does the work
-		local patt = (def + line)^0 * (EOF) --+ error'invalid character')
+		local patt = (SPACE^0*def + NL + COMMENT + LINE*NL)^0 * LINE*(EOF) --+ error'invalid character')
 
 		Lang2lpeg.autohotkey = lpeg.Ct(patt)
 	end --do --^------- autohotkey -------^--
