@@ -18,6 +18,9 @@ command.replace.selection
 command.quiet
 command.mode
 command.shortcut
+command.separator
+command.parent
+command.checked
 
 filter:yes
 filter:no
