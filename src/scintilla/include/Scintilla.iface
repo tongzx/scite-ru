@@ -2324,6 +2324,9 @@ val SCLEX_EUPHORIA=99
 ##!-start-[ABAP]
 val SCLEX_ABAP=100
 ##!-end-[ABAP]
+##!-start-[AutoHotkey]
+val SCLEX_AHK1=101
+##!-end-[AutoHotkey]
 
 # When a lexer specifies its language as SCLEX_AUTOMATIC it receives a
 # value assigned in sequence from SCLEX_AUTOMATIC+1.
@@ -3844,6 +3847,31 @@ val SCE_ABAP_USER2=10
 val SCE_ABAP_USER3=11
 val SCE_ABAP_USER4=12
 ##!-end-[ABAP]
+##!-start-[AutoHotkey]
+# Lexical states for SCLEX_AHK1
+lex AutoHotKey=SCLEX_AHK1 SCE_AHK_
+val SCE_AHK_DEFAULT=0
+val SCE_AHK_COMMENTLINE=1
+val SCE_AHK_COMMENTBLOCK=2
+val SCE_AHK_ESCAPE=3
+val SCE_AHK_SYNOPERATOR=4
+val SCE_AHK_EXPOPERATOR=5
+val SCE_AHK_STRING=6
+val SCE_AHK_NUMBER=7
+val SCE_AHK_IDENTIFIER=8
+val SCE_AHK_VARREF=9
+val SCE_AHK_LABEL=10
+val SCE_AHK_WORD_CF=11
+val SCE_AHK_WORD_CMD=12
+val SCE_AHK_WORD_FN=13
+val SCE_AHK_WORD_DIR=14
+val SCE_AHK_WORD_KB=15
+val SCE_AHK_WORD_VAR=16
+val SCE_AHK_WORD_SP=17
+val SCE_AHK_WORD_UD=18
+val SCE_AHK_VARREFKW=19
+val SCE_AHK_ERROR=20
+##!-end-[AutoHotkey]
 
 # Events
 

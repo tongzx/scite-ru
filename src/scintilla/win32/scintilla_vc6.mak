@@ -120,6 +120,7 @@ LEXOBJS=\
 	$(DIR_O)\LexABAP.obj \
 	$(DIR_O)\LexAbaqus.obj \
 	$(DIR_O)\LexAda.obj \
+	$(DIR_O)\LexAHK1.obj \
 	$(DIR_O)\LexAPDL.obj \
 	$(DIR_O)\LexAsm.obj \
 	$(DIR_O)\LexAsn1.obj \
@@ -327,6 +328,8 @@ $(DIR_O)\LexABAP.obj: ..\src\LexABAP.cxx $(LEX_HEADERS)
 $(DIR_O)\LexAbaqus.obj: ..\src\LexAbaqus.cxx $(LEX_HEADERS)
 
 $(DIR_O)\LexAda.obj: ..\src\LexAda.cxx $(LEX_HEADERS)
+
+$(DIR_O)\LexAHK1.obj: ..\src\LexAHK1.cxx $(LEX_HEADERS)
 
 $(DIR_O)\LexAPDL.obj: ..\src\LexAPDL.cxx $(LEX_HEADERS)
 

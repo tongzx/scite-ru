@@ -238,6 +238,9 @@
 				RelativePath="..\..\scintilla\src\LexAda.cxx">
 			</File>
 			<File
+				RelativePath="..\..\scintilla\src\LexAHK1.cxx">
+			</File>
+			<File
 				RelativePath="..\..\scintilla\src\LexAPDL.cxx">
 			</File>
 			<File

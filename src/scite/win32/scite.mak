@@ -116,6 +116,7 @@ LEXOBJS=\
 	..\..\scintilla\win32\LexABAP.obj \
 	..\..\scintilla\win32\LexAbaqus.obj \
 	..\..\scintilla\win32\LexAda.obj \
+	..\..\scintilla\win32\LexAHK1.obj \
 	..\..\scintilla\win32\LexAPDL.obj \
 	..\..\scintilla\win32\LexAsm.obj \
 	..\..\scintilla\win32\LexAsn1.obj \
