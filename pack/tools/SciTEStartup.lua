@@ -36,14 +36,14 @@ dofile (props["SciteDefaultHome"].."\\tools\\save_settings.lua")
 -- јвтоматическое создание резервных копий редактируемых файлов
 dofile (props["SciteDefaultHome"].."\\tools\\auto_backup.lua")
 
--- ѕоказ модифицированного диалога сохранени€ текущей сессиии при закрытии SciTE
+-- ѕоказ модифицированного диалога сохранени€ текущей сессии при закрытии SciTE
 -- (если в SciTEGlobal.properties установлены параметры session.manager=1 и save.session.manager.on.quit=1)
 dofile (props["SciteDefaultHome"].."\\tools\\SessionManager\\SessionManager.lua")
 
 ----[[ R E A D   O N L Y ]]-------------------------------------------------
 
 -- «амена стандартной команды "Read-Only"
---  расит фон вкладки не доступной дл€ редактировани€ и показывает сото€ние в статусной строке
+--  расит фон вкладки не доступной дл€ редактировани€ и показывает состо€ние в статусной строке
 dofile (props["SciteDefaultHome"].."\\tools\\ReadOnly.lua")
 
 -- ѕри открытии ReadOnly, Hidden, System файлов включает режим ReadOnly в SciTE
