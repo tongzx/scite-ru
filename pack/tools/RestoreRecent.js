@@ -1,7 +1,7 @@
 /*
 RestoreRecent.js
 Authors: mozersЩ
-Version: 1.5.1
+Version: 1.5.2
 ------------------------------------------------------
 Description:
   It is started on close SciTE (from RestoreRecent.lua)
@@ -134,7 +134,12 @@ function RemoveWaste(){
 
 // Cохран€ем массив в SciTE.recent
 function SaveRecentFile(filename){
-	var file = FSO.OpenTextFile(filename, 2, true);
+	try {
+		var file = FSO.OpenTextFile(filename, 2, true);
+	} catch(e) {
+		WshShell.Popup(filename+"\nPermission denied!", 10, "Restore Recent", 16);
+		WScript.Quit(1);
+	}
 	var buf = 0;
 	for (var i in recent_arr){
 		if (recent_arr[i]){
@@ -150,6 +155,10 @@ function SaveRecentFile(filename){
 
 try {
 	var scite_user_home = WScript.Arguments(0); // этот параметр передаетс€ в ком.строке родительского скрипта (RestoreRecent.lua)
+	if (!FSO.FolderExists(scite_user_home)) {
+		WshShell.Popup("Folder SciteUserHome\n"+scite_user_home+"\nNOT EXIST!", 10, "Restore Recent", 16);
+		WScript.Quit(1);
+	}
 } catch(e) {
 	WScript.Echo('This script started only from RestoreRecent.lua!');
 	WScript.Quit(1);

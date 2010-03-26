@@ -1,6 +1,6 @@
 --[[--------------------------------------------------
  Save SciTE Settings
- Version: 1.7.2
+ Version: 1.7.3
  Author: mozersЩ, Dmitry Maslov
 ---------------------------------------------------
  Save current settings on SciTE close.
@@ -32,7 +32,7 @@ end
 
 local function SaveSettings()
 	local file = props["scite.userhome"]..'\\SciTE.session'
-	io.input(file)
+	if not pcall(io.input, file) then return end
 	text = io.read('*a')
 	SaveKey('toolbar.visible')
 	SaveKey('tabbar.visible')
@@ -49,8 +49,9 @@ local function SaveSettings()
 	SaveKey('print.magnification') -- параметр измен€етс€ в Zoom.lua
 	SaveKey('sidebar.show') -- параметр измен€етс€ в SideBar.lua
 	SaveKey('highlighting.identical.text') -- параметр измен€етс€ в highlighting_identical_text.lua
-	io.output(file)
-	io.write(text)
+	if pcall(io.output, file) then
+		io.write(text)
+	end
 	io.close()
 end
 

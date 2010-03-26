@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev, ur4ltz
-Version 1.18.1
+Version 1.18.2
 ------------------------------------------------------
   Note: Require gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
                lpeg.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/lpeg/>
@@ -454,11 +454,12 @@ end
 Favorites_OpenList()
 
 local function Favorites_SaveList()
-	io.output(favorites_filename)
-	local list_string = table.concat(list_fav_table,'\n')
-	list_string = ReplaceWithoutCase(list_string, props['SciteDefaultHome'], '$(SciteDefaultHome)')
-	io.write(list_string)
-	io.close()
+	if pcall(io.output, favorites_filename) then
+		local list_string = table.concat(list_fav_table,'\n')
+		list_string = ReplaceWithoutCase(list_string, props['SciteDefaultHome'], '$(SciteDefaultHome)')
+		io.write(list_string)
+		io.close()
+	end
 end
 AddEventHandler("OnFinalise", Favorites_SaveList)
 

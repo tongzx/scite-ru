@@ -1,5 +1,5 @@
 -- COMMON.lua
--- Version: 1.5.0
+-- Version: 1.5.1
 ---------------------------------------------------
 -- Общие функции, использующиеся во многих скриптах
 ---------------------------------------------------
@@ -262,7 +262,8 @@ end
 --// общая функция для работы с открытыми файлами
 local function with_open_file(name,mode)
 	return function(body)
-	local f = assert(io.open(name,mode))
+	local f, err = io.open(name,mode)
+	if err then return end
 	return unwind_protect(function()return body(f) end,
 		function()return f and f:close() end)
 	end
