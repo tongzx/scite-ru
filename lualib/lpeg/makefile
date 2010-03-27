@@ -1,13 +1,23 @@
-LUADIR = ../../src/scite/lua/include
-LUALIB = -L ../lib/ -lscite
-COPT = -Os -DNDEBUG
-CFLAGS = -s -ansi -I$(LUADIR) -shared -o lpeg.dll $(LUALIB)
-CC = gcc
+INCLUDES  = -I../../src/scite/lua/include
+LIBS      = -L../lib -lscite
+DEFINES   = -DNDEBUG
+CFLAGS    = -Os $(DEFINES) $(INCLUDES)
+LDFLAGS   = -s -shared
 
-all: dll
+CC        = gcc
+RM        = del
 
-dll: lpeg.c
-	$(CC) $(COPT) lpeg.c $(CFLAGS)
+SRC       = lpeg.c
+TARGET    = lpeg.dll
+OBJECTS   = lpeg.o
+
+all: $(TARGET)
+
+$(OBJECTS): $(SRC)
+	$(CC) $(CFLAGS) -o $@ -c $<
+
+$(TARGET): $(OBJECTS)
+	$(CC) $(LDFLAGS) -o $(TARGET) $(OBJECTS) $(LIBS)
 
 clean:
-	-rm lpeg.dll
+	-$(RM) lpeg.dll
