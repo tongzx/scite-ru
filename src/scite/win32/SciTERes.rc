@@ -162,6 +162,12 @@ BEGIN
 	MENUITEM "Open A&bbreviations File",		IDM_OPENABBREVPROPERTIES
 	MENUITEM "Open Lua Startup Scr&ipt", 		IDM_OPENLUAEXTERNALFILE
 	MENUITEM SEPARATOR
+//!-start-[UserPropertiesFilesSubmenu]
+	POPUP "&Edit Properties"
+	BEGIN
+		MENUITEM SEPARATOR
+	END
+//!-end-[UserPropertiesFilesSubmenu]
 END // used: abcghlmoprstux
 
 POPUP "&Language"
