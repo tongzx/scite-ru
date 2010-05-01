@@ -715,7 +715,7 @@ EncodedFromUTF8(string text)\n = string text
 EndUndoAction()\n End a sequence of actions that is undone and redone as a unit.
 EnsureVisible(int line)\n Ensure a particular line is visible by expanding any header line hiding it.
 EnsureVisibleEnforcePolicy(int line)\n Ensure a particular line is visible by expanding any header line hiding it. Use the currently set visibility policy to determine which range to display.
-FindColumn(int, int) = int
+FindColumn(int line, int pos_on_line) = int pos
 FindText(int flags, findtext ft) = int pos\n Find some text in the document.
 FormFeed()\n Insert a Form Feed character.
 FormatRange(bool draw, formatrange fr) = int pos\n On Windows, will draw the document into a display context such as a printer.
