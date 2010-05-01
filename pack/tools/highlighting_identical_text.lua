@@ -1,6 +1,6 @@
 --[[--------------------------------------------------
 Highlighting Identical Text
-Version: 1.3.3
+Version: 1.3.4
 Author: mozersЩ, TymurGubayev
 ------------------------------
 јвто подсветка текста, который совпадает с текущим словом или выделением
@@ -96,6 +96,7 @@ local function IdenticalTextFinder()
 	EditorClearMarks(mark_max)
 	if wholeword then word_pattern = '[^' .. editor.WordChars .. ']' end
 	----------------------------------------------------------
+	all_text = editor:GetText()
 	local match_table = {}
 	local find_start = 1
 	repeat
@@ -141,7 +142,6 @@ AddEventHandler("OnUpdateUI", function()
 	if props['FileName'] ~= '' then
 		if tonumber(props["highlighting.identical.text"]) == 1 then
 			if editor.Length ~= chars_count then
-				all_text = editor:GetText()
 				chars_count = editor.Length
 				reserved_words = props['highlighting.identical.text.reserved.words.' .. editor:GetLexerLanguage()]
 				if reserved_words == '' then reserved_words = props['highlighting.identical.text.reserved.words.*'] end
