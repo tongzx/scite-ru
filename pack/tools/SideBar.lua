@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev, ur4ltz
-Version 1.18.2
+Version 1.18.3
 ------------------------------------------------------
   Note: Require gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
                lpeg.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/lpeg/>
@@ -714,14 +714,15 @@ do
 		local STRING = STRING + regexstr
 		-- define local patterns
 		local f = P"function"
+		local m = P"method"
 		local funcbody = P"{"*(ESCANY-P"}")^0*P"}"
 		-- create additional captures
 		local I = C(IDENTIFIER)*cl
 		-- definitions to capture:
-		local funcdef = Ct(f*SC^1*I*SC^0*par*SC^0*(#funcbody))
-
+		local funcdef =  Ct((f+m)*SC^1*I*SC^0*par*SC^0*(#funcbody))
+		local eventdef = Ct(P"on"*SC^1*P'"'*I*P'"'*SC^0*(#funcbody))
 		-- resulting pattern, which does the work
-		local patt = (funcdef + IGNORED^1 + IDENTIFIER + 1)^0 * EOF
+		local patt = (funcdef + eventdef + IGNORED^1 + IDENTIFIER + 1)^0 * EOF
 
 		Lang2lpeg.JScript = lpeg.Ct(patt)
 	end --^----- JS ------^--
