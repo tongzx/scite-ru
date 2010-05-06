@@ -74,6 +74,7 @@ xmld=<?xml version="1.0"?>\n<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "h
 <f=<form method ="" action="" name="">\n\t%SEL%|\n</form>\n
 <fg=<form method ="get" action="" name="">\n\t%SEL%|\n</form>\n
 <fp=<form method ="post" action="" name="">\n\t%SEL%|\n</form>\n
+<fpe=<form method="post" enctype="multipart/form-data" action="" name="">\n\t|\n</form>\n
 <h1=<h1>%SEL%|</h1>\n
 <h2=<h2>%SEL%|</h2>\n
 <h3=<h3>%SEL%|</h3>\n
@@ -168,6 +169,7 @@ ak-= accesskey="|"
 ch-= checked="checked"
 cs-= colspan="|"
 d-= disabled="disabled"
+e-= enctype="multipart/form-data"
 i-= id="|"
 h-= height="|"
 ml-= maxlength="|"
