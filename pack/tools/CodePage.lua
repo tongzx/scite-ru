@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 CodePage.lua
 Authors: YuriNB, VladVRO, mozers™
-Version: 2.2.0
+Version: 2.3.0
 ------------------------------------------------------
 Ãèáğèä 2õ ñêğèïòîâ:
 win1251 to cp866 keyboard mapper (YuriNB icq#2614215)
@@ -115,8 +115,10 @@ function change_codepage_ru()
 	scite.MenuCommand(IDM_ENCODING_DEFAULT)
 	if props["character.set"]=='255' then
 		props["character.set"]='204'
+		props["chars.accented"]='ÀàÁáÂâÃãÄäÅå¨¸ÆæÇçÈèÉéÊêËëÌìÍíÎîÏïĞğÑñÒòÓóÔôÕõÖö×÷ØøÙùÚúÛûÜüİıŞşßÿ'
 	else
 		props["character.set"]='255'
+		props["chars.accented"]='€ ¡‚¢ƒ£„¤…¥ğñ†¦‡§ˆ¨‰©Šª‹«Œ¬­®¯à‘á’â“ã”ä•å–æ—ç˜è™éšê›ëœìíîŸï'
 	end
 	scite.Perform('reloadproperties:')
 	UpdateStatusCodePage()
