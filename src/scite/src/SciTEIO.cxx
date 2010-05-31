@@ -1270,7 +1270,9 @@ void SciTEBase::GrepRecursive(GrepFlags gf, FilePath baseDir, const char *search
 						if (match) {
 //!-begin-[FindResultListStyle]
 							if (props.GetInt("lexer.errorlist.findliststyle", 1)) {
+#if PLAT_WIN
 								os.append(".");
+#endif
 								os.append(fPath.AsFileSystem() + basePath);
 							}
 							else 
