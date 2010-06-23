@@ -47,7 +47,8 @@ static void HighlightKeyword(
 	char currentWord[],
 	StyleContext &sc,
 	WordList *keywordlists[],
-	Accessor &styler) {
+//	Accessor &styler) {
+	Accessor &) { //!-chage-[no_wornings]
 
 	WordList &controlFlow = *keywordlists[0];
 	WordList &commands = *keywordlists[1];

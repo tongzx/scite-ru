@@ -2,7 +2,7 @@
 /** @file LexForth.cxx
  ** Lexer for FORTH
  **/
-// Copyright 1998-2001 by Neil Hodgson <neilh@scintilla.org>
+// Copyright 1998-2003 by Neil Hodgson <neilh@scintilla.org>
 // The License.txt file describes the conditions under which this software may be distributed.
 // Modified by SciTE-Ru (http://scite.net.ru)
 //!-start-[ForthImprovement]
@@ -17,6 +17,7 @@
 
 #include "PropSet.h"
 #include "Accessor.h"
+#include "StyleContext.h"
 #include "KeyWords.h"
 #include "Scintilla.h"
 #include "SciLexer.h"

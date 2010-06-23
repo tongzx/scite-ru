@@ -207,6 +207,10 @@ SOURCE=..\..\scintilla\src\LexAda.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\scintilla\src\LexAHK1.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\scintilla\src\LexAPDL.cxx
 # End Source File
 # Begin Source File

@@ -41,7 +41,7 @@ inline char MakeUpperCase(char ch) {
 inline char MakeUpperCase(char ch) {
 #if PLAT_WIN
 	char str[2] = {ch, 0};
-	::CharUpper(str);
+	::CharUpperA(str);
 	return str[0];
 #else
 	if (ch < 'a' || ch > 'z')
@@ -54,7 +54,7 @@ inline char MakeUpperCase(char ch) {
 inline char MakeLowerCase(char ch) {
 #if PLAT_WIN
 	char str[2] = {ch, 0};
-	::CharLower(str);
+	::CharLowerA(str);
 	return str[0];
 #else
 	if (ch < 'A' || ch > 'Z')

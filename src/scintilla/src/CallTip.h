@@ -43,7 +43,7 @@ class CallTip {
 //!	int PaintContents(Surface *surfaceWindow, bool draw);
 	PRectangle PaintContents(Surface *surfaceWindow, bool draw); //!-change-[BetterCalltips]
 
-	bool IsTabCharacter(char c);
+	bool IsTabCharacter(char c) const;
 	int NextTabPos(int x);
 	void WrapLine(const char *text, int offset, int length, SplitVector<int> &wrapPosList); //!-add-[BetterCalltips]
 
@@ -72,7 +72,7 @@ public:
 
 	/// Setup the calltip and return a rectangle of the area required.
 	PRectangle CallTipStart(int pos, Point pt, const char *defn,
-		const char *faceName, int size, int codePage_, 
+		const char *faceName, int size, int codePage_,
 		int characterSet, Window &wParent);
 
 	void CallTipCancel();

@@ -11,14 +11,10 @@
 #include "Platform.h" //!-add-[LowerUpperCase]
 #include "CharClassify.h"
 
-//!-start-[no_wornings]
-/*
 // Shut up annoying Visual C++ warnings:
 #ifdef _MSC_VER
 #pragma warning(disable: 4514)
 #endif
-*/
-//!-end-[no_wornings]
 
 CharClassify::CharClassify() {
 	SetDefaultCharClasses(true);
