@@ -8,7 +8,6 @@
 #include <stdlib.h>
 #include <ctype.h>
 
-#include "Platform.h" //!-add-[LowerUpperCase]
 #include "CharClassify.h"
 
 // Shut up annoying Visual C++ warnings:

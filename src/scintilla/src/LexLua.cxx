@@ -361,7 +361,7 @@ static void ColouriseLuaDoc(
 		}
 	}
 
-/*!-[LexersLastWordFix]
+/*!-remove-[LexersLastWordFix]
 	if (setWord.Contains(sc.chPrev)) {
 		char s[100];
 		sc.GetCurrent(s, sizeof(s));

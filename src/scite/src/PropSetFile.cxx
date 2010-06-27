@@ -17,18 +17,18 @@
 #pragma warning(disable: 4786)
 #endif
 
-//#include <string> //!-change-[no_wornings]
-//#include <map> //!-change-[no_wornings]
+#include <string>
+#include <map>
 
-#include "Platform.h"
-
-#if PLAT_GTK
+#if defined(GTK)
 
 #include <unistd.h>
 
 #endif
 
-#include "PropSet.h"
+#include "Scintilla.h"
+
+#include "GUI.h"
 
 #include "SString.h"
 #include "FilePath.h"
@@ -37,14 +37,12 @@
 // The comparison and case changing functions here assume ASCII
 // or extended ASCII such as the normal Windows code page.
 
-/*!-change-[LowerUpperCase]
 static inline char MakeUpperCase(char ch) {
 	if (ch < 'a' || ch > 'z')
 		return ch;
 	else
 		return static_cast<char>(ch - 'a' + 'A');
 }
-*/
 
 inline bool IsASpace(unsigned int ch) {
     return (ch == ' ') || ((ch >= 0x09) && (ch <= 0x0d));
@@ -275,15 +273,15 @@ bool PropSetFile::ReadLine(const char *lineBuffer, bool ifIsTrue, FilePath direc
 		ifIsTrue = GetInt(expr) != 0;
 	} else if (isPrefix(lineBuffer, "import ") && directoryForImports.IsSet()) {
 		SString importName(lineBuffer + strlen("import") + 1);
-		//!importName += ".properties";
+//!		importName += ".properties";
 		bool loaded = false; //!-add-[import]
-		FilePath importPath(directoryForImports, FilePath(importName.c_str()));
+		FilePath importPath(directoryForImports, FilePath(GUI::StringFromUTF8(importName.c_str())));
 		if (Read(importPath, directoryForImports, imports, sizeImports)) {
 //!-start-[import]
 			loaded = true;
 		} else {
 			importName += ".properties";
-			importPath.Set(directoryForImports, FilePath(importName.c_str()));
+			importPath.Set(directoryForImports, FilePath(GUI::StringFromUTF8(importName.c_str())));
 			if (Read(importPath, directoryForImports, imports, sizeImports)) {
 				loaded = true;
 			}
@@ -355,8 +353,7 @@ static bool StringEqual(const char *a, const char *b, size_t len, bool caseSensi
 		}
 	} else {
 		for (size_t i = 0; i < len; i++) {
-			//!if (MakeUpperCase(a[i]) != MakeUpperCase(b[i]))
-			if (SString::MakeUpperCase(a[i]) != SString::MakeUpperCase(b[i])) //!-change-[LowerUpperCase]
+			if (MakeUpperCase(a[i]) != MakeUpperCase(b[i]))
 				return false;
 		}
 	}
@@ -515,13 +512,6 @@ const char * PropSetFile::GetString( const char *key ) const
 }
 //!-end-[FindResultListStyle]
 
-//!-start-[no_wornings]
-void PropSetFile::SetCaseSensitiveFilenames( bool caseSensitiveFilenames_ )
-{
-	caseSensitiveFilenames = caseSensitiveFilenames_;
-}
-//!-end-[no_wornings]
-
 static inline bool IsLetter(char ch) {
 	return ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z'));
 }
@@ -529,13 +519,8 @@ static inline bool IsLetter(char ch) {
 int CompareNoCase(const char *a, const char *b) {
 	while (*a && *b) {
 		if (*a != *b) {
-			/*!-start-[LowerUpperCase]
 			char upperA = MakeUpperCase(*a);
 			char upperB = MakeUpperCase(*b);
-			*/
-			char upperA = SString::MakeUpperCase(*a);
-			char upperB = SString::MakeUpperCase(*b);
-			//!-end-[LowerUpperCase]
 			if (upperA != upperB)
 				return upperA - upperB;
 		}
@@ -593,10 +578,12 @@ SString &SString::assign(const char *sOther, lenpos_t sSize_) {
 		sSize_ = strlen(sOther);
 	}
 	if (sSize > 0 && sSize_ <= sSize) {	// Does not allocate new buffer if the current is big enough
-		if (s && sSize_) {
-			memcpy(s, sOther, sSize_);
+		if (s) {
+			if (sSize_) {
+				memcpy(s, sOther, sSize_);
+			}
+			s[sSize_] = '\0';
 		}
-		s[sSize_] = '\0';
 		sLen = sSize_;
 	} else {
 		delete []s;
@@ -641,7 +628,6 @@ SString &SString::lowercase(lenpos_t subPos, lenpos_t subLen) {
 	if ((subLen == measure_length) || (subPos + subLen > sLen)) {
 		subLen = sLen - subPos;		// don't apply past end of string
 	}
-	/*!-start-[LowerUpperCase]
 	for (lenpos_t i = subPos; i < subPos + subLen; i++) {
 		if (s[i] < 'A' || s[i] > 'Z')
 			continue;
@@ -649,19 +635,12 @@ SString &SString::lowercase(lenpos_t subPos, lenpos_t subLen) {
 			s[i] = static_cast<char>(s[i] - 'A' + 'a');
 	}
 	return *this;
-	*/
-	for (lenpos_t i = subPos; i < subPos + subLen; i++) {
-		s[i] = MakeLowerCase(s[i]);
-	}
-	return *this;
-	//!-end-[LowerUpperCase]
 }
 
 SString &SString::uppercase(lenpos_t subPos, lenpos_t subLen) {
 	if ((subLen == measure_length) || (subPos + subLen > sLen)) {
 		subLen = sLen - subPos;		// don't apply past end of string
 	}
-	/*!-start-[LowerUpperCase]
 	for (lenpos_t i = subPos; i < subPos + subLen; i++) {
 		if (s[i] < 'a' || s[i] > 'z')
 			continue;
@@ -669,12 +648,6 @@ SString &SString::uppercase(lenpos_t subPos, lenpos_t subLen) {
 			s[i] = static_cast<char>(s[i] - 'a' + 'A');
 	}
 	return *this;
-	*/
-	for (lenpos_t i = subPos; i < subPos + subLen; i++) {
-		s[i] = MakeUpperCase(s[i]);
-	}
-	return *this;
-	//!-end-[LowerUpperCase]
 }
 
 SString &SString::append(const char *sOther, lenpos_t sLenOther, char sep) {

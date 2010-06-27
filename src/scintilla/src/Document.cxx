@@ -10,8 +10,8 @@
 #include <stdio.h>
 #include <ctype.h>
 
-//#include <string> //!-chage-[no_wornings]
-//#include <vector> //!-chage-[no_wornings]
+#include <string>
+#include <vector>
 
 // With Borland C++ 5.5, including <string> includes Windows.h leading to defining
 // FindText to FindTextA which makes calls here to Document::FindText fail.
@@ -53,23 +53,11 @@ static inline bool IsADigit(char ch) {
 }
 
 static inline bool IsLowerCase(char ch) {
-//!-start-[LowerUpperCase]
-#if PLAT_WIN
-	return IsCharLowerA(ch)!=0;
-#else
-//!-end-[LowerUpperCase]
 	return isascii(ch) && islower(ch);
-#endif //!-add-[LowerUpperCase]
 }
 
 static inline bool IsUpperCase(char ch) {
-//!-start-[LowerUpperCase]
-#if PLAT_WIN
-	return IsCharUpperA(ch)!=0;
-#else
-//!-end-[LowerUpperCase]
 	return isascii(ch) && isupper(ch);
-#endif //!-add-[LowerUpperCase]
 }
 
 Document::Document() {
@@ -1112,14 +1100,12 @@ bool Document::IsWordAt(int start, int end) {
 	return IsWordStartAt(start) && IsWordEndAt(end);
 }
 
-/*!-change-[LowerUpperCase]
 static inline char MakeLowerCase(char ch) {
 	if (ch < 'A' || ch > 'Z')
 		return ch;
 	else
 		return static_cast<char>(ch - 'A' + 'a');
 }
-*/
 
 static bool GoodTrailByte(int v) {
 	return (v >= 0x80) && (v < 0xc0);

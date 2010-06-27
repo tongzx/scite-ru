@@ -212,14 +212,14 @@ static void ColouriseBatchLine(
 		wordBuffer[wbl] = '\0';
 		wbo = 0;
 
-//!-start-[BatchLexerImprovement]
+/*!-start-remove-[BatchLexerImprovement]
 // REM is comment only when it's a first word in line
 		// Check for Comment - return if found
-		// if (CompareCaseInsensitive(wordBuffer, "rem") == 0) {
-			// styler.ColourTo(endPos, SCE_BAT_COMMENT);
-			// return;
-		// }
-//!-end-[BatchLexerImprovement]
+		if (CompareCaseInsensitive(wordBuffer, "rem") == 0) {
+			styler.ColourTo(endPos, SCE_BAT_COMMENT);
+			return;
+		}
+*/ //!-end-remove-[BatchLexerImprovement]
 		// Check for Separator
 		if (IsBSeparator(wordBuffer[0])) {
 			// Check for External Command / Program
@@ -372,7 +372,8 @@ static void ColouriseBatchLine(
 					// Read up to %, Operator or Separator
 					while ((wbo < wbl) &&
 						(wordBuffer[wbo] != '%') &&
-						(!isDelayedExpansion || wordBuffer[wbo] != '!') && //!-add-[BatchLexerImprovement]
+//!						(wordBuffer[wbo] != '!') &&
+						(!isDelayedExpansion || wordBuffer[wbo] != '!') && //!-change-[BatchLexerImprovement]
 						(!IsBOperator(wordBuffer[wbo])) &&
 						(!IsBSeparator(wordBuffer[wbo]))) {
 						wbo++;
@@ -422,7 +423,8 @@ static void ColouriseBatchLine(
 					// Read up to %, Operator or Separator
 					while ((wbo < wbl) &&
 						(wordBuffer[wbo] != '%') &&
-						(!isDelayedExpansion || wordBuffer[wbo] != '!') && //!-add-[BatchLexerImprovement]
+//!						(wordBuffer[wbo] != '!') &&
+						(!isDelayedExpansion || wordBuffer[wbo] != '!') && //!-change-[BatchLexerImprovement]
 						(!IsBOperator(wordBuffer[wbo])) &&
 						(!IsBSeparator(wordBuffer[wbo]))) {
 						wbo++;
@@ -477,6 +479,7 @@ static void ColouriseBatchLine(
 					cmdLoc = offset - (wbl - wbo);
 				}
 				// Colorize Environment Variable
+//!				styler.ColourTo(startLine + offset - 1 - (wbl - wbo), SCE_BAT_IDENTIFIER);
 				styler.ColourTo(startLine + offset - 1 - (wbl - wbo), SCE_BAT_ENVIRONMENT); //!-change-[BatchLexerImprovement]
 				// Reset Offset to re-process remainder of word
 				offset -= (wbl - wbo);
@@ -613,7 +616,7 @@ static void ColouriseBatchLine(
 			// Read up to %, Operator or Separator
 			while ((wbo < wbl) &&
 				(wordBuffer[wbo] != '%') &&
-				//(wordBuffer[wbo] != '!') &&
+//!				(wordBuffer[wbo] != '!') &&
 				(!isDelayedExpansion || wordBuffer[wbo] != '!') && //!-add-[BatchLexerImprovement]
 				(!IsBOperator(wordBuffer[wbo])) &&
 				(!IsBSeparator(wordBuffer[wbo]))) {
@@ -989,10 +992,10 @@ static void ColourisePropsDoc(unsigned int startPos, int length, int, WordList *
 	unsigned int linePos = 0;
 	unsigned int startLine = startPos;
 
-	// property lexer.props.allow.initial.spaces 
-	//	For properties files, set to 0 to style all lines that start with whitespace in the default style. 
-	//	This is not suitable for SciTE .properties files which use indentation for flow control but 
-	//	can be used for RFC2822 text where indentation is used for continuation lines. 
+	// property lexer.props.allow.initial.spaces
+	//	For properties files, set to 0 to style all lines that start with whitespace in the default style.
+	//	This is not suitable for SciTE .properties files which use indentation for flow control but
+	//	can be used for RFC2822 text where indentation is used for continuation lines.
 	bool allowInitialSpaces = styler.GetPropertyInt("lexer.props.allow.initial.spaces", 1) != 0;
 
 //!-start-[PropsColouriseFix]
@@ -1007,19 +1010,17 @@ static void ColourisePropsDoc(unsigned int startPos, int length, int, WordList *
 		if (AtEOL(styler, i) || (linePos >= sizeof(lineBuffer) - 1)) {
 			// End of line (or of line buffer) met, colourise it
 			lineBuffer[linePos] = '\0';
-//!-start-[PropsColouriseFix]
+//!			ColourisePropsLine(lineBuffer, linePos, startLine, i, styler, allowInitialSpaces);
+//!-start-[PropsColouriseFix][PropsKeysSets]
 			if (continuation)
 				styler.ColourTo(i, SCE_PROPS_DEFAULT);
 			else
-//!-end-[PropsColouriseFix]
-//!			ColourisePropsLine(lineBuffer, linePos, startLine, i, styler, allowInitialSpaces);
-			style = ColourisePropsLine(lineBuffer, linePos, startLine, i, keywordlists, styler, allowInitialSpaces); //!-change-[PropsKeysSets][PropsColouriseFix]
-//!-start-[PropsColouriseFix]
+			style = ColourisePropsLine(lineBuffer, linePos, startLine, i, keywordlists, styler, allowInitialSpaces);
 			// test: is next a continuation of line
 			continuation = (linePos >= sizeof(lineBuffer) - 1) ||
 				(style != SCE_PROPS_COMMENT &&  ((lineBuffer[linePos-2] == '\\')
 				|| (lineBuffer[linePos-3] == '\\' && lineBuffer[linePos-2] == '\r')));
-//!-end-[PropsColouriseFix]
+//!-end-[PropsColouriseFix][PropsKeysSets]
 			linePos = 0;
 			startLine = i + 1;
 		}

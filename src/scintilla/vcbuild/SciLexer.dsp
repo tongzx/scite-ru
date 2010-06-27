@@ -158,6 +158,10 @@ SOURCE=..\src\LexAda.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\LexAHK1.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\LexAPDL.cxx
 # End Source File
 # Begin Source File
@@ -247,6 +251,10 @@ SOURCE=..\src\LexErlang.cxx
 # Begin Source File
 
 SOURCE=..\src\LexEScript.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\LexEuphoria.cxx
 # End Source File
 # Begin Source File
 

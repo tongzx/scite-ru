@@ -8,38 +8,28 @@
 #include <stdlib.h>
 #include <string.h>
 
-//#include <string> //!-change-[no_wornings]
-//#include <map> //!-change-[no_wornings]
-
-#include "Platform.h" //!-add-[no_wornings]
+#include <string>
+#include <map>
 
 #include "SString.h"
 #include "StringList.h"
-#include "PropSet.h"
 
 static inline bool IsASpace(unsigned int ch) {
     return (ch == ' ') || ((ch >= 0x09) && (ch <= 0x0d));
 }
 
-/*!-change-[LowerUpperCase]
 static inline char MakeUpperCase(char ch) {
 	if (ch < 'a' || ch > 'z')
 		return ch;
 	else
 		return static_cast<char>(ch - 'a' + 'A');
 }
-*/
 
 static int CompareNCaseInsensitive(const char *a, const char *b, size_t len) {
 	while (*a && *b && len) {
 		if (*a != *b) {
-			/*!-start-[LowerUpperCase]
 			char upperA = MakeUpperCase(*a);
 			char upperB = MakeUpperCase(*b);
-			*/
-			char upperA = SString::MakeUpperCase(*a);
-			char upperB = SString::MakeUpperCase(*b);
-			//!-end-[LowerUpperCase]
 			if (upperA != upperB)
 				return upperA - upperB;
 		}
@@ -421,11 +411,7 @@ char *StringList::GetNearestWords(
 	return NULL;
 }
 
-//!-start-[no_wornings]
-/*
 #ifdef _MSC_VER
 // Unreferenced inline functions are OK
 #pragma warning(disable: 4514)
 #endif
-*/
-//!-end-[no_wornings]

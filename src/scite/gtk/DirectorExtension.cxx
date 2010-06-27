@@ -3,7 +3,7 @@
  ** Extension for communicating with a director program.
  ** This allows external client programs (and internal extensions) to communicate
  ** with instances of SciTE. The original scheme required you to define the property
- ** ipc.scite.name to be a valid (but _not_ created) pipename, which becomes the 
+ ** ipc.scite.name to be a valid (but _not_ created) pipename, which becomes the
  ** 'request pipe' for sending commands to SciTE. (The set of available commands
  ** is defined in SciTEBase::PerformOne()). One also had to specify a property
  ** ipc.director.name to be an _existing_ pipe which would receive notifications (like
@@ -13,7 +13,7 @@
  ** This version supports the old protocol, so existing clients such as ScitePM still
  ** work as before. But it is no longer necessary to specify these ipc properties.
  ** If ipc.scite.name is not defined, then a new request pipe is created of the form
- ** /tmp/SciTE.<pid>.in using the current pid. This pipename is put back into 
+ ** /tmp/SciTE.<pid>.in using the current pid. This pipename is put back into
  ** ipc.scite.name (this is useful for internal extensions that want to find _another_
  ** instance of SciTE). This pipe will be removed when SciTE closes normally,
  ** so listing all files with the pattern '/tmp/SciTE.*.in' will give the currently
@@ -48,18 +48,16 @@
 
 #include <gtk/gtk.h>
 
-#include "Platform.h"
+#include "Scintilla.h"
 
-#include "PropSet.h"
+#include "GUI.h"
 #include "SString.h"
 #include "StringList.h"
-#include "Scintilla.h"
-#include "Accessor.h"
+#include "FilePath.h"
+#include "PropSetFile.h"
 #include "Extender.h"
 #include "DirectorExtension.h"
 #include "SciTE.h"
-#include "FilePath.h"
-#include "PropSetFile.h"
 #include "Mutex.h"
 #include "JobQueue.h"
 #include "SciTEBase.h"
@@ -119,13 +117,7 @@ static void RemoveSendPipes()
 
 static bool MakePipe(const char* pipeName) {
 	int res;
-//WB++
-#ifndef __vms
 	res = mkfifo(pipeName, 0777);
-#else           // no mkfifo on OpenVMS!
-	res = creat(pipeName, 0777);
-#endif
-//WB--
 	return res == 0;
 }
 
@@ -139,14 +131,14 @@ static bool SendPipeCommand(const char *pipeCommand) {
 	int size;
 	if (fdCorrespondent) {
 		size = write(fdCorrespondent,pipeCommand,strlen(pipeCommand));
-		size = write(fdCorrespondent,"\n",1);
+		size += write(fdCorrespondent,"\n",1);
 		IF_DEBUG(fprintf(fdDebug, "Send correspondent: %s %d bytes to %d\n", pipeCommand, size,fdCorrespondent))
 	} else
 	for (int i = 0; i < s_send_cnt; ++i) {
 		int fd = s_send_pipes[i].fd;
 		// put a linefeed after the notification!
 		size = write(fd, pipeCommand, strlen(pipeCommand));
-		size = write(fd,"\n",1);
+		size += write(fd,"\n",1);
 		IF_DEBUG(fprintf(fdDebug, "Send pipecommand: %s %d bytes to %d\n", pipeCommand, size,fd))
 	}
 	(void)size; // to keep compiler happy if we aren't debugging...
@@ -298,7 +290,7 @@ bool DirectorExtension::OnSavePointLeft() {
 	return false;
 }
 
-bool DirectorExtension::OnStyle(unsigned int, int, int, Accessor *) {
+bool DirectorExtension::OnStyle(unsigned int, int, int, StyleWriter *) {
 	return false;
 }
 
@@ -368,8 +360,8 @@ void DirectorExtension::HandleStringMessage(const char *message) {
 				sprintf(pipeName,"%s/SciTE.%d.%d.out", g_get_tmp_dir(), getpid(), kount++);
 			}
 			if (corresp == NULL) {
-                fprintf(stderr,"SciTE Director: bad request\n");
-                return;
+				fprintf(stderr,"SciTE Director: bad request\n");
+				return;
 			} else {
 				// the registering client has passed us a path for receiving the notify pipe name.
 				// this has to be a _regular_ file, which may not exist.
@@ -377,12 +369,15 @@ void DirectorExtension::HandleStringMessage(const char *message) {
 				IF_DEBUG(fprintf(fdDebug,"register '%s' %d\n",corresp,fdCorrespondent))
 				if (fdCorrespondent == -1) {
 					fdCorrespondent = 0;
-                    fprintf(stderr,"SciTE Director: cannot open result file '%s'\n",corresp);
-                    return;
-                }
+					fprintf(stderr,"SciTE Director: cannot open result file '%s'\n",corresp);
+					return;
+				}
 				if (fdCorrespondent != 0) {
 					size_t size = write(fdCorrespondent, pipeName, strlen(pipeName));
-					size = write(fdCorrespondent, "\n", 1);
+					size += write(fdCorrespondent, "\n", 1);
+					if (size == 0)
+						fprintf(stderr,"SciTE Director: cannot write pipe name\n");
+
 				}
 			}
 			if (SendPipeAvailable()) {
@@ -394,12 +389,12 @@ void DirectorExtension::HandleStringMessage(const char *message) {
 			if (corresp != NULL) {
 				// the client has passed us a pipename to receive the results of this command
 				fdCorrespondent = OpenPipe(corresp);
-				IF_DEBUG(fprintf(fdDebug,"corresp '%s' %d\n",corresp,fdCorrespondent))			
+				IF_DEBUG(fprintf(fdDebug,"corresp '%s' %d\n",corresp,fdCorrespondent))
 				if (fdCorrespondent == -1) {
-					fdCorrespondent = 0;		
-                    fprintf(stderr,"SciTE Director: cannot open correspondent pipe '%s'\n",corresp);
-                    return;
-                }
+					fdCorrespondent = 0;
+					fprintf(stderr,"SciTE Director: cannot open correspondent pipe '%s'\n",corresp);
+					return;
+				}
 			}
 			host->Perform(cmd);
 		}
@@ -468,7 +463,7 @@ void DirectorExtension::CreatePipe(bool) {
 		// store the inputwatcher so we can remove it.
 		inputWatcher = gdk_input_add(fdReceiver, GDK_INPUT_READ, ReceiverPipeSignal, this);
 		// if we were not supplied with an explicit ipc.scite.name, then set this
-		// property to be the constructed pipe name. 
+		// property to be the constructed pipe name.
 		if (! not_empty(pipeName)) {
 			host->SetProperty("ipc.scite.name", requestPipeName);
 		}
@@ -481,11 +476,7 @@ void DirectorExtension::CreatePipe(bool) {
 	fdReceiver = 0;
 }
 
-//!-start-[no_wornings]
-/*
 #ifdef _MSC_VER
 // Unreferenced inline functions are OK
 #pragma warning(disable: 4514)
 #endif
-*/
-//!-end-[no_wornings]

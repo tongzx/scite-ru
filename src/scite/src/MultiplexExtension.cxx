@@ -5,6 +5,10 @@
 // Copyright 1998-2003 by Neil Hodgson <neilh@scintilla.org>
 // The License.txt file describes the conditions under which this software may be distributed.
 
+#include <string>
+
+#include "Scintilla.h"
+#include "GUI.h"
 #include "MultiplexExtension.h"
 
 MultiplexExtension::MultiplexExtension(): extensions(0), extensionCount(0), host(0) {}
@@ -169,7 +173,7 @@ bool MultiplexExtension::OnSavePointLeft() {
 	return handled;
 }
 
-bool MultiplexExtension::OnStyle(unsigned int p, int q, int r, Accessor *s) {
+bool MultiplexExtension::OnStyle(unsigned int p, int q, int r, StyleWriter *s) {
 	bool handled = false;
 	for (int i = 0; i < extensionCount && !handled; ++i)
 		if (extensions[i]->OnStyle(p, q, r, s))
@@ -254,25 +258,24 @@ bool MultiplexExtension::SendProperty(const char *prop) {
 	return false;
 }
 
-//!-start-[OnKey]
-#if PLAT_WIN
-bool MultiplexExtension::OnKey(int keyval, int modifiers, char ch) {
-#else
-//!-end-[OnKey]
+/*
 bool MultiplexExtension::OnKey(int keyval, int modifiers) {
-#endif //!-add-[OnKey]
 	bool handled = false;
 	for (int i = 0; i < extensionCount; ++i)
-//!-start-[OnKey]
-#if PLAT_WIN
-		if (extensions[i]->OnKey(keyval, modifiers, ch))
-#else
-//!-end-[OnKey]
 		if (extensions[i]->OnKey(keyval, modifiers))
-#endif //!-add-[OnKey]
 			handled = true;
 	return handled;
 }
+*/
+//!-start-[OnKey]
+bool MultiplexExtension::OnKey(int keyval, int modifiers, char ch) {
+	bool handled = false;
+	for (int i = 0; i < extensionCount; ++i)
+		if (extensions[i]->OnKey(keyval, modifiers, ch))
+			handled = true;
+	return handled;
+}
+//!-end-[OnKey]
 
 bool MultiplexExtension::OnDwellStart(int pos, const char *word) {
 	for (int i = 0; i < extensionCount; ++i)

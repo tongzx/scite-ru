@@ -12,7 +12,7 @@
 #include <ctype.h>
 #include <stdlib.h>
 
-//#include <string> //!-change-[no_wornings]
+#include <string>
 
 #include "Platform.h"
 

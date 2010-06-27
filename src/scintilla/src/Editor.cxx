@@ -10,8 +10,8 @@
 #include <stdio.h>
 #include <ctype.h>
 
-//#include <string> //!-change-[no_wornings]
-//#include <vector> //!-change-[no_wornings]
+#include <string>
+#include <vector>
 #include <algorithm>
 #include <memory>
 
@@ -1666,7 +1666,7 @@ void Editor::PaintSelMargin(Surface *surfWindow, PRectangle &rc) {
 //!			int level = pdoc->GetLevel(cs.DocFromDisplay(topLine));
 //!-start-[HighlightCurrFolder]
 			int level = -1;
-			if (vs.ms[margin].mask & SC_MASK_FOLDERS) { //!-add-[HighlightCurrFolder]
+			if (vs.ms[margin].mask & SC_MASK_FOLDERS) {
 			level = pdoc->GetLevel(cs.DocFromDisplay(topLine));
 //!-end-[HighlightCurrFolder]
 			if (level & SC_FOLDLEVELWHITEFLAG) {
@@ -8364,15 +8364,15 @@ sptr_t Editor::WndProc(unsigned int iMessage, uptr_t wParam, sptr_t lParam) {
 		}
 
 	case SCI_SETOVERTYPE:
-		//! inOverstrike = wParam != 0;
-		//-start-[ignore_overstrike_change]
+//!		inOverstrike = wParam != 0;
+//-start-[ignore_overstrike_change]
 		if ( wParam < 2 ) {
 			inOverstrike = wParam != 0;
 		}
 		else {
 			ignoreOverstrikeChange = wParam == 2;
 		}
-		//-end-[ignore_overstrike_change]
+//-end-[ignore_overstrike_change]
 		break;
 
 	case SCI_GETOVERTYPE:

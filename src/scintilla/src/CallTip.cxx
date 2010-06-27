@@ -31,7 +31,7 @@ CallTip::CallTip() {
 	rectDown = PRectangle(0,0,0,0);
 	lineHeight = 1;
 /*!	startHighlight = 0;
-	endHighlight = 0;*/ 
+	endHighlight = 0;*/
 	highlightChanged = false; //!-change-[BetterCalltips]
 	tabSize = 0;
 	useStyleCallTip = false;    // for backwards compatibility
@@ -167,7 +167,8 @@ void CallTip::DrawChunk(Surface *surface, int &x, const char *s,
 	}
 }
 
-/*!int CallTip::PaintContents(Surface *surfaceWindow, bool draw) {
+/*!
+int CallTip::PaintContents(Surface *surfaceWindow, bool draw) {
 	PRectangle rcClientPos = wCallTip.GetClientPosition();
 	PRectangle rcClientSize(0, 0, rcClientPos.right - rcClientPos.left,
 	                        rcClientPos.bottom - rcClientPos.top);
@@ -216,8 +217,8 @@ void CallTip::DrawChunk(Surface *surface, int &x, const char *s,
 		maxWidth = Platform::Maximum(maxWidth, x);
 	}
 	return maxWidth;
-}*/
-
+}
+*/
 //!-start-[BetterCalltips]
 #define IS_WS(ch) (((ch) == ' ') || ((ch) == '\t'))
 void CallTip::WrapLine(const char *text, int offset, int length, SplitVector<int> &wrapPosList) {
@@ -367,7 +368,8 @@ void CallTip::MouseClick(Point pt) {
 		clickPlace = 2;
 }
 
-/*!PRectangle CallTip::CallTipStart(int pos, Point pt, const char *defn,
+/*!
+PRectangle CallTip::CallTipStart(int pos, Point pt, const char *defn,
                                  const char *faceName, int size,
                                  int codePage_, int characterSet, Window &wParent) {
 	clickPlace = 0;
@@ -409,8 +411,8 @@ void CallTip::MouseClick(Point pt) {
 	int height = lineHeight * numLines - surfaceMeasure->InternalLeading(font) + 2 + 2;
 	delete surfaceMeasure;
 	return PRectangle(pt.x - offsetMain, pt.y + 1, pt.x + width - offsetMain, pt.y + 1 + height);
-}*/
-
+}
+*/
 //!-start-[BetterCalltips]
 PRectangle CallTip::CallTipStart(int pos, Point pt, const char *defn,
                                  const char *faceName, int size,
@@ -457,7 +459,8 @@ void CallTip::CallTipCancel() {
 	}
 }
 
-/*!void CallTip::SetHighlight(int start, int end) {
+/*!
+void CallTip::SetHighlight(int start, int end) {
 	// Avoid flashing by checking something has really changed
 	if ((start != startHighlight) || (end != endHighlight)) {
 		startHighlight = start;
@@ -466,8 +469,8 @@ void CallTip::CallTipCancel() {
 			wCallTip.InvalidateAll();
 		}
 	}
-}*/
-
+}
+*/
 //!-start-[BetterCalltips]
 void CallTip::SetHighlight(int start, int end) {
 	ClearHighlight();

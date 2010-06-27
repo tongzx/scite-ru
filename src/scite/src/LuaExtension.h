@@ -31,7 +31,7 @@ public:
 	virtual bool OnExecute(const char *s);
 	virtual bool OnSavePointReached();
 	virtual bool OnSavePointLeft();
-	virtual bool OnStyle(unsigned int startPos, int lengthDoc, int initStyle, Accessor *styler);
+	virtual bool OnStyle(unsigned int startPos, int lengthDoc, int initStyle, StyleWriter *styler);
 //!	virtual bool OnDoubleClick();
 	virtual bool OnDoubleClick(int modifiers); //!-add-[OnDoubleClick]
 	virtual bool OnClick(int modifiers); //!-add-[OnClick]
@@ -39,13 +39,8 @@ public:
 	virtual bool OnUpdateUI();
 	virtual bool OnMarginClick();
 	virtual bool OnUserListSelection(int listType, const char *selection);
-//!-start-[OnKey]
-#if PLAT_WIN
-	virtual bool OnKey(int keyval, int modifiers, char ch);
-#else
-//!-end-[OnKey]
-	virtual bool OnKey(int keyval, int modifiers);
-#endif //!-add-[OnKey]
+//!	virtual bool OnKey(int keyval, int modifiers);
+	virtual bool OnKey(int keyval, int modifiers, char ch); //!-change-[OnKey]
 	virtual bool OnDwellStart(int pos, const char *word);
 	virtual bool OnClose(const char *filename);
 	virtual bool OnMacro(const char *p, const char *q); //!-add-[macro]

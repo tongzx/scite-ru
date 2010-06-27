@@ -35,7 +35,7 @@ public:
 	virtual bool OnExecute(const char *);
 	virtual bool OnSavePointReached();
 	virtual bool OnSavePointLeft();
-	virtual bool OnStyle(unsigned int, int, int, Accessor *);
+	virtual bool OnStyle(unsigned int, int, int, StyleWriter *);
 //!	virtual bool OnDoubleClick();
 	virtual bool OnDoubleClick(int modifiers); //!-add-[OnDoubleClick]
 	virtual bool OnClick(int modifiers); //!-add-[OnClick]
@@ -46,7 +46,7 @@ public:
 	virtual bool OnUserListSelection(int, const char *);
 	virtual bool SendProperty(const char *);
 //!-start-[OnKey]
-#if PLAT_WIN
+#if !defined(GTK)
 	virtual bool OnKey(int, int, char);
 #else
 //!-end-[OnKey]

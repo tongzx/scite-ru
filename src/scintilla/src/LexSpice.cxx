@@ -10,7 +10,7 @@
 #include <string.h>
 #include <stdio.h>
 
-//#include <string> //!-change-[no_wornings]
+#include <string>
 
 #include "Platform.h"
 

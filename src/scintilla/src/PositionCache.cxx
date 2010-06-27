@@ -10,8 +10,8 @@
 #include <stdio.h>
 #include <ctype.h>
 
-//#include <string> //!-change-[no_wornings]
-//#include <vector> //!-change-[no_wornings]
+#include <string>
+#include <vector>
 
 #include "Platform.h"
 

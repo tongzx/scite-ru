@@ -35,7 +35,7 @@ Utf8_16_Read::Utf8_16_Read() {
 	m_pNewBuf = NULL;
 	m_bFirstRead = true;
 	m_nLen = 0;
-	m_nAutoCheckUtf8 = false;//!-[utf8.auto.check] [mhb] 07/05/09: by default, not auto check utf8 
+	m_nAutoCheckUtf8 = false;//!-add-[utf8.auto.check]
 }
 
 //!-start-[utf8.auto.check]
@@ -44,7 +44,7 @@ Utf8_16_Read::Utf8_16_Read(bool AutoCheckUtf8) {
 	m_nBufSize = 0;
 	m_pNewBuf = NULL;
 	m_bFirstRead = true;
-	m_nAutoCheckUtf8 = AutoCheckUtf8;//[mhb] 07/05/09: by default, not auto check utf8 
+	m_nAutoCheckUtf8 = AutoCheckUtf8;
 }
 //!-end-[utf8.auto.check]
 
@@ -420,10 +420,3 @@ void Utf16_Iter::operator++() {
 		break;
 	}
 }
-
-//!-start-[no_wornings]
-#ifdef _MSC_VER
-// Unreferenced inline functions are OK
-#pragma warning(disable: 4514)
-#endif
-//!-end-[no_wornings]

@@ -2335,7 +2335,8 @@ void ListBoxX::SetList(const char *listText, char separator, char typesep) {
 	}
 }
 
-Menu::Menu() : mid(0) {}
+//! Menu::Menu() : mid(0) {}
+Menu::Menu(MenuID _id)  : mid(_id) {}//!-add-[SubMenu]
 
 void Menu::CreatePopUp() {
 	Destroy();

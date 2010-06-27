@@ -43,7 +43,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /MD /W4 /GX /Ox /I "..\src" /I "..\..\scintilla\include" /I "..\..\scintilla\src" /I "..\lua\include" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "STATIC_BUILD" /D "SCI_LEXER" /FD /c
+# ADD CPP /nologo /MD /W3 /GX /Ox /I "..\src" /I "..\..\scintilla\include" /I "..\..\scintilla\src" /I "..\lua\include" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "UNICODE" /D "_UNICODE" /D "STATIC_BUILD" /D "SCI_LEXER" /FD /c
 # SUBTRACT CPP /YX
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
@@ -66,12 +66,12 @@ LINK32=link.exe
 # PROP BASE Target_Dir ""
 # PROP Use_MFC 0
 # PROP Use_Debug_Libraries 1
-# PROP Output_Dir "exe.Debug"
+# PROP Output_Dir "Debug"
 # PROP Intermediate_Dir "Debug"
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /GZ /c
-# ADD CPP /nologo /MDd /W4 /Gm /GX /ZI /Od /I "..\src" /I "..\..\scintilla\include" /I "..\..\scintilla\src" /I "..\lua\include" /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "STATIC_BUILD" /D "SCI_LEXER" /FR /FD /GZ /c
+# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\src" /I "..\..\scintilla\include" /I "..\..\scintilla\src" /I "..\lua\include" /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "UNICODE" /D "_UNICODE" /D "STATIC_BUILD" /D "SCI_LEXER" /FR /FD /GZ /c
 # SUBTRACT CPP /YX
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
@@ -144,6 +144,10 @@ SOURCE=..\..\scintilla\src\ExternalLexer.cxx
 # Begin Source File
 
 SOURCE=..\src\FilePath.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\win32\GUIWin.cxx
 # End Source File
 # Begin Source File
 
@@ -703,6 +707,10 @@ SOURCE=..\..\scintilla\src\StyleContext.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\StyleWriter.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\scintilla\Src\UniConversion.cxx
 # End Source File
 # Begin Source File
@@ -739,6 +747,10 @@ SOURCE=..\..\scintilla\Include\Accessor.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\GUI.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\scintilla\Include\KeyWords.h
 # End Source File
 # Begin Source File
@@ -768,6 +780,10 @@ SOURCE=..\Src\SciTE.h
 # Begin Source File
 
 SOURCE=..\Src\SciTEBase.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\StyleWriter.h
 # End Source File
 # Begin Source File
 

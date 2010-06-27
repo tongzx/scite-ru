@@ -26,13 +26,14 @@ BEGIN
 	MENUITEM "&Revert\tCtrl+R",		IDM_REVERT
 	MENUITEM "&Close\tCtrl+W",		IDM_CLOSE
 	MENUITEM "&Save\tCtrl+S",		IDM_SAVE
-	MENUITEM "Save &As...\tCtrl+Shift+S",			IDM_SAVEAS
-	MENUITEM "Save a Co&py...\tCtrl+Shift+P",			IDM_SAVEACOPY
+	MENUITEM "Save &As...\tCtrl+Shift+S",	IDM_SAVEAS
+	MENUITEM "Save a Cop&y...\tCtrl+Shift+P",	IDM_SAVEACOPY
+	MENUITEM "Copy Pat&h",			IDM_COPYPATH
 	POPUP "Encodin&g"
 	BEGIN
 		MENUITEM "&Code Page Property",		IDM_ENCODING_DEFAULT
-		MENUITEM "UCS-2 &Big Endian",		IDM_ENCODING_UCS2BE
-		MENUITEM "UCS-2 &Little Endian",		IDM_ENCODING_UCS2LE
+		MENUITEM "UTF-16 &Big Endian",		IDM_ENCODING_UCS2BE
+		MENUITEM "UTF-16 &Little Endian",	IDM_ENCODING_UCS2LE
 		MENUITEM "UTF-8 &with BOM",		IDM_ENCODING_UTF8
 		MENUITEM "&UTF-8",		IDM_ENCODING_UCOOKIE
 	END
@@ -46,7 +47,7 @@ BEGIN
 	END
 	MENUITEM SEPARATOR
 	MENUITEM "Page Set&up...",		IDM_PRINTSETUP
-	MENUITEM "&Print...\tCtrl+P",	IDM_PRINT
+	MENUITEM "&Print...\tCtrl+P",		IDM_PRINT
 	MENUITEM SEPARATOR
 	MENUITEM "&Load Session...",		IDM_LOADSESSION
 	MENUITEM "Sa&ve Session...",		IDM_SAVESESSION
@@ -204,7 +205,7 @@ CAPTION "About SciTE"
 STYLE DS_MODALFRAME | DS_3DLOOK | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 FONT 8, "MS Shell Dlg"
 BEGIN
-	CONTROL "", IDABOUTSCINTILLA, "Scintilla", WS_CHILD, 1, 1, 346, 218
+	CONTROL "", IDABOUTSCINTILLA, "Scintilla", WS_CHILD | WS_VISIBLE | WS_TABSTOP, 1, 1, 346, 218
 	ICON "SciTE", -1, 1, 221, 32, 32, WS_CHILD | WS_VISIBLE
 	DEFPUSHBUTTON "OK", IDOK, 26, 222, 322, 20, WS_TABSTOP
 END
@@ -387,8 +388,7 @@ BEGIN
 	AUTOCHECKBOX    "Transform &backslash expressions", IDUNSLASH,5,70,160,10, WS_TABSTOP
 	AUTOCHECKBOX    "Search only in &this style:", IDFINDINSTYLE,5,82,95,10, WS_TABSTOP
 	AUTOCHECKBOX    "Close find window",IDFINDCLOSE,5,94,95,10, WS_TABSTOP //!-add-[close.find.window]
-	//! EDITTEXT        IDFINDSTYLE,100,81,30,12, WS_GROUP | WS_TABSTOP | ES_NUMBER //!-change-[close.find.window]
-	EDITTEXT        IDFINDSTYLE,105,81,30,12, WS_GROUP | WS_TABSTOP | ES_NUMBER //!-add-[close.find.window]
+	EDITTEXT        IDFINDSTYLE,105,81,30,12, WS_GROUP | WS_TABSTOP | ES_NUMBER //!-change-[close.find.window]
 	GROUPBOX        "Direction", -1, 135,22,60,34,WS_GROUP
 	AUTORADIOBUTTON "&Up",IDDIRECTIONUP,140,30,45,12, WS_GROUP
 	AUTORADIOBUTTON "&Down",IDDIRECTIONDOWN,140,42,45,12
@@ -595,8 +595,8 @@ IDC_MARGIN         CURSOR  DISCARDABLE     "Margin.cur"
 IDC_DRAGDROP       CURSOR  DISCARDABLE     "DragDrop.cur"
 
 VS_VERSION_INFO VERSIONINFO
-FILEVERSION	2, 0, 3, 75
-PRODUCTVERSION	2, 0, 3, 75
+FILEVERSION	2, 1, 2, 77
+PRODUCTVERSION	2, 1, 2, 77
 FILEFLAGSMASK	0x3fL
 FILEFLAGS 0
 FILEOS VOS_NT_WINDOWS32
@@ -613,12 +613,12 @@ BEGIN
 		BEGIN
 			VALUE	"CompanyName",	"scite.net.ru\0"
 			VALUE	"FileDescription",	"SciTE - a Scintilla based Text Editor\0"
-			VALUE	"FileVersion",	"2.03 .75Ru\0"
+			VALUE	"FileVersion",	"2.12 .77Ru\0"
 			VALUE	"InternalName",	"SciTE\0"
 			VALUE	"LegalCopyright",	"Copyright 1998-2010 by Neil Hodgson\0"
 			VALUE	"OriginalFilename",	"SciTE.EXE\0"
 			VALUE	"ProductName",	"SciTE\0"
-			VALUE	"ProductVersion",	"2.03 .75Ru\0"
+			VALUE	"ProductVersion",	"2.12 .77Ru\0"
 		END
 	END
 END

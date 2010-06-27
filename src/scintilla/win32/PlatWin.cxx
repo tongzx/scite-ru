@@ -2121,10 +2121,7 @@ double ElapsedTime::Duration(bool reset) {
 		LARGE_INTEGER lBegin;
 		lBegin.HighPart = bigBit;
 		lBegin.LowPart = littleBit;
-//!-start-[no_wornings]
-//		double elapsed = lEnd.QuadPart - lBegin.QuadPart;
-		double elapsed = static_cast<double>(lEnd.QuadPart - lBegin.QuadPart);
-//!-end-[no_wornings]
+		double elapsed = lEnd.QuadPart - lBegin.QuadPart;
 		result = elapsed / static_cast<double>(frequency.QuadPart);
 	} else {
 		endBigBit = clock();

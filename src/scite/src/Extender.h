@@ -8,9 +8,10 @@
 #ifndef EXTENDER_H
 #define EXTENDER_H
 
-#include "Platform.h" //!-add-[OnKey]
+#include "Platform.h" //!-add-[no comment]
 #include "Scintilla.h"
-class Accessor;
+
+class StyleWriter;
 
 class ExtensionAPI {
 public:
@@ -37,7 +38,7 @@ public:
 };
 
 /**
- * Methods in extensions return true if they have completely handled and event and
+ * Methods in extensions return true if they have completely handled an event and
  * false if default processing is to continue.
  */
 class Extension {
@@ -61,7 +62,7 @@ public:
 	virtual bool OnExecute(const char *) { return false; }
 	virtual bool OnSavePointReached() { return false; }
 	virtual bool OnSavePointLeft() { return false; }
-	virtual bool OnStyle(unsigned int, int, int, Accessor *) {
+	virtual bool OnStyle(unsigned int, int, int, StyleWriter *) {
 		return false;
 	}
 //!	virtual bool OnDoubleClick() { return false; }
@@ -78,13 +79,9 @@ public:
 
 	virtual bool SendProperty(const char *) { return false; }
 
-//!-start-[OnKey]
-#if PLAT_WIN
-	virtual bool OnKey(int, int, char) { return false; }
-#else
-//!-end-[OnKey]
-	virtual bool OnKey(int, int) { return false; }
-#endif //!-add-[OnKey]
+//!	virtual bool OnKey(int, int) { return false; }
+	virtual bool OnKey(int, int, char) { return false; } //!-change-[OnKey]
+
 	virtual bool OnDwellStart(int, const char *) { return false; }
 	virtual bool OnClose(const char *) { return false; }
 };

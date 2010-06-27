@@ -15,13 +15,9 @@
 #include <stdio.h>
 #include <assert.h>
 
-//!-start-[no_wornings]
-/*
 #ifdef _MSC_VER
 #pragma warning(disable: 4514) // nreferenced inline function has been removed
 #endif
-*/
-//!-end-[no_wornings]
 
 class Utf8_16 {
 public:
@@ -105,7 +101,7 @@ class Utf8_16_Read : public Utf8_16 {
 public:
 	Utf8_16_Read();
 	~Utf8_16_Read();
-	Utf8_16_Read(bool AutoCheckUtf8); //!-[utf8.auto.check] [mhb] 07/05/09 
+	Utf8_16_Read(bool AutoCheckUtf8); //!-add-[utf8.auto.check]
 
 	size_t convert(char* buf, size_t len);
 	char* getNewBuf() { return reinterpret_cast<char*>(m_pNewBuf); }
@@ -121,7 +117,7 @@ private:
 	bool m_bFirstRead;
 	size_t m_nLen;
 	Utf16_Iter m_Iter16;
-	int m_nAutoCheckUtf8;//!-[utf8.auto.check] [mhb] 07/05/09: to support auto check utf8
+	int m_nAutoCheckUtf8;//!-add-[utf8.auto.check]
 };
 
 // Read in a UTF-8 buffer and write out to UTF-16 or UTF-8
@@ -143,4 +139,4 @@ protected:
 	bool m_bFirstWrite;
 };
 
-int Has_UTF8_Char(unsigned char *buf,int size);//!-[utf8.auto.check] [mhb] 07/07/09 exported
+int Has_UTF8_Char(unsigned char *buf,int size);//!-add-[utf8.auto.check]

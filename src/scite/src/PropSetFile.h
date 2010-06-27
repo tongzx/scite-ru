@@ -10,7 +10,7 @@
 
 typedef std::map<std::string, std::string> mapss;
 
-class PropSetFile : public PropertyGet {
+class PropSetFile {
 	bool lowerKeys;
 	SString GetWildUsingStart(const PropSetFile &psStart, const char *keybase, const char *filename);
 	static bool caseSensitiveFilenames;
@@ -40,7 +40,9 @@ public:
 	SString GetNewExpand(const char *keybase, const char *filename="");
 	bool GetFirst(const char *&key, const char *&val);
 	bool GetNext(const char *&key, const char *&val);
-	static void SetCaseSensitiveFilenames(bool caseSensitiveFilenames_); //!-change-[no_wornings]
+	static void SetCaseSensitiveFilenames(bool caseSensitiveFilenames_) {
+		caseSensitiveFilenames = caseSensitiveFilenames_;
+	}
 
 private:
 	// copy-value semantics not implemented
