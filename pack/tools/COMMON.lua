@@ -1,5 +1,5 @@
 -- COMMON.lua
--- Version: 1.5.1
+-- Version: 1.5.2
 ---------------------------------------------------
 -- Общие функции, использующиеся во многих скриптах
 ---------------------------------------------------
@@ -206,30 +206,30 @@ local function encodeRGB2WIN(color)
 	end
 end
 
-local function InitMarkStyle(style_number, indic_style, color, alpha_fill)
-	editor.IndicStyle[style_number] = indic_style
-	editor.IndicFore[style_number] = encodeRGB2WIN(color)
-	editor.IndicAlpha[style_number] = alpha_fill
+local function InitMarkStyle(mark_number, mark_style, color, alpha_fill)
+	editor.IndicStyle[mark_number] = mark_style
+	editor.IndicFore[mark_number] = encodeRGB2WIN(color)
+	editor.IndicAlpha[mark_number] = alpha_fill
 end
 
 local function style(mark_string)
 	local mark_style_table = {
-	plain    = INDIC_PLAIN,    squiggle = INDIC_SQUIGGLE,
-	tt       = INDIC_TT,       diagonal = INDIC_DIAGONAL,
-	strike   = INDIC_STRIKE,   hidden   = INDIC_HIDDEN,
-	roundbox = INDIC_ROUNDBOX, box      = INDIC_BOX
+		plain    = INDIC_PLAIN,    squiggle = INDIC_SQUIGGLE,
+		tt       = INDIC_TT,       diagonal = INDIC_DIAGONAL,
+		strike   = INDIC_STRIKE,   hidden   = INDIC_HIDDEN,
+		roundbox = INDIC_ROUNDBOX, box      = INDIC_BOX
 	}
 	return mark_style_table[mark_string]
 end
 
 local function EditorInitMarkStyles()
-	for style_number = 0, 31 do
-		local mark = props["find.mark."..style_number]
+	for mark_number = 0, 31 do
+		local mark = props["find.mark."..mark_number]
 		if mark ~= "" then
 			local mark_color = mark:match("#%x%x%x%x%x%x") or (props["find.mark"]):match("#%x%x%x%x%x%x") or "#0F0F0F"
 			local mark_style = style(mark:match("%l+")) or INDIC_ROUNDBOX
 			local alpha_fill = tonumber((mark:match("%@%d+") or ""):sub(2)) or 30
-			InitMarkStyle(style_number, mark_style, mark_color, alpha_fill)
+			InitMarkStyle(mark_number, mark_style, mark_color, alpha_fill)
 		end
 	end
 end
