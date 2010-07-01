@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 new_file.lua
 mozers™, VladVRO
-version 3.1.2
+version 3.1.3
 ----------------------------------------------
 Заменяет стандартную команду SciTE "File|New" (Ctrl+N)
 Создает новый буфер в текущем каталоге с расширением текущего файла
@@ -28,7 +28,7 @@ local function CreateUntitledFile()
 	local file_ext = "."..props["FileExt"]
 	if file_ext == "." then file_ext = props["default.file.ext"] end
 	repeat
-		local file_path = props["FileDir"].."\\"..scite.GetTranslation('Untitled')..props["untitled.file.number"]..file_ext
+		local file_path = props["FileDir"].."\\Untitled"..props["untitled.file.number"]..file_ext
 		props["untitled.file.number"] = tonumber(props["untitled.file.number"]) + 1
 		if not shell.fileexists(file_path) then
 			local warning_couldnotopenfile_disable = props['warning.couldnotopenfile.disable']

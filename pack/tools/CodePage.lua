@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 CodePage.lua
 Authors: YuriNB, VladVRO, mozers™
-Version: 2.3.0
+Version: 2.3.1
 ------------------------------------------------------
 Гибрид 2х скриптов:
 win1251 to cp866 keyboard mapper (YuriNB icq#2614215)
@@ -56,18 +56,6 @@ local function UpdateStatusCodePage(mode)
 		end
 	end
 
-	if props["output.code.page"]=='1251' then
-		props["output.code.page.name"]='WIN-1251'
-	elseif props["output.code.page"]=='1252' then
-		props["output.code.page.name"]='CP1252'
-	elseif props["output.code.page"]=='866' then
-		props["output.code.page.name"]='DOS-866'
-	elseif props["output.code.page"]=='65001' then
-		props["output.code.page.name"]='UTF-8'
-	else
-		props["output.code.page.name"]='???'
-	end
-
 	if props["editor.code.page.name"] ~= code_page_name then
 		scite.CheckMenus()
 		scite.UpdateStatusBar()
@@ -75,27 +63,28 @@ local function UpdateStatusCodePage(mode)
 end
 
 local function CharsetDetect()
-	-- if tonumber(props["code.page.866.detect"]) ~= 1 then return false end
-	-- function CharsetDOS()
-		-- local a, b
-		-- a = editor:findtext("[\128-\175][\128-\175][\128-\175]", SCFIND_REGEXP, 0)
-		-- if a then
-			-- b = editor:findtext("[\240-\255][\240-\255][\240-\255]", SCFIND_REGEXP, 0)
-			-- if not b then
-				-- b = editor:findtext("[\192-\233][\192-\233][\192-\233]", SCFIND_REGEXP, 0)
-			-- end
-			-- if b and b < a then return false end
-			-- return true
-		-- end
-		-- return false
-	-- end
-	-- if tonumber(props["editor.unicode.mode"]) == IDM_ENCODING_DEFAULT then
-		-- if (props["character.set"]=='204' and CharsetDOS())
-			-- or (props["character.set"]=='255' and not CharsetDOS()) then
-			-- change_codepage_ru()
-			-- return true
-		-- end
-	-- end
+	if tonumber(props["code.page.866.detect"]) ~= 1 then return false end
+	function CharsetDOS()
+		local text = editor:GetText()
+		local a, b
+		a = text:find("[\128-\175][\128-\175][\128-\175]")
+		if a then
+			b = text:find("[\240-\255][\240-\255][\240-\255]")
+			if not b then
+				b = text:find("[\192-\233][\192-\233][\192-\233]")
+			end
+			if b and b < a then return false end
+			return true
+		end
+		return false
+	end
+	if tonumber(props["editor.unicode.mode"]) == IDM_ENCODING_DEFAULT then
+		if (props["character.set"]=='204' and CharsetDOS())
+			or (props["character.set"]=='255' and not CharsetDOS()) then
+			change_codepage_ru()
+			return true
+		end
+	end
 	return false
 end
 
