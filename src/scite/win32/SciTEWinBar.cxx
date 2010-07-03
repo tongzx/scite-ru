@@ -605,7 +605,10 @@ void SciTEWin::SetMenuItem(int menuNumber, int position, int itemID,
 	HMENU hmenu = ::GetSubMenu(::GetMenu(MainHWND()), menuNumber);
 //!-start-[UserPropertiesFilesSubmenu]
 	if ((menuNumber==menuOptions) && (position>=IMPORT_START)) {
-		hmenu = ::GetSubMenu(hmenu, IMPORT_START);
+		if (props.GetExpanded("ext.lua.startup.script").length())
+			hmenu = ::GetSubMenu(hmenu, IMPORT_START);
+		else
+			hmenu = ::GetSubMenu(hmenu, IMPORT_START-1);
 	}
 //!-end-[UserPropertiesFilesSubmenu]
 	GUI::gui_string sTextMnemonic = text;
