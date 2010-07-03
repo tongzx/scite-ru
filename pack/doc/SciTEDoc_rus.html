@@ -420,7 +420,7 @@ NameError: mistake
 
   <p>SciTE может использовать от 1 до 100 вкладок, каждая из которых содержит файл. По умолчанию количество вкладок равно 1, при этом вкладки полностью отключаются. Если вкладок несколько, то для переключения между ними можно использовать меню &quot;<cite>Вкладки</cite>&quot; (Buffers), либо выбрать определенное имя файла, либо использовать команды &quot;<cite>Предыдущая</cite>&quot; (Previous - F6) и &quot;<cite>Следующая</cite>&quot; (Next - Shift+F6). [<em>В Windows также можно использовать Ctrl+Tab/Ctrl+Shift+Tab</em>]. Для доступа к первым десяти вкладкам можно использовать сочетания клавиш <code>Atl+[номер вкладки]</code>, где <code>[номер вкладки]</code> - числа от 0 до 9 (0 соответствует десятой вкладке).<br>
   Вкладки отображается для каждого буфера в панели вкладок, хотя это может быть отключено через пункт меню &quot;<cite>Вид | Вкладки</cite>&quot;. Вкладка может быть закрыта, щелчком по ней средней кнопкой мыши.<br>
-  Использование более десяти вкладок может создать определенные проблемы, так как количество файлов, которые могут отобразить некоторые меню, ограничено, и файлы, превышающие эту планку, будут недоступны.</p>
+  Использование большого количества вкладок может создать определенные проблемы, так как количество файлов, которые могут отобразить некоторые меню, ограничено, и файлы, превышающие эту планку, будут недоступны.</p>
 
   <p>Когда все доступные вкладки заняты файлами, то при открытии новых файлов вкладки будут использоваться повторно, для чего может потребоваться сохранение ранее содержащихся в этих вкладках файлов. В этом случае на экран будет выведено предупреждение для подтверждения действий пользователем.</p>
 
@@ -1710,6 +1710,11 @@ style the path and line number separately from the rest of the line with style 2
 	</tr>
 
 	<tr>
+      <td><dfn><a name="lexer.python.strings.over.newline">lexer.python.strings.over.newline</a></dfn></td>
+	<td>Set to 1 to allow strings to span newline characters.</td>
+	</tr>
+
+	<tr>
       <td><dfn><a name="lexer.python.strings.u">lexer.python.strings.u</a></dfn></td>
 	<td>Set to 0 to not recognise Python Unicode literals u"x" as used before Python 3.</td>
 	</tr>
@@ -1877,9 +1882,9 @@ style the path and line number separately from the rest of the line with style 2
 
     <tr class="windowsonly">
       <td><dfn><a name="save.filter">save.filter</a></dfn></td>
-      <td>This is a complex expression used for determining the file types that will be available in
-          the save file dialog. The structure of the property is the same as open.filter.<br />
-          Does not work on GTK+.</td>
+      <td>Это сложное выражение используется для определения типов файлов, которые будут доступны в
+          диалоге сохранения файла. Структура аналогична параметру open.filter.<br />
+          Не работает на GTK+.</td>
     </tr>
 
     <tr>
@@ -1894,7 +1899,7 @@ style the path and line number separately from the rest of the line with style 2
 
     <tr>
       <td><dfn><a name="save.check.modified.time">save.check.modified.time</a></dfn></td>
-      <td>With save.check.modified.time=1, when saving and the file has been modified by another process, check if it should be overwritten by the current contents.</td>
+      <td>При установке save.check.modified.time=1 сохраняемый файл будет проверятся не был ли он изменен другим процессом. Если это так, то возникнет диалоговое окно с предложением переписать содержимое этого файла текущим содержанием.</td>
     </tr>
 
     <tr>
