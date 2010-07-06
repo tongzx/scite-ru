@@ -999,9 +999,8 @@ static bool IsBrace(char ch) {
 bool SciTEBase::FindMatchingBracePosition(bool editor, int &braceAtCaret, int &braceOpposite, bool sloppy) {
 	int maskStyle = (1 << wEditor.Call(SCI_GETSTYLEBITSNEEDED)) - 1;
 	bool isInside = false;
-//!	GUI::ScintillaWindow &win = editor ? wEditor : wOutput;
-	GUI::ScintillaWindow &win = editor ? reinterpret_cast<GUI::ScintillaWindow &>(wEditor) : wOutput; //!-change-[no comment]
-	
+	GUI::ScintillaWindow &win = editor ? reinterpret_cast<GUI::ScintillaWindow &>(wEditor) : wOutput;
+
 	int mainSel = win.Send(SCI_GETMAINSELECTION, 0, 0);
 	if (win.Send(SCI_GETSELECTIONNCARETVIRTUALSPACE, mainSel, 0) > 0)
 		return false;
@@ -1073,8 +1072,7 @@ void SciTEBase::BraceMatch(bool editor) {
 	int braceAtCaret = -1;
 	int braceOpposite = -1;
 	FindMatchingBracePosition(editor, braceAtCaret, braceOpposite, bracesSloppy);
-//!	GUI::ScintillaWindow &win = editor ? wEditor : wOutput;
-	GUI::ScintillaWindow &win = editor ? reinterpret_cast<GUI::ScintillaWindow &>(wEditor) : wOutput; //!-change-[no comment]
+	GUI::ScintillaWindow &win = editor ? reinterpret_cast<GUI::ScintillaWindow &>(wEditor) : wOutput;
 	if ((braceAtCaret != -1) && (braceOpposite == -1)) {
 		win.Send(SCI_BRACEBADLIGHT, braceAtCaret, 0);
 		wEditor.Call(SCI_SETHIGHLIGHTGUIDE, 0);
@@ -1161,8 +1159,7 @@ void SciTEBase::GetCTag(char *sel, int len) {
 	int lengthDoc, selStart, selEnd;
 	int mustStop = 0;
 	char c;
-//!	GUI::ScintillaWindow &wCurrent = wOutput.HasFocus() ? wOutput : wEditor;
-	GUI::ScintillaWindow &wCurrent = wOutput.HasFocus() ? wOutput : reinterpret_cast<GUI::ScintillaWindow &>(wEditor); //!-change-[no comment]
+	GUI::ScintillaWindow &wCurrent = wOutput.HasFocus() ? wOutput : reinterpret_cast<GUI::ScintillaWindow &>(wEditor);
 
 	lengthDoc = wCurrent.Call(SCI_GETLENGTH);
 	selStart = selEnd = wCurrent.Call(SCI_GETSELECTIONEND);
@@ -1303,8 +1300,7 @@ SString SciTEBase::SelectionExtend(
     bool (SciTEBase::*ischarforsel)(char ch),	///< Function returning @c true if the given char. is part of the selection.
     bool stripEol /*=true*/) {
 
-//!	GUI::ScintillaWindow &wCurrent = wOutput.HasFocus() ? wOutput : wEditor;
-	GUI::ScintillaWindow &wCurrent = wOutput.HasFocus() ? wOutput : reinterpret_cast<GUI::ScintillaWindow &>(wEditor); //!-change=[no comment]
+	GUI::ScintillaWindow &wCurrent = wOutput.HasFocus() ? wOutput : reinterpret_cast<GUI::ScintillaWindow &>(wEditor);
 
 	int selStart = wCurrent.Call(SCI_GETSELECTIONSTART);
 	int selEnd = wCurrent.Call(SCI_GETSELECTIONEND);
@@ -1313,8 +1309,7 @@ SString SciTEBase::SelectionExtend(
 
 void SciTEBase::FindWordAtCaret(int &start, int &end) {
 
-//!	GUI::ScintillaWindow &wCurrent = wOutput.HasFocus() ? wOutput : wEditor;
-	GUI::ScintillaWindow &wCurrent = wOutput.HasFocus() ? wOutput : reinterpret_cast<GUI::ScintillaWindow &>(wEditor); //!-change=[no comment]
+	GUI::ScintillaWindow &wCurrent = wOutput.HasFocus() ? wOutput : reinterpret_cast<GUI::ScintillaWindow &>(wEditor);
 
 	start = wCurrent.Call(SCI_GETSELECTIONSTART);
 	end = wCurrent.Call(SCI_GETSELECTIONEND);

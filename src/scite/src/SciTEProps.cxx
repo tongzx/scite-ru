@@ -54,6 +54,7 @@ const GUI::gui_char menuAccessIndicator[] = GUI_TEXT("_");
 #include <commctrl.h>
 
 const GUI::gui_char menuAccessIndicator[] = GUI_TEXT("&");
+#include "platform.h" //!-add-[StyleDefault]
 
 #endif
 

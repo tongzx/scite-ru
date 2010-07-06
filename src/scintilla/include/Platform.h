@@ -454,8 +454,7 @@ public:
 class Menu {
 	MenuID mid;
 public:
-//!	Menu();
-	Menu(MenuID _id = 0);//!-change-[SubMenu]
+	Menu();
 	MenuID GetID() { return mid; }
 	void CreatePopUp();
 	void Destroy();

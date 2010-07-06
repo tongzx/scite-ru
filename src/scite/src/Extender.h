@@ -8,7 +8,6 @@
 #ifndef EXTENDER_H
 #define EXTENDER_H
 
-#include "Platform.h" //!-add-[no comment]
 #include "Scintilla.h"
 
 class StyleWriter;

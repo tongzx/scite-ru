@@ -142,7 +142,7 @@ protected:
 	virtual void ReadLocalization();
 	virtual void GetWindowPosition(int *left, int *top, int *width, int *height, int *maximize);
 
-	virtual MenuEx GetMenu(int menuNumber) { return MenuEx(((MenuID)::GetSubMenu(::GetMenu(reinterpret_cast<HWND>(wSciTE.GetID())), menuNumber)));}; //!-add-[SubMenu]
+	virtual MenuEx GetMenu(int menuNumber) { return MenuEx(((GUI::MenuID)::GetSubMenu(::GetMenu(reinterpret_cast<HWND>(wSciTE.GetID())), menuNumber)));}; //!-add-[SubMenu]
 	virtual void ReadProperties();
 
 	virtual void SizeContentWindows();

@@ -2044,11 +2044,8 @@ bool ListBoxX_Unregister() {
 	return ::UnregisterClass(ListBoxX_ClassName, hinstPlatformRes) != 0;
 }
 
-/*!
 Menu::Menu() : mid(0) {
 }
-*/
-Menu::Menu(MenuID _id)  : mid(_id) {} //!-change-[SubMenu]
 
 void Menu::CreatePopUp() {
 	Destroy();

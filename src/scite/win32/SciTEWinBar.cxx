@@ -664,7 +664,7 @@ void SciTEWin::DestroyMenuItem(int menuNumber, int itemID) {
 static void CheckToolbarButton(HWND wTools, int id, bool enable) {
 	if (wTools) {
 		::SendMessage(wTools, TB_CHECKBUTTON, id,
-		          Platform::LongFromTwoShorts(static_cast<short>(enable ? TRUE : FALSE), 0));
+		          LongFromTwoShorts(static_cast<short>(enable ? TRUE : FALSE), 0));
 	}
 }
 //!-end-[user.toolbar]
