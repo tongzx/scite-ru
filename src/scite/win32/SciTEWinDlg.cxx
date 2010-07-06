@@ -235,7 +235,7 @@ bool SciTEWin::OpenDialog(FilePath directory, const GUI::gui_char *filter) {
 	openName[0] = '\0';
 
 	OPENFILENAMEW ofn = {
-	       sizeof(ofn), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+	       sizeof(ofn), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 	};
 	ofn.hwndOwner = MainHWND();
 	ofn.hInstance = hInstance;
@@ -287,7 +287,7 @@ FilePath SciTEWin::ChooseSaveName(FilePath directory, const char *title, const G
 			wcscpy(saveName, savePath.AsInternal());
 		}
 		OPENFILENAMEW ofn = {
-		                       sizeof(ofn), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+		                       sizeof(ofn), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 		                   };
 		ofn.hwndOwner = MainHWND();
 		ofn.hInstance = hInstance;
@@ -369,7 +369,7 @@ void SciTEWin::SaveAsXML() {
 void SciTEWin::LoadSessionDialog() {
 	GUI::gui_char openName[MAX_PATH] = GUI_TEXT("");
 	OPENFILENAMEW ofn = {
-	                       sizeof(ofn), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+	                       sizeof(ofn), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 	                   };
 	ofn.hwndOwner = MainHWND();
 	ofn.hInstance = hInstance;
@@ -389,7 +389,7 @@ void SciTEWin::SaveSessionDialog() {
 	GUI::gui_char saveName[MAX_PATH] = GUI_TEXT("\0");
 	wcscpy(saveName, GUI_TEXT("SciTE.session"));
 	OPENFILENAMEW ofn = {
-			       sizeof(ofn), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+			       sizeof(ofn), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 			   };
 	ofn.hwndOwner = MainHWND();
 	ofn.hInstance = hInstance;
