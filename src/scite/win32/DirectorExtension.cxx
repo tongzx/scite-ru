@@ -13,6 +13,7 @@
 #pragma warning(disable: 4786)
 #endif
 
+#include "Platform.h" //!-add-[no_wornings]
 #include <string>
 #include <map>
 

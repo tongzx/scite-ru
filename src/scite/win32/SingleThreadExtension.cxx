@@ -14,6 +14,7 @@
 // an #ifdef in LuaExtension.  But I did it this way so that other
 // extensions can leverage it without needing to do anything special.
 
+#include "Platform.h" //!-add-[no_wornings]
 #include <string>
 
 #include "Scintilla.h"

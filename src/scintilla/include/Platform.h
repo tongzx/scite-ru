@@ -49,6 +49,47 @@
 #include <windows.h> //!-add-[SubMenu]
 #endif
 
+//!-start-[no_wornings]
+
+// Visual C++ 6 compatible:
+#ifdef _MSC_VER
+#if _MSC_VER < 1300
+#define SetWindowLongPtr SetWindowLong
+#define GetWindowLongPtr GetWindowLong
+#define GWLP_USERDATA GWL_USERDATA
+#define DWLP_USER DWL_USER
+#define GWLP_WNDPROC GWL_WNDPROC
+#endif
+#ifndef LONG_PTR
+#define LONG_PTR long
+#endif
+#ifndef DWORD_PTR
+#define DWORD_PTR DWORD
+#endif
+#endif
+
+// STL without warnings (http://www.codeproject.com/KB/stl/stl_without_warnings.aspx)
+#ifdef _MSC_VER
+#pragma warning( push )
+#pragma warning( disable : 4018 4100 4146 4244 4245 4511 4512 4663 4786 )
+#endif
+#include <vector>
+#include <string>
+#include <map>
+#ifdef _MSC_VER
+#pragma warning( pop )
+#endif
+
+// Shut up annoying Visual C++ warnings:
+#ifdef _MSC_VER
+#pragma warning( disable: 4309 ) //'static_cast' : truncation of constant value
+#pragma warning( disable: 4511 ) //copy constructor could not be generated
+#pragma warning( disable: 4512 ) //assignment operator could not be generated
+#pragma warning( disable: 4800 ) //forcing value to bool 'true' or 'false'
+#endif
+
+//!-end-[no_wornings]
+
 #ifdef SCI_NAMESPACE
 namespace Scintilla {
 #endif
