@@ -5,13 +5,13 @@
 // Copyright 2009 by Neil Hodgson <neilh@scintilla.org>
 // The License.txt file describes the conditions under which this software may be distributed.
 
-#include "Platform.h" //!-move-[no_wornings]
+#include "Platform.h" //!-add-[no_wornings]
 
 #include <stdlib.h>
 
 #include <vector>
 
-//!#include "Platform.h"
+//!#include "Platform.h" //!-remove-[no_wornings]
 
 #include "Scintilla.h"
 
