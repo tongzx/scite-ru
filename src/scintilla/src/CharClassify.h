@@ -8,6 +8,12 @@
 #ifndef CHARCLASSIFY_H
 #define CHARCLASSIFY_H
 
+//!-start-[LowerUpperCase]
+#if PLAT_WIN
+	#include "windows.h"
+#endif
+//!-end-[LowerUpperCase]
+
 class CharClassify {
 public:
 	CharClassify();
