@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev, ur4ltz
-Version 1.18.3
+Version 1.18.4
 ------------------------------------------------------
   Note: Require gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
                lpeg.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/lpeg/>
@@ -369,7 +369,7 @@ local function OpenFile(filename)
 		filename = filename:gsub('\\','\\\\')
 		scite.Perform ("loadsession:"..filename)
 	else
-		scite.Open(filename)
+		scite.Open(filename:toUTF())
 	end
 	gui.pass_focus()
 end
@@ -1117,7 +1117,7 @@ local function Bookmarks_GotoLine()
 	if sel_item == -1 then return end
 	local pos = list_bookmarks:get_item_data(sel_item)
 	if pos then
-		scite.Open(pos[1]) -- FilePath
+		scite.Open(pos[1]:toUTF()) -- FilePath
 		ShowCompactedLine(pos[2]) -- LineNumber
 		editor:GotoLine(pos[2])
 		gui.pass_focus()

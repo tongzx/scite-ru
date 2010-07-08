@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 OpenFindFiles.lua
 Author: mozers™
-Version: 1.3.1
+Version: 1.3.2
 ------------------------------------------------------
 После выполнения команды "Найти в файлах..."
 создает пункт в контекстном меню консоли - "Открыть найденные файлы"
@@ -63,7 +63,7 @@ function OpenFindFiles()
 	for filename in output_text:gmatch('([^\r\n:]+):%d+:[^\r\n]+') do
 		filename = filename:gsub('^%.\\', path)
 		if filename ~= filename_prev then
-			scite.Open(filename)
+			scite.Open(filename:toUTF())
 			local pos = editor:findtext(str)
 			if pos ~= nil then editor:GotoPos(pos) end
 			filename_prev = filename

@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 Open_Selected_Filename.lua
 Authors: mozers™, vladvro
-Version: 1.2.1
+Version: 1.2.2
 ------------------------------------------------------
 Замена команды "Открыть выделенный файл"
 В отличии от встроенной команды SciTE, понимающей только явно заданный путь и относительные пути
@@ -50,7 +50,7 @@ local function Open_Selected_Filename()
 
 	if foropen ~= nil then
 		foropen = string.gsub(foropen, '\\\\', '\\')
-		scite.Open (foropen)
+		scite.Open (foropen:toUTF())
 		return true
 	end
 end
