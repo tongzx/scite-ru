@@ -296,7 +296,9 @@ bool SciTEKeys::MatchKeyCode(long parsedKeyCode, int keyval, int modifiers) {
 class SciTEGTK : public SciTEBase {
 
 protected:
-	void SetToolBar() {}; //!-add-[user.toolbar]
+	virtual MenuEx GetMenu(int menuNumber) { return MenuEx(0); } //!-add-[SubMenu]
+	GUI::Menu popup; //!-add-[ExtendedContextMenu]
+	void SetToolBar() {} //!-add-[user.toolbar]
 
 	GUI::Window wDivider;
 	GUI::Point ptOld;
@@ -2269,7 +2271,8 @@ gint SciTEGTK::Key(GdkEventKey *event) {
 		(event->state & GDK_SHIFT_MASK   ? SCMOD_SHIFT : 0) |
 		(event->state & GDK_CONTROL_MASK ? SCMOD_CTRL  : 0) |
 		(event->state & GDK_MOD1_MASK    ? SCMOD_ALT   : 0);
-	if (extender && extender->OnKey(event->keyval, cmodifiers))
+//	if (extender && extender->OnKey(event->keyval, cmodifiers))
+	if (extender && extender->OnKey(event->keyval, cmodifiers, 0)) //!-add-[OnKey]
 		return 1;
 
 	int commandID = 0;
@@ -3435,3 +3438,21 @@ int main(int argc, char *argv[]) {
 
 	return 0;
 }
+
+//!-start-[ExtendedContextMenu]
+void MenuEx::Add(const GUI::gui_char *label, int cmd, int enabled, const char *mnemonic, int position) {
+	//TODO: add
+}
+
+void MenuEx::AddSubMenu(const GUI::gui_char *label, GUI::Menu &subMenu, int position) {
+	//TODO: add sub menu
+}
+
+void MenuEx::RemoveItems(int fromID, int toID/*-1*/) {
+	//TODO: add remove items
+}
+
+void MenuEx::RemoveItem(int itemID, bool byPos) {
+	//TODO: add remove item
+}
+//!-end-[ExtendedContextMenu]

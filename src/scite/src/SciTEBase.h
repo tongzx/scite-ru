@@ -46,8 +46,8 @@ inline Colour ColourRGB(unsigned int red, unsigned int green, unsigned int blue)
 class MenuEx : public GUI::Menu {
 public:
 	MenuEx(GUI::MenuID _id = 0) : GUI::Menu(_id) {}
-	void Add(const wchar_t *label = 0, int cmd = 0, int enabled = 1, const char *mnemonic = 0, int position = -1);
-	void AddSubMenu(const wchar_t *label, GUI::Menu &subMenu, int position = -1);
+	void Add(const GUI::gui_char *label = 0, int cmd = 0, int enabled = 1, const char *mnemonic = 0, int position = -1);
+	void AddSubMenu(const GUI::gui_char *label, GUI::Menu &subMenu, int position = -1);
 	void RemoveItems(int fromID = 0, int toID = -1);
 	void RemoveItem(int itemID, bool byPos = false);
 };
@@ -74,7 +74,7 @@ public:
 		}
 		return false;
 	}
-	
+
 	void SetProperty(SString sProperty, int Value) {
 		char buf[1024] = {0};
 		sprintf(buf,"%s=%d", sProperty.c_str(), Value);
@@ -84,7 +84,7 @@ public:
 			while (firstPos > 0 && m_buf[firstPos-1] != '\n' && m_buf[firstPos-1] != '\r' )
 				firstPos--;
 			int lastPos = m_buf.search(StringFromEOLMode(TypeEOL), insertPos);
-			m_buf.remove(firstPos, 
+			m_buf.remove(firstPos,
 				lastPos > firstPos ? lastPos - firstPos : m_buf.length() - firstPos);
 			m_buf.insert(firstPos, buf);
 		}
@@ -95,8 +95,8 @@ public:
 			m_buf += StringFromEOLMode(TypeEOL);
 		}
 	}
-	
-	void Save()	{
+
+	void Save() {
 		if (m_filename.IsSet())	{
 			FILE * file = m_filename.Open(fileWrite);
 			if (file) {
@@ -105,27 +105,27 @@ public:
 			}
 		}
 	}
-	
+
 	SString GetString() {
 		return m_buf;
 	}
-	
+
 	int GetEOLtype() {
 		return TypeEOL;
 	}
-	
+
 public:
 	static const char *StringFromEOLMode(int eolMode) {
 		if (eolMode == SC_EOL_CR) return "\r";
 		if (eolMode == SC_EOL_LF) return "\n";
 		return "\r\n";
 	}
-	
+
 	static int GetEOLtype(SString &str) {
 		int linesCR = 0;
 		int linesLF = 0;
 		int linesCRLF = 0;
-		
+
 		int lengthDoc = str.length();
 		char chPrev = ' ';
 		for (int i = 0; i < lengthDoc; i++) {
@@ -144,7 +144,7 @@ public:
 			return  SC_EOL_CR;
 		return SC_EOL_CRLF;
 	}
-	
+
 private:
 	int TypeEOL;
 	SString m_buf;

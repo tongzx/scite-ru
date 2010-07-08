@@ -632,7 +632,11 @@ sptr_t SciTEBase::ScintillaWindowEditor::Call( unsigned int msg, uptr_t wParam, 
 				if (mark.length())
 				{
 					GUI::gui_char *ROMarker = new GUI::gui_char[ mark.length() + 1 ];
-					wcscpy( ROMarker, mark.c_str() );
+					// this is wcscpy - copy string
+					GUI::gui_char *cp = ROMarker;
+					const GUI::gui_char *src = mark.c_str();
+					while( *cp++ = *src++ );
+					//end wcscpy
 					pBase->buffers.buffers[pBase->buffers.Current()].ROMarker = ROMarker;
 				}
 			}
@@ -1356,14 +1360,14 @@ void SciTEBase::SelectionIntoFind(bool stripEol /*=true*/, bool inFiles /*=false
 //!-start-[find.fillout]
 	int findFillout = props.GetInt("find.fillout", 0);
 	SString sel;
-	switch (findFillout) { 
+	switch (findFillout) {
 		case 2:
 			; //never fill search field
-			break; 
-		case 1:	
+			break;
+		case 1:
 			sel = SelectionExtend(0, stripEol); //fill with selection, if none leave blank
 			break;
-		default: 
+		default:
 			sel = SelectionWord(stripEol); //fill with word if no selection is present
 			break;
 	}
@@ -2264,7 +2268,7 @@ void SciTEBase::ContinueCallTip() {
 			if (cmp_res != 0)
 				continue;
 		}
-		
+
 		while (functionDefinition[startHighlight] && !calltipParametersStart.contains(functionDefinition[startHighlight]))
 			startHighlight++;
 		if (calltipParametersStart.contains(functionDefinition[startHighlight]))
@@ -2596,7 +2600,7 @@ bool SciTEBase::InsertAbbreviation(const char* data, int expandedLength) {
 		wEditor.CallString(SCI_REPLACESEL, 0, "");
 		sel_length = 0;
 	}
-	
+
 	if (expandedLength > 0) {
 		caret_pos -= expandedLength;
 		sel_start = caret_pos;
@@ -2664,7 +2668,7 @@ bool SciTEBase::InsertAbbreviation(const char* data, int expandedLength) {
 							int lenPerc = pPerc - expbuf-i+1;
 							pPerc = new char[lenPerc+2];
 							strncpy(pPerc,&expbuf[i],lenPerc);
-							pPerc[lenPerc] = '\0'; 
+							pPerc[lenPerc] = '\0';
 							if(strcmp(pPerc,"%SEL%")==0){
 								if (at_start) {
 									int texteol = PropFileEx::GetEOLtype(currentSelection);
@@ -2694,7 +2698,7 @@ bool SciTEBase::InsertAbbreviation(const char* data, int expandedLength) {
 									int tabcount=0;
 									if (tpos == pos+1)
 									{
-										do 
+										do
 										{
 											tabcount++;
 											tpos = clpBuffer.search("\t", tpos+1);
@@ -2720,7 +2724,7 @@ bool SciTEBase::InsertAbbreviation(const char* data, int expandedLength) {
 							}else
 #endif
 							if(lenPerc>4 && pPerc[1]=='[' && pPerc[lenPerc-2]==']'){
-								pPerc[lenPerc-2] = '\0'; 
+								pPerc[lenPerc-2] = '\0';
 								abbrevText += props.GetExpanded(&pPerc[2]);
 								i+=lenPerc-1;
 							}else
@@ -2775,9 +2779,9 @@ bool SciTEBase::StartExpandAbbreviation() {
 //!	int currentPos = GetCaretInLine();
 //!	int position = wEditor.Call(SCI_GETCURRENTPOS); // from the beginning
 //!-start-[VarAbbrev]
-	int position = wEditor.Call(SCI_GETSELECTIONSTART); // from the beginning 
-	int line = wEditor.Call(SCI_LINEFROMPOSITION, position); 
-	int lineStart = wEditor.Call(SCI_POSITIONFROMLINE, line); 
+	int position = wEditor.Call(SCI_GETSELECTIONSTART); // from the beginning
+	int line = wEditor.Call(SCI_LINEFROMPOSITION, position);
+	int lineStart = wEditor.Call(SCI_POSITIONFROMLINE, line);
 	int currentPos = position - lineStart;
 //!-end-[VarAbbrev]
 	char *linebuf = new char[currentPos + 2];
@@ -5143,7 +5147,7 @@ void SciTEBase::ContextMenu(GUI::ScintillaWindow &wSource, GUI::Point pt, GUI::W
 		userContextMenu.substitute('|', '\0');
 		const char *userContextItem = userContextMenu.c_str();
 		const char *endDefinition = userContextItem + userContextMenu.length();
-		GenerateMenu(subMenu, userContextItem, endDefinition, 
+		GenerateMenu(subMenu, userContextItem, endDefinition,
 			item, isAdded);
 	} else {
 		SString userContextMenu = props.GetNewExpand("user.context.menu.", ExtensionFileName().c_str());
@@ -5152,28 +5156,28 @@ void SciTEBase::ContextMenu(GUI::ScintillaWindow &wSource, GUI::Point pt, GUI::W
 		userContextMenu.substitute('|', '\0');
 		const char *userContextItem = userContextMenu.c_str();
 		const char *endDefinition = userContextItem + userContextMenu.length();
-		GenerateMenu(subMenu, userContextItem, endDefinition, 
+		GenerateMenu(subMenu, userContextItem, endDefinition,
 			item, isAdded);
 	}
 
 	if (!isAdded) {
-		subMenu[0].Add(localiser.Text("Undo").c_str(), IDM_UNDO, IsMenuItemEnabled(IDM_UNDO));
-		subMenu[0].Add(localiser.Text("Redo").c_str(), IDM_REDO, IsMenuItemEnabled(IDM_REDO));
+		subMenu[0].Add(localiser.Text("Undo").c_str(), IDM_UNDO, (int)IsMenuItemEnabled(IDM_UNDO));
+		subMenu[0].Add(localiser.Text("Redo").c_str(), IDM_REDO, (int)IsMenuItemEnabled(IDM_REDO));
 		subMenu[0].Add();
-		subMenu[0].Add(localiser.Text("Cut").c_str(), IDM_CUT, IsMenuItemEnabled(IDM_CUT));
-		subMenu[0].Add(localiser.Text("Copy").c_str(), IDM_COPY, IsMenuItemEnabled(IDM_COPY));
-		subMenu[0].Add(localiser.Text("Paste").c_str(), IDM_PASTE, IsMenuItemEnabled(IDM_PASTE));
-		subMenu[0].Add(localiser.Text("Delete").c_str(), IDM_CLEAR, IsMenuItemEnabled(IDM_CLEAR));
+		subMenu[0].Add(localiser.Text("Cut").c_str(), IDM_CUT, (int)IsMenuItemEnabled(IDM_CUT));
+		subMenu[0].Add(localiser.Text("Copy").c_str(), IDM_COPY, (int)IsMenuItemEnabled(IDM_COPY));
+		subMenu[0].Add(localiser.Text("Paste").c_str(), IDM_PASTE, (int)IsMenuItemEnabled(IDM_PASTE));
+		subMenu[0].Add(localiser.Text("Delete").c_str(), IDM_CLEAR, (int)IsMenuItemEnabled(IDM_CLEAR));
 		subMenu[0].Add();
-		subMenu[0].Add(localiser.Text("Select All").c_str(), IDM_SELECTALL, IsMenuItemEnabled(IDM_SELECTALL));
+		subMenu[0].Add(localiser.Text("Select All").c_str(), IDM_SELECTALL, (int)IsMenuItemEnabled(IDM_SELECTALL));
 		subMenu[0].Add();
 		if (wSource.GetID() == wOutput.GetID()) {
-			subMenu[0].Add(localiser.Text("Hide").c_str(), IDM_TOGGLEOUTPUT, IsMenuItemEnabled(IDM_TOGGLEOUTPUT));
+			subMenu[0].Add(localiser.Text("Hide").c_str(), IDM_TOGGLEOUTPUT, (int)IsMenuItemEnabled(IDM_TOGGLEOUTPUT));
 		} else {
-			subMenu[0].Add(localiser.Text("Close").c_str(), IDM_CLOSE, IsMenuItemEnabled(IDM_CLOSE));
+			subMenu[0].Add(localiser.Text("Close").c_str(), IDM_CLOSE, (int)IsMenuItemEnabled(IDM_CLOSE));
 		}
-	}	
-	
+	}
+
 	subMenu[0].Show(pt, wCmd);
 }
 
@@ -5194,7 +5198,7 @@ bool SciTEBase::IsMenuItemEnabled(int cmd) {
 	case IDM_UNDO:
 		return CallFocused(SCI_CANUNDO);
 		break;
-	case IDM_REDO:	
+	case IDM_REDO:
 		return CallFocused(SCI_CANREDO);
 		break;
 	case IDM_DUPLICATE:
@@ -5209,43 +5213,43 @@ bool SciTEBase::IsMenuItemEnabled(int cmd) {
 	case IDM_COMPLETE:
 		return apis != 0;
 		break;
-	case IDM_CUT:	
+	case IDM_CUT:
 		return CallFocused(SCI_GETSELECTIONSTART) != CallFocused(SCI_GETSELECTIONEND);
 		break;
-	case IDM_COPY:	
+	case IDM_COPY:
 		return CallFocused(SCI_GETSELECTIONSTART) != CallFocused(SCI_GETSELECTIONEND);
 		break;
-	case IDM_CLEAR:	
+	case IDM_CLEAR:
 		return CallFocused(SCI_GETSELECTIONSTART) != CallFocused(SCI_GETSELECTIONEND);
 		break;
-	case IDM_PASTE:	
+	case IDM_PASTE:
 		return CallFocused(SCI_CANPASTE);
 		break;
-	case IDM_OPENFILESHERE:	
+	case IDM_OPENFILESHERE:
 		return props.GetInt("check.if.already.open") != 0;
 		break;
-	case IDM_COMPILE:	
+	case IDM_COMPILE:
 		return !jobQueue.IsExecuting() && props.GetWild("command.compile.", FileNameExt().AsUTF8().c_str()).size() != 0;
 		break;
-	case IDM_BUILD:	
+	case IDM_BUILD:
 		return !jobQueue.IsExecuting() && props.GetWild("command.build.", FileNameExt().AsUTF8().c_str()).size() != 0;
 		break;
-	case IDM_GO:	
+	case IDM_GO:
 		return !jobQueue.IsExecuting() && props.GetWild("command.go.", FileNameExt().AsUTF8().c_str()).size() != 0;
 		break;
-	case IDM_OPENDIRECTORYPROPERTIES:	
+	case IDM_OPENDIRECTORYPROPERTIES:
 		return props.GetInt("properties.directory.enable") != 0;
 		break;
-	case IDM_STOPEXECUTE:	
+	case IDM_STOPEXECUTE:
 		return jobQueue.IsExecuting();
 		break;
-	case IDM_MACROPLAY:	
+	case IDM_MACROPLAY:
 		return !recording;
 		break;
-	case IDM_MACRORECORD:	
+	case IDM_MACRORECORD:
 		return !recording;
 		break;
-	case IDM_MACROSTOPRECORD:	
+	case IDM_MACROSTOPRECORD:
 		return recording;
 		break;
 	}
@@ -5274,7 +5278,7 @@ void SciTEBase::GenerateMenu(MenuEx *subMenu, const char *&userContextItem,
 			} else if ( strcmp(userContextItem,"POPUPEND") == 0 ) {
 				userContextItem += strlen(userContextItem) + 1;
 				if ( caption[0] != '#') break;
-			} else {	
+			} else {
 				int cmd = GetMenuCommandAsInt(userContextItem);
 				userContextItem += strlen(userContextItem) + 1;
 				if ( caption[0] != '#') {
@@ -5932,7 +5936,12 @@ bool SciTEBase::ShowParametersDialog(const char *msg) {
 //!-end-[ParametersDialogFromLua]
 
 //!-start-[LocalizationFromLua]
+// TODO: переделать всё на utf8, это вызывается только из луа
 char *SciTEBase::GetTranslation(const char *s, bool retainIfNotFound) {
+#if defined(GTK)
+    //TODO: add get translation
+    return NULL;
+#else
 	GUI::gui_string sValue = localiser.Text(s, retainIfNotFound);
 	const wchar_t *lpw = sValue.c_str();
 	int _convert = (lstrlenW(lpw)+1)*2;
@@ -5941,5 +5950,6 @@ char *SciTEBase::GetTranslation(const char *s, bool retainIfNotFound) {
 	::WideCharToMultiByte(CP_ACP, 0, lpw, -1, lpa, _convert, NULL, NULL);
 	SString value = lpa;
 	return value.detach();
+#endif
 }
 //!-end-[LocalizationFromLua]

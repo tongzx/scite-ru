@@ -523,7 +523,7 @@ void SciTEBase::RestoreSession() {
 
 		wEditor.Call(SCI_SCROLLCARET);
 	}
-//!-start-[session.load.forced]	
+//!-start-[session.load.forced]
 	props.Set("scite.state.loadsession", "0");
 	if (props.GetInt("session.load.forced", 0) == 1 && curr != -1) {
 		RestoreState(buffers.buffers[curr]);
@@ -1019,7 +1019,7 @@ void SciTEBase::BuffersMenu() {
 //!-start-[TabbarTitleMaxLength]
 				if (tabsTitleMaxLength > 0 && titleTab.length() > tabsTitleMaxLength + 3) {
 					titleTab.resize(tabsTitleMaxLength, L'\0');
-					titleTab.append(GUI_TEXT("\x2026"));
+					titleTab.append(GUI_TEXT("..."));
 				}
 //!-end-[TabbarTitleMaxLength]
 			}
@@ -1066,7 +1066,7 @@ void SciTEBase::SetFileStackMenu() {
 		SetMenuItem(menuFile, MRU_START, IDM_MRU_SEP, GUI_TEXT(""));
 //!		for (int stackPos = 0; stackPos < fileStackMax; stackPos++) {
 //!-start-[MoreRecentFiles]
-		int fileStackMaxToUse = props.GetInt("save.recent.max",fileStackMaxDefault); //-> props 
+		int fileStackMaxToUse = props.GetInt("save.recent.max",fileStackMaxDefault); //-> props
 		if ( fileStackMaxToUse > fileStackMax )
 			 fileStackMaxToUse = fileStackMax;
 		for (int stackPos = 0; stackPos < fileStackMaxToUse; stackPos++) {
@@ -1316,7 +1316,7 @@ void SciTEBase::SetToolsMenu() {
 		if (sMenuItem.length()) {
 			prefix = "command.shortcut." + SString(items) + ".";
 			SString sMnemonic = props.GetNewExpand(prefix.c_str(), FileNameExt().AsUTF8().c_str());
-			if (items < 10 && sMnemonic.length() == 0) 
+			if (items < 10 && sMnemonic.length() == 0)
 				sMnemonic += "Ctrl+" + SString(items);
 			prefix = "command.separator." + SString(items) + ".";
 			int issep = props.GetNewExpand(prefix.c_str(), FileNameExt().AsUTF8().c_str()).value();
@@ -1367,7 +1367,7 @@ void SciTEBase::SetToolsMenu() {
 					arrMenu[toMenu].AddSubMenu(lcommandName.c_str(), arrMenu[items], 0);
 				}
 				else {
-					if (menuPos == TOOLS_START+1) 
+					if (menuPos == TOOLS_START+1)
 						arrMenu[0].Add(0, IDM_TOOLSMAX, true, 0, menuPos++);
 					arrMenu[0].AddSubMenu(lcommandName.c_str(), arrMenu[items], menuPos++);
 				}

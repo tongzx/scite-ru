@@ -1328,8 +1328,9 @@ void SciTEBase::InternalGrep(GrepFlags gf, const GUI::gui_char *directory, const
 		os.append("\" in \"");
 //!-start-[FindResultListStyle]
 		if (props.GetInt("lexer.errorlist.findliststyle", 1)) {
-			basePathLen = wcslen(directory);
-			os.append(GUI::UTF8FromString(directory).c_str());
+			std::string dir = GUI::UTF8FromString(directory);
+			basePathLen = dir.length();
+			os.append(dir.c_str());
 			if (pathSepChar == os[os.length()-1]) {
 				basePathLen--;
 			} else {

@@ -1629,10 +1629,10 @@ LRESULT SciTEWin::KeyDown(WPARAM wParam) {
 				}
  			}
 			sPrevIsDeadKey = false;
-		} 
+		}
 
 		if ( extender->OnKey( (int)wParam, modifiers, ch[0] ) ) {
-		  return 1l;
+			return 1l;
 		}
 	}
 //!-end-[OnKey]
