@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 CodePage.lua
 Authors: YuriNB, VladVRO, mozers™
-Version: 2.3.1
+Version: 2.3.2
 ------------------------------------------------------
 Гибрид 2х скриптов:
 win1251 to cp866 keyboard mapper (YuriNB icq#2614215)
@@ -65,13 +65,12 @@ end
 local function CharsetDetect()
 	if tonumber(props["code.page.866.detect"]) ~= 1 then return false end
 	function CharsetDOS()
-		local text = editor:GetText()
 		local a, b
-		a = text:find("[\128-\175][\128-\175][\128-\175]")
+		a = editor:findtext("[\128-\175][\128-\175][\128-\175]", SCFIND_REGEXP, 0)
 		if a then
-			b = text:find("[\240-\255][\240-\255][\240-\255]")
+			b = editor:findtext("[\240-\255][\240-\255][\240-\255]", SCFIND_REGEXP, 0)
 			if not b then
-				b = text:find("[\192-\233][\192-\233][\192-\233]")
+				b = editor:findtext("[\192-\233][\192-\233][\192-\233]", SCFIND_REGEXP, 0)
 			end
 			if b and b < a then return false end
 			return true
