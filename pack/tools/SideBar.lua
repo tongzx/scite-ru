@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozersЩ, VladVRO, frs, BioInfo, Tymur Gubayev, ur4ltz
-Version 1.19.0
+Version 1.20.0
 ------------------------------------------------------
   Note: Require gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
                lpeg.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/lpeg/>
@@ -740,9 +740,13 @@ do
 
 	do --v----- VB ------v--
 		-- redefine common patterns
-		local STRING = P'"' * (ANY - (P'"' + NL))^0*(P'"' + NL)
-		local COMMENT = (P"'" + P"REM ") * (ANY - NL)^0*NL
+		local SPACE = (S(" \t")+P"_"*S(" \t")^0*(P"\r\n"))^1
 		local SC = SPACE
+		local NL = (P"\r\n")^1*SC^0
+		local STRING = P'"' * (ANY - (P'"' + P"\r\n"))^0*P'"'
+		local COMMENT = (P"'" + P"REM ") * (ANY - P"\r\n")^0
+		local IGNORED = SPACE + COMMENT + STRING
+		local I = C(IDENTIFIER)*cl
 		-- define local patterns
 		local f = AnyCase"function"
 		local p = AnyCase"property"
@@ -750,22 +754,35 @@ do
 			local get = AnyCase"get"
 			local set = AnyCase"set"
 		local s = AnyCase"sub"
-		-- create flags:
-		-- f = Cg(f*Cc(true),'f')
+		--local con=Cmt(AnyCase"const",(function(s,i) if _show_more then return i else return nil end end))
+		--local dim=Cmt(AnyCase"dim",(function(s,i) if _show_more then return i else return nil end end))
+
+		local scr=P("<script>")
+		local stt=P("<stringtable>")
+
 		local restype = (P"As"+P"as")*SPACE*Cg(C(AZ^1),'')
 		let = Cg(let*Cc(true),'pl')
 		get = Cg(get*Cc(true),'pg')
 		set = Cg(set*Cc(true),'ps')
-		p = p*SC^1*(let+get+set)
-		-- create additional captures
-		local I = C(IDENTIFIER)*cl
+		p = NL*p*SC^1*(let+get+set)
+		s = NL*Cg(s*Cc(true),'S')
+		f = NL*Cg(f*Cc(true),'F')
+		--dim = NL*Cg(dim*Cc(true),"D")
+		--con = NL*Cg(con*Cc(true),"C")
+
+		local e = NL*AnyCase"end"*SC^1*(AnyCase"sub"+AnyCase"function"+AnyCase"property")
+		local body = (IGNORED^1 + IDENTIFIER + 1 - f - s - p - e)^0*e
+
 		-- definitions to capture:
 		f = f*SC^1*I*SC^0*par
 		p = p*SC^1*I*SC^0*par
 		s = s*SC^1*I*SC^0*par
-		local def = Ct((f + s + p)*(SPACE*restype)^-1)
+		--con = con*SC^1*I
+		--dim = dim*SC^1*I
+		local def = Ct((f + s + p)*(SPACE*restype)^-1)*body --+ Ct(dim+con)
 		-- resulting pattern, which does the work
-		local patt = (def + IGNORED^1 + IDENTIFIER + 1)^0 * EOF
+
+		local patt = (def + IGNORED^1 + IDENTIFIER + (1-NL)^1 + NL)^0 * EOF
 
 		Lang2lpeg.VisualBasic = lpeg.Ct(patt)
 	end --^----- VB ------^--
@@ -879,7 +896,45 @@ do
 
 		Lang2lpeg.autohotkey = lpeg.Ct(patt)
 	end --do --^------- autohotkey -------^--
-	
+
+	do --v----- SQL ------v--
+		-- redefine common patterns
+		--идентификатор может включать точку
+		local IDENTIFIER = AZ * (AZ+N+P".")^0
+		local STRING = (P'"' * (ANY - P'"')^0*P'"') + (P"'" * (ANY - P"'")^0*P"'")
+		local COMMENT = ((P"--" * (ANY - NL)^0*NL) + block_comment)^1
+		local SC = SPACE
+
+		local cr = AnyCase"create"*SC^1
+		local pr = AnyCase"proc"*AnyCase"edure"^0
+		local vi = AnyCase"view"
+		local tb = AnyCase"table"
+		local tr = AnyCase"trigger"
+		local IGNORED = SPACE + COMMENT + STRING
+		-- create flags
+		tr = Cg(cr*tr*SC^1*Cc(true),'tr')
+		tb = Cg(cr*tb*SC^1*Cc(true),'tb')
+		vi = Cg(cr*vi*SC^1*Cc(true),'vi')
+		pr = Cg(cr*pr*SC^1*Cc(true),'pr')
+
+		local I = C(IDENTIFIER)*cl
+		--параметры процедур и вью - всЄ от имени до as
+		local parpv = C((1-AnyCase"as")^0)*AnyCase"as"
+		--параметры таблиц содержат комментарии и параметры
+		local partb = C((P"("*(COMMENT + (1-S"()")+par)^1*P")"))
+		-- -- definitions to capture:
+		pr = pr*I*SC^0*parpv
+		vi = vi*I*SC^0*parpv
+		tb = tb*I*SC^0*partb
+		tr = tr*I*SC^1*AnyCase"on"*SC^1*I --"параметр" триггера - идентификатор после I
+		local def = Ct(( pr + vi + tb + tr))
+
+		-- resulting pattern, which does the work
+		local patt = (def + IGNORED^1 + IDENTIFIER + 1)^0 * EOF
+
+		Lang2lpeg.SQL = lpeg.Ct(patt)
+	end --^----- SQL ------^--
+
 end
 
 local Lang2CodeStart = {
@@ -895,6 +950,7 @@ local Lexer2Lang = {
 	['css']='CSS',
 	['pascal']='Pascal',
 	['python']='Python',
+	['sql']='SQL',
 	['lua']='Lua',
 	['nncrontab']='nnCron',
 }
@@ -908,6 +964,7 @@ do -- Fill_Ext2Lang
 		[props['file.patterns.vb']]='VisualBasic',
 		[props['file.patterns.wscript']]='VisualBasic',
 		['*.css']='CSS',
+		['*.sql']='SQL',
 		[props['file.patterns.pascal']]='Pascal',
 		[props['file.patterns.py']]='Python',
 		[props['file.patterns.lua']]='Lua',
