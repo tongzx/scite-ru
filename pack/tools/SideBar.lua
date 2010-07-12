@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev, ur4ltz
-Version 1.18.4
+Version 1.19.0
 ------------------------------------------------------
   Note: Require gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
                lpeg.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/lpeg/>
@@ -217,16 +217,27 @@ local function FileMan_ListFILL()
 	if current_path == '' then return end
 	local folders = gui.files(current_path..'*', true)
 	if not folders then return end
-	list_dir:clear()
-	list_dir:add_item ('[..]', {'..','d'})
+	local table_folders = {}
 	for i, d in ipairs(folders) do
-		list_dir:add_item('['..d..']', {d,'d'})
+		table_folders[i] = {'['..d..']', {d,'d'}}
 	end
+	table.sort(table_folders, function(a, b) return a[1]:lower() < b[1]:lower() end)
 	local files = gui.files(current_path..file_mask)
+	local table_files = {}
 	if files then
 		for i, filename in ipairs(files) do
-			list_dir:add_item(filename, {filename})
+			table_files[i] = {filename, {filename}}
 		end
+	end
+	table.sort(table_files, function(a, b) return a[1]:lower() < b[1]:lower() end)
+
+	list_dir:clear()
+	list_dir:add_item ('[..]', {'..','d'})
+	for i = 1, #table_folders do
+		list_dir:add_item(table_folders[i][1], table_folders[i][2])
+	end
+	for i = 1, #table_files do
+		list_dir:add_item(table_files[i][1], table_files[i][2])
 	end
 	list_dir:set_selected_item(0)
 	FileMan_ShowPath()
@@ -1197,7 +1208,8 @@ local function Abbreviations_ShowExpansion()
 	local expansion = list_abbrev:get_item_data(sel_item)
 	expansion = expansion:gsub('\\\\','\4'):gsub('\\r','\r'):gsub('(\\n','\n'):gsub('\\t','\t'):gsub('\4','\\')
 	editor:CallTipCancel()
-	editor:CallTipShow(editor.CurrentPos, expansion)
+	local cur_pos = editor.CurrentPos
+	editor:CallTipShow(cur_pos, expansion)
 end
 
 list_abbrev:on_double_click(function()
