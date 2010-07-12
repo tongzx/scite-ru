@@ -316,12 +316,13 @@ bool WordList::InMultiWordsList(const char *s, const char marker, bool &eq, bool
 				a++;
 				b++;
 			}
-			if (!*b)
+			if (!*b) {
 				if (!*a) eq = true;
 				else if (*a == marker) {
 					begin = true;
 					keyword_end = a + 1;
 				}
+			}
 			j++;
 		}
 	}

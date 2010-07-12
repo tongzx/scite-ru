@@ -1786,7 +1786,7 @@ void Editor::PaintSelMargin(Surface *surfWindow, PRectangle &rc) {
 //!-start-[HighlightCurrFolder]
 				int hilitemark = 0;
 				if (vs.foldHighlightSet && vs.ms[margin].mask & SC_MASK_FOLDERS &&
-					lineDoc >= hlFirstLine && lineDoc <= hlLastLine)
+					lineDoc >= hlFirstLine && lineDoc <= hlLastLine) {
 					if (level & SC_FOLDLEVELHEADERFLAG) {
 						if (firstSubLine) {
 							if (cs.GetExpanded(lineDoc)) {
@@ -1802,6 +1802,7 @@ void Editor::PaintSelMargin(Surface *surfWindow, PRectangle &rc) {
 					} else {
 						hilitemark = SC_MARKNUM_FOLDERSUB;
 					}
+				}
 //!-end-[HighlightCurrFolder]
 
 				marks &= vs.ms[margin].mask;

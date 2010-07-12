@@ -325,7 +325,7 @@ static int cf_editor_get_translation(lua_State *L) {
 //!-end-[LocalizationFromLua]
 
 //!-start-[CheckMenus]
-static int cf_scite_check_menus(lua_State *L) {
+static int cf_scite_check_menus(lua_State *) {
 	host->CheckMenus();
 	return 0;
 }

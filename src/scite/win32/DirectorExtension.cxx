@@ -24,6 +24,7 @@
 #endif
 #endif
 
+#undef _WIN32_WINNT //!-add-[no_wornings_mingw]
 #define _WIN32_WINNT  0x0500
 #ifdef _MSC_VER
 // windows.h, et al, use a lot of nameless struct/unions - can't fix it, so allow it

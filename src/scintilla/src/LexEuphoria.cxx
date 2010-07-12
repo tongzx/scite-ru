@@ -138,7 +138,7 @@ static void ColouriseEuphoriaDoc(unsigned int startPos,  int length, int initSty
 			}
 		} else if (sc.state == SCE_EUPHORIA_CHARACTER) {
 			int charLength = sc.currentPos - charStart;
-			if ( (charLength > 2) && !IsEscapedChar(sc.chPrev)  || (charLength > 3) ) {
+			if ( (charLength > 2) && !IsEscapedChar(sc.chPrev) ) {
 				while (!sc.atLineEnd) {
 					sc.Forward();
 				}

@@ -349,14 +349,17 @@ static void ColouriseLuaDoc(
 				sc.SetState(SCE_LUA_OPERATOR);
 			}
 //!-start-[LuaLexerImprovement]
-			if (sc.ch == ')' || sc.ch == ']')
+			if (sc.ch == ')' || sc.ch == ']') {
 				isSubObject = true;
-			else
-			if (isSubObject && sc.state != SCE_LUA_IDENTIFIER)
-				if (setWordStart.Contains(sc.chNext) && (sc.ch == '.' || sc.ch == ':'))
-					sChar = static_cast<char>(sc.ch);
-				else
-					isSubObject = false;
+			}
+			else {
+				if (isSubObject && sc.state != SCE_LUA_IDENTIFIER) {
+					if (setWordStart.Contains(sc.chNext) && (sc.ch == '.' || sc.ch == ':'))
+						sChar = static_cast<char>(sc.ch);
+					else
+						isSubObject = false;
+				}
+			}
 //!-end-[LuaLexerImprovement]
 		}
 	}

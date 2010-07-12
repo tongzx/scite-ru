@@ -635,7 +635,9 @@ sptr_t SciTEBase::ScintillaWindowEditor::Call( unsigned int msg, uptr_t wParam, 
 					// this is wcscpy - copy string
 					GUI::gui_char *cp = ROMarker;
 					const GUI::gui_char *src = mark.c_str();
-					while( *cp++ = *src++ );
+					do {
+						*cp++ = *src++;
+					} while( *cp != 0 );
 					//end wcscpy
 					pBase->buffers.buffers[pBase->buffers.Current()].ROMarker = ROMarker;
 				}
