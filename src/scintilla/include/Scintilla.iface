@@ -1809,10 +1809,15 @@ fun int EncodedFromUTF8=2449(string utf8, stringresult encoded)
 fun int FindColumn=2456(int line, int column)
 
 # Can the caret preferred x position only be changed by explicit movement commands?
-get bool GetCaretSticky=2457(,)
+get int GetCaretSticky=2457(,)
 
 # Stop the caret preferred x position changing when the user types.
-set void SetCaretSticky=2458(bool useCaretStickyBehaviour,)
+set void SetCaretSticky=2458(int useCaretStickyBehaviour,)
+
+enu CaretSticky=SC_CARETSTICKY_
+val SC_CARETSTICKY_OFF=0
+val SC_CARETSTICKY_ON=1
+val SC_CARETSTICKY_WHITESPACE=2
 
 # Switch between sticky and non-sticky: meant to be bound to a key.
 fun void ToggleCaretSticky=2459(,)
@@ -3707,6 +3712,9 @@ val SCE_POWERSHELL_IDENTIFIER=7
 val SCE_POWERSHELL_KEYWORD=8
 val SCE_POWERSHELL_CMDLET=9
 val SCE_POWERSHELL_ALIAS=10
+val SCE_POWERSHELL_FUNCTION=11
+val SCE_POWERSHELL_USER1=12
+val SCE_POWERSHELL_COMMENTSTREAM=13
 # Lexical state for SCLEX_MYSQL
 lex MySQL=SCLEX_MYSQL SCE_MYSQL_
 val SCE_MYSQL_DEFAULT=0

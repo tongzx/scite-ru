@@ -30,13 +30,7 @@
 
 #else
 
-#ifdef __BORLANDC__
-// Borland includes Windows.h for STL and defaults to different API number
-#ifdef _WIN32_WINNT
 #undef _WIN32_WINNT
-#endif
-#endif
-
 #define _WIN32_WINNT  0x0500
 #ifdef _MSC_VER
 // windows.h, et al, use a lot of nameless struct/unions - can't fix it, so allow it
@@ -327,6 +321,7 @@ const char *contributors[] = {
             "Haimag Ren",
             "Andrey Moskalyov",
             "Xavi",
+            "Toby Inkster",
         };
 
 // AddStyledText only called from About so static size buffer is OK
@@ -720,7 +715,7 @@ void SciTEBase::SetAboutMessage(GUI::ScintillaWindow &wsci, const char *appTitle
 		}
 #endif
 		AddStyledText(wsci, GetTranslationToAbout("Version").c_str(), trsSty);
-		AddStyledText(wsci, " 2.12 .77Ru\n", 1); //!-change-[SciTE-Ru]
+		AddStyledText(wsci, " 2.12 .78Ru\n", 1); //!-change-[SciTE-Ru]
 		AddStyledText(wsci, "    " __DATE__ " " __TIME__ "\n", 1);
 		SetAboutStyle(wsci, 4, ColourRGB(0, 0x7f, 0x7f)); //!-add-[SciTE-Ru]
 		AddStyledText(wsci, "http://scite.net.ru\n", 4); //!-add-[SciTE-Ru]
@@ -1005,7 +1000,7 @@ static bool IsBrace(char ch) {
 bool SciTEBase::FindMatchingBracePosition(bool editor, int &braceAtCaret, int &braceOpposite, bool sloppy) {
 	int maskStyle = (1 << wEditor.Call(SCI_GETSTYLEBITSNEEDED)) - 1;
 	bool isInside = false;
-	GUI::ScintillaWindow &win = editor ? reinterpret_cast<GUI::ScintillaWindow &>(wEditor) : wOutput;
+	GUI::ScintillaWindow &win = editor ? wEditor : wOutput;
 
 	int mainSel = win.Send(SCI_GETMAINSELECTION, 0, 0);
 	if (win.Send(SCI_GETSELECTIONNCARETVIRTUALSPACE, mainSel, 0) > 0)
@@ -1078,7 +1073,7 @@ void SciTEBase::BraceMatch(bool editor) {
 	int braceAtCaret = -1;
 	int braceOpposite = -1;
 	FindMatchingBracePosition(editor, braceAtCaret, braceOpposite, bracesSloppy);
-	GUI::ScintillaWindow &win = editor ? reinterpret_cast<GUI::ScintillaWindow &>(wEditor) : wOutput;
+	GUI::ScintillaWindow &win = editor ? wEditor : wOutput;
 	if ((braceAtCaret != -1) && (braceOpposite == -1)) {
 		win.Send(SCI_BRACEBADLIGHT, braceAtCaret, 0);
 		wEditor.Call(SCI_SETHIGHLIGHTGUIDE, 0);
@@ -1165,7 +1160,7 @@ void SciTEBase::GetCTag(char *sel, int len) {
 	int lengthDoc, selStart, selEnd;
 	int mustStop = 0;
 	char c;
-	GUI::ScintillaWindow &wCurrent = wOutput.HasFocus() ? wOutput : reinterpret_cast<GUI::ScintillaWindow &>(wEditor);
+	GUI::ScintillaWindow &wCurrent = wOutput.HasFocus() ? wOutput : wEditor;
 
 	lengthDoc = wCurrent.Call(SCI_GETLENGTH);
 	selStart = selEnd = wCurrent.Call(SCI_GETSELECTIONEND);
@@ -1306,7 +1301,7 @@ SString SciTEBase::SelectionExtend(
     bool (SciTEBase::*ischarforsel)(char ch),	///< Function returning @c true if the given char. is part of the selection.
     bool stripEol /*=true*/) {
 
-	GUI::ScintillaWindow &wCurrent = wOutput.HasFocus() ? wOutput : reinterpret_cast<GUI::ScintillaWindow &>(wEditor);
+	GUI::ScintillaWindow &wCurrent = wOutput.HasFocus() ? wOutput : wEditor;
 
 	int selStart = wCurrent.Call(SCI_GETSELECTIONSTART);
 	int selEnd = wCurrent.Call(SCI_GETSELECTIONEND);
@@ -1315,7 +1310,7 @@ SString SciTEBase::SelectionExtend(
 
 void SciTEBase::FindWordAtCaret(int &start, int &end) {
 
-	GUI::ScintillaWindow &wCurrent = wOutput.HasFocus() ? wOutput : reinterpret_cast<GUI::ScintillaWindow &>(wEditor);
+	GUI::ScintillaWindow &wCurrent = wOutput.HasFocus() ? wOutput : wEditor;
 
 	start = wCurrent.Call(SCI_GETSELECTIONSTART);
 	end = wCurrent.Call(SCI_GETSELECTIONEND);
@@ -5364,9 +5359,9 @@ void SciTEBase::PerformOne(char *action) {
 		} else if (isprefix(action, "currentmacro:")) {
 			currentMacro = arg;
 		} else if (isprefix(action, "cwd:")) {
-			if (chdir(arg) != 0) {
-				GUI::gui_string sArg = GUI::StringFromUTF8(arg);
-				GUI::gui_string msg = LocaliseMessage("Invalid directory '^0'.", sArg.c_str());
+			FilePath dirTarget(GUI::StringFromUTF8(arg));
+			if (!dirTarget.SetWorkingDirectory()) {
+				GUI::gui_string msg = LocaliseMessage("Invalid directory '^0'.", dirTarget.AsInternal());
 				WindowMessageBox(wSciTE, msg, MB_OK | MB_ICONWARNING);
 			}
 		} else if (isprefix(action, "enumproperties:")) {

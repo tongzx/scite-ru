@@ -8,12 +8,6 @@
 #ifndef CHARCLASSIFY_H
 #define CHARCLASSIFY_H
 
-//!-start-[LowerUpperCase]
-#if PLAT_WIN
-	#include "windows.h"
-#endif
-//!-end-[LowerUpperCase]
-
 class CharClassify {
 public:
 	CharClassify();
@@ -34,41 +28,11 @@ private:
 int CompareCaseInsensitive(const char *a, const char *b);
 int CompareNCaseInsensitive(const char *a, const char *b, size_t len);
 
-/*!-change-[LowerUpperCase]
 inline char MakeUpperCase(char ch) {
 	if (ch < 'a' || ch > 'z')
 		return ch;
 	else
 		return static_cast<char>(ch - 'a' + 'A');
 }
-*/
-
-//!-start-[LowerUpperCase]
-inline char MakeUpperCase(char ch) {
-#if PLAT_WIN
-	char str[2] = {ch, 0};
-	::CharUpperA(str);
-	return str[0];
-#else
-	if (ch < 'a' || ch > 'z')
-		return ch;
-	else
-		return static_cast<char>(ch - 'a' + 'A');
-#endif
-}
-
-inline char MakeLowerCase(char ch) {
-#if PLAT_WIN
-	char str[2] = {ch, 0};
-	::CharLowerA(str);
-	return str[0];
-#else
-	if (ch < 'A' || ch > 'Z')
-		return ch;
-	else
-		return static_cast<char>(ch - 'A' + 'a');
-#endif
-}
-//!-end-[LowerUpperCase]
 
 #endif

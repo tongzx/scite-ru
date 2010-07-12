@@ -17,12 +17,7 @@
 #include <string>
 #include <map>
 
-#ifdef __BORLANDC__
-// Borland includes Windows.h for STL and defaults to different API number
-#ifdef _WIN32_WINNT
 #undef _WIN32_WINNT
-#endif
-#endif
 
 #undef _WIN32_WINNT //!-add-[no_wornings_mingw]
 #define _WIN32_WINNT  0x0500

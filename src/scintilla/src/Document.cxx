@@ -53,23 +53,11 @@ static inline bool IsADigit(char ch) {
 }
 
 static inline bool IsLowerCase(char ch) {
-//!-start-[LowerUpperCase]
-#if PLAT_WIN
-	return IsCharLowerA(ch)!=0;
-#else
-//!-end-[LowerUpperCase]
 	return isascii(ch) && islower(ch);
-#endif //!-add-[LowerUpperCase]
 }
 
 static inline bool IsUpperCase(char ch) {
-//!-start-[LowerUpperCase]
-#if PLAT_WIN
-	return IsCharUpperA(ch)!=0;
-#else
-//!-end-[LowerUpperCase]
 	return isascii(ch) && isupper(ch);
-#endif //!-add-[LowerUpperCase]
 }
 
 Document::Document() {
@@ -204,12 +192,16 @@ void Document::DeleteMarkFromHandle(int markerHandle) {
 }
 
 void Document::DeleteAllMarks(int markerNum) {
+	bool someChanges = false;
 	for (int line = 0; line < LinesTotal(); line++) {
-		static_cast<LineMarkers *>(perLineData[ldMarkers])->DeleteMark(line, markerNum, true);
+		if (static_cast<LineMarkers *>(perLineData[ldMarkers])->DeleteMark(line, markerNum, true))
+			someChanges = true;
 	}
-	DocModification mh(SC_MOD_CHANGEMARKER, 0, 0, 0, 0);
-	mh.line = -1;
-	NotifyModified(mh);
+	if (someChanges) {
+		DocModification mh(SC_MOD_CHANGEMARKER, 0, 0, 0, 0);
+		mh.line = -1;
+		NotifyModified(mh);
+	}
 }
 
 int Document::LineFromHandle(int markerHandle) {
@@ -1112,14 +1104,12 @@ bool Document::IsWordAt(int start, int end) {
 	return IsWordStartAt(start) && IsWordEndAt(end);
 }
 
-/*!-change-[LowerUpperCase]
 static inline char MakeLowerCase(char ch) {
 	if (ch < 'A' || ch > 'Z')
 		return ch;
 	else
 		return static_cast<char>(ch - 'A' + 'a');
 }
-*/
 
 static bool GoodTrailByte(int v) {
 	return (v >= 0x80) && (v < 0xc0);
@@ -1186,6 +1176,8 @@ bool Document::MatchesWordOptions(bool word, bool wordStart, int pos, int length
 long Document::FindText(int minPos, int maxPos, const char *search,
                         bool caseSensitive, bool word, bool wordStart, bool regExp, int flags,
                         int *length, CaseFolder *pcf) {
+	if (*length <= 0)
+		return minPos;
 	if (regExp) {
 		if (!regex)
 			regex = CreateRegexSearch(&charClass);
@@ -1480,6 +1472,8 @@ void Document::AnnotationSetText(int line, const char *text) {
 
 void Document::AnnotationSetStyle(int line, int style) {
 	static_cast<LineAnnotation *>(perLineData[ldAnnotation])->SetStyle(line, style);
+	DocModification mh(SC_MOD_CHANGEANNOTATION, LineStart(line), 0, 0, 0, line);
+	NotifyModified(mh);
 }
 
 void Document::AnnotationSetStyles(int line, const unsigned char *styles) {

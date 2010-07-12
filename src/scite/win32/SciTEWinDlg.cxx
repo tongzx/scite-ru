@@ -316,8 +316,7 @@ bool SciTEWin::SaveAsDialog() {
 		GUI::StringFromUTF8(props.GetExpanded("save.filter").c_str()).c_str());
 	FilePath path = ChooseSaveName(filePath.Directory(), "Save File", saveFilter.c_str());
 	if (path.IsSet()) {
-		SaveIfNotOpen(path, false);
-		return true;
+		return SaveIfNotOpen(path, false);
 	}
 	return false;
 }
@@ -773,16 +772,6 @@ public:
 		::EnableWindow(Item(id), enable);
 	}
 
-	SString ItemText(int id) {
-		HWND wT = Item(id);
-		int len = ::GetWindowTextLength(wT);
-		SBuffer itemText(len);
-		if (len > 0) {
-			::GetDlgItemTextA(hDlg, id, itemText.ptr(), len + 1);
-		}
-		return SString(itemText);
-	}
-
 	GUI::gui_string ItemTextG(int id) {
 		HWND wT = Item(id);
 		int len = ::GetWindowTextLengthW(wT) + 1;
@@ -837,9 +826,11 @@ static void FillComboFromProps(HWND combo, PropSetFile &props) {
 	const char *key;
 	const char *val;
 	if (props.GetFirst(key, val)) {
-		::SendMessage(combo, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(key));
+		GUI::gui_string wkey = GUI::StringFromUTF8(key);
+		::SendMessage(combo, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(wkey.c_str()));
 		while (props.GetNext(key, val)) {
-			::SendMessage(combo, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(key));
+			wkey = GUI::StringFromUTF8(key);
+			::SendMessage(combo, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(wkey.c_str()));
 		}
 	}
 }
@@ -1261,7 +1252,7 @@ BOOL SciTEWin::GrepMessage(HWND hDlg, UINT message, WPARAM wParam) {
 
 		} else if (ControlIDOfCommand(wParam) == IDOK) {
 			findWhat = dlg.ItemTextU(IDFINDWHAT);
-			if ( findWhat.length() == 0 ) return FALSE; //-add-[find_in_files_no_empty]
+			if ( findWhat.length() == 0 ) return FALSE; //!-add-[find_in_files_no_empty]
 			props.Set("find.what", findWhat.c_str());
 			memFinds.Insert(findWhat.c_str());
 
@@ -1482,7 +1473,7 @@ BOOL SciTEWin::AbbrevMessage(HWND hDlg, UINT message, WPARAM wParam) {
 			::EndDialog(hDlg, IDCANCEL);
 			return FALSE;
 		} else if (ControlIDOfCommand(wParam) == IDOK) {
-			SString sAbbrev = dlg.ItemText(IDABBREV);
+			SString sAbbrev = dlg.ItemTextU(IDABBREV);
 			strncpy(abbrevInsert, sAbbrev.c_str(), sizeof(abbrevInsert));
 			abbrevInsert[sizeof(abbrevInsert) - 1] = '\0';
 			::EndDialog(hDlg, IDOK);

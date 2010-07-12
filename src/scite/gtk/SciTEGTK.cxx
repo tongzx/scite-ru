@@ -322,6 +322,8 @@ protected:
 	guint pollID;
 	int inputHandle;
 	GUI::ElapsedTime commandTime;
+	SString lastOutput;
+	int lastFlags;
 
 	// For single instance
 	guint32 startupTimestamp;
@@ -391,7 +393,7 @@ protected:
 
 	virtual void OpenUriList(const char *list);
 	virtual bool OpenDialog(FilePath directory, const char *filter);
-	void HandleSaveAs(const char *savePath);
+	bool HandleSaveAs(const char *savePath);
 	bool SaveAsXXX(FileFormat fmt, const char *title, const char *ext=0);
 	virtual bool SaveAsDialog();
 	virtual void SaveACopy();
@@ -1081,13 +1083,17 @@ static void unquote(char *s) {
 /**
  * Open a list of URIs each terminated by "\r\n".
  * Only "file:" URIs currently understood.
+ * In KDE 4, the last URI is not terminated by "\r\n"!
  */
 void SciTEGTK::OpenUriList(const char *list) {
 	if (list) {
 		char *uri = StringDup(list);
+		char *lastenduri = uri + strlen(uri);
 		if (uri) {
-			char *enduri = strchr(uri, '\r');
-			while (enduri) {
+			while (uri < lastenduri) {
+				char *enduri = strchr(uri, '\r');
+				if (enduri == NULL)
+					enduri = lastenduri;	// if last URI has no "\r\n".
 				*enduri = '\0';
 				if (isprefix(uri, "file:")) {
 					uri += strlen("file:");
@@ -1105,7 +1111,6 @@ void SciTEGTK::OpenUriList(const char *list) {
 				uri = enduri + 1;
 				if (*uri == '\n')
 					uri++;
-				enduri = strchr(uri, '\r');
 			}
 		}
 	}
@@ -1197,7 +1202,7 @@ void SciTEGTK::toggle_hidden_cb(GtkToggleButton *toggle, gpointer data) {
 		g_object_set(GTK_FILE_CHOOSER(file_chooser), "show-hidden", FALSE, NULL);
 }
 
-void SciTEGTK::HandleSaveAs(const char *savePath) {
+bool SciTEGTK::HandleSaveAs(const char *savePath) {
 	switch (saveFormat) {
 	case sfCopy:
 		SaveBuffer(savePath);
@@ -1220,15 +1225,16 @@ void SciTEGTK::HandleSaveAs(const char *savePath) {
 	default: {
 			/* Checking that no other buffer refers to the same filename */
 			FilePath destFile(savePath);
-			SaveIfNotOpen(destFile, true);
+			return SaveIfNotOpen(destFile, true);
 		}
 	}
 	dlgFileSelector.OK();
+	return true;
 }
 
 bool SciTEGTK::SaveAsXXX(FileFormat fmt, const char *title, const char *ext) {
 	filePath.SetWorkingDirectory();
-	bool canceled = true;
+	bool saved = false;
 	saveFormat = fmt;
 	if (!dlgFileSelector.Created()) {
 		GtkWidget *dlg = gtk_file_chooser_dialog_new(
@@ -1252,13 +1258,13 @@ bool SciTEGTK::SaveAsXXX(FileFormat fmt, const char *title, const char *ext) {
 		if (gtk_dialog_run(GTK_DIALOG(dlg)) == GTK_RESPONSE_ACCEPT) {
 			char *filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dlg));
 			gtk_widget_destroy(dlg);
-			HandleSaveAs(filename);
+			saved = HandleSaveAs(filename);
 			g_free(filename);
 		} else {
 			gtk_widget_destroy(dlg);
 		}
 	}
-	return !canceled;
+	return saved;
 }
 
 bool SciTEGTK::SaveAsDialog() {
@@ -1706,6 +1712,7 @@ void SciTEGTK::ContinueExecute(int fromPoll) {
 	if (count > 0) {
 		buf[count] = '\0';
 		OutputAppendString(buf);
+		lastOutput += buf;
 	} else if (count == 0) {
 		SString sExitMessage(WEXITSTATUS(exitStatus));
 		sExitMessage.insert(0, ">Exit code: ");
@@ -1717,6 +1724,12 @@ void SciTEGTK::ContinueExecute(int fromPoll) {
 		if (jobQueue.TimeCommands()) {
 			sExitMessage += "    Time: ";
 			sExitMessage += SString(commandTime.Duration(), 3);
+		}
+		if ((lastFlags & jobRepSelYes)
+			|| ((lastFlags & jobRepSelAuto) && !exitStatus)) {
+			int cpMin = wEditor.Send(SCI_GETSELECTIONSTART, 0, 0);
+			wEditor.Send(SCI_REPLACESEL,0,(sptr_t)(lastOutput.c_str()));
+			wEditor.Send(SCI_SETSEL, cpMin, cpMin+lastOutput.length());
 		}
 		sExitMessage.append("\n");
 		OutputAppendString(sExitMessage.c_str());
@@ -1772,6 +1785,9 @@ void SciTEGTK::Execute() {
 	if (scrollOutput)
 		wOutput.Send(SCI_GOTOPOS, wOutput.Send(SCI_GETTEXTLENGTH));
 	originalEnd = wOutput.Send(SCI_GETCURRENTPOS);
+
+	lastOutput = "";
+	lastFlags = jobQueue.jobQueue[icmd].flags;
 
 	if (jobQueue.jobQueue[icmd].jobType != jobExtension) {
 		OutputAppendString(">");
