@@ -66,6 +66,10 @@
 #ifndef DWORD_PTR
 #define DWORD_PTR DWORD
 #endif
+#ifndef ULONG_PTR
+#define ULONG_PTR ULONG
+#endif
+DECLARE_HANDLE(HMONITOR);
 #endif
 
 // STL without warnings (http://www.codeproject.com/KB/stl/stl_without_warnings.aspx)
