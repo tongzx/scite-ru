@@ -5861,36 +5861,12 @@ void SciTEBase::Trace(const char *s) {
 	OutputAppendStringSynchronised(s);
 }
 
-/*
 char *SciTEBase::Property(const char *key) {
 	SString value = props.GetExpanded(key);
 	char *retval = new char[value.length() + 1];
 	strcpy(retval, value.c_str());
 	return retval;
 }
-*/
-//!-start-[luaFileOpenFix]
-#if !defined(GTK)
- #include <malloc.h>
-#endif
-
-char *SciTEBase::Property(const char *key) {
-#if !defined(GTK)
-	GUI::gui_string sValue = GUI::StringFromUTF8(props.GetExpanded(key).c_str());
-	const wchar_t *lpw = sValue.c_str();
-	int _convert = (lstrlenW(lpw)+1)*2;
-	LPSTR lpa = (LPSTR)alloca(_convert);
-	lpa[0] = '\0';
-	::WideCharToMultiByte(CP_ACP, 0, lpw, -1, lpa, _convert, NULL, NULL);
-	SString value = lpa;
-#else
-	SString value = props.GetExpanded(key);
-#endif
-	char *retval = new char[value.length() + 1];
-	strcpy(retval, value.c_str());
-	return retval;
-}
-//!-end-[luaFileOpenFix]
 
 void SciTEBase::SetProperty(const char *key, const char *val) {
 	SString value = props.GetExpanded(key);

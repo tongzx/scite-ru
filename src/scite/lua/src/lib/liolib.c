@@ -157,12 +157,42 @@ static int io_tostring (lua_State *L) {
   return 1;
 }
 
+//-start-[luaFileOpenFix]
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
+static FILE *open_file(const char *filename, const char *mode) {
+#ifdef _WIN32
+	// convert from utf8
+	int cchWideFileName = 0;
+	wchar_t* pszWideFileName = NULL;
+	int cchWideMode = 0;
+	wchar_t* pszWideMode = NULL;
+	FILE* f = NULL;
+	cchWideFileName = MultiByteToWideChar(CP_UTF8, 0, filename, -1, NULL, 0);
+	pszWideFileName = (wchar_t*)malloc(sizeof(wchar_t)*(cchWideFileName+1));
+	MultiByteToWideChar(CP_UTF8, 0, filename, -1, pszWideFileName, cchWideFileName + 1);
+	cchWideMode = MultiByteToWideChar(CP_UTF8, 0, mode, -1, NULL, 0);
+	pszWideMode = (wchar_t*)malloc(sizeof(wchar_t)*(cchWideMode+1));
+	MultiByteToWideChar(CP_UTF8, 0, mode, -1, pszWideMode, cchWideMode + 1);
+	f = _wfopen(pszWideFileName, pszWideMode);
+	free(pszWideFileName);
+	free(pszWideMode);
+	if ( f == NULL ) f = fopen( filename, mode );
+	return f;
+#else
+	return fopen( filename, mode );
+#endif
+}
+//-end-[luaFileOpenFix]
 
 static int io_open (lua_State *L) {
   const char *filename = luaL_checkstring(L, 1);
   const char *mode = luaL_optstring(L, 2, "r");
   FILE **pf = newfile(L);
-  *pf = fopen(filename, mode);
+//  *pf = fopen(filename, mode);
+  *pf = open_file(filename, mode);//-change-[luaFileOpenFix]
   return (*pf == NULL) ? pushresult(L, 0, filename) : 1;
 }
 
@@ -202,7 +232,8 @@ static int g_iofile (lua_State *L, int f, const char *mode) {
     const char *filename = lua_tostring(L, 1);
     if (filename) {
       FILE **pf = newfile(L);
-      *pf = fopen(filename, mode);
+//    *pf = fopen(filename, mode);
+      *pf = open_file(filename, mode);//-change-[luaFileOpenFix]
       if (*pf == NULL)
         fileerror(L, 1, filename);
     }
@@ -254,7 +285,8 @@ static int io_lines (lua_State *L) {
   else {
     const char *filename = luaL_checkstring(L, 1);
     FILE **pf = newfile(L);
-    *pf = fopen(filename, "r");
+//  *pf = fopen(filename, "r");
+    *pf = open_file(filename, "r");//-change-[luaFileOpenFix]
     if (*pf == NULL)
       fileerror(L, 1, filename);
     aux_lines(L, lua_gettop(L), 1);
