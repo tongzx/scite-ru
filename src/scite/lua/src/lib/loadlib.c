@@ -139,8 +139,9 @@ static void *ll_load (lua_State *L, const char *path) {
   MultiByteToWideChar(CP_UTF8, 0, path, -1, pszWideFileName, cchWideFileName + 1);
   lib = LoadLibraryW(pszWideFileName);
   free(pszWideFileName);
-  if (lib == NULL) LoadLibraryA(path);
+  if (lib == NULL) lib = LoadLibraryA(path);
 //-and-[luaFileOpenFix]
+  if (lib == NULL) pusherror(L);
   return lib;
 }
 
