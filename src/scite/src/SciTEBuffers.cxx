@@ -1298,7 +1298,7 @@ void SciTEBase::SetToolsMenu() {
 	int menuPos = TOOLS_START+1;
 
 	// erasing menu tools
-	arrMenu[0] = GetMenu(menuTools);
+	arrMenu[0] = GetToolsMenu();
 	arrMenu[0].RemoveItems(IDM_TOOLS);
 	arrMenu[0].RemoveItems(IDM_MACRO_SEP, IDM_MACROLIST);
 

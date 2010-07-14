@@ -296,7 +296,7 @@ bool SciTEKeys::MatchKeyCode(long parsedKeyCode, int keyval, int modifiers) {
 class SciTEGTK : public SciTEBase {
 
 protected:
-	virtual MenuEx GetMenu(int menuNumber) { return MenuEx(0); } //!-add-[SubMenu]
+	virtual MenuEx GetToolsMenu() { return MenuEx(0); } //!-add-[SubMenu]
 	GUI::Menu popup; //!-add-[ExtendedContextMenu]
 	void SetToolBar() {} //!-add-[user.toolbar]
 

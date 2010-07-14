@@ -937,7 +937,7 @@ protected:
 	void SetFileStackMenu();
 	void DropFileStackTop();
 //!-start-[SubMenu]
-	virtual MenuEx GetMenu(int menuNumber) = 0;
+	virtual MenuEx GetToolsMenu() = 0;
 //!-end-[SubMenu]
 //!-start-[ExtendedContextMenu]
 	bool IsMenuItemEnabled(int cmd);

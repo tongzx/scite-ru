@@ -5947,10 +5947,11 @@ char *SciTEBase::GetTranslation(const char *s, bool retainIfNotFound) {
 	GUI::gui_string sValue = localiser.Text(s, retainIfNotFound);
 	const wchar_t *lpw = sValue.c_str();
 	int _convert = (lstrlenW(lpw)+1)*2;
-	LPSTR lpa = (LPSTR)alloca(_convert);
+	LPSTR lpa = (LPSTR)malloc(_convert);
 	lpa[0] = '\0';
 	::WideCharToMultiByte(CP_ACP, 0, lpw, -1, lpa, _convert, NULL, NULL);
 	SString value = lpa;
+	free(lpa);
 	return value.detach();
 #endif
 }
