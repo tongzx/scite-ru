@@ -46,7 +46,6 @@
 #else
 #undef PLAT_WIN
 #define PLAT_WIN 1
-#include <windows.h> //!-add-[SubMenu]
 #endif
 
 //!-start-[no_wornings]
@@ -69,7 +68,6 @@
 #ifndef ULONG_PTR
 #define ULONG_PTR ULONG
 #endif
-DECLARE_HANDLE(HMONITOR);
 #endif
 
 // STL without warnings (http://www.codeproject.com/KB/stl/stl_without_warnings.aspx)

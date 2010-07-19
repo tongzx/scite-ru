@@ -29,6 +29,12 @@
 // Luckily microsoft has done the heavy lifting for us, so we'll just use their stub functions!
 #if defined(_MSC_VER) || defined(__BORLANDC__)
 #define COMPILE_MULTIMON_STUBS
+//!-start-[no_wornings]
+#if(WINVER < 0x0500)
+#undef _WIN32_WINNT
+#define _WIN32_WINNT  WINVER
+#endif
+//!-end-[no_wornings]
 #include "MultiMon.h"
 #endif
 
