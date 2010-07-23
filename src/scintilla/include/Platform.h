@@ -51,12 +51,23 @@
 //!-start-[no_wornings]
 
 // Visual C++ 6 compatible:
-#ifdef _MSC_VER
-#if _MSC_VER < 1300
+#if defined(_MSC_VER) && _MSC_VER < 1300
+#undef _WIN32_WINNT
+#define _WIN32_WINNT  0x0500
+#include <windows.h>
+#ifndef SetWindowLongPtr
 #define SetWindowLongPtr SetWindowLong
+#endif
+#ifndef GetWindowLongPtr
 #define GetWindowLongPtr GetWindowLong
+#endif
+#ifndef GWLP_USERDATA
 #define GWLP_USERDATA GWL_USERDATA
+#endif
+#ifndef DWLP_USER
 #define DWLP_USER DWL_USER
+#endif
+#ifndef GWLP_WNDPROC
 #define GWLP_WNDPROC GWL_WNDPROC
 #endif
 #ifndef LONG_PTR
@@ -74,11 +85,9 @@
 #ifdef _MSC_VER
 #pragma warning( push )
 #pragma warning( disable : 4018 4100 4146 4244 4245 4511 4512 4663 4786 )
-#endif
 #include <vector>
 #include <string>
 #include <map>
-#ifdef _MSC_VER
 #pragma warning( pop )
 #endif
 
