@@ -798,7 +798,6 @@ void SciTEBase::SetOverrideLanguage(int cmdID) {
 	wEditor.Call(SCI_COLOURISE, 0, -1);
 	Redraw();
 	DisplayAround(rf);
-	CheckMenus(); //!-add-[Issue.115]
 }
 
 int SciTEBase::LengthDocument() {
