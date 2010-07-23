@@ -596,6 +596,7 @@ void SciTEWin::SetToolBar() {
 	::SendMessage(hwndToolBar, TB_BUTTONSTRUCTSIZE, sizeof(TBBUTTON), 0);
 	::SendMessage(hwndToolBar, TB_ADDBUTTONS, barbuttons.GetSize(), reinterpret_cast<LPARAM>(tbb));
 	delete []tbb;
+	CheckMenus();
 }
 //!-end-[user.toolbar]
 
