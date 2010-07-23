@@ -296,7 +296,8 @@ bool SciTEKeys::MatchKeyCode(long parsedKeyCode, int keyval, int modifiers) {
 class SciTEGTK : public SciTEBase {
 
 protected:
-	virtual MenuEx GetToolsMenu() { return MenuEx(0); } //!-add-[SubMenu]
+	friend class MenuEx; //!-add-[SubMenu]
+	virtual MenuEx GetToolsMenu(); //!-add-[SubMenu]
 	GUI::Menu popup; //!-add-[ExtendedContextMenu]
 	void SetToolBar() {} //!-add-[user.toolbar]
 
@@ -3456,8 +3457,33 @@ int main(int argc, char *argv[]) {
 }
 
 //!-start-[ExtendedContextMenu]
+MenuEx SciTEGTK::GetToolsMenu() {
+	GtkMenu* menu_tools = GTK_MENU(gtk_item_factory_get_widget(itemFactory, "<main>/Tools"));
+	return MenuEx(menu_tools);
+}
+
 void MenuEx::Add(const GUI::gui_char *label, int cmd, int enabled, const char *mnemonic, int position) {
 	//TODO: add
+	// need to add signal SciTEGTK::MenuSignal
+	// need use gtk_item_factory_create_item?
+/*
+	GtkMenu* menu = (GtkMenu*)GetID();
+	SciTEGTK* pSciTe = SciTEGTK::instance;
+	GUI::gui_string localised = pSciTe->localiser.Text(label);
+	localised.insert(0, "/");
+	GtkItemFactoryEntry itemEntry = {
+		const_cast<char *>(localised.c_str()), NULL,
+		GTK_SIGNAL_FUNC(SciTEGTK::MenuSignal), cmd,
+		const_cast<gchar *>(label[0] ? "<Item>" : "<Separator>")
+		,0
+	};
+	gtk_item_factory_create_item(GTK_ITEM_FACTORY(menu), &itemEntry, pSciTe, 1);
+	if (cmd) {
+		GtkWidget *item = gtk_item_factory_get_widget_by_action(GTK_ITEM_FACTORY(menu), cmd);
+		if (item)
+			gtk_widget_set_sensitive(item, enabled);
+	}
+*/
 }
 
 void MenuEx::AddSubMenu(const GUI::gui_char *label, GUI::Menu &subMenu, int position) {
@@ -3465,7 +3491,17 @@ void MenuEx::AddSubMenu(const GUI::gui_char *label, GUI::Menu &subMenu, int posi
 }
 
 void MenuEx::RemoveItems(int fromID, int toID/*-1*/) {
-	//TODO: add remove items
+	GtkMenu* menu = (GtkMenu*)GetID();
+	GList *childs =  menu->menu_shell.children;
+	for (int i=0; i <g_list_length(menu->menu_shell.children); i++ )
+	{
+		GtkMenuItem* child = GTK_MENU_ITEM(g_list_nth_data(menu->menu_shell.children,i));
+		if (child==NULL) continue;
+		// TODO: how can i get callback_action of GtkMenuItem???
+		// if ( child->callback_action >= fromID and child->callback_action <= toID ) {
+		//  gtk_widget_destroy((GtkWidget*)child);
+		// }
+	}
 }
 
 void MenuEx::RemoveItem(int itemID, bool byPos) {
