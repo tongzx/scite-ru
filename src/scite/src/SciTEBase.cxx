@@ -5140,7 +5140,7 @@ void SciTEBase::ContextMenu(GUI::ScintillaWindow &wSource, GUI::Point pt, GUI::W
 void SciTEBase::ContextMenu(GUI::ScintillaWindow &wSource, GUI::Point pt, GUI::Window wCmd) {
 	int item = 0;
 	MenuEx subMenu[50];
-	subMenu[0].CreatePopUp();
+	subMenu[0].CreatePopUp(NULL);
 	bool isAdded = false;
 
 	if (wSource.GetID() == wOutput.GetID()) {
@@ -5148,8 +5148,7 @@ void SciTEBase::ContextMenu(GUI::ScintillaWindow &wSource, GUI::Point pt, GUI::W
 		userContextMenu.substitute('|', '\0');
 		const char *userContextItem = userContextMenu.c_str();
 		const char *endDefinition = userContextItem + userContextMenu.length();
-		GenerateMenu(subMenu, userContextItem, endDefinition,
-			item, isAdded);
+		GenerateMenu(subMenu, userContextItem, endDefinition, item, isAdded);
 	} else {
 		SString userContextMenu = props.GetNewExpand("user.context.menu.", ExtensionFileName().c_str());
 		if (userContextMenu.length() == 0)
@@ -5157,8 +5156,7 @@ void SciTEBase::ContextMenu(GUI::ScintillaWindow &wSource, GUI::Point pt, GUI::W
 		userContextMenu.substitute('|', '\0');
 		const char *userContextItem = userContextMenu.c_str();
 		const char *endDefinition = userContextItem + userContextMenu.length();
-		GenerateMenu(subMenu, userContextItem, endDefinition,
-			item, isAdded);
+		GenerateMenu(subMenu, userContextItem, endDefinition, item, isAdded);
 	}
 
 	if (!isAdded) {
@@ -5272,7 +5270,7 @@ void SciTEBase::GenerateMenu(MenuEx *subMenu, const char *&userContextItem,
 				userContextItem += strlen(userContextItem) + 1;
 				if ( caption[0] != '#') {
 					item++;
-					subMenu[item].CreatePopUp();
+					subMenu[item].CreatePopUp(&subMenu[0]);
 					subMenu[parent].AddSubMenu(localiser.Text(caption).c_str(), subMenu[item]);
 					GenerateMenu(subMenu, userContextItem, endDefinition, item, isAdded, item);
 				}

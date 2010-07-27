@@ -157,15 +157,14 @@ void SciTEWin::Notify(SCNotification *notification) {
 //!-start-[ExtendedContextMenu]
 			int item = 0;
 			MenuEx subMenu[50];
-			subMenu[0].CreatePopUp();
+			subMenu[0].CreatePopUp(NULL);
 
 			bool isAdded = false;
 			SString tabContextMenu = props.GetNewExpand("user.tabcontext.menu.", ExtensionFileName().c_str());
 			tabContextMenu.substitute('|', '\0');
 			const char *userContextItem = tabContextMenu.c_str();
 			const char *endDefinition = userContextItem + tabContextMenu.length();
-			GenerateMenu(subMenu, userContextItem, endDefinition, 
-				item, isAdded);
+			GenerateMenu(subMenu, userContextItem, endDefinition, item, isAdded);
 
 			if (!isAdded) {
 				subMenu[0].Add(localiser.Text("Close").c_str(), IDM_CLOSE, IsMenuItemEnabled(IDM_CLOSE));
@@ -174,7 +173,7 @@ void SciTEWin::Notify(SCNotification *notification) {
 				subMenu[0].Add(localiser.Text("Save As").c_str(), IDM_SAVEAS, IsMenuItemEnabled(IDM_SAVEAS));
 				subMenu[0].Add();
 				subMenu[0].Add(localiser.Text("Print").c_str(), IDM_PRINT, IsMenuItemEnabled(IDM_PRINT));
-			}	
+			}
 
 			subMenu[0].Show(ptCursor, wSciTE);
 //!-end-[ExtendedContextMenu]

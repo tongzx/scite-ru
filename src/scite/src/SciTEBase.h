@@ -43,13 +43,18 @@ inline Colour ColourRGB(unsigned int red, unsigned int green, unsigned int blue)
 }
 
 //!-start-[ExtendedContextMenu]
-class MenuEx : public GUI::Menu {
+class MenuEx {
 public:
-	MenuEx(GUI::MenuID _id = 0) : GUI::Menu(_id) {}
+	MenuEx(void *_id = 0) : mid(_id) {}
+	void* GetID() const { return mid; }
 	void Add(const GUI::gui_char *label = 0, int cmd = 0, int enabled = 1, const char *mnemonic = 0, int position = -1);
-	void AddSubMenu(const GUI::gui_char *label, GUI::Menu &subMenu, int position = -1);
+	void AddSubMenu(const GUI::gui_char *label, MenuEx &subMenu, int position = -1);
 	void RemoveItems(int fromID = 0, int toID = -1);
-	void RemoveItem(int itemID, bool byPos = false);
+	void CreatePopUp(MenuEx* parentMenu);
+	void Destroy();
+	void Show(GUI::Point pt, GUI::Window &w);
+private:
+	void *mid;
 };
 //!-end-[ExtendedContextMenu]
 

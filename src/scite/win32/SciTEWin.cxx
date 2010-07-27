@@ -2176,6 +2176,25 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 }
 
 //!-start-[ExtendedContextMenu]
+void MenuEx::CreatePopUp(MenuEx*) {
+	Destroy();
+	mid = ::CreatePopupMenu();
+}
+
+void MenuEx::Destroy() {
+	if (mid) {
+		::DestroyMenu(reinterpret_cast<HMENU>(mid));
+		mid = 0;
+	}
+}
+
+void MenuEx::Show(GUI::Point pt, GUI::Window &w) {
+	::TrackPopupMenu(reinterpret_cast<HMENU>(mid),
+		0, pt.x - 4, pt.y, 0,
+		reinterpret_cast<HWND>(w.GetID()), NULL);
+	Destroy();
+}
+
 void MenuEx::Add(const wchar_t *label, int cmd, int enabled, const char *mnemonic, int position) {
 	HMENU menu = reinterpret_cast<HMENU>(GetID());
 	GUI::gui_string sTextMnemonic = label ? label : GUI_TEXT("");
@@ -2215,7 +2234,7 @@ void MenuEx::Add(const wchar_t *label, int cmd, int enabled, const char *mnemoni
 	}
 }
 
-void MenuEx::AddSubMenu(const wchar_t *label, GUI::Menu &subMenu, int position) {
+void MenuEx::AddSubMenu(const wchar_t *label, MenuEx &subMenu, int position) {
 	if ( label && *label && subMenu.GetID())
 	{
 		HMENU menu = reinterpret_cast<HMENU>(GetID());
@@ -2244,17 +2263,6 @@ void MenuEx::RemoveItems(int fromID, int toID/*-1*/) {
 			if (::GetMenuItemID(hMenu, i) >= (UINT)fromID && ::GetMenuItemID(hMenu, i) <= (UINT)toID)
 				::DeleteMenu(hMenu, i, MF_BYPOSITION);
 		}
-	}
-}
-
-void MenuEx::RemoveItem(int itemID, bool byPos) {
-	if ( GetID() )
-	{
-		HMENU hMenu = reinterpret_cast<HMENU>(GetID());
-		if (byPos)
-			::DeleteMenu(hMenu, itemID, MF_BYPOSITION);
-		else
-			::DeleteMenu(hMenu, itemID, MF_BYCOMMAND);
 	}
 }
 //!-end-[ExtendedContextMenu]

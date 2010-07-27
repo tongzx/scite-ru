@@ -296,9 +296,9 @@ bool SciTEKeys::MatchKeyCode(long parsedKeyCode, int keyval, int modifiers) {
 class SciTEGTK : public SciTEBase {
 
 protected:
-	friend class MenuEx; //!-add-[SubMenu]
+	std::map<GtkWidget*,unsigned int> mapMenuItemToSignal; //!-add-[ExtendedContextMenu]
+	friend class MenuEx; //!-add-[ExtendedContextMenu]
 	virtual MenuEx GetToolsMenu(); //!-add-[SubMenu]
-	GUI::Menu popup; //!-add-[ExtendedContextMenu]
 	void SetToolBar() {} //!-add-[user.toolbar]
 
 	GUI::Window wDivider;
@@ -389,7 +389,7 @@ protected:
 	virtual void CheckAMenuItem(int wIDCheckItem, bool val);
 	virtual void EnableAMenuItem(int wIDCheckItem, bool val);
 	virtual void CheckMenus();
-	virtual void AddToPopUp(const char *label, int cmd = 0, bool enabled = true);
+//!	virtual void AddToPopUp(const char *label, int cmd = 0, bool enabled = true); //!-change-[ExtendedContextMenu]
 	virtual void ExecuteNext();
 
 	virtual void OpenUriList(const char *list);
@@ -662,6 +662,11 @@ GtkWidget *SciTEGTK::AddMBButton(GtkWidget *dialog, const char *label,
 	return button;
 }
 
+//!-start-[pixmap_not_def]
+#ifndef PIXMAP_PATH
+#define PIXMAP_PATH "/usr/share/pixmaps"
+#endif
+//!-end-[pixmap_not_def]
 // This is an internally used function to create pixmaps.
 GdkPixbuf *SciTEGTK::CreatePixbuf(const char *filename) {
 	char path[MAX_PATH + 20];
@@ -2347,6 +2352,7 @@ gint SciTEGTK::Key(GdkEventKey *event) {
 	return 0;
 }
 
+/*!
 void SciTEGTK::AddToPopUp(const char *label, int cmd, bool enabled) {
 	GUI::gui_string localised = localiser.Text(label);
 	localised.insert(0, "/");
@@ -2365,6 +2371,7 @@ void SciTEGTK::AddToPopUp(const char *label, int cmd, bool enabled) {
 			gtk_widget_set_sensitive(item, enabled);
 	}
 }
+*/ //!-remove-[ExtendedContextMenu]
 
 gint SciTEGTK::Mouse(GdkEventButton *event) {
 	if (event->button == 3) {
@@ -2745,6 +2752,15 @@ void SciTEGTK::CreateTranslatedMenu(int n, SciTEItemFactoryEntry items[],
 		translatedItems[i].item_type = const_cast<char *>(translatedRadios[i].c_str());
 	}
 	gtk_item_factory_create_items(itemFactory, dim, translatedItems, gthis);
+	unsigned int cmd = 0;
+	for (int iMenuItem = 0; iMenuItem < dim; iMenuItem++) {
+		cmd = translatedItems[iMenuItem].callback_action;
+		if (cmd) {
+			GtkWidget *item = gtk_item_factory_get_widget_by_action(itemFactory, cmd);
+			mapMenuItemToSignal[item]=cmd;
+		}
+	}
+
 	delete []translatedRadios;
 	delete []translatedText;
 	delete []translatedItems;
@@ -3457,6 +3473,40 @@ int main(int argc, char *argv[]) {
 }
 
 //!-start-[ExtendedContextMenu]
+void MenuEx::CreatePopUp( MenuEx* parentMenu ) {
+	//TODO: need check code - mid is GtkMenu
+	Destroy();
+	mid = gtk_item_factory_new(GTK_TYPE_MENU, "<main>", NULL);
+}
+
+void MenuEx::Destroy() {
+	//TODO: need check code - mid is GtkMenu
+	if (mid) {
+		g_object_unref(G_OBJECT(mid));
+		mid = 0;
+	}
+}
+
+void MenuEx::Show(GUI::Point pt, GUI::Window &) {
+	//TODO: need check code - mid is GtkMenu
+	int screenHeight = gdk_screen_height();
+	int screenWidth = gdk_screen_width();
+	GtkItemFactory *factory = reinterpret_cast<GtkItemFactory *>(mid);
+	GtkWidget *widget = gtk_item_factory_get_widget(factory, "<main>");
+	gtk_widget_show_all(widget);
+	GtkRequisition requisition;
+	gtk_widget_size_request(widget, &requisition);
+	if ((pt.x + requisition.width) > screenWidth) {
+		pt.x = screenWidth - requisition.width;
+	}
+	if ((pt.y + requisition.height) > screenHeight) {
+		pt.y = screenHeight - requisition.height;
+	}
+	gtk_item_factory_popup(factory, pt.x - 4, pt.y - 4, 3,
+		gtk_get_current_event_time());
+	//TODO: need add destroy after show...
+}
+
 MenuEx SciTEGTK::GetToolsMenu() {
 	GtkMenu* menu_tools = GTK_MENU(gtk_item_factory_get_widget(itemFactory, "<main>/Tools"));
 	return MenuEx(menu_tools);
@@ -3486,25 +3536,36 @@ void MenuEx::Add(const GUI::gui_char *label, int cmd, int enabled, const char *m
 */
 }
 
-void MenuEx::AddSubMenu(const GUI::gui_char *label, GUI::Menu &subMenu, int position) {
+void MenuEx::AddSubMenu(const GUI::gui_char *label, MenuEx &subMenu, int position) {
 	//TODO: add sub menu
 }
 
 void MenuEx::RemoveItems(int fromID, int toID/*-1*/) {
+	SciTEGTK* pSciTe = SciTEGTK::instance;
 	GtkMenu* menu = (GtkMenu*)GetID();
-	GList *childs =  menu->menu_shell.children;
-	for (int i=0; i <g_list_length(menu->menu_shell.children); i++ )
+	unsigned int cmd = 0;
+	unsigned int minItemID = (unsigned int)fromID;
+	unsigned int maxItemID = (unsigned int)toID;
+	for (int i=0; i < (int)g_list_length(menu->menu_shell.children); i++ )
 	{
 		GtkMenuItem* child = GTK_MENU_ITEM(g_list_nth_data(menu->menu_shell.children,i));
 		if (child==NULL) continue;
-		// TODO: how can i get callback_action of GtkMenuItem???
-		// if ( child->callback_action >= fromID and child->callback_action <= toID ) {
-		//  gtk_widget_destroy((GtkWidget*)child);
-		// }
+		if (child->submenu != NULL ) {
+			MenuEx(child->submenu).RemoveItems(0); // remove all items in submenu
+			gtk_widget_destroy(child->submenu);
+			i--;
+		}
+		else {
+			cmd = pSciTe->mapMenuItemToSignal[GTK_WIDGET(child)];
+			if (cmd == 0) {
+				pSciTe->mapMenuItemToSignal.erase(GTK_WIDGET(child));
+			}
+			else if ( cmd >= minItemID and cmd <= maxItemID ) {
+				gtk_widget_destroy(GTK_WIDGET(child));
+				pSciTe->mapMenuItemToSignal.erase(GTK_WIDGET(child));
+				i--;
+			}
+		}
 	}
-}
-
-void MenuEx::RemoveItem(int itemID, bool byPos) {
-	//TODO: add remove item
 }
 //!-end-[ExtendedContextMenu]

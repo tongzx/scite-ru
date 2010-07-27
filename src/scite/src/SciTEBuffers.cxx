@@ -1321,7 +1321,7 @@ void SciTEBase::SetToolsMenu() {
 			int ischecked = props.GetNewExpand(prefix.c_str(), FileNameExt().AsUTF8().c_str()).value();
 			if(toMenu > 0 && toMenu < toolMax) {
 				if (arrMenu[toMenu].GetID() == 0)
-					arrMenu[toMenu].CreatePopUp();
+					arrMenu[toMenu].CreatePopUp(&arrMenu[0]);
 				if (issep)
 					arrMenu[toMenu].Add();
 				arrMenu[toMenu].Add(lsMenuItem.c_str(), itemID, 1 + ischecked, sMnemonic.c_str());
