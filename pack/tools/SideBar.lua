@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev, ur4ltz
-Version 1.20.0
+Version 1.20.1
 ------------------------------------------------------
   Note: Require gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
                lpeg.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/lpeg/>
@@ -204,7 +204,7 @@ local current_path = ''
 local file_mask = '*.*'
 
 local function FileMan_ShowPath()
-	local rtf = [[{\rtf\ansi\ansicpg1251{\fonttbl{\f0\fcharset204 Helv;}}{\colortbl;\red0\green0\blue255;\red255\green0\blue0;}\f0\fs16]]
+	local rtf = [[{\rtf{\fonttbl{\f0\fcharset204 Helv;}}{\colortbl;\red0\green0\blue255;\red255\green0\blue0;}\f0\fs16]]
 	local path = '\\cf1'..current_path:gsub('\\', '\\\\')
 	local mask = '\\cf2'..file_mask..'}'
 	memo_path:set_text(rtf..path..mask)
@@ -378,7 +378,7 @@ end
 local function OpenFile(filename)
 	if filename:match(".session$") ~= nil then
 		filename = filename:gsub('\\','\\\\')
-		scite.Perform ("loadsession:"..filename)
+		scite.Perform ("loadsession:"..filename:toUTF())
 	else
 		scite.Open(filename:toUTF())
 	end
@@ -1131,6 +1131,10 @@ local function Bookmark_Add(line_number)
 	line_text = line_text:gsub('^%s+', ''):gsub('%s+', ' ')
 	if line_text == '' then
 		line_text = ' - empty line - ('..(line_number+1)..')'
+	else
+		if tonumber(props["editor.unicode.mode"]) ~= IDM_ENCODING_DEFAULT then
+			line_text = line_text
+		end
 	end
 	for _, a in ipairs(table_bookmarks) do
 		if a.FilePath == props['FilePath'] and a.LineNumber == line_number then
@@ -1185,7 +1189,7 @@ local function Bookmarks_GotoLine()
 	if sel_item == -1 then return end
 	local pos = list_bookmarks:get_item_data(sel_item)
 	if pos then
-		scite.Open(pos[1]:toUTF()) -- FilePath
+		scite.Open(pos[1]) -- FilePath
 		ShowCompactedLine(pos[2]) -- LineNumber
 		editor:GotoLine(pos[2])
 		gui.pass_focus()
@@ -1295,6 +1299,7 @@ local function OnSwitch()
 		local path = props['FileDir']
 		if path == '' then return end
 		path = path:gsub('\\$','')..'\\'
+		path = path:toWIN()
 		if path ~= current_path then
 			current_path = path
 			FileMan_ListFILL()

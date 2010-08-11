@@ -1,13 +1,9 @@
 -- COMMON.lua
--- Version: 1.6.0
+-- Version: 1.6.1
 ---------------------------------------------------
 -- Общие функции, использующиеся во многих скриптах
 ---------------------------------------------------
 
--- Пути поиска подключаемых lua-библиотек
-package.cpath = props["SciteDefaultHome"].."\\tools\\LuaLib\\?.dll;"..package.cpath
-
---------------------------------------------------------
 -- Перекодировка текста
 require "iconv"
 
@@ -31,6 +27,15 @@ end
 function string.toUTF(s)
 	return Convert(s, "", "utf8")
 end
+
+function string.toWIN(s)
+	return Convert(s, "utf8", "windows-1251")
+end
+
+--------------------------------------------------------
+-- Пути поиска подключаемых lua-библиотек
+package.cpath = props["SciteDefaultHome"]:toWIN().."\\tools\\LuaLib\\?.dll;"..package.cpath
+
 --------------------------------------------------------
 -- Подключение пользовательского обработчика к событию SciTE
 function AddEventHandler(EventName, Handler)
