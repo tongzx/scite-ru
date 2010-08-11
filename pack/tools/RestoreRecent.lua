@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 RestoreRecent.lua
 Authors: mozers™
-Version: 1.2.2
+Version: 1.2.3
 ------------------------------------------------------
 Description:
   Restore position, bookmarks, folds at opening recent file
@@ -158,8 +158,8 @@ AddEventHandler("OnFinalise", function()
 		if tonumber(props['save.session.recent']) == 1 then
 			-- Запуск вспомогательного скрипта для сохранения данных в SciTE.recent
 			-- (заодно в ком.строке передаем в вызываемый скрипт данные о местоположении SciteUserHome)
-			local script_dir = debug.getinfo(1, "S").source:gsub('^@(.+\\).-$', '%1')
-			local cmd = 'wscript "'..script_dir..'RestoreRecent.js" "'..props["SciteUserHome"]..'"'
+			local script_dir = debug.getinfo(1, "S").source:gsub('^@(.+\\).-$', '%1'):toWIN()
+			local cmd = 'wscript "'..script_dir..'RestoreRecent.js" "'..props["SciteUserHome"]:toWIN()..'"'
 			shell.exec(cmd, nil, true, false)
 		end
 	end
