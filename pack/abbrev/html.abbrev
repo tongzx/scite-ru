@@ -4,18 +4,18 @@
 #Source: Alexey Rozenvaser (alexroz@softhome.net), mozers™, dB6
 #--------------------------------------------------------------
 
-1=<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">\n<html>\n<head>\n\t<meta http-equiv="content-type" content="text/html; charset=windows-1251">\n\t<meta name="description" content="">\n\t<meta name="keywords" content="">\n\t<meta name="generator" content="SciTE">\n<title>|</title>\n<style type="text/css">\n\tbody,tr,td {font-family:Verdana; font-size:x-small;}\n\ta {color:#000080; text-decoration:none;}\n\ta:hover {color:red;}\n</style>\n<script language="JavaScript" type="text/javascript">\n</script>\n</head>\n<body>\n%SEL%\n</body>\n</html>\n
+1=<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">\n<html>\n<head>\n\t<meta http-equiv="content-type" content="text/html; charset=utf-8">\n\t<meta name="description" content="">\n\t<meta name="keywords" content="">\n\t<meta name="generator" content="SciTE">\n<title>|</title>\n<style type="text/css">\n\tbody,tr,td {font-family:Verdana; font-size:x-small;}\n\ta {color:#000080; text-decoration:none;}\n\ta:hover {color:red;}\n</style>\n<script type="text/javascript">\n</script>\n</head>\n<body>\n%SEL%\n</body>\n</html>\n
 #HTML Application
-hta=<html>\n<head>\n<meta http-equiv=content-type content="text-html; charset=windows-1251">\n<meta http-equiv=MSThemeCompatible content=yes>\n<hta:application\n\tid=HTAApp\n\tapplicationName=My_Application\n\ticon=desk.cpl\n\tmaximizeButton=no\n\tborder=thin\n\tinnerBorder=no\n\tscroll=no\n\tselection=no\n\tcontextMenu=no\n\tsingleinstance=yes\n\tversion=1.0\n>\n<style type="text/css">\n\tbody, table {background-color:threedface; overflow:hidden; margin:2px;}\n\tbody, input, table, legend {font-family:MS Sans Serif; font-size:6pt;}\n\tlegend, label {color:highlight;}\n\tlegend {font-weight:bold;}\n</style>\n<script language="JavaScript">\n\twindow.resizeTo(240, 70);\n\tdocument.title = HTAApp.applicationName.replace(/_/g,' ') + ' v.' + HTAApp.version;\n</script>\n</head>\n<body>\n\t<fieldset><legend>&nbsp;Params:&nbsp;</legend>\n\t\t<input id="chk" type=checkbox onClick="ibox.disabled=btn.disabled=!this.checked;">\n\t\t<label for="chk" hidefocus>Set value&nbsp;</label>\n\t\t&nbsp;<input id=ibox type=text value=#FF23DA disabled>\n\t\t<input id="btn" type=button onClick="alert(ibox.value); self.close();" value=OK disabled hidefocus>\n\t</fieldset>\n</body>\n</html>
+hta=<html>\n<head>\n<meta http-equiv=content-type content="text-html; charset=utf-8">\n<meta http-equiv=MSThemeCompatible content=yes>\n<hta:application\n\tid=HTAApp\n\tapplicationName=My_Application\n\ticon=desk.cpl\n\tmaximizeButton=no\n\tborder=thin\n\tinnerBorder=no\n\tscroll=no\n\tselection=no\n\tcontextMenu=no\n\tsingleinstance=yes\n\tversion=1.0\n>\n<style type="text/css">\n\tbody, table {background-color:threedface; overflow:hidden; margin:2px;}\n\tbody, input, table, legend {font-family:MS Sans Serif; font-size:6pt;}\n\tlegend, label {color:highlight;}\n\tlegend {font-weight:bold;}\n</style>\n<script type="text/javascript">\n\twindow.resizeTo(240, 70);\n\tdocument.title = HTAApp.applicationName.replace(/_/g,' ') + ' v.' + HTAApp.version;\n</script>\n</head>\n<body>\n\t<fieldset><legend>&nbsp;Params:&nbsp;</legend>\n\t\t<input id="chk" type=checkbox onClick="ibox.disabled=btn.disabled=!this.checked;">\n\t\t<label for="chk" hidefocus>Set value&nbsp;</label>\n\t\t&nbsp;<input id=ibox type=text value=#FF23DA disabled>\n\t\t<input id="btn" type=button onClick="alert(ibox.value); self.close();" value=OK disabled hidefocus>\n\t</fieldset>\n</body>\n</html>
 
 #HTML 5
-htm5=<!DOCTYPE html>\n<html>\n<head>\n\t<meta http-equiv="Content-Type" content="text/html; charset=windows-1251">\n\t<meta name="generator" content="SciTE">\n\t<link rel="stylesheet" href="style.css" type="text/css">\n\t<title>|</title>\n</head>\n<body>\n%SEL%\n</body>\n</html>\n
+htm5=<!DOCTYPE html>\n<html>\n<head>\n\t<meta http-equiv="Content-Type" content="text/html; charset=utf-8">\n\t<meta name="generator" content="SciTE">\n\t<link rel="stylesheet" href="style.css" type="text/css">\n\t<title>|</title>\n</head>\n<body>\n%SEL%\n</body>\n</html>\n
 #HTML 4.01 Strict (строгий)
-htms=<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">\n<html>\n<head>\n\t<meta http-equiv="Content-Type" content="text/html; charset=windows-1251">\n\t<meta name="generator" content="SciTE">\n\t<link rel="stylesheet" href="style.css" type="text/css">\n\t<title>|</title>\n</head>\n<body>\n%SEL%\n</body>\n</html>\n
+htms=<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">\n<html>\n<head>\n\t<meta http-equiv="Content-Type" content="text/html; charset=utf-8">\n\t<meta name="generator" content="SciTE">\n\t<link rel="stylesheet" href="style.css" type="text/css">\n\t<title>|</title>\n</head>\n<body>\n%SEL%\n</body>\n</html>\n
 #HTML 4.01 Transitional (переходный)
-htmt=<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">\n<html>\n<head>\n\t<meta http-equiv="Content-Type" content="text/html; charset=windows-1251">\n\t<meta name="generator" content="SciTE">\n\t<link rel="stylesheet" href="style.css" type="text/css">\n\t<title>|</title>\n</head>\n<body>\n%SEL%\n</body>\n</html>\n
+htmt=<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">\n<html>\n<head>\n\t<meta http-equiv="Content-Type" content="text/html; charset=utf-8">\n\t<meta name="generator" content="SciTE">\n\t<link rel="stylesheet" href="style.css" type="text/css">\n\t<title>|</title>\n</head>\n<body>\n%SEL%\n</body>\n</html>\n
 #HTML 4.01 Frameset (с фреймами)
-htmf=<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">\n<html>\n<head>\n\t<meta http-equiv="Content-Type" content="text/html; charset=windows-1251">\n\t<meta name="generator" content="SciTE">\n\t<link rel="stylesheet" href="style.css" type="text/css">\n\t<title>|</title>\n</head>\n<frameset rows="20,*">\n<frame src="top.html">\n<frame src="bottom.html">\n</frameset>\n</html>\n
+htmf=<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">\n<html>\n<head>\n\t<meta http-equiv="Content-Type" content="text/html; charset=utf-8">\n\t<meta name="generator" content="SciTE">\n\t<link rel="stylesheet" href="style.css" type="text/css">\n\t<title>|</title>\n</head>\n<frameset rows="20,*">\n<frame src="top.html">\n<frame src="bottom.html">\n</frameset>\n</html>\n
 
 #XHTML 1.0 Strict (строгий)
 xmls=<?xml version="1.0"?>\n<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">\n<html xmlns="http://www.w3.org/1999/xhtml">\n<head>\n\t<meta http-equiv="content-type" content="text/xml;charset=utf-8" />\n\t<meta name="generator" content="SciTE" />\n\t<link rel="stylesheet" href="style.css" type="text/css" />\n\t<title>|</title>\n</head>\n<body>\n%SEL%\n</body>\n</html>\n
@@ -116,7 +116,7 @@ xmld=<?xml version="1.0"?>\n<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "h
 <met=<meta content="">%SEL%|</meta>\n
 <mi=<meta http-equiv="imagetoolbar" content="no"/>\n
 <mu=<meta http-equiv="content-type" content="text/html; charset=utf-8"/>\n
-<mw=<meta http-equiv="content-type" content="text/html; charset=windows-1251"/>\n
+<mw=<meta http-equiv="content-type" content="text/html; charset=utf-8"/>\n
 <ma=<meta name="author" content="%SEL%|"/>\n
 <mc=<meta name="copyright" content="%SEL%|"/>\n
 <md=<meta name="description" content="%SEL%|"/>\n
@@ -136,13 +136,13 @@ xmld=<?xml version="1.0"?>\n<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "h
 <q=<q>%SEL%|</q>
 <s=<s>%SEL%|</s>
 <sa=<samp>%SEL%|</samp>
-<sc=<script language="JavaScript" src="|">%SEL%\n</script>\n
+<sc=<script type="text/javascript" src="|">%SEL%\n</script>\n
 <se=<select>\n\t<option value="">|</option>\n\n</select>\n
 <sm=<small>%SEL%|</small>
 <sp=<span>%SEL%|</span>
 <str=<strike>DEPRECATED%SEL%|</strike>
 <st=<strong>%SEL%|</strong>
-<sty=<style type="text/css">\n%SEL%|\n<style>\n
+<sty=<style type="text/css">\n%SEL%|\n</style>\n
 <sub=<sub>%SEL%|</sub>
 <sup=<sup>%SEL%|</sup>
 <t=<table width="100%" cellpadding="0" cellspacing="0" border="0">\n\t<tr>\n\t\t<td>|</td>\n\t</tr>\n</table>\n
