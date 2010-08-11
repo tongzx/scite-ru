@@ -1,5 +1,5 @@
 <html><head>
-<meta http-equiv=Content-Type Content="text-html; charset=windows-1251">
+<meta http-equiv=Content-Type Content="text-html; charset=utf-8">
 <meta http-equiv=MSThemeCompatible Content=Yes>
 <meta http-equiv=Author Content=mozers>
 <hta:application
@@ -15,12 +15,12 @@ contextMenu=no
 caption=no
 showInTaskBar=no
 singleinstance=yes
-version=1.2
+version=1.3
 >
 <title>html Toolbar</title>
 <style type="text/css">
-	body, table {font-family:MS Sans Serif; font-size:8pt; background-color:threedface; cursor:default; margin:0px;}
-	button {font-family:MS Sans Serif; font-size:8pt; font-weight:bold; color:#0000CC;}
+	body, table {font-family:MS Shell Dlg; font-size:8pt; background-color:threedface; cursor:default; margin:0px;}
+	button {font-family:MS Shell Dlg; font-size:8pt; font-weight:bold; color:#0000CC;}
 </style>
 <script language="JavaScript">
 try {
@@ -62,7 +62,7 @@ for (i=0;i<Arr_BTN.length;i++){
 }
 
 function AddTag(i){
-	var pattern = Arr_BTN[i][2].replace(/\|/, "¦");
+	var pattern = Arr_BTN[i][2].replace(/\|/, "В¦");
 
 	var text = SciTE.GetSelText;
 	text = pattern.replace(/%SEL%/g,text);
@@ -70,9 +70,9 @@ function AddTag(i){
 	var clp = window.clipboardData.getData('Text');
 	text = text.replace(/%CLP%/g,clp);
 
-	var cursor = text.indexOf("¦");
+	var cursor = text.indexOf("В¦");
 	if (cursor!=-1) {
-		text = text.replace(/¦/,"");
+		text = text.replace(/В¦/,"");
 	} else {
 		cursor = text.length;
 	}
@@ -85,8 +85,8 @@ function AddTag(i){
 </head><body onLoad="SciTE.onTop(document.title, true);">
 <table id="TB"><tr>
 <td style="white-space:nowrap;"><span id="BTN"></span></td>
-<td style="white-space:nowrap;" onClick="window.location.reload();" title="левая кнопка мыши - Обновить
-правая - Перетащить">&nbsp;&nbsp;<button onClick="SciTE.Send('open:' + filename);" style="font: normal 10pt Marlett; color:green;" title="Настройка">s</button>&nbsp;<button onClick="self.close();" style="font: normal 10pt Marlett; color:red;" title="Закрыть">r</button></td>
+<td style="white-space:nowrap;" onClick="window.location.reload();" title="Р»РµРІР°СЏ РєРЅРѕРїРєР° РјС‹С€Рё - РћР±РЅРѕРІРёС‚СЊ
+РїСЂР°РІР°СЏ - РџРµСЂРµС‚Р°С‰РёС‚СЊ">&nbsp;&nbsp;<button onClick="SciTE.Send('open:' + filename);" style="font: normal 10pt Marlett; color:green;" title="РќР°СЃС‚СЂРѕР№РєР°">s</button>&nbsp;<button onClick="self.close();" style="font: normal 10pt Marlett; color:red;" title="Р—Р°РєСЂС‹С‚СЊ">r</button></td>
 </tr></table>
 </body>
 <script language="JavaScript">

@@ -1,8 +1,8 @@
 <html>
 <head>
-<meta http-equiv=Content-Type content="text-html; charset=windows-1251">
+<meta http-equiv=Content-Type content="text-html; charset=utf-8">
 <meta http-equiv=MSThemeCompatible content=yes>
-<meta name=author content=mozers™>
+<meta name=author content=mozersв„ў>
 <meta name=generator content=SciTE-Ru>
 <hta:application
 id=HTA
@@ -14,7 +14,7 @@ scroll=no
 selection=yes
 contextMenu=yes
 singleinstance=yes
-version=1.7
+version=1.8
 >
 <script language=JavaScript>
 function ParseCmdLine(cmd){
@@ -25,7 +25,7 @@ function ParseCmdLine(cmd){
 	return Arr_cmd;
 }
 
-// Читаем аргументы ком.строки
+// Р§РёС‚Р°РµРј Р°СЂРіСѓРјРµРЅС‚С‹ РєРѕРј.СЃС‚СЂРѕРєРё
 var Arr_cmd = ParseCmdLine(HTA.commandLine);
 len_cmd = Arr_cmd.length;
 if (len_cmd < 2) {
@@ -43,24 +43,24 @@ function Shortcuts(event, pane){
 	var src = self;
 	if (pane !== 0){src = parent;}
 	switch(event.keyCode){
-		case 27: //Esc - выход
+		case 27: //Esc - РІС‹С…РѕРґ
 			src.window.close(true);
 			break;
-		case 114: //F3 - следующее вхождение
+		case 114: //F3 - СЃР»РµРґСѓСЋС‰РµРµ РІС…РѕР¶РґРµРЅРёРµ
 			src.FindNext();
 			break;
-		case 107: // серый +
+		case 107: // СЃРµСЂС‹Р№ +
 		case 187: // +
 			src.Zoom(5);
 			break;
-		case 109: // серый -
+		case 109: // СЃРµСЂС‹Р№ -
 		case 189: // -
 			src.Zoom(-5);
 			break;
-		case 37: // <- влево
+		case 37: // <- РІР»РµРІРѕ
 			if (event.altKey) {back();}
 			break;
-		case 39: // -> вправо
+		case 39: // -> РІРїСЂР°РІРѕ
 			if (event.altKey) {forward();}
 			break;
 	}

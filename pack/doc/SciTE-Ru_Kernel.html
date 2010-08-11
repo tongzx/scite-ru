@@ -32,7 +32,7 @@
     </td></tr>
   </table>
 
-    <h1>Text editor SciTE RU-Board 2.03 .74</h1>
+    <h1>Text editor SciTE RU-Board 2.20 .80</h1>
 
     <p>All modifications of original <A href="http://www.scintilla.org">SciTE editor</A> has been developed by persons from <A href="http://forum.ru-board.com/topic.cgi?forum=5&topic=24956&glp">Ru-Board community</A>.
 
@@ -54,21 +54,15 @@
     </h3>
 
 <h5 id="LangMenuChecker">
-<sup>new</sup>
 [LangMenuChecker] <span class=desc>(Author: neo4max)</span></h5>
 In the menu "Language" the current language states labels. For more information look at <a href="http://code.google.com/p/scite-ru/issues/detail?id=193">Issue 193</a>.
 
 <h5 id="UserPropertiesFilesSubmenu">
-<sup>new</sup>
-[UserPropertiesFilesSubmenu] <span class=desc>(Author: mhb)</span></h5>
+<sup>updated</sup>
+[UserPropertiesFilesSubmenu] <span class=desc>(Author: mhb, arhohryakov)</span></h5>
 Menu items for opening language properties files to put in a submenu "Edit Properties".
 
-<h5 id="InsertMultiPasteText">
-[InsertMultiPasteText] <span class=desc>(Author: neo4max)</span></h5>
-Added possibility of paste text from the clipboard to affect all selections including each line of rectangular selections (if <span class="example">selection.additional.typing</span> is <span class="example">1</span>).
-
 <h5 id="CheckFileExist">
-<sup>updated</sup>
 [CheckFileExist] <span class=desc>(Author: neo4max)</span></h5>
 Now SciTE checks the edited file on disk and in its absence, displays a warning. Besides fixed detection of change in the date the edited file. For more information look at <a href="http://code.google.com/p/scite-ru/issues/detail?id=172">Issue 172</a>.
 
@@ -163,7 +157,6 @@ Command&nbsp;name2|IDM_COMMAND2|...</div><br>
 If parameter absent or empty then context menu will standard.
 
 <h5 id="user.toolbar">
-<sup>updated</sup>
 [user.toolbar] <span class=desc>(Author: Dmitry Maslov, VladVRO, UR4LTZ, neo4max)</span></h5>
 You can setup toolbar now by using new parameter <span class="example">user.toolbar.*</span> in .properties file:<br>
 Format:
@@ -208,7 +201,6 @@ New variable in properties files<br>
 Set to 0 to prevent the Find dialog from closing when "Find" pressed.
 
 <h5 id="ReturnBackAfterRALL">
-<sup>new</sup>
 [ReturnBackAfterRALL] <span class=desc>(Author: neo4max)</span></h5>
 New variable in properties files<br>
 <span class="example">find.replace.return.to.start=1</span><br>
@@ -518,7 +510,6 @@ Example: <span class="example">SendEditor(SCI_SETMOUSECAPTURE, 0)</span> <br>
 And this message will be sent if <span class="example">OnClick()</span> or <span class="example">OnDoubleClick()</span> returns <span class="example"><i>true</i></span>.
 
 <h5 id="CheckMenus">
-<sup>new</sup>
 [CheckMenus] <span class=desc>(Author: neo4max)</span></h5>
 In SciTE Lua Scripting Extension added new command<br>
 <span class="example">scite.CheckMenus()</span> - that allows to update the state of the menu and toolbar SciTE.
@@ -609,7 +600,6 @@ Now OnSendEditor can trace event SCI_SETZOOM arising at change of the size of a 
     </h3>
 
 <h5 id="OpenNonExistent">
-<sup>updated</sup>
 [OpenNonExistent] <span class=desc>(Author: neo4max)</span></h5>
 Fixed bug associated with opening a nonexistent file. For more information look at <a href="http://code.google.com/p/scite-ru/issues/detail?id=174">Issue 174</a>.
 
@@ -662,13 +652,6 @@ It prevent from transfer Russian text into external script or program.
 Are removed default values of symbols color (black) and a background (white), that allows to not set them obviously in files of adjustment in all styles for set of a corresponding background at export of a file.<br>
 If the <span class="example">style.*.32</span> do not raised characters and the background color, these parameters are collected from your Windows, i.e. equal system Window Text/Background.
 
-<h5 id="LowerUpperCase">
-[LowerUpperCase] <span class=desc>(Author: Midas, VladVRO, Dmitry Maslov)</span></h5>
-Correct working with national characters<br>
-- for Make Lower / Upper Case,<br>
-- for Search without match case,<br>
-- for Search with Regular expression
-
 <h5 id="FindInFiles">
 [FindInFiles] <span class=desc>(Author: dB6)</span></h5>
 Selected text inserted into FindInFiles dialog solely in the UTF-8, thus Russian letter turned out unreadable.
@@ -687,10 +670,9 @@ Fixed positioning of caret in insert abbreviation action.<br>
 Bug was in case when abbreviation body has one simbol '|' and in action was not selection text.
 
 <h5 id="no_wornings">
+<sup>updated</sup>
 [no_wornings] <span class=desc>(Author: Dmitry Maslov)</span></h5>
-Added compatibility with the compiler Visual C++ 6.0<br>
-Eliminated some of warnings in the compilation of Visual C++ 6.0<br>
-<span class="example">warning C4702: unreachable code</span>
+Added compatibility with the compiler Visual C++ 6.0
 
 <h5 id="SQLcase">
 [SQLcase] <span class=desc>(Author: mimir)</span></h5>

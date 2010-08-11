@@ -1,11 +1,11 @@
 <html>
 <head>
-	<meta http-equiv="content-type" content="text/html; charset=windows-1251">
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
 	<meta http-equiv=MSThemeCompatible Content=Yes>
 <hta:application
 	id=SesMgr
 	applicationName=Session_Manager
-	version=1.1
+	version=1.2
 	maximizeButton=no
 	icon=sysedit.exe
 	innerBorder=no
@@ -14,17 +14,17 @@
 	selection=no
 >
 <style type="text/css">
-	body,table   {font-family:MS Sans Serif; font-size:8px; background-color:threedface; margin:2;}
+	body,table   {font-family:MS Shell Dlg; font-size:8pt; background-color:threedface; margin:2;}
 	table   {margin:0;}
 	td           {white-space:nowrap;}
-	input,button,select,textarea {font-family:MS Sans Serif; font-size:8px;}
+	input,button,select,textarea {font-family:MS Shell Dlg; font-size:8pt;}
 	fieldset     {cursor:default;margin:0px;text-align:left;padding:4px;padding-top:0px;}
 	legend       {margin-bottom:2px; color:blue;}
 	label        {cursor: hand; white-space:nowrap;}
 </style>
 <SCRIPT language=Javascript>
 // Session Manager
-// Author: mozers™
+// Author: mozersв„ў
 // ------------------------------------------------
 var CmdArg = SesMgr.commandLine.replace(/^".*?" */,'');
 var quit = false;
@@ -33,7 +33,7 @@ if (/^QUIT /.test(CmdArg)) {
 	quit = true;
 }
 
-// Подготовка диалогового окна
+// РџРѕРґРіРѕС‚РѕРІРєР° РґРёР°Р»РѕРіРѕРІРѕРіРѕ РѕРєРЅР°
 var width = 300;
 var height = 325;
 if (CmdArg !== ''){
@@ -47,10 +47,10 @@ window.moveTo(winPosX-width/2, winPosY-height/2);
 document.title = SesMgr.applicationName.replace(/_/g,' ') + ' ' + SesMgr.version;
 
 // ------------------------------------------------
-// Пути к SciTE и SciteUserHome относительно этого файла
+// РџСѓС‚Рё Рє SciTE Рё SciteUserHome РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅРѕ СЌС‚РѕРіРѕ С„Р°Р№Р»Р°
 var scite = "..\\..\\SciTE.exe";
 var scite_sessions_path = "..\\..\\home";
-var chrNewLine = '…';
+var chrNewLine = 'вЂ¦';
 // ------------------------------------------------
 try {
 	var SciTE=new ActiveXObject("SciTE.Helper");
@@ -66,7 +66,7 @@ var save_description_edited = false;
 var script_path=unescape(window.document.URL).replace(/^.*(\w:\\.*\\).*?$/gi, '$1');
 
 // ------------------------------------------------
-// Получение полного пути из относительного
+// РџРѕР»СѓС‡РµРЅРёРµ РїРѕР»РЅРѕРіРѕ РїСѓС‚Рё РёР· РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅРѕРіРѕ
 function AbsolutePathName(path){
 	if (/^\w:\\/.test(path)) {
 		return path;
@@ -78,7 +78,7 @@ scite=AbsolutePathName(scite);
 scite_sessions_path=AbsolutePathName(scite_sessions_path);
 
 // ------------------------------------------------
-// Преобразование даты создания файла к виду "yy|dd|mm|hh|mm"
+// РџСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ РґР°С‚С‹ СЃРѕР·РґР°РЅРёСЏ С„Р°Р№Р»Р° Рє РІРёРґСѓ "yy|dd|mm|hh|mm"
 function DateString (file_date){
 	function format(j){return (j < 10) ? ('0' + j) : j;}
 	var x = new Date(file_date);
@@ -91,7 +91,7 @@ function DateString (file_date){
 }
 
 // ------------------------------------------------
-// Извлекает описание из файла descript.ion
+// РР·РІР»РµРєР°РµС‚ РѕРїРёСЃР°РЅРёРµ РёР· С„Р°Р№Р»Р° descript.ion
 function GetDescript(filename){
 	file_descript = scite_sessions_path + '\\descript.ion';
 	load_description.value = "";
@@ -109,7 +109,7 @@ function GetDescript(filename){
 }
 
 // ------------------------------------------------
-// функция для сортировки массива в убывающем порядке
+// С„СѓРЅРєС†РёСЏ РґР»СЏ СЃРѕСЂС‚РёСЂРѕРІРєРё РјР°СЃСЃРёРІР° РІ СѓР±С‹РІР°СЋС‰РµРј РїРѕСЂСЏРґРєРµ
 function compare(a, b) {
 	if (String(a) > String(b)) {return -1;}
 	if (String(a) < String(b)) {return 1;}
@@ -117,7 +117,7 @@ function compare(a, b) {
 }
 
 // ------------------------------------------------
-// Создает массив сессий (в дальнейшем вся работа ведется с ним)
+// РЎРѕР·РґР°РµС‚ РјР°СЃСЃРёРІ СЃРµСЃСЃРёР№ (РІ РґР°Р»СЊРЅРµР№С€РµРј РІСЃСЏ СЂР°Р±РѕС‚Р° РІРµРґРµС‚СЃСЏ СЃ РЅРёРј)
 function CreateSessionArray(){
 	var a_folder = fso.GetFolder(scite_sessions_path);
 	var the_files = new Enumerator(a_folder.Files);
@@ -134,32 +134,32 @@ function CreateSessionArray(){
 }
 
 // ------------------------------------------------
-// Дата сохранения файла сессии
+// Р”Р°С‚Р° СЃРѕС…СЂР°РЅРµРЅРёСЏ С„Р°Р№Р»Р° СЃРµСЃСЃРёРё
 function SesDate(i){
 	return Sessions_Arr[i][2]+"."+Sessions_Arr[i][1]+"."+Sessions_Arr[i][0]+" "+Sessions_Arr[i][3]+":"+Sessions_Arr[i][4];
 }
 
 // ------------------------------------------------
-// Имя файла сессии
+// РРјСЏ С„Р°Р№Р»Р° СЃРµСЃСЃРёРё
 function SesFileName(i){
 	return Sessions_Arr[i][5];
 }
 
 // ------------------------------------------------
-// Создает листинг сохраненных сессий
+// РЎРѕР·РґР°РµС‚ Р»РёСЃС‚РёРЅРі СЃРѕС…СЂР°РЅРµРЅРЅС‹С… СЃРµСЃСЃРёР№
 function DialogLoad_SessionList(){
 	var html = '';
 	for (var i=0; i<Sessions_Arr.length; i++) {
 		var option = SesDate(i)+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+SesFileName(i);
 		html += '<option>'+option;
 	}
-	// Отображаем список сессий
+	// РћС‚РѕР±СЂР°Р¶Р°РµРј СЃРїРёСЃРѕРє СЃРµСЃСЃРёР№
 	select.innerHTML = '<select id="sessions_opt" style="width:100%;" size=14 ondblclick="LoadSession(this.selectedIndex)" onkeydown="LoadOnKey(this.selectedIndex)" onchange="load_description.value = Descript(this.selectedIndex)" onmouseup="ShowRCMenu()">'+html+'</select>';
 	if (sessions_opt[0]) {sessions_opt[0].selected = true;}
 }
 
 // ------------------------------------------------
-// Текст описания сессии
+// РўРµРєСЃС‚ РѕРїРёСЃР°РЅРёСЏ СЃРµСЃСЃРёРё
 function Descript(i){
 	if (Sessions_Arr[i]) {
 		return Sessions_Arr[i][6];
@@ -169,12 +169,12 @@ function Descript(i){
 }
 
 // ------------------------------------------------
-// Инициализация диалогового окна открытия или сохранения сессии
+// РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РґРёР°Р»РѕРіРѕРІРѕРіРѕ РѕРєРЅР° РѕС‚РєСЂС‹С‚РёСЏ РёР»Рё СЃРѕС…СЂР°РЅРµРЅРёСЏ СЃРµСЃСЃРёРё
 function Init(cmdline){
 	CreateSessionArray();
-	// Если в ком.строке запуска имеется параметр, то ...
+	// Р•СЃР»Рё РІ РєРѕРј.СЃС‚СЂРѕРєРµ Р·Р°РїСѓСЃРєР° РёРјРµРµС‚СЃСЏ РїР°СЂР°РјРµС‚СЂ, С‚Рѕ ...
 	if (CmdArg !== ''){
-		// ...отображаем диалог сохранения сессии
+		// ...РѕС‚РѕР±СЂР°Р¶Р°РµРј РґРёР°Р»РѕРі СЃРѕС…СЂР°РЅРµРЅРёСЏ СЃРµСЃСЃРёРё
 		self.save.style.display = "inline";
 		var opt = "";
 		for (var i=0; i<Sessions_Arr.length; i++) {
@@ -185,7 +185,7 @@ function Init(cmdline){
 		self.ses_name.select();
 		self.ses_name.focus();
 	}else{
-		// ...иначе, формируем листинг сохраненных ранее сессий
+		// ...РёРЅР°С‡Рµ, С„РѕСЂРјРёСЂСѓРµРј Р»РёСЃС‚РёРЅРі СЃРѕС…СЂР°РЅРµРЅРЅС‹С… СЂР°РЅРµРµ СЃРµСЃСЃРёР№
 		DialogLoad_SessionList();
 		self.load.style.display = "inline";
 		load_description.value = Descript(0);
@@ -194,7 +194,7 @@ function Init(cmdline){
 }
 
 // ------------------------------------------------
-// Определяет запущен SciTE или нет
+// РћРїСЂРµРґРµР»СЏРµС‚ Р·Р°РїСѓС‰РµРЅ SciTE РёР»Рё РЅРµС‚
 function ExistSciTEWindow(){
 	var objWMIService = GetObject("winmgmts:\\\\.\\root\\CIMV2");
 	var colItems = objWMIService.ExecQuery("SELECT * FROM Win32_Process");
@@ -207,7 +207,7 @@ function ExistSciTEWindow(){
 }
 
 // ------------------------------------------------
-// Открытие одной из сохраненных сессий
+// РћС‚РєСЂС‹С‚РёРµ РѕРґРЅРѕР№ РёР· СЃРѕС…СЂР°РЅРµРЅРЅС‹С… СЃРµСЃСЃРёР№
 function LoadSession(i){
 	var ses = (scite_sessions_path+'\\'+SesFileName(i)+'.session').replace(/\\/g,"\\\\");
 	if (ExistSciTEWindow()) {
@@ -220,7 +220,7 @@ function LoadSession(i){
 }
 
 // ------------------------------------------------
-// Открытие одной из сохраненных сессий в новом окне
+// РћС‚РєСЂС‹С‚РёРµ РѕРґРЅРѕР№ РёР· СЃРѕС…СЂР°РЅРµРЅРЅС‹С… СЃРµСЃСЃРёР№ РІ РЅРѕРІРѕРј РѕРєРЅРµ
 function LoadSessionNewWindow(i){
 	var ses = (scite_sessions_path+'\\'+SesFileName(i)+'.session').replace(/\\/g,"\\\\");
 	var cmd = '"' + scite + '" ' + '-property:check.if.already.open=0 "-loadsession:' + ses + '"';
@@ -229,7 +229,7 @@ function LoadSessionNewWindow(i){
 }
 
 // ------------------------------------------------
-// Удаление выбранной сессии
+// РЈРґР°Р»РµРЅРёРµ РІС‹Р±СЂР°РЅРЅРѕР№ СЃРµСЃСЃРёРё
 function DeleteSession(i){
 	fso.DeleteFile(scite_sessions_path+'\\'+SesFileName(i)+'.session', true);
 	Sessions_Arr.splice(i, 1);
@@ -237,7 +237,7 @@ function DeleteSession(i){
 }
 
 // ------------------------------------------------
-// Создает одну строку для добавления в descript.ion
+// РЎРѕР·РґР°РµС‚ РѕРґРЅСѓ СЃС‚СЂРѕРєСѓ РґР»СЏ РґРѕР±Р°РІР»РµРЅРёСЏ РІ descript.ion
 function OneLineDescript(file,descr){
 	file += '.session';
 	if (!/^\w{1,8}\.\w{1,3}$/.test(file)) {
@@ -247,7 +247,7 @@ function OneLineDescript(file,descr){
 }
 
 // ------------------------------------------------
-// Сохранение описаний к сессиям в descript.ion
+// РЎРѕС…СЂР°РЅРµРЅРёРµ РѕРїРёСЃР°РЅРёР№ Рє СЃРµСЃСЃРёСЏРј РІ descript.ion
 function SaveDescriptIon(){
 	var descript_arr = [];
 	var new_file = true;
@@ -277,22 +277,22 @@ function SaveDescriptIon(){
 }
 
 // ------------------------------------------------
-// Действия при нажатии на кнопку "Save"
+// Р”РµР№СЃС‚РІРёСЏ РїСЂРё РЅР°Р¶Р°С‚РёРё РЅР° РєРЅРѕРїРєСѓ "Save"
 function SaveSession(){
 	var ses_filename = scite_sessions_path + '\\' + ses_name.value + '.session';
 	if (!quit) {
-		// сохраняем текущую сессию
+		// СЃРѕС…СЂР°РЅСЏРµРј С‚РµРєСѓС‰СѓСЋ СЃРµСЃСЃРёСЋ
 		SciTE.Send('savesession:' + ses_filename.replace(/\\/g,"\\\\"));
 	} else {
 		fso.CopyFile(scite_sessions_path + '\\SciTE.session', ses_filename, true);
 	}
-	// обновляем descript.ion
+	// РѕР±РЅРѕРІР»СЏРµРј descript.ion
 	SaveDescriptIon();
 	self.close();
 }
 
 // ------------------------------------------------
-// Показывает контекстное меню по правой кнопке мыши на пункте из списка сессий
+// РџРѕРєР°Р·С‹РІР°РµС‚ РєРѕРЅС‚РµРєСЃС‚РЅРѕРµ РјРµРЅСЋ РїРѕ РїСЂР°РІРѕР№ РєРЅРѕРїРєРµ РјС‹С€Рё РЅР° РїСѓРЅРєС‚Рµ РёР· СЃРїРёСЃРєР° СЃРµСЃСЃРёР№
 function ShowRCMenu(){
 	if (event.button==1){return false;}
 	RCMenu=window.createPopup(); 
@@ -314,7 +314,7 @@ function ShowRCMenu(){
 }
 
 // ------------------------------------------------
-// Обработка нажатий клавиш в диалоге загрузки новой сессии
+// РћР±СЂР°Р±РѕС‚РєР° РЅР°Р¶Р°С‚РёР№ РєР»Р°РІРёС€ РІ РґРёР°Р»РѕРіРµ Р·Р°РіСЂСѓР·РєРё РЅРѕРІРѕР№ СЃРµСЃСЃРёРё
 function LoadOnKey(i){
 	var keycode = event.keyCode;
 	switch(keycode){
@@ -338,7 +338,7 @@ function LoadOnKey(i){
 }
 
 // ------------------------------------------------
-// Обработка нажатий клавиш в диалоге сохранения сессии
+// РћР±СЂР°Р±РѕС‚РєР° РЅР°Р¶Р°С‚РёР№ РєР»Р°РІРёС€ РІ РґРёР°Р»РѕРіРµ СЃРѕС…СЂР°РЅРµРЅРёСЏ СЃРµСЃСЃРёРё
 function SaveOnKey(){
 	var keycode = event.keyCode;
 	switch(keycode){

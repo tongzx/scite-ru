@@ -1,12 +1,12 @@
 <html>
 <!----------------------------------------------------
 Find Alternative
-Author: mozers™
+Author: mozersв„ў
 ------------------------------------------------------
 Description:
-  Альтернативная панель поиска. Возможности:
-  - поиск многострочного текста
-  - поиск и использованием регулярных выражений
+  РђР»СЊС‚РµСЂРЅР°С‚РёРІРЅР°СЏ РїР°РЅРµР»СЊ РїРѕРёСЃРєР°. Р’РѕР·РјРѕР¶РЅРѕСЃС‚Рё:
+  - РїРѕРёСЃРє РјРЅРѕРіРѕСЃС‚СЂРѕС‡РЅРѕРіРѕ С‚РµРєСЃС‚Р°
+  - РїРѕРёСЃРє Рё РёСЃРїРѕР»СЊР·РѕРІР°РЅРёРµРј СЂРµРіСѓР»СЏСЂРЅС‹С… РІС‹СЂР°Р¶РµРЅРёР№
 
 ------------------------------------------------------
 Connection:
@@ -16,7 +16,7 @@ Connection:
   command.mode.215.*=subsystem:shellexec,savebefore:no
 ---------------------------------------------------->
 <head>
-	<meta http-equiv="content-type" content="text/html; charset=windows-1251">
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
 	<meta http-equiv=MSThemeCompatible Content=Yes>
 <hta:application
 	id=FindAlt
@@ -27,14 +27,14 @@ Connection:
 	scroll=no
 	singleinstance=yes
 	selection=no
-	version=1.0
+	version=1.1
 >
 <style type="text/css">
-	body,table   {font-family:MS Sans Serif; font-size:8px; background-color:threedface; margin:0;}
+	body,table   {font-family:MS Shell Dlg; font-size:10px; background-color:threedface; margin:0;}
 	td           {white-space:nowrap;}
-	input,button {font-family:MS Sans Serif; font-size:8px;}
+	input,button {font-family:MS Shell Dlg; font-size:10px;}
 	label        {cursor: hand; white-space:nowrap;}
-	textarea     {width:100%; height:98%; font-family:MS Sans Serif; font-size:8pt;}
+	textarea     {width:100%; height:98%; font-family:MS Sans Serif; font-size:10px;}
 </style>
 <script language="JavaScript">
 window.resizeTo(600,240);
@@ -87,17 +87,17 @@ function Find_All(){
 		var current_pos = SciTE.LUA('editor.CurrentPos');
 		var i=0;
 		do{
-			// match_array будет содержать вхождение $0 и все подстроки $1,$2,$3,и т.д.
+			// match_array Р±СѓРґРµС‚ СЃРѕРґРµСЂР¶Р°С‚СЊ РІС…РѕР¶РґРµРЅРёРµ $0 Рё РІСЃРµ РїРѕРґСЃС‚СЂРѕРєРё $1,$2,$3,Рё С‚.Рґ.
 			var match_array = re.exec(all_text);
 			if (!match_array) {break}
-			var pos = []; // начальная позиция вхождения
+			var pos = []; // РЅР°С‡Р°Р»СЊРЅР°СЏ РїРѕР·РёС†РёСЏ РІС…РѕР¶РґРµРЅРёСЏ
 			pos[0] = re.lastIndex - match_array[0].length;
 			if (pos[0] <= current_pos) index = i;
-			// в массив результатов добавляем массив одного вхождения (match_array) и начальную позицию вхождения
+			// РІ РјР°СЃСЃРёРІ СЂРµР·СѓР»СЊС‚Р°С‚РѕРІ РґРѕР±Р°РІР»СЏРµРј РјР°СЃСЃРёРІ РѕРґРЅРѕРіРѕ РІС…РѕР¶РґРµРЅРёСЏ (match_array) Рё РЅР°С‡Р°Р»СЊРЅСѓСЋ РїРѕР·РёС†РёСЋ РІС…РѕР¶РґРµРЅРёСЏ
 				Result_array[i] = match_array.concat(pos);
 			i++;
 		} while (true);
-		count = i; // общее кол-во вхождений
+		count = i; // РѕР±С‰РµРµ РєРѕР»-РІРѕ РІС…РѕР¶РґРµРЅРёР№
 		self.result.innerText = "Find " + count + " match";
 		need_init = false;
 	}

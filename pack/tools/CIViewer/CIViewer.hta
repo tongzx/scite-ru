@@ -1,6 +1,7 @@
 <html>
 <head>
 <meta http-equiv=MSThemeCompatible Content=Yes>
+<meta http-equiv=Content-Type Content="text-html; charset=utf-8">
 <hta:application
 id=CI_VIEW
 applicationName=CI_Viewer
@@ -14,7 +15,7 @@ contextMenu=no
 caption=no
 showInTaskBar=no
 singleinstance=yes
-version=2.1
+version=2.2
 >
 <title>CI Viewer</title>
 <style type="text/css">
@@ -24,13 +25,13 @@ version=2.1
 </style>
 <script language="JavaScript">
 // ---------------------------------------------
-var view_width  = 128; // размеры окна приложения
+var view_width  = 128; // СЂР°Р·РјРµСЂС‹ РѕРєРЅР° РїСЂРёР»РѕР¶РµРЅРёСЏ
 var view_height = 128;
-var dwell_period = 50;        // интервал опроса эвентом OnDwellStart положения мыши
-var check_props_timeout = 50; // интервал опроса переменных SciTE из этого скрипта
+var dwell_period = 50;        // РёРЅС‚РµСЂРІР°Р» РѕРїСЂРѕСЃР° СЌРІРµРЅС‚РѕРј OnDwellStart РїРѕР»РѕР¶РµРЅРёСЏ РјС‹С€Рё
+var check_props_timeout = 50; // РёРЅС‚РµСЂРІР°Р» РѕРїСЂРѕСЃР° РїРµСЂРµРјРµРЅРЅС‹С… SciTE РёР· СЌС‚РѕРіРѕ СЃРєСЂРёРїС‚Р°
 
 // ---------------------------------------------
-// Инициализация SciTE.Helper
+// РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ SciTE.Helper
 try {
 	var SciTE=new ActiveXObject("SciTE.Helper");
 } catch(e) {
@@ -38,7 +39,7 @@ try {
 	self.close();
 }
 
-// Обработка события удачной загрузки картинки (т.е. события onload объекта Picture)
+// РћР±СЂР°Р±РѕС‚РєР° СЃРѕР±С‹С‚РёСЏ СѓРґР°С‡РЅРѕР№ Р·Р°РіСЂСѓР·РєРё РєР°СЂС‚РёРЅРєРё (С‚.Рµ. СЃРѕР±С‹С‚РёСЏ onload РѕР±СЉРµРєС‚Р° Picture)
 function ShowImage() {
 		self.ImageView.style.display = "inline";
 		self.HelpView.style.display = "none";
@@ -54,7 +55,7 @@ function ShowImage() {
 		if (img_height > height_max) {self.Picture.style.height = height_max;}
 }
 
-// Попытка текущее слово подставить как параметр цвета
+// РџРѕРїС‹С‚РєР° С‚РµРєСѓС‰РµРµ СЃР»РѕРІРѕ РїРѕРґСЃС‚Р°РІРёС‚СЊ РєР°Рє РїР°СЂР°РјРµС‚СЂ С†РІРµС‚Р°
 function ShowColor() {
 	var color_val = SciTE.Props("civiewer.word");
 	if (color_val.length > 2) {
@@ -74,27 +75,27 @@ function ShowColor() {
 
 var current_pos_old;
 
-// Опрос параметров SciTE и попытка их отобразить
+// РћРїСЂРѕСЃ РїР°СЂР°РјРµС‚СЂРѕРІ SciTE Рё РїРѕРїС‹С‚РєР° РёС… РѕС‚РѕР±СЂР°Р·РёС‚СЊ
 function Show() {
 	var current_pos = SciTE.Props("civiewer.pos");
 	if (current_pos != current_pos_old) {
 		current_pos_old = current_pos;
-		// пробуем отобразить цвет
+		// РїСЂРѕР±СѓРµРј РѕС‚РѕР±СЂР°Р·РёС‚СЊ С†РІРµС‚
 		if (!ShowColor()) {
-			// не удалось - отображаем подсказку
+			// РЅРµ СѓРґР°Р»РѕСЃСЊ - РѕС‚РѕР±СЂР°Р¶Р°РµРј РїРѕРґСЃРєР°Р·РєСѓ
 			self.HelpView.style.display = "inline";
 			self.ColorView.style.display = "none";
 			self.ImageView.style.display = "none";
 
-			// пробуем загрузить картинку
+			// РїСЂРѕР±СѓРµРј Р·Р°РіСЂСѓР·РёС‚СЊ РєР°СЂС‚РёРЅРєСѓ
 			var image_src = SciTE.Props("civiewer.uri");
 			if (image_src.length > 4) {
 				self.Picture.src = SciTE.Props("FileDir").replace(/\\/g,'/') + '/' + image_src;
-				// если получится, то эвент onload объекта Picture запустит процедуру ShowImage()
+				// РµСЃР»Рё РїРѕР»СѓС‡РёС‚СЃСЏ, С‚Рѕ СЌРІРµРЅС‚ onload РѕР±СЉРµРєС‚Р° Picture Р·Р°РїСѓСЃС‚РёС‚ РїСЂРѕС†РµРґСѓСЂСѓ ShowImage()
 			}
 		}
 	}
-	// запускаем заново эту процедуру через указанное время
+	// Р·Р°РїСѓСЃРєР°РµРј Р·Р°РЅРѕРІРѕ СЌС‚Сѓ РїСЂРѕС†РµРґСѓСЂСѓ С‡РµСЂРµР· СѓРєР°Р·Р°РЅРЅРѕРµ РІСЂРµРјСЏ
 	setTimeout(Show, check_props_timeout);
 }
 </script>
@@ -103,13 +104,13 @@ function Show() {
 <div id="HelpView">
 	<table style="font:10px Arial;">
 		<tr><td>
-			Переместите курсор<br>
-			на параметр цвета<br>
-			("<font color="#6495ED">#6495ED</font>" или "<font color="red">red</font>")<br>
-			или на ссылку с изображением ("<a href="#">bg.gif</a>")
+			РџРµСЂРµРјРµСЃС‚РёС‚Рµ РєСѓСЂСЃРѕСЂ<br>
+			РЅР° РїР°СЂР°РјРµС‚СЂ С†РІРµС‚Р°<br>
+			("<font color="#6495ED">#6495ED</font>" РёР»Рё "<font color="red">red</font>")<br>
+			РёР»Рё РЅР° СЃСЃС‹Р»РєСѓ СЃ РёР·РѕР±СЂР°Р¶РµРЅРёРµРј ("<a href="#">bg.gif</a>")
 			<hr size="1">
-			Клик <b>левой</b> кнопкой закроет приложение.<br>
-			<b>Правая</b> - перемещение.
+			РљР»РёРє <b>Р»РµРІРѕР№</b> РєРЅРѕРїРєРѕР№ Р·Р°РєСЂРѕРµС‚ РїСЂРёР»РѕР¶РµРЅРёРµ.<br>
+			<b>РџСЂР°РІР°СЏ</b> - РїРµСЂРµРјРµС‰РµРЅРёРµ.
 		</td></tr>
 	</table>
 </div>
@@ -142,23 +143,23 @@ function Show() {
 
 </body>
 <script language="JavaScript">
-// Инициализация окна приложения
+// РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РѕРєРЅР° РїСЂРёР»РѕР¶РµРЅРёСЏ
 window.resizeTo(view_width, view_height);
 window.moveTo(SciTE.Left + SciTE.Width - view_width - 5, SciTE.Top + 25);
 Show();
 SciTE.Focus();
-// Запуск в SciTE эвента OnDwellStart, отслеживающего положение курсора
+// Р—Р°РїСѓСЃРє РІ SciTE СЌРІРµРЅС‚Р° OnDwellStart, РѕС‚СЃР»РµР¶РёРІР°СЋС‰РµРіРѕ РїРѕР»РѕР¶РµРЅРёРµ РєСѓСЂСЃРѕСЂР°
 SciTE.Props("dwell.period") = dwell_period;
 SciTE.LUA("scite.SendEditor(SCI_SETMOUSEDWELLTIME, " + dwell_period + ")");
 
-// Изменение вида курсора при перетаскивании
+// РР·РјРµРЅРµРЅРёРµ РІРёРґР° РєСѓСЂСЃРѕСЂР° РїСЂРё РїРµСЂРµС‚Р°СЃРєРёРІР°РЅРёРё
 function cursor(c){
 	for (var i in document.all) {
 		try {document.all[i].style.cursor=c;} catch(e) {}
 	}
 }
 
-// Процедуры для закрытия и перемещения окна приложения
+// РџСЂРѕС†РµРґСѓСЂС‹ РґР»СЏ Р·Р°РєСЂС‹С‚РёСЏ Рё РїРµСЂРµРјРµС‰РµРЅРёСЏ РѕРєРЅР° РїСЂРёР»РѕР¶РµРЅРёСЏ
 var x0, y0;
 
 function WindowDragHandler() {
@@ -169,13 +170,13 @@ function WindowDragHandler() {
 
 document.onmousedown=function () {
 	if (event.button!=1){
-		// Если нажата не левая кнопка - перемещение окна
+		// Р•СЃР»Рё РЅР°Р¶Р°С‚Р° РЅРµ Р»РµРІР°СЏ РєРЅРѕРїРєР° - РїРµСЂРµРјРµС‰РµРЅРёРµ РѕРєРЅР°
 		x0=event.x; y0=event.y;
 		document.onmousemove=WindowDragHandler;
 		cursor("move");
 	}else{
-		// Если нажата левая кнопка - закрытие окна
-		// Отключаем в SciTE процедуру OnDwellStart
+		// Р•СЃР»Рё РЅР°Р¶Р°С‚Р° Р»РµРІР°СЏ РєРЅРѕРїРєР° - Р·Р°РєСЂС‹С‚РёРµ РѕРєРЅР°
+		// РћС‚РєР»СЋС‡Р°РµРј РІ SciTE РїСЂРѕС†РµРґСѓСЂСѓ OnDwellStart
 		SciTE.Props("dwell.period")="";
 		SciTE.LUA("scite.SendEditor(SCI_SETMOUSEDWELLTIME, SC_TIME_FOREVER)");
 		self.close();
