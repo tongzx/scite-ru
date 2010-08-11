@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 Paired Tags (логическое продолжение скриптов highlighting_paired_tags.lua и HTMLFormatPainter.lua)
-Version: 2.2.4
-Author: mozers™, VladVRO
+Version: 2.2.5
+Author: mozers™, VladVRO, nail333
 ------------------------------
 Подсветка парных и непарных тегов в HTML и XML
 В файле настроек задается цвет подсветки парных и непарных тегов
@@ -55,7 +55,7 @@ local old_current_pos
 function CopyTags()
 	if t.tag_start == nil then
 		print("Error : "..scite.GetTranslation("Move the cursor on a tag to copy it!"))
-		return 
+		return
 	end
 	local tag = editor:textrange(t.tag_start, t.tag_end+1)
 	if t.paired_start~=nil then
@@ -143,28 +143,33 @@ local function PairedTagsFinder()
 	if t.tag_end == nil then return end
 	if editor.CharAt[t.tag_end] ~= 62 then t.tag_end = nil return end
 
-	local dec, find_end
-	if editor.CharAt[t.tag_start+1] == 47 then
-		dec, find_end = -1, 0
-	else
-		dec, find_end =  1, editor.Length
-	end
-
-	-- Find paired tag
-	local tag = editor:textrange(editor:findtext("\\w+", SCFIND_REGEXP, t.tag_start, t.tag_end))
-	local count = 1
-	local find_start = t.tag_start+dec
-	repeat
-		t.paired_start, t.paired_end = editor:findtext("</*"..tag.."[^>]*", SCFIND_REGEXP, find_start, find_end)
-		if t.paired_start == nil then break end
-		if editor.CharAt[t.paired_start+1] == 47 then
-			count = count - dec
+	if editor.CharAt[t.tag_end-1] ~= 47 then     
+		local dec, find_end
+		if editor.CharAt[t.tag_start+1] == 47 then
+			dec, find_end = -1, 0
 		else
-			count = count + dec
+			dec, find_end =  1, editor.Length
 		end
-		if count == 0 then break end
-		find_start = t.paired_start + dec
-	until false
+
+		-- Find paired tag
+		local tag = editor:textrange(editor:findtext("\\w+", SCFIND_REGEXP, t.tag_start, t.tag_end))
+		local count = 1
+		local find_start = t.tag_start+dec
+		repeat
+			t.paired_start, t.paired_end = editor:findtext("</*"..tag.."[^/>]*>", SCFIND_REGEXP, find_start, find_end)
+			if t.paired_start == nil then break end
+			if t.paired_end ~= nil then 
+				t.paired_end = t.paired_end-1 
+			end
+			if editor.CharAt[t.paired_start+1] == 47 then
+				count = count - dec
+			else
+				count = count + dec
+			end
+			if count == 0 then break end
+			find_start = t.paired_start + dec
+		until false
+	end
 
 	if t.paired_start ~= nil then
 		-- paint in Blue
