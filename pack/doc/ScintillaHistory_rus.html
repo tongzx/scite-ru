@@ -367,213 +367,223 @@
 	<h3>
 		<a href="http://prdownloads.sourceforge.net/scintilla/scite220.zip?download">Release 2.20</a>
 	</h3>
+
+	<p> SciTE 2.20 представляет собой релиз с большими изменениями, внесенными в Scintilla для поддержки более широких возможностей лексеров языков.
+	<p> Существующие внешние лексеры (лексеры размещенные в .DLL или .so файлах) несовместимы с этой версией SciTE, которая использует новые интерфейсы для внешних лексеров.
+	<p> Команды поиска и замены теперь могут использовать боковые панели в главном окне, а не диалоговые окна, если задана настройка свойствами <span class="example">find.use.strip</span> и <span class="example">replace.use.strip</span>.<br>
+	В Windows и ранее использовалась панель для быстрого (инкрементного) поиска.
+	<p> Исполняемые файлы Windows поддерживают только Windows XP и выше.<br>
+	Существует возможность собрать SciTE с более старыми компиляторами для Windows 2000, но это больше не тестируется.
+	<p> SciTE теперь использует Mercurial (Hg) для управления исходным кодом.
+	CVS репозиторий предыдущих версий до сих пор существует, но не будет обновляться в будущем.<br>
+	Mercurial хранилище может быть клонировано командой<br>
+	<span class="example">hg clone http://scintilla.hg.sourceforge.net:8000/hgroot/scintilla/scite</span>
+
 	<ul>
 	<li>
-	Released 30 July 2010.
+	Версия 2.20 от 30 июля 2010 г.
 	</li>
 	<li>
-	Lexers are implemented as objects so that they may retain extra state.
-	The interfaces defined for this are tentative and may change before the next release.
-	Compatibility classes allow current lexers compiled into Scintilla to run with few changes.
-	The interface to external lexers has changed and existing external lexers will need to have changes
-	made and be recompiled.
-	A single lexer object is attached to a document whereas previously lexers were attached to views
-	which could lead to different lexers being used for split views with confusing results.
+	Лексеры реализованы в виде объектов, чтобы они могли сохранять дополнительные состояния.
+	Интерфейсы, определенные для этого, временные и могут измениться до следующего релиза.
+	Совместимость классов позволяет существующим лексерам, скомпилированным в Scintilla, работать с небольшими изменениями.
+	Интерфейс для внешних лексеров изменился и существующие внешние лексеры требуют исправления и перекомпиляции.
+	Один объект лексера привязывается к документу, в то время как раньше лексеры были привязаны к представлению/отображению,
+	что могло приводить к использованию разных лексеров для разделения представления с непредсказуемыми результатами.
 	</li>
 	<li>
-	C++ lexer understands the preprocessor enough to grey-out inactive code due to conditional compilation.
+	Лексер C++ понимает препроцессор достаточно для выделения серым неактивный код в результате условной компиляции.
 	</li>
 	<li>
-	SciTE can use strips within the main window for find and replace rather than dialogs.
-	On Windows SciTE always uses a strip for incremental search.
+	В SciTE можно использовать боковую панель в главном окне программы для поиска и замены, а не диалог. В Windows SciTE всегда использует панель для быстрого поиска.
 	</li>
 	<li>
-	Lexer added for Txt2Tags language.
+	Добавлен лексер языка Txt2Tags.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=352439&aid=3018736&group_id=2439">Feature #3018736.</a>
 	</li>
 	<li>
-	Sticky caret feature enhanced with additional SC_CARETSTICKY_WHITESPACE mode .
+	Расширены свойства прилипания каретки дополнительным режимом SC_CARETSTICKY_WHITESPACE режиме.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=352439&aid=3027559&group_id=2439">Feature #3027559.</a>
 	</li>
 	<li>
-	Bash lexer implements basic parsing of compound commands and constructs.
+	Лексер Bash выполняет основной разбор составных команд и конструкций.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=352439&aid=3033135&group_id=2439">Feature #3033135.</a>
 	</li>
 	<li>
-	C++ folder allows disabling explicit fold comments.
+	Свертка в C++ позволяет отключить явные блоки комментариев.
 	</li>
 	<li>
-	Perl folder works for array blocks, adjacent package statements, nested PODs, and terminates package folding at __DATA__, ^D and ^Z.
+	В Perl добавлена обработка сворачивания блоков массивов, границ пакета операторов, вложенных POD, и завершение свертки пакета в __DATA__, ^D и ^Z.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=352439&aid=3030887&group_id=2439">Feature #3030887.</a>
 	</li>
 	<li>
-	PowerShell lexer supports multiline &lt;# .. #&gt; comments and adds 2 keyword classes.
+	Лексер PowerShell поддерживает многострочные комментарии &lt;# .. #&gt; и добавлены классы с 2 ключевыми словами.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=352439&aid=3015176&group_id=2439">Feature #3015176.</a>
 	</li>
 	<li>
-	Lexing performed incrementally when needed by wrapping to make user interface more responsive.
+	Подсветка выполняется постепенно, когда это необходимо при сворачивании, чтобы сделать пользовательский интерфейс более отзывчивыми.
 	</li>
 	<li>
-	SciTE setting replaceselection:yes works on GTK+.
+	В SciTE в GTK+ работает настройка replaceselection:yes.
 	</li>
 	<li>
-	SciTE Lua scripts calling io.open or io.popen on Windows have arguments treated as UTF-8 and converted to Unicode
-	so that non-ASCII file paths will work. Lua files with non-ASCII paths run.
+	<font color=#CC00CC>В скриптах SciTE Lua вызов io.open или io.popen в Windows аргументы обрабатываются в кодировке UTF-8 и преобразуются в Unicode для работы с не-ASCII путями файлов. Файлы Lua с не-ASCII путем запускаются.</font>
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3016951&group_id=2439">Bug #3016951.</a>
 	</li>
 	<li>
-	Crash fixed when searching for empty string.
+	Исправлено падение при поиске пустой строки.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3017572&group_id=2439">Bug #3017572.</a>
 	</li>
 	<li>
-	Bugs fixed with folding and lexing when Enter pressed at start of line.
+	Исправлены ошибки сворачивания и подсветки при нажатии Enter в начале строки.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3032652&group_id=2439">Bug #3032652.</a>
 	</li>
 	<li>
-	Bug fixed with line selection mode not affecting selection range.
+	Исправлена ошибка, когда в режиме выбора строки не изменялся диапазон выбора.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3021480&group_id=2439">Bug #3021480.</a>
 	</li>
 	<li>
-	Bug fixed where indicator alpha was limited to 100 rather than 255.
+	<font color=#CC00CC>Исправлена ошибка, когда счетчик прозрачности "SCI_INDICSETALPHA" был ограничен 100 вместо 255.</font>
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3021473&group_id=2439">Bug #3021473.</a>
 	</li>
 	<li>
-	Bug fixed where changing annotation did not cause automatic redraw.
+	Исправлена ошибка, когда при изменении комментариев не вызывалась автоматическая перерисовка.
 	</li>
 	<li>
-	Regular expression bug fixed when a character range included non-ASCII characters.
+	<font color=#CC00CC>Исправлена ошибка обработки регулярных выражений, если в диапазон символов включены не-ASCII символы.</font>
 	</li>
 	<li>
-	Compilation failure with recent compilers fixed on GTK+.
+	В GTK+ исправлена ошибка компиляции с использованием новых компиляторов.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3022027&group_id=2439">Bug #3022027.</a>
 	</li>
 	<li>
-	Bug fixed on Windows with multiple monitors where autocomplete pop up would appear off-screen
-	or straddling monitors.
+	Исправлена ошибка в Windows с несколькими мониторами, при которой всплывающее окно автозаполнения появлялось вне экрана или между мониторами.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3017512&group_id=2439">Bug #3017512.</a>
 	</li>
 	<li>
-	SciTE on Windows bug fixed where changing directory to a Unicode path failed.
+	Исправлена ошибка SciTE в Windows при изменении каталога на путь в Unicode.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3011987&group_id=2439">Bug #3011987.</a>
 	</li>
 	<li>
-	SciTE on Windows bug fixed where combo boxes were not allowing Unicode characters.
+	Исправлена ошибка SciTE в Windows, при которой в выпадающих списках не разрешались Unicode символы.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3012986&group_id=2439">Bug #3012986.</a>
 	</li>
 	<li>
-	SciTE on GTK+ bug fixed when dragging files into SciTE on KDE.
+	Исправлена ошибка SciTE в GTK+ при перетаскивании файлов в SciTE на KDE.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3026555&group_id=2439">Bug #3026555.</a>
 	</li>
 	<li>
-	SciTE bug fixed where closing untitled file could lose data if attempt to name file same as another buffer.
+	Исправлена ошибка SciTE, которая могла привести к потере данных при закрытии безымянного файла, если имя файла совпадает с другим буфером.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3011680&group_id=2439">Bug #3011680.</a>
 	</li>
 	<li>
-	COBOL number masks now correctly highlighted.
+	Маски чисел в COBOL теперь подсвечиваются корректно.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3012164&group_id=2439">Bug #3012164.</a>
 	</li>
 	<li>
-	PHP comments can include &lt;?PHP without triggering state change.
+	Комментарии PHP могут включать &lt;?PHP без переключения состояния.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2854183&group_id=2439">Bug #2854183.</a>
 	</li>
 	<li>
-	VHDL lexer styles unclosed string correctly.
+	Стили лексера VHDL корректно распознают незавершенную строку.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3029627&group_id=2439">Bug #3029627.</a>
 	</li>
 	<li>
-	Memory leak fixed in list boxes on GTK+.
+	Исправлены утечки памяти в списках (list box) на GTK+.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3007669&group_id=2439">Bug #3007669.</a>
 	</li>
 	</ul>
+	<li>Перевод: <b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=ALeXkRU" target=_blank>ALeXkRU</a></b>
+	<li><font color=#CC00CC>Цветом выделены изменения, связанные с участием команды SciTE-Ru</font>
 
 	<h3>
 		<a href="http://prdownloads.sourceforge.net/scintilla/scite212.zip?download">Release 2.12</a>
 	</h3>
 	<ul>
 	<li>
-	Released 1 June 2010.
+	Версия 2.12 от 1 июня 2010 г.
 	</li>
 	<li>
-	Drawing optimizations improve speed and fix some visible flashing when scrolling.
+	Улучшена скорость отрисовки и исправлено мелькание при прокрутке.
 	</li>
 	<li>
-	Copy Path command added to File menu in SciTE.
+	В SciTE в меню "Файл" добавлена команда "Копировать путь файла".
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=352439&aid=2986745&group_id=2439">Feature #2986745.</a>
 	</li>
 	<li>
-	Optional warning displayed by SciTE when saving a file which has been modified by another process.
+	В SciTE добавлено опциональное отображение предупреждения при сохранении файла, модифицированного другим процессом.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=352439&aid=2975041&group_id=2439">Feature #2975041.</a>
 	</li>
 	<li>
-	Flagship lexer for xBase languages updated to follow the language much more closely.
+	Лексер Flagship для языков xBase обновлен для лучшего соответствия языку.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=352439&aid=2992689&group_id=2439">Feature #2992689.</a>
 	</li>
 	<li>
-	HTML lexer highlights Django templates in more regions.
+	Лексер HTML подсвечивает шаблоны Django в нескольких областях.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=352439&aid=3002874&group_id=2439">Feature #3002874.</a>
 	</li>
 	<li>
-	Dropping files on SciTE on Windows, releases the drag object earlier and opens the files asynchronously,
-	leading to smoother user experience.
+	В SciTE в Windows игнорируются файлы, брошенные раньше при перетаскивании объекта, и открываются файлы неодновременно, что приводит к более равномерной работе пользователей.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=352439&aid=2986724&group_id=2439">Feature #2986724.</a>
 	</li>
 	<li>
-	SciTE HTML exports take the Use Monospaced Font setting into account.
+	В SciTE при экспорте HTML учитываются настройки "Использовать моноширинный шрифт".
 	</li>
 	<li>
-	SciTE window title "[n of m]" localised.
+	В SciTE в заголовке локализована запись "[n of m]"
 	</li>
 	<li>
-	When new line inserted at start of line, markers are moved down.
+	При вставке новых строк в начале строки, маркеры перемещаются вниз.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2986727&group_id=2439">Bug #2986727.</a>
 	</li>
 	<li>
-	On Windows, dropped text has its line ends converted, similar to pasting.
+	В Windows при перетаскивании текста используется символ конца строки аналогично месту вставки.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3005328&group_id=2439">Bug #3005328.</a>
 	</li>
 	<li>
-	Fixed bug with middle-click paste in block select mode where text was pasted next to selection rather than at cursor.
+	Исправлена ошибка вставки кликом средней кнопки в режиме выделения блока, при которой текст вставлялся за выделением, а не в положении курсора.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2984460&group_id=2439">Bug #2984460.</a>
 	</li>
 	<li>
-	Fixed SciTE crash where a style had a size parameter without a value.
+	Исправлено падение SciTE, когда в стиле для параметра size не было задано значение.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3003834&group_id=2439">Bug #3003834.</a>
 	</li>
 	<li>
-	Debug assertions in multiple lexers fixed.
+	Исправлено работа с отладочными допущениями (debug assertion) в нескольких лексерах.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3000566&group_id=2439">Bug #3000566.</a>
 	</li>
 	<li>
-	CSS lexer fixed bug where @font-face displayed incorrectly
+	В лексере CSS исправлена ошибка некорректного отображения свойства @font-face.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2994224&group_id=2439">Bug #2994224.</a>
 	</li>
 	<li>
-	CSS lexer fixed bug where open comment caused highlighting error.
+	В лексере CSS исправлена ошибка подсветки при открывании комментария.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=1683672&group_id=2439">Bug #1683672.</a>
 	</li>
 	<li>
-	Shell file lexer fixed highlight glitch with here docs where the first line is a comment.
+	В лексере Shell-файлов исправлена ошибка подсветки в документах с закомментированной первой строкой.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2830239&group_id=2439">Bug #2830239.</a>
 	</li>
 	<li>
-	Bug fixed in SciTE openpath property that caused Open Selected File to fail to open the selected file.
+	В SciTE исправлена ошибка свойства openpath (каталог открытия), когда при вызове команды "Открыть выделенный файл" не открывался выделенный файл.
 	</li>
 	<li>
-	Bug fixed in SciTE FileExt property when file name with no extension evaluated to whole path.
+	В SciTE исправлена ошибка в свойстве FileExt, если имя файла не содержит расширения в полном пути.
 	</li>
 	<li>
-	Fixed SciTE on Windows printing bug where the $(CurrentTime), $(CurrentPage) variables were not expanded.
+	В SciTE в Windows исправлена ошибка печати, когда переменные $(CurrentTime), $(CurrentPage) не были развёрнуты.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2994612&group_id=2439">Bug #2994612.</a>
 	</li>
 	<li>
-	SciTE compiles for 64-bit Windows and runs without crashing.
+	SciTE компилируется в 64-битных Windows и запускается без сбоев.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2986312&group_id=2439">Bug #2986312.</a>
 	</li>
 	<li>
-	Full Screen mode in Windows Vista/7 improved to hide Start button and size borders a little better.
+	Улучшен полноэкранный режим в Windows Vista/7, скрывается кнопка Пуск и немного улучшен размер границы.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3002813&group_id=2439">Bug #3002813.</a>
 	</li>
 	</ul>
+	<li>Перевод: <b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=ALeXkRU" target=_blank>ALeXkRU</a></b>
 
 	<h3>
 		<a href="http://prdownloads.sourceforge.net/scintilla/scite211.zip?download">Release 2.11</a>
