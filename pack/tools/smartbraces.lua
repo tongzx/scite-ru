@@ -1,6 +1,6 @@
 --[[--------------------------------------------------
 SciTE Smart braces
-Version: 1.2.4
+Version: 1.2.5
 Authors: Dmitry Maslov, Julgo, TymurGubayev
 -------------------------------------------------
 Работает, если:
@@ -37,11 +37,11 @@ Authors: Dmitry Maslov, Julgo, TymurGubayev
  текст оканчивается переводом строки, то скобки вставляются до переноса
  строки
 
- Если мы вводим символ { при редактировании файла cpp или css, то автоматически
+ Если мы вводим символ { при редактировании файла cpp, то автоматически
  вставляется перенос строки два раза, а после } - курсор при этом оказывается
  в середине, т.е. после первого переноса строки, все отступы сохраняются
 
- Если мы вставляем символ } при редактировании файла cpp или css, то отступ
+ Если мы вставляем символ } при редактировании файла cpp, то отступ
  автоматически уменьшается на один
 
  Если мы только что вставили скобку автоматом, то после того
@@ -249,7 +249,7 @@ local function SmartBraces( char )
 				then
 					-- по волшебному обрабатываем скобку { в cpp
 					if	( char == '{' ) and
-						( editor:GetLexerLanguage() == 'cpp' or editor:GetLexerLanguage() == 'css' )
+						( editor:GetLexerLanguage() == 'cpp' )
 					then
 						editor:BeginUndoAction()
 						local ln = GetCurrLineNumber()
@@ -291,9 +291,9 @@ local function SmartBraces( char )
 				end
 				-- если мы ставим закрывающуюся скобку
 				if ( char == braceClose ) then
-					-- "по волшебному" обрабатываем скобку } в cpp и css
+					-- "по волшебному" обрабатываем скобку } в cpp
 					if ( char == '}' ) and
-						( editor:GetLexerLanguage() == 'cpp' or editor:GetLexerLanguage() == 'css' )
+						( editor:GetLexerLanguage() == 'cpp' )
 					then
 						editor:BeginUndoAction()
 						if (IsLineStartPos( editor.CurrentPos ) )
