@@ -351,6 +351,7 @@
 	<td>Xavi</td>
 	<td>Toby Inkster</td>
 	<td>Eric Forgeot</td>
+	<td>Colomban Wendling</td>
     </tr>
     </table>
 	<p>
@@ -363,6 +364,104 @@
 			Icons</a> Copyright(C) 1998 by Dean S. Jones<br />
 		</li>
 	</ul>
+
+    <h3>
+       <a href="http://prdownloads.sourceforge.net/scintilla/scite221.zip?download">Release 2.21</a>
+    </h3>
+    <ul>
+	<li>
+	Версия 2.21 от 1 сентября 2010 г.
+	</li>
+	<li>
+	Улучшена поддержка азиатских двухбайтовых кодировок (DBCS). Работает поиск без учета регистра, гораздо быстрее выполняются другие операции.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2999125&group_id=2439">Bug #2999125,</a>
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2774616&group_id=2439">Bug #2774616,</a>
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2991942&group_id=2439">Bug #2991942,</a>
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3005688&group_id=2439">Bug #3005688.</a>
+	</li>
+	<li>
+	Scintilla в GTK+ не использует устаревшие интерфейсы API (для GTK+ 2.20), за исключением GdkFont и GdkFont use, которые можно отключить с помощью инструкции препроцессора DISABLE_GDK_FONT.
+	</li>
+	<li>
+	В интерфейс IDocument, использующийся лексерами, добавлены методы BufferPointer и GetLineIndentation.
+	</li>
+	<li>
+	В Windows, щелчок мыши устанавливает фокус перед обработкой действий мыши или отправкой уведомлений.
+	</li>
+	<li>
+	Исправлена ошибка в ОС X (платформы MacOSX), когда перетаскивание приводило к перезаписи буфера обмена.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3039732&group_id=2439">Bug #3039732.</a>
+	</li>
+	<li>
+	Исправлена ошибка отрисовки в GTK+ при горизонтальной прокрутке более чем на 32000 пикселей.
+	</li>
+	<li>
+	Исправлена ошибка SciTE при вызове команды Complete Symbol (автозавершение) из панели вывода
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3050957&group_id=2439">Bug #3050957.</a>
+	</li>
+	<li>
+	Исправлена ошибка невозможности отключения сворачивания.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3040649&group_id=2439">Bug #3040649.</a>
+	</li>
+	<li>
+	Исправлена ошибка нераскрытия свёрнутого блока при нажатии Enter в его заголовочной строке.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3043419&group_id=2439">Bug #3043419.</a>
+	</li>
+	<li>
+	В SciTE в окне Поиска и Замены опция 'Match case' (Учитывать регистр) изменена на 'Case sensitive', что позволяет использовать 'v' вместо 'c' для управляющей комбинации клавиш (Alt+подчеркнутый символ в названии пункта меню/команды).
+	</li>
+	<li>
+	SciTE выводит трассировку/распечатку стека (stack trace) для Lua при ошибке.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3051397&group_id=2439">Bug #3051397.</a>
+	</li>
+	<li>
+	В SciTE в Windows исправлена потеря фокуса в панели вывода при двойном клике на сообщении об ошибке.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=1264835&group_id=2439">Bug #1264835.</a>
+	</li>
+	<li>
+	SciTE в Windows использует функцию SetDllDirectory, чтобы избежать проблем с безопасностью.
+	</li>
+	<li>
+	Исправлено падение лексера C++, когда выражение препроцессора похоже на деление на 0.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3056825&group_id=2439">Bug #3056825.</a>
+	</li>
+	<li>
+	Улучшен лексер Haskell.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=352439&aid=3039490&group_id=2439">Feature #3039490.</a>
+	</li>
+	<li>
+	В HTML исправлена ошибка подсветки вокруг тэгов {% %} в Django.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3034853&group_id=2439">Bug #3034853.</a>
+	</li>
+	<li>
+	В HTML JavaScript исправлена ошибка подсветки при потере конца строки.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3038381&group_id=2439">Bug #3038381.</a>
+	</li>
+	<li>
+	В HTML лексере запоминается состояние строки, вызываемое строкой на этой строке, а не на следующей строке.
+	(<a href="http://groups.google.com/group/scintilla-interest/browse_thread/thread/bd35e47040a0aac7#">подробности</a>)
+	</li>
+	<li>
+	В лексере Markdown исправлен уход в бесконечный цикл.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3045386&group_id=2439">Bug #3045386.</a>
+	</li>
+	<li>
+	В MySQL исправлена ошибка сворачивания блоков с оператором END.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3031742&group_id=2439">Bug #3031742.</a>
+	</li>
+	<li>
+	Лексер PowerShell позволяет использовать '_' (символ подчеркивания) в качестве символа слова.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=352439&aid=3042228&group_id=2439">Feature #3042228.</a>
+	</li>
+	<li>
+	SciTE в GTK+ отказывался обрабатывать следующие команды, если не выполнилась команда command.go.needs.
+	</li>
+	<li>
+	При закрытии SciTE все буферы теперь получают вызов OnClose.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3033857&group_id=2439">Bug #3033857.</a>
+	</li>
+    </ul>
+	<li>Перевод: <b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=ALeXkRU" target=_blank>ALeXkRU</a></b>
 
 	<h3>
 		<a href="http://prdownloads.sourceforge.net/scintilla/scite220.zip?download">Release 2.20</a>
@@ -388,8 +487,8 @@
 	Интерфейсы, определенные для этого, временные и могут измениться до следующего релиза.
 	Совместимость классов позволяет существующим лексерам, скомпилированным в Scintilla, работать с небольшими изменениями.
 	Интерфейс для внешних лексеров изменился и существующие внешние лексеры требуют исправления и перекомпиляции.
-	Один объект лексера привязывается к документу, в то время как раньше лексеры были привязаны к представлению/отображению,
-	что могло приводить к использованию разных лексеров для разделения представления с непредсказуемыми результатами.
+	Каждый объект лексера теперь связан с документом.
+	Ранее он привязывался к представлению этого документа, что приводило к некорректному поведению, когда этих представлений было открыто более одного на документ.
 	</li>
 	<li>
 	Лексер C++ понимает препроцессор достаточно для выделения серым неактивный код в результате условной компиляции.
