@@ -53,7 +53,7 @@ public:
 	void SetXPM(const char *textForm);
 	void SetXPM(const char *const *linesForm);
 	void Draw(Surface *surface, PRectangle &rc, Font &fontForCharacter);
-	void Draw(Surface *surface, PRectangle &rc, Font &fontForCharacter, ColourAllocated &foreCA, ColourAllocated &backCA); //!-add-[HighlightCurrFolder]
+	void Draw(Surface *surface, PRectangle &rcWhole, Font &fontForCharacter, ColourAllocated &foreCA, ColourAllocated &backCA); //!-add-[HighlightCurrFolder]
 };
 
 #ifdef SCI_NAMESPACE

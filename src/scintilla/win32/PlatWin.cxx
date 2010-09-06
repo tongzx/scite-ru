@@ -27,14 +27,8 @@
 
 // We want to use multi monitor functions, but via LoadLibrary etc
 // Luckily microsoft has done the heavy lifting for us, so we'll just use their stub functions!
-#if defined(_MSC_VER) || defined(__BORLANDC__)
+#if (defined(_MSC_VER) && (MSC_VER > 1200)) || defined(__BORLANDC__)
 #define COMPILE_MULTIMON_STUBS
-//!-start-[no_wornings]
-#if(WINVER < 0x0500)
-#undef _WIN32_WINNT
-#define _WIN32_WINNT  WINVER
-#endif
-//!-end-[no_wornings]
 #include "MultiMon.h"
 #endif
 
@@ -1047,6 +1041,8 @@ void Window::SetPositionRelative(PRectangle rc, Window w) {
 		::GetWindowRect(reinterpret_cast<HWND>(w.GetID()), &rcOther);
 		rc.Move(rcOther.left, rcOther.top);
 
+		// This #ifdef is for VC 98 which has problems with MultiMon.h under some conditions.
+#ifdef MONITOR_DEFAULTTONULL
 		// We're using the stub functionality of MultiMon.h to decay gracefully on machines
 		// (ie, pre Win2000, Win95) that do not support the newer functions.
 		RECT rcMonitor;
@@ -1070,6 +1066,7 @@ void Window::SetPositionRelative(PRectangle rc, Window w) {
 			rc.Move(mi.rcWork.left - rc.left, 0);
 		if (rc.top < mi.rcWork.top)
 			rc.Move(0, mi.rcWork.top - rc.top);
+#endif
 	}
 	SetPosition(rc);
 }
@@ -1154,6 +1151,7 @@ void Window::SetTitle(const char *s) {
 /* Returns rectangle of monitor pt is on, both rect and pt are in Window's
    coordinates */
 PRectangle Window::GetMonitorRect(Point pt) {
+#ifdef MONITOR_DEFAULTTONULL
 	// MonitorFromPoint and GetMonitorInfo are not available on Windows 95 so are not used.
 	// There could be conditional code and dynamic loading in a future version
 	// so this would work on those platforms where they are available.
@@ -1173,6 +1171,9 @@ PRectangle Window::GetMonitorRect(Point pt) {
 	} else {
 		return PRectangle();
 	}
+#else
+	return PRectangle();
+#endif
 }
 
 struct ListItemData {
@@ -1321,7 +1322,6 @@ class ListBoxX : public ListBox {
 	int NcHitTest(WPARAM, LPARAM) const;
 	void CentreItem(int);
 	void Paint(HDC);
-	void Erase(HDC);
 	static LRESULT PASCAL ControlWndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
 
 	static const Point ItemInset;	// Padding around whole item
@@ -2072,28 +2072,7 @@ void Menu::CreatePopUp() {
 
 void Menu::Destroy() {
 	if (mid)
-//!		::DestroyMenu(reinterpret_cast<HMENU>(mid));
-//!-start-[SubMenu]
-	//~ Destroy menu with all submenus
-	{
-		HMENU hMenu = reinterpret_cast<HMENU>(mid);
-		int  ptr = 0, to_check = 0;
-		struct UserMenu {
-			HMENU   hMenu;
-		} UMenu[300];
-		UMenu[ptr++].hMenu = hMenu;
-
-		//~ Fill the struct with pointers that must be released
-		do {
-			for (int i = 0; i < ::GetMenuItemCount(UMenu[to_check].hMenu); i++)
-				UMenu[ptr++].hMenu = ::GetSubMenu(UMenu[to_check].hMenu, i);
-		} while (++to_check<=ptr);
- 
-		//~ In descending order destroy all the menus
-		for (int i = ptr-1; i >= 0; i--)
-			::DestroyMenu(UMenu[i].hMenu);
-	}
-//!-end-[SubMenu]
+		::DestroyMenu(reinterpret_cast<HMENU>(mid));
 	mid = 0;
 }
 

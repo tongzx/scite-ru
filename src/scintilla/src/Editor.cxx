@@ -9,6 +9,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <ctype.h>
+#include <assert.h>
 
 #include <string>
 #include <vector>
@@ -25,6 +26,7 @@
 
 #include "Platform.h"
 
+#include "ILexer.h"
 #include "Scintilla.h"
 
 #include "SplitVector.h"
@@ -2484,6 +2486,8 @@ void Editor::DrawEOL(Surface *surface, ViewStyle &vsDraw, PRectangle rcLine, Lin
 
 	// Fill the remainder of the line
 	rcSegment.left = xEol + xStart + virtualSpace + blobsWidth + vsDraw.aveCharWidth;
+	if (rcSegment.left < rcLine.left)
+		rcSegment.left = rcLine.left;
 	rcSegment.right = rcLine.right;
 
 	if (!hideSelection && vsDraw.selEOLFilled && eolInSelection && vsDraw.selbackset && (line < pdoc->LinesTotal() - 1) && (alpha == SC_ALPHA_NOALPHA)) {
@@ -4193,6 +4197,13 @@ void Editor::NotifyStyleNeeded(Document *, void *, int endStyleNeeded) {
 	NotifyStyleToNeeded(endStyleNeeded);
 }
 
+void Editor::NotifyLexerChanged(Document *, void *) {
+}
+
+void Editor::NotifyErrorOccurred(Document *, void *, int status) {
+	errorStatus = status;
+}
+
 void Editor::NotifyChar(int ch) {
 	SCNotification scn = {0};
 	scn.nmhdr.code = SCN_CHARADDED;
@@ -4399,6 +4410,14 @@ void Editor::NotifyModified(Document *, DocModification mh, void *) {
 			Redraw();
 		}
 	}
+	if (mh.modificationType & SC_MOD_LEXERSTATE) {
+		if (paintState == painting) {
+			CheckForChangeOutsidePaint(
+			    Range(mh.position, mh.position + mh.length));
+		} else {
+			Redraw();
+		}
+	}
 	if (mh.modificationType & (SC_MOD_CHANGESTYLE | SC_MOD_CHANGEINDICATOR)) {
 		if (mh.modificationType & SC_MOD_CHANGESTYLE) {
 			pdoc->IncrementStyleClock();
@@ -4429,7 +4448,16 @@ void Editor::NotifyModified(Document *, DocModification mh, void *) {
 			// Some lines are hidden so may need shown.
 			// TODO: check if the modified area is hidden.
 			if (mh.modificationType & SC_MOD_BEFOREINSERT) {
-				NotifyNeedShown(mh.position, 0);
+				int lineOfPos = pdoc->LineFromPosition(mh.position);
+				bool insertingNewLine = false;
+				for (int i=0; i < mh.length; i++) {
+					if ((mh.text[i] == '\n') || (mh.text[i] == '\r'))
+						insertingNewLine = true;
+				}
+				if (insertingNewLine && (mh.position != pdoc->LineStart(lineOfPos)))
+					NotifyNeedShown(mh.position, pdoc->LineStart(lineOfPos+1) - mh.position);
+				else
+					NotifyNeedShown(mh.position, 0);
 			} else if (mh.modificationType & SC_MOD_BEFOREDELETE) {
 				NotifyNeedShown(mh.position, mh.length);
 			}
@@ -8848,6 +8876,10 @@ sptr_t Editor::WndProc(unsigned int iMessage, uptr_t wParam, sptr_t lParam) {
 	case SCI_SWAPMAINANCHORCARET:
 		InvalidateSelection(sel.RangeMain());
 		sel.RangeMain() = SelectionRange(sel.RangeMain().anchor, sel.RangeMain().caret);
+		break;
+
+	case SCI_CHANGELEXERSTATE:
+		pdoc->ChangeLexerState(wParam, lParam);
 		break;
 
 //!-start-[MouseClickHandled]
