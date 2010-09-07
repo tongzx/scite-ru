@@ -1012,21 +1012,21 @@ set void CallTipUseStyle=2212(int tabSize,)
 
 ##!-start-[BetterCalltips]
 # Add a range of characters to be displayed in a highlight style.
-fun void CallTipAddHlt=4013(int start, int end)
+fun void CallTipAddHlt=4019(int start, int end)
 
 # Delete all highlighted ranges
-fun void CallTipClearHlt=4014(,)
+fun void CallTipClearHlt=4020(,)
 
 # Update calltip window to reflect changes made by CallTipAddHlt and CallTipClearHlt
-fun void CallTipUpdateHlt=4015(,)
+fun void CallTipUpdateHlt=4021(,)
 
 # Set calltip line wrap bound in characters, 0 means no wrap
-fun void CallTipSetWordWrap=4016(int wrapBnd,)
+fun void CallTipSetWordWrap=4022(int wrapBnd,)
 ##!-end-[BetterCalltips]
 
 ##!-start-[MouseClickHandled]
 # Set mouse capture status
-set void SetMouseCapture=4017(bool on,)
+set void SetMouseCapture=4023(bool on,)
 ##!-end-[MouseClickHandled]
 
 ##!-start-[HighlightCurrFolder]
