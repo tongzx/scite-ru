@@ -763,10 +763,6 @@ SOURCE=..\..\scintilla\src\XPM.cxx
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
-SOURCE=..\..\scintilla\Include\Accessor.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\src\GUI.h
 # End Source File
 # Begin Source File
@@ -796,10 +792,6 @@ SOURCE=..\Src\SciTEBase.h
 # Begin Source File
 
 SOURCE=..\src\StyleWriter.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\scintilla\Include\WinDefs.h
 # End Source File
 # Begin Source File
 

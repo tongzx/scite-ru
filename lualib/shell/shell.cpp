@@ -167,7 +167,7 @@ public:
 				// 3. Убираем лишние пробелы
 				::PathRemoveBlanksA( sCanonical.GetBuffer() );
 				// 4. Проверяем существует ли преобразованный путь
-				if ( ::PathFileExists( sCanonical.GetBuffer() ) == TRUE )
+				if ( ::PathFileExistsA( sCanonical.GetBuffer() ) == TRUE )
 				{
 					::PathMakePrettyA( sCanonical.GetBuffer() );
 					::PathRemoveBackslashA( sCanonical.GetBuffer() );
@@ -187,7 +187,7 @@ public:
 					::PathRemoveArgsA( sCanonical.GetBuffer() );
 					// 6. Делаем путь по красивше
 					::PathUnquoteSpacesA( sCanonical.GetBuffer() );
-					::PathRemoveBackslash( sCanonical.GetBuffer() );
+					::PathRemoveBackslashA( sCanonical.GetBuffer() );
 					::PathMakePrettyA( sCanonical.GetBuffer() );
 					// 7. Проверяем преобразованный путь это дирректория
 					if ( ::PathIsDirectoryA( sCanonical.GetBuffer() ) != FALSE )
@@ -200,7 +200,7 @@ public:
 						// 8. Добавляем расширение к файлу .exe, если нету
 						::PathAddExtensionA( sCanonical.GetBuffer(), NULL );
 						// 9. Проверяем есть ли такой файл
-						if ( ::PathFileExists( sCanonical.GetBuffer() ) == TRUE )
+						if ( ::PathFileExistsA( sCanonical.GetBuffer() ) == TRUE )
 						{
 							m_sPath.Append( sCanonical.GetBuffer() );
 							m_sFileName.Append( ::PathFindFileNameA( sCanonical.GetBuffer() ) );
@@ -213,7 +213,7 @@ public:
 							::PathFindOnPathA( sCanonical.GetBuffer(), NULL );
 							::PathMakePrettyA( sCanonical.GetBuffer() );
 							m_sPath.Append( sCanonical.GetBuffer() );
-							if ( ::PathFileExists( sCanonical.GetBuffer() ) == TRUE )
+							if ( ::PathFileExistsA( sCanonical.GetBuffer() ) == TRUE )
 							{
 								m_sFileName.Append( ::PathFindFileNameA( sCanonical.GetBuffer() ) );
 								::PathRemoveFileSpecA( sCanonical.GetBuffer() );
@@ -252,7 +252,7 @@ public:
 	static DWORD GetFileAttributes( const char* lpszFileName )
 	{
 		WIN32_FILE_ATTRIBUTE_DATA fad;
-		if ( ::GetFileAttributesEx( lpszFileName, GetFileExInfoStandard, &fad ) == FALSE )
+		if ( ::GetFileAttributesExA( lpszFileName, GetFileExInfoStandard, &fad ) == FALSE )
 		{
 			return ((DWORD)-1); //INVALID_FILE_ATTRIBUTES;
 		}
@@ -339,7 +339,7 @@ static int msgbox( lua_State* L )
 	const char* text = luaL_checkstring( L, 1 );
 	const char* title = lua_tostring( L, 2 );
 	int options = (int)lua_tonumber( L, 3 ) | MB_TASKMODAL;
-	int retCode = ::MessageBox( NULL, text, title == NULL ? "SciTE" : title, options );
+	int retCode = ::MessageBoxA( NULL, text, title == NULL ? "SciTE" : title, options );
 	lua_pushnumber( L, retCode );
 	return 1;
 }
@@ -371,7 +371,7 @@ static BOOL RunProcessHide( CPath& path, DWORD* out_exitcode, CSimpleString* str
 {
 	static const int MAX_CMD = 1024;
 
-	STARTUPINFO si = { sizeof(si) };
+	STARTUPINFOA si = { sizeof(STARTUPINFOA) };
 	si.dwFlags = STARTF_USESHOWWINDOW;
 	si.wShowWindow = SW_HIDE;
 
@@ -402,16 +402,16 @@ static BOOL RunProcessHide( CPath& path, DWORD* out_exitcode, CSimpleString* str
 	}
 
 	PROCESS_INFORMATION pi = { 0 };
-	BOOL RetCode = ::CreateProcess( NULL, // не используем имя файла, все в строке запуска
-									bufCmdLine.GetBuffer(), // строка запуска
-									NULL, // Process handle not inheritable
-									NULL, // Thread handle not inheritable
-									TRUE, // Set handle inheritance to FALSE
-									0, // No creation flags
-									NULL, // Use parent's environment block
-									NULL, //path.GetDirectory(), // устанавливаем дирректорию запуска
-									&si, // STARTUPINFO
-									&pi ); // PROCESS_INFORMATION
+	BOOL RetCode = ::CreateProcessA( NULL, // не используем имя файла, все в строке запуска
+									 bufCmdLine.GetBuffer(), // строка запуска
+									 NULL, // Process handle not inheritable
+									 NULL, // Thread handle not inheritable
+									 TRUE, // Set handle inheritance to FALSE
+									 0, // No creation flags
+									 NULL, // Use parent's environment block
+									 NULL, //path.GetDirectory(), // устанавливаем дирректорию запуска
+									 &si, // STARTUPINFO
+									 &pi ); // PROCESS_INFORMATION
 
 	// если провалили запуск сообщаем об ошибке
 	if ( RetCode == FALSE )
@@ -499,20 +499,21 @@ static BOOL ExecuteHide( CPath& path, DWORD* out_exitcode, CSimpleString* strOut
 	try
 	{
 		// подключаем консоль
-		STARTUPINFO si = { sizeof(si) };
+		STARTUPINFOA si = { sizeof(STARTUPINFOA) };
 		si.dwFlags = STARTF_USESHOWWINDOW;
 		si.wShowWindow = SW_HIDE;
 		PROCESS_INFORMATION pi = { 0 };
-		::CreateProcess( NULL, // не используем имя файла, все в строке запуска
-						 "cmd", // Command line
-						 NULL, // Process handle not inheritable
-						 NULL, // Thread handle not inheritable
-						 TRUE, // Set handle inheritance to FALSE
-						 0, // No creation flags
-						 NULL, // Use parent's environment block
-						 NULL, // Use parent's starting directory
-						 &si, // STARTUPINFO
-						 &pi ); // PROCESS_INFORMATION
+		char command_line[] = "cmd";
+		::CreateProcessA( NULL, // не используем имя файла, все в строке запуска
+						  command_line, // Command line
+						  NULL, // Process handle not inheritable
+						  NULL, // Thread handle not inheritable
+						  TRUE, // Set handle inheritance to FALSE
+						  0, // No creation flags
+						  NULL, // Use parent's environment block
+						  NULL, // Use parent's starting directory
+						  &si, // STARTUPINFO
+						  &pi ); // PROCESS_INFORMATION
 		// задержка чтобы консоль успела создаться
 		::WaitForSingleObject( pi.hProcess, 100 );
 		BOOL hResult = FALSE;
@@ -604,7 +605,7 @@ static BOOL ExecuteHide( CPath& path, DWORD* out_exitcode, CSimpleString* strOut
 	}
 
 	// Now create the child process.
-	SHELLEXECUTEINFO shinf = { sizeof(SHELLEXECUTEINFO) };
+	SHELLEXECUTEINFOA shinf = { sizeof(SHELLEXECUTEINFOA) };
 	shinf.lpFile = path.GetPath();
 	shinf.lpParameters = path.GetFileParams();
 	//shinf.lpDirectory = path.GetDirectory();
@@ -613,7 +614,7 @@ static BOOL ExecuteHide( CPath& path, DWORD* out_exitcode, CSimpleString* strOut
 				  SEE_MASK_FLAG_DDEWAIT |
 				  SEE_MASK_NOCLOSEPROCESS;
 	shinf.nShow = SW_HIDE;
-	BOOL bSuccess = ::ShellExecuteEx( &shinf );
+	BOOL bSuccess = ::ShellExecuteExA( &shinf );
 	if ( bSuccess && shinf.hInstApp <= (HINSTANCE)32 ) bSuccess = FALSE;
 	HANDLE hProcess = shinf.hProcess;
 
@@ -719,7 +720,7 @@ static int exec( lua_State* L )
 			 strcmp( verb, "explore" ) == 0 && // если команда запуска explore
 			 CPath::IsFileExists( file.GetPath() ) ) // проверяем файл ли это
 		{
-			SHELLEXECUTEINFO shinf = { sizeof(SHELLEXECUTEINFO) };
+			SHELLEXECUTEINFOA shinf = { sizeof(SHELLEXECUTEINFOA) };
 			shinf.lpFile = "explorer.exe";
 			CSimpleString sFileParams;
 			sFileParams.Append( "/e, /select," );
@@ -730,7 +731,7 @@ static int exec( lua_State* L )
 						  SEE_MASK_FLAG_DDEWAIT |
 						  SEE_MASK_NOCLOSEPROCESS;
 			shinf.nShow = noshow ? SW_HIDE : SW_SHOWNORMAL;
-			bSuccess = ::ShellExecuteEx( &shinf );
+			bSuccess = ::ShellExecuteExA( &shinf );
 			if ( bSuccess && shinf.hInstApp <= (HINSTANCE)32 ) bSuccess = FALSE;
 			hProcess = shinf.hProcess;
 		}
@@ -738,7 +739,7 @@ static int exec( lua_State* L )
 				  strcmp( verb, "select" ) == 0 && // если команда запуска select
 				  CPath::IsPathExist( file.GetPath() ) ) // проверяем правильный путь
 		{
-			SHELLEXECUTEINFO shinf = { sizeof(SHELLEXECUTEINFO) };
+			SHELLEXECUTEINFOA shinf = { sizeof(SHELLEXECUTEINFOA) };
 			shinf.lpFile = "explorer.exe";
 			CSimpleString sFileParams;
 			sFileParams.Append( "/select," );
@@ -749,13 +750,13 @@ static int exec( lua_State* L )
 						  SEE_MASK_FLAG_DDEWAIT |
 						  SEE_MASK_NOCLOSEPROCESS;
 			shinf.nShow = noshow ? SW_HIDE : SW_SHOWNORMAL;
-			bSuccess = ::ShellExecuteEx( &shinf );
+			bSuccess = ::ShellExecuteExA( &shinf );
 			if ( bSuccess && shinf.hInstApp <= (HINSTANCE)32 ) bSuccess = FALSE;
 			hProcess = shinf.hProcess;
 		}
 		else
 		{
-			SHELLEXECUTEINFO shinf = { sizeof(SHELLEXECUTEINFO) };
+			SHELLEXECUTEINFOA shinf = { sizeof(SHELLEXECUTEINFOA) };
 			shinf.lpFile = file.GetPath();
 			shinf.lpParameters = file.GetFileParams();
 			shinf.lpVerb = verb;
@@ -772,7 +773,7 @@ static int exec( lua_State* L )
 				shinf.fMask |= SEE_MASK_INVOKEIDLIST;
 			}
 			shinf.nShow = noshow ? SW_HIDE : SW_SHOWNORMAL;
-			bSuccess = ::ShellExecuteEx( &shinf );
+			bSuccess = ::ShellExecuteExA( &shinf );
 			if ( bSuccess && shinf.hInstApp <= (HINSTANCE)32 ) bSuccess = FALSE;
 			hProcess = shinf.hProcess;
 		}
@@ -838,7 +839,7 @@ static int findfiles( lua_State* L )
 {
 	const char* filename = luaL_checkstring( L, 1 );
 
-	WIN32_FIND_DATA findFileData;
+	WIN32_FIND_DATAA findFileData;
 	HANDLE hFind = ::FindFirstFileA( filename, &findFileData );
 	if ( hFind != INVALID_HANDLE_VALUE )
 	{
