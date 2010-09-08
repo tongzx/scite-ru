@@ -98,13 +98,13 @@ static void ColouriseLuaDoc(
 		initStyle = SCE_LUA_DEFAULT;
 	}
 
+//!	StyleContext sc(startPos, length, initStyle, styler);
 //!-start-[LuaLexerImprovement]
 	unsigned int objectPartEndPos = 0;
 	bool isObject = false;
 	bool isObjectStart = false;
 	bool isSubObject = false;
 	char sChar = 0;
-//!-end-[LuaLexerImprovement]
 	class StyleContextEx : public StyleContext
 	{
 	public:
@@ -154,6 +154,7 @@ static void ColouriseLuaDoc(
 		LexAccessor &stylerEx;
 	};
 	StyleContextEx sc(startPos, length, initStyle, styler);
+//!-end-[LuaLexerImprovement]
 	if (startPos == 0 && sc.ch == '#') {
 		// shbang line: # is a comment only if first char of the script
 		sc.SetState(SCE_LUA_COMMENTLINE);
