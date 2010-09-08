@@ -1,40 +1,11 @@
 -- COMMON.lua
--- Version: 1.6.1
+-- Version: 1.6.2
 ---------------------------------------------------
 -- Общие функции, использующиеся во многих скриптах
 ---------------------------------------------------
 
--- Перекодировка текста
-require "iconv"
-
-local function Convert(text_in, code_in, code_out)
-	local cd = iconv.open(code_in, code_out)
-	assert(cd, "Failed to create a converter object.")
-	local text_out, err = cd:iconv(text_in)
-
-	if err == iconv.ERROR_INCOMPLETE then
-		print("iconv ERROR: Incomplete input.")
-	elseif err == iconv.ERROR_INVALID then
-		print("iconv ERROR: Invalid input.")
-	elseif err == iconv.ERROR_NO_MEMORY then
-		print("iconv ERROR: Failed to allocate memory.")
-	elseif err == iconv.ERROR_UNKNOWN then
-		print("iconv ERROR: There was an unknown error.")
-	end
-	return text_out
-end
-
-function string.toUTF(s)
-	return Convert(s, "", "utf8")
-end
-
-function string.toWIN(s)
-	return Convert(s, "utf8", "windows-1251")
-end
-
---------------------------------------------------------
 -- Пути поиска подключаемых lua-библиотек
-package.cpath = props["SciteDefaultHome"]:toWIN().."\\tools\\LuaLib\\?.dll;"..package.cpath
+package.cpath = props["SciteDefaultHome"].."\\tools\\LuaLib\\?.dll;"..package.cpath
 
 --------------------------------------------------------
 -- Подключение пользовательского обработчика к событию SciTE

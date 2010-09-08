@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev, ur4ltz
-Version 1.20.1
+Version 1.20.2
 ------------------------------------------------------
   Note: Require gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
                lpeg.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/lpeg/>
@@ -376,11 +376,12 @@ function FileMan_FileExecWithParams()
 end
 
 local function OpenFile(filename)
+	filename = shell.utf8(filename)
 	if filename:match(".session$") ~= nil then
 		filename = filename:gsub('\\','\\\\')
-		scite.Perform ("loadsession:"..filename:toUTF())
+		scite.Perform ("loadsession:"..filename)
 	else
-		scite.Open(filename:toUTF())
+		scite.Open(filename)
 	end
 	gui.pass_focus()
 end
@@ -486,7 +487,7 @@ function Favorites_AddFile()
 end
 
 function Favorites_AddCurrentBuffer()
-	list_fav_table[#list_fav_table+1] = props['FilePath']
+	list_fav_table[#list_fav_table+1] = shell.mbcs(props['FilePath'])
 	Favorites_ListFILL()
 end
 
@@ -1299,7 +1300,7 @@ local function OnSwitch()
 		local path = props['FileDir']
 		if path == '' then return end
 		path = path:gsub('\\$','')..'\\'
-		path = path:toWIN()
+		path = shell.mbcs(path)
 		if path ~= current_path then
 			current_path = path
 			FileMan_ListFILL()
