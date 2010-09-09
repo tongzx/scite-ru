@@ -2942,8 +2942,10 @@ void FindStrip::Next(bool markAll) {
 		pSearcher->MarkAll();
 	}
 	pSearcher->FindNext(pSearcher->reverseFind);
-	visible = false;
-	pSearcher->UIClosed();
+	if(pSearcher->closeFind) { //!-add-[close.find.window]
+		visible = false;
+		pSearcher->UIClosed();
+	} //!-add-[close.find.window]
 }
 
 void FindStrip::AddToPopUp(GUI::Menu &popup, const char *label, int cmd, bool checked) {
