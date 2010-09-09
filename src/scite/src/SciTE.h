@@ -246,6 +246,7 @@
 #define IDFINDINSTYLE		250
 #define IDFINDSTYLE			251
 #define IDCONVERT			252
+#define IDFINDCLOSE			253 //!-add-[close.find.window]
 
 #define IDPARAMSTART		300
 

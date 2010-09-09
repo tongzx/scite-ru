@@ -894,6 +894,7 @@ void DialogFindReplace::GrabFields() {
 		pSearcher->reverseFind = Checked(IDDIRECTIONUP);
 	}
 	if (advanced) {
+		pSearcher->replacing = !Checked(IDFINDCLOSE); //!-add-[close.find.window]
 		pSearcher->findInStyle = Checked(IDFINDINSTYLE);
 		pSearcher->findStyle = atoi(ItemTextU(IDFINDSTYLE).c_str());
 	}
@@ -934,6 +935,7 @@ BOOL SciTEWin::FindMessage(HWND hDlg, UINT message, WPARAM wParam) {
 		dlg.FillFields();
 		if (FindReplaceAdvanced()) {
 			dlg.SetCheck(IDFINDSTYLE, findInStyle);
+			dlg.SetCheck(IDFINDCLOSE, closeFind); //!-add-[close.find.window]
 			dlg.Enable(IDFINDSTYLE, findInStyle);
 			::SendMessage(dlg.Item(IDFINDSTYLE), EM_LIMITTEXT, 3, 1);
 			::SetDlgItemInt(hDlg, IDFINDSTYLE, wEditor.Call(SCI_GETSTYLEAT, wEditor.Call(SCI_GETCURRENTPOS)), FALSE);
@@ -946,14 +948,17 @@ BOOL SciTEWin::FindMessage(HWND hDlg, UINT message, WPARAM wParam) {
 
 	case WM_COMMAND:
 		if (ControlIDOfCommand(wParam) == IDCANCEL) {
+/*!-remove-[close.find.window]
 			::EndDialog(hDlg, IDCANCEL);
 			wFindReplace.Destroy();
+*/
+			DestroyFindReplace(); //!-add-[close.find.window]
 			return FALSE;
 		} else if ( (ControlIDOfCommand(wParam) == IDOK) ||
 		            (ControlIDOfCommand(wParam) == IDMARKALL) ) {
 			dlg.GrabFields();
-			::EndDialog(hDlg, IDOK);
-			wFindReplace.Destroy();
+			//!::EndDialog(hDlg, IDOK); //!-remove-[close.find.window]
+			//!wFindReplace.Destroy(); //!-remove-[close.find.window]
 			if (ControlIDOfCommand(wParam) == IDMARKALL){
 				MarkAll();
 			}
@@ -1339,6 +1344,7 @@ void SciTEWin::DestroyFindReplace() {
 		::EndDialog(reinterpret_cast<HWND>(wFindReplace.GetID()), IDCANCEL);
 		wFindReplace.Destroy();
 	}
+	replacing = false; //!-add-[close.find.window]
 }
 
 BOOL SciTEWin::GoLineMessage(HWND hDlg, UINT message, WPARAM wParam) {

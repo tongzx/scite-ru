@@ -439,6 +439,7 @@ public:
 	bool replacing;
 	bool havefound;
 	bool findInStyle;
+	bool closeFind; //!-add-[close.find.window]
 	int findStyle;
 	ComboMemory memFinds;
 	ComboMemory memReplaces;
