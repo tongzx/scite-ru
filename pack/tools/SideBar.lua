@@ -376,7 +376,7 @@ function FileMan_FileExecWithParams()
 end
 
 local function OpenFile(filename)
-	filename = shell.utf8(filename)
+	filename = shell.to_utf8(filename)
 	if filename:match(".session$") ~= nil then
 		filename = filename:gsub('\\','\\\\')
 		scite.Perform ("loadsession:"..filename)
@@ -487,7 +487,7 @@ function Favorites_AddFile()
 end
 
 function Favorites_AddCurrentBuffer()
-	list_fav_table[#list_fav_table+1] = shell.mbcs(props['FilePath'])
+	list_fav_table[#list_fav_table+1] = shell.from_utf8(props['FilePath'])
 	Favorites_ListFILL()
 end
 
@@ -1300,7 +1300,7 @@ local function OnSwitch()
 		local path = props['FileDir']
 		if path == '' then return end
 		path = path:gsub('\\$','')..'\\'
-		path = shell.mbcs(path)
+		path = shell.from_utf8(path)
 		if path ~= current_path then
 			current_path = path
 			FileMan_ListFILL()

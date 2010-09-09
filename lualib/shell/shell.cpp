@@ -971,8 +971,8 @@ static const struct luaL_reg shell[] =
 	{ "getclipboardtext", getclipboardtext },
 	{ "findfiles", findfiles },
 	{ "inputbox", showinputbox },
-	{ "utf8", to_utf8 },
-	{ "mbcs", from_utf8 },
+	{ "to_utf8", to_utf8 },
+	{ "from_utf8", from_utf8 },
 	{ NULL, NULL }
 };
 

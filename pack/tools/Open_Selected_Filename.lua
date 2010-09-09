@@ -51,7 +51,7 @@ local function Open_Selected_Filename()
 
 	if foropen ~= nil then
 		foropen = string.gsub(foropen, '\\\\', '\\')
-		scite.Open (shell.utf8(foropen))
+		scite.Open (shell.to_utf8(foropen))
 		return true
 	end
 end

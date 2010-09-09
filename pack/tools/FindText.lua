@@ -48,7 +48,7 @@ if firstNum < 1 or firstNum > 31 then firstNum = 31 end
 
 local sText = props['CurrentSelection']
 if tonumber(props["editor.unicode.mode"]) == IDM_ENCODING_DEFAULT then
-	sText = shell.mbcs(sText)
+	sText = shell.from_utf8(sText)
 end
 local flag0 = 0
 if (sText == '') then
@@ -79,7 +79,7 @@ if string.len(sText) > 0 then
 		if tonumber(props["editor.unicode.mode"]) == IDM_ENCODING_DEFAULT then
 			print(msg..sText..'"')
 		else
-			print(msg..shell.mbcs(sText)..'"')
+			print(msg..shell.from_utf8(sText)..'"')
 		end
 	end
 	local s,e = editor:findtext(sText, flag0 + flag1, 0)
@@ -94,7 +94,7 @@ if string.len(sText) > 0 then
 				if bookmark then editor:MarkerAdd(l,1) end
 				local str = string.gsub(' '..editor:GetLine(l),'%s+',' ')
 				if tonumber(props["editor.unicode.mode"]) ~= IDM_ENCODING_DEFAULT then
-					str = shell.mbcs(str)
+					str = shell.from_utf8(str)
 				end
 				if isOutput then
 					print('./'..props['FileNameExt']..':'..(l + 1)..':\t'..str)

@@ -160,8 +160,8 @@ AddEventHandler("OnFinalise", function()
 			-- Запуск вспомогательного скрипта для сохранения данных в SciTE.recent
 			-- (заодно в ком.строке передаем в вызываемый скрипт данные о местоположении SciteUserHome)
 			local script_dir = debug.getinfo(1, "S").source:gsub('^@(.+\\).-$', '%1')
-			script_dir = shell.mbcs(script_dir)
-			local cmd = 'wscript "'..script_dir..'RestoreRecent.js" "'..shell.mbcs(props["SciteUserHome"])..'"'
+			script_dir = shell.from_utf8(script_dir)
+			local cmd = 'wscript "'..script_dir..'RestoreRecent.js" "'..shell.from_utf8(props["SciteUserHome"])..'"'
 			shell.exec(cmd, nil, true, false)
 		end
 	end
