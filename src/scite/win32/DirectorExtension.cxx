@@ -15,6 +15,7 @@
 
 #include "Platform.h" //!-add-[no_wornings]
 #include <string>
+#include <vector>
 #include <map>
 
 #undef _WIN32_WINNT
@@ -35,6 +36,7 @@
 #include "GUI.h"
 #include "SString.h"
 #include "StringList.h"
+#include "StringHelpers.h"
 #include "FilePath.h"
 #include "PropSetFile.h"
 #include "Extender.h"

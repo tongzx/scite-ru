@@ -1,7 +1,7 @@
 # Make file for SciTE on Windows
 # Copyright 1998-2010 by Neil Hodgson <neilh@scintilla.org>
 # The License.txt file describes the conditions under which this software may be distributed.
-# This makefile assumes the mingw32 version of GCC 3.2 or 4.x is used and changes will
+# This makefile assumes the mingw32 version of GCC 4.x is used and changes will
 # be needed to use other compilers.
 
 .SUFFIXES: .cxx .properties
@@ -37,6 +37,7 @@ vpath %.c ../lua/src ../lua/src/lib
 
 LUA_INCLUDES = -I ../lua/include
 #LUA_SCRIPTS = ..\bin\SciTEExtension.lua ..\bin\SciTEStartup.lua
+LUA_DEFINES = -DLUA_USER_H=\"scite_lua_win.h\"
 else
 LUA_DEFINES = -DNO_LUA
 endif
@@ -55,7 +56,7 @@ endif
 
 CXXFLAGS = $(CFLAGS) -Wno-char-subscripts -pedantic -fno-rtti -mno-cygwin
 
-LDFLAGS=-mwindows -lcomctl32 -limm32 -lole32 -luuid $(LUA_LDFLAGS) -mno-cygwin
+LDFLAGS=-mwindows -lmsimg32 -lcomctl32 -limm32 -lole32 -luuid -luxtheme $(LUA_LDFLAGS) -mno-cygwin
 
 .cxx.o:
 	$(CC) $(CXXFLAGS) -c $< -o $@
@@ -63,7 +64,7 @@ LDFLAGS=-mwindows -lcomctl32 -limm32 -lole32 -luuid $(LUA_LDFLAGS) -mno-cygwin
 .c.o:
 	gcc $(CFLAGS) -c $< -o $@
 
-OTHER_OBJS	= FilePath.o SciTEBuffers.o SciTEIO.o Exporters.o PropSetFile.o StringList.o \
+OTHER_OBJS	= FilePath.o SciTEBuffers.o SciTEIO.o Exporters.o PropSetFile.o StringHelpers.o StringList.o \
 SciTEProps.o SciTEWin.o SciTEWinBar.o SciTEWinDlg.o MultiplexExtension.o \
 StyleWriter.o UniqueInstance.o \
 Utf8_16.o SciTERes.o GUIWin.o \
@@ -133,7 +134,7 @@ $(PROG): $(OBJS)
 
 OBJSSTATIC = Sc1.o SciTEWinBar.o SciTEWinDlg.o MultiplexExtension.o \
 	StyleWriter.o UniqueInstance.o SciTEBase.o FilePath.o SciTEBuffers.o \
-	SciTEIO.o Exporters.o PropSetFile.o StringList.o SciTEProps.o ScintillaWinL.o \
+	SciTEIO.o Exporters.o PropSetFile.o StringHelpers.o StringList.o SciTEProps.o ScintillaWinL.o \
 	ScintillaBaseL.o Editor.o Catalogue.o Accessor.o WordList.o CharacterSet.o \
 	LexerModule.o LexerSimple.o LexerBase.o \
 	ExternalLexer.o StyleContext.o Lexers.a PropSetSimple.o RunStyles.o \

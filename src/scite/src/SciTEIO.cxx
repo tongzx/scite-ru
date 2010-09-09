@@ -17,6 +17,7 @@
 #endif
 
 #include <string>
+#include <vector>
 #include <map>
 
 #if defined(GTK)
@@ -55,6 +56,7 @@
 
 #include "SString.h"
 #include "StringList.h"
+#include "StringHelpers.h"
 #include "FilePath.h"
 #include "PropSetFile.h"
 #include "StyleWriter.h"
@@ -783,6 +785,14 @@ int SciTEBase::SaveIfUnsureAll(bool forceQuestion) {
 	if (!props.GetInt("save.session.multibuffers.only") || buffers.length > 1) //!-add-[save.session.multibuffers.only]
 	if (props.GetInt("save.session") || props.GetInt("save.position") || props.GetInt("save.recent")) {
 		SaveSessionFile(GUI_TEXT(""));
+	}
+
+	// Ensure extender is told about each buffer closing
+	for (int k = 0; k < buffers.length; k++) {
+		SetDocumentAt(k);
+		if (extender) {
+			extender->OnClose(filePath.AsUTF8().c_str());
+		}
 	}
 
 	// Definitely going to exit now, so delete all documents

@@ -38,7 +38,7 @@ RC=rc
 LD=link
 
 CXXFLAGS=-Zi -TP -W4 -EHsc -Zc:forScope -Zc:wchar_t -D_CRT_SECURE_NO_DEPRECATE=1 -D_CRT_NONSTDC_NO_DEPRECATE $(WIDEFLAGS)
-CCFLAGS=-TC -W3 -wd4244 -D_CRT_SECURE_NO_DEPRECATE=1
+CCFLAGS=-TC -W3 -wd4244 -D_CRT_SECURE_NO_DEPRECATE=1 -DLUA_USER_H=\"scite_lua_win.h\"
 
 # For something scary:-Wp64
 CXXDEBUG=-Od -MTd -DDEBUG
@@ -49,7 +49,7 @@ NAME=-Fo
 #!-[FixDebug] LDDEBUG=
 LDFLAGS=-OPT:REF -LTCG
 LDDEBUG=-DEBUG
-LIBS=KERNEL32.lib USER32.lib GDI32.lib COMDLG32.lib COMCTL32.lib ADVAPI32.lib IMM32.lib SHELL32.LIB OLE32.LIB
+LIBS=KERNEL32.lib USER32.lib GDI32.lib MSIMG32.lib COMDLG32.lib COMCTL32.lib ADVAPI32.lib IMM32.lib SHELL32.LIB OLE32.LIB UXTHEME.LIB
 NOLOGO=-nologo
 
 !ELSE
@@ -98,6 +98,7 @@ OBJS=\
 	SciTEIO.obj \
 	Exporters.obj \
 	PropSetFile.obj \
+	StringHelpers.obj \
 	StringList.obj \
 	SciTEProps.obj \
 	Utf8_16.obj \
@@ -207,6 +208,7 @@ OBJSSTATIC=\
 	SciTEIO.obj \
 	Exporters.obj \
 	PropSetFile.obj \
+	StringHelpers.obj \
 	StringList.obj \
 	SciTEProps.obj \
 	Utf8_16.obj \
@@ -405,6 +407,7 @@ DirectorExtension.obj: \
 	../../scintilla/include/Scintilla.h \
 	../src/GUI.h \
 	../src/SString.h \
+	../src/StringHelpers.h \
 	../src/StringList.h \
 	../src/FilePath.h \
 	../src/PropSetFile.h \
@@ -424,6 +427,7 @@ SciTEWin.obj: \
 	../../scintilla/include/Scintilla.h \
 	../src/GUI.h \
 	../src/SString.h \
+	../src/StringHelpers.h \
 	../src/StringList.h \
 	../src/FilePath.h \
 	../src/PropSetFile.h \
@@ -446,6 +450,7 @@ Sc1.obj: \
 	../../scintilla/include/Scintilla.h \
 	../src/GUI.h \
 	../src/SString.h \
+	../src/StringHelpers.h \
 	../src/StringList.h \
 	../src/FilePath.h \
 	../src/PropSetFile.h \
@@ -468,6 +473,7 @@ SciTEWinBar.obj: \
 	../../scintilla/include/Scintilla.h \
 	../src/GUI.h \
 	../src/SString.h \
+	../src/StringHelpers.h \
 	../src/StringList.h \
 	../src/FilePath.h \
 	../src/PropSetFile.h \
@@ -485,6 +491,7 @@ SciTEWinDlg.obj: \
 	../../scintilla/include/Scintilla.h \
 	../src/GUI.h \
 	../src/SString.h \
+	../src/StringHelpers.h \
 	../src/StringList.h \
 	../src/FilePath.h \
 	../src/PropSetFile.h \
@@ -508,6 +515,7 @@ UniqueInstance.obj: \
 	../src/GUI.h \
 	SciTEWin.h \
 	../src/SString.h \
+	../src/StringHelpers.h \
 	../src/StringList.h \
 	../src/FilePath.h \
 	../src/PropSetFile.h \
@@ -527,6 +535,7 @@ Exporters.obj: \
 	../../scintilla/include/Scintilla.h \
 	../src/GUI.h \
 	../src/SString.h \
+	../src/StringHelpers.h \
 	../src/StringList.h \
 	../src/FilePath.h \
 	../src/PropSetFile.h \
@@ -569,6 +578,7 @@ SciTEBase.obj: \
 	../../scintilla/include/SciLexer.h \
 	../src/GUI.h \
 	../src/SString.h \
+	../src/StringHelpers.h \
 	../src/StringList.h \
 	../src/FilePath.h \
 	../src/PropSetFile.h \
@@ -584,6 +594,7 @@ SciTEBuffers.obj: \
 	../../scintilla/include/SciLexer.h \
 	../src/GUI.h \
 	../src/SString.h \
+	../src/StringHelpers.h \
 	../src/StringList.h \
 	../src/FilePath.h \
 	../src/PropSetFile.h \
@@ -598,6 +609,7 @@ SciTEIO.obj: \
 	../../scintilla/include/Scintilla.h \
 	../src/GUI.h \
 	../src/SString.h \
+	../src/StringHelpers.h \
 	../src/StringList.h \
 	../src/FilePath.h \
 	../src/PropSetFile.h \
@@ -614,6 +626,7 @@ SciTEProps.obj: \
 	../../scintilla/include/SciLexer.h \
 	../src/GUI.h \
 	../src/SString.h \
+	../src/StringHelpers.h \
 	../src/StringList.h \
 	../src/FilePath.h \
 	../src/PropSetFile.h \

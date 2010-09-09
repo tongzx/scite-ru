@@ -168,6 +168,8 @@ static IFaceConstant ifaceConstants[] = {
 	{"IDM_COPYASRTF",245},
 	{"IDM_COPYPATH",118},
 	{"IDM_CUT",203},
+	{"IDM_DIRECTIONDOWN",806},
+	{"IDM_DIRECTIONUP",805},
 	{"IDM_DUPLICATE",250},
 	{"IDM_ENCODING_DEFAULT",150},
 	{"IDM_ENCODING_UCOOKIE",154},
@@ -209,6 +211,7 @@ static IFaceConstant ifaceConstants[] = {
 	{"IDM_MACROSTOPRECORD",312},
 	{"IDM_MACRO_SEP",310},
 	{"IDM_MATCHBRACE",230},
+	{"IDM_MATCHCASE",801},
 	{"IDM_MONOFONT",450},
 	{"IDM_MOVETABLEFT",509},
 	{"IDM_MOVETABRIGHT",508},
@@ -240,6 +243,7 @@ static IFaceConstant ifaceConstants[] = {
 	{"IDM_QUIT",140},
 	{"IDM_READONLY",416},
 	{"IDM_REDO",202},
+	{"IDM_REGEXP",802},
 	{"IDM_REPLACE",216},
 	{"IDM_REVERT",104},
 	{"IDM_RUNWIN",351},
@@ -276,6 +280,7 @@ static IFaceConstant ifaceConstants[] = {
 	{"IDM_TOOLSMAX",9300},
 	{"IDM_TOOLWIN",352},
 	{"IDM_UNDO",201},
+	{"IDM_UNSLASH",804},
 	{"IDM_UPRCASE",240},
 	{"IDM_VIEWEOL",403},
 	{"IDM_VIEWGUIDES",404},
@@ -283,7 +288,9 @@ static IFaceConstant ifaceConstants[] = {
 	{"IDM_VIEWSTATUSBAR",411},
 	{"IDM_VIEWTABBAR",410},
 	{"IDM_VIEWTOOLBAR",408},
+	{"IDM_WHOLEWORD",800},
 	{"IDM_WRAP",414},
+	{"IDM_WRAPAROUND",803},
 	{"IDM_WRAPOUTPUT",415},
 	{"INDIC0_MASK",0x20},
 	{"INDIC1_MASK",0x40},
@@ -2754,7 +2761,7 @@ static IFaceProperty ifaceProperties[] = {
 
 enum {
 	ifaceFunctionCount = 276,
-	ifaceConstantCount = 2167,
+	ifaceConstantCount = 2174,
 	ifacePropertyCount = 171
 };
 

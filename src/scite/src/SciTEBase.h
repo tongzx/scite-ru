@@ -167,63 +167,6 @@ enum {
     menuHelp = 8
 };
 
-/**
- * This is a fixed length list of strings suitable for display in combo boxes
- * as a memory of user entries.
- */
-template < int sz >
-class EntryMemory {
-	SString entries[sz];
-public:
-	void Insert(const SString &s) {
-		for (int i = 0; i < sz; i++) {
-			if (entries[i] == s) {
-				for (int j = i; j > 0; j--) {
-					entries[j] = entries[j - 1];
-				}
-				entries[0] = s;
-				return;
-			}
-		}
-		for (int k = sz - 1; k > 0; k--) {
-			entries[k] = entries[k - 1];
-		}
-		entries[0] = s;
-	}
-	void AppendIfNotPresent(const SString &s) {
-		for (int i = 0; i < sz; i++) {
-			if (entries[i] == s) {
-				return;
-			}
-			if (0 == entries[i].length()) {
-				entries[i] = s;
-				return;
-			}
-		}
-	}
-	void AppendList(const SString &s, char sep = '|') {
-		int start = 0;
-		int end = 0;
-		while (s[end] != '\0') {
-			while ((s[end] != sep) && (s[end] != '\0'))
-				++end;
-			AppendIfNotPresent(SString(s.c_str(), start, end));
-			start = end + 1;
-			end = start;
-		}
-	}
-	int Length() const {
-		int len = 0;
-		for (int i = 0; i < sz; i++)
-			if (entries[i].length())
-				len++;
-		return len;
-	}
-	SString At(int n) const {
-		return entries[n];
-	}
-};
-
 class RecentFile : public FilePath {
 public:
 	Sci_CharacterRange selection;
@@ -411,8 +354,6 @@ public:
 	SString extension;
 };
 
-typedef EntryMemory < 10 > ComboMemory;
-
 enum {
     heightTools = 24,
     heightTab = 24,
@@ -470,7 +411,7 @@ struct StyleAndWords {
 	bool IsSingleChar() { return words.length() == 1; }
 };
 
-class Localization : public PropSetFile {
+class Localization : public PropSetFile, public ILocalize {
 	SString missing;
 public:
 	bool read;
@@ -482,7 +423,57 @@ public:
 	}
 };
 
-class SciTEBase : public ExtensionAPI {
+// Interface between SciTE and dialogs and strips for find and replace
+class Searcher {
+public:
+	SString findWhat;
+	SString replaceWhat;
+
+	bool wholeWord;
+	bool matchCase;
+	bool regExp;
+	bool unSlash;
+	bool wrapFind;
+	bool reverseFind;
+
+	bool replacing;
+	bool havefound;
+	bool findInStyle;
+	int findStyle;
+	ComboMemory memFinds;
+	ComboMemory memReplaces;
+
+	bool focusOnReplace;
+
+	Searcher();
+
+	virtual void SetFind(const char *sFind) = 0;
+	virtual bool FindHasText() const = 0;
+	virtual void SetReplace(const char *sReplace) = 0;
+	virtual void MoveBack(int distance) = 0;
+	virtual void ScrollEditorIfNeeded() = 0;
+
+	virtual int FindNext(bool reverseDirection, bool showWarnings = true) = 0;
+	virtual int MarkAll() = 0;
+	virtual int ReplaceAll(bool inSelection) = 0;
+	virtual void ReplaceOnce() = 0;
+	virtual void UIClosed() = 0;
+	virtual void UIHasFocus() = 0;
+	bool &FlagFromCmd(int cmd);
+};
+
+class SearchUI {
+protected:
+	Searcher *pSearcher;
+public:
+	SearchUI() : pSearcher(0) {
+	}
+	void SetSearcher(Searcher *pSearcher_) {
+		pSearcher = pSearcher_;
+	}
+};
+
+class SciTEBase : public ExtensionAPI, public Searcher {
 protected:
 	virtual void SetToolBar() = 0;	//!-add-[user.toolbar]
 	GUI::gui_string windowName;
@@ -500,27 +491,10 @@ protected:
 	FilePath importFiles[importMax];
 	enum { importCmdID = IDM_IMPORT };
 
-	SString findWhat;
-	SString replaceWhat;
 	enum { indicatorMatch = INDIC_CONTAINER };
 	enum { markerBookmark = 1 };
-	GUI::Window wFindIncrement;
-	bool replacing;
-	bool havefound;
-	bool matchCase;
-	bool wholeWord;
-	bool reverseFind;
-	bool regExp;
-	bool wrapFind;
-	bool unSlash;
-	bool findInStyle;
-	bool closeFind; //!-add-[close.find.window]
-	int findStyle;
-	ComboMemory memFinds;
-	ComboMemory memReplaces;
 	ComboMemory memFiles;
 	ComboMemory memDirectory;
-	enum { maxParam = 4 };
 	SString parameterisedCommand;
 	char abbrevInsert[200];
 
@@ -824,6 +798,11 @@ protected:
 	virtual int WindowMessageBox(GUI::Window &w, const GUI::gui_string &msg, int style) = 0;
 	virtual void FindMessageBox(const SString &msg, const SString *findItem = 0) = 0;
 	int FindInTarget(const char *findWhat, int lenFind, int startPosition, int endPosition);
+	virtual void SetFind(const char *sFind);
+	virtual bool FindHasText() const;
+	virtual void SetReplace(const char *sReplace);
+	virtual void MoveBack(int distance);
+	virtual void ScrollEditorIfNeeded();
 	int FindNext(bool reverseDirection, bool showWarnings = true);
 	virtual void FindIncrement() = 0;
 	int IncrementSearchMode();
@@ -833,6 +812,8 @@ protected:
 	int DoReplaceAll(bool inSelection); // returns number of replacements or negative value if error
 	int ReplaceAll(bool inSelection);
 	int ReplaceInBuffers();
+	virtual void UIClosed();
+	virtual void UIHasFocus();
 	virtual void DestroyFindReplace() = 0;
 	virtual void GoLineDialog() = 0;
 	virtual bool AbbrevDialog() = 0;
@@ -1049,6 +1030,8 @@ protected:
 	int OnMenuCommandCallsCount; //!-add-[OnMenuCommand]
 public:
 
+	enum { maxParam = 4 };
+
 	SciTEBase(Extension *ext = 0);
 	virtual ~SciTEBase();
 
@@ -1089,14 +1072,8 @@ const int blockSize = 131072;
 int ControlIDOfCommand(unsigned long);
 void LowerCaseString(char *s);
 long ColourOfProperty(PropSetFile &props, const char *key, Colour colourDefault);
-char *Slash(const char *s, bool quoteQuotes);
-unsigned int UnSlash(char *s);
 void WindowSetFocus(GUI::ScintillaWindow &w);
 
 inline bool isspacechar(unsigned char ch) {
     return (ch == ' ') || ((ch >= 0x09) && (ch <= 0x0d));
 }
-
-bool StartsWith(GUI::gui_string const &s, GUI::gui_string const &end);
-bool EndsWith(GUI::gui_string const &s, GUI::gui_string const &end);
-int Substitute(GUI::gui_string &s, const GUI::gui_string &sFind, const GUI::gui_string &sReplace);

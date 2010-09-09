@@ -16,6 +16,7 @@
 #endif
 
 #include <string>
+#include <vector>
 #include <map>
 
 #if defined(GTK)
@@ -58,6 +59,7 @@
 
 #include "SString.h"
 #include "StringList.h"
+#include "StringHelpers.h"
 #include "FilePath.h"
 #include "PropSetFile.h"
 #include "StyleWriter.h"
@@ -976,14 +978,10 @@ void SciTEBase::BuffersMenu() {
 #if !defined(GTK)
 
 			if (pos < 10) {
-				GUI::gui_char stemp[100];
-#if defined(_MSC_VER) && (_MSC_VER > 1200)
-				swprintf(stemp, ELEMENTS(stemp), GUI_TEXT("&%d "), (pos + 1) % 10 );
-#else
-				swprintf(stemp, GUI_TEXT("&%d "), (pos + 1) % 10 );
-#endif
-				entry = stemp;	// hotkey 1..0
-				titleTab = stemp; // add hotkey to the tabbar
+				GUI::gui_string sPos = GUI::StringFromInteger((pos + 1) % 10);
+				GUI::gui_string sHotKey = GUI_TEXT("&") + sPos + GUI_TEXT(" ");
+				entry = sHotKey;	// hotkey 1..0
+				titleTab = sHotKey; // add hotkey to the tabbar
 			}
 #endif
 
@@ -1244,7 +1242,6 @@ void SciTEBase::SetMenuItemLocalised(int menuNumber, int position, int itemID,
 	SetMenuItem(menuNumber, position, itemID, localised.c_str(), GUI::StringFromUTF8(mnemonic).c_str());
 }
 
-//!-start-[SubMenu]
 /*
 void SciTEBase::SetToolsMenu() {
 	//command.name.0.*.py=Edit in PythonWin
@@ -1292,6 +1289,7 @@ void SciTEBase::SetToolsMenu() {
 	}
 }
 */
+//!-start-[SubMenu]
 void SciTEBase::SetToolsMenu() {
 	int items;
 	MenuEx arrMenu[toolMax];

@@ -18,6 +18,7 @@
 #endif
 
 #include <string>
+#include <vector>
 #include <map>
 
 #include "Scintilla.h"
@@ -54,6 +55,7 @@ const GUI::gui_char menuAccessIndicator[] = GUI_TEXT("&");
 
 #include "SString.h"
 #include "StringList.h"
+#include "StringHelpers.h"
 #include "FilePath.h"
 #include "PropSetFile.h"
 #include "StyleWriter.h"
@@ -455,7 +457,7 @@ SString SciTEBase::ExtensionFileName() {
 }
 
 void SciTEBase::ForwardPropertyToEditor(const char *key) {
-	SString value = props.Get(key);
+	SString value = props.GetExpanded(key);
 	wEditor.CallString(SCI_SETPROPERTY,
 	                 reinterpret_cast<uptr_t>(key), value.c_str());
 	wOutput.CallString(SCI_SETPROPERTY,
@@ -1121,7 +1123,7 @@ void SciTEBase::ReadProperties() {
 	preprocCondEnd.Clear();
 	preprocCondEnd.Set(list.c_str());
 
-	memFiles.AppendList(props.GetNewExpand("find.files"));
+	memFiles.AppendList(props.GetNewExpand("find.files").c_str());
 
 	wEditor.Call(SCI_SETWRAPVISUALFLAGS, props.GetInt("wrap.visual.flags"));
 	wEditor.Call(SCI_SETWRAPVISUALFLAGSLOCATION, props.GetInt("wrap.visual.flags.location"));
@@ -1405,7 +1407,7 @@ void SciTEBase::SetPropertiesInitial() {
 	regExp = props.GetInt("find.replace.regexp");
 	unSlash = props.GetInt("find.replace.escapes");
 	wrapFind = props.GetInt("find.replace.wrap", 1);
-	closeFind = props.GetInt("find.replace.closefind", 1); //!-add-[close.find.window]
+	focusOnReplace = props.GetInt("find.replacewith.focus", 1);
 }
 
 GUI::gui_string Localization::Text(const char *s, bool retainIfNotFound) {
@@ -1444,29 +1446,6 @@ GUI::gui_string Localization::Text(const char *s, bool retainIfNotFound) {
 		return GUI::StringFromUTF8(translation.c_str());
 	}
 	return GUI::StringFromUTF8(s);
-}
-
-bool StartsWith(GUI::gui_string const &s, GUI::gui_string const &start) {
-	return (s.size() >= start.size()) &&
-		(std::equal(s.begin(), s.begin() + start.size(), start.begin()));
-}
-
-bool EndsWith(GUI::gui_string const &s, GUI::gui_string const &end) {
-	return (s.size() >= end.size()) &&
-		(std::equal(s.begin() + s.size() - end.size(), s.end(), end.begin()));
-}
-
-int Substitute(GUI::gui_string &s, const GUI::gui_string &sFind, const GUI::gui_string &sReplace) {
-	int c = 0;
-	size_t lenFind = sFind.size();
-	size_t lenReplace = sReplace.size();
-	size_t posFound = s.find(sFind);
-	while (posFound != GUI::gui_string::npos) {
-		s.replace(posFound, lenFind, sReplace);
-		posFound = s.find(sFind, posFound + lenReplace);
-		c++;
-	}
-	return c;
 }
 
 GUI::gui_string SciTEBase::LocaliseMessage(const char *s, const GUI::gui_char *param0, const GUI::gui_char *param1, const GUI::gui_char *param2) {

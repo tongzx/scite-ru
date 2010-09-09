@@ -100,7 +100,6 @@
 
 #define IDC_INCFINDTEXT     253
 #define IDC_INCFINDBTNOK	254
-#define IDD_FIND2           255
 #define IDC_EDIT1           1000
 #define IDC_STATIC          -1
 
@@ -185,6 +184,14 @@
 #define IDM_MOVETABRIGHT			508
 #define IDM_MOVETABLEFT			509
 
+#define IDM_WHOLEWORD			800
+#define IDM_MATCHCASE			801
+#define IDM_REGEXP					802
+#define IDM_WRAPAROUND		803
+#define IDM_UNSLASH				804
+#define IDM_DIRECTIONUP			805
+#define IDM_DIRECTIONDOWN	806
+
 // Help
 #define IDM_HELP			901
 #define IDM_ABOUT			902
@@ -197,7 +204,6 @@
 #define IDC_SHIFTTAB		963
 
 // Dialog control IDs
-#define IDFINDCLOSE			219 //!-add-[close.find.window]
 #define IDGOLINE			220
 #define IDABOUTSCINTILLA	221
 #define IDFINDWHAT			222
@@ -254,4 +260,10 @@
 //! #define IDR_CLOSEFILE 100
 #define IDR_BUTTONS			100	//!-change-[user.toolbar]
 #define IDC_DRAGDROP        401
+#define IDBM_WORD 101
+#define IDBM_CASE 102
+#define IDBM_REGEX 103
+#define IDBM_BACKSLASH 104
+#define IDBM_AROUND 105
+#define IDBM_UP 106
 #endif

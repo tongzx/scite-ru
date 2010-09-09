@@ -8,7 +8,7 @@
 #include "Platform.h" //!-add-[no_wornings]
 #include "SciTEWin.h"
 // need this header for SHBrowseForFolder
-#include <Shlobj.h>
+#include <shlobj.h>
 
 /**
  * Flash the given window for the asked @a duration to visually warn the user.
@@ -156,19 +156,26 @@ bool SciTEWin::ModelessHandler(MSG *pmsg) {
 	if (DialogHandled(wFindReplace.GetID(), pmsg)) {
 		return true;
 	}
-	if (DialogHandled(wFindIncrement.GetID(), pmsg)) {
-		return true;
-	}
 	if (DialogHandled(wFindInFiles.GetID(), pmsg)) {
 		return true;
 	}
 	if (wParameters.GetID()) {
+		// Allow commands, such as Ctrl+1 to be active while the Parameters dialog is
+		// visible so that a group of commands can be easily run with differing parameters.
 		bool menuKey = (pmsg->message == WM_KEYDOWN) &&
 		               (pmsg->wParam != VK_TAB) &&
 		               (pmsg->wParam != VK_ESCAPE) &&
 		               (pmsg->wParam != VK_RETURN) &&
 		               (IsKeyDown(VK_CONTROL) || !IsKeyDown(VK_MENU));
 		if (!menuKey && DialogHandled(wParameters.GetID(), pmsg))
+			return true;
+	}
+	if ((pmsg->message == WM_KEYDOWN) || (pmsg->message == WM_SYSKEYDOWN)) {
+		if (searchStrip.KeyDown(pmsg->wParam))
+			return true;
+		if (findStrip.KeyDown(pmsg->wParam))
+			return true;
+		if (replaceStrip.KeyDown(pmsg->wParam))
 			return true;
 	}
 	if (pmsg->message == WM_KEYDOWN || pmsg->message == WM_SYSKEYDOWN) {
@@ -863,26 +870,69 @@ static void FillComboFromProps(HWND combo, PropSetFile &props) {
 	}
 }
 
+class DialogFindReplace : public Dialog, public SearchUI  {
+	bool advanced;
+public:
+	DialogFindReplace(HWND hDlg_, bool advanced_) :
+		Dialog(hDlg_), advanced(advanced_) {
+	}
+	void GrabFields();
+	void FillFields();
+};
+
+void DialogFindReplace::GrabFields() {
+	pSearcher->SetFind(ItemTextU(IDFINDWHAT).c_str());
+	if (pSearcher->replacing) {
+		pSearcher->SetReplace(ItemTextU(IDREPLACEWITH).c_str());
+	}
+	pSearcher->wholeWord = Checked(IDWHOLEWORD);
+	pSearcher->matchCase = Checked(IDMATCHCASE);
+	pSearcher->regExp = Checked(IDREGEXP);
+	pSearcher->wrapFind = Checked(IDWRAP);
+	pSearcher->unSlash = Checked(IDUNSLASH);
+	if (!pSearcher->replacing) {
+		pSearcher->reverseFind = Checked(IDDIRECTIONUP);
+	}
+	if (advanced) {
+		pSearcher->findInStyle = Checked(IDFINDINSTYLE);
+		pSearcher->findStyle = atoi(ItemTextU(IDFINDSTYLE).c_str());
+	}
+}
+
+void DialogFindReplace::FillFields() {
+	FillComboFromMemory(IDFINDWHAT, pSearcher->memFinds);
+	SetItemTextU(IDFINDWHAT, pSearcher->findWhat);
+	if (pSearcher->replacing) {
+		FillComboFromMemory(IDREPLACEWITH, pSearcher->memReplaces);
+		SetItemTextU(IDREPLACEWITH, pSearcher->replaceWhat);
+		SetItemText(IDREPLDONE, GUI_TEXT("0"));
+	}
+	SetCheck(IDWHOLEWORD, pSearcher->wholeWord);
+	SetCheck(IDMATCHCASE, pSearcher->matchCase);
+	SetCheck(IDREGEXP, pSearcher->regExp);
+	SetCheck(IDWRAP, pSearcher->wrapFind);
+	SetCheck(IDUNSLASH, pSearcher->unSlash);
+	if (!pSearcher->replacing) {
+		SetCheck(pSearcher->reverseFind ? IDDIRECTIONUP : IDDIRECTIONDOWN, true);
+	}
+	if (advanced) {
+		SetCheck(IDFINDSTYLE, pSearcher->findInStyle);
+	}
+}
+
 BOOL SciTEWin::FindMessage(HWND hDlg, UINT message, WPARAM wParam) {
 	// Avoid getting dialog items before set up or during tear down.
-	if (WM_SETFONT == message || WM_NCDESTROY == message)
+	if (!(WM_INITDIALOG == message || WM_CLOSE == message || WM_COMMAND == message))
 		return FALSE;
-	Dialog dlg(hDlg);
+	DialogFindReplace dlg(hDlg, FindReplaceAdvanced());
+	dlg.SetSearcher(this);
 
 	switch (message) {
 
 	case WM_INITDIALOG:
 		LocaliseDialog(hDlg);
-		dlg.FillComboFromMemory(IDFINDWHAT, memFinds);
-		dlg.SetItemTextU(IDFINDWHAT, findWhat);
-		dlg.SetCheck(IDWHOLEWORD, wholeWord);
-		dlg.SetCheck(IDMATCHCASE, matchCase);
-		dlg.SetCheck(IDREGEXP, regExp);
-		dlg.SetCheck(IDWRAP, wrapFind);
-		dlg.SetCheck(IDUNSLASH, unSlash);
-		dlg.SetCheck(reverseFind ? IDDIRECTIONUP : IDDIRECTIONDOWN, true);
+		dlg.FillFields();
 		if (FindReplaceAdvanced()) {
-			dlg.SetCheck(IDFINDCLOSE, closeFind); //!-add-[close.find.window]
 			dlg.SetCheck(IDFINDSTYLE, findInStyle);
 			dlg.Enable(IDFINDSTYLE, findInStyle);
 			::SendMessage(dlg.Item(IDFINDSTYLE), EM_LIMITTEXT, 3, 1);
@@ -896,30 +946,14 @@ BOOL SciTEWin::FindMessage(HWND hDlg, UINT message, WPARAM wParam) {
 
 	case WM_COMMAND:
 		if (ControlIDOfCommand(wParam) == IDCANCEL) {
-/*!-remove-[close.find.window]
 			::EndDialog(hDlg, IDCANCEL);
 			wFindReplace.Destroy();
-*/
-			DestroyFindReplace(); //!-add-[close.find.window]
 			return FALSE;
 		} else if ( (ControlIDOfCommand(wParam) == IDOK) ||
 		            (ControlIDOfCommand(wParam) == IDMARKALL) ) {
-			findWhat = dlg.ItemTextU(IDFINDWHAT);
-			props.Set("find.what", findWhat.c_str());
-			memFinds.Insert(findWhat.c_str());
-			wholeWord = dlg.Checked(IDWHOLEWORD);
-			matchCase = dlg.Checked(IDMATCHCASE);
-			regExp = dlg.Checked(IDREGEXP);
-			wrapFind = dlg.Checked(IDWRAP);
-			unSlash = dlg.Checked(IDUNSLASH);
-			if (FindReplaceAdvanced()) {
-				replacing = !dlg.Checked(IDFINDCLOSE); //!-add-[close.find.window]
-				findInStyle = dlg.Checked(IDFINDINSTYLE);
-				findStyle = atoi(dlg.ItemTextU(IDFINDSTYLE).c_str());
-			}
-			reverseFind = dlg.Checked(IDDIRECTIONUP);
-			//! ::EndDialog(hDlg, IDOK); //!-remove-[close.find.window]
-			//! wFindReplace.Destroy(); //!-remove-[close.find.window]
+			dlg.GrabFields();
+			::EndDialog(hDlg, IDOK);
+			wFindReplace.Destroy();
 			if (ControlIDOfCommand(wParam) == IDMARKALL){
 				MarkAll();
 			}
@@ -945,41 +979,18 @@ BOOL SciTEWin::HandleReplaceCommand(int cmd) {
 	if (!wFindReplace.GetID())
 		return TRUE;
 	HWND hwndFR = reinterpret_cast<HWND>(wFindReplace.GetID());
-	Dialog dlg(hwndFR);
+	DialogFindReplace dlg(hwndFR, FindReplaceAdvanced());
+	dlg.SetSearcher(this);
 
 	if ((cmd == IDOK) || (cmd == IDREPLACE) || (cmd == IDREPLACEALL) || (cmd == IDREPLACEINSEL) || (cmd == IDREPLACEINBUF)) {
-		findWhat = dlg.ItemTextU(IDFINDWHAT);
-		props.Set("find.what", findWhat.c_str());
-		memFinds.Insert(findWhat.c_str());
-		wholeWord = dlg.Checked(IDWHOLEWORD);
-		matchCase = dlg.Checked(IDMATCHCASE);
-		regExp = dlg.Checked(IDREGEXP);
-		wrapFind = dlg.Checked(IDWRAP);
-		unSlash = dlg.Checked(IDUNSLASH);
-		if (FindReplaceAdvanced()) {
-			findInStyle = dlg.Checked(IDFINDINSTYLE);
-			findStyle = atoi(dlg.ItemTextU(IDFINDSTYLE).c_str());
-		}
-	}
-	if ((cmd == IDREPLACE) || (cmd == IDREPLACEALL) || (cmd == IDREPLACEINSEL) || (cmd == IDREPLACEINBUF)) {
-		replaceWhat = dlg.ItemTextU(IDREPLACEWITH);
-		memReplaces.Insert(replaceWhat.c_str());
+		dlg.GrabFields();
 	}
 
 	int replacements = 0;
 	if (cmd == IDOK) {
 		FindNext(false);
 	} else if (cmd == IDREPLACE) {
-		if (havefound) {
-			ReplaceOnce();
-		} else {
-			Sci_CharacterRange crange = GetSelection();
-			SetSelection(crange.cpMin, crange.cpMin);
-			FindNext(false);
-			if (havefound) {
-				ReplaceOnce();
-			}
-		}
+		ReplaceOnce();
 	} else if ((cmd == IDREPLACEALL) || (cmd == IDREPLACEINSEL)) {
 		replacements = ReplaceAll(cmd == IDREPLACEINSEL);
 	} else if (cmd == IDREPLACEINBUF) {
@@ -993,32 +1004,22 @@ BOOL SciTEWin::HandleReplaceCommand(int cmd) {
 
 BOOL SciTEWin::ReplaceMessage(HWND hDlg, UINT message, WPARAM wParam) {
 	// Avoid getting dialog items before set up or during tear down.
-	if (WM_SETFONT == message || WM_NCDESTROY == message)
+	if (!(WM_INITDIALOG == message || WM_CLOSE == message || WM_COMMAND == message))
 		return FALSE;
-	Dialog dlg(hDlg);
-	HWND wReplaceWith = ::GetDlgItem(hDlg, IDREPLACEWITH);
+	DialogFindReplace dlg(hDlg, FindReplaceAdvanced());
+	dlg.SetSearcher(this);
 
 	switch (message) {
 
 	case WM_INITDIALOG:
 		LocaliseDialog(hDlg);
-		dlg.FillComboFromMemory(IDFINDWHAT, memFinds);
-		dlg.SetItemTextU(IDFINDWHAT, findWhat);
-		dlg.FillComboFromMemory(IDREPLACEWITH, memReplaces);
-		dlg.SetItemTextU(IDREPLACEWITH, replaceWhat);
-		dlg.SetCheck(IDWHOLEWORD, wholeWord);
-		dlg.SetCheck(IDMATCHCASE, matchCase);
-		dlg.SetCheck(IDREGEXP, regExp);
-		dlg.SetCheck(IDWRAP, wrapFind);
-		dlg.SetCheck(IDUNSLASH, unSlash);
+		dlg.FillFields();
 		if (FindReplaceAdvanced()) {
-			dlg.SetCheck(IDFINDSTYLE, findInStyle);
 			dlg.Enable(IDFINDSTYLE, findInStyle);
 			::SetDlgItemInt(hDlg, IDFINDSTYLE, wEditor.Call(SCI_GETSTYLEAT, wEditor.Call(SCI_GETCURRENTPOS)), FALSE);
 		}
-		dlg.SetItemText(IDREPLDONE, GUI_TEXT("0"));
 		if (findWhat.length() != 0 && props.GetInt("find.replacewith.focus", 1)) {
-			::SetFocus(wReplaceWith);
+			::SetFocus(::GetDlgItem(hDlg, IDREPLACEWITH));
 			return FALSE;
 		}
 		return TRUE;
@@ -1031,11 +1032,8 @@ BOOL SciTEWin::ReplaceMessage(HWND hDlg, UINT message, WPARAM wParam) {
 		if (ControlIDOfCommand(wParam) == IDCANCEL) {
 			props.Set("Replacements", "");
 			UpdateStatusBar(false);
-/*!-remove-[close.find.window]
 			::EndDialog(hDlg, IDCANCEL);
 			wFindReplace.Destroy();
-*/
-			DestroyFindReplace(); //!-add-[close.find.window]
 			return FALSE;
 		} else if (ControlIDOfCommand(wParam) == IDFINDINSTYLE) {
 			if (FindReplaceAdvanced()) {
@@ -1055,121 +1053,32 @@ BOOL CALLBACK SciTEWin::ReplaceDlg(HWND hDlg, UINT message, WPARAM wParam, LPARA
 	return Caller(hDlg, message, lParam)->ReplaceMessage(hDlg, message, wParam);
 }
 
-BOOL SciTEWin::IncrementFindMessage(HWND hDlg, UINT message, WPARAM wParam) {
-	// Prevent reentrance when setting text
-	static bool entered = false;
-	if (entered)
-		return FALSE;
-
-	// Avoid getting dialog items before set up or during tear down.
-	if (WM_SETFONT == message || WM_NCDESTROY == message)
-		return FALSE;
-
-	Dialog dlg(hDlg);
-
-	switch (message) {
-
-	case WM_INITDIALOG:{
-		wFindIncrement = hDlg;
-		LocaliseDialog(hDlg);
-		SetWindowLong(hDlg, GWL_STYLE, WS_TABSTOP || GetWindowLong(hDlg, GWL_STYLE));
-		dlg.SetItemTextU(IDC_INCFINDTEXT, "");
-		SetFocus(hDlg);
-
-		GUI::Rectangle aRect = wFindIncrement.GetPosition();
-		GUI::Rectangle aTBRect = wStatusBar.GetPosition();
-		GUI::Rectangle aNewRect = aTBRect;
-		aNewRect.top = aNewRect.bottom - (aRect.bottom - aRect.top);
-		aNewRect.right = aNewRect.left + aRect.right - aRect.left;
-		RegisterHotKey(hDlg,1,0,VK_F3);	//!-add-[IncrementalSearch.AddHotkeys]
-		RegisterHotKey(hDlg,2,MOD_SHIFT,VK_F3);	//!-add-[IncrementalSearch.AddHotkeys]
-		RegisterHotKey(hDlg,3,MOD_SHIFT,VK_RETURN);	//!-add-[IncrementalSearch.AddHotkeys]
-		wFindIncrement.SetPosition(aNewRect);
-
-		return TRUE;
-	}
-
-	case WM_SETFOCUS:
-		return 0;
-
-/*!
-	case WM_CLOSE:
-		::SendMessage(hDlg, WM_COMMAND, IDCANCEL, 0);
-		break;
-*/
-//!-start-[IncrementalSearch.AddHotkeys]
-	case WM_HOTKEY:
-		if (wParam == 1)
-			FindNext(false,false);
-		if (wParam == 2 || wParam == 3)
-			FindNext(true,false);
-		break;
-
-	case WM_CLOSE:
-		UnregisterHotKey(hDlg,1);
-		UnregisterHotKey(hDlg,2);
-		UnregisterHotKey(hDlg,3);
-		::SendMessage(hDlg, WM_COMMAND, IDCANCEL, 0);
-		break;
-//!-end-[IncrementalSearch.AddHotkeys]
-
-	case WM_COMMAND:
-		if (ControlIDOfCommand(wParam) == IDCANCEL) {
-			props.Set("Replacements", "");
-			UpdateStatusBar(false);
-			::EndDialog(hDlg, IDCANCEL);
-			wFindIncrement.Destroy();
-			return FALSE;
-		} else if (((ControlIDOfCommand(wParam) == IDC_INCFINDTEXT) && ((wParam >> 16) == 0x0300))
-			|| (ControlIDOfCommand(wParam) == IDC_INCFINDBTNOK)) {
-			SString ffLastWhat;
-			ffLastWhat = findWhat;
-			findWhat = dlg.ItemTextU(IDC_INCFINDTEXT);
-
-			if (ControlIDOfCommand(wParam) != IDC_INCFINDBTNOK) {
-				Sci_CharacterRange cr = GetSelection();
-				if (ffLastWhat.length()) {
-					SetSelection(cr.cpMin - ffLastWhat.length(), cr.cpMin - ffLastWhat.length());
-				}
-			}
-			wholeWord = false;
-			FindNext(false, false);
- 			if ((!havefound) &&
-				strncmp(findWhat.c_str(), ffLastWhat.c_str(), ffLastWhat.length()) == 0) {
-				// Could not find string with added character so revert to previous value.
-				findWhat = ffLastWhat;
-				entered = true;
-				dlg.SetItemTextU(IDC_INCFINDTEXT, findWhat);
-				SendMessage(dlg.Item(IDC_INCFINDTEXT), EM_SETSEL, ffLastWhat.length(), ffLastWhat.length());
-				entered = false;
-			}
-			return FALSE;
-		}
-	}
-
-	return FALSE;
-}
-
-
-BOOL CALLBACK SciTEWin::FindIncrementDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) {
-	return Caller(hDlg, message, lParam)->IncrementFindMessage(hDlg, message, wParam);
+void SciTEWin::UIClosed() {
+	SciTEBase::UIClosed();
+	props.Set("Replacements", "");
+	if (!searchStrip.visible)
+		bands[SciTEWin::bandSearch].visible = false;
+	if (!findStrip.visible)
+		bands[SciTEWin::bandFind].visible = false;
+	if (!replaceStrip.visible)
+		bands[SciTEWin::bandReplace].visible = false;
+	UpdateStatusBar(false);
+	SizeSubWindows();
+	WindowSetFocus(wEditor);
 }
 
 void SciTEWin::FindIncrement() {
-	if (wFindIncrement.Created()) {
-		wFindIncrement.Destroy();
-		return;
+	if (findStrip.visible)
+		findStrip.Close();
+	if (replaceStrip.visible)
+		replaceStrip.Close();
+	searchStrip.visible = !searchStrip.visible;
+	SizeSubWindows();
+	if (searchStrip.visible) {
+		searchStrip.Focus();
+	} else {
+		WindowSetFocus(wEditor);
 	}
-
-	findWhat.clear();
-
-	replacing = false;
-	::CreateDialogParamW(hInstance,
-	                                    (LPCWSTR)MAKEINTRESOURCE(IDD_FIND2),
-	                                    MainHWND(),
-	                                    reinterpret_cast<DLGPROC>(FindIncrementDlg),
-	                                    reinterpret_cast<LPARAM>(this));
-	wFindIncrement.Show();
 }
 
 bool SciTEWin::FindReplaceAdvanced() {
@@ -1177,22 +1086,33 @@ bool SciTEWin::FindReplaceAdvanced() {
 }
 
 void SciTEWin::Find() {
-	if (wFindIncrement.Created())
-		return;
 	if (wFindReplace.Created())
 		return;
 	SelectionIntoFind();
 
-	int dialog_id = FindReplaceAdvanced() ? IDD_FIND_ADV : IDD_FIND;
+	if (props.GetInt("find.use.strip")) {
+		if (searchStrip.visible)
+			searchStrip.Close();
+		if (replaceStrip.visible)
+			replaceStrip.Close();
+		findStrip.visible = true;
+		SizeSubWindows();
+		findStrip.Show();
+	} else {
+		if (searchStrip.visible || replaceStrip.visible)
+			return;
 
-	wFindReplace = ::CreateDialogParamW(hInstance,
-	                                    (LPCWSTR)MAKEINTRESOURCE(dialog_id),
-	                                    MainHWND(),
-	                                    reinterpret_cast<DLGPROC>(FindDlg),
-	                                    reinterpret_cast<LPARAM>(this));
-	wFindReplace.Show();
+		replacing = false;
 
-	replacing = false;
+		int dialog_id = FindReplaceAdvanced() ? IDD_FIND_ADV : IDD_FIND;
+
+		wFindReplace = ::CreateDialogParamW(hInstance,
+											(LPCWSTR)MAKEINTRESOURCE(dialog_id),
+											MainHWND(),
+											reinterpret_cast<DLGPROC>(FindDlg),
+											reinterpret_cast<LPARAM>(this));
+		wFindReplace.Show();
+	}
 }
 
 // Set a call back with the handle after init to set the path.
@@ -1384,17 +1304,30 @@ void SciTEWin::Replace() {
 		return;
 	SelectionIntoFind(false); // don't strip EOL at end of selection
 
-	int dialog_id = (!props.GetInt("find.replace.advanced") ? IDD_REPLACE : IDD_REPLACE_ADV);
+	if (props.GetInt("replace.use.strip")) {
+		if (searchStrip.visible)
+			searchStrip.Close();
+		if (findStrip.visible)
+			findStrip.Close();
+		replaceStrip.visible = true;
+		SizeSubWindows();
+		replaceStrip.Show();
+		havefound = false;
+	} else {
+		if (searchStrip.visible || findStrip.visible)
+			return;
+		int dialog_id = (!props.GetInt("find.replace.advanced") ? IDD_REPLACE : IDD_REPLACE_ADV);
 
-	wFindReplace = ::CreateDialogParamW(hInstance,
-	                                    (LPCWSTR)MAKEINTRESOURCE(dialog_id),
-	                                    MainHWND(),
-	                                    reinterpret_cast<DLGPROC>(ReplaceDlg),
-	                                    reinterpret_cast<sptr_t>(this));
-	wFindReplace.Show();
+		replacing = true;
+		havefound = false;
 
-	replacing = true;
-	havefound = false;
+		wFindReplace = ::CreateDialogParamW(hInstance,
+											(LPCWSTR)MAKEINTRESOURCE(dialog_id),
+											MainHWND(),
+											reinterpret_cast<DLGPROC>(ReplaceDlg),
+											reinterpret_cast<sptr_t>(this));
+		wFindReplace.Show();
+	}
 }
 
 void SciTEWin::FindReplace(bool replace) {
@@ -1406,7 +1339,6 @@ void SciTEWin::DestroyFindReplace() {
 		::EndDialog(reinterpret_cast<HWND>(wFindReplace.GetID()), IDCANCEL);
 		wFindReplace.Destroy();
 	}
-	replacing = false; //!-add-[close.find.window]
 }
 
 BOOL SciTEWin::GoLineMessage(HWND hDlg, UINT message, WPARAM wParam) {
