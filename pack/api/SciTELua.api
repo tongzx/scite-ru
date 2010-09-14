@@ -162,13 +162,17 @@ shell.setfileattr
 shell.exec
 shell.findfiles
 shell.fileexists
+shell.to_utf8
+shell.from_utf8
 msgbox (<Text>, <Title>, <Options>)\n Message Box. Return select button  /extern lib "shell"/
 inputbox (<Title>, <Prompt>, <Default>, <funcCheck>, <minWidth>)\n Input Box. Return input string  /extern lib "shell"/
 getfileattr (<FileName>)\n return File Attribute as number  /extern lib "shell"/
 setfileattr (<FileName>, <FileAttr>)\n Set File Attribute  /extern lib "shell"/
 exec (strCommand, [strOperation], [boolNoShow], [bWaitOnReturn])\n /extern lib "shell"/
 findfiles (<FileMask>)\n return list of files by mask  /extern lib "shell"/
-fileexists (<FileName>)\n return true if file or folder exists  /extern lib "shell"/
+fileexists (<FileName>)\n return true if file or folder exists /extern lib "shell"/
+to_utf8 (text)\n convert text to UTF-8 /extern lib "shell"/
+from_utf8 (text)\n convert text from UTF-8 /extern lib "shell"/
 
 gui.window
 gui.panel

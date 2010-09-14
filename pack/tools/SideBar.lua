@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev, ur4ltz
-Version 1.20.2
+Version 1.20.3
 ------------------------------------------------------
   Note: Require gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
                lpeg.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/lpeg/>
@@ -1134,7 +1134,7 @@ local function Bookmark_Add(line_number)
 		line_text = ' - empty line - ('..(line_number+1)..')'
 	else
 		if tonumber(props["editor.unicode.mode"]) ~= IDM_ENCODING_DEFAULT then
-			line_text = line_text
+			line_text = shell.from_utf8(line_text)
 		end
 	end
 	for _, a in ipairs(table_bookmarks) do
