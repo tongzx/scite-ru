@@ -548,6 +548,9 @@
 				RelativePath="..\lua\src\ltm.c">
 			</File>
 			<File
+				RelativePath="..\src\LuaExtension.cxx">
+			</File>
+			<File
 				RelativePath="..\lua\src\lundump.c">
 			</File>
 			<File
@@ -718,9 +721,6 @@
 			</File>
 			<File
 				RelativePath="..\..\scintilla\src\LineMarker.h">
-			</File>
-			<File
-				RelativePath="..\src\LuaExtension.cxx">
 			</File>
 			<File
 				RelativePath="..\src\LuaExtension.h">
