@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 Paired Tags (логическое продолжение скриптов highlighting_paired_tags.lua и HTMLFormatPainter.lua)
-Version: 2.2.5
-Author: mozers™, VladVRO, nail333
+Version: 2.2.6
+Author: mozers™, VladVRO, TymurGubayev, nail333
 ------------------------------
 Подсветка парных и непарных тегов в HTML и XML
 В файле настроек задается цвет подсветки парных и непарных тегов
@@ -189,6 +189,15 @@ AddEventHandler("OnUpdateUI", function()
 			if editor:GetLexerLanguage() == "hypertext" or editor:GetLexerLanguage() == "xml" then
 				PairedTagsFinder()
 			end
+		end
+	end
+end)
+
+AddEventHandler("OnKey", function(key, shift, ctrl, alt, char)
+	if editor.Focus then
+		if alt and key == 66 -- alt+B
+			and t.paired_start then -- the paired tag found
+				editor:GotoPos(t.paired_start+1)
 		end
 	end
 end)

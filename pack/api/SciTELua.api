@@ -160,6 +160,7 @@ shell.inputbox
 shell.getfileattr
 shell.setfileattr
 shell.exec
+shell.getclipboardtext
 shell.findfiles
 shell.fileexists
 shell.to_utf8
