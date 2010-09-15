@@ -80,9 +80,9 @@ typedef enum Opcode {
 #define HASCHARSET	(ISFENVOFF << 1)
 
 static const byte opproperties[] = {
-  /* IAny */		ISCHECK,
-  /* IChar */		ISCHECK,
-  /* ISet */		ISCHECK | HASCHARSET,
+  /* IAny */		ISCHECK | ISJMP,
+  /* IChar */		ISCHECK | ISJMP,
+  /* ISet */		ISCHECK | ISJMP | HASCHARSET,
   /* ISpan */		ISNOFAIL | HASCHARSET,
   /* IRet */		0,
   /* IEnd */		0,
@@ -126,7 +126,7 @@ static const Instruction giveup = {{IGiveup, 0, 0}};
 #define MAXOFF		0xF
 
 #define isprop(op,p)	(opproperties[(op)->i.code] & (p))
-#define isjmp(op)	isprop(op, ISJMP)
+#define isjmp(op)	(isprop(op, ISJMP) && (op)->i.offset != 0)
 #define iscapture(op) 	isprop(op, ISCAPTURE)
 #define ischeck(op)	(isprop(op, ISCHECK) && (op)->i.offset == 0)
 #define istest(op)	(isprop(op, ISCHECK) && (op)->i.offset != 0)
@@ -2256,4 +2256,3 @@ int luaopen_lpeg (lua_State *L) {
   lua_settable(L, -4);
   return 1;
 }
-
