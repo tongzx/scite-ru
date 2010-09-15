@@ -832,14 +832,22 @@ NameError: mistake
   <p>Для того чтобы свернуть или развернуть код, необходимо щелкнуть мышкой по маркеру в местах сворачивания:</p>
 
   <ul>
-    <li>Ctrl+Shift+щелчок мышью между маркерами свертки (просто по колонке, где расположены маркеры свёртки), развернет или свернет все свертки.<br></li>
-
     <li>Ctrl+щелчок мышью по маркеру свертки выполняет свертку или развертку не только самого маркера, но и всех его дочерних сверток.<br></li>
 
     <li>Shift+щелчок мышью раскрывает не только сам маркер (если он свернут), но и все его дочерние свертки.<br></li>
 
+    <li>Ctrl+Shift+щелчок мышью между маркерами свертки (просто по колонке, где расположены маркеры свёртки), развернет или свернет все свертки.<br>
+    Команда "Toggle all folds" в меню View делает тоже самое с самого верхнего уровня свертки<br></li>
+
     <li>Ctrl+*(в правой части клавиатуры) сворачивает/разворачивает текущий маркер.</li>
   </ul>
+    <p>
+       Tip:
+       To open a large code block with all its children folded, fold it with
+       Ctrl+Click, then open it with a normal click. Then on opening a child fold,
+       you will see that the grandchild folds are still closed; if you want those
+       'grandchild' folds open, Shift+Click the child fold.
+
 
   <h3><a name="props">Файлы настроек</a></h3>
 
@@ -1136,13 +1144,6 @@ NameError: mistake
       <td><dfn><a name="margin.width">margin.width</a></dfn></td>
 
       <td>Эта переменная задает ширину в пикселях левой вертикальной колонки для меток (bookmarks).</td>
-    </tr>
-
-    <tr>
-      <td><dfn><a name="fold.margin.colour">fold.margin.colour<br>
-      fold.margin.highlight.colour</a></dfn></td>
-
-      <td>Данные переменные определяют цвет колонки свёртки кода. Если переменные не заданы (закомментированы), цвет поля будет установлен по умолчанию. В Windows поле свёртки кода по умолчанию отображается как у полосы прокрутки. Например, если задать <span class="example">fold.margin.colour=#FF0000</span> и <span class="example">fold.margin.highlight.colour=#0000FF</span>, цвет колонки свёртки кода будет представлять собой смесь красного и синего, т.е. цвет колонки для свёртки кода - составной (из этих двух цветов).</td>
     </tr>
 
     <tr class="windowsonly">
@@ -1930,7 +1931,7 @@ style the path and line number separately from the rest of the line with style 2
     <tr>
       <td><dfn><a name="open.dialog.in.file.directory">open.dialog.in.file.directory</a></dfn></td>
 
-      <td>Задайте переменную <dfn>open.dialog.in.file.directory</dfn>, чтобы диалог открытия файла первоначально отображал тот же каталог, где находится текущий файл. Если переменная не задана, тогда используются значения системы по умолчанию. В Windows 2000 это последний каталог, который был открыт в диалоге открытия файла в любом экземпляре SciTE.<br>
+      <td>Задайте переменную <dfn>open.dialog.in.file.directory</dfn>, чтобы диалог открытия файла первоначально отображал тот же каталог, где находится текущий файл. Если переменная не задана, тогда используются значения системы по умолчанию. В Windows XP это последний каталог, который был открыт в диалоге открытия файла в любом экземпляре SciTE.<br>
       В некоторых версиях GTK+ может быть открыт неожиданный каталог.</td>
     </tr>
 
@@ -2024,15 +2025,19 @@ style the path and line number separately from the rest of the line with style 2
       output.code.page</a></dfn></td>
 
       <td>
-        Чтобы SciTE мог поддерживать язык с набором двухбайтовых символов (например, японский), здесь необходимо задать кодовую страницу. Это нужно для того, чтобы двухбайтовые символы рассматривались как единое целое, и курсор ввода никогда не оказывался между двумя байтами двухбайтового символа. Под Windows будут работать значения <var>0</var> (набор однобайтовых символов) и <var>65001</var> (UTF-8). Кроме того, в зависимости от того, как настроен Windows, могут работать следующие настройки: <var>932</var> (Japanese Shift-JIS), <var>936</var> (Simplified Chinese GBK), <var>949</var> (Korean), <var>950</var> (Traditional Chinese Big5) и <var>1361</var>(Korean Johab).<br>
-        В GTK+ данная переменная будет работать только со значениями <var>0</var>, <var>1</var> или <var>65001</var>, поскольку в этой среде SciTE поддерживает только однобайтовые символы и Юникод.<br>
-        Значение <var>65001</var> в переменной <dfn>code.page</dfn> запустит режим Юникода и текст будет рассматриваться как последовательность символов UTF-8. Для вывода на экран символы первоначально конвертируются в обычную кодировку Юникод, так что отобразить можно символы любого языка. Глифы будут отображаться корректно только в том случае, если подходящие глифы содержатся в выбранных шрифтах. Для Windows 2000 рекомендуется <code>Tahoma</code>.<br>
+        Чтобы SciTE мог поддерживать язык с набором двухбайтовых символов (например, японский), здесь необходимо задать кодовую страницу. Это нужно для того, чтобы двухбайтовые символы рассматривались как единое целое, и курсор ввода никогда не оказывался между двумя байтами двухбайтового символа.
+  	  <table>
+	  <thead><th>Code page</th><th>Value</th></thead>
+	  <tr><td>Default (single byte character set)</td><td align="right">0</td></tr>
+	  <tr><td>UTF-8</td><td align="right">65001</td></tr>
+	  <tr><td>Japanese Shift-JIS</td><td align="right">932</td></tr>
+	  <tr><td>Simplified Chinese GBK</td><td align="right">936</td></tr>
+	  <tr><td>Korean Wansung</td><td align="right">949</td></tr>
+	  <tr><td>Traditional Chinese Big5</td><td align="right">950</td></tr>
+	  <tr><td>Korean Johab</td><td align="right">1361</td></tr>
+  	  </table>
+        Значение <var>65001</var> в переменной <dfn>code.page</dfn> запустит режим Юникода и текст будет рассматриваться как последовательность символов UTF-8. Для вывода на экран символы первоначально конвертируются в обычную кодировку Юникод, так что отобразить можно символы любого языка. Глифы будут отображаться корректно только в том случае, если подходящие глифы содержатся в выбранных шрифтах. Для Windows XP рекомендуется <code>Tahoma</code>.<br>
         <em>Данной переменной нельзя задать набор однобайтовых символов. Любые другие значения данного параметра, кроме вышеперечисленных, недопустимы и будут игнорироваться SciTE. Более того, установка <span class="example">code.page=1251</span>, рекомендуемая в некоторых пособиях, приводит к <a href="http://code.google.com/p/scite-ru/issues/detail?id=49">проблемам с переключением кодировок</a>.</em><br>
-        <span class="gtkonly">Под GTK+ 1.x национальные настройки при помощи свойства <dfn>LC_CTYPE</dfn> должны быть установлены в Юникод. На английской машине это выглядит так:
-
-        <div class="example">
-          LC_CTYPE=en_US.UTF-8
-        </div>В наборе шрифтов необходимо использовать шрифты с регистром &quot;<code>iso10646</code>&quot;. Набор шрифтов представляет собой список разделенных символом &#39;<code>|</code>&#39; частичных спецификаций шрифта, где каждая частичная спецификация может иметь форму <span class="example">foundry-fontface-charsetregistry-encoding *OR* fontface-charsetregistry-encoding *OR* foundry-fontface *OR* fontface</span>. Например, <span class="example">misc-fixed-iso10646-1*</span>.</span><br>
         Переменная <dfn>output.code.page</dfn> используется в том случае, если настройки панели вывода отличаются от настроек панели редактора.
       </td>
     </tr>
@@ -2040,8 +2045,31 @@ style the path and line number separately from the rest of the line with style 2
     <tr>
       <td><dfn><a name="character.set">character.set</a></dfn></td>
 
-      <td>Данная настройка позволяет изменять набор символов, который запрашивается при настройке шрифтов. Для использования японских символов необходимо задать переменной <dfn>character.set</dfn> значение <var>128</var>. Среди других значений <code>GB2312=134</code> или <code>BIG5=136</code> для китайских символов, <var>129</var> для корейских, <var>161</var> для греческих, <var>238</var> – восточноевропейских, <var>186</var> – балтийских, <var>162</var> – турецких, <var>177</var> – еврейских, <var>178</var> – арабских и <var>222</var> для тайских. Все указанные выше значения работают под Windows, а под GTK+ значения для балтийских, турецких, тайских и вьетнамских символов, возможно, работать не будут. Для того чтобы использовать кириллицу на платформе Windows, задайте <span class="example">character.set=204</span> (кодировка CP1251). Для использования символов кириллицы под GTK+ нужно задать <span class="example">character.set=204</span> (кодировка KOI8-R) или <span class="example">character.set=1251</span> (кодировка CP1251). Если вы используете одно из данных значений, пожалуйста, сообщите разработчикам по электронной почте, работают они или нет. Напишите также (если обладаете информацией об этом), как обеспечить поддержку других языков.<br>
-      <em>Возможно также использование <span class="example">character.set=255</span> (кодировка DOS-866). Естественно, что используемый шрифт должен содержать заданную кодовую страницу.</em></td>
+      <td>Данная настройка позволяет изменять набор символов, который запрашивается при настройке шрифтов. Не все из этих значений будут работать на всех платформах.
+	  <table>
+	  <thead><th>Character set</th><th>Value</th></thead>
+	  <tr><td>Default</td><td align="right">0</td></tr>
+	  <tr><td>Japanese</td><td align="right">128</td></tr>
+	  <tr><td>Chinese GB2312</td><td align="right">134</td></tr>
+	  <tr><td>Chinese BIG5</td><td align="right">136</td></tr>
+	  <tr><td>Korean</td><td align="right">129</td></tr>
+	  <tr><td>Greek</td><td align="right">161</td></tr>
+	  <tr><td>Eastern European</td><td align="right">238</td></tr>
+	  <tr class="windowsonly"><td>Baltic</td><td align="right">186</td></tr>
+	  <tr class="windowsonly"><td>Turkish</td><td align="right">162</td></tr>
+	  <tr><td>Hebrew</td><td align="right">177</td></tr>
+	  <tr><td>Arabic</td><td align="right">178</td></tr>
+	  <tr class="windowsonly"><td>Thai</td><td align="right">222</td></tr>
+	  <tr class="windowsonly"><td>Vietnamese</td><td align="right">163</td></tr>
+	  <tr><td>Cyrillic (CP1251 on Windows, KOI8-R on GTK+)</td><td align="right">204</td></tr>
+	  <tr class="gtkonly"><td>Cyrillic (CP1251 on GTK+)</td><td align="right">1251</td></tr>
+	  <tr class="gtkonly"><td>European with Euro (ISO 8859-15)</td><td align="right">1000</td></tr>
+	  </table>
+      Все указанные выше значения (за исключением 1251 и 1000) работают под Windows, а под GTK+ значения для балтийских, турецких, тайских и вьетнамских символов, возможно, работать не будут.<br>
+       Если вы используете одно из данных значений, пожалуйста, сообщите разработчикам по электронной почте, работают они или нет. Напишите также (если обладаете информацией об этом), как обеспечить поддержку других языков.<br>
+      <em>Для того чтобы использовать кириллицу на платформе Windows, задайте <span class="example">character.set=204</span> (кодировка CP1251) или <span class="example">character.set=255</span> (кодировка DOS-866).<br>
+      Для использования символов кириллицы под GTK+ нужно задать <span class="example">character.set=204</span> (кодировка KOI8-R) или <span class="example">character.set=1251</span> (кодировка CP1251).<br>
+      Естественно, что используемый шрифт должен содержать заданную кодовую страницу.</em></td>
     </tr>
 
     <tr>
@@ -2077,7 +2105,7 @@ style the path and line number separately from the rest of the line with style 2
       <td><dfn><a name="lexer">lexer.<i>filepattern</i></a></dfn></td>
       <td>Лексер разбивает текст на синтаксические части. После этого SciTE может отображать эти части в различных визуальных стилях. Лексеры, входящие в SciTE, предназначены для таких популярных языков программирования, как Python, Java, C/C++, JavaScript и VB. Часто несколько типов файлов относятся к одному языку (например, файлы с расширением .cpp, .cc, .h относятся к C++) и, следовательно, к одному лексеру. Данные опции ассоциируют имя файла с лексером.<br />
           The lexers included in SciTE are written in C++ and compiled into the SciTE executable.
-          Lexers can also be written as a <a href="ScriptLexer.html">Lua script</a>.</td>
+          Lexers can also be written as a <a href="ScriptLexer.html">Lua script</a> or as a Lua LPeg lexer using <a href="http://code.google.com/p/scintillua/">scintillua</a>.</td>
     </tr>
 
     <tr>
@@ -2431,21 +2459,35 @@ style the path and line number separately from the rest of the line with style 2
     </tr>
 
     <tr>
-      <td><dfn><a name="fold">fold<br>
-      fold.margin.width<br>
-      fold.symbols<br>
-      fold.on.open</a></dfn></td>
+      <td><dfn><a name="fold">fold</a></dfn></td>
+      <td>Свертка включается, если переменной <dfn>fold</dfn> задано значение <var>1</var></td>
+    </tr>
 
-      <td>Данные опции управляют сверткой. Свертка включается, если переменной <dfn>fold</dfn> задано значение <var>1</var>.<br>
-      Переменная <dfn>fold.symbols</dfn> задает один из четырех способов отображения свертки. Если значение этой переменной равно <var>0</var> (по умолчанию), используется стиль MacOS (стрелка вправо для свернутого текста, стрелка вниз для развернутого);<br>
+    <tr>
+      <td><dfn><a name="fold.symbols">fold.symbols</a></dfn></td>
+      <td>Переменная <dfn>fold.symbols</dfn> задает один из четырех способов отображения свертки. Если значение этой переменной равно <var>0</var> (по умолчанию), используется стиль MacOS (стрелка вправо для свернутого текста, стрелка вниз для развернутого);<br>
       <var>1</var> - свернутый текст отмечается символом &quot;+&quot;, а развернутый - символом &quot;-&quot;.<br>
-      При значении <var>2</var> отображается плоская древовидная структура с круглыми значками и закругленными соединениями, значение <var>3</var> выводит плоскую древовидную структуру с квадратными значками.<br>
-      Для автоматической свертки загружаемых файлов задайте переменной <dfn>fold.on.open</dfn> значение <var>1</var>.</td>
+      При значении <var>2</var> отображается плоская древовидная структура с круглыми значками и закругленными соединениями, значение <var>3</var> выводит плоскую древовидную структуру с квадратными значками.</td>
+    </tr>
+
+    <tr>
+      <td><dfn><a name="fold.margin.width">fold.margin.width</a></dfn></td>
+      <td>Sets the width of the fold margin.</td>
+    </tr>
+
+    <tr>
+      <td><dfn><a name="fold.margin.colour">fold.margin.colour<br>
+      fold.margin.highlight.colour</a></dfn></td>
+      <td>Данные переменные определяют цвет колонки свёртки кода. Если переменные не заданы (закомментированы), цвет поля будет установлен по умолчанию. В Windows поле свёртки кода по умолчанию отображается как у полосы прокрутки. Например, если задать <span class="example">fold.margin.colour=#FF0000</span> и <span class="example">fold.margin.highlight.colour=#0000FF</span>, цвет колонки свёртки кода будет представлять собой смесь красного и синего, т.е. цвет колонки для свёртки кода - составной (из этих двух цветов).</td>
+    </tr>
+
+    <tr>
+      <td><dfn><a name="fold.on.open">fold.on.open</a></dfn></td>
+      <td>Для автоматической свертки загружаемых файлов задайте переменной <dfn>fold.on.open</dfn> значение <var>1</var>.</td>
     </tr>
 
     <tr>
       <td><dfn><a name="fold.flags">fold.flags</a></dfn></td>
-
       <td>Не в полной мере задокументированные ;) битовые флаги, которые могут исчезнуть в будущих версиях.<br>
       Значения <var>2</var>, <var>4</var>, <var>8</var> и <var>16</var> управляют отрисовкой строк выше и ниже свертываемых строк, как в свернутом, так и в развернутом состоянии.<br>
       Значение <var>64</var> поможет отладить свертку, отобразив в поле уровни свертки в шестнадцатеричном виде.</td>
@@ -2453,37 +2495,31 @@ style the path and line number separately from the rest of the line with style 2
 
     <tr>
       <td><dfn><a name="fold.compact">fold.compact</a></dfn></td>
-
       <td>Для файлов HTML, XML, Lua, C++ и подобных включение данной опции ведет к тому, что пустые строки после элемента свертки свертываются вместе с ней. По умолчанию включено.</td>
     </tr>
 
     <tr>
       <td><dfn><a name="fold.html">fold.html</a></dfn></td>
-
       <td>Данная переменная включает и выключает свертку кода для HTML и XML файлов. Чтобы свертка работала, необходимо также включить параметр <dfn><a href="#fold">fold</a></dfn>.</td>
     </tr>
 
     <tr>
       <td><dfn><a name="fold.html.preprocessor">fold.html.preprocessor</a></dfn></td>
-
       <td>Если данная переменная равна <var>0</var> (<var>1</var> - значение по умолчанию), то команда "<cite>Свернуть все блоки текста</cite>" выполненная на  файле содержащем только код <code>php</code> (не php внедренный в html) свернет файл корректно, оставляя видимыми заголовки процедур. По умолчанию этого не происходит и команда сворачивает все содержимое файла целиком.</td>
     </tr>
 
     <tr>
       <td><dfn><a name="fold.hypertext.comment">fold.hypertext.comment</a></dfn></td>
-
       <td>Разрешает свертку в комментариях скриптов внедренных в HTML. По умолчанию отключено.</td>
     </tr>
 
     <tr>
       <td><dfn><a name="fold.hypertext.heredoc">fold.hypertext.heredoc</a></dfn></td>
-
       <td>Разрешает свертку скриптов внедренных в HTML. По умолчанию отключено.</td>
     </tr>
 
     <tr>
       <td><dfn><a name="fold.comment">fold.comment</a></dfn></td>
-
       <td>При использовании лексера C++ данная переменная включает свертку для многострочных комментариев и явно указаных точек свертки. Точки свертки позволяют добавлять дополнительную свертку с помощью комментариев <code>//{</code> и <code>//}</code>, помещаемых соответственно в начале и в конце секции, которую необходимо свернуть.</td>
     </tr>
 
