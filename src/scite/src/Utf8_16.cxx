@@ -108,34 +108,34 @@ int Has_UTF8_Char(unsigned char *buf,int size) {
 	int i=0,cnt=0;
 	while (p[0] && i<size) {
 		if (p[0]>>7==0x01) {
-			if (p[0]>>5==0x06) {
-				if (p[1]>>6!=0x02) {return 0;} //not utf8
+			if (p[0]>>5==0x06 && (i+1)<size) { //!-change-[FixBrokenStopRead]
+				if (p[1]>>6!=0x02) { return 0;} //not utf8
 				cnt++;p++;i++;//UTF-8: U-00000080 ?C U-000007FF
 			}
-			else if (p[0]>>4==0x0e) {
-				if (p[1]>>6!=0x02) 	{return 0;} //not utf8
-				if (p[2]>>6!=0x02) 	{return 0;} //not utf8
+			else if (p[0]>>4==0x0e && (i+2)<size) { //!-change-[FixBrokenStopRead]
+				if (p[1]>>6!=0x02) 	{ return 0;} //not utf8
+				if (p[2]>>6!=0x02) 	{ return 0;} //not utf8
 				cnt++;p+=2;i+=2;//UTF-8: U-00000800 ?C U-0000FFFF
 			}
-			else if (p[0]>>3==0x1e) {
-				if (p[1]>>6!=0x02) 	{return 0;} //not utf8
-				if (p[2]>>6!=0x02) 	{return 0;} //not utf8
-				if (p[3]>>6!=0x02) 	{return 0;} //not utf8
+			else if (p[0]>>3==0x1e && (i+3)<size) { //!-change-[FixBrokenStopRead]
+				if (p[1]>>6!=0x02) 	{ return 0;} //not utf8
+				if (p[2]>>6!=0x02) 	{ return 0;} //not utf8
+				if (p[3]>>6!=0x02) 	{ return 0;} //not utf8
 				cnt++;p+=3;i+=3;//UTF-8: U-00010000 ?C U-001FFFFF
 			}
-			else if (p[0]>>2==0x3e) {
-				if (p[1]>>6!=0x02) 	{return 0;} //not utf8
-				if (p[2]>>6!=0x02) 	{return 0;} //not utf8
-				if (p[3]>>6!=0x02) 	{return 0;} //not utf8
-				if (p[4]>>6!=0x02) 	{return 0;} //not utf8
+			else if (p[0]>>2==0x3e && (i+4)<size) { //!-change-[FixBrokenStopRead]
+				if (p[1]>>6!=0x02) 	{ return 0;} //not utf8
+				if (p[2]>>6!=0x02) 	{ return 0;} //not utf8
+				if (p[3]>>6!=0x02) 	{ return 0;} //not utf8
+				if (p[4]>>6!=0x02) 	{ return 0;} //not utf8
 				cnt++;p+=4;i+=4;//UTF-8: U-00200000 ?C U-03FFFFFF
 			}
-			else if (p[0]>>1==0x7e) {
-				if (p[1]>>6!=0x02) 	{return 0;} //not utf8
-				if (p[2]>>6!=0x02) 	{return 0;} //not utf8
-				if (p[3]>>6!=0x02) 	{return 0;} //not utf8
-				if (p[4]>>6!=0x02) 	{return 0;} //not utf8
-				if (p[5]>>6!=0x02) 	{return 0;} //not utf8
+			else if (p[0]>>1==0x7e && (i+5)<size) { //!-change-[FixBrokenStopRead]
+				if (p[1]>>6!=0x02) 	{ return 0;} //not utf8
+				if (p[2]>>6!=0x02) 	{ return 0;} //not utf8
+				if (p[3]>>6!=0x02) 	{ return 0;} //not utf8
+				if (p[4]>>6!=0x02) 	{ return 0;} //not utf8
+				if (p[5]>>6!=0x02) 	{ return 0;} //not utf8
 				cnt++;p+=5;i+=5;//UTF-8: U-04000000 ?C U-7FFFFFFF
 			}
 		}
