@@ -6,6 +6,8 @@ Steve Donovan, 2007.
 #include <windows.h>
 #include "yawl.h"
 #include <string.h>
+#include <xstring>
+#include <vector>
 #include <io.h>
 #include <direct.h>
 extern "C" {
@@ -19,7 +21,135 @@ const int BUFFER_SIZE = 2*0xFFFF;
 static TWin* s_parent = NULL;
 static TWin* s_last_parent = NULL;
 
-#define EQ(s1,s2) (strcmp((s1),(s2))==0)
+#define EQ(s1,s2) (wcscmp((s1),(s2))==0)
+
+// ==========================================================================
+enum { SURROGATE_LEAD_FIRST = 0xD800 };
+enum { SURROGATE_TRAIL_FIRST = 0xDC00 };
+enum { SURROGATE_TRAIL_LAST = 0xDFFF };
+
+static unsigned int UTF8Length(const wchar_t *uptr, size_t tlen) {
+	size_t len = 0;
+	for (size_t i = 0; i < tlen && uptr[i];) {
+		unsigned int uch = uptr[i];
+		if (uch < 0x80) {
+			len++;
+		} else if (uch < 0x800) {
+			len += 2;
+		} else if ((uch >= SURROGATE_LEAD_FIRST) &&
+			(uch <= SURROGATE_TRAIL_LAST)) {
+			len += 4;
+			i++;
+		} else {
+			len += 3;
+		}
+		i++;
+	}
+	return len;
+}
+
+static void UTF8FromUTF16(const wchar_t *uptr, size_t tlen, char *putf, size_t len) {
+	int k = 0;
+	for (size_t i = 0; i < tlen && uptr[i];) {
+		unsigned int uch = uptr[i];
+		if (uch < 0x80) {
+			putf[k++] = static_cast<char>(uch);
+		} else if (uch < 0x800) {
+			putf[k++] = static_cast<char>(0xC0 | (uch >> 6));
+			putf[k++] = static_cast<char>(0x80 | (uch & 0x3f));
+		} else if ((uch >= SURROGATE_LEAD_FIRST) &&
+			(uch <= SURROGATE_TRAIL_LAST)) {
+			// Half a surrogate pair
+			i++;
+			unsigned int xch = 0x10000 + ((uch & 0x3ff) << 10) + (uptr[i] & 0x3ff);
+			putf[k++] = static_cast<char>(0xF0 | (xch >> 18));
+			putf[k++] = static_cast<char>(0x80 | ((xch >> 12) & 0x3f));
+			putf[k++] = static_cast<char>(0x80 | ((xch >> 6) & 0x3f));
+			putf[k++] = static_cast<char>(0x80 | (xch & 0x3f));
+		} else {
+			putf[k++] = static_cast<char>(0xE0 | (uch >> 12));
+			putf[k++] = static_cast<char>(0x80 | ((uch >> 6) & 0x3f));
+			putf[k++] = static_cast<char>(0x80 | (uch & 0x3f));
+		}
+		i++;
+	}
+	putf[len] = '\0';
+}
+
+static size_t UTF16Length(const char *s, unsigned int len) {
+	size_t ulen = 0;
+	size_t charLen;
+	for (size_t i=0; i<len;) {
+		unsigned char ch = static_cast<unsigned char>(s[i]);
+		if (ch < 0x80) {
+			charLen = 1;
+		} else if (ch < 0x80 + 0x40 + 0x20) {
+			charLen = 2;
+		} else if (ch < 0x80 + 0x40 + 0x20 + 0x10) {
+			charLen = 3;
+		} else {
+			charLen = 4;
+			ulen++;
+		}
+		i += charLen;
+		ulen++;
+	}
+	return ulen;
+}
+
+static size_t UTF16FromUTF8(const char *s, size_t len, wchar_t *tbuf, size_t tlen) {
+	size_t ui=0;
+	const unsigned char *us = reinterpret_cast<const unsigned char *>(s);
+	size_t i=0;
+	while ((i<len) && (ui<tlen)) {
+		unsigned char ch = us[i++];
+		if (ch < 0x80) {
+			tbuf[ui] = ch;
+		} else if (ch < 0x80 + 0x40 + 0x20) {
+			tbuf[ui] = static_cast<wchar_t>((ch & 0x1F) << 6);
+			ch = us[i++];
+			tbuf[ui] = static_cast<wchar_t>(tbuf[ui] + (ch & 0x7F));
+		} else if (ch < 0x80 + 0x40 + 0x20 + 0x10) {
+			tbuf[ui] = static_cast<wchar_t>((ch & 0xF) << 12);
+			ch = us[i++];
+			tbuf[ui] = static_cast<wchar_t>(tbuf[ui] + ((ch & 0x7F) << 6));
+			ch = us[i++];
+			tbuf[ui] = static_cast<wchar_t>(tbuf[ui] + (ch & 0x7F));
+		} else {
+			// Outside the BMP so need two surrogates
+			int val = (ch & 0x7) << 18;
+			ch = us[i++];
+			val += (ch & 0x3F) << 12;
+			ch = us[i++];
+			val += (ch & 0x3F) << 6;
+			ch = us[i++];
+			val += (ch & 0x3F);
+			tbuf[ui] = static_cast<wchar_t>(((val - 0x10000) >> 10) + SURROGATE_LEAD_FIRST);
+			ui++;
+			tbuf[ui] = static_cast<wchar_t>((val & 0x3ff) + SURROGATE_TRAIL_FIRST);
+		}
+		ui++;
+	}
+	return ui;
+}
+
+wchar_t* StringFromUTF8(const char *s) {
+	size_t sLen = s ? strlen(s) : 0;
+	size_t wideLen = UTF16Length(s, sLen);
+	wchar_t* vgc = new wchar_t[wideLen + 1];
+	size_t outLen = UTF16FromUTF8(s, sLen, vgc, wideLen);
+	vgc[outLen] = 0;
+	return vgc;
+}
+
+char* UTF8FromString(const std::wstring &s) {
+	size_t sLen = s.size();
+	size_t narrowLen = UTF8Length(s.c_str(), sLen);
+	char* vc = new char[narrowLen + 1];
+	UTF8FromUTF16(s.c_str(), sLen, vc, narrowLen);
+	return vc;
+}
+// -------------------------------------------------------------------
 
 TWin* get_parent()
 {
@@ -43,13 +173,13 @@ TWin *get_desktop_window()
 
 class PromptDlg: public TModalDlg {
 public:
-	char m_val[256];
-    const char *m_field_name;
+	wchar_t m_val[256];
+    const wchar_t *m_field_name;
 
-	PromptDlg(TEventWindow *parent, pchar field_name, const char* val)
-		: TModalDlg(parent,"Enter:"), m_field_name(field_name)
+	PromptDlg(TEventWindow *parent, pchar field_name, const wchar_t* val)
+		: TModalDlg(parent,L"Enter:"), m_field_name(field_name)
 	{
-		strcpy(m_val,val);
+		wcscpy(m_val,val);
 	}
 
 	void layout(Layout& lo)
@@ -85,19 +215,19 @@ class LuaWindow: public TEventWindow
 protected:
 	lua_State* L;
 public:
-	LuaWindow(const char* caption,lua_State* l, TWin *parent, int stylex = 0, bool is_child = false, int style = -1)
+	LuaWindow(const wchar_t* caption,lua_State* l, TWin *parent, int stylex = 0, bool is_child = false, int style = -1)
 		: TEventWindow(caption,parent,stylex,is_child,style),L(l)
 	{}
 
 	void handler(Item* item)
 	{
-		char* name = (char*)item->data;
-		if (strncmp(name,"IDM_",4) == 0) {
-			char buff[128];
-			sprintf(buff,"scite.MenuCommand(%s)",name); //
-			luaL_dostring(L,buff);
+		wchar_t* name = (wchar_t*)item->data;
+		if (wcsncmp(name,L"IDM_",4) == 0) {
+			wchar_t buff[128];
+			swprintf(buff,L"scite.MenuCommand(%s)",name); //
+			luaL_dostring(L,UTF8FromString(buff));
 		} else {
-			lua_getglobal(L,name);
+			lua_getglobal(L,UTF8FromString(name));
 			if (lua_pcall(L,0,0,0)) {
 				OutputMessage(L);
 			}
@@ -110,7 +240,7 @@ class PanelWindow: public LuaWindow
 {
 public:
 	PanelWindow(lua_State* l)
-		: LuaWindow("",l,get_parent(),0,true)
+		: LuaWindow(L"",l,get_parent(),0,true)
 	{}
 };
 
@@ -123,7 +253,7 @@ class PaletteWindow: public LuaWindow
 protected:
 	bool m_shown;
 public:
-	PaletteWindow(const char* caption, lua_State* l, int stylex = 0, int style = -1)
+	PaletteWindow(const wchar_t* caption, lua_State* l, int stylex = 0, int style = -1)
 		: LuaWindow(caption,l,NULL,stylex,false,style)
 	{
 		instances[n_instances++] = this;
@@ -174,14 +304,14 @@ public:
 class ToolbarWindow: public PaletteWindow
 {
 public:
-	ToolbarWindow(const char* caption, char** item, int sz, const char* path, lua_State* l)
+	ToolbarWindow(const wchar_t* caption, wchar_t** item, int sz, const wchar_t* path, lua_State* l)
 		: PaletteWindow(caption,l,WS_EX_PALETTEWINDOW, WS_OVERLAPPED)
 	{
 		TToolbar tbar(this,sz,sz);
 		tbar.set_path(path);
 		for (;*item; item++) {
-			char* img_text = strtok(*item,"|");
-			char* fun = strtok(NULL,"");
+			wchar_t* img_text = wcstok(*item,L"|");
+			wchar_t* fun = wcstok(NULL,L"");
 			tbar << Item(img_text,(EH)&LuaWindow::handler,fun);
 		}
 		tbar.release();
@@ -197,19 +327,19 @@ class ContainerWindow: public PaletteWindow
 {
 public:
 	TListView* listv;
-	const char* select_name;
-	const char* double_name;
+	const wchar_t* select_name;
+	const wchar_t* double_name;
 
-	ContainerWindow(const char* caption, lua_State* l)
+	ContainerWindow(const wchar_t* caption, lua_State* l)
 		: PaletteWindow(caption,l),select_name(NULL),double_name(NULL)
 	{
 		set_icon_from_window(s_parent);
 	}
 
-	void dispatch(const char* name, int ival)
+	void dispatch(const wchar_t* name, int ival)
 	{
 		if (name != NULL) {
-			lua_getglobal(L,name);
+			lua_getglobal(L,UTF8FromString(name));
 			lua_pushnumber(L,ival);
 			if (lua_pcall(L,1,0,0)) {
 				OutputMessage(L);
@@ -219,7 +349,7 @@ public:
 
 	void on_button(Item* item)
 	{
-		dispatch((char*)item->data,0);  //listv->selected_id()
+		dispatch((wchar_t*)item->data,0);  //listv->selected_id()
 	}
 
 	void add_buttons(lua_State* L)
@@ -230,7 +360,7 @@ public:
 		panel->align(alBottom,50);
 		Layout layout(panel,this);
 		while (i < nargs) {
-			layout << Button(luaL_checkstring(L,i),(EH)&ContainerWindow::on_button,(void*)luaL_checkstring(L,i+1));
+			layout << Button(StringFromUTF8(luaL_checkstring(L,i)),(EH)&ContainerWindow::on_button,(void*)StringFromUTF8(luaL_checkstring(L,i+1)));
 			i += 2;
 		}
 		layout.release();
@@ -302,7 +432,7 @@ public:
 		LuaControl(l)
 	{
 		if (! multiple_columns) {
-			add_column("*",200);
+			add_column(L"*",200);
 		}
 	}
 
@@ -376,38 +506,38 @@ static int wrap_window(lua_State* L, TWin* win)
 	return 1;
 }
 
-static void throw_error(lua_State* L, const char *msg)
+static void throw_error(lua_State* L, const wchar_t *msg)
 {
-	lua_pushstring(L,msg);
+	lua_pushstring(L,UTF8FromString(msg));
 	lua_error(L);
 }
 
 static TWin* window_arg(lua_State* L, int idx = 1)
 {
 	WinWrap *wrp = (WinWrap*)lua_touserdata(L,idx);
-	if (! wrp) throw_error(L,"not a window");
+	if (! wrp) throw_error(L,L"not a window");
 	return (PaletteWindow*)wrp->window;
 }
 
 static void *& window_data(lua_State* L, int idx = 1)
 {
 	WinWrap *wrp = (WinWrap*)lua_touserdata(L,idx);
-	if (! wrp) throw_error(L,"not a window");
+	if (! wrp) throw_error(L,L"not a window");
 	return wrp->data;
 }
 
 
-static char** table_to_str_array(lua_State *L, int idx, int* psz = NULL)
+static wchar_t** table_to_str_array(lua_State *L, int idx, int* psz = NULL)
 {
 	if (! lua_istable(L,idx)) {
-		throw_error(L,"table argument expected");
+		throw_error(L,L"table argument expected");
 	}
-    char** p = new char*[100];
+    wchar_t** p = new wchar_t*[100];
     int i = 0;
     lua_pushnil(L); // first key
     while (lua_next(L, idx) != 0) {
          /* `key' is at index -2 and `value' at index -1 */
-         p[i++] = strdup(lua_tostring(L,-1));
+		 p[i++] = _wcsdup(StringFromUTF8(lua_tostring(L,-1)));
          lua_pop(L, 1);  /* removes `value'; keeps `key' for next iteration */
     }
     p[i] = NULL;  // conventional way of indicating end of string array
@@ -449,13 +579,13 @@ static bool optboolean(lua_State* L, int idx, bool res)
 
 int do_message(lua_State* L)
 {
-	const char* msg = luaL_checkstring(L,1);
-	const char* kind = luaL_optstring(L,2,"message");
+	const wchar_t* msg = StringFromUTF8(luaL_checkstring(L,1));
+	const wchar_t* kind = StringFromUTF8(luaL_optstring(L,2,"message"));
 	int type = 0;
-	if (EQ(kind,"message")) type = 0; else
-	if (EQ(kind,"warning")) type = 1; else
-	if (EQ(kind,"error")) type = 2; else
-	if (EQ(kind,"query")) type = 3;
+	if (EQ(kind,L"message")) type = 0; else
+	if (EQ(kind,L"warning")) type = 1; else
+	if (EQ(kind,L"error")) type = 2; else
+	if (EQ(kind,L"query")) type = 3;
 	lua_pushboolean(L,get_parent()->message(msg,type));
 	return 1;
 }
@@ -468,11 +598,11 @@ int do_message(lua_State* L)
 */
 int do_prompt_value(lua_State* L)
 {
-	const char* varname = luaL_checkstring(L,1);
-	const char* value = luaL_optstring(L,2,"");
+	const wchar_t* varname = StringFromUTF8(luaL_checkstring(L,1));
+	const wchar_t* value = StringFromUTF8(luaL_optstring(L,2,""));
 	PromptDlg dlg((TEventWindow*)get_desktop_window(),varname, value);
 	if (dlg.show_modal()) {
-		lua_pushstring(L,dlg.m_val);
+		lua_pushstring(L,UTF8FromString(dlg.m_val));
 	} else {
 		lua_pushnil(L);
 	}
@@ -481,12 +611,12 @@ int do_prompt_value(lua_State* L)
 
 int do_run(lua_State* L)
 {
-	const char* lpFile = luaL_checkstring(L,1);
-	const char* lpParameters = lua_tostring(L,2);
-	const char* lpDirectory = lua_tostring(L,3);
+	const wchar_t* lpFile = StringFromUTF8(luaL_checkstring(L,1));
+	const wchar_t* lpParameters = StringFromUTF8(lua_tostring(L,2));
+	const wchar_t* lpDirectory = StringFromUTF8(lua_tostring(L,3));
 	int res = (int)ShellExecute (
 		NULL,
-		"open",
+		L"open",
 		lpFile,
 		lpParameters,
 		lpDirectory,
@@ -540,11 +670,11 @@ int do_colour_dlg(lua_State* L)
 */
 int do_open_dlg(lua_State* L)
 {
-	const char* caption = luaL_optstring(L,1,"Open File");
-	const char* filter = luaL_optstring(L,2,"All (*.*)|*.*");
+	const wchar_t* caption = StringFromUTF8(luaL_optstring(L,1,"Open File"));
+	const wchar_t* filter = StringFromUTF8(luaL_optstring(L,2,"All (*.*)|*.*"));
 	TOpenFile tof (get_parent(),caption,filter);
 	if (tof.go()) {
-		lua_pushstring(L,tof.file_name());
+		lua_pushstring(L,UTF8FromString(tof.file_name()));
 	} else {
 		lua_pushnil(L);
 	}
@@ -553,11 +683,11 @@ int do_open_dlg(lua_State* L)
 
 int do_save_dlg(lua_State* L)
 {
-	const char* caption = luaL_optstring(L,1,"Save File");
-	const char* filter = luaL_optstring(L,2,"All (*.*)|*.*");
+	const wchar_t* caption = StringFromUTF8(luaL_optstring(L,1,"Save File"));
+	const wchar_t* filter = StringFromUTF8(luaL_optstring(L,2,"All (*.*)|*.*"));
 	TSaveFile tof (get_parent(),caption,filter);
 	if (tof.go()) {
-		lua_pushstring(L,tof.file_name());
+		lua_pushstring(L,UTF8FromString(tof.file_name()));
 	} else {
 		lua_pushnil(L);
 	}
@@ -570,11 +700,11 @@ int do_save_dlg(lua_State* L)
 */
 int do_select_dir_dlg(lua_State* L)
 {
-	const char* descr = luaL_optstring(L,1,"");
-	const char* initdir = luaL_optstring(L,2,"");
+	const wchar_t* descr = StringFromUTF8(luaL_optstring(L,1,""));
+	const wchar_t* initdir = StringFromUTF8(luaL_optstring(L,2,""));
 	TSelectDir dir(get_parent(), descr, initdir);
 	if (dir.go()) {
-		lua_pushstring(L, dir.path());
+		lua_pushstring(L, UTF8FromString(dir.path()));
 	} else {
 		lua_pushnil(L);
 	}
@@ -584,10 +714,10 @@ int do_select_dir_dlg(lua_State* L)
 
 int new_toolbar(lua_State* L)
 {
-	const char* caption = luaL_checkstring(L,1);
-	char** items = table_to_str_array(L,2);
+	const wchar_t* caption = StringFromUTF8(luaL_checkstring(L,1));
+	wchar_t** items = table_to_str_array(L,2);
 	int sz = luaL_optinteger(L,3,16);
-	const char* path = lua_tostring(L,4);
+	const wchar_t* path = StringFromUTF8(lua_tostring(L,4));
 	ToolbarWindow* ew = new ToolbarWindow(caption,items,sz,path,L);
 	ew->show();
 	delete[] items;
@@ -596,7 +726,7 @@ int new_toolbar(lua_State* L)
 
 int new_window(lua_State* L)
 {
-	const char* caption = luaL_checkstring(L,1);
+	const wchar_t* caption = StringFromUTF8(luaL_checkstring(L,1));
 	ContainerWindow* cw = new ContainerWindow(caption,L);
 	s_last_parent = cw;
 	return wrap_window(L,cw);
@@ -614,7 +744,7 @@ int window_client(lua_State* L)
 {
 	TEventWindow *cw = (TEventWindow*)window_arg(L,1);
 	TWin* child = window_arg(L,2);
-	if (! child) throw_error(L,"must provide a child window");
+	if (! child) throw_error(L,L"must provide a child window");
 	child->set_parent(cw);
 	cw->set_client(child);
 	return 0;
@@ -624,20 +754,20 @@ int window_add(lua_State* L)
 {
 	TEventWindow *cw = (TEventWindow*)window_arg(L,1);
 	TWin* child = window_arg(L,2);
-	const char *align = luaL_optstring(L,3,"client");
+	const wchar_t *align = StringFromUTF8(luaL_optstring(L,3,"client"));
 	bool splitter = optboolean(L,5,true);
 	int sz = luaL_optinteger(L,4,100);
 	child->set_parent(cw);
-	if (EQ(align,"top")) {
+	if (EQ(align,L"top")) {
 		child->align(alTop,sz);
     } else
-	if (EQ(align,"bottom")) {
+	if (EQ(align,L"bottom")) {
 		child->align(alBottom,sz);
 	} else
-	if (EQ(align,"left")) {
+	if (EQ(align,L"left")) {
 		child->align(alLeft,sz);
 	} else
-	if (EQ(align,"right")) {
+	if (EQ(align,L"right")) {
 		child->align(alRight,sz);
 	} else {
 		child->align(alClient,sz);
@@ -665,11 +795,11 @@ int window_remove(lua_State* L)
 int window_context_menu(lua_State* L)
 {
 	ContainerWindow *cw = (ContainerWindow*)window_arg(L,1);
-	char** items = table_to_str_array(L,2);
+	wchar_t** items = table_to_str_array(L,2);
 	ContextMenu mnu(cw);
 	for (;*items; items++) {
-		char* text = strtok(*items,"|");
-		char* fun = strtok(NULL,"");
+		wchar_t* text = wcstok(*items,L"|");
+		wchar_t* fun = wcstok(NULL,L"");
 		if ( ( text == 0 || *text == 0 )
 			 && ( fun == 0 || *fun == 0 ) )
 		{
@@ -697,7 +827,7 @@ int new_tabbar(lua_State* L)
 int tabbar_add(lua_State* L)
 {
 	TTabControl *tab = (TTabControl*)window_arg(L,1);
-	tab->add(luaL_checkstring(L,2),window_arg(L,3));
+	tab->add(StringFromUTF8(luaL_checkstring(L,2)),window_arg(L,3));
 	return 0;
 }
 
@@ -711,14 +841,14 @@ int new_memo(lua_State* L)
 int memo_set(lua_State* L)
 {
 	TMemo *m = (TMemo*)window_arg(L,1);
-	m->set_text(luaL_checkstring(L,2));
+	m->set_text(StringFromUTF8(luaL_checkstring(L,2)));
 	return 0;
 }
 
 int memo_set_colour(lua_State* L)
 {
 	TMemo *m = (TMemo*)window_arg(L,1);
-	m->set_text_colour(convert_colour_spec(luaL_checkstring(L,2)));
+	m->set_text_colour(convert_colour_spec(luaL_checkstring(L,2))); // Must be only ASCII
 	m->set_background_colour(convert_colour_spec(luaL_checkstring(L,3)));
 
 	return 0;
@@ -812,7 +942,7 @@ TListViewLua* list_window_arg(lua_State* L)
 */
 int window_add_column(lua_State* L)
 {
-	list_window_arg(L)->add_column(luaL_checkstring(L,2),luaL_checkinteger(L,3));
+	list_window_arg(L)->add_column(StringFromUTF8(luaL_checkstring(L,2)),luaL_checkinteger(L,3));
 	return 0;
 }
 
@@ -833,9 +963,9 @@ void window_aux_item(lua_State* L, bool at_index)
 		data = (void*)luaL_ref(L,LUA_REGISTRYINDEX);
 	}
 	if (lua_isstring(L,next_arg)) {
-		lv->add_item_at(ipos,luaL_checkstring(L,next_arg),0,data);
+		lv->add_item_at(ipos,StringFromUTF8(luaL_checkstring(L,next_arg)),0,data);
 	} else {
-		char** items = table_to_str_array(L,next_arg);
+		wchar_t** items = table_to_str_array(L,next_arg);
 		int i = 0, ncol = lv->columns();
 		int idx = lv->add_item_at(ipos,*items,0,data);
 		++items;
@@ -901,9 +1031,9 @@ int window_set_colour(lua_State* L)
 */
 int window_get_item_text(lua_State* L)
 {
-	char* buff = new char[BUFFER_SIZE];
+	wchar_t* buff = new wchar_t[BUFFER_SIZE];
 	list_window_arg(L)->get_item_text(luaL_checkinteger(L,2),buff,BUFFER_SIZE);
-	lua_pushstring(L,buff);
+	lua_pushstring(L,UTF8FromString(buff));
 	delete[] buff;
 	return 1;
 }
@@ -919,6 +1049,30 @@ int window_selected_item(lua_State* L)
 {
 	int idx =list_window_arg(L)->selected_id();
 	lua_pushinteger(L,idx);
+	return 1;
+}
+
+int window_selected_items(lua_State* L)
+{
+	TListViewLua* lv = list_window_arg(L);
+	int i = -1;
+	int idx = 0;
+	lua_newtable(L);
+	while(true) {
+		i = lv->next_selected_id(i);
+		if (i < 0) break;
+		lua_pushinteger(L, ++idx);
+		lua_pushinteger(L,i);
+		lua_settable(L, -3);
+	}
+
+	return 1;
+}
+
+int window_selected_count(lua_State* L)
+{
+	int count =list_window_arg(L)->selected_count();
+	lua_pushinteger(L,count);
 	return 1;
 }
 
@@ -1191,11 +1345,11 @@ static int do_set_panel(lua_State *L)
 		shake_scite_descendants();
 	} else {
 		extra_window = window_arg(L);
-		const char *align = luaL_optstring(L,2,"left");
-		if (EQ(align,"left")) {
+		const wchar_t *align = StringFromUTF8(luaL_optstring(L,2,"left"));
+		if (EQ(align,L"left")) {
 			extra_window->align(alLeft);
 		} else
-		if (EQ(align,"right")) {
+		if (EQ(align,L"right")) {
 			extra_window->align(alRight);
 		}
 		extra_window->set_parent(content_window);
@@ -1216,12 +1370,12 @@ static int do_chdir(lua_State *L)
 	return 1;
 }
 
-static int append_file(lua_State *L, int idx,int attrib,bool look_for_dir, const char *value)
+static int append_file(lua_State *L, int idx,int attrib,bool look_for_dir, const wchar_t *value)
 {
 	if (((attrib & _A_SUBDIR) != 0) == look_for_dir) {
-		if (look_for_dir && (EQ(value,".") || EQ(value,".."))) return idx;
+		if (look_for_dir && (EQ(value,L".") || EQ(value,L".."))) return idx;
 		lua_pushinteger(L,idx);
-		lua_pushstring(L,value);
+		lua_pushstring(L,UTF8FromString(value));
 		lua_settable(L,-3);
 		return idx + 1;
 	}
@@ -1230,15 +1384,15 @@ static int append_file(lua_State *L, int idx,int attrib,bool look_for_dir, const
 
 static int do_files(lua_State *L)
 {
-	struct _finddata_t c_file;
-	const char *mask = luaL_checkstring(L,1);
+	struct _wfinddata_t c_file;
+	const wchar_t *mask = StringFromUTF8(luaL_checkstring(L,1));
 	bool look_for_dir = optboolean(L,2,false);
-	long hFile = _findfirst(mask,&c_file);
+	long hFile = _wfindfirst(mask,&c_file);
 	int i = 1;
 	if (hFile == -1L) { lua_pushboolean(L,0); return 1; }
 	lua_newtable(L);
 	i = append_file(L,i,c_file.attrib,look_for_dir,c_file.name);
-	while( _findnext( hFile, &c_file ) == 0) {
+	while( _wfindnext( hFile, &c_file ) == 0) {
 		i = append_file(L,i,c_file.attrib,look_for_dir,c_file.name);
 	}
 	return 1;
@@ -1296,6 +1450,8 @@ static const struct luaL_reg window_methods[] = {
 	{"get_item_text",window_get_item_text},
 	{"get_item_data",window_get_item_data},
 	{"get_selected_item",window_selected_item},
+	{"get_selected_items",window_selected_items},
+	{"selected_count",window_selected_count},
 	{"set_selected_item",window_select_item},
 	{"on_select",window_on_select},
 	{"on_double_click",window_on_double_click},
@@ -1312,9 +1468,9 @@ static const struct luaL_reg window_methods[] = {
 
 BOOL CALLBACK CheckSciteWindow(HWND  hwnd, LPARAM  lParam)
 {
-	char buff[120];
+	wchar_t buff[120];
     GetClassName(hwnd,buff,sizeof(buff));	
-    if (strcmp(buff,"SciTEWindow") == 0) {
+    if (wcscmp(buff,L"SciTEWindow") == 0) {
 		*(HWND *)lParam = hwnd;
 		return FALSE;
     }
@@ -1323,9 +1479,9 @@ BOOL CALLBACK CheckSciteWindow(HWND  hwnd, LPARAM  lParam)
 
 BOOL CALLBACK CheckContainerWindow(HWND  hwnd, LPARAM  lParam)
 {
-	char buff[120];
+	wchar_t buff[120];
     GetClassName(hwnd,buff,sizeof(buff));	
-    if (strcmp(buff,"SciTEWindowContent") == 0) {
+    if (wcscmp(buff,L"SciTEWindowContent") == 0) {
 		*(HWND *)lParam = hwnd;
 		return FALSE;
     }
@@ -1382,7 +1538,7 @@ int luaopen_gui(lua_State *L)
 		}
 	}
 	if (! subclassed) {
-		get_parent()->message("Cannot subclass SciTE Window",2);
+		get_parent()->message(L"Cannot subclass SciTE Window",2);
 	}
 	luaL_openlib (L, "gui", gui, 0);
 	luaL_newmetatable(L, WINDOW_CLASS);  // create metatable for window objects

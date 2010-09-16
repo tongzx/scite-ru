@@ -9,18 +9,20 @@ class EXPORT TListViewB: public TNotifyWin {
 public:
 	TListViewB(TWin* form, bool large_icons = false, bool multiple_columns = false, bool single_select = true);
 	void set_image_list(TImageList* il_small, TImageList* il_large = NULL);
-	void add_column(const char* label, int width);
+	void add_column(const wchar_t* label, int width);
 	void autosize_column(int col, bool by_contents);
 	void start_items();
-	int add_item_at(int i, const char* text, int idx = 0, void* data = NULL);
-	int add_item(const char* text, int idx = 0, void* data = NULL);
-	void add_subitem(int i, const char* text, int sub_idx);
+	int add_item_at(int i, const wchar_t* text, int idx = 0, void* data = NULL);
+	int add_item(const wchar_t* text, int idx = 0, void* data = NULL);
+	void add_subitem(int i, const wchar_t* text, int sub_idx);
 	void delete_item(int i);
 	void select_item(int i);
-	void get_item_text(int i, char* buff, int buffsize);
+	void get_item_text(int i, wchar_t* buff, int buffsize);
 	void* get_item_data(int i);
     int  selected_id();
+	int  next_selected_id(int i);
     int  count();
+	int  selected_count();
 	int  columns();
     void clear();
 	void set_foreground(unsigned int colour);

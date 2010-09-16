@@ -10,25 +10,25 @@
 
 #define WIN32_INI
 
-EXPORT void output_debug_str(const char *buff)
+EXPORT void output_debug_str(const wchar_t *buff)
 {
   OutputDebugString(buff);
 }
 
-char IniBase::_tmpbuff_[BUFSZ];
+wchar_t IniBase::_tmpbuff_[BUFSZ];
 
 void IniBase::write_int(pcchar key, int val)
 {
-  itoa(val,_tmpbuff_,10);
+  _itow(val,_tmpbuff_,10);
   write_string(key,_tmpbuff_);
 }
 
 int  IniBase::read_int(pcchar key, int def)
 {
-  char defstr[20];
-  itoa(def,defstr,10);
-  char* istr = read_string(key,_tmpbuff_,BUFSZ,defstr);
-  return atoi(istr);
+  wchar_t defstr[20];
+  _itow(def,defstr,10);
+  wchar_t* istr = read_string(key,_tmpbuff_,BUFSZ,defstr);
+  return _wtoi(istr);
 }
 
 #ifndef WIN32_INI
@@ -46,12 +46,12 @@ static void trim_end(char* buff)
 
 IniFile::IniFile(pcchar file, bool in_cwd)
 {
-    if (! in_cwd) m_file = strdup(file);
+    if (! in_cwd) m_file = _wcsdup(file);
     else {
         get_app_path(_tmpbuff_,BUFSZ);
-        strcat(_tmpbuff_,"/");
-        strcat(_tmpbuff_,file);
-        m_file = strdup(_tmpbuff_);
+        wcscat(_tmpbuff_,L"/");
+        wcscat(_tmpbuff_,file);
+        m_file = _wcsdup(_tmpbuff_);
     }
 #ifndef WIN32_INI
 	FILE *in = fopen(file,"r");
@@ -80,7 +80,7 @@ void IniFile::write_string(pcchar key, pcchar value)
     WritePrivateProfileString(m_section,key,value,m_file);
 }
 
-char *IniFile::read_string(pcchar key, char *value, int sz, pcchar def)
+wchar_t *IniFile::read_string(pcchar key, wchar_t *value, int sz, pcchar def)
 {
     GetPrivateProfileString(m_section,key,def,value,sz,m_file);
     return value;

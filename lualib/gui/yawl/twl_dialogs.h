@@ -6,33 +6,33 @@
 class EXPORT TOpenFile {
 protected:
   void *m_ofn;
-  char *m_filename;
+  wchar_t *m_filename;
   bool m_prompt;
-  char *m_file;
-  char *m_file_out;
-  char *m_path;
+  wchar_t *m_file;
+  wchar_t *m_file_out;
+  wchar_t *m_path;
 public:
-  TOpenFile(TWin *parent,const char *caption,const char *filter,bool do_prompt=true);
+  TOpenFile(TWin *parent,const wchar_t *caption,const wchar_t *filter,bool do_prompt=true);
   ~TOpenFile();
   virtual bool go();
-  void initial_dir(const char *dir);
+  void initial_dir(const wchar_t *dir);
   bool next();
-  const char *file_name();
-  void file_name(const char *buff);
+  const wchar_t *file_name();
+  void file_name(const wchar_t *buff);
 };
 
 class TSelectDir {
 	TWin *parent;
-	char *descr;
-	char *dirPath;
-	char *lpszInitialDir;
+	wchar_t *descr;
+	wchar_t *dirPath;
+	wchar_t *lpszInitialDir;
 	HWND m_hWndTreeView;
 	TSelectDir();
 public:
-	TSelectDir(TWin *_parent, const char *_description="",const char *_initialdir="");
+	TSelectDir(TWin *_parent, const wchar_t *_description=L"",const wchar_t *_initialdir=L"");
 	virtual ~TSelectDir();
 	virtual bool go();
-	const char *path() const
+	const wchar_t *path() const
 		{ return dirPath; }
 private:
 	static int WINAPI SHBrowseCallBack( HWND hWnd, UINT uMsg, LPARAM lParam, LPARAM lpData );
@@ -40,7 +40,7 @@ private:
 
 class EXPORT TSaveFile: public TOpenFile {
 	public:
-	TSaveFile(TWin *parent, const char *caption, const char *filter,bool do_prompt=true)
+	TSaveFile(TWin *parent, const wchar_t *caption, const wchar_t *filter,bool do_prompt=true)
 		: TOpenFile(parent,caption,filter,false)
 	{}
 	bool go();

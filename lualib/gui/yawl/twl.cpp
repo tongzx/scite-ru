@@ -27,14 +27,14 @@
 
 #define MAX_CMD_LINE 120
 #define N_CMD_LINE 20
-#define EW_CLASSNAME "EVNTWNDCLSS"
-#define POP_WNDCLSS "WNDCLSS"
+#define EW_CLASSNAME L"EVNTWNDCLSS"
+#define POP_WNDCLSS L"WNDCLSS"
 
 static HINSTANCE hInst;
 static int CmdShow;
 static HANDLE hAccel=0,hModeless=0;
-char obuff[BUFSIZE];
-static char buff[MAX_CMD_LINE];
+wchar_t obuff[BUFSIZE];
+static wchar_t buff[MAX_CMD_LINE];
 static Point g_mouse_pt,g_mouse_pt_right;
 
 typedef unsigned char byte;
@@ -60,10 +60,11 @@ long make_rgb(int r, int g, int b)
 int exec(pchar s, int mode)
 //-------------------------
 {
-  return WinExec(s,mode) > 31;
+  //return WinExec(s,mode) > 31;
+  return (int)ShellExecute(0, L"open", s, NULL, NULL, mode) > 31;
 }
 
-int message(const char *format,bool was_warning)
+int message(const wchar_t *format,bool was_warning)
 //----------------------------------------
 {
   //char *Args;
@@ -73,7 +74,7 @@ int message(const char *format,bool was_warning)
  // vsprintf(obuff,format,Args);
  // ret = MessageBox(NULL,obuff,"Message",MB_ICONEXCLAMATION | MB_OKCANCEL);
 
-  ret = MessageBox(NULL,format,"Message",MB_ICONEXCLAMATION | MB_OKCANCEL);
+  ret = MessageBox(NULL,format,L"Message",MB_ICONEXCLAMATION | MB_OKCANCEL);
   if (ret == IDCANCEL) return 0;  else return 1;
  }
 
@@ -372,7 +373,7 @@ void TWin::set_text(pchar str)
 //---------------------------
 { SetWindowText(m_hwnd, str);  }
 
-pchar TWin::get_text(char* str, int sz)
+pchar TWin::get_text(wchar_t* str, int sz)
 //-------------------------------------
 { GetWindowText(m_hwnd,str,sz);          return str; }
 
@@ -386,7 +387,7 @@ void TWin::set_int(int id, int val)
 //-------------------------------------
 { SetDlgItemInt(m_hwnd,id,val,TRUE); }
 
-pchar TWin::get_text(int id, char* str, int sz)
+pchar TWin::get_text(int id, wchar_t* str, int sz)
 //--------------------------------------------
 {  GetDlgItemText(m_hwnd,id,str,sz);  return str; }
 
@@ -510,11 +511,11 @@ int TWin::message(pchar msg, int type)
 //-------------------------------------
 {
  int flags;
- char *title;
- if (type == MSG_ERROR) { flags = MB_ICONERROR | MB_OK; title = "Error"; }
- else if (type == MSG_WARNING) { flags = MB_ICONEXCLAMATION | MB_OKCANCEL; title = "Warning"; }
- else if (type == MSG_QUERY)   { flags = MB_YESNO; title = "Query"; }
- else { flags = MB_OK; title = "Message"; }
+ wchar_t *title;
+ if (type == MSG_ERROR) { flags = MB_ICONERROR | MB_OK; title = L"Error"; }
+ else if (type == MSG_WARNING) { flags = MB_ICONEXCLAMATION | MB_OKCANCEL; title = L"Warning"; }
+ else if (type == MSG_QUERY)   { flags = MB_YESNO; title = L"Query"; }
+ else { flags = MB_OK; title = L"Message"; }
  int retval = type == MSG_QUERY ? IDYES : IDOK;
  return MessageBox(m_hwnd, msg, title,flags) == retval;
 }
@@ -980,7 +981,7 @@ TFrameWindow::TFrameWindow(pchar caption, bool has_status, TWin *cli)
   set_client(cli);
   if (has_status) {
     HWND hStatus = CreateStatusWindow(WS_CHILD | WS_BORDER | WS_VISIBLE,
-				"", m_hwnd, 1);
+				L"", m_hwnd, 1);
     m_status = new TWin(hStatus);
     m_status->align(alBottom);
     m_status->resize(0,20);
@@ -1054,7 +1055,7 @@ void TControl::calc_size()
 
 bool TControl::is_type(pchar tname)
 {
-	return strcmp(type_name(),tname)==0;
+	return wcscmp(type_name(),tname)==0;
 }
 
 void TControl::set_font(TFont *fnt)
@@ -1074,12 +1075,12 @@ void TControl::set_colour(float r, float g, float b)
 
 TLabel::TLabel(TWin *parent, pchar text, int id)
 //--------------------------------------
-: TControl(parent,"STATIC",text,id,0x0)
+: TControl(parent,L"STATIC",text,id,0x0)
 { }
 
 TEdit::TEdit(TWin *parent, pchar text, int id, long style)
 //-----------------------------------------------
-: TControl(parent,"EDIT",text,id,style | WS_BORDER | ES_AUTOHSCROLL )
+: TControl(parent,L"EDIT",text,id,style | WS_BORDER | ES_AUTOHSCROLL )
 {  }
 
 void TEdit::set_selection(int start, int finish)
@@ -1440,21 +1441,21 @@ WNDFN WndProc (HWND hwnd, UINT msg, UINT wParam,LONG lParam)
  return ret;
 }
 
-EXPORT void get_app_path(char* buff,int sz)
+EXPORT void get_app_path(wchar_t* buff,int sz)
 {
  GetModuleFileName(NULL,buff,sz);
 }
 
-EXPORT void debug_output(char* str)
+EXPORT void debug_output(wchar_t* str)
 {
 	OutputDebugString(str);
 }
 
-char *_quote_strtok(char *str, char str_delim)
+wchar_t *_quote_strtok(wchar_t *str, wchar_t str_delim)
 {
 // a specialized version of strtok() which treats quoted strings specially
 // (used for handling command-line parms)
-    static char *tok;
+    static wchar_t *tok;
     if(str != NULL) tok = str;
 
     while (*tok && isspace(*tok)) tok++;
@@ -1472,12 +1473,12 @@ char *_quote_strtok(char *str, char str_delim)
     return str;
 }
 
-int ParseCmdLine(LPSTR CmdLine, char **args)
+int ParseCmdLine(LPCWSTR CmdLine, wchar_t **args)
 //-----------------------------------------
 {
   int i;
-  char *arg;
-  static char app_path[255];
+  wchar_t *arg;
+  static wchar_t app_path[255];
   get_app_path(app_path,255);
 
   lstrcpy(buff,CmdLine);

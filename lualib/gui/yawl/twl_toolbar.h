@@ -8,15 +8,15 @@ class EXPORT TToolbar: public TWin {
    MessageHandler* m_menu_handler;
    TEventWindow* m_form;
    TEventWindow* m_container;
-   const char* m_path;
+   const wchar_t* m_path;
    int m_bwidth,m_bheight;
 
 public:
     TToolbar(TEventWindow* form, int bwidth=16, int bheight=16, TEventWindow* m_container=NULL);
     ~TToolbar();
     void create();
-	void set_path(const char* path);
-    void add_item(const char* bmp, const char* tooltext, EventHandler eh, void* data=NULL);
+	void set_path(const wchar_t* path);
+    void add_item(const wchar_t* bmp, const wchar_t* tooltext, EventHandler eh, void* data=NULL);
 	SIZE get_size();
     void release();
 };

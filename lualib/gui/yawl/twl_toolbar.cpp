@@ -43,12 +43,12 @@ void *ApplicationInstance();
 
 static int gID = 445560;
 
-static HWND create_common_control(TWin* form, const char* winclass, int style, int height = -1)
+static HWND create_common_control(TWin* form, const wchar_t* winclass, int style, int height = -1)
 {
     int w = CW_USEDEFAULT, h = CW_USEDEFAULT;
     if (height != -1) { w = 100; h = height; }
     return CreateWindowEx( 0L,   // No extended styles.
-       winclass,"",WS_CHILD | style,
+       winclass,L"",WS_CHILD | style,
        0, 0, w, h,
        (HWND)form->handle(),                  // Parent window of the control.
        (HMENU)(void*)gID++,
@@ -57,33 +57,33 @@ static HWND create_common_control(TWin* form, const char* winclass, int style, i
 }
 
 struct StdItem {
-    const char* name;
+    const wchar_t* name;
     int idx;
 };
 static StdItem std_items[] = {
-    {"COPY",STD_COPY},
-    {"CUT",STD_CUT},
-    {"DELETE",STD_DELETE},
-    {"FILENEW",STD_FILENEW},
-    {"FILEOPEN",STD_FILEOPEN},
-    {"FILESAVE",STD_FILESAVE},
-    {"FIND",STD_FIND},
-    {"HELP",STD_HELP},
-    {"PASTE",STD_PASTE},
-    {"PRINT",STD_PRINT},
-    {"PRINTPRE",STD_PRINTPRE},
-    {"PROPERTIES",STD_PROPERTIES},
-    {"REDOW",STD_REDOW},
-    {"REPLACE",STD_REPLACE},
-    {"UNDO",STD_UNDO},
-    {"_DETAILS",VIEW_DETAILS},
-    {"_LARGEICONS",VIEW_LARGEICONS},
-    {"_LIST",VIEW_LIST},
-    {"_SMALLICONS",VIEW_SMALLICONS},
-    {"_SORTDATE",VIEW_SORTDATE},
-    {"_SORTNAME",VIEW_SORTNAME},
-    {"_SORTSIZE",VIEW_SORTSIZE},
-    {"_SORTTYPE",VIEW_SORTTYPE},
+    {L"COPY",STD_COPY},
+    {L"CUT",STD_CUT},
+    {L"DELETE",STD_DELETE},
+    {L"FILENEW",STD_FILENEW},
+    {L"FILEOPEN",STD_FILEOPEN},
+    {L"FILESAVE",STD_FILESAVE},
+    {L"FIND",STD_FIND},
+    {L"HELP",STD_HELP},
+    {L"PASTE",STD_PASTE},
+    {L"PRINT",STD_PRINT},
+    {L"PRINTPRE",STD_PRINTPRE},
+    {L"PROPERTIES",STD_PROPERTIES},
+    {L"REDOW",STD_REDOW},
+    {L"REPLACE",STD_REPLACE},
+    {L"UNDO",STD_UNDO},
+    {L"_DETAILS",VIEW_DETAILS},
+    {L"_LARGEICONS",VIEW_LARGEICONS},
+    {L"_LIST",VIEW_LIST},
+    {L"_SMALLICONS",VIEW_SMALLICONS},
+    {L"_SORTDATE",VIEW_SORTDATE},
+    {L"_SORTNAME",VIEW_SORTNAME},
+    {L"_SORTSIZE",VIEW_SORTSIZE},
+    {L"_SORTTYPE",VIEW_SORTTYPE},
     {NULL,-1}
 };
 
@@ -119,16 +119,16 @@ void TToolbar::create()
 
 }
 
-static HICON load_icon(const char* file)
+static HICON load_icon(const wchar_t* file)
 {
   return (HICON)LoadImage( (HINSTANCE)ApplicationInstance(),file,IMAGE_ICON,0,0,LR_LOADFROMFILE | LR_LOADTRANSPARENT);
 }
 
-static HBITMAP load_bitmap (const char* file)
+static HBITMAP load_bitmap (const wchar_t* file)
 {
   HBITMAP res = (HBITMAP)LoadImage(0/*ApplicationInstance()*/,file,IMAGE_BITMAP,0,0,LR_LOADFROMFILE | LR_LOADTRANSPARENT);
   if (! res) {
-	int res = access(file,0);
+	int res = _waccess(file,0);
 	int err = GetLastError();
 	err = err - 1;
   }
@@ -143,32 +143,32 @@ SIZE TToolbar::get_size()
 }
 
 
-void TToolbar::set_path(const char* path)
+void TToolbar::set_path(const wchar_t* path)
 {
 	m_path = path;
 }
 
-void TToolbar::add_item(const char* bmp, const char* tooltext, EventHandler eh, void* data)
+void TToolbar::add_item(const wchar_t* bmp, const wchar_t* tooltext, EventHandler eh, void* data)
 {
      int idx = 0;
      if (bmp) {
        int std_id = -1;
        StdItem* pi = std_items;
        while (pi->name != NULL) {
-         if (strcmp(pi->name,bmp)==0) break;
+         if (wcscmp(pi->name,bmp)==0) break;
          pi++;
        }
        idx = pi->idx;
        if (idx == -1) { // wasn't a standard toolbar button
-		 char bmpfile[256];
+		 wchar_t bmpfile[256];
 		 if (m_path != NULL) {
-			sprintf(bmpfile,"%s\\%s",m_path,bmp);
+			swprintf(bmpfile,L"%s\\%s",m_path,bmp);
 		 } else {
-			 strcpy(bmpfile,bmp);
+			 wcscpy(bmpfile,bmp);
 		 }
-		 int sz = strlen(bmpfile);
-		 if (strncmp(bmpfile+sz-4,".bmp",4) != 0) {
-			 strcat(bmpfile,".bmp");
+		 int sz = wcslen(bmpfile);
+		 if (wcsncmp(bmpfile+sz-4,L".bmp",4) != 0) {
+			 wcscat(bmpfile,L".bmp");
 		 }
          HANDLE hBitmap = load_bitmap(bmpfile);
          TBADDBITMAP bitmap;
@@ -215,7 +215,7 @@ public:
           lpToolTipText->lpszText = lpToolTipText->szText;
 		  if (btn.dwData == 0)
 			  return 0;
-          strcpy(lpToolTipText->szText,(char*)btn.dwData);
+          wcscpy(lpToolTipText->szText,(wchar_t*)btn.dwData);
       }
       return 1;
     }
@@ -235,9 +235,9 @@ void TToolbar::release()
 
 EXPORT TToolbar& operator<< (TToolbar& tb, Item item)
 {
-    char* caption = strdup((char*)item.caption); // hack
-    char* bmp_file = strtok(caption,":");
-    char* tooltip_text = strtok(NULL,"");
+    wchar_t* caption = _wcsdup((wchar_t*)item.caption); // hack
+    wchar_t* bmp_file = wcstok(caption,L":");
+    wchar_t* tooltip_text = wcstok(NULL,L"");
     tb.add_item(bmp_file,tooltip_text,item.handler,item.data);
     return tb;
 }
@@ -275,14 +275,14 @@ void TImageList::create(int cx, int cy)
 	m_handle = ImageList_Create(cx,cy,ILC_COLOR32 | ILC_MASK,0,32);
 }
 
-int TImageList::add_icon(const char* iconfile)
+int TImageList::add_icon(const wchar_t* iconfile)
 {
 	  HICON hIcon = load_icon(iconfile);
 	  if (! hIcon) return -1;  // can't find icon
 	  return ImageList_AddIcon(m_handle,hIcon);
 }
 
-int TImageList::add(const char* bitmapfile, long mask_clr)
+int TImageList::add(const wchar_t* bitmapfile, long mask_clr)
 {
 	  HBITMAP hBitmap = load_bitmap(bitmapfile);
 	  if (! hBitmap) return -1;  // can't find bitmap
@@ -292,7 +292,7 @@ int TImageList::add(const char* bitmapfile, long mask_clr)
         return ImageList_Add(m_handle,hBitmap,NULL);
 }
 
-int TImageList::load_icons_from_module(const char* mod)
+int TImageList::load_icons_from_module(const wchar_t* mod)
 {
  HINSTANCE hInst = GetModuleHandle(mod);
  HICON hIcon;
@@ -300,7 +300,7 @@ int TImageList::load_icons_from_module(const char* mod)
  int cy = cx;
  int i = 1;
  while (
-     (hIcon = (HICON)LoadImage(hInst, (const char*)(i++), IMAGE_ICON, cx, cy, LR_LOADMAP3DCOLORS))
+     (hIcon = (HICON)LoadImage(hInst, (const wchar_t*)(i++), IMAGE_ICON, cx, cy, LR_LOADMAP3DCOLORS))
      != NULL)
 	    ImageList_AddIcon(m_handle,hIcon);
  return i;
@@ -313,7 +313,7 @@ void TImageList::set_back_colour(long clrRef)
 
 void TImageList::load_shell_icons()
 {
- load_icons_from_module("shell32.dll");
+ load_icons_from_module(L"shell32.dll");
  set_back_colour(CLR_NONE);
 }
 
@@ -353,13 +353,13 @@ void TListViewB::set_image_list(TImageList* il_small, TImageList* il_large)
 	   m_has_images = true;
 }
 
-void TListViewB::add_column(const char* label, int width)
+void TListViewB::add_column(const wchar_t* label, int width)
 {
      LVCOLUMN lvc;
      lvc.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
      lvc.fmt = LVCFMT_LEFT;   // left-align, by default
      lvc.cx = width;
-     lvc.pszText = (char*)label;
+     lvc.pszText = (wchar_t*)label;
 	 lvc.iSubItem = m_last_col;
 
 	 ListView_InsertColumn((HWND)m_hwnd, m_last_col, &lvc);
@@ -395,14 +395,14 @@ void TListViewB::start_items()
 	m_last_row = -1;
 }
 
-int TListViewB::add_item_at(int i, const char* text, int idx, void* data)
+int TListViewB::add_item_at(int i, const wchar_t* text, int idx, void* data)
 {
      LVITEM lvi;
      lvi.mask = LVIF_TEXT | LVIF_PARAM | LVIF_STATE;
 	 if (m_has_images) lvi.mask |= LVIF_IMAGE;
 	 lvi.state = 0;
 	 lvi.stateMask = 0;
-     lvi.pszText = (char*)text;
+     lvi.pszText = (wchar_t*)text;
  	 lvi.lParam = (unsigned long)data;
 	 lvi.iItem = i;
 	 lvi.iImage = idx;                // image list index
@@ -412,15 +412,15 @@ int TListViewB::add_item_at(int i, const char* text, int idx, void* data)
 	 return i;
 }
 
-int TListViewB::add_item(const char* text, int idx, void* data)
+int TListViewB::add_item(const wchar_t* text, int idx, void* data)
 {
 	 m_last_row++;
 	 return add_item_at(m_last_row,text,idx,data);
 }
 
-void TListViewB::add_subitem(int i, const char* text, int idx)
+void TListViewB::add_subitem(int i, const wchar_t* text, int idx)
 {
-	ListView_SetItemText((HWND)m_hwnd,i,idx,(char*)text);
+	ListView_SetItemText((HWND)m_hwnd,i,idx,(wchar_t*)text);
 }
 
 void TListViewB::delete_item(int i)
@@ -433,7 +433,7 @@ void TListViewB::select_item(int i)
 	ListView_SetItemState((HWND)m_hwnd,i,LVIS_SELECTED | LVIS_FOCUSED,LVIS_SELECTED | LVIS_FOCUSED );
 }
 
-void TListViewB::get_item_text(int i, char* buff, int buffsize)
+void TListViewB::get_item_text(int i, wchar_t* buff, int buffsize)
 {
 	ListView_GetItemText((HWND)m_hwnd,i,0,buff,buffsize);
 }
@@ -453,9 +453,19 @@ int TListViewB::selected_id()
   return send_msg(LVM_GETNEXTITEM,-1,LVNI_FOCUSED);
 }
 
+int TListViewB::next_selected_id(int i)
+{
+  return send_msg(LVM_GETNEXTITEM,i,LVNI_SELECTED);
+}
+
 int TListViewB::count()
 {
   return send_msg(LVM_GETITEMCOUNT);
+}
+
+int TListViewB::selected_count()
+{
+  return send_msg(LVM_GETSELECTEDCOUNT);
 }
 
 void TListViewB::clear()
@@ -578,11 +588,11 @@ TTabControlB::TTabControlB(TWin* form, bool multiline)
      */
 }
 
-void TTabControlB::add(const char* caption, void* data, int image_idx /*= -1*/)
+void TTabControlB::add(const wchar_t* caption, void* data, int image_idx /*= -1*/)
 {
 	TCITEM item;
 	item.mask = TCIF_TEXT | TCIF_PARAM;
-	item.pszText = (char*)caption;
+	item.pszText = (wchar_t*)caption;
 	item.lParam = (LPARAM)data;
 	send_msg(TCM_INSERTITEM,m_index++,(LPARAM)&item);
 }
@@ -664,7 +674,7 @@ void TTreeView::set_image_list(TImageList* il, bool normal)
 	m_has_images = true;
 }
 
-Handle TTreeView::add(Handle parent, const char* caption, int idx1, int idx2, bool has_children, void* data)
+Handle TTreeView::add(Handle parent, const wchar_t* caption, int idx1, int idx2, bool has_children, void* data)
 {
 	TVITEM item;
 	item.mask = TVIF_TEXT  | TVIF_PARAM | TVIF_CHILDREN;
@@ -672,7 +682,7 @@ Handle TTreeView::add(Handle parent, const char* caption, int idx1, int idx2, bo
 		 item.mask |= (TVIF_IMAGE | TVIF_SELECTEDIMAGE);
 		 if (idx2 == -1) idx2 = idx1;
     }
-	item.pszText = (char*)caption;
+	item.pszText = (wchar_t*)caption;
 	//item.ccbTextMax ?
  	item.iImage = idx1;
 	item.iSelectedImage = idx2;

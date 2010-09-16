@@ -6,15 +6,15 @@
 
  EXPORT void output_debug_str(const char *buff);
 
- typedef const char* pcchar;
+ typedef const wchar_t* pcchar;
 
  class EXPORT IniBase {
  protected:
-     static char _tmpbuff_[BUFSZ];
+     static wchar_t _tmpbuff_[BUFSZ];
  public:
     virtual void set_section(pcchar section) = 0;
     virtual void write_string(pcchar key, pcchar value) = 0;
-    virtual char *read_string(pcchar key, char* value=_tmpbuff_, int sz=BUFSZ,pcchar def="") = 0;
+    virtual wchar_t *read_string(pcchar key, wchar_t* value=_tmpbuff_, int sz=BUFSZ,pcchar def=L"") = 0;
     virtual void write_int(pcchar key, int val);
     virtual int  read_int(pcchar key, int def=0);
  };
@@ -28,7 +28,7 @@
 	// overrides!
     void set_section(pcchar section);
     void write_string(pcchar key, pcchar value);
-    char *read_string(pcchar key, char* value=_tmpbuff_, int sz=BUFSZ,pcchar def="");
+    wchar_t *read_string(pcchar key, wchar_t* value=_tmpbuff_, int sz=BUFSZ,pcchar def=L"");
  };
 #endif
 

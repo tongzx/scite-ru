@@ -15,13 +15,13 @@ typedef void (TEventWindow::*DataEventHandler)(Item*);
 typedef EventHandler DEH;
 
 struct EXPORT Item {
- const char *caption;
+ const wchar_t *caption;
  EventHandler handler;
  int id;
  void *data;
  bool inactive_data;
 
- Item(char *_caption=NULL, EventHandler _handler=NULL, void* data = NULL, int id = -1, bool inactive = false);
+ Item(wchar_t *_caption=NULL, EventHandler _handler=NULL, void* data = NULL, int id = -1, bool inactive = false);
 };
 
 #ifdef IN_MENU_CPP
@@ -73,11 +73,11 @@ public:
 
 class EXPORT Popup: public Menu {
 protected:
-  char *m_name;
+  wchar_t *m_name;
 public:
-  Popup(char *name);
+  Popup(wchar_t *name);
   Popup(Handle h);
-  char *name() { return m_name; }
+  wchar_t *name() { return m_name; }
   void create();
   void release();
 };

@@ -4,7 +4,7 @@
 #include "twl_splitter.h"
 
 TSplitterB::TSplitterB(TEventWindow* parent, TWin* control, int thick /* = 3*/)
-:  TEventWindow("",parent,0,true),
+:  TEventWindow(L"",parent,0,true),
    m_form(parent),m_control(control),m_width(thick),m_min_size(30),m_line_visible(false),m_down(false)
 {
 	// we take our alignment from the control which we're abutting...

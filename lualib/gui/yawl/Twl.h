@@ -6,7 +6,7 @@
 #ifndef __TWL_H
 #define __TWL_H
 
-typedef const char *pchar;
+typedef const wchar_t *pchar;
 
 #if !defined(_WINDOWS_) && !defined(_WINDOWS_H)
 // some constants are fairly essential...
@@ -95,7 +95,7 @@ typedef unsigned long dword;
 #define BUFSIZE 120
 #define ID_ABOUT	103
 
-extern char obuff[BUFSIZE];
+extern wchar_t obuff[BUFSIZE];
 
 const int TOPLEFT = 1, MSG_ERROR=2,MSG_WARNING=1, MSG_QUERY=3;
 const long TOPMOST = 0x8, TOOLWINDOW = 0x80;
@@ -125,9 +125,9 @@ public:
   int   width();
   int   height();
   void  set_text(pchar str);
-  pchar get_text(char* str=obuff,int sz=BUFSIZE);
+  pchar get_text(wchar_t* str=obuff,int sz=BUFSIZE);
   void  set_text(int id, pchar str);
-  pchar get_text(int id, char* str=obuff, int sz=BUFSIZE);
+  pchar get_text(int id, wchar_t* str=obuff, int sz=BUFSIZE);
   void  set_int(int id, int val);
   int   get_int(int id);
   TWin *get_twin(int id);
@@ -387,7 +387,7 @@ class EXPORT TEventWindow: public TWin
 
  class EXPORT TFrameWindow: public TEventWindow {
   public:
-	 TFrameWindow(pchar caption="twl", bool has_status=false, TWin *cli=0);
+	 TFrameWindow(pchar caption=L"twl", bool has_status=false, TWin *cli=0);
 	 ~TFrameWindow();
 
      // overrides
@@ -410,7 +410,7 @@ protected:
  	 void *m_wnd_proc;  //*TEMP*
 	 TControl(TWin *parent,pchar classname, pchar text,int id=-1, long style=0);
 	 ~TControl();
-	 virtual pchar type_name()                   { return "TControl"; }
+	 virtual pchar type_name()                   { return L"TControl"; }
 	 virtual void calc_size();
 	 bool is_type(pchar tname);
 	 void set_font(TFont *fnt);
@@ -432,13 +432,13 @@ protected:
  class EXPORT TLabel: public TControl {
  public:
 	 TLabel(TWin *parent,pchar text, int id=-1);
-	 pchar type_name() { return "TLabel"; }
+	 pchar type_name() { return L"TLabel"; }
  };
 
  class EXPORT TEdit: public TControl {
  public:
      TEdit(TWin *parent, pchar text, int id, long style=0);
-	 pchar type_name() { return "TEdit"; }
+	 pchar type_name() { return L"TEdit"; }
      void set_selection(int start, int finish);
  };
 
@@ -475,12 +475,12 @@ class EXPORT TDialog: public TWin
  protected:
    void* m_lpfnBox;
    int m_modeless, m_ret;
-   const char* m_name;
+   const wchar_t* m_name;
    TWin *m_owner;
 };
 
  EXPORT int exec(pchar s, int mode=SW_SHOW);
- EXPORT void get_app_path(char* buff, int sz);
+ EXPORT void get_app_path(wchar_t* buff, int sz);
  EXPORT long make_rgb(int r, int g, int b);
  EXPORT void debug_output(char* str);
  

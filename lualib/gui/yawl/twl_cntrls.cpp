@@ -15,7 +15,7 @@
 const int BUFFSIZE = 60000;
 
 TButton::TButton(TWin *parent,pchar caption, int id, long style)
- : TControl(parent,"button",caption,id,style)
+ : TControl(parent,L"button",caption,id,style)
  {
  }
 
@@ -64,7 +64,7 @@ TRadioButton::TRadioButton(TWin *parent,pchar caption, int id, bool is_auto)
 }
 
 TListBox::TListBox(TWin *parent, int id, bool is_sorted)
- : TControl(parent,"listbox","",id,
+ : TControl(parent,L"listbox",L"",id,
     LBS_NOTIFY | WS_VSCROLL | WS_BORDER | (is_sorted? LBS_SORT : 0))
 {
 }
@@ -104,13 +104,13 @@ void TListBox::selected(int idx)
 int  TListBox::selected() const
 { return send_msg(LB_GETCURSEL); }
 
-void TListBox::get_text(int idx, char *buff)
+void TListBox::get_text(int idx, wchar_t *buff)
 { send_msg(LB_GETTEXT,idx,(int)buff); }
 
 void *ApplicationInstance();
 
 TMemo::TMemo(TWin *parent, int id, bool do_scroll, bool plain)
-: TControl(parent,plain ? "edit" : "RichEdit","",id,
+: TControl(parent,plain ? L"edit" : L"RichEdit",L"",id,
     (do_scroll ? WS_HSCROLL | WS_VSCROLL : 0) |
 	WS_BORDER | 
 	ES_MULTILINE 
@@ -221,11 +221,11 @@ void TMemo::auto_url_detect(bool yn)
   send_msg(EM_AUTOURLDETECT,(int)yn,0);
 }
 
-static char buff[BUFFSIZE]; //*TEMPORARY*
+static wchar_t buff[BUFFSIZE]; //*TEMPORARY*
 
 //*SJD* Must understand this shit!!
 // In the meantime, it keeps a buffer!!
-char *
+wchar_t *
 TMemo::get_buffer()
 { 
 	get_text(buff,BUFFSIZE);
@@ -338,7 +338,7 @@ void TMemo::set_line_colour(int line, int colour)
 
 
 TTrackBar::TTrackBar(TWin *parent, int id)
-: TControl(parent,TRACKBAR_CLASS,"",id,TBS_AUTOTICKS)
+: TControl(parent,TRACKBAR_CLASS,L"",id,TBS_AUTOTICKS)
 {
 }
 
@@ -412,7 +412,7 @@ WNDFN FormWndProc (HWND hwnd, UINT msg, UINT wParam,LONG lParam)
    }
    break;
   case WM_SETFOCUS:
-    if (ctrl->is_type("TEdit"))
+    if (ctrl->is_type(L"TEdit"))
          ctrl->send_msg(EM_SETSEL,0,-1);
     break;
  }
@@ -429,7 +429,7 @@ class _Cntrls_init {
 	HMODULE hLib;
 public:
 	_Cntrls_init() {
-		hLib = LoadLibrary("RICHED32.DLL");
+		hLib = LoadLibrary(L"RICHED32.DLL");
     }
 	~_Cntrls_init() {
 		FreeLibrary(hLib);

@@ -30,7 +30,7 @@
      field(caption,new UIntData(&val),eh);
   }
 
-  Field(pchar caption, char* val, EventHandler eh=NULL) {
+  Field(pchar caption, wchar_t* val, EventHandler eh=NULL) {
      field(caption,new StringData(val),eh);
   }
 
@@ -85,12 +85,12 @@
 
  struct EXPORT OKButton: public Button {
 	 OKButton(EventHandler _eh) 
-		 : Button("&OK",_eh) { id = ID_OK; }
+		 : Button(L"&OK",_eh) { id = ID_OK; }
  };
 
  struct EXPORT CancelButton: public Button {
 	 CancelButton(EventHandler _eh)
-		 : Button("&Cancel",_eh) { id = ID_CANCEL; }
+		 : Button(L"&Cancel",_eh) { id = ID_CANCEL; }
  };
 
  struct EXPORT Listbox: public Item {

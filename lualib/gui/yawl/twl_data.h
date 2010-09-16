@@ -20,7 +20,7 @@ protected:
 public:
   Converter() : m_digits(4) {}
   void set_ctrl(TControl *ctrl) { m_ctrl = ctrl; }
-  virtual char* get_str() { return ""; }
+  virtual wchar_t* get_str() { return L""; }
   virtual void set_str(pchar) { };	 
   virtual double get_double();
   virtual void set_double(double);
@@ -31,7 +31,7 @@ public:
 class EXPORT EditConverter: public Converter {
 public:
   // overrides:
-  char* get_str();
+  wchar_t* get_str();
   void set_str(pchar);	 
 
    
@@ -50,7 +50,7 @@ public:
 class EXPORT ListboxConverter: public Converter {
 public:
 	// overrides:
-    char *get_str();
+    wchar_t *get_str();
     void set_str(pchar);	 
 
 	TListBox *list_box() { return (TListBox *)m_ctrl; }

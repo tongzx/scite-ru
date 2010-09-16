@@ -13,34 +13,42 @@
  // classes.
 
 static char temp_buff[255];
+static wchar_t wtemp_buff[255];
   
 double Converter::get_double()
 {
-  char *endptr = "t"; // must not be NULL
-  double f = strtod(get_str(),&endptr);
+  wchar_t *endptr = L"t"; // must not be NULL
+  double f = wcstod(get_str(),&endptr);
   if (*endptr) throw EBadNumber();
   return f; 
 }
 
 void Converter::set_double(double f)
 {
-  set_str(gcvt(f,m_digits,temp_buff));
+  const char * p = gcvt(f,m_digits,temp_buff);
+  wchar_t b[_CVTBUFSIZE + 1];
+  wchar_t * w = b;
+  do
+  {
+    *w++ = (unsigned char)*p;
+  } while(*p++ != 0);
+  set_str(w);
 }
 
 int Converter::get_long()
 {
-  return atoi(get_str());
+  return _wtoi(get_str());
 }
 
 void Converter::set_long(int val)
 {
-   itoa(val,temp_buff,10);
-   set_str(temp_buff);
+   _itow(val,wtemp_buff,10);
+   set_str(wtemp_buff);
 }
 
-char *EditConverter::get_str()
+wchar_t *EditConverter::get_str()
 {
- return (char*)edit()->get_text();  // *hack
+ return (wchar_t*)edit()->get_text();  // *hack
 }
 
 void EditConverter::set_str(pchar str)
@@ -61,15 +69,15 @@ void CheckboxConverter::set_long(int val)
 }
 
 // And into List boxes
-char *
+wchar_t *
 ListboxConverter::get_str()
 {
 	int idx = list_box()->selected();
 	if (idx != -1) {
-		list_box()->get_text(idx,temp_buff);
-		return temp_buff;
+		list_box()->get_text(idx,wtemp_buff);
+		return wtemp_buff;
     }
-	else return "";
+	else return L"";
 }
 
 void
@@ -84,10 +92,10 @@ ListboxConverter::set_str(pchar str)
 // conversion behaviour using the conversion object
 
 void StringData::write()
-{ strcpy((char *)m_ptr,m_co->get_str()); }
+{ wcscpy((wchar_t *)m_ptr,m_co->get_str()); }
 
 void StringData::read()
-{ m_co->set_str((char *)m_ptr); }
+{ m_co->set_str((wchar_t *)m_ptr); }
 
 
 void FloatData::write()

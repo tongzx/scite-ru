@@ -7,7 +7,7 @@ class EXPORT TTabControlB: public TNotifyWin {
 	int m_index;
 public:
   TTabControlB(TWin* form, bool multiline = false);
-  void add(const char* caption, void* data, int image_idx = -1);
+  void add(const wchar_t* caption, void* data, int image_idx = -1);
   void remove(int idx = -1);
   void* get_data(int idx = -1);
   void selected(int idx);

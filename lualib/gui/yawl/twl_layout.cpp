@@ -122,7 +122,7 @@ Layout::left_align(int row)
      }
 	 for(row = sr; row < er; row++) {
 		 ctrl = _controls_[row][col];
-		 if (ctrl == NULL || ! ctrl->is_type("TEdit")) break; //*new
+		 if (ctrl == NULL || ! ctrl->is_type(L"TEdit")) break; //*new
 		 ctrl->get_rect(rt,true);
          ctrl->move(maxx, rt.top);
          m_width = __max(m_width,rt.right); //*new
@@ -181,7 +181,7 @@ Layout::add_data_control(TControl *ctrl, Data *obj, Converter *co, bool new_line
 void
 Layout::add_edit(Data *obj, int id, bool new_line)
 {
-   add_data_control(new TEdit(m_parent,"",id),
+   add_data_control(new TEdit(m_parent,L"",id),
 	   obj,
 	   new EditConverter,new_line
 	   );
@@ -247,7 +247,7 @@ Layout::release()
 
  if (s_first_ctrl) { 
     s_first_ctrl->set_focus();
-    if (s_first_ctrl->is_type("TEdit"))
+    if (s_first_ctrl->is_type(L"TEdit"))
         ((TEdit*)s_first_ctrl)->set_selection(0,-1);
     s_first_ctrl = NULL;
  } 

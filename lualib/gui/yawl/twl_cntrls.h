@@ -18,7 +18,7 @@ public:
   };
 
   TButton(TWin *parent,pchar caption, int id, long style=PUSHBUTTON);
-  pchar type_name() { return "TButton"; }
+  pchar type_name() { return L"TButton"; }
   void check(bool c);
   bool check() const;
   void state(bool s);
@@ -28,7 +28,7 @@ public:
 class EXPORT TCheckBox: public TButton {
 public:
   TCheckBox(TWin *parent,pchar caption,int id, bool is_auto=false);
-  pchar type_name() { return "TCheckBox"; }
+  pchar type_name() { return L"TCheckBox"; }
   // override
   void calc_size();
 };
@@ -36,7 +36,7 @@ public:
 class EXPORT TRadioButton: public TButton {
 public:
   TRadioButton(TWin *parent,pchar caption, int id, bool is_auto=false);
-  pchar type_name() { return "TRadioButton"; }
+  pchar type_name() { return L"TRadioButton"; }
 };
 
 class EXPORT TGroupBox: public TButton {
@@ -44,13 +44,13 @@ public:
   TGroupBox(TWin *parent,pchar caption)
    : TButton(parent,caption,-1,GROUPBOX)
    {}
-  pchar type_name() { return "TGroupBox"; }
+  pchar type_name() { return L"TGroupBox"; }
 };
 
 class EXPORT TListBox: public TControl {
 public:
   TListBox(TWin *parent, int id, bool is_sorted=false);
-  pchar type_name() { return "TListBox"; }
+  pchar type_name() { return L"TListBox"; }
   void add(pchar str, void* ptr = NULL);
   void insert(int i, pchar str);
   void remove(int i);
@@ -59,7 +59,7 @@ public:
   int  count();
   void selected(int idx);
   int  selected() const;
-  void get_text(int idx, char *buff);
+  void get_text(int idx, wchar_t *buff);
 
   void  set_data(int i, void* ptr);
   void* get_data(int i);
@@ -75,10 +75,10 @@ typedef int CHARFORMAT;
 class EXPORT TMemo: public TControl {
 protected:
    CHARFORMAT *m_pfmt;
-   char* m_file_name;
+   wchar_t* m_file_name;
 public:
   TMemo(TWin *parent, int id, bool do_scroll=false, bool plain=false);
-  pchar type_name() { return "TMemo"; }
+  pchar type_name() { return L"TMemo"; }
   pchar file_name();
   void cut();
   void copy();
@@ -102,7 +102,7 @@ public:
   int get_line_text(int line, char *buff, int sz);
   void get_selection(int& start, int& finish);
   void set_selection(int start, int finish);
-  char *get_buffer();
+  wchar_t *get_buffer();
   void release_buffer();
   bool load_from_file(pchar file);
   void save_to_file(pchar file);

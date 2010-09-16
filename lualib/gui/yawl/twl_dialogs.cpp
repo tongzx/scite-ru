@@ -8,18 +8,18 @@
 
 const int BUFFSIZE = 1024;
 
-static char s_initial_dir[MAX_PATH];
+static wchar_t s_initial_dir[MAX_PATH];
 
-TOpenFile::TOpenFile(TWin *parent,const char *caption, const char *filter, bool do_prompt)
+TOpenFile::TOpenFile(TWin *parent,const wchar_t *caption, const wchar_t *filter, bool do_prompt)
 {
  OPENFILENAME& ofn = *new OPENFILENAME;
  m_ofn = &ofn;
  m_prompt = do_prompt;
- m_filename = new char [BUFFSIZE];
- m_file_out = new char [MAX_PATH];
+ m_filename = new wchar_t [BUFFSIZE];
+ m_file_out = new wchar_t [MAX_PATH];
  *m_filename = '\0';
- char* p_filter = strdup(filter);
- for(char* p = p_filter; *p; p++)
+ wchar_t* p_filter = _wcsdup(filter);
+ for(wchar_t* p = p_filter; *p; p++)
      if (*p=='|') *p = '\0';
 
  ZeroMemory(m_ofn,sizeof(OPENFILENAME));
@@ -28,7 +28,7 @@ TOpenFile::TOpenFile(TWin *parent,const char *caption, const char *filter, bool 
  ofn.lpstrFilter = p_filter;
  ofn.nFilterIndex = 1;
  ofn.nMaxFile = BUFFSIZE;
- ofn.lpstrTitle = (char*)caption;
+ ofn.lpstrTitle = (wchar_t*)caption;
  ofn.lpstrFile = m_filename;
 
  GetCurrentDirectory(MAX_PATH,s_initial_dir);
@@ -42,7 +42,7 @@ TOpenFile::~TOpenFile()
  delete m_file_out;
 }
 
-void TOpenFile::initial_dir(const char *dir)
+void TOpenFile::initial_dir(const wchar_t *dir)
 {
  LPOPENFILENAME(m_ofn)->lpstrInitialDir = dir;
 }
@@ -60,13 +60,13 @@ bool TOpenFile::go()
  return ret;
 }
 
-const char *TOpenFile::file_name()
+const wchar_t *TOpenFile::file_name()
 {
  LPOPENFILENAME ofn = LPOPENFILENAME(m_ofn);
  if (m_path) { // multiple selection: build up each path individually
-   strcpy(m_file_out,m_path);
-   strcat(m_file_out,"\\");
-   strcat(m_file_out,m_file);
+   wcscpy(m_file_out,m_path);
+   wcscat(m_file_out,L"\\");
+   wcscat(m_file_out,m_file);
    return m_file_out;
  } else
  return m_filename;
@@ -75,15 +75,15 @@ const char *TOpenFile::file_name()
 bool TOpenFile::next()
 {
   if (m_path == NULL) return false;
-  m_file += strlen(m_file)+1;
+  m_file += wcslen(m_file)+1;
   bool finished = *m_file == '\0';
   if (finished) m_path = NULL;
   return !finished;
 }
 
-void TOpenFile::file_name(const char *file)
+void TOpenFile::file_name(const wchar_t *file)
 {
- strcpy(m_filename,file);
+ wcscpy(m_filename,file);
 }
 
 /*
@@ -137,20 +137,20 @@ int TColourDialog::result()
 }
 
 
-TSelectDir::TSelectDir(TWin *_parent, const char *_description,const char *_initialdir)
-	: parent(_parent), descr(0), dirPath(new char[MAX_PATH])
+TSelectDir::TSelectDir(TWin *_parent, const wchar_t *_description,const wchar_t *_initialdir)
+	: parent(_parent), descr(0), dirPath(new wchar_t[MAX_PATH])
 {
 	memset(dirPath, 0, MAX_PATH);
-	descr = new char[::lstrlenA(_description)+1];
-	::lstrcpyA(descr, _description);
+	descr = new wchar_t[::lstrlen(_description)+1];
+	::lstrcpy(descr, _description);
 
-	lpszInitialDir=new char[::lstrlenA(_initialdir)+1];
-	::lstrcpyA(lpszInitialDir, _initialdir);
+	lpszInitialDir=new wchar_t[::lstrlen(_initialdir)+1];
+	::lstrcpy(lpszInitialDir, _initialdir);
 }
 
 typedef struct _SB_INITDATA
 {
-	char         *lpszInitialDir;
+	wchar_t         *lpszInitialDir;
 	TSelectDir *pSHBrowseDlg;
 } SB_INITDATA, *LPSB_INITDATA;
 
@@ -193,11 +193,11 @@ bool TSelectDir::go()
 
 	LPMALLOC shellMalloc = 0;
 	SHGetMalloc(&shellMalloc);
-	LPCITEMIDLIST pidl = ::SHBrowseForFolderA(&bi);
+	LPCITEMIDLIST pidl = ::SHBrowseForFolder(&bi);
 
 	bool result = false;
 	if (pidl) {
-		result = ::SHGetPathFromIDListA(pidl, dirPath) != FALSE;
+		result = ::SHGetPathFromIDList(pidl, dirPath) != FALSE;
 	}
 	shellMalloc->Release();
 

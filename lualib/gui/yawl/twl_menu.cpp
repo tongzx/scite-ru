@@ -32,7 +32,7 @@ void Menu::create()
 }
 
 
-#define EQ(s1,s2) (strcmp(s1,s2)==0)
+#define EQ(s1,s2) (wcscmp(s1,s2)==0)
 
 void Menu::add_menu(Item& item)
 {
@@ -40,38 +40,38 @@ void Menu::add_menu(Item& item)
   item.id = last_id++; //*new
   AppendMenu(HMENU(m_handle),MF_STRING,item.id,item.caption);
   m_menu_handler->add(item);
-  char buff[120];
-  strcpy(buff,item.caption);
-  strtok(buff,"\t");
-  char *astr = strtok(NULL,"");
+  wchar_t buff[120];
+  wcscpy(buff,item.caption);
+  wcstok(buff,L"\t");
+  wchar_t *astr = wcstok(NULL,L"");
   if (astr) {
     ACCEL accl; 
-    char *ckey, *vkey;
-	ckey = strtok(astr,"-");
-	vkey = strtok(NULL," ");
+    wchar_t *ckey, *vkey;
+	ckey = wcstok(astr,L"-");
+	vkey = wcstok(NULL,L" ");
 	if (vkey==NULL) { vkey = ckey; ckey = NULL; }
-	else strupr(ckey);
-	strupr(vkey);
+	else _wcsupr(ckey);
+	_wcsupr(vkey);
 	int key;
 	accl.fVirt = FVIRTKEY;
 	if (*vkey=='F' && *(vkey+1) != '\0') {
-      int fkey_id = atoi(vkey+1);
+      int fkey_id = _wtoi(vkey+1);
 	  key = VK_F1 + fkey_id - 1;
     } else
-	if (EQ(vkey,"UP"))     key = VK_UP; else
-	if (EQ(vkey,"DOWN"))   key = VK_DOWN; else
-	if (EQ(vkey,"RIGHT"))  key = VK_RIGHT; else
-	if (EQ(vkey,"LEFT"))   key = VK_LEFT; else
-	if (EQ(vkey,"DELETE")) key = VK_DELETE;
+	if (EQ(vkey,L"UP"))     key = VK_UP; else
+	if (EQ(vkey,L"DOWN"))   key = VK_DOWN; else
+	if (EQ(vkey,L"RIGHT"))  key = VK_RIGHT; else
+	if (EQ(vkey,L"LEFT"))   key = VK_LEFT; else
+	if (EQ(vkey,L"DELETE")) key = VK_DELETE;
 	else {
       //accl.fVirt = 0;
 	  key = (int)vkey[0];
     }
     accl.key = (WORD)key;
 	if (ckey != NULL) {
-      if (EQ(ckey,"CTRL")) accl.fVirt |= FCONTROL; else
-      if (EQ(ckey,"ALT")) accl.fVirt |= FALT; else
-      if (EQ(ckey,"SHIFT")) accl.fVirt |= FSHIFT;
+      if (EQ(ckey,L"CTRL")) accl.fVirt |= FCONTROL; else
+      if (EQ(ckey,L"ALT")) accl.fVirt |= FALT; else
+      if (EQ(ckey,L"SHIFT")) accl.fVirt |= FSHIFT;
     }
     accl.cmd = (WORD)item.id;
 	//if (accl.fVirt & FVIRTKEY)  // for now...
@@ -82,7 +82,7 @@ void Menu::add_menu(Item& item)
 
 void Menu::add_menu(Menu& menu)
 {
- char *name = ((Popup&)menu).name();
+ wchar_t *name = ((Popup&)menu).name();
  AppendMenu(HMENU(m_handle),MF_STRING | MF_POPUP,(int)menu.m_handle,name);
  m_menu_handler->add_handler(menu.m_menu_handler);
  m_accel_list->splice(m_accel_list->end(),*menu.m_accel_list); 
@@ -122,13 +122,13 @@ void Menu::release()
  }
 }
 
-Popup::Popup(char *name)
+Popup::Popup(wchar_t *name)
  : Menu(NULL),m_name(name)
 {
 }
 
 Popup::Popup(Handle h)
-: Menu(NULL),m_name("")
+: Menu(NULL),m_name(L"")
 {
   m_handle = h;
 }
@@ -180,7 +180,7 @@ void ContextMenu::release()
  m_main_form->add_handler(m_menu_handler);
 }
 
-Item::Item(char *_caption, EventHandler _handler, void* _data, int _id, bool inactive)
+Item::Item(wchar_t *_caption, EventHandler _handler, void* _data, int _id, bool inactive)
   : caption(_caption),handler(_handler),data(_data),id(_id),inactive_data(inactive) { }
 
 
@@ -262,7 +262,7 @@ void MessageHandler::write()
 	  for(ihl = m_list->begin();  ihl != m_list->end(); ++ihl)
 		if (ihl->data) PData(ihl->data)->write();
     } catch(...) {
-       m_form->message("Bad Number!",MSG_ERROR);
+       m_form->message(L"Bad Number!",MSG_ERROR);
     }
 }
 

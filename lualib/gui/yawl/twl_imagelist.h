@@ -17,9 +17,9 @@ public:
 	TImageList(int cx, int cy);
 	TImageList(bool s = true);
 	void create(int cx, int cy);
-	int add_icon(const char* iconfile);
-	int add(const char* bitmapfile, long mask_clr = 1);
-	int load_icons_from_module(const char* mod);
+	int add_icon(const wchar_t* iconfile);
+	int add(const wchar_t* bitmapfile, long mask_clr = 1);
+	int load_icons_from_module(const wchar_t* mod);
 	void set_back_colour(long clrRef);
 	void load_shell_icons();
 };
