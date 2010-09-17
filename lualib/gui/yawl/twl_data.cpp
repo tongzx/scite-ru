@@ -26,8 +26,7 @@ double Converter::get_double()
 void Converter::set_double(double f)
 {
   const char * p = gcvt(f,m_digits,temp_buff);
-  wchar_t b[_CVTBUFSIZE + 1];
-  wchar_t * w = b;
+  wchar_t * w = wtemp_buff;
   do
   {
     *w++ = (unsigned char)*p;

@@ -20,7 +20,7 @@ LIBS        = $(LIBDIR)scite.lib kernel32.lib user32.lib gdi32.lib comdlg32.lib 
 # C4505: 'function'   : unreferenced local function has been removed
 WARNS  = -W4 -wd4100 -wd4189 -wd4505
 
-DEFS   = -DWIN32 -D_WINDOWS -DNDEBUG -D_WIN32_IE=0x0500 -D_USRDLL\
+DEFS   = -DWIN32 -D_WINDOWS -DNDEBUG -DUNICODE -D_WIN32_IE=0x0500 -D_USRDLL\
          -D_CRT_SECURE_NO_DEPRECATE=1 -D_SCL_SECURE_NO_DEPRECATE=1 -D_CRT_NONSTDC_NO_DEPRECATE=1
 CFLAGS = -nologo -c -O1b2isy -GR -Gm- -EHsc -Zc:forScope,wchar_t -MT -LD $(DEFS) $(WARNS)
 LFLAGS = -NOLOGO -DLL -RELEASE -OPT:ICF,NOREF,NOWIN98 -MACHINE:X86 -INCREMENTAL:NO

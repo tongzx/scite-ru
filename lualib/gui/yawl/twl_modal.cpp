@@ -19,7 +19,7 @@ void TModalDlg::on_cancel()
 
 void TModalDlg::layout(Layout& lo)
 {
-		lo << "base class" << Next;
+		lo << L"base class" << Next;
 }
 
 void TModalDlg::do_buttons(Layout& lo)

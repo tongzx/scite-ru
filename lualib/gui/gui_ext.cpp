@@ -6,7 +6,6 @@ Steve Donovan, 2007.
 #include <windows.h>
 #include "yawl.h"
 #include <string.h>
-#include <xstring>
 #include <vector>
 #include <io.h>
 #include <direct.h>
@@ -142,11 +141,11 @@ wchar_t* StringFromUTF8(const char *s) {
 	return vgc;
 }
 
-char* UTF8FromString(const std::wstring &s) {
-	size_t sLen = s.size();
-	size_t narrowLen = UTF8Length(s.c_str(), sLen);
+char* UTF8FromString(const wchar_t *s) {
+	size_t sLen = wcslen(s);
+	size_t narrowLen = UTF8Length(s, sLen);
 	char* vc = new char[narrowLen + 1];
-	UTF8FromUTF16(s.c_str(), sLen, vc, narrowLen);
+	UTF8FromUTF16(s, sLen, vc, narrowLen);
 	return vc;
 }
 // -------------------------------------------------------------------
