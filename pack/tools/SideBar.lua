@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev, ur4ltz
-Version 1.21.0
+Version 1.22.0
 ------------------------------------------------------
   Note: Require gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
                lpeg.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/lpeg/>
@@ -121,7 +121,7 @@ list_favorites:add_column("Favorites", 600)
 tab0:add(list_favorites, "bottom", list_dir_height)
 if colorback then list_favorites:set_list_colour(colorfore,colorback) end
 
-local list_dir = gui.list()
+local list_dir = gui.list(false,false)
 tab0:client(list_dir)
 if colorback then list_dir:set_list_colour(colorfore,colorback) end
 
@@ -130,12 +130,13 @@ tab0:context_menu {
 	'FileMan: Show All|FileMan_MaskAllFiles',
 	'FileMan: Only current ext|FileMan_MaskOnlyCurrentExt',
 	'', -- separator
+	'FileMan: Open with SciTE|FileMan_OpenSelectedItems',
+	'FileMan: Execute|FileMan_FileExec',
+	'FileMan: Exec with Params|FileMan_FileExecWithParams',
 	'FileMan: Copy to...|FileMan_FileCopy',
 	'FileMan: Move to...|FileMan_FileMove',
 	'FileMan: Rename|FileMan_FileRename',
 	'FileMan: Delete\tDel|FileMan_FileDelete',
-	'FileMan: Execute|FileMan_FileExec',
-	'FileMan: Exec with Params|FileMan_FileExecWithParams',
 	'FileMan: Add to Favorites\tIns|Favorites_AddFile',
 	'', -- separator
 	'Favorites: Add active buffer|Favorites_AddCurrentBuffer',
@@ -243,8 +244,8 @@ local function FileMan_ListFILL()
 	FileMan_ShowPath()
 end
 
-local function FileMan_GetSelectedItem()
-	local idx = list_dir:get_selected_item()
+local function FileMan_GetSelectedItem(idx)
+	if idx == nil then idx = list_dir:get_selected_item() end
 	if idx == -1 then return '' end
 	local data = list_dir:get_item_data(idx)
 	local dir_or_file = data[1]
@@ -403,13 +404,27 @@ local function FileMan_OpenItem()
 	end
 end
 
+function FileMan_OpenSelectedItems()
+	local si = list_dir:get_selected_items()
+	for _,i in ipairs(si) do
+		local dir_or_file, attr = FileMan_GetSelectedItem(i)
+		if attr ~= 'd' then
+			OpenFile(current_path..dir_or_file)
+		end
+	end
+end
+
 list_dir:on_double_click(function()
 	FileMan_OpenItem()
 end)
 
 list_dir:on_key(function(key)
 	if key == 13 then -- Enter
-		FileMan_OpenItem()
+		if list_dir:selected_count() > 1 then
+			FileMan_OpenSelectedItems()
+		else
+			FileMan_OpenItem()
+		end
 	elseif key == 8 then -- BackSpace
 		list_dir:set_selected_item(0)
 		FileMan_OpenItem()
