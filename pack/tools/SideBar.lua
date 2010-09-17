@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev, ur4ltz
-Version 1.20.3
+Version 1.21.0
 ------------------------------------------------------
   Note: Require gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
                lpeg.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/lpeg/>
@@ -376,7 +376,6 @@ function FileMan_FileExecWithParams()
 end
 
 local function OpenFile(filename)
-	filename = shell.to_utf8(filename)
 	if filename:match(".session$") ~= nil then
 		filename = filename:gsub('\\','\\\\')
 		scite.Perform ("loadsession:"..filename)
@@ -487,7 +486,7 @@ function Favorites_AddFile()
 end
 
 function Favorites_AddCurrentBuffer()
-	list_fav_table[#list_fav_table+1] = shell.from_utf8(props['FilePath'])
+	list_fav_table[#list_fav_table+1] = props['FilePath']
 	Favorites_ListFILL()
 end
 
@@ -1132,10 +1131,6 @@ local function Bookmark_Add(line_number)
 	line_text = line_text:gsub('^%s+', ''):gsub('%s+', ' ')
 	if line_text == '' then
 		line_text = ' - empty line - ('..(line_number+1)..')'
-	else
-		if tonumber(props["editor.unicode.mode"]) ~= IDM_ENCODING_DEFAULT then
-			line_text = shell.from_utf8(line_text)
-		end
 	end
 	for _, a in ipairs(table_bookmarks) do
 		if a.FilePath == props['FilePath'] and a.LineNumber == line_number then
@@ -1300,7 +1295,6 @@ local function OnSwitch()
 		local path = props['FileDir']
 		if path == '' then return end
 		path = path:gsub('\\$','')..'\\'
-		path = shell.from_utf8(path)
 		if path ~= current_path then
 			current_path = path
 			FileMan_ListFILL()
