@@ -198,7 +198,7 @@ panel (width)\n create panel  /extern lib "gui"/
 set_panel (panel_name, "right")\n panel attached to the left or the right side of the editor pane  /extern lib "gui"/
 set_panel ()\n remove the panel and hide it  /extern lib "gui"/
 tabbar (win_name)\n create tabbar control from window or panel  /extern lib "gui"/
-list (true)\n create standard list view (with caption\n true|false)  /extern lib "gui"/
+list (caption, multiselect)\n create standard list view (set caption=>true, set multiselect=>false)  /extern lib "gui"/
 memo ()\n creates a Windows Rich Text control  /extern lib "gui"/
 pass_focus ()\n pass keyboard focus to editor  /extern lib "gui"/
 toolbar ("title", {"icon1.bmp:item1 caption|func1", "FILEOPEN:Open|IDM_OPEN"}, icons_size, "c:\\Path to icons\\button")

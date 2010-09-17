@@ -54,7 +54,7 @@ tabbar1:on_select(function(index) print(index) end)
 -- LIST
 --------
 -- Set:
-list1 = gui.list(true) -- or false (List heading show)
+list1 = gui.list(true, true) -- List heading show (true => visiable), multiselect items (false => enable)
 window_or_panel1:add(list1, "top", height) -- "top" or "bottom"
 -- or
 window_or_panel1:add(list1, "left", width) -- "left" or "right"
@@ -64,6 +64,8 @@ list1:size(width, height) -- Note: Changes either height or width (one of parame
 list1:set_list_colour("#FFFFFF", "#000000") -- foreground, background
 list1:context_menu {'item1|func1', 'item2|func2'} -- Note: There is no. This - the wish.
 list1:set_selected_item(index) -- Note: Revision 747
+list1:selected_count() -- Note: Revision 1467
+list1:get_selected_items() -- Note: Revision 1467
 
 -- Add:
 list1:add_column('Title1', width) -- Note: If gui.list(true)
