@@ -451,6 +451,7 @@ editor:CallTipPosStart
 editor:CallTipSetHlt
 editor:CallTipShow
 editor:Cancel
+editor:ChangeLexerState
 editor:CanPaste
 editor:CanRedo
 editor:CanUndo
@@ -480,6 +481,8 @@ editor:CreateDocument
 editor:Cut
 editor:DeleteBack
 editor:DeleteBackNotLine
+editor:DescribeKeyWordSets
+editor:DescribeProperty
 editor:DelLineLeft
 editor:DelLineRight
 editor:DelWordLeft
@@ -601,6 +604,9 @@ editor:PositionBefore
 editor:PositionFromLine
 editor:PositionFromPoint
 editor:PositionFromPointClose
+editor:PrivateLexerCall
+editor:PropertyNames
+editor:PropertyType
 editor:Redo
 editor:RegisterImage
 editor:ReleaseDocument
@@ -716,6 +722,7 @@ CallTipPosStart() = int pos\n Retrieve the position where the caret was before d
 CallTipSetHlt(int hlStart, int hlEnd)\n Highlight a segment of the definition
 CallTipShow(int posStart, string definition)\n Show a call tip containing a definition near position pos
 Cancel()\n Cancel any modes such as call tip or auto-completion list display
+ChangeLexerState(int posStart, int posEnd) = int\n Indicate that the internal state of a lexer has changed over a range and therefore there may be a need to redraw
 CanPaste() = bool\n Will a paste succeed?
 CanRedo() = bool\n Are there any redoable actions in the undo history?
 CanUndo() = bool\n Are there any undoable actions in the undo history?
@@ -745,6 +752,8 @@ CreateDocument() = int\n Create a new document object. Starts with reference cou
 Cut()\n Cut the selection to the clipboard
 DeleteBack()\n Delete the selection or if no selection, the character before the caret
 DeleteBackNotLine()\n Delete the selection or if no selection, the character before the caret. Will not delete the character before at the start of a line
+DescribeKeyWordSets() = string descriptions, int length\n Retrieve a '\n' separated list of descriptions of the keyword sets understood by the current lexer
+DescribeProperty(string name) = string description, int length\n Describe a property
 DelLineLeft()\n Delete back from the current position to the start of the line
 DelLineRight()\n Delete forwards from the current position to the end of the line
 DelWordLeft()\n Delete the word to the left of the caret
@@ -866,6 +875,9 @@ PositionBefore(int pos) = int pos\n Given a valid document position, return the 
 PositionFromLine(int line) = int pos\n Retrieve the position at the start of a line
 PositionFromPoint(int x, int y) = int pos\n Find the position from a point within the window
 PositionFromPointClose(int x, int y) = int pos\n Find the position from a point within the window but return INVALID_POSITION if not close to text
+PrivateLexerCall(int operation, int pointer) = int\n For private communication between an application and a known lexer
+PropertyNames() = string names, int length\n Retrieve a '\n' separated list of properties understood by the current lexer
+PropertyType(string name) = int type\n Retrieve the type of a property
 Redo()\n Redoes the next action on the undo history
 RegisterImage(int type, string xpmData)\n Register an XPM image for use in autocompletion lists
 ReleaseDocument(int pDocPointer)\n Create a new document object. Starts with reference count of 1 and not selected into editor.\n Extend life of document. Release a reference to the document, deleting document if it fades to black
@@ -1153,7 +1165,7 @@ CaretLineBack = int colour\n [RW] Set the colour of the background of the line c
 CaretLineBackAlpha = int alpha\n [RW] Set background alpha of the caret line
 CaretLineVisible = bool show\n [RW] Display the background of the line containing the caret in a different colour
 CaretPeriod = int milliseconds\n [RW] Get the time in milliseconds that the caret is on and off. 0 = steady on
-CaretSticky = bool useCaretStickyBehaviour\n [RW] Stop the caret preferred x position changing when the user types
+CaretSticky = int useCaretStickyBehaviour\n [RW] Stop the caret preferred x position changing when the user types
 CaretStyle = int style\n [RW] Set the style of the caret to be drawn\nReturns the current style of the caret
 CaretWidth = int pixels\n [RW] Set the width of the insert mode caret
 CharacterPointer = int\n [RO] Compact the document buffer and return a read-only pointer to the characters in the document
@@ -1174,7 +1186,7 @@ EndStyled = int pos\n [RO] Retrieve the position of the last correctly styled ch
 EOLMode = int eolMode\n [RW] Set the current end of line mode
 ExtraAscent = int\n [RW] Set and get extra ascent for each line
 ExtraDescent = int\n [RW] Set and get extra descent for each line
-FirstVisibleLine = int\n [RO] Retrieve the display line at the top of the display
+FirstVisibleLine = int lineDisplay\n [RW] Retrieve the display line at the top of the display. Scroll so that a display line is at the top of the display
 Focus = bool focus\n [RW] Change internal focus flag
 FoldExpanded[int line] = bool expanded\n [RW] Show the children of a header line
 FoldLevel[int line] = int level\n [RW] Set the fold level of a line. This encodes an integer level along with flags indicating whether the line is a header and whether it is effectively white space
@@ -1278,7 +1290,7 @@ UsePalette = bool allowPaletteUse\n [RW] In palette mode, Scintilla uses the env
 UseTabs = bool useTabs\n [RW] Indentation will only use space characters if useTabs is false, otherwise it will use a combination of tabs and spaces
 ViewEOL = bool visible\n [RW] Make the end of line characters visible or invisible
 ViewWS = int wsMode\n [RW] Make white space characters invisible, always visible or visible outside indentation
-VirtualSpaceOptions = int\n [RW] 
+VirtualSpaceOptions = int\n [RW]
 VScrollBar = bool visible\n [RW] Show or hide the vertical scroll bar
 WhitespaceChars = string chars\n [WO] Set the set of characters making up whitespace for when moving or selecting by word. Should be called after SetWordChars
 WhitespaceSize = int size\n [RW] Set and get the size of the dots used to mark space characters
@@ -1329,6 +1341,8 @@ IDM_COPY = 204
 IDM_COPYASRTF = 245
 IDM_COPYPATH = 118
 IDM_CUT = 203
+IDM_DIRECTIONDOWN = 806
+IDM_DIRECTIONUP = 805
 IDM_DUPLICATE = 250
 IDM_ENCODING_DEFAULT = 150
 IDM_ENCODING_UCOOKIE = 154
@@ -1370,6 +1384,7 @@ IDM_MACRORECORD = 311
 IDM_MACROSTOPRECORD = 312
 IDM_MACRO_SEP = 310
 IDM_MATCHBRACE = 230
+IDM_MATCHCASE = 801
 IDM_MONOFONT = 450
 IDM_MOVETABLEFT = 509
 IDM_MOVETABRIGHT = 508
@@ -1401,6 +1416,7 @@ IDM_PRINTSETUP = 130
 IDM_QUIT = 140
 IDM_READONLY = 416
 IDM_REDO = 202
+IDM_REGEXP = 802
 IDM_REPLACE = 216
 IDM_REVERT = 104
 IDM_RUNWIN = 351
@@ -1437,6 +1453,7 @@ IDM_TOOLS = 9000
 IDM_TOOLSMAX = 9300
 IDM_TOOLWIN = 352
 IDM_UNDO = 201
+IDM_UNSLASH = 804
 IDM_UPRCASE = 240
 IDM_VIEWEOL = 403
 IDM_VIEWGUIDES = 404
@@ -1444,7 +1461,9 @@ IDM_VIEWSPACE = 402
 IDM_VIEWSTATUSBAR = 411
 IDM_VIEWTABBAR = 410
 IDM_VIEWTOOLBAR = 408
+IDM_WHOLEWORD = 800
 IDM_WRAP = 414
+IDM_WRAPAROUND = 803
 IDM_WRAPOUTPUT = 415
 INDIC0_MASK = 0x20
 INDIC1_MASK = 0x40
@@ -2778,6 +2797,32 @@ SCE_TEX_GROUP = 2
 SCE_TEX_SPECIAL = 1
 SCE_TEX_SYMBOL = 3
 SCE_TEX_TEXT = 5
+SCE_TXT2TAGS_BLOCKQUOTE = 15
+SCE_TXT2TAGS_CODE = 19
+SCE_TXT2TAGS_CODE2 = 20
+SCE_TXT2TAGS_CODEBK = 21
+SCE_TXT2TAGS_COMMENT = 22
+SCE_TXT2TAGS_DEFAULT = 0
+SCE_TXT2TAGS_EM1 = 4
+SCE_TXT2TAGS_EM2 = 5
+SCE_TXT2TAGS_HEADER1 = 6
+SCE_TXT2TAGS_HEADER2 = 7
+SCE_TXT2TAGS_HEADER3 = 8
+SCE_TXT2TAGS_HEADER4 = 9
+SCE_TXT2TAGS_HEADER5 = 10
+SCE_TXT2TAGS_HEADER6 = 11
+SCE_TXT2TAGS_HRULE = 17
+SCE_TXT2TAGS_LINE_BEGIN = 1
+SCE_TXT2TAGS_LINK = 18
+SCE_TXT2TAGS_OLIST_ITEM = 14
+SCE_TXT2TAGS_OPTION = 23
+SCE_TXT2TAGS_POSTPROC = 25
+SCE_TXT2TAGS_PRECHAR = 12
+SCE_TXT2TAGS_PREPROC = 24
+SCE_TXT2TAGS_STRIKEOUT = 16
+SCE_TXT2TAGS_STRONG1 = 2
+SCE_TXT2TAGS_STRONG2 = 3
+SCE_TXT2TAGS_ULIST_ITEM = 13
 SCE_VHDL_ATTRIBUTE = 10
 SCE_VHDL_COMMENT = 1
 SCE_VHDL_COMMENTLINEBANG = 2
@@ -2876,22 +2921,23 @@ SCI_BRACEBADLIGHT = 2352
 SCI_BRACEHIGHLIGHT = 2351
 SCI_BRACEMATCH = 2353
 SCI_CALLTIPACTIVE = 2202
-SCI_CALLTIPADDHLT = 4013
+SCI_CALLTIPADDHLT = 4019
 SCI_CALLTIPCANCEL = 2201
-SCI_CALLTIPCLEARHLT = 4014
+SCI_CALLTIPCLEARHLT = 4020
 SCI_CALLTIPPOSSTART = 2203
 SCI_CALLTIPSETBACK = 2205
 SCI_CALLTIPSETFORE = 2206
 SCI_CALLTIPSETFOREHLT = 2207
 SCI_CALLTIPSETHLT = 2204
-SCI_CALLTIPSETWORDWRAP = 4016
+SCI_CALLTIPSETWORDWRAP = 4022
 SCI_CALLTIPSHOW = 2200
-SCI_CALLTIPUPDATEHLT = 4015
+SCI_CALLTIPUPDATEHLT = 4021
 SCI_CALLTIPUSESTYLE = 2212
 SCI_CANCEL = 2325
 SCI_CANPASTE = 2173
 SCI_CANREDO = 2016
 SCI_CANUNDO = 2174
+SCI_CHANGELEXERSTATE = 2617
 SCI_CHARLEFT = 2304
 SCI_CHARLEFTEXTEND = 2305
 SCI_CHARLEFTRECTEXTEND = 2428
@@ -2923,6 +2969,8 @@ SCI_DELLINERIGHT = 2396
 SCI_DELWORDLEFT = 2335
 SCI_DELWORDRIGHT = 2336
 SCI_DELWORDRIGHTEND = 2518
+SCI_DESCRIBEKEYWORDSETS = 4017
+SCI_DESCRIBEPROPERTY = 4016
 SCI_DOCLINEFROMVISIBLE = 2221
 SCI_DOCUMENTEND = 2318
 SCI_DOCUMENTENDEXTEND = 2319
@@ -3181,6 +3229,9 @@ SCI_POSITIONBEFORE = 2417
 SCI_POSITIONFROMLINE = 2167
 SCI_POSITIONFROMPOINT = 2022
 SCI_POSITIONFROMPOINTCLOSE = 2023
+SCI_PRIVATELEXERCALL = 4013
+SCI_PROPERTYNAMES = 4014
+SCI_PROPERTYTYPE = 4015
 SCI_REDO = 2011
 SCI_REGISTERIMAGE = 2405
 SCI_RELEASEDOCUMENT = 2377
@@ -3262,7 +3313,7 @@ SCI_SETMARGINSENSITIVEN = 2246
 SCI_SETMARGINTYPEN = 2240
 SCI_SETMARGINWIDTHN = 2242
 SCI_SETMODEVENTMASK = 2359
-SCI_SETMOUSECAPTURE = 4017
+SCI_SETMOUSECAPTURE = 4023
 SCI_SETMOUSEDOWNCAPTURES = 2384
 SCI_SETMOUSEDWELLTIME = 2264
 SCI_SETMULTIPASTE = 2614
@@ -3423,10 +3474,10 @@ SCK_SUBTRACT = 311
 SCK_TAB = 9
 SCK_UP = 301
 SCK_WIN = 313
-SCLEX_ABAP = 100
+SCLEX_ABAP = 101
 SCLEX_ABAQUS = 84
 SCLEX_ADA = 20
-SCLEX_AHK1 = 101
+SCLEX_AHK1 = 102
 SCLEX_APDL = 61
 SCLEX_ASM = 34
 SCLEX_ASN1 = 63
@@ -3457,7 +3508,7 @@ SCLEX_EIFFELKW = 24
 SCLEX_ERLANG = 53
 SCLEX_ERRORLIST = 10
 SCLEX_ESCRIPT = 41
-SCLEX_EUPHORIA = 99
+SCLEX_EUPHORIA = 100
 SCLEX_F77 = 37
 SCLEX_FLAGSHIP = 73
 SCLEX_FORTH = 52
@@ -3517,6 +3568,7 @@ SCLEX_TADS3 = 70
 SCLEX_TAL = 91
 SCLEX_TCL = 25
 SCLEX_TEX = 49
+SCLEX_TXT2TAGS = 99
 SCLEX_VB = 8
 SCLEX_VBSCRIPT = 28
 SCLEX_VERILOG = 56
@@ -3640,7 +3692,7 @@ SC_MARK_TCORNERCURVE = 17
 SC_MARK_UNDERLINE = 29
 SC_MARK_VLINE = 9
 SC_MASK_FOLDERS = 0xFE000000
-SC_MODEVENTMASKALL = 0x7FFFF
+SC_MODEVENTMASKALL = 0xFFFFF
 SC_MOD_BEFOREDELETE = 0x800
 SC_MOD_BEFOREINSERT = 0x400
 SC_MOD_CHANGEANNOTATION = 0x20000
@@ -3653,6 +3705,7 @@ SC_MOD_CHANGESTYLE = 0x4
 SC_MOD_CONTAINER = 0x40000
 SC_MOD_DELETETEXT = 0x2
 SC_MOD_INSERTTEXT = 0x1
+SC_MOD_LEXERSTATE = 0x80000
 SC_MULTILINEUNDOREDO = 0x1000
 SC_MULTIPASTE_EACH = 1
 SC_MULTIPASTE_ONCE = 0
@@ -3674,6 +3727,9 @@ SC_STATUS_BADALLOC = 2
 SC_STATUS_FAILURE = 1
 SC_STATUS_OK = 0
 SC_TIME_FOREVER = 10000000
+SC_TYPE_BOOLEAN = 0
+SC_TYPE_INTEGER = 1
+SC_TYPE_STRING = 2
 SC_WRAPINDENT_FIXED = 0
 SC_WRAPINDENT_INDENT = 2
 SC_WRAPINDENT_SAME = 1
@@ -3697,7 +3753,6 @@ STYLE_LINENUMBER = 33
 STYLE_MAX = 255
 UNDO_MAY_COALESCE = 1
 VISIBLE_SLOP = 0x01
-VISIBLE_STRICT = 0x04
 
 FilePath \n full path of the current file
 FileDir \n directory of the current file without a trailing slash
