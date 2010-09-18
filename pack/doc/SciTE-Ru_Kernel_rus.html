@@ -260,6 +260,14 @@ command.name.6.*=Date and Time</div>
 Установка Bookmark'а по 1 щелчку на панели Bookmark'ов.<br>
 Новый параметр в .properties <span class="example">margin.bookmark.by.single.click=0</span> отключает эту возможность
 
+<h5 id="clearbefore">
+<sup>new</sup>
+[clearbefore] <span class=desc>(Автор: neo4max)</span></h5>
+Переменной <span class="example">command.mode</span> добавлен новый параметр - <span class="example">clearbefore:[yes|no]</span>, со следующей логикой работы:<br>
+* <span class="example">clearbefore</span> отсутствует - поведение, как и раньше, определяется значением <span class="example">clear.before.execute</span><br>
+* <span class="example">clearbefore:yes</span> - как <span class="example">clear.before.execute=1</span><br>
+* <span class="example">clearbefore:no</span>  - как <span class="example">clear.before.execute=0</span>
+
 <h5 id="output.caret">
 [output.caret] <span class=desc>(Автор: VladVRO)</span></h5>
 Новые параметры в .properties<br>
