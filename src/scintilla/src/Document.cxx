@@ -437,7 +437,7 @@ static int BytesFromLead(int leadByte) {
 	return 0;
 }
 
-bool Document::InGoodUTF8(int pos, int &start, int &end) {
+bool Document::InGoodUTF8(int pos, int &start, int &end) const {
 	int lead = pos;
 	while ((lead>0) && (pos-lead < 4) && IsTrailByte(static_cast<unsigned char>(cb.CharAt(lead-1))))
 		lead--;
@@ -536,7 +536,7 @@ int Document::MovePositionOutsideChar(int pos, int moveDir, bool checkLineEnd) {
 // NextPosition moves between valid positions - it can not handle a position in the middle of a
 // multi-byte character. It is used to iterate through text more efficiently than MovePositionOutsideChar.
 // A \r\n pair is treated as two characters.
-int Document::NextPosition(int pos, int moveDir) {
+int Document::NextPosition(int pos, int moveDir) const {
 	// If out of range, just return minimum/maximum value.
 	int increment = (moveDir > 0) ? 1 : -1;
 	if (pos + increment <= 0)
@@ -570,7 +570,7 @@ int Document::NextPosition(int pos, int moveDir) {
 				// See http://msdn.microsoft.com/en-us/library/cc194792%28v=MSDN.10%29.aspx
 				// http://msdn.microsoft.com/en-us/library/cc194790.aspx
 				if ((pos - 1) <= posStartLine) {
-					return posStartLine;
+					return posStartLine - 1;
 				} else if (IsDBCSLeadByte(cb.CharAt(pos - 1))) {
 					// Must actually be trail byte
 					return pos - 2;

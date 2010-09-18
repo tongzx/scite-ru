@@ -2172,6 +2172,7 @@ static IFaceConstant ifaceConstants[] = {
 	{"SC_CHARSET_THAI",222},
 	{"SC_CHARSET_TURKISH",162},
 	{"SC_CHARSET_VIETNAMESE",163},
+	{"SC_CP_DBCS",1},
 	{"SC_CP_UTF8",65001},
 	{"SC_CURSORNORMAL",-1},
 	{"SC_CURSORWAIT",4},

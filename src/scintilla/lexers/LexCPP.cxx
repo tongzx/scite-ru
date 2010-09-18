@@ -617,12 +617,12 @@ void SCI_METHOD LexerCPP::Lex(unsigned int startPos, int length, int initStyle, 
 				}
 				break;
 			case SCE_C_COMMENTLINE:
-				if (sc.atLineStart) {
+				if (sc.atLineStart && !continuationLine) {
 					sc.SetState(SCE_C_DEFAULT|activitySet);
 				}
 				break;
 			case SCE_C_COMMENTLINEDOC:
-				if (sc.atLineStart) {
+				if (sc.atLineStart && !continuationLine) {
 					sc.SetState(SCE_C_DEFAULT|activitySet);
 				} else if (sc.ch == '@' || sc.ch == '\\') { // JavaDoc and Doxygen support
 					// Verify that we have the conditions to mark a comment-doc-keyword
