@@ -1491,6 +1491,15 @@ void SciTEBase::ToolsMenu(int item) {
 						groupUndo = false;
 				}
 
+				//!-add-[clearbefore]
+				if (0 == strcmp(opt, "clearbefore")) {
+					if (!colon || colon[0] == '1' || 0 == strcmp(colon, "yes"))
+						jobQueue.clearBeforeExecute = true;
+					else if (colon[0] == '0' || 0 == strcmp(colon, "no"))
+						jobQueue.clearBeforeExecute = false;
+				}
+				//!-end-[clearbefore]
+
 				opt = cpComma ? cpComma + 1 : 0;
 			}
 			delete []modeTags;
