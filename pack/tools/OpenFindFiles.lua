@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 OpenFindFiles.lua
 Author: mozers™
-Version: 1.3.3
+Version: 1.4.0
 ------------------------------------------------------
 После выполнения команды "Найти в файлах..."
 создает пункт в контекстном меню консоли - "Открыть найденные файлы"
@@ -12,7 +12,6 @@ Version: 1.3.3
 --]]--------------------------------------------------
 
 local user_outputcontext_menu           -- исходное контекстное меню консоли
-local clear_before_execute              -- исходное значение параметра clear.before.execute
 local outputcontextmenu_changed = false -- признак модификации контекстного меню
 local command_num                       -- номер команды "OpenFindFiles" в меню Tools
 local IDM_TOOLS = 9000
@@ -29,7 +28,7 @@ end
 --------------------------------------------------
 -- Создание команды в меню Tools и вставка ее в контекстное меню консоли
 local function CreateMenu()
-	local command_name = scite.GetTranslation("Open Find Files")
+	local command_name = shell.to_utf8(scite.GetTranslation("Open Find Files"))
 	command_num = GetFreeCommandNumber()
 
 	-- пункт в в контекстном меню консоли
@@ -39,10 +38,8 @@ local function CreateMenu()
 
 	-- команда в меню Tools
 	props["command."..command_num..".*"] = "OpenFindFiles"
-	props["command.mode."..command_num..".*"] = "subsystem:lua,savebefore:no"
+	props["command.mode."..command_num..".*"] = "subsystem:lua,savebefore:no,clearbefore:no"
 
-	clear_before_execute = props["clear.before.execute"]
-	props["clear.before.execute"] = 0 -- чтобы можно было воспользоваться output:GetText()
 end
 
 --------------------------------------------------
@@ -51,7 +48,6 @@ local function RemoveMenu()
 	props["user.outputcontext.menu.*"] = user_outputcontext_menu
 	outputcontextmenu_changed = false
 	props["command."..command_num..".*"] = ""
-	props["clear.before.execute"] = clear_before_execute
 end
 
 --------------------------------------------------
