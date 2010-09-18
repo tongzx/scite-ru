@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 new_file.lua
 mozers™, VladVRO
-version 3.1.6
+version 3.2.0
 ----------------------------------------------
 Заменяет стандартную команду SciTE "File|New" (Ctrl+N)
 Создает новый буфер в текущем каталоге с расширением текущего файла
@@ -10,13 +10,21 @@ version 3.1.6
 Подключение:
 В файл SciTEStartup.lua добавьте строку:
   dofile (props["SciteDefaultHome"].."\\tools\\new_file.lua")
-----------------------------------------------
+
+Задайте в файле .properties расширения файлов которые будут создаваться в кодировке UTF-8
+  file.create.as.utf8=htm,html
+
+-------------------------------------------------------------------
 Replaces SciTE command "File|New" (Ctrl+N)
 Creates new buffer in the current folder with current file extension
 ----------------------------------------------
 Connection:
 In file SciTEStartup.lua add a line:
   dofile (props["SciteDefaultHome"].."\\tools\\new_file.lua")
+
+Set in a file .properties:
+  file.create.as.utf8=htm,html
+
 --]]----------------------------------------------------
 require 'shell'
 
@@ -34,6 +42,13 @@ local function CreateUntitledFile()
 			local warning_couldnotopenfile_disable = props['warning.couldnotopenfile.disable']
 			props['warning.couldnotopenfile.disable'] = 1
 			scite.Open(file_path)
+
+			local create_utf8_ext = props['file.create.as.utf8']:lower()
+			local current_ext = props['FileExt']:lower()
+			for ext in create_utf8_ext:gmatch("%w+") do
+				if current_ext == ext then scite.MenuCommand(IDM_ENCODING_UCOOKIE) end
+			end
+
 			unsaved_files[file_path:upper()] = true --сохраняем путь к созданному буферу в таблице
 			props['warning.couldnotopenfile.disable'] = warning_couldnotopenfile_disable
 			return true
