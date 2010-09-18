@@ -841,13 +841,9 @@ NameError: mistake
 
     <li>Ctrl+*(в правой части клавиатуры) сворачивает/разворачивает текущий маркер.</li>
   </ul>
-    <p>
-       Tip:
-       To open a large code block with all its children folded, fold it with
-       Ctrl+Click, then open it with a normal click. Then on opening a child fold,
-       you will see that the grandchild folds are still closed; if you want those
-       'grandchild' folds open, Shift+Click the child fold.
-
+    <p>Совет:
+    Чтобы открыть большой родительский блок со всеми свёрнутыми дочерними блоками, закройте его с Ctrl+щелчок мышью (на крестике свёртки), после чего откройте его обычным кликом.
+    Открывая дочерний блок, вы увидите, что подблок дочернего блока свёрнут; если хотите, чтобы он при этом был открыт – откройте его, зажав Shift.</p>
 
   <h3><a name="props">Файлы настроек</a></h3>
 
@@ -999,15 +995,8 @@ NameError: mistake
     command.go.$(file.patterns.html)=file://$(FilePath)
   </div>
 
-  <p>Wildcard matching only works where the wildcard is at the start of a file specification, so "*.mak" will match "proj.mak" but
-  "Makefile*" will not match "Makefile.in".</p>
-  <p>Properties files are not treated as having a particular encoding, however individual property values
-  may be treated as having an encoding. For file names, commands, and user interface text, this is
-  UTF-8 so it may be easier to edit properties files as UTF-8 by inserting a coding cookie as explained later.
-  Other properties may be treated as byte sequences (like word.characters.<i>filepattern</i>) or in an implicit
-  encoding (such as keywords.<i>filepattern</i> matching the document encoding) so that it may be better to
-  edit these settings using a non-UTF-8 encoding. Where both UTF-8 and non-UTF-8 values are wanted,
-  two files can be used with different encodings and an import statement to include one in the other.</p>
+  <p>Групповой шаблон действует только когда он находится слева от определения группы файлов, то есть "*.mak" подойдёт для "proj.mak", но "Makefile*" не подойдёт для "Makefile.in".</p>
+  <p>Файлы ".properties" могут быть в любой кодировке, однако определённые значения свойств могут подразумевать определённую кодировку. Для имён файлов, команд и текста пользовательского интерфейса – это UTF-8, так что вероятно гораздо легче редактировать файлы ".properties" как UTF-8, вставляя строки кода как будет описано далее. Другие свойства могут подразумевать последовательность байтов (например, word.characters.<i>filepattern</i>) или неявную кодировку (напр., keywords.<i>filepattern</i> для совпадения с кодировкой документа), так что может быть лучше редактировать эти настройки используя не UTF-8 кодировку. Там, где нужны оба, и UTF-8, и не UTF-8 значения, можно использовать два файла и выражение import для включения содержимого одного из файлов в другой.</p>
 
   <p>Более подробно о паттернах в файлах настроек можно прочитать в <a href="http://scite.ruteam.ru/scite/dokumentaciya/patterny-i-leksery-v-failax-nastroek">этой статье</a>.</p>
 
