@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev, ur4ltz
-Version 1.22.0
+Version 1.23.0
 ------------------------------------------------------
   Note: Require gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
                lpeg.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/lpeg/>
@@ -125,22 +125,26 @@ local list_dir = gui.list(false,false)
 tab0:client(list_dir)
 if colorback then list_dir:set_list_colour(colorfore,colorback) end
 
-tab0:context_menu {
-	'FileMan: Change Dir|FileMan_ChangeDir',
-	'FileMan: Show All|FileMan_MaskAllFiles',
-	'FileMan: Only current ext|FileMan_MaskOnlyCurrentExt',
+list_dir:context_menu {
+	'Change Dir|FileMan_ChangeDir',
+	'Show All|FileMan_MaskAllFiles',
+	'Only current ext|FileMan_MaskOnlyCurrentExt',
 	'', -- separator
-	'FileMan: Open with SciTE|FileMan_OpenSelectedItems',
-	'FileMan: Execute|FileMan_FileExec',
-	'FileMan: Exec with Params|FileMan_FileExecWithParams',
-	'FileMan: Copy to...|FileMan_FileCopy',
-	'FileMan: Move to...|FileMan_FileMove',
-	'FileMan: Rename|FileMan_FileRename',
-	'FileMan: Delete\tDel|FileMan_FileDelete',
-	'FileMan: Add to Favorites\tIns|Favorites_AddFile',
+	'Open with SciTE|FileMan_OpenSelectedItems',
+	'Execute|FileMan_FileExec',
+	'Exec with Params|FileMan_FileExecWithParams',
 	'', -- separator
-	'Favorites: Add active buffer|Favorites_AddCurrentBuffer',
-	'Favorites: Delete item\tDel|Favorites_DeleteItem',
+	'Copy to...|FileMan_FileCopy',
+	'Move to...|FileMan_FileMove',
+	'Rename|FileMan_FileRename',
+	'Delete\tDel|FileMan_FileDelete',
+	'', -- separator
+	'Add to Favorites\tIns|Favorites_AddFile',
+}
+
+list_favorites:context_menu {
+	'Add active buffer|Favorites_AddCurrentBuffer',
+	'Delete item\tDel|Favorites_DeleteItem',
 }
 -------------------------
 local tab1 = gui.panel(panel_width)

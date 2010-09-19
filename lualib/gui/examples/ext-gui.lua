@@ -62,7 +62,7 @@ window_or_panel1:add(list1, "left", width) -- "left" or "right"
 window_or_panel1:client(list1)
 list1:size(width, height) -- Note: Changes either height or width (one of parameters is ignored)
 list1:set_list_colour("#FFFFFF", "#000000") -- foreground, background
-list1:context_menu {'item1|func1', 'item2|func2'} -- Note: There is no. This - the wish.
+list1:context_menu {'item1|func1', 'item2|func2'} -- Note: Revision 1484
 list1:set_selected_item(index) -- Note: Revision 747
 list1:selected_count() -- Note: Revision 1467
 list1:get_selected_items() -- Note: Revision 1467
