@@ -232,7 +232,6 @@ public:
 			}
 		}
 	}
-
 };
 
 class PanelWindow: public LuaWindow
@@ -399,11 +398,19 @@ protected:
 	int select_idx;
 	int double_idx;
 	int onkey_idx;
+	int rclick_idx;
+    Handle m_hpopup_menu;
 
 public:
 	LuaControl(lua_State *l)
-		: L(l), select_idx(0), double_idx(0), onkey_idx(0)
+		: L(l), select_idx(0), double_idx(0), onkey_idx(0), rclick_idx(0)
+		, m_hpopup_menu(0)
 	{}
+
+	void set_popup_menu(Handle menu)
+	{
+		m_hpopup_menu = menu;
+	}
 
 	virtual void set_select(int iarg)
 	{
@@ -418,6 +425,11 @@ public:
 	virtual void set_onkey(int iarg)
 	{
 		function_ref(L,iarg,&onkey_idx);
+	}
+
+	virtual void set_rclick(int iarg)
+	{
+		function_ref(L,iarg,&rclick_idx);
 	}
 
 };
@@ -449,6 +461,20 @@ public:
 	virtual void handle_onkey(int id)
 	{
 		dispatch_ref(L,onkey_idx,id);
+	}
+
+	virtual int handle_rclick(int id)
+	{
+		if(m_hpopup_menu) {
+			POINT p;
+			GetCursorPos(&p);
+			
+			HWND hwnd = (HWND)(get_parent_win()->handle());
+			TrackPopupMenu((HMENU)m_hpopup_menu, TPM_LEFTALIGN | TPM_TOPALIGN, p.x, p.y, 0, hwnd, NULL);
+			return 1;
+		}
+
+		return 0;
 	}
 };
 
@@ -793,23 +819,46 @@ int window_remove(lua_State* L)
 
 int window_context_menu(lua_State* L)
 {
-	ContainerWindow *cw = (ContainerWindow*)window_arg(L,1);
-	wchar_t** items = table_to_str_array(L,2);
-	ContextMenu mnu(cw);
-	for (;*items; items++) {
-		wchar_t* text = wcstok(*items,L"|");
-		wchar_t* fun = wcstok(NULL,L"");
-		if ( ( text == 0 || *text == 0 )
-			 && ( fun == 0 || *fun == 0 ) )
-		{
-			mnu.add_separator();
+	TWin* w = window_arg(L,1);
+	if(LuaWindow *cw = dynamic_cast<LuaWindow*> (w)) {
+		wchar_t** items = table_to_str_array(L,2);
+		ContextMenu mnu(cw);
+		for (;*items; items++) {
+			wchar_t* text = wcstok(*items,L"|");
+			wchar_t* fun = wcstok(NULL,L"");
+			if ( ( text == 0 || *text == 0 )
+				 && ( fun == 0 || *fun == 0 ) )
+			{
+				mnu.add_separator();
+			}
+			else
+			{
+				mnu << Item(text,(EH)&LuaWindow::handler,fun);
+			}
 		}
-		else
-		{
-			mnu << Item(text,(EH)&ContainerWindow::handler,fun);
+	} else if(TListViewLua* lv = dynamic_cast<TListViewLua*>(w)) {
+		TEventWindow* parent = dynamic_cast<TEventWindow*>(lv->get_parent_win());
+		wchar_t** items = table_to_str_array(L,2);
+		HMENU hm = CreatePopupMenu();
+		Popup mnu(hm);
+		for (;*items; items++) {
+			wchar_t* text = wcstok(*items,L"|");
+			wchar_t* fun = wcstok(NULL,L"");
+			if ( ( text == 0 || *text == 0 )
+				 && ( fun == 0 || *fun == 0 ) )
+			{
+				mnu.add_separator();
+			}
+			else
+			{
+				mnu << Item(text,(EH)&LuaWindow::handler,fun);
+			}
 		}
+		lv->set_popup_menu(hm);
+		mnu.get_menu_handler()->set_form(parent);
+		parent->add_handler(mnu.get_menu_handler());
 	}
-	//mnu.release();
+
 	return 0;
 }
 

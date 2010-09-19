@@ -5,6 +5,7 @@ class EXPORT TListViewB: public TNotifyWin {
 	int m_last_col,m_last_row;
 	bool m_has_images, m_custom_paint;
 	unsigned int m_fg, m_bg;
+	TWin* parent_win;
 	
 public:
 	TListViewB(TWin* form, bool large_icons = false, bool multiple_columns = false, bool single_select = true);
@@ -19,6 +20,7 @@ public:
 	void select_item(int i);
 	void get_item_text(int i, wchar_t* buff, int buffsize);
 	void* get_item_data(int i);
+	TWin* get_parent_win() { return parent_win; };
     int  selected_id();
 	int  next_selected_id(int i);
     int  count();
@@ -31,6 +33,7 @@ public:
 	virtual void handle_select(int id) = 0;
 	virtual void handle_double_click(int id) = 0;
 	virtual void handle_onkey(int id) = 0;
+	virtual int handle_rclick(int id) = 0;
 
 	// override
     int handle_notify(void *p);

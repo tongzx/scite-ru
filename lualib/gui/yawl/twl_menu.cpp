@@ -93,6 +93,11 @@ void Menu::add_separator()
  AppendMenu(HMENU(m_handle),MF_SEPARATOR,0,NULL);
 }
 
+MessageHandler *Menu::get_menu_handler()
+{
+	return m_menu_handler;
+}
+
 void Menu::insert_menu(int id_before, Item& item)
 {
   if (item.id == -1) item.id = last_id++;

@@ -63,6 +63,7 @@ public:
   void add_menu(Item& item);
   void add_menu(Menu& menu);
   void add_separator();
+  MessageHandler * get_menu_handler();
   void insert_menu(int id_before, Item& item);
   void delete_menu(int id);
   operator Handle () { return m_handle; }
@@ -80,6 +81,7 @@ public:
   wchar_t *name() { return m_name; }
   void create();
   void release();
+  Handle get_handle();
 };
 
 class EXPORT PopupMenu: public Menu {

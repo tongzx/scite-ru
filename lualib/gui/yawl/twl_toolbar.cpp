@@ -338,6 +338,7 @@ TListViewB::TListViewB(TWin* form, bool large_icons, bool multiple_columns, bool
 
 	// Create the list view control.
 	set(create_common_control(form,WC_LISTVIEW,style));
+	parent_win = form;
 	m_custom_paint = false;
 	m_has_images = false;
 	m_last_col = 0;
@@ -491,7 +492,6 @@ static int list_custom_draw(void * lParam, COLORREF fg, COLORREF bg)
 }
 
 
-
 int TListViewB::handle_notify(void *p)
 {
  LPNMHDR np  = (LPNMHDR)p;
@@ -507,8 +507,8 @@ int TListViewB::handle_notify(void *p)
 	handle_onkey(((LPNMLVKEYDOWN)p)->wVKey);
 	return 0;  // ignored, anyway
  case NM_RCLICK:
-	send_msg(WM_CHAR,VK_ESCAPE,0);
-	return 0;
+	//send_msg(WM_CHAR,VK_ESCAPE,0);
+	return handle_rclick(id);
  case NM_CUSTOMDRAW:
 	if (m_custom_paint) {
 		return list_custom_draw(p,m_fg,m_bg);
