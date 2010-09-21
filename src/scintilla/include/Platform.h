@@ -80,6 +80,12 @@
 #ifndef ULONG_PTR
 #define ULONG_PTR ULONG
 #endif
+#ifndef DFCS_HOT
+#define DFCS_HOT 0x1000
+#endif
+#ifndef SPI_GETKEYBOARDCUES
+#define SPI_GETKEYBOARDCUES 0x100A
+#endif
 #endif
 
 // STL without warnings (http://www.codeproject.com/KB/stl/stl_without_warnings.aspx)

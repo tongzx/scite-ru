@@ -362,6 +362,7 @@ Searcher::Searcher() {
 	replacing = false;
 	havefound = false;
 	findInStyle = false;
+	closeFind = true; //!-add-[close.find.window]
 	findStyle = 0;
 
 	focusOnReplace = false;
