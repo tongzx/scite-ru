@@ -1,9 +1,10 @@
 --[[----------------------------------------------------------------------------
-HighlightLinks v1.4.2
-Автор: VladVRO
+HighlightLinks v1.5.0
+Автор: VladVRO, mozers
 
-Подсветка линков в тексте, выделение всего линка при двойном клике на нем и
-открытие линка в броузере при двойном клике с зажатой клавишей Ctrl.
+- Подсветка линков в тексте (автоматическая или по команде меню)
+- Выделение всего линка двойным кликом на нем
+- Открытие линка в броузере двойным кликом с зажатой клавишей Ctrl.
 
 Внимание:
 Скрипт работает только в версии SciTE-Ru.
@@ -29,8 +30,10 @@ HighlightLinks v1.4.2
   highlight.links.exts=txt,htm
 
 Дополнительный параметр, позволяющий менять маску поиска линков:
-  highlight.links.mask=https*://[\w_&%?.-$+=*~/]+
+  highlight.links.mask=https*://[\w_&%?.\-@$+=*~/]+
 --]]----------------------------------------------------------------------------
+
+require "shell"
 
 local mark_number = 3
 local default_link_mask = "https*://[^ \t\r\n\"\']+"
@@ -47,39 +50,26 @@ function HighlightLinks()
 	end
 end
 
-local browser
-local function select_highlighted_link(is_browse)
+local function select_highlighted_link()
 	local p = editor.CurrentPos
 	if scite.SendEditor(SCI_INDICATORVALUEAT, mark_number, p) == 1 then
 		local s = scite.SendEditor(SCI_INDICATORSTART, mark_number, p)
 		local e = scite.SendEditor(SCI_INDICATOREND, mark_number, p)
 		if s and e then
 			editor:SetSel(s,e)
-			if is_browse then
-				browser = editor:GetSelText()
-			end
 			return true
 		end
 	end
+	return false
 end
 AddEventHandler("OnDoubleClick", function(shift, ctrl, alt)
 	if editor.Focus then
-		if ctrl then
-			return select_highlighted_link(true)
-		else
-			select_highlighted_link(false)
+		if select_highlighted_link() and ctrl then
+			local url = editor:GetSelText()
+			shell.exec(url)
 		end
 	end
 end)
-
-local function launch_browse()
-	if browser then
-		local cmd = browser
-		browser = nil
-		shell.exec(cmd)
-	end
-end
-AddEventHandler("OnMouseButtonUp", launch_browse)
 
 local function auto_highlight()
 	local list_lexers = props['highlight.links.lexers']
