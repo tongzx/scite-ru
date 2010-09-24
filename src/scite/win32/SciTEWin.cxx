@@ -1186,15 +1186,7 @@ void SciTEWin::ShellExec(const SString &cmd, const char *dir) {
 void SciTEWin::Execute() {
 	SciTEBase::Execute();
 
-//!	beginthread(ExecThread, 1024 * 1024, reinterpret_cast<void *>(this));
-//!-start-[ExtensionThreadFix]
-	// Force to start Lua extension in the main thread
-	if (jobQueue.jobQueue[jobQueue.commandCurrent-1].jobType == jobExtension) {
-		ExecThread(static_cast<void *>(this));
-	} else {
-		_beginthread(ExecThread, 1024 * 1024, static_cast<void *>(this));
-	}
-//!-end-[ExtensionThreadFix]
+	_beginthread(ExecThread, 1024 * 1024, reinterpret_cast<void *>(this));
 }
 
 void SciTEWin::StopExecute() {
