@@ -2740,13 +2740,10 @@ bool SearchStrip::KeyDown(WPARAM key) {
 		return true;
 
 	if (key == VK_RETURN) {
-//!		Next(false);
-//!-start-[close.find.window]
-		if (IsChild(Hwnd(), ::GetFocus()) || IsKeyDown(VK_CONTROL) || IsKeyDown(VK_SHIFT)) {
+		if (IsChild(Hwnd(), ::GetFocus()) || IsKeyDown(VK_CONTROL) || IsKeyDown(VK_SHIFT)) { //!-add-[close.find.window]
 			Next(false);
 			return true;
-		}
-//!-end-[close.find.window]
+		} //!-add-[close.find.window]
 	}
 
 	return false;
@@ -2927,7 +2924,8 @@ bool FindStrip::KeyDown(WPARAM key) {
 		return true;
 	switch (key) {
 	case VK_RETURN:
-//!		Next(false);
+//!			Next(false);
+//!			return true;
 //!-start-[close.find.window]
 		if (IsChild(Hwnd(), ::GetFocus()) || IsKeyDown(VK_CONTROL) || IsKeyDown(VK_SHIFT)) {
 			if(IsKeyDown(VK_SHIFT)) pSearcher->reverseFind = !pSearcher->reverseFind;
