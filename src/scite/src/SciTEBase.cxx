@@ -1604,7 +1604,7 @@ int SciTEBase::FindNext(bool reverseDirection, bool showWarnings) {
 		int end = wEditor.Call(SCI_GETTARGETEND);
 		EnsureRangeVisible(start, end);
 		SetSelection(start, end);
-		if (!replacing) {
+		if (!replacing && closeFind) { //!-change-[close.find.window]
 			DestroyFindReplace();
 		}
 	}

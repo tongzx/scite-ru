@@ -2733,13 +2733,6 @@ void SearchStrip::Focus() {
 	::SetFocus(HwndOf(wText));
 }
 
-//!-start-[close.find.window]
-static bool IsSameOrChild(GUI::Window &wParent, HWND wChild) {
-	HWND hwnd = reinterpret_cast<HWND>(wParent.GetID());
-	return (wChild == hwnd) || IsChild(hwnd, wChild);
-}
-//!-end-[close.find.window]
-
 bool SearchStrip::KeyDown(WPARAM key) {
 	if (!visible)
 		return false;
@@ -2749,11 +2742,11 @@ bool SearchStrip::KeyDown(WPARAM key) {
 	if (key == VK_RETURN) {
 //!		Next(false);
 //!-start-[close.find.window]
-		if (IsSameOrChild(wText, ::GetFocus()) || IsKeyDown(VK_CONTROL) || IsKeyDown(VK_SHIFT)) {
+		if (IsChild(Hwnd(), ::GetFocus()) || IsKeyDown(VK_CONTROL) || IsKeyDown(VK_SHIFT)) {
 			Next(false);
-		} else return false;
+			return true;
+		}
 //!-end-[close.find.window]
-		return true;
 	}
 
 	return false;
@@ -2936,13 +2929,13 @@ bool FindStrip::KeyDown(WPARAM key) {
 	case VK_RETURN:
 //!		Next(false);
 //!-start-[close.find.window]
-		if (IsSameOrChild(wText, ::GetFocus()) || IsKeyDown(VK_CONTROL) || IsKeyDown(VK_SHIFT)) {
+		if (IsChild(Hwnd(), ::GetFocus()) || IsKeyDown(VK_CONTROL) || IsKeyDown(VK_SHIFT)) {
 			if(IsKeyDown(VK_SHIFT)) pSearcher->reverseFind = !pSearcher->reverseFind;
 			Next(false);
 			if(IsKeyDown(VK_SHIFT)) pSearcher->reverseFind = !pSearcher->reverseFind;
-		} else return false;
+			return true;
+		}
 //!-end-[close.find.window]
-		return true;
 	}
 	return false;
 }
@@ -3201,12 +3194,10 @@ void ReplaceStrip::Close() {
 	pSearcher->UIClosed();
 }
 
-/*!-remove-[close.find.window]
 static bool IsSameOrChild(GUI::Window &wParent, HWND wChild) {
 	HWND hwnd = reinterpret_cast<HWND>(wParent.GetID());
 	return (wChild == hwnd) || IsChild(hwnd, wChild);
 }
-*/
 
 bool ReplaceStrip::KeyDown(WPARAM key) {
 	if (!visible)

@@ -1491,7 +1491,7 @@ void SciTEBase::ToolsMenu(int item) {
 						groupUndo = false;
 				}
 
-				//!-add-[clearbefore]
+				//!-start-[clearbefore]
 				if (0 == strcmp(opt, "clearbefore")) {
 					if (!colon || colon[0] == '1' || 0 == strcmp(colon, "yes"))
 						jobQueue.clearBeforeExecute = true;
