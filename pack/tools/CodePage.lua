@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 CodePage.lua
 Authors: YuriNB, VladVRO, mozers™
-Version: 2.3.3
+Version: 2.4.0
 ------------------------------------------------------
 Ãèáğèä 2õ ñêğèïòîâ:
 win1251 to cp866 keyboard mapper (YuriNB icq#2614215)
@@ -66,11 +66,20 @@ local function UpdateStatusCodePage(mode)
 			props["cp.iconv"]='?'
 		end
 	end
+	if props["editor.code.page.name"] == code_page_name then return end
 
-	if props["editor.code.page.name"] ~= code_page_name then
-		scite.CheckMenus()
-		scite.UpdateStatusBar()
+	if mode == nil or mode == IDM_ENCODING_DEFAULT then
+		if props["character.set"]=='255' then
+			props["chars.accented"]='€ ¡‚¢ƒ£„¤…¥ğñ†¦‡§ˆ¨‰©Šª‹«Œ¬­®¯à‘á’â“ã”ä•å–æ—ç˜è™éšê›ëœìíîŸï'
+		else
+			props["chars.accented"]='ÀàÁáÂâÃãÄäÅå¨¸ÆæÇçÈèÉéÊêËëÌìÍíÎîÏïĞğÑñÒòÓóÔôÕõÖö×÷ØøÙùÚúÛûÜüİıŞşßÿ'
+		end
+	else -- utf8
+		props["chars.accented"]='ĞĞ°Ğ‘Ğ±Ğ’Ğ²Ğ“Ğ³Ğ”Ğ´Ğ•ĞµĞÑ‘Ğ–Ğ¶Ğ—Ğ·Ğ˜Ğ¸Ğ™Ğ¹ĞšĞºĞ›Ğ»ĞœĞ¼ĞĞ½ĞĞ¾ĞŸĞ¿Ğ Ñ€Ğ¡ÑĞ¢Ñ‚Ğ£ÑƒĞ¤Ñ„Ğ¥Ñ…Ğ¦Ñ†Ğ§Ñ‡Ğ¨ÑˆĞ©Ñ‰ĞªÑŠĞ«Ñ‹Ğ¬ÑŒĞ­ÑĞ®ÑĞ¯Ñ'
 	end
+
+	scite.CheckMenus()
+	scite.UpdateStatusBar()
 end
 
 local function CharsetDetect()
@@ -127,10 +136,8 @@ function change_codepage_ru()
 	scite.MenuCommand(IDM_ENCODING_DEFAULT)
 	if props["character.set"]=='255' then
 		props["character.set"]='204'
-		props["chars.accented"]='ÀàÁáÂâÃãÄäÅå¨¸ÆæÇçÈèÉéÊêËëÌìÍíÎîÏïĞğÑñÒòÓóÔôÕõÖö×÷ØøÙùÚúÛûÜüİıŞşßÿ'
 	else
 		props["character.set"]='255'
-		props["chars.accented"]='€ ¡‚¢ƒ£„¤…¥ğñ†¦‡§ˆ¨‰©Šª‹«Œ¬­®¯à‘á’â“ã”ä•å–æ—ç˜è™éšê›ëœìíîŸï'
 	end
 	scite.Perform('reloadproperties:')
 	UpdateStatusCodePage()
