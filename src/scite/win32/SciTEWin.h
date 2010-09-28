@@ -252,7 +252,8 @@ public:
 	virtual bool KeyDown(WPARAM key);
 	void AddToPopUp(GUI::Menu &popup, const char *label, int cmd, bool checked);
 	void ShowPopup();
-	void HandleReplaceCommand(int cmd);
+//!	void HandleReplaceCommand(int cmd); 
+	void HandleReplaceCommand(int cmd, bool searchDirection = false); //!-change-[close.find.window]
 	virtual bool Command(WPARAM wParam);
 	virtual void Size();
 	virtual void Paint(HDC hDC);

@@ -3205,18 +3205,21 @@ bool ReplaceStrip::KeyDown(WPARAM key) {
 	switch (key) {
 	case VK_RETURN:
 		if (IsChild(Hwnd(), ::GetFocus())) {
+/*!-remove-[close.find.window]
 			if (IsSameOrChild(wButtonFind, ::GetFocus()))
 				HandleReplaceCommand(IDOK);
 			else if (IsSameOrChild(wReplace, ::GetFocus()))
 				HandleReplaceCommand(IDOK);
-			else if (IsSameOrChild(wButtonReplace, ::GetFocus()))
+			else 
+*/
+			if (IsSameOrChild(wButtonReplace, ::GetFocus()))
 				HandleReplaceCommand(IDREPLACE);
 			else if (IsSameOrChild(wButtonReplaceAll, ::GetFocus()))
 				HandleReplaceCommand(IDREPLACEALL);
 			else if (IsSameOrChild(wButtonReplaceInSelection, ::GetFocus()))
 				HandleReplaceCommand(IDREPLACEINSEL);
 			else
-				HandleReplaceCommand(IDOK);
+				HandleReplaceCommand(IDOK, IsKeyDown(VK_SHIFT)); //!-change-[close.find.window]
 			return true;
 		}
 	}
@@ -3243,7 +3246,8 @@ void ReplaceStrip::ShowPopup() {
 	popup.Show(pt, *this);
 }
 
-void ReplaceStrip::HandleReplaceCommand(int cmd) {
+//!void ReplaceStrip::HandleReplaceCommand(int cmd) { 
+void ReplaceStrip::HandleReplaceCommand(int cmd, bool searchDirection) { 	//!-change-[close.find.window]
 	pSearcher->SetFind(ControlText(wText).c_str());
 	if (cmd != IDOK) {
 		pSearcher->SetReplace(ControlText(wReplace).c_str());
@@ -3251,7 +3255,7 @@ void ReplaceStrip::HandleReplaceCommand(int cmd) {
 	//int replacements = 0;
 	if (cmd == IDOK) {
 		if (pSearcher->FindHasText()) {
-			pSearcher->FindNext(false);
+			pSearcher->FindNext(/*false*/ searchDirection); //!-change-[close.find.window]
 		}
 	} else if (cmd == IDREPLACE) {
 		pSearcher->ReplaceOnce();

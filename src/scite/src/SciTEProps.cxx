@@ -1307,6 +1307,7 @@ void SciTEBase::ReadProperties() {
 			}
 		}
 	}
+	closeFind = props.GetInt("find.close.on.find", 1); //!-add-[close.find.window]
 	firstPropertiesRead = false;
 	needReadProperties = false;
 }
@@ -1433,7 +1434,6 @@ void SciTEBase::SetPropertiesInitial() {
 	unSlash = props.GetInt("find.replace.escapes");
 	wrapFind = props.GetInt("find.replace.wrap", 1);
 	focusOnReplace = props.GetInt("find.replacewith.focus", 1);
-	closeFind = props.GetInt("find.close.on.find", 1); //!-add-[close.find.window]
 }
 
 GUI::gui_string Localization::Text(const char *s, bool retainIfNotFound) {
