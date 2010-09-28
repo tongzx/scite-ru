@@ -959,7 +959,9 @@ BOOL SciTEWin::FindMessage(HWND hDlg, UINT message, WPARAM wParam) {
 			if (ControlIDOfCommand(wParam) == IDMARKALL){
 				MarkAll();
 			}
+			if(IsKeyDown(VK_SHIFT)) reverseFind = !reverseFind; //!-add-[close.find.window]
 			FindNext(reverseFind);
+			if(IsKeyDown(VK_SHIFT)) reverseFind = !reverseFind; //!-add-[close.find.window]
 			return TRUE;
 		} else if (ControlIDOfCommand(wParam) == IDFINDINSTYLE) {
 			if (FindReplaceAdvanced()) {
@@ -977,7 +979,8 @@ BOOL CALLBACK SciTEWin::FindDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 	return Caller(hDlg, message, lParam)->FindMessage(hDlg, message, wParam);
 }
 
-BOOL SciTEWin::HandleReplaceCommand(int cmd) {
+//!BOOL SciTEWin::HandleReplaceCommand(int cmd) {
+BOOL SciTEWin::HandleReplaceCommand(int cmd, bool searchDirection) { //!-change-[close.find.window]
 	if (!wFindReplace.GetID())
 		return TRUE;
 	HWND hwndFR = reinterpret_cast<HWND>(wFindReplace.GetID());
@@ -990,7 +993,7 @@ BOOL SciTEWin::HandleReplaceCommand(int cmd) {
 
 	int replacements = 0;
 	if (cmd == IDOK) {
-		FindNext(false);
+		FindNext(/*false*/ searchDirection); //!-change-[close.find.window]
 	} else if (cmd == IDREPLACE) {
 		ReplaceOnce();
 	} else if ((cmd == IDREPLACEALL) || (cmd == IDREPLACEINSEL)) {
@@ -1043,6 +1046,10 @@ BOOL SciTEWin::ReplaceMessage(HWND hDlg, UINT message, WPARAM wParam) {
 				dlg.Enable(IDFINDSTYLE, findInStyle);
 			}
 			return TRUE;
+//!-start-[close.find.window]
+		} else if (ControlIDOfCommand(wParam) == IDOK) {
+			return HandleReplaceCommand(ControlIDOfCommand(wParam), IsKeyDown(VK_SHIFT));
+//!-end-[close.find.window]
 		} else {
 			return HandleReplaceCommand(ControlIDOfCommand(wParam));
 		}

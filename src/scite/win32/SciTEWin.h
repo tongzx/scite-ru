@@ -391,7 +391,8 @@ protected:
 	/// Handle default print setup values and ask the user its preferences.
 	virtual void PrintSetup();
 
-	BOOL HandleReplaceCommand(int cmd);
+//!	BOOL HandleReplaceCommand(int cmd);
+	BOOL HandleReplaceCommand(int cmd, bool searchDirection = false); //!-change-[close.find.window]
 
 	virtual int WindowMessageBox(GUI::Window &w, const GUI::gui_string &msg, int style);
 	virtual void FindMessageBox(const SString &msg, const SString *findItem=0);
