@@ -1153,13 +1153,6 @@ static int push_iface_propval(lua_State *L, const char *name) {
 		if (prop.paramType == iface_void) {
 			if (prop.getter) {
 				lua_settop(L, 1);
-//!-begin-[GetLexerLanguage]
-				if (prop.valueType == iface_string) {
-					IFaceFunction func = prop.GetterFunction();
-					func.paramType[1] = iface_stringresult;
-					return iface_function_helper(L, func);
-				}
-//!-end-[GetLexerLanguage]
 				return iface_function_helper(L, prop.GetterFunction());
 			}
 		} else if (prop.paramType == iface_bool) {
@@ -1535,10 +1528,10 @@ static bool InitGlobalScope(bool checkProperties, bool forceReload = false) {
 	lua_setfield(luaState, -2, "Perform");
 //!-end-[Perform]
 
-//!-begin-[GetLexerLanguage]
+//!-begin-[AbbrevRefactoring]
 	lua_pushcfunction(luaState, cf_editor_insert_abbrev);
 	lua_setfield(luaState, -2, "InsertAbbreviation");
-//!-end-[GetLexerLanguage]
+//!-end-[AbbrevRefactoring]
 
 //!-start-[ParametersDialogFromLua]
 	lua_pushcfunction(luaState, cf_scite_show_parameters_dialog);
