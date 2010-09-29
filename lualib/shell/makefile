@@ -1,11 +1,11 @@
-LIBS= -lscite -lshlwapi -lgdi32 -lstdc++
+LIBS= -lscite -lshlwapi -lgdi32
 LIBDIR= -L ../lib/
 
 OUTFILE= shell.dll
 
 LUA= ../../src/scite/lua/include
 
-CFLAGS= -s -I$(LUA)
+CFLAGS= -O2 -s -I$(LUA)
 
 CC= g++
 
