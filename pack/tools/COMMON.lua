@@ -9,18 +9,7 @@ package.cpath = props["SciteDefaultHome"].."\\tools\\LuaLib\\?.dll;"..package.cp
 
 --------------------------------------------------------
 -- Подключение пользовательского обработчика к событию SciTE
-function AddEventHandler(EventName, Handler)
-	local prime_Event = _G[EventName]
-	if prime_Event ~= nil then
-		_G[EventName] = function (...)
-			return prime_Event(...) or Handler(...)
-		end
-	else
-		_G[EventName] = function (...)
-			return Handler(...)
-		end
-	end
-end
+dofile(props["SciteDefaultHome"]..'\\tools\\eventmanager.lua')
 
 --------------------------------------------------------
 -- Замена порой неработающего props['CurrentWord']
@@ -233,14 +222,7 @@ local function EditorInitMarkStyles()
 		end
 	end
 end
-
-local OnOpenOne = true
-AddEventHandler("OnOpen", function(file)
-	if OnOpenOne then
-		EditorInitMarkStyles()
-		OnOpenOne = false
-	end
-end)
+AddEventHandler("OnOpen", EditorInitMarkStyles, 'Once')
 
 ----------------------------------------------------------------------------
 -- Инвертирование состояния заданного параметра (используется для снятия/установки "галок" в меню)
