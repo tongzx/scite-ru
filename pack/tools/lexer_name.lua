@@ -15,7 +15,7 @@ version 1.1.3
 local last_lexer
 local function SetPropLexerName()
 	if props['FileName'] == '' then return end
-	local cur_lexer = editor:GetLexerLanguage()
+	local cur_lexer = props['Language']
 	if cur_lexer ~= last_lexer then
 		if cur_lexer == "hypertext" then
 			props["scite.lexer.name"] = "html"

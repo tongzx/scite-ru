@@ -363,7 +363,7 @@ end
 local function AutocompleteObject(char)
 	if IsComment(editor.CurrentPos-2) then return false end  -- Если строка закомментирована, то выходим
 
-	autocomplete_start_characters = props["autocomplete."..editor:GetLexerLanguage()..".start.characters"]
+	autocomplete_start_characters = props["autocomplete."..props['Language']..".start.characters"]
 	-- Если в параметр autocomplete.lexer.start.characters пустой, то выходим
 	if autocomplete_start_characters == '' then return false end
 

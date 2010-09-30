@@ -222,7 +222,7 @@ end
 ---------------------------------------------
 local function xComment()
 -- Обработка нажатия на Ctrl+Q
-	lexer = editor:GetLexerLanguage()
+	lexer = props['Language']
 	sel_text = editor:GetSelText()
 	sel_start = editor.SelectionStart
 	sel_end = editor.SelectionEnd

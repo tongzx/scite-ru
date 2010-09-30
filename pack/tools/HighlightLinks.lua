@@ -74,7 +74,7 @@ end)
 local function auto_highlight()
 	local list_lexers = props['highlight.links.lexers']
 	local list_exts = props['highlight.links.exts']
-	if (list_lexers ~= '' and string.find(','..list_lexers..',', ','..editor:GetLexerLanguage()..',')) or
+	if (list_lexers ~= '' and string.find(','..list_lexers..',', ','..props['Language']..',')) or
 	   (list_exts ~= '' and string.find(','..list_exts..',', ','..props['FileExt']..','))
 	then
 		HighlightLinks()

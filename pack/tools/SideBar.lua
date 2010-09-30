@@ -1032,7 +1032,7 @@ local function Functions_GetNames()
 	local start_code = Lang2CodeStart[lang]
 	local lpegPattern = Lang2lpeg[lang]
 	if not lpegPattern then
-		lang = Lexer2Lang[editor:GetLexerLanguage()]
+		lang = Lexer2Lang[props['Language']]
 		start_code = Lang2CodeStart[lang]
 		lpegPattern = Lang2lpeg[lang]
 		if not tablePattern then

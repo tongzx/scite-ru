@@ -199,12 +199,12 @@ local function SmartComment(char)
 	if (editor.SelectionStart~=editor.SelectionEnd)
 	then
 		-- делаем индивидуальную обработку по лексерам
-		if (editor:GetLexerLanguage() == 'cpp')
+		if (props['Language'] == 'cpp')
 		then
 			if (char == '*' ) then return StrimComment('/*', '*/') end
 		end
 		-- делаем проверку на блочный комментарий
-		if GetIndexFindCharInProps('comment.block.'..editor:GetLexerLanguage(), char) == 1
+		if GetIndexFindCharInProps('comment.block.'..props['Language'], char) == 1
 		then
 			return BlockComment()
 		end

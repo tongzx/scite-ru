@@ -102,7 +102,7 @@ end
 -- Определение соответствует ли стиль символа стилю комментария
 function IsComment(pos)
 	local style = editor.StyleAt[pos]
-	local lexer = editor:GetLexerLanguage()
+	local lexer = props['Language']
 	local comment = {
 		abap = {1, 2},
 		ada = {10},

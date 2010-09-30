@@ -20,7 +20,7 @@ local function ChangeCommentChar()
 		end
 		return false
 	end
-	if editor:GetLexerLanguage() == 'props' then
+	if props['Language'] == 'props' then
 		if IsINI() then
 			props['comment.block.props']=';'
 		else

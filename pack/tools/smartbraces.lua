@@ -249,7 +249,7 @@ local function SmartBraces( char )
 				then
 					-- по волшебному обрабатываем скобку { в cpp
 					if	( char == '{' ) and
-						( editor:GetLexerLanguage() == 'cpp' )
+						( props['Language'] == 'cpp' )
 					then
 						editor:BeginUndoAction()
 						local ln = GetCurrLineNumber()
@@ -293,7 +293,7 @@ local function SmartBraces( char )
 				if ( char == braceClose ) then
 					-- "по волшебному" обрабатываем скобку } в cpp
 					if ( char == '}' ) and
-						( editor:GetLexerLanguage() == 'cpp' )
+						( props['Language'] == 'cpp' )
 					then
 						editor:BeginUndoAction()
 						if (IsLineStartPos( editor.CurrentPos ) )

@@ -143,7 +143,7 @@ AddEventHandler("OnUpdateUI", function()
 		if tonumber(props["highlighting.identical.text"]) == 1 then
 			if editor.Length ~= chars_count then
 				chars_count = editor.Length
-				reserved_words = props['highlighting.identical.text.reserved.words.' .. editor:GetLexerLanguage()]
+				reserved_words = props['highlighting.identical.text.reserved.words.' .. props['Language']]
 				if reserved_words == '' then reserved_words = props['highlighting.identical.text.reserved.words.*'] end
 			end
 			IdenticalTextFinder()

@@ -103,7 +103,7 @@ STYLES.cpp = {
 STYLES.cppnocase = STYLES.cpp
 
 local LEXSTYLES
-local lex = editor:GetLexerLanguage()
+local lex = props['Language']
 if lex == nil then
   LEXSTYLES = STYLES.others
 else
