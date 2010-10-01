@@ -1,6 +1,6 @@
 --[[--------------------------------------------------
 Paired Tags (логическое продолжение скриптов highlighting_paired_tags.lua и HTMLFormatPainter.lua)
-Version: 2.2.6
+Version: 2.2.7
 Author: mozers™, VladVRO, TymurGubayev, nail333
 ------------------------------
 Подсветка парных и непарных тегов в HTML и XML

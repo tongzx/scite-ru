@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 ChangeCommentChar.lua
 Authors: VladVRO, mozers™
-Version: 1.0.2
+Version: 1.0.3
 ------------------------------------------------------
 Подставляет адекватный символ комментария для файлов обрабатываемых лексером props
 (*.properties;*.abbrev;*.session;*.ini;*.inf;*.reg;*.url;*.cfg;*.cnf;*.aut;*.m3u)

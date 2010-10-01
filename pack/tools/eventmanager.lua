@@ -1,7 +1,7 @@
 --[[-----------------------------------------------------------------
 eventmanager.lua
 Authors: Tymur Gubayev
-version: 1.0
+version: 1.0.0
 ---------------------------------------------------------------------
   Description:
 	simple event manager realization for SciTE.

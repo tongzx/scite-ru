@@ -1,6 +1,6 @@
 --[[--------------------------------------------------
 SciTE Smart braces
-Version: 1.2.5
+Version: 1.2.6
 Authors: Dmitry Maslov, Julgo, TymurGubayev
 -------------------------------------------------
 Работает, если:
