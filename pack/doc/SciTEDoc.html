@@ -781,6 +781,7 @@ NameError: mistake
                <tr><td>FileName</td><td>base name of the current file</td></tr>
                <tr><td>FileExt</td><td>extension of the current file</td></tr>
                <tr><td>FileNameExt</td><td>$(FileName).$(FileExt)</td></tr>
+               <tr><td>Language</td><td>name of the lexer used for the current file</td></tr>
                <tr><td>SessionPath</td><td>full path of the current session</td></tr>
                <tr><td>CurrentSelection</td><td>value of the currently selected text</td></tr>
                <tr><td>CurrentWord</td><td>value of word which the caret is within or near</td></tr>
@@ -2184,6 +2185,15 @@ Prev File|IDM_PREVFILE|<br/>
 	  	  Some versions of GTK+ may also set an unexpected directory.
         </td>
       </tr>
+      <tr class="windowsonly">
+        <td>
+          find.close.on.find
+        </td>
+        <td>
+          Set to 0 to prevent the Find dialog from closing when "Find" pressed.
+        </td>
+      </tr>
+      <tr>
       <tr>
         <td>
         find.replace.matchcase<br />

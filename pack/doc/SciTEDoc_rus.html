@@ -1918,15 +1918,18 @@ style the path and line number separately from the rest of the line with style 2
     <tr>
       <td><dfn><a name="session.bookmarks">session.bookmarks<br>
       session.folds</a></dfn></td>
-
       <td>Задайте переменную <dfn>session.bookmarks</dfn>, чтобы положение меток сохранялось в файлах сессий. Если задать переменную <dfn>session.folds</dfn>, в файлах сессий будет сохранено положение свертки кода. При загрузке файла сессии, метки и/или положение свертки кода восстанавливаются. Если задана переменная <dfn><a href="#fold">fold.on.open</a></dfn>, положение свертки кода не восстанавливается.</td>
     </tr>
 
     <tr>
       <td><dfn><a name="open.dialog.in.file.directory">open.dialog.in.file.directory</a></dfn></td>
-
       <td>Задайте переменную <dfn>open.dialog.in.file.directory</dfn>, чтобы диалог открытия файла первоначально отображал тот же каталог, где находится текущий файл. Если переменная не задана, тогда используются значения системы по умолчанию. В Windows XP это последний каталог, который был открыт в диалоге открытия файла в любом экземпляре SciTE.<br>
       В некоторых версиях GTK+ может быть открыт неожиданный каталог.</td>
+    </tr>
+
+    <tr class="windowsonly">
+      <td><dfn><a name="find.close.on.find">find.close.on.find</a></dfn></td>
+      <td>Задайте данной переменной значение <var>0</var>, чтобы при нажатии кнопки &quot;<cite>Найти</cite>&quot; диалог поиска оставался открытым.</td>
     </tr>
 
     <tr>

@@ -2740,10 +2740,11 @@ bool SearchStrip::KeyDown(WPARAM key) {
 		return true;
 
 	if (key == VK_RETURN) {
-		if (IsChild(Hwnd(), ::GetFocus()) || IsKeyDown(VK_CONTROL) || IsKeyDown(VK_SHIFT)) { //!-add-[close.find.window]
+//!		if (IsChild(Hwnd(), ::GetFocus())) {
+		if (IsChild(Hwnd(), ::GetFocus()) || IsKeyDown(VK_CONTROL) || IsKeyDown(VK_SHIFT)) { //!-change-[reverse.find]
 			Next(false);
 			return true;
-		} //!-add-[close.find.window]
+		}
 	}
 
 	return false;
@@ -2924,16 +2925,18 @@ bool FindStrip::KeyDown(WPARAM key) {
 		return true;
 	switch (key) {
 	case VK_RETURN:
-//!			Next(false);
-//!			return true;
-//!-start-[close.find.window]
+/*!
+		if (IsChild(Hwnd(), ::GetFocus())) {
+			Next(false);
+*/
+//!-start-[reverse.find]
 		if (IsChild(Hwnd(), ::GetFocus()) || IsKeyDown(VK_CONTROL) || IsKeyDown(VK_SHIFT)) {
 			if(IsKeyDown(VK_SHIFT)) pSearcher->reverseFind = !pSearcher->reverseFind;
 			Next(false);
 			if(IsKeyDown(VK_SHIFT)) pSearcher->reverseFind = !pSearcher->reverseFind;
+//!-end-[reverse.find]
 			return true;
 		}
-//!-end-[close.find.window]
 	}
 	return false;
 }
@@ -2944,10 +2947,10 @@ void FindStrip::Next(bool markAll) {
 		pSearcher->MarkAll();
 	}
 	pSearcher->FindNext(pSearcher->reverseFind);
-	if(pSearcher->closeFind) { //!-add-[close.find.window]
+	if (pSearcher->closeFind) {
 		visible = false;
 		pSearcher->UIClosed();
-	} //!-add-[close.find.window]
+	}
 }
 
 void FindStrip::AddToPopUp(GUI::Menu &popup, const char *label, int cmd, bool checked) {
@@ -3205,21 +3208,19 @@ bool ReplaceStrip::KeyDown(WPARAM key) {
 	switch (key) {
 	case VK_RETURN:
 		if (IsChild(Hwnd(), ::GetFocus())) {
-/*!-remove-[close.find.window]
 			if (IsSameOrChild(wButtonFind, ::GetFocus()))
 				HandleReplaceCommand(IDOK);
 			else if (IsSameOrChild(wReplace, ::GetFocus()))
 				HandleReplaceCommand(IDOK);
-			else 
-*/
-			if (IsSameOrChild(wButtonReplace, ::GetFocus()))
+			else if (IsSameOrChild(wButtonReplace, ::GetFocus()))
 				HandleReplaceCommand(IDREPLACE);
 			else if (IsSameOrChild(wButtonReplaceAll, ::GetFocus()))
 				HandleReplaceCommand(IDREPLACEALL);
 			else if (IsSameOrChild(wButtonReplaceInSelection, ::GetFocus()))
 				HandleReplaceCommand(IDREPLACEINSEL);
 			else
-				HandleReplaceCommand(IDOK, IsKeyDown(VK_SHIFT)); //!-change-[close.find.window]
+//!				HandleReplaceCommand(IDOK);
+				HandleReplaceCommand(IDOK, IsKeyDown(VK_SHIFT)); //!-change-[reverse.find]
 			return true;
 		}
 	}
@@ -3246,8 +3247,8 @@ void ReplaceStrip::ShowPopup() {
 	popup.Show(pt, *this);
 }
 
-//!void ReplaceStrip::HandleReplaceCommand(int cmd) { 
-void ReplaceStrip::HandleReplaceCommand(int cmd, bool searchDirection) { 	//!-change-[close.find.window]
+//!void ReplaceStrip::HandleReplaceCommand(int cmd) {
+void ReplaceStrip::HandleReplaceCommand(int cmd, bool searchDirection) { 	//!-change-[reverse.find]
 	pSearcher->SetFind(ControlText(wText).c_str());
 	if (cmd != IDOK) {
 		pSearcher->SetReplace(ControlText(wReplace).c_str());
@@ -3255,7 +3256,8 @@ void ReplaceStrip::HandleReplaceCommand(int cmd, bool searchDirection) { 	//!-ch
 	//int replacements = 0;
 	if (cmd == IDOK) {
 		if (pSearcher->FindHasText()) {
-			pSearcher->FindNext(/*false*/ searchDirection); //!-change-[close.find.window]
+//!			pSearcher->FindNext(false);
+			pSearcher->FindNext(/*false*/ searchDirection); //!-change-[reverse.find]
 		}
 	} else if (cmd == IDREPLACE) {
 		pSearcher->ReplaceOnce();

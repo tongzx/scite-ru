@@ -793,8 +793,6 @@ void SciTEBase::ReadProperties() {
 		ReadAbbrevPropFile();
 	}
 
-	DiscoverEOLSetting();
-
 	props.Set("AbbrevPath", pathAbbreviations.AsUTF8().c_str());
 
 	wEditor.Call(SCI_SETOVERTYPE, props.GetInt("change.overwrite.enable", 1) + 2); //-add-[ignore_overstrike_change]
@@ -882,6 +880,8 @@ void SciTEBase::ReadProperties() {
 		wEditor.Call(SCI_INDICSETSTYLE, indicatorMatch, INDIC_ROUNDBOX);
 		wEditor.Call(SCI_INDICSETFORE, indicatorMatch, ColourFromString(findMark));
 	}
+
+	closeFind = props.GetInt("find.close.on.find", 1);
 
 	SString controlCharSymbol = props.Get("control.char.symbol");
 	if (controlCharSymbol.length()) {
@@ -1307,7 +1307,6 @@ void SciTEBase::ReadProperties() {
 			}
 		}
 	}
-	closeFind = props.GetInt("find.close.on.find", 1); //!-add-[close.find.window]
 	firstPropertiesRead = false;
 	needReadProperties = false;
 }

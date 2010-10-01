@@ -472,6 +472,7 @@ editor:ClearDocumentStyle
 editor:ClearRegisteredImages
 editor:ClearSelections
 editor:Colourise
+editor:ContractedFoldNext
 editor:ConvertEOLs
 editor:Copy
 editor:CopyAllowLine
@@ -743,6 +744,7 @@ ClearDocumentStyle()\n Set all style bytes to 0, remove all folding information
 ClearRegisteredImages()\n Clear all the registered XPM images
 ClearSelections()\n Clear selections to a single empty stream selection
 Colourise(int posStart, int posEnd)\n Colourise a segment of the document using the current lexing language
+ContractedFoldNext(int lineStart) = int\n Find the next line at or after lineStart that is a contracted fold header line.\nReturn -1 when no more lines.
 ConvertEOLs(int eolMode)\n Convert all line endings in the document to one mode
 Copy()\n Copy the selection to the clipboard
 CopyAllowLine()\n Copy the selection, if selection empty copy the line with the caret
@@ -848,7 +850,7 @@ MarkerDeleteAll(int markerNumber)\n Delete all markers with a particular number 
 MarkerDeleteHandle(int markerHandle)\n Delete a marker
 MarkerGet(int line) = int\n Get a bit mask of all the markers set on a line
 MarkerLineFromHandle(int markerHandle) = int\n Retrieve the line number at which a particular marker is located
-MarkerNext(int lineStart, int markerMask) = int\n Find the next line after lineStart that includes a marker in mask
+MarkerNext(int lineStart, int markerMask) = int\n Find the next line at or after lineStart that includes a marker in mask.\nReturn -1 when no more lines
 MarkerPrevious(int lineStart, int markerMask) = int\n Find the previous line before lineStart that includes a marker in mask
 MarkerSetAlpha(int markerNumber, int colour)\n Set the alpha used for a marker that is drawn in the text area, not the margin
 MarkerSetBack(int markerNumber, colour back)\n Set the background colour used for a particular marker number

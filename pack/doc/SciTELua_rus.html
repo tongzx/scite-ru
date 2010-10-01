@@ -147,9 +147,8 @@ word under the mouse as arguments and the word will be empty when the mouse star
 <span class="S100">Функции которые объявлены возвращать числовой тип добавляют результат к возвращаемому значению. Если функция также имеет строковый результат, он приходит первым, затем числовое значение.</span>
 </p><p>
 Несколько функций объявлено как 'get' или 'set' в файле iface. Это в основном доступно Lua как свойства, например <tt>editor.TabSize = 8</tt>. Некоторые из getters и setters также имеют параметры. Где возможно, они доступны Lua как индексированные параметры, например <tt>editor.StyleBold[SCE_PROPS_DEFAULT] = true</tt>. <span class="S100">Однако, если функция iface объявлена как get / set но неможет быть преобразована в свойство Lua, она доступна как функция Lua.</span>
-</p><p>
-Подразумевается что полное руководство по функциям и свойствам iface должно быть добавлено в документацию, вы не должны смотреть файл iface и делать манипуляции с текстом в уме. Это пока не сделано, но это может быть неполих проектом для кого-нибудь.
-<a href="http://scintilla.sourceforge.net/ScintillaDoc.html">ScintillaDoc</a> может быть хорошим шаблоном для примера. API файл также может быть неплохим дополнением.
+</p><p>Перечень доступных функций Scintilla перечислен в данном <a href="http://scite-interest.googlegroups.com/web/SciTELua.api">API-файле</a>.
+Интерфейс Scintilla API описан в <a href="http://scintilla.sourceforge.net/ScintillaDoc.html">ScintillaDoc</a>
 </p><p>
 Пространство имен <tt>scite</tt> включает следующие функции:
 </p><pre><tt>  scite.Open(filename)

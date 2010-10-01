@@ -450,7 +450,9 @@ void SCI_METHOD LexerCPP::Lex(unsigned int startPos, int length, int initStyle, 
 	bool isIncludePreprocessor = false;
 
 	int lineCurrent = styler.GetLine(startPos);
-	if (initStyle == SCE_C_PREPROCESSOR) {
+	if ((initStyle == SCE_C_PREPROCESSOR) ||
+      (initStyle == SCE_C_COMMENTLINE) ||
+      (initStyle == SCE_C_COMMENTLINEDOC)) {
 		// Set continuationLine if last character of previous line is '\'
 		if (lineCurrent > 0) {
 			int chBack = styler.SafeGetCharAt(startPos-1, 0);

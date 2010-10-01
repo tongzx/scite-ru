@@ -190,90 +190,10 @@ enum UniMode {
     uniCookie = 4
 };
 
-// State of folding in a given document, remembers lines folded.
-class FoldState {
-private:
-	int *lines;
-	int size;
-	int fill;
-
-	void CopyFrom(const FoldState& b) {
-		Alloc(b.size);
-		memcpy(lines, b.lines, size*sizeof(int));
-		fill = b.fill;
-	}
-
-public:
-	FoldState() {
-		lines = 0;
-		size = 0;
-		fill = 0;
-	}
-
-	FoldState &operator=(const FoldState &b) {
-		if (this != &b) {
-			CopyFrom(b);
-		}
-		return *this;
-	}
-
-	FoldState(const FoldState &b) {
-		lines = 0;
-		size = 0;
-		fill = 0;
-
-		CopyFrom(b);
-	}
-
-	void Alloc(int s) {
-		//assert(s>0);
-		//assert(size==0);
-
-		delete []lines;
-		lines = new int[s];
-		size = s;
-		fill = 0;
-
-		//assert(lines && size>0);
-	}
-
-	void Clear() {
-
-		delete []lines;
-		lines = 0;
-
-		size = 0;
-		fill = 0;
-	}
-
-	virtual ~FoldState() {
-		Clear();
-	}
-
-	void Append(int line) {
-		//assert(fill<size);
-		lines[fill] = line;
-		fill++;
-	}
-
-	int Folds() const {
-		return size;
-	}
-
-	int Line(int fold) const {
-		if (fold >= size) {
-			return 0;
-		} else {
-			return lines[fold];
-		}
-	}
-};
-
 class Buffer : public RecentFile {
 public:
 	sptr_t doc;
 	bool isDirty;
-	bool isColorized; //!-add-[session.load.forced]
 	GUI::gui_char *ROMarker; //!-add-[ReadOnlyTabMarker]
 	bool useMonoFont;
 	UniMode unicodeMode;
@@ -281,7 +201,7 @@ public:
 	time_t fileModLastAsk;
 	enum { fmNone, fmMarked, fmModified} findMarks;
 	SString overrideExtension;	///< User has chosen to use a particular language
-	FoldState foldState;
+	std::vector<int> foldState;
 	Buffer() :
 //!			RecentFile(), doc(0), isDirty(false), useMonoFont(false),
 			RecentFile(), doc(0), isDirty(false), ROMarker(0), useMonoFont(false),  //!-change-[ReadOnlyTabMarker]
@@ -290,7 +210,6 @@ public:
 	void Init() {
 		RecentFile::Init();
 		isDirty = false;
-		isColorized = false; //!-add-[session.load.forced]
 		ROMarker = NULL; //!-add-[ReadOnlyTabMarker]
 		useMonoFont = false;
 		unicodeMode = uni8Bit;
@@ -298,7 +217,7 @@ public:
 		fileModLastAsk = 0;
 		findMarks = fmNone;
 		overrideExtension = "";
-		foldState.Clear();
+		foldState.clear();
 	}
 
 	void SetTimeFromFile() {
@@ -439,8 +358,8 @@ public:
 	bool replacing;
 	bool havefound;
 	bool findInStyle;
-	bool closeFind; //!-add-[close.find.window]
 	int findStyle;
+	bool closeFind;
 	ComboMemory memFinds;
 	ComboMemory memReplaces;
 

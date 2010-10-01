@@ -2366,6 +2366,7 @@ static IFaceFunction ifaceFunctions[] = {
 	{"ClearRegisteredImages", 2408, iface_void, {iface_void, iface_void}},
 	{"ClearSelections", 2571, iface_void, {iface_void, iface_void}},
 	{"Colourise", 4003, iface_void, {iface_position, iface_position}},
+	{"ContractedFoldNext", 2618, iface_int, {iface_int, iface_void}},
 	{"ConvertEOLs", 2029, iface_void, {iface_int, iface_void}},
 	{"Copy", 2178, iface_void, {iface_void, iface_void}},
 	{"CopyAllowLine", 2519, iface_void, {iface_void, iface_void}},
@@ -2761,8 +2762,8 @@ static IFaceProperty ifaceProperties[] = {
 };
 
 enum {
-	ifaceFunctionCount = 276,
-	ifaceConstantCount = 2174,
+	ifaceFunctionCount = 277,
+	ifaceConstantCount = 2175,
 	ifacePropertyCount = 171
 };
 

@@ -110,6 +110,7 @@ public:
 	int caretStyle;
 	int caretWidth;
 	bool someStylesProtected;
+	bool someStylesForceCase;
 	int extraFontFlag;
 	int extraAscent;
 	int extraDescent;

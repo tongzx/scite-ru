@@ -142,9 +142,10 @@ void SciTEBase::CountLineEnds(int &linesCR, int &linesLF, int &linesCRLF) {
 	int lengthDoc = LengthDocument();
 	char chPrev = ' ';
 	TextReader acc(wEditor);
+	char chNext = acc.SafeGetCharAt(0);
 	for (int i = 0; i < lengthDoc; i++) {
-		char ch = acc[i];
-		char chNext = acc.SafeGetCharAt(i + 1);
+		char ch = chNext;
+		chNext = acc.SafeGetCharAt(i + 1);
 		if (ch == '\r') {
 			if (chNext == '\n')
 				linesCRLF++;
@@ -466,17 +467,11 @@ bool SciTEBase::Open(FilePath file, OpenFlags of) {
 
 	SetFileName(absPath);
 	CurrentBuffer()->overrideExtension = "";
-	if(props.GetInt("session.load.forced", 0) != 1 || props.GetInt("scite.state.loadsession", 0) != 1) { //!-add-[session.load.forced]
 	ReadProperties();
 	SetIndentSettings();
+	SetEol();
 	UpdateBuffersCurrent();
 	SizeSubWindows();
-//!-start-[session.load.forced]
-	} else {
-		CurrentBuffer()->isColorized = false;
-		SetIndentSettings();
-	}
-//!-end-[session.load.forced]
 
 	if (!filePath.IsUntitled()) {
 		wEditor.Call(SCI_SETREADONLY, 0);
@@ -500,12 +495,10 @@ bool SciTEBase::Open(FilePath file, OpenFlags of) {
 	RemoveFileFromStack(filePath);
 	DeleteFileStackMenu();
 	SetFileStackMenu();
-	if(props.GetInt("session.load.forced", 0) != 1 || props.GetInt("scite.state.loadsession", 0) != 1) { //!-add-[session.load.forced]
 	SetWindowName();
 	if (lineNumbers && lineNumbersExpand)
 		SetLineNumberWidth();
 	UpdateStatusBar(true);
-	} //!-add-[session.load.forced]
 	if (extender)
 		extender->OnOpen(filePath.AsUTF8().c_str());
 	return true;
