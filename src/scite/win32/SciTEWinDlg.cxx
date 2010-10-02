@@ -959,9 +959,8 @@ BOOL SciTEWin::FindMessage(HWND hDlg, UINT message, WPARAM wParam) {
 			if (ControlIDOfCommand(wParam) == IDMARKALL){
 				MarkAll();
 			}
-			if(IsKeyDown(VK_SHIFT)) reverseFind = !reverseFind; //!-add-[reverse.find]
-			FindNext(reverseFind);
-			if(IsKeyDown(VK_SHIFT)) reverseFind = !reverseFind; //!-add-[reverse.find]
+//!			FindNext(reverseFind);
+			FindNext(reverseFind ^ IsKeyDown(VK_SHIFT)); //!-change-[reverse.find]
 			return TRUE;
 		} else if (ControlIDOfCommand(wParam) == IDFINDINSTYLE) {
 			if (FindReplaceAdvanced()) {
@@ -980,7 +979,7 @@ BOOL CALLBACK SciTEWin::FindDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 }
 
 //!BOOL SciTEWin::HandleReplaceCommand(int cmd) {
-BOOL SciTEWin::HandleReplaceCommand(int cmd, bool searchDirection) { //!-change-[reverse.find]
+BOOL SciTEWin::HandleReplaceCommand(int cmd, bool reverseFind) { //!-change-[reverse.find]
 	if (!wFindReplace.GetID())
 		return TRUE;
 	HWND hwndFR = reinterpret_cast<HWND>(wFindReplace.GetID());
@@ -994,7 +993,7 @@ BOOL SciTEWin::HandleReplaceCommand(int cmd, bool searchDirection) { //!-change-
 	int replacements = 0;
 	if (cmd == IDOK) {
 //!		FindNext(false);
-		FindNext(/*false*/ searchDirection); //!-change-[reverse.find]
+		FindNext(/*false*/ reverseFind); //!-change-[reverse.find]
 	} else if (cmd == IDREPLACE) {
 		ReplaceOnce();
 	} else if ((cmd == IDREPLACEALL) || (cmd == IDREPLACEINSEL)) {
@@ -1047,12 +1046,9 @@ BOOL SciTEWin::ReplaceMessage(HWND hDlg, UINT message, WPARAM wParam) {
 				dlg.Enable(IDFINDSTYLE, findInStyle);
 			}
 			return TRUE;
-//!-start-[reverse.find]
-		} else if (ControlIDOfCommand(wParam) == IDOK) {
-			return HandleReplaceCommand(ControlIDOfCommand(wParam), IsKeyDown(VK_SHIFT));
-//!-end-[reverse.find]
 		} else {
-			return HandleReplaceCommand(ControlIDOfCommand(wParam));
+//!			return HandleReplaceCommand(ControlIDOfCommand(wParam));
+			return HandleReplaceCommand(ControlIDOfCommand(wParam), IsKeyDown(VK_SHIFT)); //!-change-[reverse.find]
 		}
 	}
 
@@ -1100,8 +1096,7 @@ void SciTEWin::Find() {
 		if (!replacing) {
 			SelectionIntoFind();
 			HWND hDlg = reinterpret_cast<HWND>(wFindReplace.GetID());
-//!			Dialog dlg(hDlg);
-			DialogFindReplace dlg(hDlg, FindReplaceAdvanced()); //!-change-[reverse.find]
+			Dialog dlg(hDlg);
 			dlg.SetItemTextU(IDFINDWHAT, findWhat);
 			::SetFocus(hDlg);
 		}
@@ -1323,8 +1318,7 @@ void SciTEWin::Replace() {
 		if (replacing) {
 			SelectionIntoFind(false);
 			HWND hDlg = reinterpret_cast<HWND>(wFindReplace.GetID());
-//!			Dialog dlg(hDlg);
-			DialogFindReplace dlg(hDlg, FindReplaceAdvanced()); //!-change-[reverse.find]
+			Dialog dlg(hDlg);
 			dlg.SetItemTextU(IDFINDWHAT, findWhat);
 			::SetFocus(hDlg);
 		}

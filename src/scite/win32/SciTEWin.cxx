@@ -2740,8 +2740,7 @@ bool SearchStrip::KeyDown(WPARAM key) {
 		return true;
 
 	if (key == VK_RETURN) {
-//!		if (IsChild(Hwnd(), ::GetFocus())) {
-		if (IsChild(Hwnd(), ::GetFocus()) || IsKeyDown(VK_CONTROL) || IsKeyDown(VK_SHIFT)) { //!-change-[reverse.find]
+		if (IsChild(Hwnd(), ::GetFocus())) {
 			Next(false);
 			return true;
 		}
@@ -2925,16 +2924,10 @@ bool FindStrip::KeyDown(WPARAM key) {
 		return true;
 	switch (key) {
 	case VK_RETURN:
-/*!
 		if (IsChild(Hwnd(), ::GetFocus())) {
+			if(IsKeyDown(VK_SHIFT)) pSearcher->reverseFind = !pSearcher->reverseFind; //!-add-[reverse.find]
 			Next(false);
-*/
-//!-start-[reverse.find]
-		if (IsChild(Hwnd(), ::GetFocus()) || IsKeyDown(VK_CONTROL) || IsKeyDown(VK_SHIFT)) {
-			if(IsKeyDown(VK_SHIFT)) pSearcher->reverseFind = !pSearcher->reverseFind;
-			Next(false);
-			if(IsKeyDown(VK_SHIFT)) pSearcher->reverseFind = !pSearcher->reverseFind;
-//!-end-[reverse.find]
+			if(IsKeyDown(VK_SHIFT)) pSearcher->reverseFind = !pSearcher->reverseFind; //!-add-[reverse.find]
 			return true;
 		}
 	}
@@ -3209,9 +3202,11 @@ bool ReplaceStrip::KeyDown(WPARAM key) {
 	case VK_RETURN:
 		if (IsChild(Hwnd(), ::GetFocus())) {
 			if (IsSameOrChild(wButtonFind, ::GetFocus()))
-				HandleReplaceCommand(IDOK);
+//!				HandleReplaceCommand(IDOK);
+				HandleReplaceCommand(IDOK, IsKeyDown(VK_SHIFT)); //!-change-[reverse.find]
 			else if (IsSameOrChild(wReplace, ::GetFocus()))
-				HandleReplaceCommand(IDOK);
+//!				HandleReplaceCommand(IDOK);
+				HandleReplaceCommand(IDOK, IsKeyDown(VK_SHIFT)); //!-change-[reverse.find]
 			else if (IsSameOrChild(wButtonReplace, ::GetFocus()))
 				HandleReplaceCommand(IDREPLACE);
 			else if (IsSameOrChild(wButtonReplaceAll, ::GetFocus()))
@@ -3248,7 +3243,7 @@ void ReplaceStrip::ShowPopup() {
 }
 
 //!void ReplaceStrip::HandleReplaceCommand(int cmd) {
-void ReplaceStrip::HandleReplaceCommand(int cmd, bool searchDirection) { 	//!-change-[reverse.find]
+void ReplaceStrip::HandleReplaceCommand(int cmd, bool reverseFind) { 	//!-change-[reverse.find]
 	pSearcher->SetFind(ControlText(wText).c_str());
 	if (cmd != IDOK) {
 		pSearcher->SetReplace(ControlText(wReplace).c_str());
@@ -3257,7 +3252,7 @@ void ReplaceStrip::HandleReplaceCommand(int cmd, bool searchDirection) { 	//!-ch
 	if (cmd == IDOK) {
 		if (pSearcher->FindHasText()) {
 //!			pSearcher->FindNext(false);
-			pSearcher->FindNext(/*false*/ searchDirection); //!-change-[reverse.find]
+			pSearcher->FindNext(/*false*/ reverseFind); //!-change-[reverse.find]
 		}
 	} else if (cmd == IDREPLACE) {
 		pSearcher->ReplaceOnce();

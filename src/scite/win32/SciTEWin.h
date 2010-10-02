@@ -253,7 +253,7 @@ public:
 	void AddToPopUp(GUI::Menu &popup, const char *label, int cmd, bool checked);
 	void ShowPopup();
 //!	void HandleReplaceCommand(int cmd); 
-	void HandleReplaceCommand(int cmd, bool searchDirection = false); //!-change-[reverse.find]
+	void HandleReplaceCommand(int cmd, bool reverseFind = false); //!-change-[reverse.find]
 	virtual bool Command(WPARAM wParam);
 	virtual void Size();
 	virtual void Paint(HDC hDC);
@@ -392,7 +392,7 @@ protected:
 	virtual void PrintSetup();
 
 //!	BOOL HandleReplaceCommand(int cmd);
-	BOOL HandleReplaceCommand(int cmd, bool searchDirection = false); //!-change-[reverse.find]
+	BOOL HandleReplaceCommand(int cmd, bool reverseFind = false); //!-change-[reverse.find]
 
 	virtual int WindowMessageBox(GUI::Window &w, const GUI::gui_string &msg, int style);
 	virtual void FindMessageBox(const SString &msg, const SString *findItem=0);
