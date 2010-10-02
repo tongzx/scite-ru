@@ -1372,8 +1372,7 @@ SString SciTEBase::SelectionWord(bool stripEol /*=true*/) {
 }
 
 SString SciTEBase::SelectionFilename() {
-//!	return SelectionExtend(&SciTEBase::isfilenamecharforsel);
-	return EncodeString(SelectionExtend(&SciTEBase::isfilenamecharforsel)); //!-add-[OpenSelFilenameWithNationalCharsErr]
+	return SelectionExtend(&SciTEBase::isfilenamecharforsel);
 }
 
 void SciTEBase::SelectionIntoProperties() {
