@@ -1,6 +1,6 @@
 --[[--------------------------------------------------
  Rename.lua
- Version: 2.2.1
+ Version: 2.2.2
  Author: mozersЩ (иде€ codewarlock1101)
  ------------------------------------------------
  ѕереименовывает текущий файл
@@ -11,8 +11,8 @@
 --]]--------------------------------------------------
 require 'shell'
 
-local filename = props["FileNameExt"]
-local filename_new = props["FileNameExt"]
+local filename = shell.from_utf8(props["FileNameExt"])
+local filename_new = filename
 local title = scite.GetTranslation("File Rename")
 local msg1 = scite.GetTranslation("Please enter new file name:")
 local msg2 = scite.GetTranslation("The file with such name already exists!\nPlease enter different file name.")
@@ -26,6 +26,6 @@ repeat
 until false
 
 local file_dir = props["FileDir"]
-filename_new = file_dir:gsub('\\','\\\\')..'\\\\'..filename_new
+filename_new = file_dir:gsub('\\','\\\\')..'\\\\'..shell.to_utf8(filename_new)
 scite.Perform("saveas:"..filename_new)
 os.remove(file_dir..'\\'..filename)
