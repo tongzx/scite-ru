@@ -20,7 +20,6 @@ css_formatter.lua Упорядочивает таблицы стилей
 descript.ion В этом файле хранятся комментарии
 display_com_object_in_ole_viewer.vbs Display COM object in OLE Viewer
 exec.lua Расчет выделенного текста как математического выражения или открытие URL
-Find_Alt.hta Альтернативная панель поиска
 FindText.lua Поиск выделенного в окне редактора (или консоли) текста с выводом содержащих его строк в консоль
 FoldText.lua Фолдинг для текстовых файлов
 FontChanger.lua Смена текущих установок шрифта
