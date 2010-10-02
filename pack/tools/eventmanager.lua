@@ -1,7 +1,7 @@
 --[[-----------------------------------------------------------------
 eventmanager.lua
 Authors: Tymur Gubayev
-version: 1.0.0
+version: 1.0.1
 ---------------------------------------------------------------------
   Description:
 	simple event manager realization for SciTE.
@@ -21,8 +21,8 @@ version: 1.0.0
 
 ---------------------------------------------------------------------
 History:
-	* 1.0 initial release
-
+	* 1.0.0 initial release
+	* 1.0.1 RemoveEventHandler bug fix
 --]]-----------------------------------------------------------------
 
 
@@ -36,7 +36,7 @@ local function RemoveAllOutstandingEventHandlers()
 		local t_rem, h_rem = events[_remove[i].EventName], _remove[i].Handler
 		for j = 1, #t_rem do
 			if t_rem[j]==h_rem then
-				table.remove(h_rem, j)
+				table.remove(t_rem, j)
 				break -- remove only one handler instance
 			end
 		end
