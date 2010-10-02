@@ -1390,34 +1390,27 @@ void SciTEBase::SelectionIntoProperties() {
 	props.SetInteger("SelectionEndColumn", CallFocused(SCI_GETCOLUMN, selEnd) + 1);
 }
 
-//! void SciTEBase::SelectionIntoFind(bool stripEol /*=true*/) {
-//!	SString sel = SelectionWord(stripEol);
-//!	if (sel.length() && !sel.contains('\r') && !sel.contains('\n')) {
-void SciTEBase::SelectionIntoFind(bool stripEol /*=true*/, bool inFiles /*=false*/) { //!-change-[FindInFiles]
-//!-start-[find.fillout]
-	int findFillout = props.GetInt("find.fillout", 0);
-	SString sel;
-	switch (findFillout) {
-		case 2:
-			; //never fill search field
-			break;
-		case 1:
-			sel = SelectionExtend(0, stripEol); //fill with selection, if none leave blank
-			break;
-		default:
-			sel = SelectionWord(stripEol); //fill with word if no selection is present
-			break;
-	}
-//!-end-[find.fillout]
-
-//!-start-[FindInFiles]
-	if ((sel.length() || findFillout) && !sel.contains('\r') && !sel.contains('\n')) {
+void SciTEBase::SelectionIntoFind(bool stripEol /*=true*/) {
+	SString sel = SelectionWord(stripEol);
+	if (sel.length() && !sel.contains('\r') && !sel.contains('\n')) {
 		// The selection does not include a new line, so is likely to be
 		// the expression to search...
-		if (inFiles)
-			findWhat = EncodeString(sel);
-		else
-//!-end-[FindInFiles]
+//!-start-[find.fillout]
+		int findFillout = props.GetInt("find.fillout", 0);
+		SString sel;
+		switch (findFillout) {
+			case 2:
+				; //never fill search field
+				break;
+			case 1:
+				sel = SelectionExtend(0, stripEol); //fill with selection, if none leave blank
+				break;
+			default:
+				sel = SelectionWord(stripEol); //fill with word if no selection is present
+				break;
+		}
+//!-end-[find.fillout]
+
 		findWhat = sel;
 		if (unSlash) {
 			char *slashedFind = Slash(findWhat.c_str(), false);

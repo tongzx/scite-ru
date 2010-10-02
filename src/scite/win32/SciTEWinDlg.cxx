@@ -1303,8 +1303,7 @@ BOOL CALLBACK SciTEWin::GrepDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 void SciTEWin::FindInFiles() {
 	if (wFindInFiles.Created())
 		return;
-//!	SelectionIntoFind();
-	SelectionIntoFind(true, true); //!-add-[FindInFiles]
+	SelectionIntoFind();
 	props.Set("find.what", findWhat.c_str());
 	FilePath findInDir = filePath.Directory();
 	props.Set("find.directory", findInDir.AsUTF8().c_str());

@@ -712,8 +712,7 @@ protected:
 	SString SelectionWord(bool stripEol = true);
 	SString SelectionFilename();
 	void SelectionIntoProperties();
-//!	void SelectionIntoFind(bool stripEol = true);
-	void SelectionIntoFind(bool stripEol = true, bool inFiles = false); //!-add-[FindInFiles]
+	void SelectionIntoFind(bool stripEol = true);
 	virtual SString EncodeString(const SString &s);
 	virtual void Find() = 0;
 	virtual int WindowMessageBox(GUI::Window &w, const GUI::gui_string &msg, int style) = 0;
