@@ -334,7 +334,9 @@ TListViewB::TListViewB(TWin* form, bool large_icons, bool multiple_columns, bool
 			style |= LVS_NOCOLUMNHEADER;
 			//add_column("*",1000);
 		}
-	 }
+	}
+
+	style |= LVS_SHOWSELALWAYS;
 
 	// Create the list view control.
 	set(create_common_control(form,WC_LISTVIEW,style));
