@@ -24,6 +24,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include "twl.h"
+#include "twl_cntrls.h"
 
 #define MAX_CMD_LINE 120
 #define N_CMD_LINE 20
@@ -707,13 +708,18 @@ bool TEventWindow::check_notify(long lParam, int& ret)
   LPNMHDR ph = (LPNMHDR)lParam;
   TWin* w;
   TNotifyWin* pnw;
+  TMemo* m;
   start_child();
   while (next_child(w)) {
     if(ph->hwndFrom == w->handle() &&
         (pnw = dynamic_cast<TNotifyWin*>(w)) != NULL) {
           ret = pnw->handle_notify(ph);
           return ret;
-    }
+    } else if(ph->hwndFrom == w->handle() &&
+		(m = dynamic_cast<TMemo*>(w)) != NULL) {
+		ret = m->handle_notify(ph);
+        return ret;
+	}
   }
   return false;
 }
@@ -1334,8 +1340,8 @@ WNDFN WndProc (HWND hwnd, UINT msg, UINT wParam,LONG lParam)
       }
 	  if (This->command(LOW_WORD(wParam),HIWORD(wParam))) return 0;
 	  else break;
-
-   case WM_USER_PLUS:
+	
+	case WM_USER_PLUS:
       return This->handle_user(wParam,lParam);
 
 	case WM_KEYDOWN:

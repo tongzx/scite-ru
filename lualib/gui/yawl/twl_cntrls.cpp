@@ -110,7 +110,7 @@ void TListBox::get_text(int idx, wchar_t *buff)
 void *ApplicationInstance();
 
 TMemo::TMemo(TWin *parent, int id, bool do_scroll, bool plain)
-: TControl(parent,plain ? L"edit" : L"RichEdit",L"",id,
+: TControl(parent,plain ? L"edit" : L"RichEdit20A",L"",id,
     (do_scroll ? WS_HSCROLL | WS_VSCROLL : 0) |
 	WS_BORDER | 
 	ES_MULTILINE 
@@ -122,7 +122,8 @@ TMemo::TMemo(TWin *parent, int id, bool do_scroll, bool plain)
 		m_pfmt->cbSize = sizeof(CHARFORMAT);
 		m_pfmt->dwMask = 0;
 		m_pfmt->dwEffects = 0;
-    } 
+    }
+	send_msg(EM_SETEVENTMASK, 0, ENM_KEYEVENTS);
 }
 
 void TMemo::set_font(pchar facename, int size, int flags, bool selection)
@@ -336,6 +337,23 @@ void TMemo::set_line_colour(int line, int colour)
 	set_selection(old,old);
 }
 
+int TMemo::handle_notify(void*p)
+{
+	LPNMHDR np  = (LPNMHDR)p;
+	switch(np->code) {
+		case EN_MSGFILTER:
+		MSGFILTER* msf = (MSGFILTER*)p;
+		switch(msf->msg) {
+			case WM_RBUTTONDOWN: // For future use
+				return 0;
+			case WM_KEYDOWN:
+				handle_onkey(msf->wParam);
+				return 0;
+		}
+	}
+	return 0;
+}
+
 
 TTrackBar::TTrackBar(TWin *parent, int id)
 : TControl(parent,TRACKBAR_CLASS,L"",id,TBS_AUTOTICKS)
@@ -429,7 +447,7 @@ class _Cntrls_init {
 	HMODULE hLib;
 public:
 	_Cntrls_init() {
-		hLib = LoadLibrary(L"RICHED32.DLL");
+		hLib = LoadLibrary(L"RICHED20.DLL");
     }
 	~_Cntrls_init() {
 		FreeLibrary(hLib);

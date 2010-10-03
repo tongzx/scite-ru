@@ -434,6 +434,18 @@ public:
 
 };
 
+class TMemoLua: public TMemo, public LuaControl
+{
+public:
+	TMemoLua(TWin *parent, lua_State *l, int id, bool do_scroll=false, bool plain=false)
+		:TMemo(parent, id, do_scroll, plain), LuaControl(l)
+	{}
+
+	virtual void handle_onkey(int id)
+	{
+		dispatch_ref(L,onkey_idx,id);
+	}
+};
 
 class TListViewLua: public TListViewB, public LuaControl
 {
@@ -882,20 +894,29 @@ int tabbar_add(lua_State* L)
 
 int new_memo(lua_State* L)
 {
-	TMemo *m = new TMemo(get_last_parent(),1);
+	TMemoLua *m = new TMemoLua(get_last_parent(),L,1);
 	return wrap_window(L,m);
 }
 
 int memo_set(lua_State* L)
 {
-	TMemo *m = (TMemo*)window_arg(L,1);
+	TMemoLua *m = (TMemoLua*)window_arg(L,1);
 	m->set_text(StringFromUTF8(luaL_checkstring(L,2)));
 	return 0;
 }
 
+int memo_get(lua_State* L)
+{
+	wchar_t str[BUFSIZE];
+	TMemoLua *m = (TMemoLua*)window_arg(L,1);
+	m->get_text(str, BUFSIZE);
+	lua_pushstring(L, UTF8FromString(str));
+	return 1;
+}
+
 int memo_set_colour(lua_State* L)
 {
-	TMemo *m = (TMemo*)window_arg(L,1);
+	TMemoLua *m = (TMemoLua*)window_arg(L,1);
 	m->set_text_colour(convert_colour_spec(luaL_checkstring(L,2))); // Must be only ASCII
 	m->set_background_colour(convert_colour_spec(luaL_checkstring(L,3)));
 
@@ -1174,7 +1195,12 @@ int window_on_double_click(lua_State* L)
 
 int window_on_key(lua_State* L)
 {
-	list_window_arg(L)->set_onkey(2);
+	TWin* w = window_arg(L);
+	if(TListViewLua* lv = dynamic_cast<TListViewLua*>(w)) {
+		lv->set_onkey(2);
+	} else if (TMemoLua* m = dynamic_cast<TMemoLua*>(w)) {
+		m->set_onkey(2);
+	}
 	return 0;
 }
 
@@ -1509,6 +1535,7 @@ static const struct luaL_reg window_methods[] = {
 	{"add_buttons",window_add_buttons},
 	{"add_tab",tabbar_add},
 	{"set_text",memo_set},
+	{"get_text",memo_get},
 	{"set_memo_colour",memo_set_colour},
 	{"set_list_colour",window_set_colour},
 	{NULL, NULL},
