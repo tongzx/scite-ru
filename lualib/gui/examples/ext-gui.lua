@@ -103,7 +103,7 @@ memo1:set_memo_colour("#FFFFFF", "#000000") -- foreground, background
 
 -- Get:
 visible, x, y, width, height = memo1:bounds()
-text = memo1:get_text() -- Note: There is no. This - the wish.
+text = memo1:get_text() -- Note: Revision: 1518
 
 -- Event:
-memo1:on_key(function(key) print(key) end) -- Note: There is no. This - the wish.
+memo1:on_key(function(key) print(key) end) --  -- Note: Revision: 1518
