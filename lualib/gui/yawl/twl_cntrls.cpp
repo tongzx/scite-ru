@@ -347,8 +347,7 @@ int TMemo::handle_notify(void*p)
 			case WM_RBUTTONDOWN: // For future use
 				return 0;
 			case WM_KEYDOWN:
-				handle_onkey(msf->wParam);
-				return 0;
+				return (bool) handle_onkey(msf->wParam);
 		}
 	}
 	return 0;

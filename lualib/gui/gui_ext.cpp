@@ -380,6 +380,22 @@ void dispatch_ref(lua_State* L,int idx, int ival)
 	}
 }
 
+int dispatch_rref(lua_State* L,int idx, int ival)
+{
+	if (idx != 0) {
+		lua_rawgeti(L,LUA_REGISTRYINDEX,idx);
+		lua_pushnumber(L,ival);
+		
+		if (lua_pcall(L,1,1,0)) {
+			OutputMessage(L);
+		} else {
+			int ret = lua_toboolean(L, -1);
+			return ret;
+		}
+	}
+	return 0;
+}
+
 
 bool function_ref(lua_State* L, int idx, int* pr)
 {
@@ -441,9 +457,9 @@ public:
 		:TMemo(parent, id, do_scroll, plain), LuaControl(l)
 	{}
 
-	virtual void handle_onkey(int id)
+	virtual int handle_onkey(int id)
 	{
-		dispatch_ref(L,onkey_idx,id);
+		return dispatch_rref(L,onkey_idx,id);
 	}
 };
 

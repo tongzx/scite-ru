@@ -121,7 +121,7 @@ public:
   int get_line_colour(int l);
   void set_line_colour(int line, int colour);
   void set_background_colour(int colour);
-  virtual void handle_onkey(int id) = 0;
+  virtual int handle_onkey(int id) = 0;
 
   int handle_notify(void*p);
 };
