@@ -1153,13 +1153,6 @@ static int push_iface_propval(lua_State *L, const char *name) {
 		if (prop.paramType == iface_void) {
 			if (prop.getter) {
 				lua_settop(L, 1);
-//!-start-[GetWordChars]
-				if (prop.valueType == iface_string) {
-					IFaceFunction func = prop.GetterFunction();
-					func.paramType[1] = iface_stringresult;
-					return iface_function_helper(L, func);
-				}
-//!-end-[GetWordChars]
 				return iface_function_helper(L, prop.GetterFunction());
 			}
 		} else if (prop.paramType == iface_bool) {

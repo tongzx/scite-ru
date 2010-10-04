@@ -521,11 +521,6 @@ set void SetCaretPeriod=2076(int periodMilliseconds,)
 # First sets defaults like SetCharsDefault.
 set void SetWordChars=2077(, string characters)
 
-##!-start-[GetWordChars]
-# Get the set of characters making up words for when moving or selecting by word.
-get string GetWordChars=2120(,)
-##!-end-[GetWordChars]
-
 # Start a sequence of actions that is undone and redone as a unit.
 # May be nested.
 fun void BeginUndoAction=2078(,)

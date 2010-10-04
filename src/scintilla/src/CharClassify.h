@@ -22,9 +22,8 @@ public:
 	cc GetClass(unsigned char ch) const { return static_cast<cc>(charClass[ch]);}
 	bool IsWord(unsigned char ch) const { return static_cast<cc>(charClass[ch]) == ccWord;}
 
-	enum { maxChar=256 }; //-change-[GetWordChars]
 private:
-//!	enum { maxChar=256 };
+	enum { maxChar=256 };
 	unsigned char charClass[maxChar];    // not type cc to save space
 };
 

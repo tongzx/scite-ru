@@ -1096,6 +1096,9 @@ void SciTEBase::ReadProperties() {
 	} else {
 		wordCharacters = "_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 	}
+//!-start-[GetWordChars]
+	props.Set("CurrentWordCharacters", wordCharacters.c_str() );
+//!-end-[GetWordChars]
 
 	whitespaceCharacters = props.GetNewExpand("whitespace.characters.", fileNameForExtension.c_str());
 	if (whitespaceCharacters.length()) {
