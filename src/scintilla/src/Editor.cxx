@@ -2105,7 +2105,7 @@ void Editor::LayoutLine(int line, Surface *surface, ViewStyle &vstyle, LineLayou
 		}
 		const int numCharsInLine = (vstyle.viewEOL) ? lineLength : numCharsBeforeEOL;
 		int charInLine = 0; //!-add-[no_wornings]
-		//! for (int charInLine = 0; charInLine < numCharsInLine; charInLine++) {
+//!		for (int charInLine = 0; charInLine < numCharsInLine; charInLine++) {
 		for (charInLine = 0; charInLine < numCharsInLine; charInLine++) { //!-change-[no_wornings]
 			styleByte = ll->styles[charInLine];
 			ll->styleBitsSet |= styleByte;
@@ -2140,7 +2140,7 @@ void Editor::LayoutLine(int line, Surface *surface, ViewStyle &vstyle, LineLayou
 		bool isControlNext = IsControlCharacter(ll->chars[0]);
 		int trailBytes = 0;
 		bool isBadUTFNext = IsUnicodeMode() && BadUTF(ll->chars, numCharsInLine, trailBytes);
-		//! for (int charInLine = 0; charInLine < numCharsInLine; charInLine++) {
+//!		for (int charInLine = 0; charInLine < numCharsInLine; charInLine++) {
 		for (charInLine = 0; charInLine < numCharsInLine; charInLine++) { //!-change-[no_wornings]
 			bool isControl = isControlNext;
 			isControlNext = IsControlCharacter(ll->chars[charInLine + 1]);

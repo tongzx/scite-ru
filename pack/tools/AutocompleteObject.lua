@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 AutocompleteObject.lua
 mozers™, Tymur Gubayev
-version 3.10.8
+version 3.10.9
 ------------------------------------------------------
 Inputting of the symbol set in autocomplete.[lexer].start.characters causes the popup list of properties and methods of input_object. They undertake from corresponding api-file.
 In the same case inputting of a separator changes the case of symbols in input_object's name according to a api-file.
@@ -159,7 +159,7 @@ end
 -- Извлечение из текущего файла имени объекта, с которым "работаем":
 -- Берем "слово" слева от курсора, причем считаем символы autocomplete.start.characters частью этого слова
 local function GetInputObject()
-	local word_chars = editor.WordChars
+	local word_chars = props['CurrentWordCharacters']
 	-- добавляем разделители - они теперь тоже часть слова
 	editor.WordChars = word_chars..autocomplete_start_characters
 
@@ -231,7 +231,7 @@ local function FindDeclaration()
 	local text_all = editor:GetText()
 	local _start, _end, sVar, sRightString
 	-- берём то, что хранится в, например, word.characters.$(file.patterns.lua)
-	word_chars_patt = '['..editor.WordChars:pattern()..auto_start_chars_patt..']+'
+	word_chars_patt = '['..props['CurrentWordCharacters']:pattern()..auto_start_chars_patt..']+'
 
 	-- @todo: правую часть также хорошо бы слегка поправить.
 	local pattern = '('..word_chars_patt..')%s*=%s*(%C+)'
@@ -256,7 +256,7 @@ end
 -- Чтение api файла в таблицу api_table (чтобы потом не опрашивать диск, а все тащить из нее)
 local function CreateAPITable()
 	api_table = {}
-	local word_patt = editor.WordChars:pattern()
+	local word_patt = props['CurrentWordCharacters']:pattern()
 	local word_extended_patt = '['..word_patt..auto_start_chars_patt..']'
 	for api_filename in props["APIPath"]:gmatch("[^;]+") do
 		if api_filename ~= nil then
@@ -284,7 +284,7 @@ local function CreateObjectsAndAliasTables()
 	objects_table = {}
 	alias_table = {}
 	patterns_table = {}
-	local word_patt = editor.WordChars:pattern()
+	local word_patt = props['CurrentWordCharacters']:pattern()
 	local word_extended_patt = '['..word_patt..auto_start_chars_patt..']'
 	word_patt = '['..word_patt..']'
 
@@ -319,7 +319,7 @@ local function CreateMethodsTable(obj)
 		if _end ~= nil and line:sub(1,1)~='#' and
 			(_start == 1 or line:gsub(_start-1,_start-1)==sep_char) then
 			-- local _start, _end, str_method = line:find('([^'..auto_start_chars_patt..']+)', _end+1)
-			local _start, _end, str_method = line:find('(['..editor.WordChars:pattern()..']+)', _end+1)
+			local _start, _end, str_method = line:find('(['..props['CurrentWordCharacters']:pattern()..']+)', _end+1)
 			if _start ~= nil then
 				methods_table[#methods_table+1] = str_method
 			end

@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 CodePage.lua
 Authors: YuriNB, VladVRO, mozers™
-Version: 2.4.1
+Version: 2.4.2
 ------------------------------------------------------
 Ãèáðèä 2õ ñêðèïòîâ:
 win1251 to cp866 keyboard mapper (YuriNB icq#2614215)
@@ -72,16 +72,16 @@ local function UpdateStatusCodePage(mode)
 		if props["character.set"]=='255' then
 			props["chars.accented"]='€ ¡‚¢ƒ£„¤…¥ðñ†¦‡§ˆ¨‰©Šª‹«Œ¬­Ž®¯à‘á’â“ã”ä•å–æ—ç˜è™éšê›ëœìížîŸï'
 			scite.Perform("reloadproperties:")
--- print(' dos866 > '..editor.WordChars)
+-- print(' dos866 > '..props['CurrentWordCharacters'])
 		else
 			props["chars.accented"]='ÀàÁáÂâÃãÄäÅå¨¸ÆæÇçÈèÉéÊêËëÌìÍíÎîÏïÐðÑñÒòÓóÔôÕõÖö×÷ØøÙùÚúÛûÜüÝýÞþßÿ'
 			scite.Perform("reloadproperties:")
--- print('win1251 > '..editor.WordChars)
+-- print('win1251 > '..props['CurrentWordCharacters'])
 		end
 	else -- utf8
 		props["chars.accented"]='ÐÐ°Ð‘Ð±Ð’Ð²Ð“Ð³Ð”Ð´Ð•ÐµÐÑ‘Ð–Ð¶Ð—Ð·Ð˜Ð¸Ð™Ð¹ÐšÐºÐ›Ð»ÐœÐ¼ÐÐ½ÐžÐ¾ÐŸÐ¿Ð Ñ€Ð¡ÑÐ¢Ñ‚Ð£ÑƒÐ¤Ñ„Ð¥Ñ…Ð¦Ñ†Ð§Ñ‡Ð¨ÑˆÐ©Ñ‰ÐªÑŠÐ«Ñ‹Ð¬ÑŒÐ­ÑÐ®ÑŽÐ¯Ñ'
 		scite.Perform("reloadproperties:")
--- print('   utf8 > '..editor.WordChars)
+-- print('   utf8 > '..props['CurrentWordCharacters'])
 	end
 
 	scite.CheckMenus()

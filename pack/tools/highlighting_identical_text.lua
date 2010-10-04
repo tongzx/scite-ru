@@ -1,6 +1,6 @@
 --[[--------------------------------------------------
 Highlighting Identical Text
-Version: 1.3.5
+Version: 1.3.6
 Author: mozersЩ, TymurGubayev
 ------------------------------
 јвто подсветка текста, который совпадает с текущим словом или выделением
@@ -94,7 +94,7 @@ local function IdenticalTextFinder()
 
 	EditorClearMarks(mark_ident)
 	EditorClearMarks(mark_max)
-	if wholeword then word_pattern = '[^' .. editor.WordChars .. ']' end
+	if wholeword then word_pattern = '[^' .. props['CurrentWordCharacters'] .. ']' end
 	----------------------------------------------------------
 	all_text = editor:GetText()
 	local match_table = {}

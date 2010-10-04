@@ -2762,7 +2762,7 @@ static IFaceProperty ifaceProperties[] = {
 
 enum {
 	ifaceFunctionCount = 277,
-	ifaceConstantCount = 2175,
+	ifaceConstantCount = 2174,
 	ifacePropertyCount = 171
 };
 
