@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev, ur4ltz
-Version 1.23.1
+Version 1.24.0
 ------------------------------------------------------
   Note: Require gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
                lpeg.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/lpeg/>
@@ -215,10 +215,25 @@ local function FileMan_ShowPath()
 	memo_path:set_text(rtf..path..mask)
 end
 
+memo_path:on_key(function(key)
+	if key == 13 then
+		local new_path = memo_path:get_text()
+		if new_path ~= '' then
+			new_path = new_path:gsub('[\\*\.]*$','')..'\\'
+			local is_folder = gui.files(new_path..'*', true)
+			if is_folder then
+				current_path = new_path
+			end
+		end
+		FileMan_ListFILL()
+		return true
+	end
+end)
+
 ----------------------------------------------------------
 -- tab0:list_dir   File Manager
 ----------------------------------------------------------
-local function FileMan_ListFILL()
+function FileMan_ListFILL()
 	if current_path == '' then return end
 	local folders = gui.files(current_path..'*', true)
 	if not folders then return end
