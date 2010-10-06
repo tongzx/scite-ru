@@ -2445,7 +2445,7 @@ bool SciTEBase::StartInsertAbbreviation() {
 		return true; // returning if expanded abbreviation is empty
 	}
 */
-//!-start-[AbbrevRefactoring]
+//!-start-[InsertAbbreviation]
 	InsertAbbreviation(data.c_str(), 0);
 	return true;
 }
@@ -2455,7 +2455,7 @@ bool SciTEBase::InsertAbbreviation(const char* data, int expandedLength) {
 	if (dataLength == 0) {
 		return false; // returning if abbreviation is empty
 	}
-//!-end-[AbbrevRefactoring]
+//!-end-[InsertAbbreviation]
 
 //!-start-[VarAbbrev]
 	SString currentSelection = EncodeString(SelectionExtend(0, false));
@@ -2829,11 +2829,11 @@ bool SciTEBase::StartExpandAbbreviation() {
 	wEditor.Call(SCI_ENDUNDOACTION);
 	delete []expbuf;
 */
-//!-start-[AbbrevRefactoring]
+//!-start-[InsertAbbreviation]
 	if (!InsertAbbreviation(data.c_str(), abbrevLength)) {
 		WarnUser(warnNotFound, "No match abbreviation."); //!-change-[WarningMessage]
 	}
-//!-end-[AbbrevRefactoring]
+//!-end-[InsertAbbreviation]
 	delete []linebuf;
 	return true;
 }

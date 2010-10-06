@@ -294,7 +294,7 @@ static int cf_scite_perform(lua_State *L) {
 }
 //!-end-[Perform]
 
-//!-start-[AbbrevRefactoring]
+//!-start-[InsertAbbreviation]
 static int cf_editor_insert_abbrev(lua_State *L) {
 	const char *s = luaL_checkstring(L, 1);
 	if (s) {
@@ -302,7 +302,7 @@ static int cf_editor_insert_abbrev(lua_State *L) {
 	}
 	return 0;
 }
-//!-end-[AbbrevRefactoring]
+//!-end-[InsertAbbreviation]
 
 //!-start-[ParametersDialogFromLua]
 static int cf_scite_show_parameters_dialog(lua_State *L) {
@@ -1528,20 +1528,20 @@ static bool InitGlobalScope(bool checkProperties, bool forceReload = false) {
 	lua_setfield(luaState, -2, "Perform");
 //!-end-[Perform]
 
-//!-begin-[AbbrevRefactoring]
+//!-begin-[InsertAbbreviation]
 	lua_pushcfunction(luaState, cf_editor_insert_abbrev);
 	lua_setfield(luaState, -2, "InsertAbbreviation");
-//!-end-[AbbrevRefactoring]
+//!-end-[InsertAbbreviation]
 
 //!-start-[ParametersDialogFromLua]
 	lua_pushcfunction(luaState, cf_scite_show_parameters_dialog);
 	lua_setfield(luaState, -2, "ShowParametersDialog");
 //!-end-[ParametersDialogFromLua]
 
-//!-start-[StartupScriptReloadv]
+//!-start-[ReloadStartupScript]
 	lua_pushcfunction(luaState, cf_editor_reload_startup_script);
 	lua_setfield(luaState, -2, "ReloadStartupScript");
-//!-end-[StartupScriptReload]
+//!-end-[ReloadStartupScript]
 
 //!-start-[LocalizationFromLua]
 	lua_pushcfunction(luaState, cf_editor_get_translation);

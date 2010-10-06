@@ -764,7 +764,7 @@ protected:
 	virtual bool StartAutoCompleteWord(bool onlyOneWord);
 	virtual bool StartExpandAbbreviation();
 	virtual bool StartInsertAbbreviation();
-	virtual bool InsertAbbreviation(const char* data, int expandedLength); //!-add-[AbbrevRefactoring]
+	virtual bool InsertAbbreviation(const char* data, int expandedLength); //!-add-[InsertAbbreviation]
 	virtual bool StartBlockComment();
 	virtual bool StartBoxComment();
 	virtual bool StartStreamComment();

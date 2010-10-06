@@ -67,13 +67,6 @@
 [CheckFileExist] <span class=desc>(Автор: neo4max)</span></h5>
 Теперь SciTE проверяет наличие редактируемого файла на диске и при его отсутствии выводит соответствующее предупреждение. Кроме этого исправлено детектирование изменения даты редактируемого файла. Подробности в <a href="http://code.google.com/p/scite-ru/issues/detail?id=172">Issue 172</a>.
 
-<h5 id="session.load.forced">
-[session.load.forced] <span class=desc>(Автор: VladVRO)</span></h5>
-Добавлен новый параметр <span class="example">session.load.forced</span> в .properties, который позволяет ускорить загрузку и сохранение сессии:<br>
-&nbsp; 0 (по умолчанию) - обычная загрузка,<br>
-&nbsp; 1 - пропускать часть процедур обработки файла во время загрузки и сохранения сессии.<br>
-Кроме того, во время загрузки сессии новый параметр <span class="example">scite.state.loadsession</span> равен 1. Теперь в скрипте можно определить в какой момент вызван обработчик <span class="example">OnOpen</span>, во время загрузки сессии или одиночного файла.
-
 <h5 id="find.fillout">
 [find.fillout] <span class=desc>(Авторы: Frank Wunderlich, VladVRO)</span></h5>
 Новый параметр <span class="example">find.fillout</span> в .properties, который позволяет задать способ начального заполнения поля в диалоге поиска:<br>
@@ -228,7 +221,7 @@ command.name.6.*=Date and Time</div>
 
 <h5 id="TabsMoving">
 [TabsMoving] <span class=desc>(Автор: VladVRO)</span></h5>
-В редактор добавлены две новых команды <span class="example">IDM_MOVETABLEFT</span> и <span class="example">IDM_MOVETABRIGHT</span> позволяющие перемещать текущую вкладку. Они доступны в меню Вкладки.<br>
+В меню Вкладки добавлены две команды <span class="example">IDM_MOVETABLEFT</span> и <span class="example">IDM_MOVETABRIGHT</span> позволяющие перемещать текущую вкладку.<br>
 
 <h5 id="TabbarTitleMaxLength">
 [TabbarTitleMaxLength] <span class=desc>(Автор: VladVRO)</span></h5>
@@ -339,12 +332,6 @@ command.name.6.*=Date and Time</div>
 Позволяет использовать в пути внутренние переменные SciTE, например, так:
 <div class="example">scite.userhome=$(SciteDefaultHome)\home</div>
 
-<h5 id="IncrementalSearch.AddHotkeys">
-[IncrementalSearch.AddHotkeys] <span class=desc>(Автор: Midas)</span></h5>
-Добавляет в "<span class="example">Быстрый поиск</span>" (Ctrl+Alt+I) горячие клавиши:<br>
-- Enter или F3 - следующее вхождение<br>
-- Shift+Enter или Shift+F3 - предыдущее вхождение
-
 <h5 id="WarningMessage">
 [WarningMessage] <span class=desc>(Автор: VladVRO)</span></h5>
 Добавлена возможность настроить отображение предупреждения для информационных событий редактора (warning), сообщения задаются параметрами:<br>
@@ -415,11 +402,6 @@ calltip.*.word.wrap</div>
       <a name="2"></a>
       Расширения
     </h3>
-
-<h5 id="IndicatorsFillAlpha">
-[IndicatorsFillAlpha] <span class=desc>(Автор: VladVRO)</span></h5>
-Поправлен диапазон значений параметра прозрачности заливки метки (mark) для стиля ROUNDBOX, который может принимать значения от 0 до 255 под Windows OS.<br>
-Для работы с ним добавлен интерфейс в API редактора <span class="example">editor.IndicAlpha[num]</span>.
 
 <h5 id="ForthImprovement">
 [ForthImprovement] <span class=desc>(Автор: VladVRO)</span></h5>
@@ -542,8 +524,8 @@ CurrentWordCharacters - новая внутренняя переменная Sci
 [BufferNumber] <span class=desc>(Автор: VladVRO)</span></h5>
 BufferNumber - новая внутренняя переменная SciTE. Cодержит номер текущего буфера.
 
-<h5 id="AbbrevRefactoring">
-[AbbrevRefactoring] <span class=desc>(Автор: Дмитрий Маслов)</span></h5>
+<h5 id="InsertAbbreviation">
+[InsertAbbreviation] <span class=desc>(Автор: Дмитрий Маслов)</span></h5>
 В SciTE Lua Scripting Extension добавлена новая команда<br>
 <span class="example">InsertAbbreviation(string)</span><br>
 где "<span class="example">string</span>" - это текст, по формату аналогичный сокращениям (abbrev), например:
@@ -613,14 +595,6 @@ Tеперь можно задавать до 4х дополнительных н
 [OpenNonExistent] <span class=desc>(Автор: neo4max)</span></h5>
 Исправлена ошибка связанная с открытием несуществующего файла. Подробности в <a href="http://code.google.com/p/scite-ru/issues/detail?id=174">Issue 174</a>.
 
-<h5 id="FixWideStringHandler">
-[FixWideStringHandler] <span class=desc>(Автор: neo4max)</span></h5>
-Исправлена ошибка в диалоговом окне "Параметры" не позволявшая вводить не латинские буквы (<a href="http://code.google.com/p/scite-ru/issues/detail?id=177">Issue 177</a>).
-
-<h5 id="ExtensionThreadFix">
-[ExtensionThreadFix] <span class=desc>(Автор: qvaclav)</span></h5>
-Исправлено ошибочное размножение запущенного скрипта Lua
-
 <h5 id="PropsColouriseFix">
 [PropsColouriseFix] <span class=desc>(Автор: VladVRO)</span></h5>
 Исправлена подсветка синтаксиса в файлах настроек для длинных строк (более 1024 символов) и строк с символом переноса.
@@ -647,11 +621,6 @@ Tеперь можно задавать до 4х дополнительных н
 [InputErr] <span class=desc>(Автор: mimir)</span></h5>
 Исправлена ошибка зависания SciTE при использовании <span class="example">command.input</span>.<br>
 Если пользователь забыл выделить текст перед запуском скрипта, то SciTE зависал.
-
-<h5 id="SelectionErr">
-[SelectionErr] <span class=desc>(Автор: mimir)</span></h5>
-Исправлена ошибка с выводом текста по <span class="example">command.input</span> и <span class="example">$(CurrentSelection)</span> исключительно в кодировке UTF-8.<br>
-Это не позволяло передать русский текст во внешний скрипт или программу.
 
 <h5 id="StyleDefault">
 [StyleDefault] <span class=desc>(Автор: VladVRO, Дмитрий Маслов)</span></h5>

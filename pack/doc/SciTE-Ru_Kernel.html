@@ -66,13 +66,6 @@ Menu items for opening language properties files to put in a submenu "Edit Prope
 [CheckFileExist] <span class=desc>(Author: neo4max)</span></h5>
 Now SciTE checks the edited file on disk and in its absence, displays a warning. Besides fixed detection of change in the date the edited file. For more information look at <a href="http://code.google.com/p/scite-ru/issues/detail?id=172">Issue 172</a>.
 
-<h5 id="session.load.forced">
-[session.load.forced] <span class=desc>(Author: VladVRO)</span></h5>
-Added new property <span class="example">session.load.forced</span> to do load or save a session quickly:<br>
-&nbsp; 0 (default) - normal load,<br>
-&nbsp; 1 - exclude some functions of file processing while loading or saving session.<br>
-And one more new property <span class="example">scite.state.loadsession</span> is set to 1 while loading session . It can be used in script function <span class="example">OnOpen</span> for determine is loading session now or not.
-
 <h5 id="find.fillout">
 [find.fillout] <span class=desc>(Authors: Frank Wunderlich, VladVRO)</span></h5>
 New property <span class="example">find.fillout</span> is to define how will be filled input field in find dialog on start:<br>
@@ -227,7 +220,7 @@ You can open new buffer now by double click on empty space on right of tabs (a-l
 
 <h5 id="TabsMoving">
 [TabsMoving] <span class=desc>(Authors: VladVRO)</span></h5>
-You can move tabs now. In editor added two new commands <span class="example">IDM_MOVETABLEFT</span> and <span class="example">IDM_MOVETABRIGHT</span> for shift current tab left or right and added identical commands in menu Buffers.
+Added two commands in menu Buffers <span class="example">IDM_MOVETABLEFT</span> and <span class="example">IDM_MOVETABRIGHT</span> for shift current tab left or right.
 
 <h5 id="TabbarTitleMaxLength">
 [TabbarTitleMaxLength] <span class=desc>(Author: VladVRO)</span></h5>
@@ -340,12 +333,6 @@ New variable in properties files<br>
 Possible to use in the path internal variables of SciTE, for instance:
 <div class="example">scite.userhome=$(SciteDefaultHome)\home</div>
 
-<h5 id="IncrementalSearch.AddHotkeys">
-[IncrementalSearch.AddHotkeys] <span class=desc>(Author: Midas)</span></h5>
-Add on "<span class="example">Incremental Search</span>" (Ctrl+Alt+I) Hotkeys:<br>
-- Enter or F3 - Find Next<br>
-- Shift+Enter or Shift+F3 - Find Previous
-
 <h5 id="WarningMessage">
 [WarningMessage] <span class=desc>(Author: VladVRO)</span></h5>
 Now can to set up alert with warning message for each warning type:<br>
@@ -415,11 +402,6 @@ It is possible to set this parameter through SCI_SETOVERTYPE<br>
       <a name="2"></a>
       Extensions
     </h3>
-
-<h5 id="IndicatorsFillAlpha">
-[IndicatorsFillAlpha] <span class=desc>(Author: VladVRO)</span></h5>
-Changed values range of parameter for setup filling alpha of indicators (marks) with style ROUNDBOX, that can be from 0 to 255 on Windows OS.<br>
-For access to parameter was made new property in editor API - <span class="example">editor.IndicAlpha[num]</span>.
 
 <h5 id="ForthImprovement">
 [ForthImprovement] <span class=desc>(Author: VladVRO)</span></h5>
@@ -542,8 +524,8 @@ CurrentWordCharacters - new SciTE environment variable. Contains which character
 [BufferNumber] <span class=desc>(Author: VladVRO)</span></h5>
 BufferNumber - new SciTE environment variable. Contains number of the current buffer.
 
-<h5 id="AbbrevRefactoring">
-[AbbrevRefactoring] <span class=desc>(Author: Dmitry Maslov)</span></h5>
+<h5 id="InsertAbbreviation">
+[InsertAbbreviation] <span class=desc>(Author: Dmitry Maslov)</span></h5>
 In SciTE Lua Scripting Extension added new command<br>
 <span class="example">InsertAbbreviation(string)</span><br>
 where "<span class="example">string</span>" - is a text, on a format similar to abbreviation, for example:
@@ -611,14 +593,6 @@ Now OnSendEditor can trace event SCI_SETZOOM arising at change of the size of a 
 [OpenNonExistent] <span class=desc>(Author: neo4max)</span></h5>
 Fixed bug associated with opening a nonexistent file. For more information look at <a href="http://code.google.com/p/scite-ru/issues/detail?id=174">Issue 174</a>.
 
-<h5 id="FixWideStringHandler">
-[FixWideStringHandler] <span class=desc>(Author: neo4max)</span></h5>
-Fixed a bug in "Parameters" dialog not allow to enter non-latin letters.
-
-<h5 id="ExtensionThreadFix">
-[ExtensionThreadFix] <span class=desc>(Author: qvaclav)</span></h5>
-Fixed incorrect cloning of running Lua script.
-
 <h5 id="PropsColouriseFix">
 [PropsColouriseFix] <span class=desc>(Author: VladVRO)</span></h5>
 Fixed coloring of syntax in properties files for long lines (more then 1024 chars) and for lines with division of words.
@@ -645,11 +619,6 @@ Bug fixed at which keyboard shortcut ceased to work after switching keyboard lay
 [InputErr] <span class=desc>(Author: mimir)</span></h5>
 Bug fixed in deadlock of SciTE on using <span class="example">command.input</span>.<br>
 If user forget to select text before running script it cause deadlock.
-
-<h5 id="SelectionErr">
-[SelectionErr] <span class=desc>(Author: mimir)</span></h5>
-Bug fixed in text output on <span class="example">command.input</span> and <span class="example">$(CurrentSelection)</span> in UTF-8 code page only.<br>
-It prevent from transfer Russian text into external script or program.
 
 <h5 id="StyleDefault">
 [StyleDefault] <span class=desc>(Authors: VladVRO, Dmitry Maslov)</span></h5>
