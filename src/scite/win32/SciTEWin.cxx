@@ -674,6 +674,14 @@ void SciTEWin::Command(WPARAM wParam, LPARAM lParam) {
 		CloseTab((int)lParam);
 		break;
 
+//!-start-[close_on_dbl_clk]
+	case IDC_TABDBLCLK:
+		if (props.GetInt("tabbar.tab.close.on.doubleclick") == 1) {
+			CloseTab((int)lParam);
+		}
+		break;
+//!-end-[close_on_dbl_clk]
+
 	case IDC_SHIFTTAB:
 		ShiftTab(LOWORD(lParam), HIWORD(lParam));
 		break;

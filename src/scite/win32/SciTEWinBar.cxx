@@ -969,8 +969,21 @@ static LRESULT PASCAL TabWndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM
 	}
 
 	switch (iMessage) {
+//!-start-[close_on_dbl_clk]
+	case WM_LBUTTONDBLCLK: {
+			GUI::Point pt = PointFromLong(lParam);
+			TCHITTESTINFO thti;
+			thti.pt.x = pt.x;
+			thti.pt.y = pt.y;
+			thti.flags = 0;
+			int tab = ::SendMessage(hWnd, TCM_HITTEST, (WPARAM)0, (LPARAM) & thti);
+			if (tab >= 0) {
+				::SendMessage(::GetParent(hWnd), WM_COMMAND, IDC_TABDBLCLK, (LPARAM)tab);
+			}
+		}
+		break;
+//!-end-[close_on_dbl_clk]
 
-	case WM_LBUTTONDBLCLK:	//!-add-[close_on_dbl_clk]
 	case WM_MBUTTONDOWN: {
 			// Check if on tab bar
 			GUI::Point pt = PointFromLong(lParam);

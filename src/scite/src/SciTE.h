@@ -202,6 +202,7 @@
 #define IDM_FULLSCREEN		961
 #define IDC_TABCLOSE		962
 #define IDC_SHIFTTAB		963
+#define IDC_TABDBLCLK		964 //!-add-[close_on_dbl_clk]
 
 // Dialog control IDs
 #define IDGOLINE			220
