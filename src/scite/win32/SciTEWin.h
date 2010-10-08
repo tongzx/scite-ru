@@ -177,7 +177,8 @@ public:
 	virtual void Close();
 	void Focus();
 	virtual bool KeyDown(WPARAM key);
-	void Next(bool select);
+//!	void Next(bool select);
+	void Next(bool select, bool reverseSearch = false); //!-change-[reverse.find]
 	virtual bool Command(WPARAM wParam);
 	virtual void Size();
 	virtual void Paint(HDC hDC);

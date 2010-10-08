@@ -2749,7 +2749,8 @@ bool SearchStrip::KeyDown(WPARAM key) {
 
 	if (key == VK_RETURN) {
 		if (IsChild(Hwnd(), ::GetFocus())) {
-			Next(false);
+//!			Next(false);
+			Next(false, IsKeyDown(VK_SHIFT)); //!-change-[reverse.find]
 			return true;
 		}
 	}
@@ -2757,7 +2758,8 @@ bool SearchStrip::KeyDown(WPARAM key) {
 	return false;
 }
 
-void SearchStrip::Next(bool select) {
+//!void SearchStrip::Next(bool select) {
+void SearchStrip::Next(bool select, bool reverseSearch) { //!-change-[reverse.find]
 	SString ffLastWhat = pSearcher->findWhat;
 	pSearcher->findWhat = ControlText(wText);
 
@@ -2768,7 +2770,8 @@ void SearchStrip::Next(bool select) {
 	}
 	pSearcher->wholeWord = false;
 	if (pSearcher->FindHasText())
-		pSearcher->FindNext(false, false);
+//!		pSearcher->FindNext(false, false);
+		pSearcher->FindNext(reverseSearch, false); //!-change-[reverse.find]
  	if ((!pSearcher->havefound) &&
 		strncmp(pSearcher->findWhat.c_str(), ffLastWhat.c_str(), ffLastWhat.length()) == 0) {
 		// Could not find string with added character so revert to previous value.
