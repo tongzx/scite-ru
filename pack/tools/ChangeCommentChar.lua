@@ -1,10 +1,11 @@
 --[[--------------------------------------------------
 ChangeCommentChar.lua
 Authors: VladVRO, mozers™
-Version: 1.0.3
+Version: 1.1.0
 ------------------------------------------------------
 Подставляет адекватный символ комментария для файлов обрабатываемых лексером props
 (*.properties;*.abbrev;*.session;*.ini;*.inf;*.reg;*.url;*.cfg;*.cnf;*.aut;*.m3u)
+Подставляет адекватный символы потокового комментария для файлов *.php
 ------------------------------------------------------
 Connection:
  In file SciTEStartup.lua add a line:
@@ -25,6 +26,14 @@ local function ChangeCommentChar()
 			props['comment.block.props']=';'
 		else
 			props['comment.block.props']='#'
+		end
+	elseif props['Language'] == 'hypertext' then
+		if props['FileExt']:lower() == 'php' then
+			props['comment.stream.start.hypertext']='/*'
+			props['comment.stream.end.hypertext']='*/'
+		else
+			props['comment.stream.start.hypertext']='<!--'
+			props['comment.stream.end.hypertext']='-->'
 		end
 	end
 end
