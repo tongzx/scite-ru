@@ -1,6 +1,6 @@
 --[[--------------------------------------------------
 Highlighting Identical Text
-Version: 1.3.6
+Version: 1.5.0
 Author: mozers™, TymurGubayev
 ------------------------------
 Авто подсветка текста, который совпадает с текущим словом или выделением
@@ -29,11 +29,6 @@ Author: mozers™, TymurGubayev
 	highlighting.identical.text.max=100
 и задать перечень не подсвечиваемых слов для конкретного лексера (или для всех остальных - *)
 	highlighting.identical.text.reserved.words.lua=and,break,do,else,elseif,end,false,for,function,if,in,local,nil,not,or,repeat,return,then,true,until,while
-
-============================================================================
-Если бы функция editor:findtext не вешала редактор при работе с UTF текстами,
-то код можно было бы значительно оптимизировать (см. версию 1.0 этого скрипта).
-============================================================================
 --]]----------------------------------------------------
 
 local count_max = 50   -- max кол-во результатов поиска (по умолчанию)
@@ -42,7 +37,6 @@ local store_text       -- переменная для хранения предыдущего поискового текста
 local mark_ident = 4   -- номер маркера для отметки идентичного текста/слова
 local mark_max = 5     -- номер маркера для отметки при превышении max кол-ва вхождений
 local chars_count      -- кол-во символов в текущем документе
-local all_text         -- текст текущего документа
 local word_pattern     -- паттерн для поиска слов
 local reserved_words   -- не подсвечиваемые слова
 
@@ -55,15 +49,6 @@ function highlighting_identical_text_switch()
 	props[prop_name] = 1 - tonumber(props[prop_name])
 	EditorClearMarks(mark_ident)
 	store_pos, store_text = 0, ''
-end
-
--- Проверка, является ли найденный текст словом
-local function isWord(all_text, text_start, text_end)
-	if  ( (text_start==1)       or (all_text:sub(text_start-1, text_start-1):match(word_pattern)) ) and
-		( (text_end==#all_text) or (all_text:sub(text_end+1, text_end+1):match(word_pattern)) )    then
-			return true
-	end
-	return false
 end
 
 -- Проверка, является ли текущее слово зарезервированным
@@ -81,12 +66,12 @@ local function IdenticalTextFinder()
 	if current_pos == store_pos then return end
 	store_pos = current_pos
 
-	local wholeword = false
 	local cur_text = editor:GetSelText()
 	if cur_text:find('^%s+$') then return end
+	local find_flags = SCFIND_MATCHCASE
 	if cur_text == '' then
 		cur_text = GetCurrentWord()
-		wholeword = true
+		find_flags = find_flags + SCFIND_WHOLEWORD
 		if isReservedWord(cur_text) then return end
 	end
 	if cur_text == store_text then return end
@@ -94,33 +79,28 @@ local function IdenticalTextFinder()
 
 	EditorClearMarks(mark_ident)
 	EditorClearMarks(mark_max)
-	if wholeword then word_pattern = '[^' .. props['CurrentWordCharacters'] .. ']' end
 	----------------------------------------------------------
-	all_text = editor:GetText()
 	local match_table = {}
-	local find_start = 1
+	local find_start = 0
 	repeat
-		local ident_text_start, ident_text_end = all_text:find(cur_text, find_start, true)
-		if ident_text_start == nil then break end
-		if ident_text_end == 0 then break end
-		if ( not wholeword ) or
-			( isWord(all_text, ident_text_start, ident_text_end) ) then
-				-- загоняем все результаты поиска в таблицу match_table
-				match_table[#match_table+1] = {ident_text_start-1, ident_text_end}
-		end
+		local ident_text_start, ident_text_end = editor:findtext(cur_text, find_flags, find_start, editor.Length)
+		if ident_text_start == nil
+		or ident_text_start == ident_text_end then break end
+		-- загоняем все результаты поиска в таблицу match_table
+		match_table[#match_table+1] = {ident_text_start, ident_text_end}
 		if count_max ~= 0 then
 			if #match_table > count_max then -- если результатов больше, чем указанное число...
 				local err_start, err_end
-				if wholeword then
-					-- то маркируем только текущее слово
-					err_start = editor:WordStartPosition(current_pos, true)
-					err_end = editor:WordEndPosition(current_pos, true)
+				if find_flags == SCFIND_MATCHCASE then
+					-- маркируем выделенный текст
+					err_start = editor.SelectionStart
+					err_end = editor.SelectionEnd
 					EditorMarkText(err_start, err_end-err_start, mark_max)
 					return
 				else
-					-- то маркируем только текущее выделение
-					err_start = editor.SelectionStart
-					err_end = editor.SelectionEnd
+					-- маркируем текущее слово
+					err_start = editor:WordStartPosition(current_pos, true)
+					err_end = editor:WordEndPosition(current_pos, true)
 					EditorMarkText(err_start, err_end-err_start, mark_max)
 					return
 				end
