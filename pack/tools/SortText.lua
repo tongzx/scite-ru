@@ -1,14 +1,14 @@
 --[[--------------------------------------------------
 SortText.lua
 Authors: Tugarinov Sergey, mozersЩ, Tymur Gubayev
-version 2.1
+version 2.1.0
 ------------------------------------------------------
 Sorting selected lines_tbl alphabetically and vice versa
 —ортировка выделенных строк по алфавиту и наоборот
 
 Connection:
 	Set in a file .properties:
-		command.name.37.*=Sorting of lines_tbl AЕ z / zЕ A
+		command.name.37.*=Sorting of lines AЕ z / zЕ A
 		command.37.*=dofile $(SciteDefaultHome)\tools\SortText.lua
 		command.mode.37.*=subsystem:lua,savebefore:no
 --]]--------------------------------------------------
