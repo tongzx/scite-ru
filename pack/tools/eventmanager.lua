@@ -23,6 +23,8 @@ version: 1.0.1
 History:
 	* 1.0.0 initial release
 	* 1.0.1 RemoveEventHandler bug fix
+	* 1.0.2  Dispatch bug fix (non-existent event raised error)
+			 RunOnce bug fix
 --]]-----------------------------------------------------------------
 
 
@@ -56,7 +58,7 @@ local function Dispatch (name, ...)
 			return unpack(res)
 		end
 	end
-	return unpack(res) -- just for the case of error-handling
+	return res and unpack(res) -- just for the case of error-handling
 end
 
 --- Создаёт новый обработчик для вызова ядром редактора
@@ -92,10 +94,12 @@ function AddEventHandler(EventName, Handler, RunOnce)
 	if not RunOnce then
 		event[#event+1] = Handler
 	else
-		event[#event+1] = function(...)
-			RemoveEventHandler(EventName, Handler)
+		local OnceHandler
+		OnceHandler = function(...)
+			RemoveEventHandler(EventName, OnceHandler)
 			return Handler(...)
 		end
+		event[#event+1] = OnceHandler
 	end
 	
 end -- AddEventHandler
