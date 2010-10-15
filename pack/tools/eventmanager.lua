@@ -1,7 +1,7 @@
 --[[-----------------------------------------------------------------
 eventmanager.lua
 Authors: Tymur Gubayev
-version: 1.0.1
+version: 1.0.3
 ---------------------------------------------------------------------
   Description:
 	simple event manager realization for SciTE.
@@ -25,6 +25,7 @@ History:
 	* 1.0.1 RemoveEventHandler bug fix
 	* 1.0.2  Dispatch bug fix (non-existent event raised error)
 			 RunOnce bug fix
+	* 1.0.3 Dispatch bug workaround (rare OnOpen event bug)
 --]]-----------------------------------------------------------------
 
 
@@ -53,9 +54,12 @@ local function Dispatch (name, ...)
 	local event = events[name]
 	local res
 	for i = 1, #event do
-		res = { event[i](...) } -- store whole handler return in a table
-		if res[1] then -- first returned value is a interruption flag
-			return unpack(res)
+		local h = event[i]
+		if h then --@ this is a workaround for eventhandler-disappear bug (see v.1.0.3)
+			res = { h(...) } -- store whole handler return in a table
+			if res[1] then -- first returned value is a interruption flag
+				return unpack(res)
+			end
 		end
 	end
 	return res and unpack(res) -- just for the case of error-handling
