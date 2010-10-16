@@ -1,5 +1,5 @@
 -- Code Poster
--- Version: 3.0.1
+-- Version: 3.0.2
 -- Author: mozers™, frs (Идея и первая реализация: VladVRO)
 ---------------------------------------------------
 -- Description:
@@ -113,7 +113,7 @@ end
 
 local header = "[b][color=Blue]"..props["FileNameExt"].."[/color][/b]"
 if line_start ~= 0 then
-	header = header.." [s][[b]строка "..line_start.."[/b]][/s]"
+	header = header.." [s][[b]line "..line_start.."[/b]][/s]"
 end
 local more = ""
 local more_end = ""
@@ -122,6 +122,10 @@ if editor:LineFromPosition(sel_end) - line_start > 10 then
 	more_end = "[/more]"
 end
 
-forum_text = header.." : "..more.."[code]"..forum_text.."[/code]".."  [color=Purple][font=Wingdings][size=4]?[/size][/font]  [s]Код создан и опубликован с помощью[/s] [url=http://forum.ru-board.com/topic.cgi?forum=5&topic=24956&glp][s]SciTE-Ru[/s][/url][/color]"..more_end
+local reclam = "Код создан и опубликован с помощью"
+if tonumber(props["editor.unicode.mode"]) ~= IDM_ENCODING_DEFAULT then
+	reclam = shell.to_utf8(reclam)
+end
+forum_text = header.." : "..more.."[code]"..forum_text.."[/code]".."  [color=Purple][font=Wingdings][size=4]?[/size][/font]  [s]"..reclam.."[/s] [url=http://forum.ru-board.com/topic.cgi?forum=5&topic=24956&glp][s]SciTE-Ru[/s][/url][/color]"..more_end
 editor:CopyText(forum_text)
 shell.msgbox ("Код для форума успешно сформирован\n и помещен в буфер обмена", "Формирование кода для форума")
