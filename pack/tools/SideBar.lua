@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev, ur4ltz
-Version 1.24.0
+Version 1.24.2
 ------------------------------------------------------
   Note: Require gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
                lpeg.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/lpeg/>
@@ -162,11 +162,11 @@ list_func:add_column("Functions/Procedures", 600)
 tab1:client(list_func)
 if colorback then list_func:set_list_colour(colorfore,colorback) end
 
-tab1:context_menu {
-	'Functions: Sort by Order|Functions_SortByOrder',
-	'Functions: Sort by Name|Functions_SortByName',
-	'Functions: Show/Hide Flags|Functions_ToggleFlags',
-	'Functions: Show/Hide Parameters|Functions_ToggleParams',
+list_func:context_menu {
+	'Sort by Order|Functions_SortByOrder',
+	'Sort by Name|Functions_SortByName',
+	'Show/Hide Flags|Functions_ToggleFlags',
+	'Show/Hide Parameters|Functions_ToggleParams',
 }
 -------------------------
 local tab2 = gui.panel(panel_width)
@@ -1174,6 +1174,9 @@ local function Bookmark_Add(line_number)
 	bmk.FilePath = props['FilePath']
 	bmk.BufferNumber = GetBufferNumber()
 	bmk.LineNumber = line_number
+	if tonumber(props["editor.unicode.mode"]) == IDM_ENCODING_DEFAULT then
+		line_text = shell.to_utf8(line_text)
+	end
 	bmk.LineText = line_text
 	table_bookmarks[#table_bookmarks+1] = bmk
 end
