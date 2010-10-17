@@ -664,14 +664,12 @@ sptr_t SciTEBase::ScintillaWindowEditor::Call( unsigned int msg, uptr_t wParam, 
 				GUI::gui_string mark = GUI::StringFromUTF8( pBase->props.Get("tabbar.readonly.marker").c_str() );
 				if (mark.length())
 				{
-					GUI::gui_char *ROMarker = new GUI::gui_char[ mark.length() + 1 ];
-					// this is wcscpy - copy string
+					int len = mark.length() + 1;
+					GUI::gui_char *ROMarker = new GUI::gui_char[ len ];
 					GUI::gui_char *cp = ROMarker;
 					const GUI::gui_char *src = mark.c_str();
-					do {
+					while (len-- > 0)
 						*cp++ = *src++;
-					} while( *cp != 0 );
-					//end wcscpy
 					pBase->buffers.buffers[pBase->buffers.Current()].ROMarker = ROMarker;
 				}
 			}
