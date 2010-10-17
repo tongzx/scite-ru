@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 new_file.lua
 mozers™, VladVRO
-version 3.2.0
+version 3.3.0
 ----------------------------------------------
 Заменяет стандартную команду SciTE "File|New" (Ctrl+N)
 Создает новый буфер в текущем каталоге с расширением текущего файла
@@ -12,7 +12,7 @@ version 3.2.0
   dofile (props["SciteDefaultHome"].."\\tools\\new_file.lua")
 
 Задайте в файле .properties расширения файлов которые будут создаваться в кодировке UTF-8
-  file.create.as.utf8=htm,html
+  file.make.as.utf8=htm,html
 
 -------------------------------------------------------------------
 Replaces SciTE command "File|New" (Ctrl+N)
@@ -23,13 +23,23 @@ In file SciTEStartup.lua add a line:
   dofile (props["SciteDefaultHome"].."\\tools\\new_file.lua")
 
 Set in a file .properties:
-  file.create.as.utf8=htm,html
+  file.make.as.utf8=htm,html
 
 --]]----------------------------------------------------
 require 'shell'
 
 props["untitled.file.number"] = 0
 local unsaved_files = {}
+
+-- Определяет надо ли файл с текущим расширением создавать и сохранять в UTF-8
+local function isMakeUTF8()
+	local create_utf8_ext = props['file.make.as.utf8']:lower()
+	local current_ext = props['FileExt']:lower()
+	for ext in create_utf8_ext:gmatch("%w+") do
+		if current_ext == ext then return true end
+	end
+	return false
+end
 
 -- Создает новый буфер в текущем каталоге с расширением текущего файла
 local function CreateUntitledFile()
@@ -42,13 +52,7 @@ local function CreateUntitledFile()
 			local warning_couldnotopenfile_disable = props['warning.couldnotopenfile.disable']
 			props['warning.couldnotopenfile.disable'] = 1
 			scite.Open(file_path)
-
-			local create_utf8_ext = props['file.create.as.utf8']:lower()
-			local current_ext = props['FileExt']:lower()
-			for ext in create_utf8_ext:gmatch("%w+") do
-				if current_ext == ext then scite.MenuCommand(IDM_ENCODING_UCOOKIE) end
-			end
-
+			if isMakeUTF8() then scite.MenuCommand(IDM_ENCODING_UCOOKIE) end
 			unsaved_files[file_path:upper()] = true --сохраняем путь к созданному буферу в таблице
 			props['warning.couldnotopenfile.disable'] = warning_couldnotopenfile_disable
 			return true
@@ -66,6 +70,13 @@ end)
 -- Новый буфер, созданный функцией CreateUntitledFile имеет полное имя, поэтому при сохранении SciTE будет сохранять его молча по заданному пути (без вывода диалогового окна "SaveAs")
 -- Обработчик события OnBeforeSave при сохранении такого буфера выводит диалоговое окно "SaveAs"
 AddEventHandler("OnBeforeSave", function(file)
+	if isMakeUTF8() and tonumber(props["editor.unicode.mode"]) == IDM_ENCODING_DEFAULT then
+		editor.TargetStart = 0
+		editor.TargetEnd = editor.Length
+		local txt_in = editor:GetText()
+		editor:ReplaceTarget(shell.to_utf8(txt_in))
+		scite.MenuCommand(IDM_ENCODING_UCOOKIE)
+	end
 	if unsaved_files[file:upper()] then -- если это созданный нами несохраненный буфер
 		scite.MenuCommand(IDM_SAVEAS)
 		return true
