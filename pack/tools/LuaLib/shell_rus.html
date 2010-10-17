@@ -344,7 +344,7 @@ end
 		<div class="example">
 			-- запустить приложение<br />
 			shell.exec("clipbrd.exe")<br />
-			shell.exec("CMD /c IPCONFIG /all > out.txt", nil, true, false)<br />
+			shell.exec("CMD /c IPCONFIG /all &gt; out.txt", nil, true, false)<br />
 			<br />
 			-- вывести результат консольного приложения<br />
 			print( shell.exec("CMD /c DIR", nil, true, true) )<br />

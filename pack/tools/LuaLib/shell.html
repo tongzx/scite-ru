@@ -343,7 +343,7 @@ end
 		<div class="example">
 			-- run application<br />
 			shell.exec("clipbrd.exe")<br />
-			shell.exec("CMD /c IPCONFIG /all > out.txt", nil, true, false)<br />
+			shell.exec("CMD /c IPCONFIG /all &gt; out.txt", nil, true, false)<br />
 			<br />
 			-- show result of console application<br />
 			print( shell.exec("CMD /c DIR", nil, true, true) )<br />
