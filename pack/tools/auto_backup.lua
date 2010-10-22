@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 auto_backup.lua
 Authors: mozers™
-Version: 1.4.4
+Version: 1.5.0
 ------------------------------------------------------
 Создание резервной копии сохраняемого после редактирования файла
 ------------------------------------------------------
@@ -27,11 +27,11 @@ e.g.
 require 'shell'
 
 local function GetPath()
-	local path = props['backup.path']
+	local path = shell.from_utf8(props['backup.path'])
 
 -- 	if set relative path
 	if string.find(path, '^%a:\\') == nil then
-		path = props['FileDir']..'\\'..path
+		path = shell.from_utf8(props['FileDir'])..'\\'..path
 	end
 
 -- 	if backup folder not exist
@@ -47,6 +47,7 @@ local function BakupFile(filename)
 	if sbck == nil or sbck == 0 then
 		return false
 	end
+	filename = shell.from_utf8(filename)
 	local sfilename = filename
 	filename = GetPath().."\\"..string.gsub(filename,'.*\\','')
 	local nbck = 1
