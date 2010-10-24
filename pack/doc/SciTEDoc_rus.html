@@ -24,7 +24,7 @@
       <a href="SciTEExtension_rus.html">SciTE Extension</a>&nbsp;&nbsp;
       <a href="SciTELua_rus.html">LUA</a>&nbsp;&nbsp;
       <a href="SciTEDirector_rus.html">SciTE Director</a>&nbsp;&nbsp;
-      <a href="CommandValuesExt_rus.html">Команды SciTE и Scintilla</a>&nbsp;&nbsp;
+      <a href="CommandValues_rus.html">Команды SciTE и Scintilla</a>&nbsp;&nbsp;
       <a href="SciTE-Ru_Pack_rus.html">Сборка Ru-Board</a>&nbsp;&nbsp;
       <a href="SciTE-Ru_Kernel_rus.html">Ядро SciTE-Ru</a>&nbsp;&nbsp;
       <a href="../tools/LuaLib/shell_rus.html">Shell</a>&nbsp;&nbsp;
@@ -548,7 +548,7 @@ NameError: mistake
 
   <h3><a name="kbdcmd">Клавиатурные команды</a></h3>
 
-  <p>SciTE использует как собственные, так и заданные в движке Scintilla клавиатурные команды. Полный список команд и соответствующих им шорткатов вы можете увидеть в <a href="CommandValuesExt_rus.html">этом документе</a>.<br>
+  <p>SciTE использует как собственные, так и заданные в движке Scintilla клавиатурные команды. Полный список команд и соответствующих им шорткатов вы можете увидеть в <a href="CommandValues_rus.html">этом документе</a>.<br>
   SciTE по большей части придерживается установленных в Windows и GTK+ стандартов. Клавиши навигации (стрелки, page up/down, home и end) поддерживают расширение или сужение области выделения при удержании Shift, а также выделение прямоугольных областей при удержании Shift и Alt. Некоторые клавиши могут быть недоступны в ряде национальных раскладок или в том случае, когда они контролируются системой (например, менеджером окон в GTK+).<br>
   Для задания собственной клавиатурной комбинации можно использовать параметр <dfn>user.shortcuts</dfn>, параметры <dfn>command.shortcut</dfn> (для назначения горячей клавиши на пункт меню <cite>Tools</cite>) или параметр <dfn>menu.language</dfn> (для назначения горячей клавиши на пункт меню <cite>Подсветка</cite>). Обратите внимание, что функции клавиши Home настраиваются при помощи опции <dfn>vc.home.key</dfn>.<br>
   Клавиатурные эквиваленты команд меню указаны в самом меню. Далее перечислены команды, не имеющие эквивалента в меню:</p>
@@ -1760,7 +1760,7 @@ style the path and line number separately from the rest of the line with style 2
         - любую команду ядра Scintilla (ее числовое обозначение)<br>
         - команду встроенного меню SciTE (использовав символьный идентификатор вида <code>IDM_*</code>)<br>
         - любую команду пользовательского меню <cite>Tools</cite>. (Для этого необходимо к номеру нужной команды из этого меню прибавить <var>1200</var> [<span class="ruboardonly">или <var>9000</var> для SciTE-Ru</span>] и полученную сумму вставить как числовой идентификатор.<br>
-        Все доступные команды и их значения перечислены в документации (<a href="CommandValuesExt_rus.html">Command Values</a>).<br>
+        Все доступные команды и их значения перечислены в документации (<a href="CommandValues_rus.html">Command Values</a>).<br>
         Модификаторами являются клавиши <code>Ctrl</code>, <code>Shift</code> и <code>Alt</code>, а в качестве именованных клавиш используются <code>Left</code>, <code>Right</code>, <code>Up</code>, <code>Down</code>, <code>Insert</code>, <code>End</code>, <code>Home</code>, <code>Enter</code>, <code>Space</code>, <code>Tab</code>, <code>KeypadPlus</code>, <code>KeypadMinus</code>, <code>KeypadMultiply</code>, <code>KeypadDivide</code>, <code>Escape</code>, <code>Delete</code>, <code>PageUp</code>, <code>PageDown</code>, <code>Slash</code>, <code>Question</code>, <code>Equal</code>, <code>Win</code>:
 
         <div class="example">

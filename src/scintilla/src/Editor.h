@@ -198,6 +198,7 @@ protected:	// ScintillaBase subclass needs access to much of Editor
 	bool dropWentOutside;
 	SelectionPosition posDrag;
 	SelectionPosition posDrop;
+	int hotSpotClickPos;
 	int lastXChosen;
 	int lineAnchor;
 	int originalAnchorPos;
@@ -219,7 +220,7 @@ protected:	// ScintillaBase subclass needs access to much of Editor
 	PRectangle rcPaint;
 	bool paintingAllText;
 	StyleNeeded styleNeeded;
-	
+
 	int modEventMask;
 
 	SelectionText drag;
@@ -328,6 +329,7 @@ protected:	// ScintillaBase subclass needs access to much of Editor
 	void ScrollTo(int line, bool moveThumb=true);
 	virtual void ScrollText(int linesToMove);
 	void HorizontalScrollTo(int xPos);
+	void VerticalCentreCaret();
 	void MoveCaretInsideView(bool ensureVisible=true);
 	int DisplayFromPosition(int pos);
 
@@ -416,10 +418,10 @@ protected:	// ScintillaBase subclass needs access to much of Editor
 	void NotifySavePoint(bool isSavePoint);
 	void NotifyModifyAttempt();
 	virtual void NotifyDoubleClick(Point pt, bool shift, bool ctrl, bool alt);
-	void NotifyClick(Point pt, bool shift, bool ctrl, bool alt); //-add-[OnClick]
 	void NotifyMouseButtonUp(Point pt, bool ctrl); //!-add-[OnMouseButtonUp]
 	void NotifyHotSpotClicked(int position, bool shift, bool ctrl, bool alt);
 	void NotifyHotSpotDoubleClicked(int position, bool shift, bool ctrl, bool alt);
+	void NotifyHotSpotReleaseClick(int position, bool shift, bool ctrl, bool alt);
 	void NotifyUpdateUI();
 	void NotifyPainted();
 	void NotifyIndicatorClick(bool click, int position, bool shift, bool ctrl, bool alt);

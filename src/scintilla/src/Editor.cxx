@@ -136,6 +136,7 @@ Editor::Editor() {
 	dropWentOutside = false;
 	posDrag = SelectionPosition(invalidPosition);
 	posDrop = SelectionPosition(invalidPosition);
+	hotSpotClickPos = INVALID_POSITION;
 	selectionType = selChar;
 
 	lastXChosen = 0;
@@ -998,6 +999,16 @@ void Editor::HorizontalScrollTo(int xPos) {
 	}
 }
 
+void Editor::VerticalCentreCaret() {
+	int lineDoc = pdoc->LineFromPosition(sel.IsRectangular() ? sel.Rectangular().caret.Position() : sel.MainCaret());
+	int lineDisplay = cs.DisplayFromDoc(lineDoc);
+	int newTop = lineDisplay - (LinesOnScreen() / 2);
+	if (topLine != newTop) {
+		SetTopLine(newTop > 0 ? newTop : 0);
+		RedrawRect(GetClientRectangle());
+	}
+}
+
 void Editor::MoveCaretInsideView(bool ensureVisible) {
 	PRectangle rcClient = GetTextRectangle();
 	Point pt = PointMainCaret();
@@ -1088,7 +1099,7 @@ Editor::XYScrollPosition Editor::XYScrollToMakeVisible(const bool useMargin, con
 	XYScrollPosition newXY(xOffset, topLine);
 
 	// Vertical positioning
-	if (vert && (pt.y < rcClient.top || ptBottomCaret.y > rcClient.bottom || (caretYPolicy & CARET_STRICT) != 0)) {
+	if (vert && (pt.y < rcClient.top || ptBottomCaret.y >= rcClient.bottom || (caretYPolicy & CARET_STRICT) != 0)) {
 		const int linesOnScreen = LinesOnScreen();
 		const int halfScreen = Platform::Maximum(linesOnScreen - 1, 2) / 2;
 		const bool bSlop = (caretYPolicy & CARET_SLOP) != 0;
@@ -2104,13 +2115,11 @@ void Editor::LayoutLine(int line, Surface *surface, ViewStyle &vstyle, LineLayou
 			numCharsBeforeEOL--;
 		}
 		const int numCharsInLine = (vstyle.viewEOL) ? lineLength : numCharsBeforeEOL;
-		int charInLine = 0; //!-add-[no_wornings]
-//!		for (int charInLine = 0; charInLine < numCharsInLine; charInLine++) {
-		for (charInLine = 0; charInLine < numCharsInLine; charInLine++) { //!-change-[no_wornings]
-			styleByte = ll->styles[charInLine];
+		for (int styleInLine = 0; styleInLine < numCharsInLine; styleInLine++) {
+			styleByte = ll->styles[styleInLine];
 			ll->styleBitsSet |= styleByte;
-			ll->styles[numCharsInLine] = static_cast<char>(styleByte & styleMask);
-			ll->indicators[numCharsInLine] = static_cast<char>(styleByte & ~styleMask);
+			ll->styles[styleInLine] = static_cast<char>(styleByte & styleMask);
+			ll->indicators[styleInLine] = static_cast<char>(styleByte & ~styleMask);
 		}
 		if (vstyle.someStylesForceCase) {
 			for (int charInLine = 0; charInLine<lineLength; charInLine++) {
@@ -2140,8 +2149,7 @@ void Editor::LayoutLine(int line, Surface *surface, ViewStyle &vstyle, LineLayou
 		bool isControlNext = IsControlCharacter(ll->chars[0]);
 		int trailBytes = 0;
 		bool isBadUTFNext = IsUnicodeMode() && BadUTF(ll->chars, numCharsInLine, trailBytes);
-//!		for (int charInLine = 0; charInLine < numCharsInLine; charInLine++) {
-		for (charInLine = 0; charInLine < numCharsInLine; charInLine++) { //!-change-[no_wornings]
+		for (int charInLine = 0; charInLine < numCharsInLine; charInLine++) {
 			bool isControl = isControlNext;
 			isControlNext = IsControlCharacter(ll->chars[charInLine + 1]);
 			bool isBadUTF = isBadUTFNext;
@@ -4244,18 +4252,6 @@ void Editor::NotifyDoubleClick(Point pt, bool shift, bool ctrl, bool alt) {
 	NotifyParent(scn);
 }
 
-//-start-[OnClick]
-void Editor::NotifyClick(Point pt, bool shift, bool ctrl, bool alt) {
-	SCNotification scn = {0};
-	scn.nmhdr.code = SCN_CLICK;
-	scn.line = LineFromLocation(pt);
-	scn.position = PositionFromLocation(pt, true);
-	scn.modifiers = (shift ? SCI_SHIFT : 0) | (ctrl ? SCI_CTRL : 0) |
-		(alt ? SCI_ALT : 0);
-	NotifyParent(scn);
-}
-//-end-[OnClick]
-
 //!-start-[OnMouseButtonUp]
 void Editor::NotifyMouseButtonUp(Point pt, bool ctrl) {
 	SCNotification scn = {0};
@@ -4279,6 +4275,15 @@ void Editor::NotifyHotSpotDoubleClicked(int position, bool shift, bool ctrl, boo
 void Editor::NotifyHotSpotClicked(int position, bool shift, bool ctrl, bool alt) {
 	SCNotification scn = {0};
 	scn.nmhdr.code = SCN_HOTSPOTCLICK;
+	scn.position = position;
+	scn.modifiers = (shift ? SCI_SHIFT : 0) | (ctrl ? SCI_CTRL : 0) |
+	        (alt ? SCI_ALT : 0);
+	NotifyParent(scn);
+}
+
+void Editor::NotifyHotSpotReleaseClick(int position, bool shift, bool ctrl, bool alt) {
+	SCNotification scn = {0};
+	scn.nmhdr.code = SCN_HOTSPOTRELEASECLICK;
 	scn.position = position;
 	scn.modifiers = (shift ? SCI_SHIFT : 0) | (ctrl ? SCI_CTRL : 0) |
 	        (alt ? SCI_ALT : 0);
@@ -4666,6 +4671,7 @@ void Editor::NotifyMacroRecord(unsigned int iMessage, uptr_t wParam, sptr_t lPar
 	case SCI_PAGEDOWNRECTEXTEND:
 	case SCI_SELECTIONDUPLICATE:
 	case SCI_COPYALLOWLINE:
+	case SCI_VERTICALCENTRECARET:
 		break;
 
 		// Filter out all others like display changes. Also, newlines are redundant
@@ -5962,8 +5968,6 @@ void Editor::ButtonDown(Point pt, unsigned int curTime, bool shift, bool ctrl, b
 	inDragDrop = ddNone;
 	sel.SetMoveExtends(false);
 
-	bool notifyClick = false; //-add-[OnClick]
-
 	bool processed = NotifyMarginClick(pt, shift, ctrl, alt);
 	if (processed)
 		return;
@@ -6045,6 +6049,7 @@ void Editor::ButtonDown(Point pt, unsigned int curTime, bool shift, bool ctrl, b
 		} else {
 			if (PointIsHotspot(pt)) {
 				NotifyHotSpotClicked(newPos.Position(), shift, ctrl, alt);
+				hotSpotClickPos = PositionFromLocation(pt,true,false);
 			}
 			if (!shift) {
 				if (PointInSelection(pt) && !SelectionEmpty())
@@ -6079,13 +6084,11 @@ void Editor::ButtonDown(Point pt, unsigned int curTime, bool shift, bool ctrl, b
 				sel.Rectangular() = SelectionRange(newPos, anchorCurrent);
 				SetRectangularRange();
 			}
-			notifyClick = true; //-add-[OnClick]
 		}
 	}
 	lastClickTime = curTime;
 	lastXChosen = pt.x + xOffset;
 	ShowCaretAtCurrentPosition();
-	if (notifyClick) NotifyClick(pt, shift, ctrl, alt); //-add-[OnClick]
 }
 
 bool Editor::PositionIsHotspot(int position) {
@@ -6226,6 +6229,13 @@ void Editor::ButtonMove(Point pt) {
 		if (hsStart != -1 && !PositionIsHotspot(movePos.Position()))
 			SetHotSpotRange(NULL);
 
+		if (hotSpotClickPos != INVALID_POSITION && PositionFromLocation(pt,true,false) != hotSpotClickPos ) {
+			if (inDragDrop == ddNone) {
+				DisplayCursor(Window::cursorText);
+			}
+			hotSpotClickPos = INVALID_POSITION;
+		}
+
 	} else {
 		if (vs.fixedColumnWidth > 0) {	// There is a margin
 			if (PointInSelMargin(pt)) {
@@ -6260,6 +6270,10 @@ void Editor::ButtonUp(Point pt, unsigned int curTime, bool ctrl) {
 	if (inDragDrop == ddInitial) {
 		inDragDrop = ddNone;
 		SetEmptySelection(newPos.Position());
+	}
+	if (hotSpotClickPos != INVALID_POSITION && PointIsHotspot(pt)) {
+		hotSpotClickPos = INVALID_POSITION;
+		NotifyHotSpotReleaseClick(newPos.Position(), false, ctrl, false);
 	}
 	if (HaveMouseCapture()) {
 		if (PointInSelMargin(pt)) {
@@ -6415,7 +6429,7 @@ void Editor::StyleToPositionInView(Position pos) {
 	int styleAtEnd = pdoc->StyleAt(pos-1);
 	pdoc->EnsureStyledTo(pos);
 	if ((endWindow > pos) && (styleAtEnd != pdoc->StyleAt(pos-1))) {
-		// Style at end of line changed so is multi-line change like starting a comment 
+		// Style at end of line changed so is multi-line change like starting a comment
 		// so require rest of window to be styled.
 		pdoc->EnsureStyledTo(endWindow);
 	}
@@ -6888,6 +6902,10 @@ sptr_t Editor::WndProc(unsigned int iMessage, uptr_t wParam, sptr_t lParam) {
 
 	case SCI_COPYALLOWLINE:
 		CopyAllowLine();
+		break;
+
+	case SCI_VERTICALCENTRECARET:
+		VerticalCentreCaret();
 		break;
 
 	case SCI_COPYRANGE:
