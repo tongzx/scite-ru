@@ -65,7 +65,6 @@ public:
 //!	virtual bool OnDoubleClick();
 	virtual bool OnDoubleClick(int); //!-add-[OnDoubleClick]
 	virtual bool OnHotSpotReleaseClick(int); //!-add-[OnClick]
-	virtual bool OnMouseButtonUp(int); //!-add-[OnMouseButtonUp]
 	virtual bool OnUpdateUI();
 	virtual bool OnMarginClick();
 	virtual bool OnMacro(const char *, const char *);

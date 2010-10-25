@@ -1,7 +1,7 @@
 --[[----------------------------------------------------------------------------
 Select_And_Open_Filename.lua
 Author: VladVRO
-version 1.4.4
+version 1.4.5
 
 Расширение команды "Открыть выделенный файл" для случая когда выделения нет.
 А также возможность открыть файл по двойному клику мыши на его имени при нажатой
@@ -148,7 +148,7 @@ AddEventHandler("OnMenuCommand", function(msg, source)
 	end
 end)
 
-AddEventHandler("OnMouseButtonUp", launch_open)
+AddEventHandler("OnHotSpotReleaseClick", launch_open)
 
 AddEventHandler("OnDoubleClick", function(shift, ctrl, alt)
 	if ctrl and props["select.and.open.by.click"] == "1" then

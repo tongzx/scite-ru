@@ -35,7 +35,6 @@ public:
 //!	virtual bool OnDoubleClick();
 	virtual bool OnDoubleClick(int modifiers); //!-add-[OnDoubleClick]
 	virtual bool OnHotSpotReleaseClick(int modifiers); //!-add-[OnClick]
-	virtual bool OnMouseButtonUp(int modifiers); //!-add-[OnMouseButtonUp]
 	virtual bool OnUpdateUI();
 	virtual bool OnMarginClick();
 	virtual bool OnUserListSelection(int listType, const char *selection);

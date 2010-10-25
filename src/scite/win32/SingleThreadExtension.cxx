@@ -142,12 +142,6 @@ bool SingleThreadExtension::OnHotSpotReleaseClick(int modifiers){
 }
 //!-end-[OnClick]
 
-//!-start-[OnMouseButtonUp]
-bool SingleThreadExtension::OnMouseButtonUp(int modifiers){
-	return ext->OnMouseButtonUp(modifiers);
-}
-//!-end-[OnMouseButtonUp]
-
 bool SingleThreadExtension::OnUpdateUI() {
 	return ext->OnUpdateUI();
 }

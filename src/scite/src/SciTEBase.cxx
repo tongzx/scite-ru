@@ -4766,17 +4766,6 @@ void SciTEBase::Notify(SCNotification *notification) {
 		break;
 //!-end-[OnClick][MouseClickHandled]
 
-//!-start-[OnMouseButtonUp][GoMessageImprovement]
-	case SCN_MOUSEBUTTONUP:
-		if (extender)
-			extender->OnMouseButtonUp(notification->modifiers);
-		if (preserveFocusOnEditor) {
-			preserveFocusOnEditor = false;
-			WindowSetFocus(wEditor);
-		}
-		break;
-//!-end-[OnMouseButtonUp][GoMessageImprovement]
-
 	case SCN_UPDATEUI:
 		if (extender)
 			handled = extender->OnUpdateUI();

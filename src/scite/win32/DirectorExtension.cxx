@@ -261,12 +261,6 @@ bool DirectorExtension::OnHotSpotReleaseClick(int){
 }
 //!-end-[OnClick]
 
-//!-start-[OnMouseButtonUp]
-bool DirectorExtension::OnMouseButtonUp(int){ 
-	return false;
-}
-//!-end-[OnMouseButtonUp]
-
 bool DirectorExtension::OnUpdateUI() {
 	return false;
 }
