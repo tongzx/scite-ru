@@ -4755,7 +4755,7 @@ void SciTEBase::Notify(SCNotification *notification) {
 //!-begin-[OnClick][MouseClickHandled]
 	case SCN_HOTSPOTRELEASECLICK:
 		if (extender) {
-			handled = extender->OnClick(notification->modifiers);
+			handled = extender->OnHotSpotReleaseClick(notification->modifiers);
 			if (handled) {
 				if (notification->nmhdr.idFrom == IDM_RUNWIN)
 					wOutput.Call(SCI_SETMOUSECAPTURE, 0);

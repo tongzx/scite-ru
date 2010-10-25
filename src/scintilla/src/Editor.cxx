@@ -5968,6 +5968,8 @@ void Editor::ButtonDown(Point pt, unsigned int curTime, bool shift, bool ctrl, b
 	inDragDrop = ddNone;
 	sel.SetMoveExtends(false);
 
+	bool notifyClick = false; //-add-[OnClick]
+
 	bool processed = NotifyMarginClick(pt, shift, ctrl, alt);
 	if (processed)
 		return;
@@ -6084,11 +6086,13 @@ void Editor::ButtonDown(Point pt, unsigned int curTime, bool shift, bool ctrl, b
 				sel.Rectangular() = SelectionRange(newPos, anchorCurrent);
 				SetRectangularRange();
 			}
+			notifyClick = true; //-add-[OnClick]
 		}
 	}
 	lastClickTime = curTime;
 	lastXChosen = pt.x + xOffset;
 	ShowCaretAtCurrentPosition();
+	if (notifyClick) NotifyHotSpotReleaseClick(hotSpotClickPos, shift, ctrl, alt); //-add-[OnClick]
 }
 
 bool Editor::PositionIsHotspot(int position) {

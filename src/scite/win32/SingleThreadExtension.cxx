@@ -137,8 +137,8 @@ bool SingleThreadExtension::OnDoubleClick(int modifiers){
 //!-end-[OnDoubleClick]
 
 //!-start-[OnClick]
-bool SingleThreadExtension::OnClick(int modifiers){
-	return ext->OnClick(modifiers);
+bool SingleThreadExtension::OnHotSpotReleaseClick(int modifiers){
+	return ext->OnHotSpotReleaseClick(modifiers);
 }
 //!-end-[OnClick]
 

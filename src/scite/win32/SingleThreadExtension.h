@@ -38,7 +38,7 @@ public:
 	virtual bool OnStyle(unsigned int, int, int, StyleWriter *);
 //!	virtual bool OnDoubleClick();
 	virtual bool OnDoubleClick(int modifiers); //!-add-[OnDoubleClick]
-	virtual bool OnClick(int modifiers); //!-add-[OnClick]
+	virtual bool OnHotSpotReleaseClick(int modifiers); //!-add-[OnClick]
 	virtual bool OnMouseButtonUp(int modifiers); //!-add-[OnMouseButtonUp]
 	virtual bool OnUpdateUI();
 	virtual bool OnMarginClick();

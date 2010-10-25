@@ -201,10 +201,10 @@ bool MultiplexExtension::OnDoubleClick(int modifiers) {
 //!-end-[OnDoubleClick]
 
 //!-start-[OnClick]
-bool MultiplexExtension::OnClick(int modifiers) {
+bool MultiplexExtension::OnHotSpotReleaseClick(int modifiers) {
 	bool handled = false;
 	for (int i=0; i<extensionCount && !handled; ++i)
-		if (extensions[i]->OnClick(modifiers))
+		if (extensions[i]->OnHotSpotReleaseClick(modifiers))
 			handled = true;
 		return handled;
 }

@@ -256,7 +256,7 @@ bool DirectorExtension::OnDoubleClick(int){ //!-changed-[OnDoubleClick]
 }
 
 //!-start-[OnClick]
-bool DirectorExtension::OnClick(int){ 
+bool DirectorExtension::OnHotSpotReleaseClick(int){ 
 	return false;
 }
 //!-end-[OnClick]

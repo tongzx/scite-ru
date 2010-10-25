@@ -2208,10 +2208,10 @@ bool LuaExtension::OnDoubleClick(int modifiers) {
 //!-end-[OnDoubleClick]
 
 //!-start-[OnClick]
-bool LuaExtension::OnClick(int modifiers) {
+bool LuaExtension::OnHotSpotReleaseClick(int modifiers) {
 	bool handled = false;
 	if (luaState) {
-		lua_getglobal(luaState, "OnClick");
+		lua_getglobal(luaState, "OnHotSpotReleaseClick");
 		if (lua_isfunction(luaState, -1)) {
 			lua_pushboolean(luaState, (SCMOD_SHIFT & modifiers) != 0 ? 1 : 0); // shift/lock
 			lua_pushboolean(luaState, (SCMOD_CTRL  & modifiers) != 0 ? 1 : 0); // control

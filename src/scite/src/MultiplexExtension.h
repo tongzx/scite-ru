@@ -64,7 +64,7 @@ public:
 	virtual bool OnStyle(unsigned int, int, int, StyleWriter *);
 //!	virtual bool OnDoubleClick();
 	virtual bool OnDoubleClick(int); //!-add-[OnDoubleClick]
-	virtual bool OnClick(int); //!-add-[OnClick]
+	virtual bool OnHotSpotReleaseClick(int); //!-add-[OnClick]
 	virtual bool OnMouseButtonUp(int); //!-add-[OnMouseButtonUp]
 	virtual bool OnUpdateUI();
 	virtual bool OnMarginClick();
