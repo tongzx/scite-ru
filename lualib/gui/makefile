@@ -9,15 +9,15 @@ gui.dll: gui_ext.o $(YAWL)
 	g++ $(CFLAGS) -s -shared -o gui.dll gui_ext.o $(YAWL) $(LIBDIR) $(LIBS)
 
 gui_ext.o: gui_ext.cpp yawl.h
-	g++ $(CFLAGS) -MMD -c -I$(LUA_INCLUDE) gui_ext.cpp
+	g++ $(CFLAGS) -c -I$(LUA_INCLUDE) gui_ext.cpp
 
 clean:
-	-del /s *.o *.d >nul
+	-del /s *.o >nul
 
 vpath %.cpp yawl
 
 .cpp.o:
-	g++ $(CFLAGS) -MMD -c $< -o $@
+	g++ $(CFLAGS) -c $< -o $@
 
 twl.o: yawl/twl.cpp
 
