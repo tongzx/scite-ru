@@ -1,5 +1,5 @@
 -- COMMON.lua
--- Version: 1.7.0
+-- Version: 1.7.1
 ---------------------------------------------------
 -- Общие функции, использующиеся во многих скриптах
 ---------------------------------------------------
@@ -221,6 +221,9 @@ local function EditorInitMarkStyles()
 			InitMarkStyle(mark_number, mark_style, mark_color, alpha_fill)
 		end
 	end
+	-- Задаем вертикальную тонкую линию, отделяющую колонку маркеров фолдинга от текста (для красоты)
+	editor.MarginTypeN[3] = SC_MARGIN_TEXT
+	editor.MarginWidthN[3] = 1
 end
 AddEventHandler("OnOpen", EditorInitMarkStyles, 'Once')
 
