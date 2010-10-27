@@ -1,5 +1,5 @@
 -- COMMON.lua
--- Version: 1.7.1
+-- Version: 1.8.0
 ---------------------------------------------------
 -- Общие функции, использующиеся во многих скриптах
 ---------------------------------------------------
@@ -155,32 +155,32 @@ end
 ------[[ T E X T   M A R K S ]]-------------------------
 
 -- Выделение текста маркером определенного стиля
-function EditorMarkText(start, length, style_number)
-	local current_mark_number = scite.SendEditor(SCI_GETINDICATORCURRENT)
-	scite.SendEditor(SCI_SETINDICATORCURRENT, style_number)
+function EditorMarkText(start, length, indic_number)
+	local current_indic_number = scite.SendEditor(SCI_GETINDICATORCURRENT)
+	scite.SendEditor(SCI_SETINDICATORCURRENT, indic_number)
 	scite.SendEditor(SCI_INDICATORFILLRANGE, start, length)
-	scite.SendEditor(SCI_SETINDICATORCURRENT, current_mark_number)
+	scite.SendEditor(SCI_SETINDICATORCURRENT, current_indic_number)
 end
 
 -- Очистка текста от маркерного выделения заданного стиля
 --   если параметры отсутсвуют - очищаются все стили во всем тексте
 --   если не указана позиция и длина - очищается весь текст
-function EditorClearMarks(style_number, start, length)
-	local _first_style, _end_style, style
-	local current_mark_number = scite.SendEditor(SCI_GETINDICATORCURRENT)
-	if style_number == nil then
-		_first_style, _end_style = 0, 31
+function EditorClearMarks(indic_number, start, length)
+	local _first_indic, _end_indic, indic
+	local current_indic_number = scite.SendEditor(SCI_GETINDICATORCURRENT)
+	if indic_number == nil then
+		_first_indic, _end_indic = 0, 31
 	else
-		_first_style, _end_style = style_number, style_number
+		_first_indic, _end_indic = indic_number, indic_number
 	end
 	if start == nil then
 		start, length = 0, editor.Length
 	end
-	for style = _first_style, _end_style do
-		scite.SendEditor(SCI_SETINDICATORCURRENT, style)
+	for indic = _first_indic, _end_indic do
+		scite.SendEditor(SCI_SETINDICATORCURRENT, indic)
 		scite.SendEditor(SCI_INDICATORCLEARRANGE, start, length)
 	end
-	scite.SendEditor(SCI_SETINDICATORCURRENT, current_mark_number)
+	scite.SendEditor(SCI_SETINDICATORCURRENT, current_indic_number)
 end
 
 ----------------------------------------------------------------------------
@@ -195,37 +195,37 @@ local function encodeRGB2WIN(color)
 	end
 end
 
-local function InitMarkStyle(mark_number, mark_style, color, alpha_fill)
-	editor.IndicStyle[mark_number] = mark_style
-	editor.IndicFore[mark_number] = encodeRGB2WIN(color)
-	editor.IndicAlpha[mark_number] = alpha_fill
-end
-
-local function style(mark_string)
-	local mark_style_table = {
-		plain    = INDIC_PLAIN,    squiggle = INDIC_SQUIGGLE,
-		tt       = INDIC_TT,       diagonal = INDIC_DIAGONAL,
-		strike   = INDIC_STRIKE,   hidden   = INDIC_HIDDEN,
-		roundbox = INDIC_ROUNDBOX, box      = INDIC_BOX
-	}
-	return mark_style_table[mark_string]
+local function InitMarkStyle(indic_number, indic_style, indic_color, indic_alpha)
+	editor.IndicStyle[indic_number] = indic_style
+	editor.IndicFore[indic_number] = encodeRGB2WIN(indic_color)
+	editor.IndicAlpha[indic_number] = indic_alpha
 end
 
 local function EditorInitMarkStyles()
-	for mark_number = 0, 31 do
-		local mark = props["find.mark."..mark_number]
+	local string2value = {
+		plain    = INDIC_PLAIN,    squiggle = INDIC_SQUIGGLE,
+		tt       = INDIC_TT,       diagonal = INDIC_DIAGONAL,
+		strike   = INDIC_STRIKE,   hidden   = INDIC_HIDDEN,
+		roundbox = INDIC_ROUNDBOX, box      = INDIC_BOX,
+		hotspot  = INDIC_HOTSPOT
+	}
+	for indic_number = 0, 31 do
+		local mark = props["indic.style."..indic_number]
 		if mark ~= "" then
-			local mark_color = mark:match("#%x%x%x%x%x%x") or (props["find.mark"]):match("#%x%x%x%x%x%x") or "#0F0F0F"
-			local mark_style = style(mark:match("%l+")) or INDIC_ROUNDBOX
-			local alpha_fill = tonumber((mark:match("%@%d+") or ""):sub(2)) or 30
-			InitMarkStyle(mark_number, mark_style, mark_color, alpha_fill)
+			local indic_color = mark:match("#%x%x%x%x%x%x") or (props["find.mark"]):match("#%x%x%x%x%x%x") or "#0F0F0F"
+			local indic_style = string2value[mark:match("%l+")] or INDIC_ROUNDBOX
+			local indic_alpha = tonumber((mark:match("%@%d+") or ""):sub(2)) or 30
+			InitMarkStyle(indic_number, indic_style, indic_color, indic_alpha)
 		end
 	end
-	-- Задаем вертикальную тонкую линию, отделяющую колонку маркеров фолдинга от текста (для красоты)
+end
+
+----------------------------------------------------------------------------
+-- Отрисовка вертикальной тонкой линии, отделяющей колонку маркеров фолдинга от текста (для красоты)
+local function SetMarginTypeN()
 	editor.MarginTypeN[3] = SC_MARGIN_TEXT
 	editor.MarginWidthN[3] = 1
 end
-AddEventHandler("OnOpen", EditorInitMarkStyles, 'Once')
 
 ----------------------------------------------------------------------------
 -- Инвертирование состояния заданного параметра (используется для снятия/установки "галок" в меню)
@@ -264,3 +264,11 @@ function os_copy(source_path,dest_path)
 	end)
 end
 -- ==============================================================
+
+-- Функции, выполняющиеся только один раз, при открытии первого файла
+--   ( Выполнить их сразу, при загрузке SciTEStartup.lua, нельзя
+--   получим сообщение об ошибке: "Editor pane is not accessible at this time." )
+AddEventHandler("OnOpen", function(file)
+	EditorInitMarkStyles()
+	SetMarginTypeN()
+end, 'RunOnce')

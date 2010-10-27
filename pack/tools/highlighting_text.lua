@@ -1,6 +1,6 @@
 --[[--------------------------------------------------
 Text Highlighting
-Version: 1.0
+Version: 1.0.1
 Author: VladVRO
 ------------------------------
 Description:
@@ -12,7 +12,7 @@ Script uses the functions from COMMON.lua (EditorMarkText, EditorClearMarks)
 Installation:
 Setup next propertions:
 	highlighting.text.marker=6
-	find.mark.6=#FF0080,@120
+	indic.style.6=#FF0080,@120
 
 Setup next menu commands:
   command.name.40.*=Highlight Selected Text

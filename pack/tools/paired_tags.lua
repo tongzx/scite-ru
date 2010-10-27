@@ -1,6 +1,6 @@
 --[[--------------------------------------------------
 Paired Tags (логическое продолжение скриптов highlighting_paired_tags.lua и HTMLFormatPainter.lua)
-Version: 2.2.7
+Version: 2.2.8
 Author: mozers™, VladVRO, TymurGubayev, nail333
 ------------------------------
 Подсветка парных и непарных тегов в HTML и XML
@@ -19,8 +19,8 @@ Author: mozers™, VladVRO, TymurGubayev, nail333
 Добавить в файл настроек параметр:
 	hypertext.highlighting.paired.tags=1
 Дополнительно можно задать стили используемых маркеров (1 и 2):
-	find.mark.1=#0099FF
-	find.mark.2=#FF0000 (если этот параметр не задан, то непарные теги не подсвечиваются)
+	indic.style.1=#0099FF
+	indic.style.2=#FF0000 (если этот параметр не задан, то непарные теги не подсвечиваются)
 
 Команды копирования, вставки, удаления тегов добавляются в меню Tools обычным порядком:
 	tagfiles=$(file.patterns.html);$(file.patterns.xml)
@@ -176,7 +176,7 @@ local function PairedTagsFinder()
 		EditorMarkText(t.tag_start + 1, t.tag_end - t.tag_start - 1, 1)
 		EditorMarkText(t.paired_start + 1, t.paired_end - t.paired_start - 1, 1)
 	else
-		if props["find.mark.2"] ~= '' then
+		if props["indic.style.2"] ~= '' then
 			-- paint in Red
 			EditorMarkText(t.tag_start + 1, t.tag_end - t.tag_start - 1, 2)
 		end
