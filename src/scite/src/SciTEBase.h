@@ -314,9 +314,11 @@ public:
 	int caseForce;
 	bool visible;
 	bool changeable;
+	bool hotspot; //!-add-[StyleDefHotspot]
 	enum flags { sdNone = 0, sdFont = 0x1, sdSize = 0x2, sdFore = 0x4, sdBack = 0x8,
 	        sdBold = 0x10, sdItalics = 0x20, sdEOLFilled = 0x40, sdUnderlined = 0x80,
-	        sdCaseForce = 0x100, sdVisible = 0x200, sdChangeable = 0x400} specified;
+//!	        sdCaseForce = 0x100, sdVisible = 0x200, sdChangeable = 0x400} specified;
+	        sdCaseForce = 0x100, sdVisible = 0x200, sdChangeable = 0x400, sdHotspot = 0x800} specified; //!-change-[StyleDefHotspot]
 	StyleDefinition(const char *definition);
 	bool ParseStyleDefinition(const char *definition);
 	long ForeAsLong() const;

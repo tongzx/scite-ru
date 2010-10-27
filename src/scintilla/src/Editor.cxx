@@ -6260,10 +6260,10 @@ void Editor::ButtonUp(Point pt, unsigned int curTime, bool ctrl) {
 		inDragDrop = ddNone;
 		SetEmptySelection(newPos.Position());
 	}
-//!	if (hotSpotClickPos != INVALID_POSITION && PointIsHotspot(pt)) { // непонятно почему, но проверка не проходит (Ошибка Нейла?)
+	if (hotSpotClickPos != INVALID_POSITION && PointIsHotspot(pt)) {
 		hotSpotClickPos = INVALID_POSITION;
 		NotifyHotSpotReleaseClick(newPos.Position(), false, ctrl, false);
-//!	} //-remove-[onClick]
+	}
 	if (HaveMouseCapture()) {
 		if (PointInSelMargin(pt)) {
 			DisplayCursor(Window::cursorReverseArrow);
