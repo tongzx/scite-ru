@@ -66,7 +66,9 @@ public:
 	}
 //!	virtual bool OnDoubleClick() { return false; }
 	virtual bool OnDoubleClick(int) { return false; } //!-add-[OnDoubleClick]
-	virtual bool OnHotSpotReleaseClick(int) { return false; } //!-add-[OnClick]
+	virtual bool OnClick(int) { return false; } //!-add-[OnClick]
+	virtual bool OnMouseButtonUp(int) { return false; } //!-add-[OnMouseButtonUp]
+	virtual bool OnHotSpotReleaseClick(int) { return false; } //!-add-[OnHotSpotReleaseClick]
 	virtual bool OnUpdateUI() { return false; }
 	virtual bool OnMarginClick() { return false; }
 	virtual bool OnMacro(const char *, const char *) { return false; }

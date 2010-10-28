@@ -3987,6 +3987,12 @@ evt void IndicatorRelease=2024(int modifiers, int position)
 evt void AutoCCancelled=2025(void)
 evt void AutoCCharDeleted=2026(void)
 evt void HotSpotReleaseClick=2027(int modifiers, int position)
+##!-start-[OnClick]
+evt void Click=2061(int modifiers)
+##!-end-[OnClick]
+##!-start-[OnMouseButtonUp]
+evt void MouseButtonUp=2062(int modifiers)
+##!-end-[OnMouseButtonUp]
 ##!-start-[autocompleteword.incremental]
 evt void AutoCUpdated=2038(void)
 ##!-end-[autocompleteword.incremental]

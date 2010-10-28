@@ -34,7 +34,9 @@ public:
 	virtual bool OnStyle(unsigned int startPos, int lengthDoc, int initStyle, StyleWriter *styler);
 //!	virtual bool OnDoubleClick();
 	virtual bool OnDoubleClick(int modifiers); //!-add-[OnDoubleClick]
-	virtual bool OnHotSpotReleaseClick(int modifiers); //!-add-[OnClick]
+	virtual bool OnClick(int modifiers); //!-add-[OnClick]
+	virtual bool OnMouseButtonUp(int modifiers); //!-add-[OnMouseButtonUp]
+	virtual bool OnHotSpotReleaseClick(int modifiers); //!-add-[OnHotSpotReleaseClick]
 	virtual bool OnUpdateUI();
 	virtual bool OnMarginClick();
 	virtual bool OnUserListSelection(int listType, const char *selection);

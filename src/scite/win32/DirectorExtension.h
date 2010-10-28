@@ -30,7 +30,9 @@ public:
 	virtual bool OnStyle(unsigned int startPos, int lengthDoc, int initStyle, StyleWriter *styler);
 //!	virtual bool OnDoubleClick();
 	virtual bool OnDoubleClick(int); //!-add-[OnDoubleClick]
-	virtual bool OnHotSpotReleaseClick(int); //!-add-[OnClick]
+	virtual bool OnClick(int); //!-add-[OnClick]
+	virtual bool OnMouseButtonUp(int); //!-add-[OnMouseButtonUp]
+	virtual bool OnHotSpotReleaseClick(int); //!-add-[OnHotSpotReleaseClick]
 	virtual bool OnUpdateUI();
 	virtual bool OnMarginClick();
 	virtual bool OnMacro(const char *command, const char *params);

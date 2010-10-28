@@ -4253,6 +4253,29 @@ void Editor::NotifyDoubleClick(Point pt, bool shift, bool ctrl, bool alt) {
 	NotifyParent(scn);
 }
 
+//-start-[OnClick]
+void Editor::NotifyClick(Point pt, bool shift, bool ctrl, bool alt) {
+	SCNotification scn = {0};
+	scn.nmhdr.code = SCN_CLICK;
+	scn.line = LineFromLocation(pt);
+	scn.position = PositionFromLocation(pt, true);
+	scn.modifiers = (shift ? SCI_SHIFT : 0) | (ctrl ? SCI_CTRL : 0) |
+		(alt ? SCI_ALT : 0);
+	NotifyParent(scn);
+}
+//-end-[OnClick]
+
+//!-start-[OnMouseButtonUp]
+void Editor::NotifyMouseButtonUp(Point pt, bool ctrl) {
+	SCNotification scn = {0};
+	scn.nmhdr.code = SCN_MOUSEBUTTONUP;
+	scn.line = LineFromLocation(pt);
+	scn.position = PositionFromLocation(pt, true);
+	scn.modifiers = (ctrl ? SCI_CTRL : 0);
+	NotifyParent(scn);
+}
+//!-end-[OnMouseButtonUp]
+
 void Editor::NotifyHotSpotDoubleClicked(int position, bool shift, bool ctrl, bool alt) {
 	SCNotification scn = {0};
 	scn.nmhdr.code = SCN_HOTSPOTDOUBLECLICK;
@@ -5958,6 +5981,8 @@ void Editor::ButtonDown(Point pt, unsigned int curTime, bool shift, bool ctrl, b
 	inDragDrop = ddNone;
 	sel.SetMoveExtends(false);
 
+	bool notifyClick = false; //-add-[OnClick]
+
 	bool processed = NotifyMarginClick(pt, shift, ctrl, alt);
 	if (processed)
 		return;
@@ -6074,11 +6099,13 @@ void Editor::ButtonDown(Point pt, unsigned int curTime, bool shift, bool ctrl, b
 				sel.Rectangular() = SelectionRange(newPos, anchorCurrent);
 				SetRectangularRange();
 			}
+			notifyClick = true; //-add-[OnClick]
 		}
 	}
 	lastClickTime = curTime;
 	lastXChosen = pt.x + xOffset;
 	ShowCaretAtCurrentPosition();
+	if (notifyClick) NotifyClick(pt, shift, ctrl, alt); //-add-[OnClick]
 }
 
 bool Editor::PositionIsHotspot(int position) {
@@ -6328,6 +6355,7 @@ void Editor::ButtonUp(Point pt, unsigned int curTime, bool ctrl) {
 		inDragDrop = ddNone;
 		EnsureCaretVisible(false);
 	}
+	NotifyMouseButtonUp(pt, ctrl); //!-add-[OnMouseButtonUp]
 }
 
 // Called frequently to perform background UI including

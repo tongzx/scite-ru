@@ -4753,6 +4753,20 @@ void SciTEBase::Notify(SCNotification *notification) {
 //!-end-[OnDoubleClick][GoMessageImprovement][MouseClickHandled]
 
 //!-begin-[OnClick][MouseClickHandled]
+	case SCN_CLICK:
+		if (extender) {
+			handled = extender->OnClick(notification->modifiers);
+			if (handled) {
+				if (notification->nmhdr.idFrom == IDM_RUNWIN)
+					wOutput.Call(SCI_SETMOUSECAPTURE, 0);
+				else
+					wEditor.Call(SCI_SETMOUSECAPTURE, 0);
+			}
+		}
+		break;
+//!-end-[OnClick][MouseClickHandled]
+
+//!-begin-[OnHotSpotReleaseClick][GoMessageImprovement]
 	case SCN_HOTSPOTRELEASECLICK:
 		if (extender) {
 			handled = extender->OnHotSpotReleaseClick(notification->modifiers);
@@ -4764,7 +4778,18 @@ void SciTEBase::Notify(SCNotification *notification) {
 			}
 		}
 		break;
-//!-end-[OnClick][MouseClickHandled]
+//!-end-[OnHotSpotReleaseClick][GoMessageImprovement]
+
+//!-start-[OnMouseButtonUp][GoMessageImprovement]
+	case SCN_MOUSEBUTTONUP:
+		if (extender)
+			extender->OnMouseButtonUp(notification->modifiers);
+		if (preserveFocusOnEditor) {
+			preserveFocusOnEditor = false;
+			WindowSetFocus(wEditor);
+		}
+		break;
+//!-end-[OnMouseButtonUp][GoMessageImprovement]
 
 	case SCN_UPDATEUI:
 		if (extender)

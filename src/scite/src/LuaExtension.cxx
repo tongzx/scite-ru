@@ -2208,6 +2208,24 @@ bool LuaExtension::OnDoubleClick(int modifiers) {
 //!-end-[OnDoubleClick]
 
 //!-start-[OnClick]
+bool LuaExtension::OnClick(int modifiers) {
+	bool handled = false;
+	if (luaState) {
+		lua_getglobal(luaState, "OnClick");
+		if (lua_isfunction(luaState, -1)) {
+			lua_pushboolean(luaState, (SCMOD_SHIFT & modifiers) != 0 ? 1 : 0); // shift/lock
+			lua_pushboolean(luaState, (SCMOD_CTRL  & modifiers) != 0 ? 1 : 0); // control
+			lua_pushboolean(luaState, (SCMOD_ALT   & modifiers) != 0 ? 1 : 0); // alt
+			handled = call_function(luaState, 3);
+		} else {
+			lua_pop(luaState, 1);
+		}
+	}
+	return handled;
+}
+//!-end-[OnClick]
+
+//!-start-[OnHotSpotReleaseClick]
 bool LuaExtension::OnHotSpotReleaseClick(int modifiers) {
 	bool handled = false;
 	if (luaState) {
@@ -2221,7 +2239,23 @@ bool LuaExtension::OnHotSpotReleaseClick(int modifiers) {
 	}
 	return handled;
 }
-//!-end-[OnClick]
+//!-end-[OnHotSpotReleaseClick]
+
+//!-start-[OnMouseButtonUp]
+bool LuaExtension::OnMouseButtonUp(int modifiers) {
+	bool handled = false;
+	if (luaState) {
+		lua_getglobal(luaState, "OnMouseButtonUp");
+		if (lua_isfunction(luaState, -1)) {
+			lua_pushboolean(luaState, (SCMOD_CTRL  & modifiers) != 0 ? 1 : 0); // control
+			handled = call_function(luaState, 1);
+		} else {
+			lua_pop(luaState, 1);
+		}
+	}
+	return handled;
+}
+//!-end-[OnMouseButtonUp]
 
 bool LuaExtension::OnUpdateUI() {
 	return CallNamedFunction("OnUpdateUI");
