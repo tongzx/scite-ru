@@ -377,103 +377,106 @@
     </h3>
     <ul>
 	<li>
-	Released 27 October 2010.
+	Версия 2.22 от 27 октября 2010.
 	</li>
 	<li>
-	SciTE includes support for integrating with Scintillua which allows lexers to be implemented in Lua as a
-	Parsing Expression Grammar (PEG).
+	В SciTE включена поддержка для интеграции с Scintillua, что позволяет применять в Lua-лексерах метод синтаксического анализа выражений - Parsing Expression Grammar (PEG).
 	</li>
 	<li>
-	Regular expressions allow use of '?' for non-greedy matches or to match 0 or 1 instances of an item.
+	В регулярных выражениях можно использовать квантификатор '?' для составления не жадных выражений или указания на 0 или единственное совпадение.
 	</li>
 	<li>
-	SCI_CONTRACTEDFOLDNEXT added to allow rapid retrieval of folding state.
+	Добавлен параметр SCI_CONTRACTEDFOLDNEXT для быстрого поиска свёрнутого блока.
 	</li>
 	<li>
-	SCN_HOTSPOTRELEASECLICK notification added which is similar to SCN_HOTSPOTCLICK but occurs
-	when the mouse is released.
+	Добавлено уведомление SCN_HOTSPOTRELEASECLICK, похожее на SCN_HOTSPOTCLICK, но вызывается при отпускании кнопки мыши.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=352439&aid=3082409&group_id=2439">Feature #3082409.</a>
 	</li>
 	<li>
-	Command added for centring current line in window.
+	Добавлена команда для центрирования текущей строки в окне.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=352439&aid=3064696&group_id=2439">Feature #3064696.</a>
 	</li>
 	<li>
-	SciTE performance improved by not examining document for line ends when switching buffers and not
-	storing folds when folding turned off.
+	В SciTE для улучшения производительности в документе не проверяется состояние концов строк при переключении буферов и не сохраняется состояние свёртки, если сворачивание выключено.
 	</li>
 	<li>
-	Bug fixed where scrolling to ensure the caret is visible did not take into account all pixels of the line.
+	Исправлена ошибка отображения каретки при прокрутке текста, при которой не учитывались все пиксели строки.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3081721&group_id=2439">Bug #3081721.</a>
 	</li>
 	<li>
-	Bug fixed for autocompletion list overlaping text when WS_EX_CLIENTEDGE used.
+	Исправлена ошибка списка автозавершения при наложении/перекрытии текста при использовании WS_EX_CLIENTEDGE.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3079778&group_id=2439">Bug #3079778.</a>
 	</li>
 	<li>
-	After autocompletion, the caret's X is updated.
+	После автозавершения обновляется значение координаты X каретки.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3079114&group_id=2439">Bug #3079114.</a>
 	</li>
 	<li>
-	On Windows, default to the system caret blink time.
+	В Windows по умолчанию используется системное время мигания курсора.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=352439&aid=3079784&group_id=2439">Feature #3079784.</a>
 	</li>
 	<li>
-	PgUp/PgDn fixed to allow virtual space.
+	Исправлена работа PgUp/PgDn с виртуальными пробелами.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3077452&group_id=2439">Bug #3077452.</a>
 	</li>
 	<li>
-	Crash fixed when AddMark and AddMarkSet called with negative argument.
+	Исправлено падение при вызове AddMark и AddMarkSet с отрицательным аргументом.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3075074&group_id=2439">Bug #3075074.</a>
 	</li>
 	<li>
-	Dwell notifications fixed so that they do not occur when the mouse is outside Scintilla.
+	Исправлен вызов уведомления Dwell, когда мышь находится вне Scintilla.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3073481&group_id=2439">Bug #3073481.</a>
 	</li>
 	<li>
-	C++ lexer bug fixed for // comments that are continued onto a second line by a \.
+	Исправлена ошибка лексера Bash для документов, начинающихся с &lt;&lt;-.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3063822&group_id=2439">Bug #3063822.</a>
+	</li>
+	<li>
+	Исправлена ошибка лексера C++ с продолжением комментария // на следующей строке при наличии \.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3066031&group_id=2439">Bug #3066031.</a>
 	</li>
 	<li>
-	C++ lexer fixes wrong highlighting for float literals containing +/-.
+	В лексере C++ исправлена неправильная подсветка числовых литералов, содержащих +/-.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3058924&group_id=2439">Bug #3058924.</a>
 	</li>
 	<li>
-	JavaScript lexer recognize regexes following return keyword.‎
+	Лексер JavaScript распознаёт регулярные выражения после возвращения ключевого слова.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3062287&group_id=2439">Bug #3062287.</a>
 	</li>
 	<li>
-	Ruby lexer handles % quoting better and treats range dots as operators in 1..2 and 1...2.
-	Ruby folder handles "if" keyword used as a modifier even when it is separated from the modified statement by an escaped new line.
+	В лексере Ruby лучше обрабатывает цитирование % и распознаёт ряд точек в качестве операторов в 1..2 и 1...2.
+	Сворачивание в Ruby обрабатывает ключевое слово "if", используемое в качестве модификатора, даже если оно отделено от изменяемого оператора пустыми строками.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2093767&group_id=2439">Bug #2093767.</a>
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3058496&group_id=2439">Bug #3058496.</a>
 	</li>
 	<li>
-	Bug fixed where upwards search failed with DBCS code pages.
+	Исправлена ошибка поиска вверх в файлах с кодировкой DBCS.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3065912&group_id=2439">Bug #3065912.</a>
 	</li>
 	<li>
-	SciTE has a default Lua startup script name distributed in SciTEGlobal.properties.
-	No error message is displayed if this file does not exist.
+	В SciTE имя стартового Lua-скрипта по умолчанию указывается в SciTEGlobal.properties.
+	Сообщение об ошибке не отображается, если этот файл не существует.
 	</li>
 	<li>
-	SciTE on Windows tab control height is calculated better.
+	Для SciTE в Windows лучше рассчитывается высота панели вкладок.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=2635702&group_id=2439">Bug #2635702.</a>
 	</li>
 	<li>
-	SciTE on Windows uses better themed check buttons in find and replace strips.
+	SciTE в Windows использует улучшенные кнопки переключения в панелях поиска и замены.
 	</li>
 	<li>
-	SciTE on Windows fixes bug with Find strip appearing along with Incremental Find strip.
+	Исправлена ошибка SciTE в Windows, при которой панель "Найти" появлялась вместе с панелью "Быстрый поиск".
 	</li>
 	<li>
-	SciTE setting find.close.on.find added to allow preventing the Find dialog from closing.
+	<font color=#CC00CC>В SciTE добавлена настройка find.close.on.find, позволяющая предотвратить закрытие диалога поиска.</font>
 	</li>
 	<li>
-	SciTE on Windows attempts to rerun commands that fail by prepending them with "cmd.exe /c".
-	This allows commands built in to the command processor like "dir" to run.
+	SciTE в Windows пытается повторно вызвать команды, которые завершились с ошибкой, используя "cmd.exe /c".
+	Это позволяет выполнять команды, встроенные в командный процессор, например "dir".
 	</li>
     </ul>
+	<li>Перевод: <b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=ALeXkRU" target=_blank>ALeXkRU</a></b>
+	<li><font color=#CC00CC>Цветом выделены изменения, внесенные участниками команды SciTE-Ru</font>
 
     <h3>
        <a href="http://prdownloads.sourceforge.net/scintilla/scite221.zip?download">Release 2.21</a>
