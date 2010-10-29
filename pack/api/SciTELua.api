@@ -671,6 +671,7 @@ editor:VCHomeExtend
 editor:VCHomeRectExtend
 editor:VCHomeWrap
 editor:VCHomeWrapExtend
+editor:VerticalCentreCaret
 editor:VisibleFromDocLine
 editor:WordEndPosition
 editor:WordLeft
@@ -943,6 +944,7 @@ VCHomeExtend()\n Like VCHome but extending selection to new caret position
 VCHomeRectExtend()\n Move caret to before first visible character on line. If already there move to first character on line.\n In either case, extend rectangular selection to new caret position
 VCHomeWrap()
 VCHomeWrapExtend()
+VerticalCentreCaret()\n Centre current line in window
 VisibleFromDocLine(int line) = int\n Find the display line of a document line taking hidden lines into account
 WordEndPosition(int pos, bool onlyWordCharacters) = int\n Get position of end of word
 WordLeft()\n Move caret left one word
@@ -2957,6 +2959,7 @@ SCI_CLEARDOCUMENTSTYLE = 2005
 SCI_CLEARREGISTEREDIMAGES = 2408
 SCI_CLEARSELECTIONS = 2571
 SCI_COLOURISE = 4003
+SCI_CONTRACTEDFOLDNEXT = 2618
 SCI_CONVERTEOLS = 2029
 SCI_COPY = 2178
 SCI_COPYALLOWLINE = 2519
@@ -3121,7 +3124,6 @@ SCI_GETVIEWWS = 2020
 SCI_GETVIRTUALSPACEOPTIONS = 2597
 SCI_GETVSCROLLBAR = 2281
 SCI_GETWHITESPACESIZE = 2087
-SCI_GETWORDCHARS = 2120
 SCI_GETWRAPINDENTMODE = 2473
 SCI_GETWRAPMODE = 2269
 SCI_GETWRAPSTARTINDENT = 2465
@@ -3438,6 +3440,7 @@ SCI_VCHOMEEXTEND = 2332
 SCI_VCHOMERECTEXTEND = 2431
 SCI_VCHOMEWRAP = 2453
 SCI_VCHOMEWRAPEXTEND = 2454
+SCI_VERTICALCENTRECARET = 2619
 SCI_VISIBLEFROMDOCLINE = 2220
 SCI_WORDENDPOSITION = 2267
 SCI_WORDLEFT = 2308
@@ -3623,7 +3626,6 @@ SC_CHARSET_SYMBOL = 2
 SC_CHARSET_THAI = 222
 SC_CHARSET_TURKISH = 162
 SC_CHARSET_VIETNAMESE = 163
-SC_CP_DBCS = 1
 SC_CP_UTF8 = 65001
 SC_CURSORNORMAL = -1
 SC_CURSORWAIT = 4
@@ -3755,6 +3757,7 @@ STYLE_LINENUMBER = 33
 STYLE_MAX = 255
 UNDO_MAY_COALESCE = 1
 VISIBLE_SLOP = 0x01
+VISIBLE_STRICT = 0x04
 
 FilePath \n full path of the current file
 FileDir \n directory of the current file without a trailing slash
