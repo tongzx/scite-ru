@@ -112,17 +112,17 @@
 Добавлена возможность создания вложенных подменю в меню Tools.<br>
 Они создаются вначале меню и отделены от остальных пунктов разделителем.<br>
 Сначала задаются названия подменю:
-<div class="example">command.submenu.name.2.*=Insert from Text</div>
+<div class="example">command.submenu.name.2.<i>filepattern</i>=Insert from Text</div>
 если они вложены в другое подменю, то задается номер родительского меню:
-<div class="example">command.submenu.parent.2.*=4</div>
+<div class="example">command.submenu.parent.2.<i>filepattern</i>=4</div>
 Затем для команд, входящих в подменю, задается номер родительского меню:
-<div class="example">command.parent.6.*=2<br>
-command.name.6.*=Date and Time</div>
+<div class="example">command.parent.6.<i>filepattern</i>=2<br>
+command.name.6.<i>filepattern</i>=Date and Time</div>
 <br>
 В меню Tools возможно вставлять разделители.<br>
-Например, <span class="example">command.separator.34.*=1</span> вставляет разделитель перед командой 34.<br>
+Например, <span class="example">command.separator.34.<i>filepattern</i>=1</span> вставляет разделитель перед командой 34.<br>
 Так же возможна установка отметки перед выбранным пунктом меню.<br>
-Например, так: <span class="example">command.checked.34.*=1</span>.<br>
+Например, так: <span class="example">command.checked.34.<i>filepattern</i>=1</span>.<br>
 <br>
 Текст всех пунктов меню и подменю Tools русифицируется так же как и основное меню - через файл locale.properties.
 
@@ -135,16 +135,16 @@ command.name.6.*=Date and Time</div>
 <h5 id="ExtendedContextMenu">
 [ExtendedContextMenu] <span class=desc>(Автор: Дмитрий Маслов, VladVRO)</span></h5>
 Новые параметры в .properties позволяют ПОЛНОСТЬЮ настроить контекстные меню:<br>
-<span class="example">user.context.menu.*</span> - контекстное меню редактора<br>
-<span class="example">user.tabcontext.menu.*</span> - контекстное меню вкладок<br>
-<span class="example">user.outputcontext.menu.*</span> - контекстное меню консоли<br>
+<span class="example">user.context.menu.<i>filepattern</i></span> - контекстное меню редактора<br>
+<span class="example">user.tabcontext.menu.<i>filepattern</i></span> - контекстное меню вкладок<br>
+<span class="example">user.outputcontext.menu.<i>filepattern</i></span> - контекстное меню консоли<br>
 С помощью параметров <span class="example">POPUPBEGIN</span> и <span class="example">POPUPEND</span> возможно создание подменю!<br>
 Формат:
-<div class="example">user.context.menu.*=\<br>
+<div class="example">user.context.menu.<i>filepattern</i>=\<br>
 Имя&nbsp;команды1|IDM_COMMAND1|\<br>
 Имя&nbsp;команды2|IDM_COMMAND2|...</div>
 Чтобы вставить разделитель нужно оба поля оставить пустыми
-<div class="example">user.context.menu.*=\<br>
+<div class="example">user.context.menu.<i>filepattern</i>=\<br>
 Имя&nbsp;команды1|IDM_COMMAND1|\<br>
 ||\<br>
 Имя&nbsp;команды2|IDM_COMMAND2|...</div>
@@ -152,19 +152,19 @@ command.name.6.*=Date and Time</div>
 
 <h5 id="user.toolbar">
 [user.toolbar] <span class=desc>(Автор: Дмитрий Маслов, VladVRO, UR4LTZ, neo4max)</span></h5>
-Новый параметр <span class="example">user.toolbar.*</span> в .properties позволяет ПОЛНОСТЬЮ настроить панель инструментов.<br>
+Новый параметр <span class="example">user.toolbar.<i>filepattern</i></span> в .properties позволяет ПОЛНОСТЬЮ настроить панель инструментов.<br>
 Формат:
-<div class="example">user.toolbar.*=\<br>
+<div class="example">user.toolbar.<i>filepattern</i>=\<br>
 Всплывающая&nbsp;подсказка1|IDM_COMMAND1|номер&nbsp;иконки1|\<br>
 Всплывающая&nbsp;подсказка2|IDM_COMMAND2|номер&nbsp;иконки2|...</div>
 Чтобы вставить разделитель нужно все три поля оставить пустыми
-<div class="example">user.toolbar.*=\<br>
+<div class="example">user.toolbar.<i>filepattern</i>=\<br>
 Всплывающая&nbsp;подсказка1|IDM_COMMAND1|номер&nbsp;иконки1|\<br>
 |||\<br>
 Всплывающая&nbsp;подсказка2|IDM_COMMAND2|номер&nbsp;иконки2|...</div>
 Если параметр не задан в настройках, то отображается стандартный тулбар.<br><br>
 Новый параметр в настройках позволяет задать пользовательскую библиотеку с иконками:
-<span class="example">user.toolbar.iconlib.*=$(SciteUserHome)\gnome.dll</span><br>
+<span class="example">user.toolbar.iconlib.<i>filepattern</i>=$(SciteUserHome)\gnome.dll</span><br>
 Кнопки на панели инструментов отображают состояние вкл/откл в зависимости от текущего значения изменяемого кнопкой параметра.<br>
 Так по виду (нажата/отжата) таких кнопок как IDM_WRAP, IDM_READONLY, IDM_VIEWSPACE и т.п. можно видеть текущее состояние соответствующих им установок - wrap, read.only, view.whitespace.
 
@@ -376,13 +376,13 @@ caret.width.$(file.patterns.cpp)=3</div>
 <h5 id="BetterCalltips">
 [BetterCalltips] <span class=desc>(Автор: chupakabra)</span></h5>
 Новые параметры в .properties<br>
-<div class="example">calltip.lexer.automatic<br>
+<div class="example">calltip.<i>lexer</i>.automatic<br>
 calltip.*.automatic</div>
 Yстановка этого параметра в 0 означает что не будет происходить автоматическое отображение окошка с calltip'ом при наборе текста, но останется возможность вызвать его вручную.
-<div class="example">calltip.lexer.show.per.page<br>
+<div class="example">calltip.<i>lexer</i>.show.per.page<br>
 calltip.*.show.per.page</div>
 Возможность указать количество определений, отображаемых одновременно в calltip'е. Значение по умолчанию - 1.
-<div class="example">calltip.lexer.word.wrap<br>
+<div class="example">calltip.<i>lexer</i>.word.wrap<br>
 calltip.*.word.wrap</div>
 Опция включает возможность переноса по словам длинных calltip'ов, её значение определяет максимальный размер строки calltip'а в символах, 0 означает что данная функция будет отключена.<br>
 <br>

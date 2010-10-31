@@ -111,17 +111,17 @@ Cursor is set as inverse arrow when we realy can to select text otherwise used d
 Added possibility of creation submenu in Tools menu.<br>
 All submenu items located on top of menu and separated by line from other.<br>
 For define submenu you should set up name first:
-<div class="example">command.submenu.name.2.*=Insert from Text</div>
+<div class="example">command.submenu.name.2.<i>filepattern</i>=Insert from Text</div>
 If it is part of another menu then you should setup parent's menu number:
-<div class="example">command.submenu.parent.2.*=4</div>
+<div class="example">command.submenu.parent.2.<i>filepattern</i>=4</div>
 And next for all subitems of this menu you should setup parent's menu number:
-<div class="example">command.parent.6.*=2<br>
-command.name.6.*=Date and Time</div>
+<div class="example">command.parent.6.<i>filepattern</i>=2<br>
+command.name.6.<i>filepattern</i>=Date and Time</div>
 <br>
 Can insert separator between any new commands in menu Tools.<br>
-For example, <span class="example">command.separator.34.*=1</span> adding separator before command 34.<br>
+For example, <span class="example">command.separator.34.<i>filepattern</i>=1</span> adding separator before command 34.<br>
 Added possibility of a set check before command item of the menu.<br>
-For example: <span class="example">command.checked.34.*=1</span>.<br>
+For example: <span class="example">command.checked.34.<i>filepattern</i>=1</span>.<br>
 <br>
 All menu items text can be localized same as other menu command by file locale.properties.
 
@@ -134,16 +134,16 @@ User command = 9000 + number of this command in menu Tools
 <h5 id="ExtendedContextMenu">
 [ExtendedContextMenu] <span class=desc>(Author: Dmitry Maslov, VladVRO)</span></h5>
 You can setup each context menu now by using new parameters in .properties file:<br>
-<span class="example">user.context.menu.*</span> - editor context menu<br>
-<span class="example">user.tabcontext.menu.*</span> - tabbar context menu<br>
-<span class="example">user.outputcontext.menu.*</span> - output context menu<br>
+<span class="example">user.context.menu.<i>filepattern</i></span> - editor context menu<br>
+<span class="example">user.tabcontext.menu.<i>filepattern</i></span> - tabbar context menu<br>
+<span class="example">user.outputcontext.menu.<i>filepattern</i></span> - output context menu<br>
 And you can create submenus there by using tags <span class="example">POPUPBEGIN</span> and <span class="example">POPUPEND</span>!<br>
 Format:
-<div class="example">user.context.menu.*=\<br>
+<div class="example">user.context.menu.<i>filepattern</i>=\<br>
 Command&nbsp;name1|IDM_COMMAND1|\<br>
 Command&nbsp;name2|IDM_COMMAND2|...</div>
 you can add separator by leaving both fields empty:
-<div class="example">user.context.menu.*=\<br>
+<div class="example">user.context.menu.<i>filepattern</i>=\<br>
 Command&nbsp;name1|IDM_COMMAND1|\<br>
 ||\<br>
 Command&nbsp;name2|IDM_COMMAND2|...</div><br>
@@ -151,19 +151,19 @@ If parameter absent or empty then context menu will standard.
 
 <h5 id="user.toolbar">
 [user.toolbar] <span class=desc>(Author: Dmitry Maslov, VladVRO, UR4LTZ, neo4max)</span></h5>
-You can setup toolbar now by using new parameter <span class="example">user.toolbar.*</span> in .properties file:<br>
+You can setup toolbar now by using new parameter <span class="example">user.toolbar.<i>filepattern</i></span> in .properties file:<br>
 Format:
-<div class="example">user.toolbar.*=\<br>
+<div class="example">user.toolbar.<i>filepattern</i>=\<br>
 Hint1|IDM_COMMAND1|icon&nbsp;number1|\<br>
 Hint2|IDM_COMMAND2|icon&nbsp;number2|...</div>
 you can add separator by leaving fields empty:
-<div class="example">user.toolbar.*=\<br>
+<div class="example">user.toolbar.<i>filepattern</i>=\<br>
 Hint1|IDM_COMMAND1|icon&nbsp;number1|\<br>
 |||\<br>
 Hint2|IDM_COMMAND2|icon&nbsp;number2|...</div>
 If parameter absent or empty then toolbar will standard.<br><br>
 New property for setup user library with icons:
-<span class="example">user.toolbar.iconlib.*=$(SciteUserHome)\gnome.dll</span><br>
+<span class="example">user.toolbar.iconlib.<i>filepattern</i>=$(SciteUserHome)\gnome.dll</span><br>
 Toolbar buttons can display status on/off now based on the current state of parameter that switched by the button.<br>
 For example state of such parameters as wrap, read.only, view.whitespace displayed now by status pressed/released of related buttons IDM_WRAP, IDM_READONLY, IDM_VIEWSPACE.
 
@@ -377,13 +377,13 @@ It is not convenient when there are different colors and backgrounds for differe
 <h5 id="BetterCalltips">
 [BetterCalltips] <span class=desc>(Author: chupakabra)</span></h5>
 New variable in properties files<br>
-<div class="example">calltip.lexer.automatic<br>
+<div class="example">calltip.<i>lexer</i>.automatic<br>
 calltip.*.automatic</div>
 Setting this option to 0 disables automatic calltip popup display but leaves user with possibility to invoke calltip manually. The * form is used if there is no lexer specific setting.
-<div class="example">calltip.lexer.show.per.page<br>
+<div class="example">calltip.<i>lexer</i>.show.per.page<br>
 calltip.*.show.per.page</div>
 This option specifies number of definitions displayed per page in calltip window (default 1). Use arrow buttons to switch to next/previous page. The * form is used if there is no lexer specific setting.
-<div class="example">calltip.lexer.word.wrap<br>
+<div class="example">calltip.<i>lexer</i>.word.wrap<br>
 calltip.*.word.wrap</div>
 This option enables word wrapping of calltip lines. Specify maximum number of characters allowed per line. Specify 0 to disable this feature (default). The * form is used if there is no lexer specific setting.<br>
 <br>
