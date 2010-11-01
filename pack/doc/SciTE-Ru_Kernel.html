@@ -32,7 +32,7 @@
     </td></tr>
   </table>
 
-    <h1>Text editor SciTE RU-Board 2.22 .86</h1>
+    <h1>Text editor SciTE RU-Board 2.22 .87</h1>
 
     <p>All modifications of original <A href="http://www.scintilla.org">SciTE editor</A> has been developed by persons from <A href="http://forum.ru-board.com/topic.cgi?forum=5&topic=24956&glp">Ru-Board community</A>.
 
@@ -58,7 +58,6 @@
 In the menu "Language" the current language states labels. For more information look at <a href="http://code.google.com/p/scite-ru/issues/detail?id=193">Issue 193</a>.
 
 <h5 id="UserPropertiesFilesSubmenu">
-<sup>updated</sup>
 [UserPropertiesFilesSubmenu] <span class=desc>(Author: mhb, arhohryakov)</span></h5>
 Menu items for opening language properties files to put in a submenu "Edit Properties".
 
@@ -90,7 +89,8 @@ For example to define do not close opened files:
 by default all opened files should be closed on load session.
 
 <h5 id="ReadOnlyTabMarker">
-[ReadOnlyTabMarker] <span class=desc>(Authors: Midas, VladVRO)</span></h5>
+<sup>updated</sup>
+[ReadOnlyTabMarker] <span class=desc>(Authors: Midas, VladVRO, neo4max)</span></h5>
 Added possibility to show <i>Readonly</i> status by additional symbols in tab name, which can be setup by property <span class="example">tabbar.readonly.marker</span>, for example:
 <div class="example">tabbar.readonly.marker= R/O</div>
 
@@ -167,6 +167,11 @@ New property for setup user library with icons:
 Toolbar buttons can display status on/off now based on the current state of parameter that switched by the button.<br>
 For example state of such parameters as wrap, read.only, view.whitespace displayed now by status pressed/released of related buttons IDM_WRAP, IDM_READONLY, IDM_VIEWSPACE.
 
+<h5 id="StyleDefHotspot">
+<sup>new</sup>
+[StyleDefHotspot] <span class=desc>(Author: neo4max)</span></h5>
+The value of setting <span class="example">style.<i>lexer</i>.<i>stylenumber</i></span> can use new field <span class="example">hotspot</span>|<span class="example">nothotspot</span>.
+
 <h5 id="FindResultListStyle">
 [FindResultListStyle] <span class=desc>(Authors: VladVRO, Dmitry Maslov)</span></h5>
 Internal search (Ctrl+Shift+F) result text looks more better now:<br>
@@ -188,7 +193,6 @@ New variable in properties files<br>
 possible to set the background color of the error message in the output pane, other than error.marker.back.
 
 <h5 id="reverse.find">
-<sup>new</sup>
 [reverse.find] <span class=desc>(Author: neo4max)</span></h5>
 Added one more shortcut for "Incremental Search", "Find", "Replace" dialogs (including Strip type): "Shift+Enter", as reversed alternative of "Enter" (like "Shift+F3" for "F3").
 
@@ -211,7 +215,6 @@ New variable in properties files<br>
 If 1, then pressing the button "Mark all" removed any earlier bookmarks.
 
 <h5 id="close_on_dbl_clk">
-<sup>new</sup>
 [close_on_dbl_clk] <span class=desc>(Author: Dmitry Maslov)</span></h5>
 New variable in properties files<br>
 <span class="example">tabbar.tab.close.on.doubleclick=1</span><br>
@@ -256,7 +259,6 @@ And you can switch off this feature by setup new parameter in .properties:<br>
 <span class="example">margin.bookmark.by.single.click=0</span>
 
 <h5 id="clearbefore">
-<sup>new</sup>
 [clearbefore] <span class=desc>(Author: neo4max)</span></h5>
 Property <span class="example">command.mode</span> added a new option - <span class="example">clearbefore:[yes|no]</span> with the following logic:<br>
 * <span class="example">clearbefore</span> is no - behavior, as previously determined by the property <span class="example">clear.before.execute</span><br>
@@ -356,7 +358,6 @@ New variable in properties files<br>
 <span class="example">autocompleteword.incremental=1</span> for <span class="example">autocompleteword.automatic=1</span> show the multivariate hint of the found word completion. (<a href="http://groups.google.com/group/scite-interest/browse_thread/thread/87ba9fd13989ae84">See details</a>)
 
 <h5 id="utf8.auto.check">
-<sup>updated</sup>
 [utf8.auto.check] <span class=desc>(Author: mhb, neo4max)</span></h5>
 Enhance function of auto checking utf8: providing two methods<br>
 <span class="example">utf8.auto.check=1</span>: detect utf8 and add BOM automatically<br>
@@ -489,6 +490,13 @@ Receives the state of key modifiers (Shift, Ctrl, Alt):<br>
 Event <span class="example">OnDoubleClick()</span> is expanded, now it is returned to the state of key modifiers (Shift, Ctrl, Alt):<br>
 <span class="example">function OnDoubleClick(shift, ctrl, alt)</span>
 
+<h5 id="OnHotSpotReleaseClick">
+<sup>new</sup>
+[OnHotSpotReleaseClick] <span class=desc>(Author: mozers)</span></h5>
+Added new event to SciTE <span class="example">OnHotSpotReleaseClick()</span>. Event arises from a mouse button up in the hotspot.<br>
+Receives the state of Ctrl:<br>
+<span class="example">function OnHotSpotReleaseClick(ctrl)</span>
+
 <h5 id="OnKey">
 [OnKey] <span class=desc>(Author: Dmitry Maslov)</span></h5>
 Function <span class="example">OnKey</span> is expanded, now in it the pressed symbol is passed also:<br>
@@ -524,7 +532,6 @@ In SciTE Lua Scripting Extension added new command<br>
 <span class="example">scite.ReloadStartupScript()</span> - this function initializes Lua startup script reloading.
 
 <h5 id="GetWordChars">
-<sup>new</sup>
 [GetWordChars] <span class=desc>(Author: Dmitry Maslov)</span></h5>
 CurrentWordCharacters - new SciTE environment variable. Contains which characters can be parts of words.
 
@@ -647,7 +654,6 @@ Fixed positioning of caret in insert abbreviation action.<br>
 Bug was in case when abbreviation body has one simbol '|' and in action was not selection text.
 
 <h5 id="no_wornings">
-<sup>updated</sup>
 [no_wornings] <span class=desc>(Author: Dmitry Maslov)</span></h5>
 Added compatibility with the compiler Visual C++ 6.0
 

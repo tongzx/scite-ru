@@ -33,7 +33,7 @@
     </td></tr>
   </table>
 
-    <h1>Текстовый редактор SciTE RU-Board 2.22 .86</h1>
+    <h1>Текстовый редактор SciTE RU-Board 2.22 .87</h1>
 
     <p>Все модификации оригинального кода редактора <A href="http://www.scintilla.org">SciTE</A> выполнены энтузиастами <A href="http://forum.ru-board.com/topic.cgi?forum=5&topic=24956&glp">форума Ru-Board</A>.
 
@@ -59,7 +59,6 @@
 Текущий язык отмечается меткой в меню "Подсветка". Подробности в <a href="http://code.google.com/p/scite-ru/issues/detail?id=193">Issue 193</a>.
 
 <h5 id="UserPropertiesFilesSubmenu">
-<sup>updated</sup>
 [UserPropertiesFilesSubmenu] <span class=desc>(Автор: mhb, arhohryakov)</span></h5>
 Пункты открытия файлов языковых настроек (language.properties) вынесены в отдельное подменю "Edit Properties".
 
@@ -91,7 +90,8 @@
 по умолчанию при загрузке сессии все открытые файлы закрываются.
 
 <h5 id="ReadOnlyTabMarker">
-[ReadOnlyTabMarker] <span class=desc>(Авторы: Midas, VladVRO)</span></h5>
+<sup>updated</sup>
+[ReadOnlyTabMarker] <span class=desc>(Авторы: Midas, VladVRO, neo4max)</span></h5>
 Добавлена возможность отображать состояние <i>"только для чтения"</i> с помощью доп. символов в имени вкладки, которые задаются в настройках параметром <span class="example">tabbar.readonly.marker</span>, например:
 <div class="example">tabbar.readonly.marker= R/O</div>
 
@@ -168,6 +168,11 @@ command.name.6.<i>filepattern</i>=Date and Time</div>
 Кнопки на панели инструментов отображают состояние вкл/откл в зависимости от текущего значения изменяемого кнопкой параметра.<br>
 Так по виду (нажата/отжата) таких кнопок как IDM_WRAP, IDM_READONLY, IDM_VIEWSPACE и т.п. можно видеть текущее состояние соответствующих им установок - wrap, read.only, view.whitespace.
 
+<h5 id="StyleDefHotspot">
+<sup>new</sup>
+[StyleDefHotspot] <span class=desc>(Автор: neo4max)</span></h5>
+В строке описания стиля <span class="example">style.<i>lexer</i>.<i>stylenumber</i></span> можно использовать новый параметр <span class="example">hotspot</span>|<span class="example">nothotspot</span>. При наведении мыши, такой текст подчеркивается и вид курсора принимает форму руки.
+
 <h5 id="FindResultListStyle">
 [FindResultListStyle] <span class=desc>(Авторы: VladVRO, Дмитрий Маслов)</span></h5>
 Улучшена наглядность строк, выводимых встроенным инструментом для поиска текста в файлах (Ctrl+Shift+F):<br>
@@ -189,7 +194,6 @@ command.name.6.<i>filepattern</i>=Date and Time</div>
 позволяет задать цвет фона строки с текстом ошибки в окне консоли, отличный от заданного параметром error.marker.back.
 
 <h5 id="reverse.find">
-<sup>new</sup>
 [reverse.find] <span class=desc>(Автор: neo4max)</span></h5>
 В диалогах/панелях "Быстрый поиск", "Поиск", "Замена" теперь возможен не только переход вперед по найденным вхождениям (с помощью Enter), но и назад (Shift+Enter). (Аналогично F3/Shift+F3 но только когда фокус находится в диалоге).
 
@@ -212,7 +216,6 @@ command.name.6.<i>filepattern</i>=Date and Time</div>
 Если 1, то при нажатии на кнопку "Пометить все" удаляются все установленные ранее метки (bookmarks) и маркеры.
 
 <h5 id="close_on_dbl_clk">
-<sup>new</sup>
 [close_on_dbl_clk] <span class=desc>(Автор: Дмитрий Маслов)</span></h5>
 Новый параметр в .properties<br>
 <span class="example">tabbar.tab.close.on.doubleclick=1</span><br>
@@ -256,7 +259,6 @@ command.name.6.<i>filepattern</i>=Date and Time</div>
 Новый параметр в .properties <span class="example">margin.bookmark.by.single.click=0</span> отключает эту возможность
 
 <h5 id="clearbefore">
-<sup>new</sup>
 [clearbefore] <span class=desc>(Автор: neo4max)</span></h5>
 Переменной <span class="example">command.mode</span> добавлен новый параметр - <span class="example">clearbefore:[yes|no]</span>, со следующей логикой работы:<br>
 * <span class="example">clearbefore</span> отсутствует - поведение, как и раньше, определяется значением <span class="example">clear.before.execute</span><br>
@@ -355,7 +357,6 @@ command.name.6.<i>filepattern</i>=Date and Time</div>
 <span class="example">autocompleteword.incremental=1</span> при <span class="example">autocompleteword.automatic=1</span> выводит многовариантную подсказку из найденных вариантов завершения слова. (<a href="http://groups.google.com/group/scite-interest/browse_thread/thread/87ba9fd13989ae84">Подробности</a>)
 
 <h5 id="utf8.auto.check">
-<sup>updated</sup>
 [utf8.auto.check] <span class=desc>(Автор: mhb, neo4max)</span></h5>
 Новый параметр в .properties<br>
 <span class="example">utf8.auto.check</span> позволяет автоматически детектировать текст в кодировке UTF-8 не снабженный BOM заголовком.<br>
@@ -489,6 +490,13 @@ end</div>
 Событие <span class="example">OnDoubleClick()</span>, теперь получает состояния клавиш-модификаторов (Shift, Ctrl, Alt):<br>
 <span class="example">function OnDoubleClick(shift, ctrl, alt)</span>
 
+<h5 id="OnHotSpotReleaseClick">
+<sup>new</sup>
+[OnHotSpotReleaseClick] <span class=desc>(Автор: mozers)</span></h5>
+Добавлено новое событие SciTE <span class="example">OnHotSpotReleaseClick()</span>. Событие возникает при отжатии кнопки мыши в hotspot зоне.<br>
+Получает в строке параметров состояние клавиши-модификатора Ctrl:<br>
+<span class="example">function OnHotSpotReleaseClick(ctrl)</span>
+
 <h5 id="OnKey">
 [OnKey] <span class=desc>(Автор: Дмитрий Маслов)</span></h5>
 Расширена функция луа <span class="example">OnKey</span>, теперь в нее передается также нажатый символ:<br>
@@ -524,7 +532,6 @@ end</div>
 <span class="example">scite.ReloadStartupScript()</span> - которая позволяет перезагрузить стартовый Луа скрипт
 
 <h5 id="GetWordChars">
-<sup>new</sup>
 [GetWordChars] <span class=desc>(Автор: Дмитрий Маслов)</span></h5>
 CurrentWordCharacters - новая внутренняя переменная SciTE. Cодержит перечень символов из которых строятся слова текущего языка.
 
@@ -650,7 +657,6 @@ Tеперь можно задавать до 4х дополнительных н
 Если в сокращении имелся символ \t то курсор так же позиционировался не верно.
 
 <h5 id="no_wornings">
-<sup>updated</sup>
 [no_wornings] <span class=desc>(Автор: Дмитрий Маслов)</span></h5>
 Добавлена совместимость с компилятором Visual C++ 6.0
 

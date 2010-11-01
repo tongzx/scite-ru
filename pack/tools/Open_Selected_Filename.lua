@@ -54,7 +54,7 @@ local function GetSelText()
 	end
 end
 
-local function Open_Selected_Filename()
+local function OpenSelectedFilename()
 	local text = GetSelText()
 	if #text < 5 then return end
 	local filename = GetOpenFilePath(text)
@@ -66,6 +66,6 @@ end
 
 AddEventHandler("OnMenuCommand", function(msg, source)
 	if msg == IDM_OPENSELECTED then
-		return Open_Selected_Filename()
+		return OpenSelectedFilename()
 	end
 end)
