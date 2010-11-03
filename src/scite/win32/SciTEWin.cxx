@@ -1345,6 +1345,11 @@ GUI::gui_string SciTEWin::ProcessArgs(const GUI::gui_char *cmdLine) {
 		while (IsASpace(*startArg)) {
 			startArg++;
 		}
+//!-start-[cmdline.spaces.fix]
+		if (!*startArg) {
+			break;
+		}
+//!-end-[cmdline.spaces.fix]
 		const GUI::gui_char *endArg = startArg;
 		if (*startArg == '"') {	// Opening double-quote
 			startArg++;
