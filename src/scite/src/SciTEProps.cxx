@@ -271,7 +271,7 @@ StyleDefinition::StyleDefinition(const char *definition) :
 		caseForce(SC_CASE_MIXED),
 		visible(true), changeable(true),
 //!		specified(sdNone) {
-		specified(sdNone), hotspot(false) { //!-change-[StyleDefHotspot]
+		hotspot(false), specified(sdNone) { //!-change-[StyleDefHotspot]
 	ParseStyleDefinition(definition);
 }
 
