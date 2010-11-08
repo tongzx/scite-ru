@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev, ur4ltz
-Version 1.24.2
+Version 1.24.3
 ------------------------------------------------------
   Note: Require gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
                lpeg.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/lpeg/>
@@ -1331,11 +1331,8 @@ local function OnSwitch()
 	if tab0:bounds() then -- visible FileMan
 		local path = props['FileDir']
 		if path == '' then return end
-		path = path:gsub('\\$','')..'\\'
-		if path ~= current_path then
-			current_path = path
-			FileMan_ListFILL()
-		end
+		current_path = path:gsub('\\$','')..'\\'
+		FileMan_ListFILL()
 	elseif tab1:bounds() then -- visible Funk/Bmk
 		Functions_GetNames()
 		Functions_ListFILL()
