@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 abbrevlist.lua
 Authors: Dmitry Maslov, frs, mozers™
-version 2.1.5
+version 2.1.6
 ------------------------------------------------------
   Если при вставке расшифровки аббревиатуры (Ctrl+B) не нашлось точного соответствия,
   то выводится список соответствий начинающихся с этой комбинации символов.
@@ -133,7 +133,7 @@ AddEventHandler("OnChar", function(char)
 	if chars_count_min ~= 0 then
 		event_IDM_ABBREV = false
 		if tonumber(props['macro-recording']) ~= 1 then
-			ShowExpansionList()
+			return ShowExpansionList()
 		end
 	end
 end)
