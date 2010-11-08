@@ -1,6 +1,6 @@
 --[[--------------------------------------------------
 Paired Tags (логическое продолжение скриптов highlighting_paired_tags.lua и HTMLFormatPainter.lua)
-Version: 2.2.8
+Version: 2.3.0
 Author: mozers™, VladVRO, TymurGubayev, nail333
 ------------------------------
 Подсветка парных и непарных тегов в HTML и XML
@@ -119,57 +119,74 @@ function highlighting_paired_tags_switch()
 	EditorClearMarks(2)
 end
 
+local function FindPairedTag(tag)
+	local count = 1
+	local find_start, find_end, dec
+
+	if editor.CharAt[t.tag_start+1] ~= 47 then -- [/]
+		-- поиск вперед (закрывающего тега)
+		find_start = t.tag_start + 1
+		find_end = editor.Length
+		dec = -1
+	else
+		-- поиск назад (открывающего тега)
+		find_start = t.tag_start
+		find_end = 0
+		dec = 1
+	end
+
+	repeat
+		local paired_start, paired_end = editor:findtext("</?"..tag..".*?>", SCFIND_REGEXP, find_start, find_end)
+		if paired_start == nil then break end
+		if editor.CharAt[paired_start+1] == 47 then -- [/]
+			count = count + dec
+		else
+			count = count - dec
+		end
+		if count == 0 then
+			t.paired_start = paired_start
+			t.paired_end = paired_end - 1
+			break
+		end
+		find_start = (dec==1) and paired_start or paired_end
+	until false
+end
+
 local function PairedTagsFinder()
 	local current_pos = editor.CurrentPos
 	if current_pos == old_current_pos then return end
 	old_current_pos = current_pos
 
-	EditorClearMarks(1)
-	EditorClearMarks(2)
-
-	t.tag_start = nil
-	t.tag_end = nil
-	t.paired_start = nil
-	t.paired_end = nil
-
 	local tag_start = editor:findtext("[<>]", SCFIND_REGEXP, current_pos, 0)
-	if tag_start == nil then return end
-	if editor.CharAt[tag_start] ~= 60 then return end
-	if editor.StyleAt[tag_start+1] ~= 1 then return end
+	if tag_start == nil
+		or editor.CharAt[tag_start] ~= 60 -- [<]
+		or editor.StyleAt[tag_start+1] ~= 1
+		then
+			t.tag_start = nil
+			t.tag_end = nil
+			EditorClearMarks(1)
+			EditorClearMarks(2)
+			return
+	end
 	if tag_start == t.tag_start then return end
 	t.tag_start = tag_start
 
-	t.tag_end = editor:findtext("[<>]", SCFIND_REGEXP, current_pos, editor.Length)
-	if t.tag_end == nil then return end
-	if editor.CharAt[t.tag_end] ~= 62 then t.tag_end = nil return end
-
-	if editor.CharAt[t.tag_end-1] ~= 47 then     
-		local dec, find_end
-		if editor.CharAt[t.tag_start+1] == 47 then
-			dec, find_end = -1, 0
-		else
-			dec, find_end =  1, editor.Length
-		end
-
-		-- Find paired tag
-		local tag = editor:textrange(editor:findtext("\\w+", SCFIND_REGEXP, t.tag_start, t.tag_end))
-		local count = 1
-		local find_start = t.tag_start+dec
-		repeat
-			t.paired_start, t.paired_end = editor:findtext("</*"..tag.."[^/>]*>", SCFIND_REGEXP, find_start, find_end)
-			if t.paired_start == nil then break end
-			if t.paired_end ~= nil then 
-				t.paired_end = t.paired_end-1 
-			end
-			if editor.CharAt[t.paired_start+1] == 47 then
-				count = count - dec
-			else
-				count = count + dec
-			end
-			if count == 0 then break end
-			find_start = t.paired_start + dec
-		until false
+	local tag_end = editor:findtext("[<>]", SCFIND_REGEXP, current_pos, editor.Length)
+	if tag_end == nil
+		or editor.CharAt[tag_end] ~= 62 -- [>]
+		then return
 	end
+	t.tag_end = tag_end
+
+	t.paired_start = nil
+	t.paired_end = nil
+	if editor.CharAt[t.tag_end-1] ~= 47 then -- не ищем парные теги для закрытых тегов, типа <BR />
+		local tag = editor:textrange(editor:findtext("\\w+", SCFIND_REGEXP, t.tag_start, t.tag_end))
+		FindPairedTag(tag)
+	end
+
+	EditorClearMarks(1)
+	EditorClearMarks(2)
 
 	if t.paired_start ~= nil then
 		-- paint in Blue
