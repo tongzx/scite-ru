@@ -1,6 +1,6 @@
 --[[--------------------------------------------------
 SciTE Smart braces
-Version: 1.2.6
+Version: 1.3.0
 Authors: Dmitry Maslov, Julgo, TymurGubayev
 -------------------------------------------------
 Работает, если:
@@ -10,6 +10,8 @@ Authors: Dmitry Maslov, Julgo, TymurGubayev
  В настройках установлено braces.open = открывающиеся скобки
  В настройках установлено braces.close = закрывающиеся скобки
  Используется только в русской сборке из-за расширенной функции OnKey
+
+ Параметр braces.multiline определяет перечень имен лексеров (через запятую) для которых фигурная скобка вставляется в три строки с курсором посередине. По умолчанию braces.multiline=cpp
 
 -------------------------------------------------
 Функционал:
@@ -220,6 +222,10 @@ local g_isPastedBraceClose = false
 -- "умные скобки/кавычки" 
 -- возвращает true когда обрабатывать дальше символ не нужно
 local function SmartBraces( char )
+	local multiline = props['braces.multiline']
+	if multiline == '' then multiline = 'cpp' end
+	local use_multiline = string.find(','..multiline..',', ','..props['Language']..',')
+
 	if ( props['braces.autoclose'] == '1' ) then
 		local isSelection = editor.SelectionStart ~= editor.SelectionEnd
 		-- находим парный символ
@@ -249,7 +255,7 @@ local function SmartBraces( char )
 				then
 					-- по волшебному обрабатываем скобку { в cpp
 					if	( char == '{' ) and
-						( props['Language'] == 'cpp' )
+						( use_multiline )
 					then
 						editor:BeginUndoAction()
 						local ln = GetCurrLineNumber()
@@ -293,7 +299,7 @@ local function SmartBraces( char )
 				if ( char == braceClose ) then
 					-- "по волшебному" обрабатываем скобку } в cpp
 					if ( char == '}' ) and
-						( props['Language'] == 'cpp' )
+						( use_multiline )
 					then
 						editor:BeginUndoAction()
 						if (IsLineStartPos( editor.CurrentPos ) )
