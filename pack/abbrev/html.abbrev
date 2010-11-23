@@ -116,7 +116,7 @@ xmld=<?xml version="1.0"?>\n<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "h
 <met=<meta content="">%SEL%|</meta>\n
 <mi=<meta http-equiv="imagetoolbar" content="no"/>\n
 <mu=<meta http-equiv="content-type" content="text/html; charset=utf-8"/>\n
-<mw=<meta http-equiv="content-type" content="text/html; charset=utf-8"/>\n
+<mw=<meta http-equiv="content-type" content="text/html; charset=windows-1251"/>\n
 <ma=<meta name="author" content="%SEL%|"/>\n
 <mc=<meta name="copyright" content="%SEL%|"/>\n
 <md=<meta name="description" content="%SEL%|"/>\n

@@ -382,41 +382,43 @@ dostring(s)\n executes s as a Lua string, like Lua 4's dostring
 
 #editor=output
 
-editor:textrange
-editor:findtext
-editor:match
 editor:append
+editor:findtext
 editor:insert
+editor:match
 editor:remove
+editor:textrange
 
-textrange(int startPos, int endPos)\n gets the text in the specified range
-findtext(string searchText, [int searchFlags], [int searchStart, [int searchEnd]]) = int startMatch, int endMatch\n Find some text in the document. Returns the start and end of the first match, or nil if no match
-match(string searchText, [flags], [int startPos])\n returns a generator that allows you to loop over the matches\ni.e. for m in output:match(text, flags) do ... end
 append(string text)\n appends text to the end of the document
+findtext(string searchText, [int searchFlags], [int searchStart, [int searchEnd]]) = int startMatch, int endMatch\n Find some text in the document. Returns the start and end of the first match, or nil if no match
 insert(int pos, string text)\n inserts text at the specified position
+match(string searchText, [flags], [int startPos])\n returns a generator that allows you to loop over the matches\ni.e. for m in output:match(text, flags) do ... end
 remove(int startPos, int endPos)\n removes the text in the range
+textrange(int startPos, int endPos)\n gets the text in the specified range
 
-scite.Open
+scite.CheckMenus
 scite.ConstantName
+scite.InsertAbbreviation
 scite.MenuCommand
+scite.Open
+scite.Perform
+scite.ReloadStartupScript
 scite.SendEditor
 scite.SendOutput
 scite.ShowParametersDialog
-scite.CheckMenus
-scite.Perform
 scite.UpdateStatusBar
-scite.ReloadStartupScript
 
-Open(filename)\n opens a file in a new buffer
+CheckMenus()\n allows to update the state of the menu and toolbar (only SciTE-Ru)
 ConstantName(number)\n returns the symbolic name of a Scintilla / SciTE constant
+InsertAbbreviation(text)\n insert a text, on a format similar to abbreviation (only SciTE-Ru)
 MenuCommand(IDM_constant)\n run specifed menu command
+Open(filename)\n opens a file in a new buffer
+Perform("action")\n execute commands of SciTE Director Interface (only SciTE-Ru)
+ReloadStartupScript()\n reload startup script
 SendEditor(SCI_constant, ...)\n sends a message to the editor pane
 SendOutput(SCI_constant, ...)\n sends a message to the output pane
 ShowParametersDialog(text)\n show parametrs dialog with message (txt) and return result action (only SciTE-Ru)
-CheckMenus()\n allows to update the state of the menu and toolbar (only SciTE-Ru)
-Perform("action")\n execute commands of SciTE Director Interface (only SciTE-Ru)
 UpdateStatusBar([bUpdateSlowData])\n perform update status bar
-ReloadStartupScript()\n reload startup script
 
 editor:AddRefDocument
 editor:AddSelection
