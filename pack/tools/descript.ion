@@ -36,6 +36,7 @@ HTMLFormatPainter.lua "Формат по образцу" для HTML
 IndentTabToSpace.lua Замена отступов в виде табуляторов на пробелы и наоборот
 InsertSpecialChar.lua Вставка спецсимволов (©,®,§,±,…) из раскрывающегося списка (для HTML вставляются их обозначения)
 lexer_name.lua Показ имени текущего лексера в строке статуса
+LuaInspectInstall.lua Подключение LuaInspect <http://lua-users.org/wiki/LuaInspect>
 macro_support.lua Поддержка записи и воспроизведения макросов
 MakeAbbrev.lua Автоматическое добавление текста в файл аббревиатур
 MoveLines.lua Перемещение выделенных строк (или 1 строки) вверх, вниз, вправо, влево

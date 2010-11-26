@@ -75,6 +75,9 @@ dofile (props["SciteDefaultHome"].."\\tools\\Select_And_Open_Filename.lua")
 
 ----[[ А В Т О М А Т И З А Ц И Я ]]-------------------------------------------
 
+-- Подключение LuaInspect <http://lua-users.org/wiki/LuaInspect>
+if props["luainspect.path"] ~= '' then dofile (props["SciteDefaultHome"].."\\tools\\LuaInspectInstall.lua") end
+
 -- При переходе на заданную строку, прокручивает текст, сохраняя позицию курсора на экране
 dofile (props["SciteDefaultHome"].."\\tools\\goto_line.lua")
 
