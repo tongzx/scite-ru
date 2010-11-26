@@ -864,7 +864,7 @@ do
 		local function clear_spaces(s)
 			return s:gsub('%s+',' ')
 		end
- 		-- redefine common patterns
+		-- redefine common patterns
 		local IDENTIFIER = (ANY - SPACE)^1
 		local NL = P"\r\n"
 		local SPACE = S' \t'^1
