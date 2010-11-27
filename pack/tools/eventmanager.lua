@@ -1,12 +1,12 @@
 --[[-----------------------------------------------------------------
 eventmanager.lua
 Authors: Tymur Gubayev
-version: 1.0.3
+version: 1.1.0
 ---------------------------------------------------------------------
   Description:
 	simple event manager realization for SciTE.
 	exported functions (self-descriptive):
-	  * AddEventHandler ( EventName, Handler[, RunOnce] )
+	  * AddEventHandler ( EventName, Handler[, RunOnce] ) => Handler
 	  * RemoveEventHandler ( EventName, Handler )
 	
 	простейший менеджер событий для SciTE
@@ -26,6 +26,9 @@ History:
 	* 1.0.2  Dispatch bug fix (non-existent event raised error)
 			 RunOnce bug fix
 	* 1.0.3 Dispatch bug workaround (rare OnOpen event bug)
+	* 1.0.4 Rearrange `_remove` table (doesn't affect managers behavior)
+	* 1.1.0 `AddEventHandler` now returns added function handler.
+			Use this value to remove handler added with RunOnce option.
 --]]-----------------------------------------------------------------
 
 
@@ -36,7 +39,8 @@ local _remove = {}
 -- В конце обнуляет список "к удалению"
 local function RemoveAllOutstandingEventHandlers()
 	for i = 1, #_remove do
-		local t_rem, h_rem = events[_remove[i].EventName], _remove[i].Handler
+		local ename, h_rem = next(_remove[i])
+		local t_rem = events[ename]
 		for j = 1, #t_rem do
 			if t_rem[j]==h_rem then
 				table.remove(t_rem, j)
@@ -95,10 +99,10 @@ function AddEventHandler(EventName, Handler, RunOnce)
 		NewDispatcher(EventName)
 	end
 	
+	local OnceHandler
 	if not RunOnce then
 		event[#event+1] = Handler
 	else
-		local OnceHandler
 		OnceHandler = function(...)
 			RemoveEventHandler(EventName, OnceHandler)
 			return Handler(...)
@@ -106,10 +110,11 @@ function AddEventHandler(EventName, Handler, RunOnce)
 		event[#event+1] = OnceHandler
 	end
 	
+	return OnceHandler or Handler
 end -- AddEventHandler
 
 --- Отключает обработчик от события
 -- Если один обработчик подключён к одному событию дважды, то и удалять его надо дважды
 function RemoveEventHandler(EventName, Handler)
-	_remove[#_remove+1]={EventName=EventName, Handler=Handler}
+	_remove[#_remove+1]={[EventName]=Handler}
 end
