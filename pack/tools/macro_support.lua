@@ -1,7 +1,7 @@
 --[[
 Macros support for SciTE
-Version 2.4.0
-Author: VladVRO
+Version 2.5.0
+Author: VladVRO, Tymur Gubayev
 ---------------------------------------------------
 Description:
 macros recording, storing and playing support
@@ -484,3 +484,7 @@ end
 if props['macro.load.on.startup'] == "1" then
   MacroLoadFromFile(macro_file_path())
 end
+
+AddEventHandler("OnChar", function(char)
+	return tonumber(props['macro-recording']) == 1 -- true=stop event handling
+end)

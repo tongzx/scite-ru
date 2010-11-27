@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 AutocompleteObject.lua
 mozers™, Tymur Gubayev
-version 3.10.9
+version 3.10.10
 ------------------------------------------------------
 Inputting of the symbol set in autocomplete.[lexer].start.characters causes the popup list of properties and methods of input_object. They undertake from corresponding api-file.
 In the same case inputting of a separator changes the case of symbols in input_object's name according to a api-file.
@@ -416,11 +416,7 @@ local function AutocompleteObject(char)
 end
 
 ------------------------------------------------------
-AddEventHandler("OnChar", function(char)
-	if props['macro-recording'] ~= '1' then
-		return AutocompleteObject(char)
-	end
-end)
+AddEventHandler("OnChar", AutocompleteObject)
 
 AddEventHandler("OnSwitchFile", function(file)
 	get_api = true

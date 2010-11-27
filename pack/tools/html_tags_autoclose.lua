@@ -2,7 +2,7 @@
 html_tags_autoclose.lua
 Author: Romain Vallet (http://lua-users.org/wiki/SciteXmlAutocompletion)
 Modified by: VladVRO
-Version: 1.1.1
+Version: 1.1.2
 ------------------------------------------------------
 Scite Xml Autocompletion
 automatically closes tags and quotes attributes in XHTML and any XML files
@@ -61,7 +61,7 @@ end
 
 -- Добавляем свой обработчик события OnChar
 AddEventHandler("OnChar", function(char)
-    if props['macro-recording'] ~= '1' and tonumber(props['tags.autoclose']) == 1 then
+    if tonumber(props['tags.autoclose']) == 1 then
         return XMLTagsAutoClose(char)
     end
 end)
