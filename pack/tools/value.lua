@@ -1,12 +1,39 @@
---   Показывает действующее значение переменных $(название_переменной)
---   Для подключения добавьте в свой файл .properties следующие строки:
---   command.name.45.*.properties=Узнать значение переменной
---   command.45.*.properties=dofile "$(SciteDefaultHome)\tools\value.lua"
---   command.mode.45.*.properties=subsystem:lua,savebefore:no
---   command.shortcut.45.*.properties=Alt+V
------------------------------------------------
-local value = props['CurrentSelection']
-if (value == '') then
-	value = props['CurrentWord']
+--[[--------------------------------------------------
+value.lua
+Author: Mingun
+version 1.1.0
+------------------------------------------------------
+  Показывает действующие значения
+   - параметров, заданных в файлах .properties
+   - переменных и таблиц, заданных в глобальной таблице _G
+
+  Для подключения добавьте в свой файл .properties следующие строки:
+    command.name.18.*.properties;*.lua=Value of variable
+    command.18.*.properties;*.lua=dofile $(SciteDefaultHome)\tools\value.lua
+    command.mode.18.*.properties;*.lua=subsystem:lua,savebefore:no
+    command.shortcut.18.*.properties;*.lua=Alt+V
+--]]--------------------------------------------------
+
+-- Выводит содержимое таблицы в виде дерева
+local function print_table(tbl, tbl_name)
+	if tbl_name == nil then tbl_name = '.' end
+	for fields, value in pairs(tbl) do
+		if type(fields)=='string' then fields = "'"..fields.."'" end
+		if type(value) == "table" then
+			print("+", tbl_name.."["..fields.."] =", value)
+			print_table(value, tbl_name.."["..fields.."]")
+		else
+			print("-", tbl_name.."["..fields.."] =", value)
+		end
+	end
 end
-print('\n'..value..' = '..props[value])
+
+local value = props['CurrentSelection']
+if (value == '') then value = props['CurrentWord'] end
+
+local res = _G[value] or props[value]
+print('\n'..value..'='..tostring(res))
+if type(res) == "table" then
+	-- Печатает содержимое таблицы
+	print_table(res, value)
+end
