@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 abbrevlist.lua
 Authors: Dmitry Maslov, frs, mozers™, Tymur Gubayev
-version 3.2.2
+version 3.2.3
 ------------------------------------------------------
   Если при вставке расшифровки аббревиатуры (Ctrl+B) не нашлось точного соответствия,
   то выводится список соответствий начинающихся с этой комбинации символов.
@@ -194,24 +194,22 @@ local function ShowExpansionList()
 end
 
 ------------------------------------------------------
-AddEventHandler("OnMenuCommand", function(msg, source)
+AddEventHandler("OnMenuCommand", function(msg)
 	if msg == IDM_ABBREV then
 		event_IDM_ABBREV = true
 		return ShowExpansionList()
 	end
 end)
 
-AddEventHandler("OnChar", function(char)
+AddEventHandler("OnChar", function()
 	chars_count_min = tonumber(props['abbrev.'..props['Language']..'.auto']) or tonumber(props['abbrev.*.auto']) or 0
 	if chars_count_min ~= 0 then
 		event_IDM_ABBREV = false
-		if tonumber(props['macro-recording']) ~= 1 then
-			return ShowExpansionList()
-		end
+		return ShowExpansionList()
 	end
 end)
 
-AddEventHandler("OnKey", function(key, shift, ctrl, alt, char)
+AddEventHandler("OnKey", function(key, shift, ctrl, alt)
 	if editor.Focus and smart_tab > 0 and key == 9 then -- TAB=9
 		if not (shift or ctrl or alt) then
 			for i = editor.CurrentPos, editor.Length do
@@ -238,10 +236,10 @@ AddEventHandler("OnUserListSelection", function(tp, sel_value)
 	end
 end)
 
-AddEventHandler("OnSwitchFile", function(file)
+AddEventHandler("OnSwitchFile", function()
 	get_abbrev = true
 end)
 
-AddEventHandler("OnOpen", function(file)
+AddEventHandler("OnOpen", function()
 	get_abbrev = true
 end)
