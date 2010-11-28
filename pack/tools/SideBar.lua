@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev, ur4ltz
-Version 1.25.0
+Version 1.26.0
 ------------------------------------------------------
   Note: Require gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
                lpeg.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/lpeg/>
@@ -89,8 +89,8 @@ local nametotime = {} -- maps names to starttimes
 		if nametotime[name] then
 			local d = os.clock() - nametotime[name]
 			print(name,('%.5fs'):format(d),...)
+			return d
 		end
-		return d
 	end -- _DEBUG.timer
 
 	_DEBUG.timerstop = function (name,...)
@@ -219,7 +219,7 @@ memo_path:on_key(function(key)
 	if key == 13 then
 		local new_path = memo_path:get_text()
 		if new_path ~= '' then
-			new_path = new_path:gsub('[\\*\.]*$','')..'\\'
+			new_path = new_path:match('[^*]+')..'\\' 
 			local is_folder = gui.files(new_path..'*', true)
 			if is_folder then
 				current_path = new_path
@@ -355,22 +355,22 @@ function FileMan_FileExec(params)
 	local file_ext = filename:match("[^.]+$")
 	if file_ext == nil then return end
 	file_ext = '%*%.'..string.lower(file_ext)
-	local cmd = ''
+	
 	local function CommandBuild(lng)
 		local cmd = props['command.build.$(file.patterns.'..lng..')']
 		cmd = cmd:gsub(props["FilePath"], current_path..filename)
 		return cmd
 	end
 	-- Lua
-	if string.match(props['file.patterns.lua'], file_ext) ~= nil then
+	if string.match(props['file.patterns.lua'], file_ext) then
 		dostring(params)
 		dofile(current_path..filename)
 	-- Batch
-	elseif string.match(props['file.patterns.batch'], file_ext) ~= nil then
+	elseif string.match(props['file.patterns.batch'], file_ext) then
 		FileMan_FileExecWithSciTE(CommandBuild('batch'))
 		return
 	-- WSH
-	elseif string.match(props['file.patterns.wscript']..props['file.patterns.wsh'], file_ext) ~= nil then
+	elseif string.match(props['file.patterns.wscript']..props['file.patterns.wsh'], file_ext) then
 		FileMan_FileExecWithSciTE(CommandBuild('wscript'))
 	-- Other
 	else
@@ -757,6 +757,7 @@ do
 		local NL = NL + P"\f"
 		local regexstr = P'/' * (ESCANY - (P'/' + NL))^0*(P'/' * S('igm')^0 + NL)
 		local STRING = STRING + regexstr
+		local IGNORED = SPACE + COMMENT + STRING
 		-- define local patterns
 		local f = P"function"
 		local m = P"method"
@@ -791,8 +792,8 @@ do
 		--local con=Cmt(AnyCase"const",(function(s,i) if _show_more then return i else return nil end end))
 		--local dim=Cmt(AnyCase"dim",(function(s,i) if _show_more then return i else return nil end end))
 
-		local scr=P("<script>")
-		local stt=P("<stringtable>")
+		--local scr=P("<script>")
+		--local stt=P("<stringtable>")
 
 		local restype = (P"As"+P"as")*SPACE*Cg(C(AZ^1),'')
 		let = Cg(let*Cc(true),'pl')
@@ -864,7 +865,7 @@ do
 		local function clear_spaces(s)
 			return s:gsub('%s+',' ')
 		end
-		-- redefine common patterns
+ 		-- redefine common patterns
 		local IDENTIFIER = (ANY - SPACE)^1
 		local NL = P"\r\n"
 		local SPACE = S' \t'^1
@@ -1012,30 +1013,6 @@ do -- Fill_Ext2Lang
 	end
 end -- Fill_Ext2Lang
 
-local function GetFlagsAndCut(findString)
-	local findString = findString
-	local t = {}
-	findString,f = ReplaceWithoutCase(findString, "Sub ", "") -- VB
-	t["s"] = f and true
-	findString,f = ReplaceWithoutCase(findString, "Function ", "") -- JS, VB,...
-	t["f"] = f and true
-	findString,f = ReplaceWithoutCase(findString, "Procedure ", "") -- Pascal
-	t["p"] = f and true
-	findString,f = ReplaceWithoutCase(findString, "Proc ", "") -- C
-	t["p"] = t.p or (f and true)
-	findString,f = ReplaceWithoutCase(findString, "Property Let ", "") -- VB
-	t["pl"] = f and true
-	findString,f = ReplaceWithoutCase(findString, "Property Get ", "") -- VB
-	t["pg"] = f and true
-	findString,f = ReplaceWithoutCase(findString, "Property Set ", "") -- VB
-	t["ps"] = f and true
-	findString,f = ReplaceWithoutCase(findString, "CLASS ", "") -- Phyton
-	t["c"] = f and true
-	findString,f = ReplaceWithoutCase(findString, "DEF ", "") -- Phyton
-	t["d"] = f and true
-	return findString, t
-end
-
 local function Functions_GetNames()
 	_DEBUG.timerstart('Functions_GetNames')
 	table_functions = {}
@@ -1050,7 +1027,7 @@ local function Functions_GetNames()
 		lang = Lexer2Lang[props['Language']]
 		start_code = Lang2CodeStart[lang]
 		lpegPattern = Lang2lpeg[lang]
-		if not tablePattern then
+		if not lpegPattern then
 			start_code = Lang2CodeStart['*']
 			lpegPattern = Lang2lpeg['*']
 		end
