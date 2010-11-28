@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev, ur4ltz
-Version 1.26.0
+Version 1.26.1
 ------------------------------------------------------
   Note: Require gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
                lpeg.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/lpeg/>
@@ -36,6 +36,8 @@ require 'shell'
 -- отображение флагов/параметров по умолчанию:
 local _show_flags = tonumber(props['sidebar.functions.flags']) == 1
 local _show_params = tonumber(props['sidebar.functions.params']) == 1
+-- Переключатель способа предпросмотра аббревиатур: true = calltip, false = annotation
+local abbrev_usecalltips = true
 
 local tab_index = 0
 local panel_width = tonumber(props['sidebar.width']) or 216
@@ -1270,7 +1272,7 @@ local function Abbreviations_InsertExpansion()
 	local expansion = list_abbrev:get_item_data(sel_item)
 	scite.InsertAbbreviation(expansion)
 	gui.pass_focus()
-	editor:CallTipCancel()
+	if abbrev_usecalltips then editor:CallTipCancel() else editor:AnnotationClearAll() end
 end
 
 local function Abbreviations_ShowExpansion()
@@ -1278,9 +1280,17 @@ local function Abbreviations_ShowExpansion()
 	if sel_item == -1 then return end
 	local expansion = list_abbrev:get_item_data(sel_item)
 	expansion = expansion:gsub('\\\\','\4'):gsub('\\r','\r'):gsub('(\\n','\n'):gsub('\\t','\t'):gsub('\4','\\')
-	editor:CallTipCancel()
 	local cur_pos = editor.CurrentPos
-	editor:CallTipShow(cur_pos, expansion)
+	if abbrev_usecalltips then
+		editor:CallTipCancel()
+		editor:CallTipShow(cur_pos, expansion)
+	else
+		editor:AnnotationClearAll()
+		editor.AnnotationVisible = ANNOTATION_BOXED
+		local linenr = editor:LineFromPosition(cur_pos)
+		editor.AnnotationStyle[linenr] = 0 -- S_DEFAULT
+		editor:AnnotationSetText(linenr, expansion:gsub('\t','    '))
+	end
 end
 
 list_abbrev:on_double_click(function()
