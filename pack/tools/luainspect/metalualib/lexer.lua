@@ -87,7 +87,7 @@ local function unescape_string (s)
       local t = { 
          a = "\a", b = "\b", f = "\f",
          n = "\n", r = "\r", t = "\t", v = "\v",
-         ["\\"] = "\\", ["'"] = "'", ['"'] = '"', ["\n"] = "\n" }
+         ["\\"] = "\\", ["'"] = "'", ['"'] = '"', ["\n"] = "\n", ["\."] = '.' }
       return t[x] or error([[Unknown escape sequence '\]]..x..[[']])
    end
 
