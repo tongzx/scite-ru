@@ -1304,6 +1304,8 @@ end)
 list_abbrev:on_key(function(key)
 	if key == 13 then -- Enter
 		Abbreviations_InsertExpansion()
+	elseif key == 27 then -- ESC
+		if abbrev_usecalltips then editor:CallTipCancel() else editor:AnnotationClearAll() end
 	end
 end)
 
