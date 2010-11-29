@@ -1,6 +1,6 @@
 --[[--------------------------------------------------
 SciTE Smart braces
-Version: 1.3.0
+Version: 1.3.1
 Authors: Dmitry Maslov, Julgo, TymurGubayev
 -------------------------------------------------
 Работает, если:
@@ -69,8 +69,7 @@ end
 
 local function FindCount( text, textToFind )
 	local count = 0;
-	for w in string.gmatch( text, textToFind:pattern() )
-	do
+	for _ in string.gmatch( text, textToFind:pattern() ) do
 		count = count + 1
 	end
 	return count
@@ -150,7 +149,7 @@ local function BracesBalanced (s, bracebegin, braceend)
 end -- BracesBalanced
 
 local function BlockBraces( bracebegin, braceend )
-	local text, lenght = editor:GetSelText()
+	local text = editor:GetSelText()
 	local selbegin = editor.SelectionStart
 	local selend = editor.SelectionEnd
 	local b, e   = string.find( text, "^%s*"..bracebegin:pattern() )

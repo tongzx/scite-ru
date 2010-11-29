@@ -1,5 +1,5 @@
 -- COMMON.lua
--- Version: 1.8.1
+-- Version: 1.8.2
 ---------------------------------------------------
 -- Общие функции, использующиеся во многих скриптах
 ---------------------------------------------------
@@ -167,7 +167,7 @@ end
 --   если параметры отсутсвуют - очищаются все стили во всем тексте
 --   если не указана позиция и длина - очищается весь текст
 function EditorClearMarks(indic_number, start, length)
-	local _first_indic, _end_indic, indic
+	local _first_indic, _end_indic
 	local current_indic_number = scite.SendEditor(SCI_GETINDICATORCURRENT)
 	if indic_number == nil then
 		_first_indic, _end_indic = 0, 31
@@ -269,7 +269,7 @@ end
 -- Функции, выполняющиеся только один раз, при открытии первого файла
 --   ( Выполнить их сразу, при загрузке SciTEStartup.lua, нельзя
 --   получим сообщение об ошибке: "Editor pane is not accessible at this time." )
-AddEventHandler("OnOpen", function(file)
+AddEventHandler("OnOpen", function()
 	EditorInitMarkStyles()
 	SetMarginTypeN()
 end, 'RunOnce')

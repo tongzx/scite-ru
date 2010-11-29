@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 AutocompleteObject.lua
 mozersЩ, Tymur Gubayev
-version 3.10.10
+version 3.10.11
 ------------------------------------------------------
 Inputting of the symbol set in autocomplete.[lexer].start.characters causes the popup list of properties and methods of input_object. They undertake from corresponding api-file.
 In the same case inputting of a separator changes the case of symbols in input_object's name according to a api-file.
@@ -185,7 +185,7 @@ end
 local function AddAlias(alias, obj)
 	local ALIAS = alias:upper()
 	-- если впервые такое слово, создаЄм таблицу
-	alias_table[ALIAS] = alias_table[OBJ] or CreateAliasEntry(alias)
+	alias_table[ALIAS] = alias_table[obj] or CreateAliasEntry(alias)
 	-- добавл€ем синоним alias к объекту obj
 	alias_table[ALIAS][obj:upper()] = obj
 end
@@ -418,14 +418,14 @@ end
 ------------------------------------------------------
 AddEventHandler("OnChar", AutocompleteObject)
 
-AddEventHandler("OnSwitchFile", function(file)
+AddEventHandler("OnSwitchFile", function()
 	get_api = true
 end)
 
-AddEventHandler("OnOpen", function(file)
+AddEventHandler("OnOpen", function()
 	get_api = true
 end)
 
-AddEventHandler("OnBeforeSave", function(file)
+AddEventHandler("OnBeforeSave", function()
 	get_api = true
 end)

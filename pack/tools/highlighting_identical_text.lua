@@ -1,6 +1,6 @@
 --[[--------------------------------------------------
 Highlighting Identical Text
-Version: 1.5.1
+Version: 1.5.2
 Author: mozersЩ, TymurGubayev
 ------------------------------
 јвто подсветка текста, который совпадает с текущим словом или выделением
@@ -37,7 +37,6 @@ local store_text       -- переменна€ дл€ хранени€ предыдущего поискового текста
 local mark_ident = 4   -- номер маркера дл€ отметки идентичного текста/слова
 local mark_max = 5     -- номер маркера дл€ отметки при превышении max кол-ва вхождений
 local chars_count      -- кол-во символов в текущем документе
-local word_pattern     -- паттерн дл€ поиска слов
 local reserved_words   -- не подсвечиваемые слова
 
 local max = props['highlighting.identical.text.max']

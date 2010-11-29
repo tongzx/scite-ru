@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SortText.lua
 Authors: Tugarinov Sergey, mozersЩ, Tymur Gubayev
-version 2.1.0
+version 2.1.1
 ------------------------------------------------------
 Sorting selected lines_tbl alphabetically and vice versa
 —ортировка выделенных строк по алфавиту и наоборот
@@ -43,7 +43,6 @@ local sel_text = editor:GetSelText()
 local sel_start = editor.SelectionStart
 local sel_end = editor.SelectionEnd
 if sel_text ~= '' then
-	local current_line = ''
 	-- раздел€ем на строки и загон€ем их в таблицу
 	for current_line in sel_text:gmatch('[^\n]+') do
 		lines_tbl[#lines_tbl+1] = current_line

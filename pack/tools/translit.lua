@@ -1,5 +1,5 @@
 -- ћодуль translit.lua предназначен дл€ транслитерации английских букв в русские
--- Version: 1.02
+-- Version: 1.0.3
 -- Author: HSolo
 -- ѕодключение можно сделать похожим образом:
 ---------------------------------------------------------------------------------
@@ -22,7 +22,7 @@ local function RusUpper(Ch)
 end
 
 local function TranslitIT(s)
-  if string.len(s) == 0 then return outstr end
+  if string.len(s) == 0 then return end
 
   local pos = 1
   local outstr = ""

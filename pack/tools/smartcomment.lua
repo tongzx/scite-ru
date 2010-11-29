@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SciTE Smart comment
 Author: Dmitry Maslov
-Version: 2.7.3
+Version: 2.7.4
 ------------------------------------------------------
 Выделяем текст нажимаем на клавиатуре символ 
 с которого начинается комментарий и строка комментируется
@@ -25,7 +25,7 @@ Version: 2.7.3
 Версия 1.0
 Обработка комментариев в cpp * и / (/**/ и //~ )
 Обработка коментариев в lua - ( -- )
-Обработка скобок в lua [ ( [[...]] )
+Обработка скобок в lua
 Обработка комментария в props # ( #~ )
 --]]--------------------------------------------------
 
@@ -99,7 +99,7 @@ local function IsEOLlast(text)
 end
 
 local function StrimComment(commentbegin, commentend)
-	local text, lenght = editor:GetSelText()
+	local text = editor:GetSelText()
 	local selbegin = editor.SelectionStart
 	local selend = editor.SelectionEnd
 	local b,e = string.find(text, MakeFind(commentbegin))
