@@ -221,6 +221,18 @@ void dispatch_ref(lua_State* L,int idx, int ival)
 	}
 }
 
+void dispatch_ref_bool(lua_State* L,int idx, bool ival)
+{
+	if (idx != 0) {
+		lua_rawgeti(L,LUA_REGISTRYINDEX,idx);
+		lua_pushboolean(L,ival);
+		
+		if (lua_pcall(L,1,0,0)) {
+			OutputMessage(L);
+		}
+	}
+}
+
 int dispatch_rref(lua_State* L,int idx, int ival)
 {
 	if (idx != 0) {
@@ -290,7 +302,7 @@ public:
 
 	void on_showhide(bool show)
 	{
-		dispatch_ref(L,onshow_idx,show);
+		dispatch_ref_bool(L,onshow_idx,show);
 	}
 };
 
@@ -539,7 +551,7 @@ public:
 
 	virtual void handle_onfocus(bool yes)
 	{
-		dispatch_ref(L,onfocus_idx,yes);
+		dispatch_ref_bool(L,onfocus_idx,yes);
 	}
 };
 
