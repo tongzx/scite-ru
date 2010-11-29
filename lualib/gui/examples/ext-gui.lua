@@ -23,6 +23,10 @@ window1:context_menu {'item1|func1', 'item2|func2'} -- Note: Need to use global 
 -- Get:
 visible, x, y, width, height = window1:bounds()
 
+-- Event:
+window1:on_show(shown) -- Note: Revision: 1604
+window1:on_close() -- Note: Revision: 1604
+
 ---------
 -- PANEL
 ---------
@@ -86,6 +90,7 @@ visible, x, y, width, height = list1:bounds()
 list1:on_select(function(index) print(index) end)
 list1:on_double_click(function(index) print(index) end)
 list1:on_key(function(key) print(key) end) -- Note: Revision: 747
+list1:on_focus(setfocus) -- Note: Revision: 1604
 
 -------------
 -- MEMO TEXT
