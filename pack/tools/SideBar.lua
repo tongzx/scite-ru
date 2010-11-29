@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev, ur4ltz
-Version 1.26.3
+Version 1.26.4
 ------------------------------------------------------
   Note: Require gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
                lpeg.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/lpeg/>
@@ -29,15 +29,15 @@ require 'gui'
 require 'lpeg'
 require 'shell'
 
--- you can choose to make it a stand-alone window; just uncomment this line:
--- local win = true
-
 -- local _DEBUG = true --включает вывод отладочной информации
+
+-- you can choose to make SideBar a stand-alone window
+local win = tonumber(props['sidebar.win']) == 1
+-- Переключатель способа предпросмотра аббревиатур: true = calltip, false = annotation
+local Abbreviations_USECALLTIPS = tonumber(props['sidebar.abbrev.calltip']) == 1
 -- отображение флагов/параметров по умолчанию:
 local _show_flags = tonumber(props['sidebar.functions.flags']) == 1
 local _show_params = tonumber(props['sidebar.functions.params']) == 1
--- Переключатель способа предпросмотра аббревиатур: true = calltip, false = annotation
-local Abbreviations_USECALLTIPS = false
 
 local tab_index = 0
 local panel_width = tonumber(props['sidebar.width']) or 216
