@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev, ur4ltz
-Version 1.26.1
+Version 1.26.2
 ------------------------------------------------------
   Note: Require gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
                lpeg.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/lpeg/>
@@ -37,7 +37,7 @@ require 'shell'
 local _show_flags = tonumber(props['sidebar.functions.flags']) == 1
 local _show_params = tonumber(props['sidebar.functions.params']) == 1
 -- Переключатель способа предпросмотра аббревиатур: true = calltip, false = annotation
-local abbrev_usecalltips = true
+local Abbreviations_USECALLTIPS = true
 
 local tab_index = 0
 local panel_width = tonumber(props['sidebar.width']) or 216
@@ -183,6 +183,7 @@ if colorback then list_abbrev:set_list_colour(colorfore,colorback) end
 local win_parent
 if win then
 	win_parent = gui.window "Side Bar"
+	win_parent:on_close(function() props['sidebar.show']=0 end)
 else
 	win_parent = gui.panel(panel_width)
 end
@@ -1266,13 +1267,23 @@ local function Abbreviations_ListFILL()
 	ReadAbbrev(abbrev_filename)
 end
 
+local Abbreviations_HideExpansion
+if Abbreviations_USECALLTIPS then
+	Abbreviations_HideExpansion = function ()
+		editor:CallTipCancel()
+	end
+else
+	Abbreviations_HideExpansion = function ()
+		editor:AnnotationClearAll()
+	end
+end
+
 local function Abbreviations_InsertExpansion()
 	local sel_item = list_abbrev:get_selected_item()
 	if sel_item == -1 then return end
 	local expansion = list_abbrev:get_item_data(sel_item)
 	scite.InsertAbbreviation(expansion)
-	gui.pass_focus()
-	if abbrev_usecalltips then editor:CallTipCancel() else editor:AnnotationClearAll() end
+	gui.pass_focus() --don't need to call Abbreviations_HideExpansion(): on_focus will do
 end
 
 local function Abbreviations_ShowExpansion()
@@ -1281,7 +1292,7 @@ local function Abbreviations_ShowExpansion()
 	local expansion = list_abbrev:get_item_data(sel_item)
 	expansion = expansion:gsub('\\\\','\4'):gsub('\\r','\r'):gsub('(\\n','\n'):gsub('\\t','\t'):gsub('\4','\\')
 	local cur_pos = editor.CurrentPos
-	if abbrev_usecalltips then
+	if Abbreviations_USECALLTIPS then
 		editor:CallTipCancel()
 		editor:CallTipShow(cur_pos, expansion)
 	else
@@ -1305,8 +1316,12 @@ list_abbrev:on_key(function(key)
 	if key == 13 then -- Enter
 		Abbreviations_InsertExpansion()
 	elseif key == 27 then -- ESC
-		if abbrev_usecalltips then editor:CallTipCancel() else editor:AnnotationClearAll() end
+		Abbreviations_HideExpansion()
 	end
+end)
+
+list_abbrev:on_focus(function(setfocus)
+	if not setfocus then Abbreviations_HideExpansion() end
 end)
 
 ----------------------------------------------------------
