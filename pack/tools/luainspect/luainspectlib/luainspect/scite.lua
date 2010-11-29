@@ -1484,7 +1484,7 @@ local function install_handler(name)
   local global_handler = _G[name]
   _G[name] = function(...)
     local_handler(...)
-    if global_handler then global_handler(...) end
+    if global_handler then return global_handler(...) end
   end
 end
 
