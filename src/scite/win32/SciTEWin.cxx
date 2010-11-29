@@ -477,6 +477,7 @@ void SciTEWin::ExecuteOtherHelp(const char *cmd) {
 }
 
 // HH_AKLINK not in mingw headers
+/*!
 struct XHH_AKLINK {
 	long cbStruct;
 	BOOL fReserved;
@@ -487,6 +488,19 @@ struct XHH_AKLINK {
 	char *pszWindow;
 	BOOL fIndexOnFail;
 };
+*/
+//!-start-[HtmlHelpW]
+struct XHH_AKLINK {
+	long cbStruct;
+	BOOL fReserved;
+	const wchar_t *pszKeywords;
+	wchar_t *pszUrl;
+	wchar_t *pszMsgText;
+	wchar_t *pszMsgTitle;
+	wchar_t *pszWindow;
+	BOOL fIndexOnFail;
+};
+//!-end-[HtmlHelpW]
 
 // Help command lines contain topic!path
 void SciTEWin::ExecuteHelp(const char *cmd) {
@@ -499,20 +513,27 @@ void SciTEWin::ExecuteHelp(const char *cmd) {
 		if (topic && path) {
 			*path = '\0';
 			path++;	// After the !
-			typedef HWND (WINAPI *HelpFn) (HWND, const char *, UINT, DWORD_PTR);
-			HelpFn fnHHA = (HelpFn)::GetProcAddress(hHH, "HtmlHelpA");
+//!			typedef HWND (WINAPI *HelpFn) (HWND, const char *, UINT, DWORD_PTR);
+//!			HelpFn fnHHA = (HelpFn)::GetProcAddress(hHH, "HtmlHelpA");
+//!-start-[HtmlHelpW]
+			GUI::gui_string wt = GUI::StringFromUTF8(topic);
+			typedef HWND (WINAPI *HelpFn) (HWND, const wchar_t *, UINT, DWORD_PTR);
+			HelpFn fnHHA = (HelpFn)::GetProcAddress(hHH, "HtmlHelpW");
+//!-end-[HtmlHelpW]
 			if (fnHHA) {
 				XHH_AKLINK ak;
 				ak.cbStruct = sizeof(ak);
 				ak.fReserved = FALSE;
-				ak.pszKeywords = topic;
+//!				ak.pszKeywords = topic;
+				ak.pszKeywords = wt.c_str(); //!-changed-[HtmlHelpW]
 				ak.pszUrl = NULL;
 				ak.pszMsgText = NULL;
 				ak.pszMsgTitle = NULL;
 				ak.pszWindow = NULL;
 				ak.fIndexOnFail = TRUE;
 				fnHHA(NULL,
-				      path,
+//!				      path,
+				      GUI::StringFromUTF8(path).c_str(), //!-changed-[HtmlHelpW]
 				      0x000d,          	// HH_KEYWORD_LOOKUP
 				      reinterpret_cast<DWORD_PTR>(&ak)
 				     );
