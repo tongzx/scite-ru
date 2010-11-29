@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev, ur4ltz
-Version 1.26.2
+Version 1.26.3
 ------------------------------------------------------
   Note: Require gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
                lpeg.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/lpeg/>
@@ -1278,6 +1278,7 @@ else
 	end
 end
 
+local scite_InsertAbbreviation = scite_InsertAbbreviation or scite.InsertAbbreviation
 local function Abbreviations_InsertExpansion()
 	local sel_item = list_abbrev:get_selected_item()
 	if sel_item == -1 then return end
