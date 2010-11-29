@@ -1282,7 +1282,7 @@ local function Abbreviations_InsertExpansion()
 	local sel_item = list_abbrev:get_selected_item()
 	if sel_item == -1 then return end
 	local expansion = list_abbrev:get_item_data(sel_item)
-	scite.InsertAbbreviation(expansion)
+	scite_InsertAbbreviation(expansion, 0)
 	gui.pass_focus() --don't need to call Abbreviations_HideExpansion(): on_focus will do
 end
 

@@ -95,7 +95,7 @@ local function CreateExpansionList()
 end
 
 -- Вставка расшифровки, из раскрывающегося списка
-local function InsertExpansion(expansion)
+local function InsertExpansion(expansion, abbrev_length)
 	-- получаем длину аббревиатуры (чтобы знать сколько символов надо удалить перед вставкой расшифровки)
 	local function GetAbbrevLength(expansion)
 		for i = 1, #table_user_list do
@@ -107,10 +107,12 @@ local function InsertExpansion(expansion)
 
 	editor:BeginUndoAction()
 	-- удаление введенной аббревиатуры с сохранением выделения
-	local abbrev_length = GetAbbrevLength(expansion)
+	local abbrev_length = abbrev_length or GetAbbrevLength(expansion)
 	local sel_start, sel_end = editor.SelectionStart - abbrev_length, editor.SelectionEnd - abbrev_length
-	editor:remove(sel_start, editor.SelectionStart)
-	editor:SetSel(sel_start, sel_end)
+	if abbrev_length > 0 then
+		editor:remove(sel_start, editor.SelectionStart)
+		editor:SetSel(sel_start, sel_end)
+	end
 	-- вставка расшифровки c заменой всех меток курсора | (кроме первой) на символ cr
 	expansion = expansion:gsub("|", cr):gsub(cr..cr, "|"):gsub(cr, "|", 1)
 	local _, tab_count = expansion:gsub(cr, cr) -- определяем кол-во дополнительных меток курсора
@@ -140,6 +142,8 @@ local function InsertExpansion(expansion)
 	--------------------------------------------------
 	editor:EndUndoAction()
 end
+-- export global
+scite_InsertAbbreviation = InsertExpansion
 
 -- выводит раскрывающийся список из расшифровок, соответствующих введенной аббревиатуре
 local function ShowExpansionList()
@@ -234,7 +238,7 @@ end)
 
 AddEventHandler("OnUserListSelection", function(tp, sel_value, sel_item_id)
 	if tp == typeUserList then
-		InsertExpansion(table_user_list[sel_item_id][2])
+		InsertExpansion(table_user_list[sel_item_id][2], #table_user_list[sel_item_id][1])
 	end
 end)
 
