@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 abbrevlist.lua
 Authors: Dmitry Maslov, frs, mozers™, Tymur Gubayev
-version 3.2.3
+version 3.3.0
 ------------------------------------------------------
   Если при вставке расшифровки аббревиатуры (Ctrl+B) не нашлось точного соответствия,
   то выводится список соответствий начинающихся с этой комбинации символов.
@@ -30,6 +30,8 @@ History:
 	* теперь аббревиатуры ищутся не только с начала слова
 	+ добавлена возможность обходить заданные в аббревиатуре места по TAB (Issue 240)
 	+ добавлено несколько дополнительных опций
+3.3 (mozers)
+	* благодаря доработке r1610 (автор:Neo) исправлена ошибка со вставкой "некорректных" (для UserList) аббревиатур
 --]]--------------------------------------------------
 
 local table_abbr_exp = {}     -- полный список аббревиатур и расшифровок к ним
@@ -230,9 +232,9 @@ AddEventHandler("OnKey", function(key, shift, ctrl, alt)
 	end
 end)
 
-AddEventHandler("OnUserListSelection", function(tp, sel_value)
+AddEventHandler("OnUserListSelection", function(tp, sel_value, sel_item_id)
 	if tp == typeUserList then
-		InsertExpansion(sel_value)
+		InsertExpansion(table_user_list[sel_item_id][2])
 	end
 end)
 
