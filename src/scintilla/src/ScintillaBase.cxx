@@ -358,6 +358,7 @@ void ScintillaBase::AutoCompleteCompleted() {
 	Position firstPos = ac.posStart - ac.startLen;
 	scn.lParam = firstPos;
 	scn.text = selected;
+	scn.position = item; //!-add-[UserListItemID]
 	NotifyParent(scn);
 
 	if (!ac.Active())

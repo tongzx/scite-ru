@@ -72,7 +72,8 @@ public:
 	virtual bool OnUpdateUI() { return false; }
 	virtual bool OnMarginClick() { return false; }
 	virtual bool OnMacro(const char *, const char *) { return false; }
-	virtual bool OnUserListSelection(int, const char *) { return false; }
+//!	virtual bool OnUserListSelection(int, const char *) { return false; }
+	virtual bool OnUserListSelection(int, const char *,int) { return false; } //!-change-[UserListItemID]
 	virtual bool OnMenuCommand(int, int) { return false; } //!-add-[OnMenuCommand]
 	virtual const char *OnSendEditor(unsigned int, unsigned int, const char *) { return 0; } //!-add-[OnSendEditor]
 	virtual const char *OnSendEditor(unsigned int, unsigned int, long) { return 0; } //!-add-[OnSendEditor]

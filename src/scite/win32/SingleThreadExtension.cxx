@@ -166,9 +166,16 @@ bool SingleThreadExtension::OnMacro(const char *p, const char *q) {
 	return ext->OnMacro(p,q);
 }
 
+/*!
 bool SingleThreadExtension::OnUserListSelection(int listType, const char *selection) {
 	return ext->OnUserListSelection(listType, selection);
 }
+*/
+//!-start-[UserListItemID]
+bool SingleThreadExtension::OnUserListSelection(int listType, const char *selection, int id) {
+	return ext->OnUserListSelection(listType, selection, id);
+}
+//!-end-[UserListItemID]
 
 //!-start-[OnMenuCommand]
 bool SingleThreadExtension::OnMenuCommand(int cmd, int source) {

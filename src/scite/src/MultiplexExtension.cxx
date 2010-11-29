@@ -254,10 +254,12 @@ bool MultiplexExtension::OnMacro(const char *p, const char *q) {
 	return handled;
 }
 
-bool MultiplexExtension::OnUserListSelection(int listType, const char *selection) {
+//!bool MultiplexExtension::OnUserListSelection(int listType, const char *selection) {
+bool MultiplexExtension::OnUserListSelection(int listType, const char *selection, int id) { //!-change-[UserListItemID]
 	bool handled = false;
 	for (int i = 0; i < extensionCount && !handled; ++i)
-		if (extensions[i]->OnUserListSelection(listType, selection))
+//!		if (extensions[i]->OnUserListSelection(listType, selection))
+		if (extensions[i]->OnUserListSelection(listType, selection, id)) //!-change-[UserListItemID]
 			handled = true;
 	return handled;
 }

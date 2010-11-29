@@ -39,7 +39,8 @@ public:
 	virtual bool OnHotSpotReleaseClick(int modifiers); //!-add-[OnHotSpotReleaseClick]
 	virtual bool OnUpdateUI();
 	virtual bool OnMarginClick();
-	virtual bool OnUserListSelection(int listType, const char *selection);
+//!	virtual bool OnUserListSelection(int listType, const char *selection);
+	virtual bool OnUserListSelection(int listType, const char *selection, int id); //!-change-[UserListItemID]
 //!	virtual bool OnKey(int keyval, int modifiers);
 	virtual bool OnKey(int keyval, int modifiers, char ch); //!-change-[OnKey]
 	virtual bool OnDwellStart(int pos, const char *word);

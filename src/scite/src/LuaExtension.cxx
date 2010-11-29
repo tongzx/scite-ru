@@ -957,6 +957,22 @@ static const char *CallNamedFunction(const char *name, unsigned int numberArg, u
 	return handled;
 }
 
+static const char *CallNamedFunction(const char *name, unsigned int numberArg, const char *stringArg, int numberArg2) {
+	const char *handled = NULL;
+	if (luaState) {
+		lua_getglobal(luaState, name);
+		if (lua_isfunction(luaState, -1)) {
+			lua_pushnumber(luaState, numberArg);
+			lua_pushstring(luaState, stringArg);
+			lua_pushnumber(luaState, numberArg2);
+			handled = call_sfunction(luaState, 3);
+		} else {
+			lua_pop(luaState, 1);
+		}
+	}
+	return handled;
+}
+
 static const char *CallNamedFunction(const char *name, unsigned int numberArg, unsigned int numberArg2, long numberArg3) {
 	const char *handled = NULL;
 	if (luaState) {
@@ -2264,10 +2280,15 @@ bool LuaExtension::OnUpdateUI() {
 bool LuaExtension::OnMarginClick() {
 	return CallNamedFunction("OnMarginClick");
 }
-
+/*!
 bool LuaExtension::OnUserListSelection(int listType, const char *selection) {
 	return CallNamedFunction("OnUserListSelection", listType, selection);
+}*/
+//!-start-[UserListItemID]
+bool LuaExtension::OnUserListSelection(int listType, const char *selection, int id) {
+	return CallNamedFunction("OnUserListSelection", listType, selection, id);
 }
+//!-end-[UserListItemID]
 
 //! bool LuaExtension::OnKey(int keyval, int modifiers) {
 bool LuaExtension::OnKey(int keyval, int modifiers, char ch) { //!-chage-[OnKey]
