@@ -1,7 +1,7 @@
 # JScript Abbreviations
 
 #New script file
-1=/*\nScript Name|\nVersion: 1.0\nAuthor: \n------------------------------------------------\nDescription: \n------------------------------------------------\n*/\nvar WshShell = new ActiveXObject("WScript.Shell");\nvar FSO = new ActiveXObject("Scripting.FileSystemObject");\nvar SciTE=new ActiveXObject("SciTE.Helper");\n
+1=/*\n%[FileNameExt]%|\nVersion: 1.0\nAuthor: \n------------------------------------------------\nDescription: \n------------------------------------------------\n*/\nvar WshShell = new ActiveXObject("WScript.Shell");\nvar FSO = new ActiveXObject("Scripting.FileSystemObject");\nvar SciTE=new ActiveXObject("SciTE.Helper");\n
 
 #Object References
 wsh=var WshShell = new ActiveXObject("WScript.Shell");\n

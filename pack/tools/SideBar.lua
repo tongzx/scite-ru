@@ -37,7 +37,7 @@ require 'shell'
 local _show_flags = tonumber(props['sidebar.functions.flags']) == 1
 local _show_params = tonumber(props['sidebar.functions.params']) == 1
 -- Переключатель способа предпросмотра аббревиатур: true = calltip, false = annotation
-local Abbreviations_USECALLTIPS = true
+local Abbreviations_USECALLTIPS = false
 
 local tab_index = 0
 local panel_width = tonumber(props['sidebar.width']) or 216
@@ -222,7 +222,7 @@ memo_path:on_key(function(key)
 	if key == 13 then
 		local new_path = memo_path:get_text()
 		if new_path ~= '' then
-			new_path = new_path:match('[^*]+')..'\\' 
+			new_path = new_path:match('[^*]+')..'\\'
 			local is_folder = gui.files(new_path..'*', true)
 			if is_folder then
 				current_path = new_path
