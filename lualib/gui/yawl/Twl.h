@@ -334,6 +334,7 @@ class EXPORT TEventWindow: public TWin
   virtual void paint(TDC&);
   virtual bool query_close() { return true; }
   virtual void on_close() { }
+  virtual void on_showhide(bool show) { }
   virtual bool activate(bool yes) { return true; }
   virtual void on_select(Rect& rt) {}
 

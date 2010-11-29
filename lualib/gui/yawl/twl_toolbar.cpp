@@ -511,6 +511,12 @@ int TListViewB::handle_notify(void *p)
  case NM_RCLICK:
 	//send_msg(WM_CHAR,VK_ESCAPE,0);
 	return handle_rclick(id);
+ case NM_SETFOCUS:
+	 handle_onfocus(true);
+	 return 1;
+ case NM_KILLFOCUS:
+	 handle_onfocus(false);
+	 return 1;
  case NM_CUSTOMDRAW:
 	if (m_custom_paint) {
 		return list_custom_draw(p,m_fg,m_bg);

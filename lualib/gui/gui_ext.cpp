@@ -209,13 +209,53 @@ void OutputMessage(lua_State *L)
 	}
 }
 
+void dispatch_ref(lua_State* L,int idx, int ival)
+{
+	if (idx != 0) {
+		lua_rawgeti(L,LUA_REGISTRYINDEX,idx);
+		lua_pushnumber(L,ival);
+		
+		if (lua_pcall(L,1,0,0)) {
+			OutputMessage(L);
+		}
+	}
+}
+
+int dispatch_rref(lua_State* L,int idx, int ival)
+{
+	if (idx != 0) {
+		lua_rawgeti(L,LUA_REGISTRYINDEX,idx);
+		lua_pushnumber(L,ival);
+		
+		if (lua_pcall(L,1,1,0)) {
+			OutputMessage(L);
+		} else {
+			return lua_toboolean(L, -1);
+		}
+	}
+	return 0;
+}
+
+bool function_ref(lua_State* L, int idx, int* pr)
+{
+	if (*pr != 0) {
+		luaL_unref(L,LUA_REGISTRYINDEX,*pr);
+	}
+	lua_pushvalue(L,idx);
+	*pr = luaL_ref(L,LUA_REGISTRYINDEX);
+	return true;
+}
+
 class LuaWindow: public TEventWindow
 {
 protected:
 	lua_State* L;
+	int onclose_idx;
+	int onfocus_idx;
+	int onshow_idx;
 public:
 	LuaWindow(const wchar_t* caption,lua_State* l, TWin *parent, int stylex = 0, bool is_child = false, int style = -1)
-		: TEventWindow(caption,parent,stylex,is_child,style),L(l)
+		: TEventWindow(caption,parent,stylex,is_child,style),L(l),onclose_idx(0),onfocus_idx(0),onshow_idx(0)
 	{}
 
 	void handler(Item* item)
@@ -231,6 +271,26 @@ public:
 				OutputMessage(L);
 			}
 		}
+	}
+
+	void set_on_close(int iarg)
+	{
+		function_ref(L,iarg,&onclose_idx);
+	}
+
+	void on_close()
+	{
+		dispatch_ref(L,onclose_idx,0);
+	}
+
+	void set_on_show(int iarg)
+	{
+		function_ref(L,iarg,&onshow_idx);
+	}
+
+	void on_showhide(bool show)
+	{
+		dispatch_ref(L,onshow_idx,show);
 	}
 };
 
@@ -365,47 +425,7 @@ public:
 		add(panel);
 		size();
 	}
-
 };
-
-void dispatch_ref(lua_State* L,int idx, int ival)
-{
-	if (idx != 0) {
-		lua_rawgeti(L,LUA_REGISTRYINDEX,idx);
-		lua_pushnumber(L,ival);
-		
-		if (lua_pcall(L,1,0,0)) {
-			OutputMessage(L);
-		}
-	}
-}
-
-int dispatch_rref(lua_State* L,int idx, int ival)
-{
-	if (idx != 0) {
-		lua_rawgeti(L,LUA_REGISTRYINDEX,idx);
-		lua_pushnumber(L,ival);
-		
-		if (lua_pcall(L,1,1,0)) {
-			OutputMessage(L);
-		} else {
-			int ret = lua_toboolean(L, -1);
-			return ret;
-		}
-	}
-	return 0;
-}
-
-
-bool function_ref(lua_State* L, int idx, int* pr)
-{
-	if (*pr != 0) {
-		luaL_unref(L,LUA_REGISTRYINDEX,*pr);
-	}
-	lua_pushvalue(L,idx);
-	*pr = luaL_ref(L,LUA_REGISTRYINDEX);
-	return true;
-}
 
 class LuaControl
 {
@@ -415,12 +435,14 @@ protected:
 	int double_idx;
 	int onkey_idx;
 	int rclick_idx;
+	int onclose_idx;
+	int onfocus_idx;
     Handle m_hpopup_menu;
 
 public:
 	LuaControl(lua_State *l)
 		: L(l), select_idx(0), double_idx(0), onkey_idx(0), rclick_idx(0)
-		, m_hpopup_menu(0)
+		, m_hpopup_menu(0), onclose_idx(0), onfocus_idx(0)
 	{}
 
 	void set_popup_menu(Handle menu)
@@ -446,6 +468,16 @@ public:
 	virtual void set_rclick(int iarg)
 	{
 		function_ref(L,iarg,&rclick_idx);
+	}
+
+	virtual void set_on_close(int iarg)
+	{
+		function_ref(L,iarg,&onclose_idx);
+	}
+
+	virtual void set_on_focus(int iarg)
+	{
+		function_ref(L,iarg,&onfocus_idx);
 	}
 
 };
@@ -503,6 +535,11 @@ public:
 		}
 
 		return 0;
+	}
+
+	virtual void handle_onfocus(bool yes)
+	{
+		dispatch_ref(L,onfocus_idx,yes);
 	}
 };
 
@@ -1209,6 +1246,27 @@ int window_on_double_click(lua_State* L)
 	return 0;
 }
 
+int window_on_close(lua_State* L)
+{
+	if(LuaWindow* cw = dynamic_cast<LuaWindow*>(window_arg(L)))
+		cw->set_on_close(2);
+	return 0;
+}
+
+int window_on_show(lua_State* L)
+{
+	if(LuaWindow* cw = dynamic_cast<LuaWindow*>(window_arg(L)))
+		cw->set_on_show(2);
+	return 0;
+}
+
+int window_on_focus(lua_State* L)
+{
+	LuaControl* lc = dynamic_cast<LuaControl*>(window_arg(L,1));
+	lc->set_on_focus(2);
+	return 0;
+}
+
 int window_on_key(lua_State* L)
 {
 	TWin* w = window_arg(L);
@@ -1545,6 +1603,9 @@ static const struct luaL_reg window_methods[] = {
 	{"set_selected_item",window_select_item},
 	{"on_select",window_on_select},
 	{"on_double_click",window_on_double_click},
+	{"on_close",window_on_close},
+	{"on_show",window_on_show},
+	{"on_focus",window_on_focus},
 	{"on_key",window_on_key},
 	{"clear",window_clear},
 	{"autosize",window_autosize},

@@ -1431,8 +1431,15 @@ WNDFN WndProc (HWND hwnd, UINT msg, UINT wParam,LONG lParam)
 	  return 0;
 
   case WM_CLOSE:
-	if (! This->query_close()) return 0;
+	  
 	This->on_close();
+	if (! This->query_close()) return 0;
+	//This->on_close();
+	break; // let DefWindowProc handle this...
+
+  case WM_SHOWWINDOW:
+	  
+	This->on_showhide(!IsWindowVisible(hwnd));
 	break; // let DefWindowProc handle this...
 
   case WM_DESTROY:
