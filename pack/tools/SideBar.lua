@@ -1,29 +1,43 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozersЩ, VladVRO, frs, BioInfo, Tymur Gubayev, ur4ltz
-Version 1.26.4
+Version 1.26.5
 ------------------------------------------------------
   Note: Require gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
                lpeg.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/lpeg/>
               shell.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/shell/>
              COMMON.lua (function GetCurrentWord)
+             eventmanager.lua (function AddEventHandler)
+
   Connection:
    In file SciTEStartup.lua add a line:
       dofile (props["SciteDefaultHome"].."\\tools\\SideBar.lua")
+
    Set in a file .properties:
-      command.checked.17.*=$(sidebar.show)
-      command.name.17.*=SideBar
-      command.17.*=SideBar_ShowHide
-      command.mode.17.*=subsystem:lua,savebefore:no
+    command.checked.17.*=$(sidebar.show)
+    command.name.17.*=SideBar
+    command.17.*=SideBar_ShowHide
+    command.mode.17.*=subsystem:lua,savebefore:no
+
+    # Set window(1) or pane(0) (default = 0)
+    sidebar.win=1
 
     # Set show(1) or hide(0) to SciTE start
     sidebar.show=1
+
+    # Set sidebar width and position
+    sidebar.width=250 (default = 230)
+    sidebar.position=left or right (default = right)
+
     # Set default settings for Functions/Procedures List
     sidebar.functions.flags=1
     sidebar.functions.params=1
 
-    sidebar.width=250 (default = 230)
-    sidebar.position=left or right (default = right)
+    # Set abbrev preview 1-calltip, 0-annotation(default)
+    sidebar.abbrev.calltip=1
+
+    # Set annotation style
+    style.*.255=fore:#808080,back:#FEFEFE
 --]]--------------------------------------------------
 require 'gui'
 require 'lpeg'
@@ -1300,8 +1314,8 @@ local function Abbreviations_ShowExpansion()
 		editor:AnnotationClearAll()
 		editor.AnnotationVisible = ANNOTATION_BOXED
 		local linenr = editor:LineFromPosition(cur_pos)
-		editor.AnnotationStyle[linenr] = 0 -- S_DEFAULT
-		editor:AnnotationSetText(linenr, expansion:gsub('\t','    '))
+		editor.AnnotationStyle[linenr] = 255 -- номер стил€, в котором вы задали параметры дл€ аннотаций
+		editor:AnnotationSetText(linenr, expansion:gsub('\t', '    '))
 	end
 end
 
