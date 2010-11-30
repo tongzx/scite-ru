@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 LuaInspectInstall.lua
 Authors: mozers™, Tymur Gubayev
-Version: 1.2.0
+Version: 1.3.0
 ------------------------------------------------------
 Служит для подключения LuaInspect <http://lua-users.org/wiki/LuaInspect>
 Срабатывает при наличии параметра luainspect.path в .properties файле
@@ -15,7 +15,9 @@ function scite_GetProp(key, default)
 	if val and val ~= '' then return val
 	else return default end
 end
+
 ----------------------------------------
+local name_id_map = {}
 function scite_Command(tbl)
 	function get_num(pat)
 		for num = 0, 19 do
@@ -28,6 +30,16 @@ function scite_Command(tbl)
 	props['command.'..num..'.'..pattern] = cmd
 	props['command.mode.'..num..'.'..pattern] = 'subsystem:lua,savebefore:no'
 	props['command.shortcut.'..num..'.'..pattern] = shortcut
+	name_id_map[name] = 9000 + num
+end
+
+----------------------------------------
+function scite_MenuCommand(cmd)
+	if type(cmd) == 'string' then
+		cmd = name_id_map[cmd]
+		if not cmd then return end
+	end
+	scite.MenuCommand(cmd)
 end
 
 ----------------------------------------
