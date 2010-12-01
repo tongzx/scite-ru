@@ -461,13 +461,16 @@ FilePath SciTEWin::GetSciteUserHome() {
 
 // Help command lines contain topic!path
 void SciTEWin::ExecuteOtherHelp(const char *cmd) {
-	char *topic = StringDup(cmd);
+//!	char *topic = StringDup(cmd);
+	wchar_t *topic = wcsdup(GUI::StringFromUTF8(cmd).c_str()); //!-changed-[UnicodeHelp]
 	if (topic) {
-		char *path = strchr(topic, '!');
+//!		char *path = strchr(topic, '!');
+		wchar_t *path = wcschr(topic, '!'); //!-changed-[UnicodeHelp]
 		if (path) {
 			*path = '\0';
 			path++;	// After the !
-			::WinHelpA(MainHWND(),
+//!			::WinHelpA(MainHWND(),
+			::WinHelpW(MainHWND(), //!-changed-[UnicodeHelp]
 			          path,
 			          HELP_KEY,
 			          reinterpret_cast<ULONG_PTR>(topic));
@@ -489,7 +492,7 @@ struct XHH_AKLINK {
 	BOOL fIndexOnFail;
 };
 */
-//!-start-[HtmlHelpW]
+//!-start-[UnicodeHelp]
 struct XHH_AKLINK {
 	long cbStruct;
 	BOOL fReserved;
@@ -500,7 +503,7 @@ struct XHH_AKLINK {
 	wchar_t *pszWindow;
 	BOOL fIndexOnFail;
 };
-//!-end-[HtmlHelpW]
+//!-end-[UnicodeHelp]
 
 // Help command lines contain topic!path
 void SciTEWin::ExecuteHelp(const char *cmd) {
@@ -508,32 +511,33 @@ void SciTEWin::ExecuteHelp(const char *cmd) {
 		hHH = ::LoadLibrary(TEXT("HHCTRL.OCX"));
 
 	if (hHH) {
-		char *topic = StringDup(cmd);
-		char *path = strchr(topic, '!');
+//!		char *topic = StringDup(cmd);
+//!		char *path = strchr(topic, '!');
+		wchar_t *topic = wcsdup(GUI::StringFromUTF8(cmd).c_str()); //!-changed-[UnicodeHelp]
+		wchar_t *path = wcschr(topic, '!'); //!-changed-[UnicodeHelp]
 		if (topic && path) {
 			*path = '\0';
 			path++;	// After the !
 //!			typedef HWND (WINAPI *HelpFn) (HWND, const char *, UINT, DWORD_PTR);
 //!			HelpFn fnHHA = (HelpFn)::GetProcAddress(hHH, "HtmlHelpA");
-//!-start-[HtmlHelpW]
-			GUI::gui_string wt = GUI::StringFromUTF8(topic);
+//!-start-[UnicodeHelp]
 			typedef HWND (WINAPI *HelpFn) (HWND, const wchar_t *, UINT, DWORD_PTR);
-			HelpFn fnHHA = (HelpFn)::GetProcAddress(hHH, "HtmlHelpW");
-//!-end-[HtmlHelpW]
-			if (fnHHA) {
+			HelpFn fnHHW = (HelpFn)::GetProcAddress(hHH, "HtmlHelpW");
+//!-end-[UnicodeHelp]
+//!			if (fnHHA) {
+			if (fnHHW) { //!-changed-[UnicodeHelp]
 				XHH_AKLINK ak;
 				ak.cbStruct = sizeof(ak);
 				ak.fReserved = FALSE;
-//!				ak.pszKeywords = topic;
-				ak.pszKeywords = wt.c_str(); //!-changed-[HtmlHelpW]
+				ak.pszKeywords = topic;
 				ak.pszUrl = NULL;
 				ak.pszMsgText = NULL;
 				ak.pszMsgTitle = NULL;
 				ak.pszWindow = NULL;
 				ak.fIndexOnFail = TRUE;
-				fnHHA(NULL,
-//!				      path,
-				      GUI::StringFromUTF8(path).c_str(), //!-changed-[HtmlHelpW]
+//!				fnHHA(NULL,
+				fnHHW(NULL, //!-changed-[UnicodeHelp]
+				      path,
 				      0x000d,          	// HH_KEYWORD_LOOKUP
 				      reinterpret_cast<DWORD_PTR>(&ak)
 				     );
