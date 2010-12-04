@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev, ur4ltz
-Version 1.26.5
+Version 1.26.6
 ------------------------------------------------------
   Note: Require gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
                lpeg.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/lpeg/>
@@ -318,7 +318,7 @@ function FileMan_FileCopy()
 	if filename == '' or filename == '..' then return end
 	local path_destination = gui.select_dir_dlg("Copy to...")
 	if path_destination == nil then return end
-	os_copy(current_path..filename, path_destination..'\\'..filename)
+	os_copy(shell.from_utf8(current_path..filename), shell.from_utf8(path_destination..'\\'..filename))
 	FileMan_ListFILL()
 end
 
@@ -327,7 +327,7 @@ function FileMan_FileMove()
 	if filename == '' or filename == '..' then return end
 	local path_destination = gui.select_dir_dlg("Move to...")
 	if path_destination == nil then return end
-	os.rename(current_path..filename, path_destination..'\\'..filename)
+	os.rename(shell.from_utf8(current_path..filename), shell.from_utf8(path_destination..'\\'..filename))
 	FileMan_ListFILL()
 end
 
@@ -337,7 +337,7 @@ function FileMan_FileRename()
 	local filename_new = shell.inputbox("Rename", "Enter new file name:", filename, function(name) return not name:match('[\\/:|*?"<>]') end)
 	if filename_new == nil then return end
 	if filename_new ~= '' and filename_new ~= filename then
-		os.rename(current_path..filename, current_path..filename_new)
+		os.rename(shell.from_utf8(current_path..filename), shell.from_utf8(current_path..filename_new))
 		FileMan_ListFILL()
 	end
 end
@@ -346,6 +346,7 @@ function FileMan_FileDelete()
 	local filename, attr = FileMan_GetSelectedItem()
 	if filename == '' then return end
 	if attr == 'd' then return end
+	filename = shell.from_utf8(filename)
 	if shell.msgbox("Are you sure you want to DELETE this file?\n"..filename, "DELETE", 4+256) == 6 then
 	-- if gui.message("Are you sure you want to DELETE this file?\n"..filename, "query") then
 		os.remove(current_path..filename)
