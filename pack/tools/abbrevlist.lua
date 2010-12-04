@@ -1,20 +1,24 @@
 --[[--------------------------------------------------
 abbrevlist.lua
 Authors: Dmitry Maslov, frs, mozers™, Tymur Gubayev
-version 3.3.2
+version 3.4.0
 ------------------------------------------------------
   Если при вставке расшифровки аббревиатуры (Ctrl+B) не нашлось точного соответствия,
   то выводится список соответствий начинающихся с этой комбинации символов.
   Возможен автоматический режим работы (появление списка без нажатия на Ctrl+B).
   Он включается параметром abbrev.lexer.auto=3,
-        где lexer - имя соответсвующего лексера,
-              а 3 - min длина введеной строки при которой она будет анализироваться как аббревиатура
+        где lexer - имя соответствующего лексера,
+              а 3 - min длина введенной строки при которой она будет анализироваться как аббревиатура
 
   Если в расшифровке аббревиатуры задано несколько курсорных меток, то после вставки расшифровки курсор устанавливается на первую из них.
   На все остальные устанавливаются невидимые метки, переход по которым осуществляется клавишей Tab.
   При установке параметра abbrev.multitab.clear.manual=1 скрипт не очищает метки табуляторов после перемещения на них по Tab. Их пользователь удаляет вручную комбинацией Ctrl+Tab.
   Параметр abbrev.multitab.indic.style=#FF6600,diagonal позволяет показывать метки табуляторов заданным стилем (значения задаются так же как в параметрах indic.style.number)
   Установка параметра abbrev.lexer.ignore.comment=1 разрешает скрипту игнорировать символ комментария в файлах аббревиатур для указанных лексеров (т.е. все закомментированные строки будут восприниматься как обычные аббревиатуры с начальным символом #)
+
+  Предупреждение:
+  Встроенные функции SciTE (Ctrl+B, Ctrl+Shift+R), которые заменяет скрипт, работают совершенно иначе!
+  Поэтому файлы сокращений от оригинального SciTE подлежат внимательному пересмотру.
 
   Подключение:
     В файл SciTEStartup.lua добавьте строку:
@@ -25,21 +29,20 @@ History:
 	* при вводе символов ? * возникал список всех имеющихся расшифровок
 	* теперь при показе списка скрипт игнорирует регистр введенной аббревиатуры
 	* исправлено регулярное выражение для идентификации аббревиатуры (т.к. символы пробела и # недопустимы только в ее начале)
-	* параметр abbrev.lexer.auto теперь задает min длину введеной строки при котором она будет анализироваться как аббревиатура
+	* параметр abbrev.lexer.auto теперь задает min длину введенной строки при котором она будет анализироваться как аббревиатура
 3.2 (Tymur, mozers)
-	* теперь аббревиатуры ищутся не только с начала слова
 	+ добавлена возможность обходить заданные в аббревиатуре места по TAB (Issue 240)
 	+ добавлено несколько дополнительных опций
 3.3 (mozers)
 	* благодаря доработке r1610 (автор:Neo) исправлена ошибка со вставкой "некорректных" (для UserList) аббревиатур
+3.4 (mozers)
+	* введенной аббревиатурой считается текст от начала "слова" (где "слово" - любой текст не содержащий пробелов) и до начала выделения (или до каретки).
 --]]--------------------------------------------------
 
 local table_abbr_exp = {}     -- полный список аббревиатур и расшифровок к ним
 local table_user_list = {}    -- список подходящих к текущему тексту аббревиатур и расшифровок к ним
 local get_abbrev = true       -- признак того, что этот список надо пересоздать
-local probably_abbrev = ''    -- текущий текст, в котором будем искать подходящие аббревиатуры
 local chars_count_min = 0     -- min длина введенной строки при которой она будет анализироваться
-local event_IDM_ABBREV = true -- событие, вызвавшее срабатывание скрипта (IDM_ABBREV или OnChar)
 local sep = '•'               -- разделитель для строки раскрывающегося списка
 local typeUserList = 11       -- идентификатор раскрывающегося списка
 local smart_tab = 0           -- кол-во дополнительных позиций табуляции (невидимых маркеров)
@@ -63,31 +66,31 @@ local function SetHiddenMarker()
 end
 local num_hidden_indic = SetHiddenMarker()   -- номер маркера позиций курсора (для обхода по TAB)
 
--- читает один из файлов abbrev в таблицу table_abbr_exp
-local function ReadAbbrevFile(file)
-	local abbrev_file = io.open(file)
-	if abbrev_file then
-		local ignorecomment = tonumber(props['abbrev.'..props['Language']..'.ignore.comment'])==1
-		for line in abbrev_file:lines() do
-			if line ~= '' and (ignorecomment or line:sub(1,1) ~= '#' ) then
-				local _abr, _exp = line:match('^(.-)=(.+)')
-				if _abr then
-					table_abbr_exp[#table_abbr_exp+1] = {_abr, _exp}
-				else
-					local import_file = line:match('^import%s+(.+)')
-					-- если обнаружена запись import то рекурсивно вызываем эту же функцию
-					if import_file then
-						ReadAbbrevFile(file:match('.+\\')..import_file)
+-- Чтение всех подключенных abbrev-файлов в таблицу table_abbr_exp
+local function CreateExpansionList()
+	-- Чтение одного из abbrev-файлов
+	local function ReadAbbrevFile(file)
+		local abbrev_file = io.open(file)
+		if abbrev_file then
+			local ignorecomment = tonumber(props['abbrev.'..props['Language']..'.ignore.comment'])==1
+			for line in abbrev_file:lines() do
+				if line ~= '' and (ignorecomment or line:sub(1,1) ~= '#' ) then
+					local _abr, _exp = line:match('^(.-)=(.+)')
+					if _abr then
+						table_abbr_exp[#table_abbr_exp+1] = {_abr:upper(), _exp}
+					else
+						local import_file = line:match('^import%s+(.+)')
+						-- если обнаружена запись import то рекурсивно вызываем эту же функцию
+						if import_file then
+							ReadAbbrevFile(file:match('.+\\')..import_file)
+						end
 					end
 				end
 			end
+			abbrev_file:close()
 		end
-		abbrev_file:close()
 	end
-end
 
--- читает все подключенные файлы abbrev в таблицу table_abbr_exp
-local function CreateExpansionList()
 	table_abbr_exp = {}
 	local abbrev_filename = props["AbbrevPath"]
 	if abbrev_filename == '' then return end
@@ -96,18 +99,8 @@ end
 
 -- Вставка расшифровки, из раскрывающегося списка
 local function InsertExpansion(expansion, abbrev_length)
-	-- получаем длину аббревиатуры (чтобы знать сколько символов надо удалить перед вставкой расшифровки)
-	local function GetAbbrevLength(expansion)
-		for i = 1, #table_user_list do
-			if table_user_list[i][2] == expansion then
-				return #table_user_list[i][1]
-			end
-		end
-	end
-
 	editor:BeginUndoAction()
 	-- удаление введенной аббревиатуры с сохранением выделения
-	local abbrev_length = abbrev_length or GetAbbrevLength(expansion)
 	local sel_start, sel_end = editor.SelectionStart - abbrev_length, editor.SelectionEnd - abbrev_length
 	if abbrev_length > 0 then
 		editor:remove(sel_start, editor.SelectionStart)
@@ -145,36 +138,38 @@ end
 -- export global
 scite_InsertAbbreviation = InsertExpansion
 
--- выводит раскрывающийся список из расшифровок, соответствующих введенной аббревиатуре
-local function ShowExpansionList()
-	-- находим текст, часть которого (или весь) может быть аббревиатурой
+-- Показ списка из расшифровок, соответствующих введенной аббревиатуре
+local function ShowExpansionList(event_IDM_ABBREV)
 	local sel_start = editor.SelectionStart
 	local line_start_pos = editor:PositionFromLine(editor:LineFromPosition(sel_start))
-	probably_abbrev = editor:textrange(line_start_pos, sel_start):match('[^=%s]+$')
-	if probably_abbrev == nil then return false end
+	-- ищем начало сокращения - первый пробельный символ
+	local abbrev_start = editor:findtext('\\s', SCFIND_REGEXP, sel_start, line_start_pos)
+	if abbrev_start then abbrev_start = abbrev_start+1 else abbrev_start = line_start_pos end
+	if props['Language'] == 'hypertext' then -- для поиска <аббревиатур в html без ведущего пробела
+		local abbrev_start_html = editor:findtext('<', SCFIND_REGEXP, sel_start, line_start_pos)
+		if abbrev_start_html and abbrev_start_html > abbrev_start then abbrev_start = abbrev_start_html end
+	end
+	local probably_abbrev = editor:textrange(abbrev_start, sel_start)
+	if probably_abbrev == '' then return event_IDM_ABBREV end
 	probably_abbrev = probably_abbrev:upper()
 
 	-- если длина вероятной аббревиатуры меньше заданного кол-ва символов то выходим
-	if #probably_abbrev < chars_count_min then return false end
+	if not event_IDM_ABBREV and #probably_abbrev < chars_count_min then return true end
 	-- если мы переключились на другой файл, то строим таблицу table_abbr_exp заново
 	if get_abbrev then
 		CreateExpansionList()
 		get_abbrev = false
 	end
-	if #table_abbr_exp == 0 then return false end
+
+	if #table_abbr_exp == 0 then return event_IDM_ABBREV end
 	table_user_list = {}
-	for j = #probably_abbrev, 1, -1 do
-		local abbrev = probably_abbrev:sub(-j) -- пробуем не является ли часть текста аббревиатурой
-		for i = 1, #table_abbr_exp do -- выбираем из table_abbr_exp только записи соответствующие этой аббревиатуре
-			if table_abbr_exp[i][1]:upper():find(abbrev, 1, true) == 1 then
-				local tmp = {}
-				tmp[1] = abbrev
-				tmp[2] = table_abbr_exp[i][2]
-				table_user_list[#table_user_list+1] = tmp
-			end
+	 -- выбираем из table_abbr_exp только записи соответствующие этой аббревиатуре
+	for i = 1, #table_abbr_exp do
+		if table_abbr_exp[i][1]:find(probably_abbrev, 1, true) == 1 then
+			table_user_list[#table_user_list+1] = {table_abbr_exp[i][1], table_abbr_exp[i][2]}
 		end
 	end
-	if #table_user_list == 0 then return false end
+	if #table_user_list == 0 then return event_IDM_ABBREV end
 	-- если мы используем Ctrl+B (а не автоматическое срабатывание)
 	if (event_IDM_ABBREV)
 		-- и если найден единственный вариант расшифровки
@@ -183,9 +178,10 @@ local function ShowExpansionList()
 		and (probably_abbrev == table_user_list[1][1])
 			-- то вставку производим немедленно
 			then
-				InsertExpansion(table_user_list[1][2])
+				InsertExpansion(table_user_list[1][2], #probably_abbrev)
 				return true
 	end
+
 	-- показываем раскрывающийся список из расшифровок, соответствующих введенной аббревиатуре
 	local tmp = {}
 	for i = 1, #table_user_list do
@@ -202,16 +198,14 @@ end
 ------------------------------------------------------
 AddEventHandler("OnMenuCommand", function(msg)
 	if msg == IDM_ABBREV then
-		event_IDM_ABBREV = true
-		return ShowExpansionList()
+		return ShowExpansionList(true)
 	end
 end)
 
 AddEventHandler("OnChar", function()
 	chars_count_min = tonumber(props['abbrev.'..props['Language']..'.auto']) or tonumber(props['abbrev.*.auto']) or 0
 	if chars_count_min ~= 0 then
-		event_IDM_ABBREV = false
-		return ShowExpansionList()
+		return ShowExpansionList(false)
 	end
 end)
 
