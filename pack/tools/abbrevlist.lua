@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 abbrevlist.lua
 Authors: Dmitry Maslov, frs, mozers™, Tymur Gubayev
-version 3.4.0
+version 3.4.1
 ------------------------------------------------------
   Если при вставке расшифровки аббревиатуры (Ctrl+B) не нашлось точного соответствия,
   то выводится список соответствий начинающихся с этой комбинации символов.
@@ -35,8 +35,11 @@ History:
 	+ добавлено несколько дополнительных опций
 3.3 (mozers)
 	* благодаря доработке r1610 (автор:Neo) исправлена ошибка со вставкой "некорректных" (для UserList) аббревиатур
-3.4 (mozers)
+3.4 (mozers, Tymur)
 	* введенной аббревиатурой считается текст от начала "слова" (где "слово" - любой текст не содержащий пробелов) и до начала выделения (или до каретки).
+	* начало сокращения теперь считается от пробельного символа или открывающей скобки(т.е. `(`,`[` или `{`).
+	- поправлен баг с удалением лишних символов слева от начала аббревиатуры.
+	+ добавлена новая настройка `abbrev.list.width` для указания максимальной ширины списка аббревиатур.
 --]]--------------------------------------------------
 
 local table_abbr_exp = {}     -- полный список аббревиатур и расшифровок к ним
@@ -48,6 +51,7 @@ local typeUserList = 11       -- идентификатор раскрывающегося списка
 local smart_tab = 0           -- кол-во дополнительных позиций табуляции (невидимых маркеров)
 local cr = string.char(1)     -- символ для временной подмены метки курсора |
 local clearmanual = tonumber(props['abbrev.multitab.clear.manual']) == 1
+local nr_chars_to_del = 0     -- сколько символов удалять при вставке расшифровки
 
 -- Возвращает номер свободного маркера и присваивает ему атрибут "невидимый"
 local function SetHiddenMarker()
@@ -143,18 +147,17 @@ local function ShowExpansionList(event_IDM_ABBREV)
 	local sel_start = editor.SelectionStart
 	local line_start_pos = editor:PositionFromLine(editor:LineFromPosition(sel_start))
 	-- ищем начало сокращения - первый пробельный символ
-	local abbrev_start = editor:findtext('\\s', SCFIND_REGEXP, sel_start, line_start_pos)
-	if abbrev_start then abbrev_start = abbrev_start+1 else abbrev_start = line_start_pos end
+	local abbrev_start = editor:findtext('[\\s\\(\\[\\{]', SCFIND_REGEXP, sel_start, line_start_pos)
+	abbrev_start = abbrev_start and abbrev_start+1 or line_start_pos
 	if props['Language'] == 'hypertext' then -- для поиска <аббревиатур в html без ведущего пробела
 		local abbrev_start_html = editor:findtext('<', SCFIND_REGEXP, sel_start, line_start_pos)
 		if abbrev_start_html and abbrev_start_html > abbrev_start then abbrev_start = abbrev_start_html end
 	end
 	local probably_abbrev = editor:textrange(abbrev_start, sel_start)
 	if probably_abbrev == '' then return event_IDM_ABBREV end
-	probably_abbrev = probably_abbrev:upper()
-
 	-- если длина вероятной аббревиатуры меньше заданного кол-ва символов то выходим
 	if not event_IDM_ABBREV and #probably_abbrev < chars_count_min then return true end
+
 	-- если мы переключились на другой файл, то строим таблицу table_abbr_exp заново
 	if get_abbrev then
 		CreateExpansionList()
@@ -162,6 +165,7 @@ local function ShowExpansionList(event_IDM_ABBREV)
 	end
 
 	if #table_abbr_exp == 0 then return event_IDM_ABBREV end
+	probably_abbrev = probably_abbrev:upper()
 	table_user_list = {}
 	 -- выбираем из table_abbr_exp только записи соответствующие этой аббревиатуре
 	for i = 1, #table_abbr_exp do
@@ -183,11 +187,12 @@ local function ShowExpansionList(event_IDM_ABBREV)
 	end
 
 	-- показываем раскрывающийся список из расшифровок, соответствующих введенной аббревиатуре
-	local tmp = {}
+	local tmp, list_width = {}, tonumber(props['abbrev.list.width']) or -1
 	for i = 1, #table_user_list do
-		tmp[#tmp+1] = table_user_list[i][2]
+		tmp[#tmp+1] = table_user_list[i][2]:sub(1, list_width)
 	end
 	local table_user_list_string = table.concat(tmp, sep):gsub('%?', ' ')
+	nr_chars_to_del = #probably_abbrev
 	local sep_tmp = editor.AutoCSeparator
 	editor.AutoCSeparator = string.byte(sep)
 	editor:UserListShow(typeUserList, table_user_list_string)
@@ -232,7 +237,7 @@ end)
 
 AddEventHandler("OnUserListSelection", function(tp, sel_value, sel_item_id)
 	if tp == typeUserList then
-		InsertExpansion(table_user_list[sel_item_id][2], #table_user_list[sel_item_id][1])
+		InsertExpansion(table_user_list[sel_item_id][2], nr_chars_to_del)
 	end
 end)
 
