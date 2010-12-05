@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 abbrevlist.lua
 Authors: Dmitry Maslov, frs, mozers™, Tymur Gubayev
-version 3.4.1
+version 3.4.2
 ------------------------------------------------------
   Если при вставке расшифровки аббревиатуры (Ctrl+B) не нашлось точного соответствия,
   то выводится список соответствий начинающихся с этой комбинации символов.
@@ -15,6 +15,7 @@ version 3.4.1
   При установке параметра abbrev.multitab.clear.manual=1 скрипт не очищает метки табуляторов после перемещения на них по Tab. Их пользователь удаляет вручную комбинацией Ctrl+Tab.
   Параметр abbrev.multitab.indic.style=#FF6600,diagonal позволяет показывать метки табуляторов заданным стилем (значения задаются так же как в параметрах indic.style.number)
   Установка параметра abbrev.lexer.ignore.comment=1 разрешает скрипту игнорировать символ комментария в файлах аббревиатур для указанных лексеров (т.е. все закомментированные строки будут восприниматься как обычные аббревиатуры с начальным символом #)
+  Параметром abbrev.list.width можно задать максимальную ширину раскрывающегося списка расшифровок аббревиатур (в символах)
 
   Предупреждение:
   Встроенные функции SciTE (Ctrl+B, Ctrl+Shift+R), которые заменяет скрипт, работают совершенно иначе!
@@ -36,10 +37,9 @@ History:
 3.3 (mozers)
 	* благодаря доработке r1610 (автор:Neo) исправлена ошибка со вставкой "некорректных" (для UserList) аббревиатур
 3.4 (mozers, Tymur)
-	* введенной аббревиатурой считается текст от начала "слова" (где "слово" - любой текст не содержащий пробелов) и до начала выделения (или до каретки).
-	* начало сокращения теперь считается от пробельного символа или открывающей скобки(т.е. `(`,`[` или `{`).
+	* аббревиатурой считается текст от пробельного символа или открывающей скобки(т.е. `(`,`[` или `{`) и до начала выделения (или до каретки).
 	- поправлен баг с удалением лишних символов слева от начала аббревиатуры.
-	+ добавлена новая настройка `abbrev.list.width` для указания максимальной ширины списка аббревиатур.
+	+ добавлена новая настройка `abbrev.list.width` для указания максимальной ширины раскрывающегося списка расшифровок аббревиатур.
 --]]--------------------------------------------------
 
 local table_abbr_exp = {}     -- полный список аббревиатур и расшифровок к ним
@@ -51,7 +51,7 @@ local typeUserList = 11       -- идентификатор раскрывающегося списка
 local smart_tab = 0           -- кол-во дополнительных позиций табуляции (невидимых маркеров)
 local cr = string.char(1)     -- символ для временной подмены метки курсора |
 local clearmanual = tonumber(props['abbrev.multitab.clear.manual']) == 1
-local nr_chars_to_del = 0     -- сколько символов удалять при вставке расшифровки
+local abbrev_length = 0       -- длина аббревиатуры
 
 -- Возвращает номер свободного маркера и присваивает ему атрибут "невидимый"
 local function SetHiddenMarker()
@@ -103,12 +103,14 @@ end
 
 -- Вставка расшифровки, из раскрывающегося списка
 local function InsertExpansion(expansion, abbrev_length)
+	if not abbrev_length then abbrev_length = 0 end
 	editor:BeginUndoAction()
 	-- удаление введенной аббревиатуры с сохранением выделения
 	local sel_start, sel_end = editor.SelectionStart - abbrev_length, editor.SelectionEnd - abbrev_length
 	if abbrev_length > 0 then
 		editor:remove(sel_start, editor.SelectionStart)
 		editor:SetSel(sel_start, sel_end)
+		abbrev_length = 0
 	end
 	-- вставка расшифровки c заменой всех меток курсора | (кроме первой) на символ cr
 	expansion = expansion:gsub("|", cr):gsub(cr..cr, "|"):gsub(cr, "|", 1)
@@ -147,16 +149,19 @@ local function ShowExpansionList(event_IDM_ABBREV)
 	local sel_start = editor.SelectionStart
 	local line_start_pos = editor:PositionFromLine(editor:LineFromPosition(sel_start))
 	-- ищем начало сокращения - первый пробельный символ
-	local abbrev_start = editor:findtext('[\\s\\(\\[\\{]', SCFIND_REGEXP, sel_start, line_start_pos)
+	local abbrev_start = editor:findtext('[\\s\\(\\[\\{\\<]', SCFIND_REGEXP, sel_start, line_start_pos)
 	abbrev_start = abbrev_start and abbrev_start+1 or line_start_pos
-	if props['Language'] == 'hypertext' then -- для поиска <аббревиатур в html без ведущего пробела
-		local abbrev_start_html = editor:findtext('<', SCFIND_REGEXP, sel_start, line_start_pos)
-		if abbrev_start_html and abbrev_start_html > abbrev_start then abbrev_start = abbrev_start_html end
+	-- в html нарушаем общие правила и включаем в аббревиатуру ведущий символ-разделитель < или (
+	-- (не думаю что подобную практику стоит распостранять на другие языки)
+	if props['Language'] == 'hypertext' then
+		local prev_char = editor:textrange(abbrev_start-1, abbrev_start)
+		if prev_char == '(' or prev_char == '<' then abbrev_start = abbrev_start - 1 end
 	end
-	local probably_abbrev = editor:textrange(abbrev_start, sel_start)
-	if probably_abbrev == '' then return event_IDM_ABBREV end
+	local abbrev = editor:textrange(abbrev_start, sel_start)
+	abbrev_length = #abbrev
+	if abbrev_length == 0 then return event_IDM_ABBREV end
 	-- если длина вероятной аббревиатуры меньше заданного кол-ва символов то выходим
-	if not event_IDM_ABBREV and #probably_abbrev < chars_count_min then return true end
+	if not event_IDM_ABBREV and abbrev_length < chars_count_min then return true end
 
 	-- если мы переключились на другой файл, то строим таблицу table_abbr_exp заново
 	if get_abbrev then
@@ -165,11 +170,11 @@ local function ShowExpansionList(event_IDM_ABBREV)
 	end
 
 	if #table_abbr_exp == 0 then return event_IDM_ABBREV end
-	probably_abbrev = probably_abbrev:upper()
+	abbrev = abbrev:upper()
 	table_user_list = {}
 	 -- выбираем из table_abbr_exp только записи соответствующие этой аббревиатуре
 	for i = 1, #table_abbr_exp do
-		if table_abbr_exp[i][1]:find(probably_abbrev, 1, true) == 1 then
+		if table_abbr_exp[i][1]:find(abbrev, 1, true) == 1 then
 			table_user_list[#table_user_list+1] = {table_abbr_exp[i][1], table_abbr_exp[i][2]}
 		end
 	end
@@ -179,20 +184,20 @@ local function ShowExpansionList(event_IDM_ABBREV)
 		-- и если найден единственный вариант расшифровки
 		and (#table_user_list == 1)
 		-- и аббревиатура полностью соотвествует введенной
-		and (probably_abbrev == table_user_list[1][1])
+		and (abbrev == table_user_list[1][1])
 			-- то вставку производим немедленно
 			then
-				InsertExpansion(table_user_list[1][2], #probably_abbrev)
+				InsertExpansion(table_user_list[1][2], abbrev_length)
 				return true
 	end
 
 	-- показываем раскрывающийся список из расшифровок, соответствующих введенной аббревиатуре
-	local tmp, list_width = {}, tonumber(props['abbrev.list.width']) or -1
+	local tmp = {}
+	local list_width = tonumber(props['abbrev.list.width']) or -1
 	for i = 1, #table_user_list do
 		tmp[#tmp+1] = table_user_list[i][2]:sub(1, list_width)
 	end
 	local table_user_list_string = table.concat(tmp, sep):gsub('%?', ' ')
-	nr_chars_to_del = #probably_abbrev
 	local sep_tmp = editor.AutoCSeparator
 	editor.AutoCSeparator = string.byte(sep)
 	editor:UserListShow(typeUserList, table_user_list_string)
@@ -237,7 +242,7 @@ end)
 
 AddEventHandler("OnUserListSelection", function(tp, sel_value, sel_item_id)
 	if tp == typeUserList then
-		InsertExpansion(table_user_list[sel_item_id][2], nr_chars_to_del)
+		InsertExpansion(table_user_list[sel_item_id][2], abbrev_length)
 	end
 end)
 

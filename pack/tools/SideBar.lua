@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev, ur4ltz
-Version 1.26.6
+Version 1.26.7
 ------------------------------------------------------
   Note: Require gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
                lpeg.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/lpeg/>
@@ -1298,7 +1298,7 @@ local function Abbreviations_InsertExpansion()
 	local sel_item = list_abbrev:get_selected_item()
 	if sel_item == -1 then return end
 	local expansion = list_abbrev:get_item_data(sel_item)
-	scite_InsertAbbreviation(expansion, 0)
+	scite_InsertAbbreviation(expansion)
 	gui.pass_focus() --don't need to call Abbreviations_HideExpansion(): on_focus will do
 end
 
