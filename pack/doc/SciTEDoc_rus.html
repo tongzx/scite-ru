@@ -1729,6 +1729,11 @@ style the path and line number separately from the rest of the line with style 2
 	</tr>
 
 	<tr>
+      <td><dfn><a name="lexer.sql.numbersign.comment">lexer.sql.numbersign.comment</a></dfn></td>
+	<td>If "lexer.sql.numbersign.comment" property is set to 0 a line beginning with '#' will not be a comment.</td>
+	</tr>
+
+	<tr>
       <td><dfn><a name="lexer.xml.allow.scripts">lexer.xml.allow.scripts</a></dfn></td>
 	<td>Set to 0 to disable scripts in XML.</td>
 	</tr>
@@ -2197,7 +2202,8 @@ style the path and line number separately from the rest of the line with style 2
       style.<i>lexer</i>.34<br>
       style.<i>lexer</i>.35<br>
       style.<i>lexer</i>.36<br>
-      style.<i>lexer</i>.37</a></dfn></td>
+      style.<i>lexer</i>.37<br>
+      style.<i>lexer</i>.38</a></dfn></td>
 
       <td>Помимо стилей, генерируемых различными лексерами, в SciTe используется ряд встроенных стилей.<br>
       Стиль <dfn>32</dfn> используется по умолчанию. Его свойства наследуется всеми другими стилями до тех пор, пока не будут перекрыты.<br>
@@ -2205,6 +2211,7 @@ style the path and line number separately from the rest of the line with style 2
       Стили <dfn>34</dfn> и <dfn>35</dfn> используются для отображения соответственно согласованых (закрытых) и несогласованых (незакрытых) скобок.<br>
       Стиль <dfn>36</dfn> используется для отображения управляющих символов и не является полноценным стилем, так как цвета текста и фона для управляющих символов задаются чаще конкретным лексером, чем эти параметром.<br>
       Стиль <dfn>37</dfn> используется для отображения направляющих отступа. При этом используются только цвета текста и фона.<br>
+      Стиль <dfn>38</dfn> используется для отображения всплывающей подсказки. При этом используются только параметры font, size, fore и back.<br>
       Символ &quot;<code>*</code>&quot; может использоваться вместо имени конкретного лексера для задания глобальных настроек.</td>
     </tr>
 
