@@ -380,58 +380,55 @@
     </h3>
     <ul>
 	<li>
-	Released 7 December 2010.
+	Версия 2.23 от 7 декабря 2010 г.
 	</li>
 	<li>
-	On GTK+ version 2.22 and later, drawing is performed with Cairo rather than GDK.
-	This is in preparation for GTK+ 3.0 which will no longer support GDK drawing.
-	The appearance of some elements will be different with Cairo as it is anti-aliased and uses sub-pixel positioning.
-	Cairo may be turned on for GTK+ versions before 2.22 by defining USE_CAIRO although this has not
-	been extensively tested.
+	В GTK+ версий 2.22 и новее отрисовка выполняется с использованием графической библиотеки Cairo, а не GDK. Это сделано в качестве подготовки к переходу на GTK+ 3.0, в которой больше не будет поддерживаться графическая библиотека GDK. С Cairo внешний вид некоторых элементов будет отличаться из-за применения сглаживания и суб-пиксельного выравнивания. Cairo может использоваться в GTK+ версий до 2.22 с параметром USE_CAIRO, хотя это не было тщательно протестировано.
 	</li>
 	<li>
-	New lexer a68k for Motorola 68000 assembler.
+	Добавлен новый лексер a68k для ассемблера Motorola 68000.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=352439&aid=3101598&group_id=2439">Feature #3101598.</a>
 	</li>
 	<li>
-	Borland C++ is no longer supported for building Scintilla or SciTE on Windows.
+	Borland C++ больше не используется для сборки Scintilla и SciTE на Windows.
 	</li>
 	<li>
-	Performance improved when creating large rectangular selections.
+	Улучшено создание большого прямоугольного выделения.
 	</li>
 	<li>
-	PHP folder recognizes #region and #endregion comments.
+	Сворачивание в PHP распознаёт блоки комментариев #region и #endregion.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=352439&aid=3101624&group_id=2439">Feature #3101624.</a>
 	</li>
 	<li>
-	SQL lexer has a lexer.sql.numbersign.comment option to turn off use of '#' comments
-	as these are a non-standard feature only available in some implementations.
+	В лексер SQL добавлена опция lexer.sql.numbersign.comment, позволяющая отключить использование комментариев '#', т.к. это - нестандартная функция, доступная только в некоторых реализациях.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=352439&aid=3098071&group_id=2439">Feature #3098071.</a>
 	</li>
 	<li>
-	SQL folder recognizes case statements and understands the fold.at.else property.
+	<font color=#CC00CC>Сворачивание в SQL распознаёт блоки case</font> и понимает свойство fold.at.else.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3104091&group_id=2439">Bug #3104091.</a>
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3107362&group_id=2439">Bug #3107362.</a>
 	</li>
 	<li>
-	SQL folder fixes bugs with end statements when fold.sql.only.begin=1.
+	Исправлена ошибка сворачивания с концами блоков в SQL, когда задан параметр fold.sql.only.begin=1.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3104091&group_id=2439">Bug #3104091.</a>
 	</li>
 	<li>
-	SciTE on Windows bug fixed with multi-line tab bar not adjusting correctly when maximizing and demaximizing.
+	Исправлена ошибка SciTE в Windows с неправильным выравниванием многострочной панели вкладок при разворачивании и сворачивании окна.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3097517&group_id=2439">Bug #3097517.</a>
 	</li>
 	<li>
-	Crash fixed on GTK+ when Scintilla widget destroyed while it still has an outstanding style idle pending.
+	Исправлено падение на GTK+ при уничтожении элемента интерфейса Scintilla, когда она находится в режиме ожидания.
 	</li>
 	<li>
-	Bug fixed where searching backwards in DBCS text (code page 936 or similar) failed to find occurrences at the start of the line.
+	Исправлена ошибка при поиске в обратном направлении в DBCS тексте (кодовая страница 936 или аналогичная), если не удалось найти вхождений в начале строки.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3103936&group_id=2439">Bug #3103936.</a>
 	</li>
 	<li>
-	SciTE on Windows supports Unicode file names when executing help applications with winhelp and htmlhelp subsystems.
+	<font color=#CC00CC>SciTE в Windows поддерживает Unicode в именах файлов при открытии справки с помощью подсистем winhelp и htmlhelp.</font>
 	</li>
     </ul>
+	<li>Перевод: <b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=ALeXkRU" target=_blank>ALeXkRU</a></b>
+	<li><font color=#CC00CC>Цветом выделены изменения, внесенные участниками команды SciTE-Ru</font>
 
     <h3>
        <a href="http://prdownloads.sourceforge.net/scintilla/scite222.zip?download">Release 2.22</a>

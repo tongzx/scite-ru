@@ -32,7 +32,7 @@
     </td></tr>
   </table>
 
-    <h1>Text editor SciTE RU-Board 2.22 .87</h1>
+    <h1>Text editor SciTE RU-Board 2.23 .88</h1>
 
     <p>All modifications of original <A href="http://www.scintilla.org">SciTE editor</A> has been developed by persons from <A href="http://forum.ru-board.com/topic.cgi?forum=5&topic=35160&glp">Ru-Board community</A>.
 
@@ -55,7 +55,7 @@
 
 <h5 id="LangMenuChecker">
 [LangMenuChecker] <span class=desc>(Author: neo4max)</span></h5>
-In the menu "Language" the current language states labels. For more information look at <a href="http://code.google.com/p/scite-ru/issues/detail?id=193">Issue 193</a>.
+In the menu "Language" the current language states labels. <a href="http://code.google.com/p/scite-ru/issues/detail?id=193">Issue 193</a>.
 
 <h5 id="UserPropertiesFilesSubmenu">
 [UserPropertiesFilesSubmenu] <span class=desc>(Author: mhb, arhohryakov)</span></h5>
@@ -63,7 +63,7 @@ Menu items for opening language properties files to put in a submenu "Edit Prope
 
 <h5 id="CheckFileExist">
 [CheckFileExist] <span class=desc>(Author: neo4max)</span></h5>
-Now SciTE checks the edited file on disk and in its absence, displays a warning. Besides fixed detection of change in the date the edited file. For more information look at <a href="http://code.google.com/p/scite-ru/issues/detail?id=172">Issue 172</a>.
+Now SciTE checks the edited file on disk and in its absence, displays a warning. Besides fixed detection of change in the date the edited file. <a href="http://code.google.com/p/scite-ru/issues/detail?id=172">Issue 172</a>.
 
 <h5 id="find.fillout">
 [find.fillout] <span class=desc>(Authors: Frank Wunderlich, VladVRO)</span></h5>
@@ -89,7 +89,6 @@ For example to define do not close opened files:
 by default all opened files should be closed on load session.
 
 <h5 id="ReadOnlyTabMarker">
-<sup>updated</sup>
 [ReadOnlyTabMarker] <span class=desc>(Authors: Midas, VladVRO, neo4max)</span></h5>
 Added possibility to show <i>Readonly</i> status by additional symbols in tab name, which can be setup by property <span class="example">tabbar.readonly.marker</span>, for example:
 <div class="example">tabbar.readonly.marker= R/O</div>
@@ -168,7 +167,6 @@ Toolbar buttons can display status on/off now based on the current state of para
 For example state of such parameters as wrap, read.only, view.whitespace displayed now by status pressed/released of related buttons IDM_WRAP, IDM_READONLY, IDM_VIEWSPACE.
 
 <h5 id="StyleDefHotspot">
-<sup>new</sup>
 [StyleDefHotspot] <span class=desc>(Author: neo4max)</span></h5>
 The value of setting <span class="example">style.<i>lexer</i>.<i>stylenumber</i></span> can use new field <span class="example">hotspot</span>|<span class="example">nothotspot</span>.
 
@@ -348,10 +346,6 @@ Now can to set up alert with warning message for each warning type:<br>
 <span class="example">warning.executeko.message=alert's text</span><br>
 <span class="example">warning.nootherbookmark.message=alert's text</span><br>
 
-<h5 id="AutoComplete">
-[AutoComplete] <span class=desc>(Author: mimir, VladVRO)</span></h5>
-Autocomplete function (Ctrl+I, Ctrl+Space) takes variants of end of a word not only from appropriate ".api" a file (as in original SciTE), but also from the edited text.
-
 <h5 id="autocompleteword.incremental">
 [autocompleteword.incremental] <span class=desc>(Author: Sergey Kishchenko)</span></h5>
 New variable in properties files<br>
@@ -463,7 +457,8 @@ Added new SciTE event - <span class="example">OnMenuCommand (msg, source)</span>
 It can be equal to IDM_SRCWIN (350) - editor's window, or IDM_RUNWIN (351) - output window, or something else where the focus is.
 
 <h5 id="OnSendEditor">
-[OnSendEditor] <span class=desc>(Author: VladVRO)</span></h5>
+<sup>updated</sup>
+[OnSendEditor] <span class=desc>(Author: VladVRO, neo4max)</span></h5>
 Added new event to SciTE - <span class="example">OnSendEditor (msg, wp, lp)</span><br>
 Parameters the same as SendEditor.<br>
 <span class="example">msg</span> - function id (SCI_constant)<br>
@@ -491,7 +486,6 @@ Event <span class="example">OnDoubleClick()</span> is expanded, now it is return
 <span class="example">function OnDoubleClick(shift, ctrl, alt)</span>
 
 <h5 id="OnHotSpotReleaseClick">
-<sup>new</sup>
 [OnHotSpotReleaseClick] <span class=desc>(Author: mozers)</span></h5>
 Added new event to SciTE <span class="example">OnHotSpotReleaseClick()</span>. Event arises from a mouse button up in the hotspot.<br>
 Receives the state of Ctrl:<br>
@@ -507,6 +501,11 @@ Function <span class="example">OnKey</span> is expanded, now in it the pressed s
 Added new event to SciTE <span class="example">OnMouseButtonUp()</span>. Event arises from a mouse button up in the editing pane or the output pane.<br>
 Receives the state of Ctrl:<br>
 <span class="example">function OnMouseButtonUp(ctrl)</span>
+
+<h5 id="UserListItemID">
+<sup>new</sup>
+[UserListItemID] <span class=desc>(Author: neo4max)</span></h5>
+Event <span class="example">OnUserListSelection</span> returns the third parameter with id position of the selected item in the list. <a href="http://code.google.com/p/scite-ru/issues/detail?id=245">Issue 245</a>
 
 <h5 id="MouseClickHandled">
 [MouseClickHandled] <span class=desc>(Author: VladVRO)</span></h5>
@@ -604,9 +603,14 @@ Now OnSendEditor can trace event SCI_SETZOOM arising at change of the size of a 
       Bug fix
     </h3>
 
+<h5 id="cmdline.spaces.fix">
+<sup>new</sup>
+[cmdline.spaces.fix] <span class=desc>(Author: nail333)</span></h5>
+Fixed bug associated with opening a blank tab if the presence spaces in the end of the command line. <a href="http://code.google.com/p/scite-ru/issues/detail?id=239">Issue 239</a>.
+
 <h5 id="OpenNonExistent">
 [OpenNonExistent] <span class=desc>(Author: neo4max)</span></h5>
-Fixed bug associated with opening a nonexistent file. For more information look at <a href="http://code.google.com/p/scite-ru/issues/detail?id=174">Issue 174</a>.
+Fixed bug associated with opening a nonexistent file. <a href="http://code.google.com/p/scite-ru/issues/detail?id=174">Issue 174</a>.
 
 <h5 id="PropsColouriseFix">
 [PropsColouriseFix] <span class=desc>(Author: VladVRO)</span></h5>
@@ -624,11 +628,11 @@ For implementation used <span class="example">[OnMouseButtonUp]</span> improveme
 
 <h5 id="fix_invalid_codepage">
 [fix_invalid_codepage] <span class=desc>(Author: Dmitry Maslov)</span></h5>
-Bug fixed at which switching in the "Code Page Property" did not work if the props code.page has been set incorrectly. (<a href="http://code.google.com/p/scite-ru/issues/detail?id=49">details</a>)
+Bug fixed at which switching in the "Code Page Property" did not work if the props code.page has been set incorrectly. <a href="http://code.google.com/p/scite-ru/issues/detail?id=49">Issue 49</a>
 
 <h5 id="English_KeyCode">
 [English_KeyCode] <span class=desc>(Author: Dmitry Maslov)</span></h5>
-Bug fixed at which keyboard shortcut ceased to work after switching keyboard layout. (<a href="http://code.google.com/p/scite-ru/issues/detail?id=43">details</a>)
+Bug fixed at which keyboard shortcut ceased to work after switching keyboard layout. <a href="http://code.google.com/p/scite-ru/issues/detail?id=43">Issue 43</a>
 
 <h5 id="InputErr">
 [InputErr] <span class=desc>(Author: mimir)</span></h5>
@@ -656,10 +660,6 @@ Bug was in case when abbreviation body has one simbol '|' and in action was not 
 <h5 id="no_wornings">
 [no_wornings] <span class=desc>(Author: Dmitry Maslov)</span></h5>
 Added compatibility with the compiler Visual C++ 6.0
-
-<h5 id="SQLcase">
-[SQLcase] <span class=desc>(Author: mimir)</span></h5>
-The word "case" added into LexSQL to start folding
 
 </body>
 </html>

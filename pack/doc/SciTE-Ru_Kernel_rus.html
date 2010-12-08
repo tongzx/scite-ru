@@ -33,7 +33,7 @@
     </td></tr>
   </table>
 
-    <h1>Текстовый редактор SciTE RU-Board 2.22 .87</h1>
+    <h1>Текстовый редактор SciTE RU-Board 2.23 .88</h1>
 
     <p>Все модификации оригинального кода редактора <A href="http://www.scintilla.org">SciTE</A> выполнены энтузиастами <A href="http://forum.ru-board.com/topic.cgi?forum=5&topic=35160&glp">форума Ru-Board</A>.
 
@@ -56,7 +56,7 @@
 
 <h5 id="LangMenuChecker">
 [LangMenuChecker] <span class=desc>(Автор: neo4max)</span></h5>
-Текущий язык отмечается меткой в меню "Подсветка". Подробности в <a href="http://code.google.com/p/scite-ru/issues/detail?id=193">Issue 193</a>.
+Текущий язык отмечается меткой в меню "Подсветка". <a href="http://code.google.com/p/scite-ru/issues/detail?id=193">Issue 193</a>.
 
 <h5 id="UserPropertiesFilesSubmenu">
 [UserPropertiesFilesSubmenu] <span class=desc>(Автор: mhb, arhohryakov)</span></h5>
@@ -64,7 +64,7 @@
 
 <h5 id="CheckFileExist">
 [CheckFileExist] <span class=desc>(Автор: neo4max)</span></h5>
-Теперь SciTE проверяет наличие редактируемого файла на диске и при его отсутствии выводит соответствующее предупреждение. Кроме этого исправлено детектирование изменения даты редактируемого файла. Подробности в <a href="http://code.google.com/p/scite-ru/issues/detail?id=172">Issue 172</a>.
+Теперь SciTE проверяет наличие редактируемого файла на диске и при его отсутствии выводит соответствующее предупреждение. Кроме этого исправлено детектирование изменения даты редактируемого файла. <a href="http://code.google.com/p/scite-ru/issues/detail?id=172">Issue 172</a>.
 
 <h5 id="find.fillout">
 [find.fillout] <span class=desc>(Авторы: Frank Wunderlich, VladVRO)</span></h5>
@@ -90,7 +90,6 @@
 по умолчанию при загрузке сессии все открытые файлы закрываются.
 
 <h5 id="ReadOnlyTabMarker">
-<sup>updated</sup>
 [ReadOnlyTabMarker] <span class=desc>(Авторы: Midas, VladVRO, neo4max)</span></h5>
 Добавлена возможность отображать состояние <i>"только для чтения"</i> с помощью доп. символов в имени вкладки, которые задаются в настройках параметром <span class="example">tabbar.readonly.marker</span>, например:
 <div class="example">tabbar.readonly.marker= R/O</div>
@@ -169,7 +168,6 @@ command.name.6.<i>filepattern</i>=Date and Time</div>
 Так по виду (нажата/отжата) таких кнопок как IDM_WRAP, IDM_READONLY, IDM_VIEWSPACE и т.п. можно видеть текущее состояние соответствующих им установок - wrap, read.only, view.whitespace.
 
 <h5 id="StyleDefHotspot">
-<sup>new</sup>
 [StyleDefHotspot] <span class=desc>(Автор: neo4max)</span></h5>
 В строке описания стиля <span class="example">style.<i>lexer</i>.<i>stylenumber</i></span> можно использовать новый параметр <span class="example">hotspot</span>|<span class="example">nothotspot</span>. При наведении мыши, такой текст подчеркивается и вид курсора принимает форму руки.
 
@@ -347,10 +345,6 @@ command.name.6.<i>filepattern</i>=Date and Time</div>
 <span class="example">warning.executeko.message=текст сообщения</span><br>
 <span class="example">warning.nootherbookmark.message=текст сообщения</span>
 
-<h5 id="AutoComplete">
-[AutoComplete] <span class=desc>(Автор: mimir, VladVRO)</span></h5>
-Функция автозавершения (Ctrl+I, Ctrl+Space) берет варианты завершения слова не только из соответствующего .api файла (как в оригинальном SciTE), но и из редактируемого текста.
-
 <h5 id="autocompleteword.incremental">
 [autocompleteword.incremental] <span class=desc>(Автор: Сергей Кищенко)</span></h5>
 Новый параметр в .properties<br>
@@ -463,7 +457,8 @@ calltip.*.word.wrap</div>
 Он может быть равным IDM_SRCWIN (350) - окно редактора, или IDM_RUNWIN (351) - окно вывода, или еще чему-то тому, где находится фокус.
 
 <h5 id="OnSendEditor">
-[OnSendEditor] <span class=desc>(Автор: VladVRO)</span></h5>
+<sup>updated</sup>
+[OnSendEditor] <span class=desc>(Автор: VladVRO, neo4max)</span></h5>
 Добавлено новое событие SciTE - <span class="example">OnSendEditor (msg, wp, lp)</span><br>
 Параметры теже что и у функции SendEditor.<br>
 <span class="example">msg</span> - id функции (SCI_constant)<br>
@@ -491,7 +486,6 @@ end</div>
 <span class="example">function OnDoubleClick(shift, ctrl, alt)</span>
 
 <h5 id="OnHotSpotReleaseClick">
-<sup>new</sup>
 [OnHotSpotReleaseClick] <span class=desc>(Автор: mozers)</span></h5>
 Добавлено новое событие SciTE <span class="example">OnHotSpotReleaseClick()</span>. Событие возникает при отжатии кнопки мыши в hotspot зоне.<br>
 Получает в строке параметров состояние клавиши-модификатора Ctrl:<br>
@@ -507,6 +501,11 @@ end</div>
 Добавлено новое событие SciTE <span class="example">OnMouseButtonUp()</span>. Событие возникает при отжатии кнопки мыши в окне редактирования или в окне консоли.<br>
 Получает в строке параметров состояние клавиши-модификатора Ctrl:<br>
 <span class="example">function OnMouseButtonUp(ctrl)</span>
+
+<h5 id="UserListItemID">
+<sup>new</sup>
+[UserListItemID] <span class=desc>(Автор: neo4max)</span></h5>
+Событие <span class="example">OnUserListSelection</span> возвращает третий параметр, указывающий на позицию выбранного пункта в списке. <a href="http://code.google.com/p/scite-ru/issues/detail?id=245">Issue 245</a>
 
 <h5 id="MouseClickHandled">
 [MouseClickHandled] <span class=desc>(Автор: VladVRO)</span></h5>
@@ -606,9 +605,14 @@ Tеперь можно задавать до 4х дополнительных н
       Устранение ошибок
     </h3>
 
+<h5 id="cmdline.spaces.fix">
+<sup>new</sup>
+[cmdline.spaces.fix] <span class=desc>(Автор: nail333)</span></h5>
+Исправление ошибки с открытием лишней пустой вкладки при наличии пробелов в конце командной строки. <a href="http://code.google.com/p/scite-ru/issues/detail?id=239">Issue 239</a>.
+
 <h5 id="OpenNonExistent">
 [OpenNonExistent] <span class=desc>(Автор: neo4max)</span></h5>
-Исправлена ошибка связанная с открытием несуществующего файла. Подробности в <a href="http://code.google.com/p/scite-ru/issues/detail?id=174">Issue 174</a>.
+Исправлена ошибка связанная с открытием несуществующего файла. <a href="http://code.google.com/p/scite-ru/issues/detail?id=174">Issue 174</a>.
 
 <h5 id="PropsColouriseFix">
 [PropsColouriseFix] <span class=desc>(Автор: VladVRO)</span></h5>
@@ -626,11 +630,11 @@ Tеперь можно задавать до 4х дополнительных н
 
 <h5 id="fix_invalid_codepage">
 [fix_invalid_codepage] <span class=desc>(Автор: Дмитрий Маслов)</span></h5>
-Исправлена ошибка при которой не работало переключение в кодировку по умолчанию, если параметр code.page был задан неверно. (<a href="http://code.google.com/p/scite-ru/issues/detail?id=49">подробности</a>)
+Исправлена ошибка при которой не работало переключение в кодировку по умолчанию, если параметр code.page был задан неверно. <a href="http://code.google.com/p/scite-ru/issues/detail?id=49">Issue 49</a>
 
 <h5 id="English_KeyCode">
 [English_KeyCode] <span class=desc>(Автор: Дмитрий Маслов)</span></h5>
-Исправлена ошибка при которой назначенные шорткаты переставали работать после переключения раскладки клавиатуры. (<a href="http://code.google.com/p/scite-ru/issues/detail?id=43">подробности</a>)
+Исправлена ошибка при которой назначенные шорткаты переставали работать после переключения раскладки клавиатуры. <a href="http://code.google.com/p/scite-ru/issues/detail?id=43">Issue 43</a>
 
 <h5 id="InputErr">
 [InputErr] <span class=desc>(Автор: mimir)</span></h5>
@@ -644,7 +648,7 @@ Tеперь можно задавать до 4х дополнительных н
 
 <h5 id="find_in_files_no_empty">
 [find_in_files_no_empty] <span class=desc>(Автор: Дмитрий Маслов)</span></h5>
-Поиск текста в файлах теперь не запускается если в строку поиска ничего не ввели. (<a href="http://code.google.com/p/scite-ru/issues/detail?id=52">Issue 52</a>).
+Поиск текста в файлах теперь не запускается если в строку поиска ничего не ввели. <a href="http://code.google.com/p/scite-ru/issues/detail?id=52">Issue 52</a>.
 
 <h5 id="FileReaderUnlimitedLen">
 [FileReaderUnlimitedLen] <span class=desc>(Автор: VladVRO)</span></h5>
@@ -659,10 +663,6 @@ Tеперь можно задавать до 4х дополнительных н
 <h5 id="no_wornings">
 [no_wornings] <span class=desc>(Автор: Дмитрий Маслов)</span></h5>
 Добавлена совместимость с компилятором Visual C++ 6.0
-
-<h5 id="SQLcase">
-[SQLcase] <span class=desc>(Автор: mimir)</span></h5>
-В LexSQL добавлено слово "case" для начала фолдинга
 
 </body>
 </html>
