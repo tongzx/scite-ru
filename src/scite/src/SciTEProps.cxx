@@ -803,8 +803,7 @@ void SciTEBase::ReadProperties() {
 	FilePath fileAbbrev = GUI::StringFromUTF8(props.GetNewExpand("abbreviations.", fileNameForExtension.c_str()).c_str());
 	if (!fileAbbrev.IsSet())
 		fileAbbrev = GetAbbrevPropertiesFileName();
-//!	if (!pathAbbreviations.SameNameAs(fileAbbrev)) {
-	if (!pathAbbreviations.SameNameAs(fileAbbrev)||(props.GetInt("abbrev.always.update"))) { //!-add-[abbrev.always.update]
+	if (!pathAbbreviations.SameNameAs(fileAbbrev)) {
 		pathAbbreviations = fileAbbrev;
 		ReadAbbrevPropFile();
 	}

@@ -2379,7 +2379,7 @@ bool SciTEBase::InsertAbbreviation(const char* data, int expandedLength) {
 //!-end-[VarAbbrev]
 	char *expbuf = new char[dataLength + 1];
 //!	strcpy(expbuf, data.c_str());
-	strcpy(expbuf, data); //!-change-[AbbrevRefactoring]
+	strcpy(expbuf, data); //!-change-[InsertAbbreviation]
 	UnSlash(expbuf);
 	size_t expbuflen = strlen(expbuf);
 	int caret_pos = wEditor.Call(SCI_GETSELECTIONSTART);
@@ -2409,19 +2409,6 @@ bool SciTEBase::InsertAbbreviation(const char* data, int expandedLength) {
 	}
 
 	wEditor.Call(SCI_BEGINUNDOACTION);
-//!-start-[AbbrevRefactoring]
-	if (props.GetInt("abbrev.preserve.selection") != 1) {
-		wEditor.CallString(SCI_REPLACESEL, 0, "");
-		sel_length = 0;
-	}
-
-	if (expandedLength > 0) {
-		caret_pos -= expandedLength;
-		sel_start = caret_pos;
-		wEditor.Call(SCI_SETSEL, caret_pos, caret_pos + expandedLength);
-		wEditor.CallString(SCI_REPLACESEL, 0, "");
-	}
-//!-end-[AbbrevRefactoring]
 
 	// add the abbreviation one character at a time
 	for (i = 0; i < expbuflen; i++) {
