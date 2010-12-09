@@ -2350,11 +2350,11 @@ bool SciTEBase::StartInsertAbbreviation() {
 	}
 */
 //!-start-[InsertAbbreviation]
-	InsertAbbreviation(data.c_str(), 0);
+	InsertAbbreviation(data.c_str());
 	return true;
 }
 
-bool SciTEBase::InsertAbbreviation(const char* data, int expandedLength) {
+bool SciTEBase::InsertAbbreviation(const char* data) {
 	size_t dataLength = strlen(data);
 	if (dataLength == 0) {
 		return false; // returning if abbreviation is empty
@@ -2687,7 +2687,7 @@ bool SciTEBase::StartExpandAbbreviation() {
 	delete []expbuf;
 */
 //!-start-[InsertAbbreviation]
-	if (!InsertAbbreviation(data.c_str(), abbrevLength)) {
+	if (!InsertAbbreviation(data.c_str())) {
 		WarnUser(warnNotFound, "No match abbreviation."); //!-change-[WarningMessage]
 	}
 //!-end-[InsertAbbreviation]

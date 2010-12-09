@@ -298,7 +298,7 @@ static int cf_scite_perform(lua_State *L) {
 static int cf_editor_insert_abbrev(lua_State *L) {
 	const char *s = luaL_checkstring(L, 1);
 	if (s) {
-		host->InsertAbbreviation(s,0);
+		host->InsertAbbreviation(s);
 	}
 	return 0;
 }
