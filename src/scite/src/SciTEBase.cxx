@@ -2419,7 +2419,6 @@ bool SciTEBase::InsertAbbreviation(const char* data, int expandedLength) {
 				indentExtra++;
 				SetLineIndentation(currentLineNumber, indent + indentSize * indentExtra);
 				caret_pos += indentSize / indentChars;
-				if (at_start) sel_start += indentSize / indentChars; //-add-[AbbrevFixCaretPos]
 			}
 		} else {
 			switch (c) {
@@ -2566,8 +2565,8 @@ bool SciTEBase::InsertAbbreviation(const char* data, int expandedLength) {
 	// set the caret to the desired position
 	if (double_pipe) {
 		sel_length = 0;
-//!	} else if (!at_start && sel_length == 0) { //-remove-[AbbrevFixCaretPos]
-//!		sel_start += static_cast<int>(expbuflen); //-remove-[AbbrevFixCaretPos]
+	} else if (!at_start && sel_length == 0) {
+		sel_start += static_cast<int>(expbuflen);
 	}
 	wEditor.Call(SCI_SETSEL, sel_start, sel_start + sel_length);
 
