@@ -2587,43 +2587,11 @@ bool SciTEBase::StartExpandAbbreviation() {
 	char *linebuf = new char[currentPos + 2];
 	GetLine(linebuf, currentPos + 2);	// Just get text to the left of the caret
 	linebuf[currentPos] = '\0';
-/*!
 	int abbrevPos = (currentPos > 32 ? currentPos - 32 : 0);
 	const char *abbrev = linebuf + abbrevPos;
 	SString data;
 	size_t dataLength = 0;
 	int abbrevLength = currentPos - abbrevPos;
-*/
-//!-start-[AbbrevExpandIncremental]
-	int max_abbrev_len = props.GetInt("abbrev.maximum.length", 32); //-add-[AbbrevMaxLength]
-	int abbrev_expand_incremental = props.GetInt("abbrev.expand.incremental", 0);
-	SString data;
-	size_t dataLength = 0;
-	int abbrevLength;
-	if (abbrev_expand_incremental == 1) {
-		const char *abbrev = linebuf + currentPos - 1;
-		abbrevLength = 1;
-		// Try each potential abbreviation from the previous of currentPos letter on a line
-		// and expanding to the left until reached start of the line or max_abbrev_len.
-		// We arbitrarily limits the length of an abbreviation (seems a reasonable value..)
-		while (abbrevLength <= max_abbrev_len) { //-add-[AbbrevMaxLength]
-			data = propsAbbrev.Get(abbrev);
-			dataLength = data.length();
-			if (dataLength > 0) {
-				break;	/* Found */
-			}
-			if (abbrev != linebuf) {
-				abbrev--;	// One more letter to the left
-			} else {
-				break;
-			}
-			abbrevLength++;
-		}
-	} else {
-		int abbrevPos = (currentPos > max_abbrev_len ? currentPos - max_abbrev_len : 0); //-add-[AbbrevMaxLength]
-		const char *abbrev = linebuf + abbrevPos;
-		abbrevLength = currentPos - abbrevPos;
-//!-end-[AbbrevExpandIncremental]
 	// Try each potential abbreviation from the first letter on a line
 	// and expanding to the right.
 	// We arbitrarily limit the length of an abbreviation (seems a reasonable value..),
@@ -2637,7 +2605,6 @@ bool SciTEBase::StartExpandAbbreviation() {
 		abbrev++;	// One more letter to the right
 		abbrevLength--;
 	}
-} //!
 
 /*! Original
 	if (dataLength == 0) {
