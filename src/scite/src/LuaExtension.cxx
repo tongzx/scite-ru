@@ -2286,7 +2286,7 @@ bool LuaExtension::OnUserListSelection(int listType, const char *selection) {
 }*/
 //!-start-[UserListItemID]
 bool LuaExtension::OnUserListSelection(int listType, const char *selection, int id) {
-	return CallNamedFunction("OnUserListSelection", listType, selection, id);
+	return CallNamedFunction("OnUserListSelection", listType, selection, id) != NULL;
 }
 //!-end-[UserListItemID]
 
