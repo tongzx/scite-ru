@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 abbrevlist.lua
 Authors: Dmitry Maslov, frs, mozers™, Tymur Gubayev
-version 3.4.2
+version 3.4.3
 ------------------------------------------------------
   Если при вставке расшифровки аббревиатуры (Ctrl+B) не нашлось точного соответствия,
   то выводится список соответствий начинающихся с этой комбинации символов.
@@ -16,6 +16,7 @@ version 3.4.2
   Параметр abbrev.multitab.indic.style=#FF6600,diagonal позволяет показывать метки табуляторов заданным стилем (значения задаются так же как в параметрах indic.style.number)
   Установка параметра abbrev.lexer.ignore.comment=1 разрешает скрипту игнорировать символ комментария в файлах аббревиатур для указанных лексеров (т.е. все закомментированные строки будут восприниматься как обычные аббревиатуры с начальным символом #)
   Параметром abbrev.list.width можно задать максимальную ширину раскрывающегося списка расшифровок аббревиатур (в символах)
+  Параметром abbrev.lexer.prev.chars можно задать индивидуальный для избранного лексера список символов, отличный от дефолтового набора ' ([{<', которые предшествуют аббревиатуре. Учтите, что эти символы уже нельзя будет включать в состав аббревиатур!
 
   Предупреждение:
   Встроенные функции SciTE (Ctrl+B, Ctrl+Shift+R), которые заменяет скрипт, работают совершенно иначе!
@@ -52,6 +53,7 @@ local smart_tab = 0           -- кол-во дополнительных позиций табуляции (невиди
 local cr = string.char(1)     -- символ для временной подмены метки курсора |
 local clearmanual = tonumber(props['abbrev.multitab.clear.manual']) == 1
 local abbrev_length = 0       -- длина аббревиатуры
+local prev_chars = ' ([{<'    -- символы которые предшествуют аббревиатуре
 
 -- Возвращает номер свободного маркера и присваивает ему атрибут "невидимый"
 local function SetHiddenMarker()
@@ -146,10 +148,16 @@ scite_InsertAbbreviation = InsertExpansion
 
 -- Показ списка из расшифровок, соответствующих введенной аббревиатуре
 local function ShowExpansionList(event_IDM_ABBREV)
+	if get_abbrev then -- при открытии и переключении вкладки
+		-- определяем символы которые предшествуют аббревиатуре
+		prev_chars = props['abbrev.'..props['Language']..'.prev.chars']
+		if prev_chars == '' then prev_chars = ' ([{<' end
+		prev_chars = '['..prev_chars:gsub(' ', 's'):gsub('(.)', '\\%1')..']'
+	end
 	local sel_start = editor.SelectionStart
 	local line_start_pos = editor:PositionFromLine(editor:LineFromPosition(sel_start))
 	-- ищем начало сокращения - первый пробельный символ
-	local abbrev_start = editor:findtext('[\\s\\(\\[\\{\\<]', SCFIND_REGEXP, sel_start, line_start_pos)
+	local abbrev_start = editor:findtext(prev_chars, SCFIND_REGEXP, sel_start, line_start_pos)
 	abbrev_start = abbrev_start and abbrev_start+1 or line_start_pos
 	-- в html нарушаем общие правила и включаем в аббревиатуру ведущий символ-разделитель < или (
 	-- (не думаю что подобную практику стоит распостранять на другие языки)
