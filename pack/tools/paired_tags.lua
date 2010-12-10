@@ -1,6 +1,6 @@
 --[[--------------------------------------------------
 Paired Tags (логическое продолжение скриптов highlighting_paired_tags.lua и HTMLFormatPainter.lua)
-Version: 2.3.0
+Version: 2.4.0
 Author: mozers™, VladVRO, TymurGubayev, nail333
 ------------------------------
 Подсветка парных и непарных тегов в HTML и XML
@@ -40,11 +40,22 @@ Author: mozers™, VladVRO, TymurGubayev, nail333
 	command.mode.7.$(tagfiles)=subsystem:lua,savebefore:no
 	command.shortcut.7.$(tagfiles)=Alt+D
 
-Для быстрого включения/отключения подсветки можно добавить команду:
-	command.checked.8.$(tagfiles)=$(hypertext.highlighting.paired.tags)
-	command.name.8.$(tagfiles)=Highlighting Paired Tags
-	command.8.$(tagfiles)=highlighting_paired_tags_switch
+	command.name.8.$(tagfiles)=Goto Paired Tag
+	command.8.$(tagfiles)=GotoPairedTag
 	command.mode.8.$(tagfiles)=subsystem:lua,savebefore:no
+	command.shortcut.8.$(tagfiles)=Alt+B
+
+	command.name.9.$(tagfiles)=Select With Tags
+	command.9.$(tagfiles)=SelectWithTags
+	command.mode.9.$(tagfiles)=subsystem:lua,savebefore:no
+	command.shortcut.9.$(tagfiles)=Alt+S
+
+Для быстрого включения/отключения подсветки можно добавить команду:
+	command.separator.10.$(tagfiles)=1
+	command.checked.10.$(tagfiles)=$(hypertext.highlighting.paired.tags)
+	command.name.10.$(tagfiles)=Highlighting Paired Tags
+	command.10.$(tagfiles)=highlighting_paired_tags_switch
+	command.mode.10.$(tagfiles)=subsystem:lua,savebefore:no
 --]]----------------------------------------------------
 
 local t = {}
@@ -53,12 +64,12 @@ local t = {}
 local old_current_pos
 
 function CopyTags()
-	if t.tag_start == nil then
+	if not t.tag_start then
 		print("Error : "..scite.GetTranslation("Move the cursor on a tag to copy it!"))
 		return
 	end
 	local tag = editor:textrange(t.tag_start, t.tag_end+1)
-	if t.paired_start~=nil then
+	if t.paired_start then
 		local paired = editor:textrange(t.paired_start, t.paired_end+1)
 		if t.tag_start < t.paired_start then
 			t.begin = tag
@@ -74,8 +85,8 @@ function CopyTags()
 end
 
 function PasteTags()
-	if t.begin~=nil then
-		if t.finish~=nil then
+	if t.begin then
+		if t.finish then
 			local sel_text = editor:GetSelText()
 			editor:ReplaceSel(t.begin..sel_text..t.finish)
 			if sel_text == '' then
@@ -88,7 +99,7 @@ function PasteTags()
 end
 
 function DeleteTags()
-	if t.tag_start~=nil then
+	if t.tag_start then
 		editor:BeginUndoAction()
 		if t.paired_start~=nil then
 			if t.tag_start < t.paired_start then
@@ -109,6 +120,22 @@ function DeleteTags()
 		editor:EndUndoAction()
 	else
 		print("Error : "..scite.GetTranslation("Move the cursor on a tag to delete it!"))
+	end
+end
+
+function GotoPairedTag()
+	if t.paired_start then -- the paired tag found
+		editor:GotoPos(t.paired_start+1)
+	end
+end
+
+function SelectWithTags()
+	if t.paired_start then -- the paired tag found
+		if t.tag_start < t.paired_start then
+			editor:SetSel(t.tag_start, t.paired_end+1)
+		else
+			editor:SetSel(t.paired_start, t.tag_end+1)
+		end
 	end
 end
 
@@ -137,7 +164,7 @@ local function FindPairedTag(tag)
 
 	repeat
 		local paired_start, paired_end = editor:findtext("</?"..tag..".*?>", SCFIND_REGEXP, find_start, find_end)
-		if paired_start == nil then break end
+		if not paired_start then break end
 		if editor.CharAt[paired_start+1] == 47 then -- [/]
 			count = count + dec
 		else
@@ -188,7 +215,7 @@ local function PairedTagsFinder()
 	EditorClearMarks(1)
 	EditorClearMarks(2)
 
-	if t.paired_start ~= nil then
+	if t.paired_start then
 		-- paint in Blue
 		EditorMarkText(t.tag_start + 1, t.tag_end - t.tag_start - 1, 1)
 		EditorMarkText(t.paired_start + 1, t.paired_end - t.paired_start - 1, 1)
@@ -206,15 +233,6 @@ AddEventHandler("OnUpdateUI", function()
 			if props['Language'] == "hypertext" or props['Language'] == "xml" then
 				PairedTagsFinder()
 			end
-		end
-	end
-end)
-
-AddEventHandler("OnKey", function(key, shift, ctrl, alt, char)
-	if editor.Focus then
-		if alt and key == 66 -- alt+B
-			and t.paired_start then -- the paired tag found
-				editor:GotoPos(t.paired_start+1)
 		end
 	end
 end)
