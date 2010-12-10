@@ -754,7 +754,7 @@ void SciTEBase::SetAboutMessage(GUI::ScintillaWindow &wsci, const char *appTitle
 		}
 #endif
 		AddStyledText(wsci, GetTranslationToAbout("Version").c_str(), trsSty);
-		AddStyledText(wsci, " 2.23 .88Ru\n", 1); //!-change-[SciTE-Ru]
+		AddStyledText(wsci, " 2.23 .89Ru\n", 1); //!-change-[SciTE-Ru]
 		AddStyledText(wsci, "    " __DATE__ " " __TIME__ "\n", 1);
 		SetAboutStyle(wsci, 4, ColourRGB(0, 0x7f, 0x7f)); //!-add-[SciTE-Ru]
 		AddStyledText(wsci, "http://scite.net.ru\n", 4); //!-add-[SciTE-Ru]
@@ -2629,7 +2629,6 @@ bool SciTEBase::StartExpandAbbreviation() {
 	char *linebuf = new char[currentPos + 2];
 	GetLine(linebuf, currentPos + 2);	// Just get text to the left of the caret
 	linebuf[currentPos] = '\0';
-
 //!	int abbrevPos = (currentPos > 32 ? currentPos - 32 : 0);
 //!-start-[InsertAbbreviation]
 	int max_abbrev_len = props.GetInt("abbrev.maximum.length", 64); // max length abbrev is 32 at scite original
@@ -2639,7 +2638,6 @@ bool SciTEBase::StartExpandAbbreviation() {
 	SString data;
 	size_t dataLength = 0;
 	int abbrevLength = currentPos - abbrevPos;
-
 	// Try each potential abbreviation from the first letter on a line
 	// and expanding to the right.
 	// We arbitrarily limit the length of an abbreviation (seems a reasonable value..),
@@ -2654,7 +2652,7 @@ bool SciTEBase::StartExpandAbbreviation() {
 		abbrevLength--;
 	}
 
-/*! Original
+/*!-remove-[InsertAbbreviation]
 	if (dataLength == 0) {
 		delete []linebuf;
 		WarnUser(warnNotFound);	// No need for a special warning

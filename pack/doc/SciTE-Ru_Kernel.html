@@ -32,7 +32,7 @@
     </td></tr>
   </table>
 
-    <h1>Text editor SciTE RU-Board 2.23 .88</h1>
+    <h1>Text editor SciTE RU-Board 2.23 .89</h1>
 
     <p>All modifications of original <A href="http://www.scintilla.org">SciTE editor</A> has been developed by persons from <A href="http://forum.ru-board.com/topic.cgi?forum=5&topic=35160&glp">Ru-Board community</A>.
 
@@ -275,12 +275,9 @@ Sets caret style of the output window.
 [NewIcons] <span class=desc>(Author: VladVRO)</span></h5>
 New icons for the files associated with SciTE and for sessions files.
 
-<h5 id="AbbrevRefactoring">
-[AbbrevRefactoring] <span class=desc>(Author: VladVRO)</span></h5>
-Using of char '|' identical for Insert Abbreviation (Ctrl+Shift+R) and for Expand Abbreviation (Ctrl+B).
-
 <h5 id="VarAbbrev">
-[VarAbbrev] <span class=desc>(Authors: mimir, VladVRO)</span></h5>
+<sup>updated</sup>
+[VarAbbrev] <span class=desc>(Authors: mimir, VladVRO, Dmitry Maslov)</span></h5>
 It is possible to add user variables into list of abbreviation (abbrev).<br>
 - <span class="example">%SEL%</span> - selected text<br>
 - <span class="example">%CLP%</span> - text from clipboard<br>
@@ -294,30 +291,7 @@ Type '&lt;a+My Site' and select 'My Site'. Then pushing Ctrl+B - have got a comp
 <div class="example">&lt;a href="http://scite.net.ru/" title="|"&gt;My Site&lt;/a&gt;</div>
 and caret have position of first meeting of '<span class="example">|</span>'.<br>
 <br>
-    The same action: Type 'My Site' and select 'My Site'. Then press Ctrl+Shift+R and to choose "&lt;a+" from a drop-down list.<br>
-<br>
-New variable in properties files<br>
-<span class="example">abbrev.preserve.selection=1</span><br>
-allows to insert selected text without using %SEL% variable.<br>
-In this case selected text is inserted instead of last char '<span class="example">|</span>'.
-
-<h5 id="abbrev.always.update">
-[abbrev.always.update] <span class=desc>(Author: mimir)</span></h5>
-If there is only one abbreviation file in use, without <br>
-<span class="example">abbrev.always.update=1</span><br>
-it will be renewed after Scite restart only.
-
-<h5 id="AbbrevExpandIncremental">
-[AbbrevExpandIncremental] <span class=desc>(Author: VladVRO)</span></h5>
-New variable in properties files<br>
-<span class="example">abbrev.expand.incremental=1</span><br>
-Changing expanding method to incremental for expand abbreviation by Ctrl+B, in other words new method  to expand abbreviation is taking one char first, then two and so on.
-
-<h5 id="AbbrevMaxLength">
-[AbbrevMaxLength] <span class=desc>(Author: VladVRO)</span></h5>
-New variable in properties files<br>
-<span class="example">abbrev.maximum.length=[value]</span><br>
-Set value of length limit for expand abbreviation by Ctrl+B, in other words it is the maximum length of text for comparing with abbreviations set
+    The same action: Type 'My Site' and select 'My Site'. Then press Ctrl+Shift+R and to choose "&lt;a+" from a drop-down list.
 
 <h5 id="import">
 [import] <span class=desc>(Author: mimir, VladVRO)</span></h5>
@@ -504,7 +478,7 @@ Receives the state of Ctrl:<br>
 
 <h5 id="UserListItemID">
 <sup>new</sup>
-[UserListItemID] <span class=desc>(Author: neo4max)</span></h5>
+[UserListItemID] <span class=desc>(Author: neo4max, Dmitry Maslov)</span></h5>
 Event <span class="example">OnUserListSelection</span> returns the third parameter with id position of the selected item in the list. <a href="http://code.google.com/p/scite-ru/issues/detail?id=245">Issue 245</a>
 
 <h5 id="MouseClickHandled">
@@ -539,6 +513,7 @@ CurrentWordCharacters - new SciTE environment variable. Contains which character
 BufferNumber - new SciTE environment variable. Contains number of the current buffer.
 
 <h5 id="InsertAbbreviation">
+<sup>updated</sup>
 [InsertAbbreviation] <span class=desc>(Author: Dmitry Maslov)</span></h5>
 In SciTE Lua Scripting Extension added new command<br>
 <span class="example">InsertAbbreviation(string)</span><br>
@@ -651,11 +626,6 @@ If the <span class="example">style.*.32</span> do not raised characters and the 
 <h5 id="FileReaderUnlimitedLen">
 [FileReaderUnlimitedLen] <span class=desc>(Author: VladVRO)</span></h5>
 Removed the restriction on the length of lines in the internal Find in Files. Earlier in long lines only to find worked 1,001 characters, the rest ignored.
-
-<h5 id="AbbrevFixCaretPos">
-[AbbrevFixCaretPos] <span class=desc>(Author: VladVRO)</span></h5>
-Fixed positioning of caret in insert abbreviation action.<br>
-Bug was in case when abbreviation body has one simbol '|' and in action was not selection text.
 
 <h5 id="no_wornings">
 [no_wornings] <span class=desc>(Author: Dmitry Maslov)</span></h5>

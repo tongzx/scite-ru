@@ -33,7 +33,7 @@
     </td></tr>
   </table>
 
-    <h1>Текстовый редактор SciTE RU-Board 2.23 .88</h1>
+    <h1>Текстовый редактор SciTE RU-Board 2.23 .89</h1>
 
     <p>Все модификации оригинального кода редактора <A href="http://www.scintilla.org">SciTE</A> выполнены энтузиастами <A href="http://forum.ru-board.com/topic.cgi?forum=5&topic=35160&glp">форума Ru-Board</A>.
 
@@ -275,12 +275,9 @@ command.name.6.<i>filepattern</i>=Date and Time</div>
 [NewIcons] <span class=desc>(Автор: VladVRO)</span></h5>
 Новые иконки для файлов, ассоциированных с SciTE и для файлов сессий.
 
-<h5 id="AbbrevRefactoring">
-[AbbrevRefactoring] <span class=desc>(Автор: VladVRO)</span></h5>
-Использование символа '|' работает одинаково и для вставки сокращения (Ctrl+Shift+R) и для расшифровки сокращения (Сtrl+B).
-
 <h5 id="VarAbbrev">
-[VarAbbrev] <span class=desc>(Автор: mimir, VladVRO)</span></h5>
+<sup>updated</sup>
+[VarAbbrev] <span class=desc>(Автор: mimir, VladVRO, Дмитрий Маслов)</span></h5>
 В списки сокращений (abbrev) можно добавлять пользовательские переменные.<br>
 - <span class="example">%SEL%</span> - выделенный текст<br>
 - <span class="example">%CLP%</span> - текст из буфера обмена<br>
@@ -294,30 +291,7 @@ command.name.6.<i>filepattern</i>=Date and Time</div>
 <div class="example">&lt;a href="http://scite.net.ru/" title="|"&gt;Наш сайт&lt;/a&gt;</div>
 где курсор находится на месте символа '<span class="example">|</span>'.<br>
 <br>
-То же самое получится если написать "Наш сайт" и выделив этот текст, нажать Ctrl+Shift+R и выбрать "&lt;a+" из раскрывающегося списка.<br>
-<br>
-Новый параметр в .properties<br>
-<span class="example">abbrev.preserve.selection=1</span><br>
-позволяет вставлять выделенный текст без использования переменной %SEL%.<br>
-В этом случае выделенный текст размещается вместо последнего символа '<span class="example">|</span>'.
-
-<h5 id="abbrev.always.update">
-[abbrev.always.update] <span class=desc>(Автор: mimir)</span></h5>
-Новый параметр в .properties<br>
-<span class="example">abbrev.always.update=1</span><br>
-позволяет обновлять файл сокращений без перезапуска Scite
-
-<h5 id="AbbrevExpandIncremental">
-[AbbrevExpandIncremental] <span class=desc>(Автор: VladVRO)</span></h5>
-Новый параметр в .properties<br>
-<span class="example">abbrev.expand.incremental=1</span><br>
-Изменяет порядок поиска сокращения по Ctrl+B от малого к большему, иначе говоря, сперва берется один символ, потом два и т.д.
-
-<h5 id="AbbrevMaxLength">
-[AbbrevMaxLength] <span class=desc>(Автор: VladVRO)</span></h5>
-Новый параметр в .properties<br>
-<span class="example">abbrev.maximum.length=[число]</span><br>
-Задает максимальную длину сокращения, обрабатываемого по Ctrl+B, иначе говоря, максимальную длину текста который будет сравниваться с набором сокращений.
+То же самое получится если написать "Наш сайт" и выделив этот текст, нажать Ctrl+Shift+R и выбрать "&lt;a+" из раскрывающегося списка.
 
 <h5 id="import">
 [import] <span class=desc>(Автор: mimir, VladVRO)</span></h5>
@@ -504,7 +478,7 @@ end</div>
 
 <h5 id="UserListItemID">
 <sup>new</sup>
-[UserListItemID] <span class=desc>(Автор: neo4max)</span></h5>
+[UserListItemID] <span class=desc>(Автор: neo4max, Дмитрий Маслов)</span></h5>
 Событие <span class="example">OnUserListSelection</span> возвращает третий параметр, указывающий на позицию выбранного пункта в списке. <a href="http://code.google.com/p/scite-ru/issues/detail?id=245">Issue 245</a>
 
 <h5 id="MouseClickHandled">
@@ -539,12 +513,12 @@ CurrentWordCharacters - новая внутренняя переменная Sci
 BufferNumber - новая внутренняя переменная SciTE. Cодержит номер текущего буфера.
 
 <h5 id="InsertAbbreviation">
+<sup>updated</sup>
 [InsertAbbreviation] <span class=desc>(Автор: Дмитрий Маслов)</span></h5>
 В SciTE Lua Scripting Extension добавлена новая команда<br>
 <span class="example">InsertAbbreviation(string)</span><br>
 где "<span class="example">string</span>" - это текст, по формату аналогичный сокращениям (abbrev), например:
 <div class="example">scite.InsertAbbreviation("&lt;a href="|" title=""&gt;%SEL%&lt;/a&gt;")</div>
-
 
 <h5 id="ParametersDialogFromLua">
 [ParametersDialogFromLua] <span class=desc>(Автор: VladVRO)</span></h5>
@@ -653,12 +627,6 @@ Tеперь можно задавать до 4х дополнительных н
 <h5 id="FileReaderUnlimitedLen">
 [FileReaderUnlimitedLen] <span class=desc>(Автор: VladVRO)</span></h5>
 Убрано ограничение на длину строк во встроенном поиске по файлам. Раньше в длинных строках поиск работал только до 1001 символа, все остальное в строке игнорировалось.
-
-<h5 id="AbbrevFixCaretPos">
-[AbbrevFixCaretPos] <span class=desc>(Автор: VladVRO, Дмитрий Маслов)</span></h5>
-Исправлено позиционирование курсора при вставке сокращения (insert abbreviation).<br>
-Ошибка возникала в случае если в теле сокращения был один символ '|' и не было выделенного текста во время вставки.<br>
-Если в сокращении имелся символ \t то курсор так же позиционировался не верно.
 
 <h5 id="no_wornings">
 [no_wornings] <span class=desc>(Автор: Дмитрий Маслов)</span></h5>
