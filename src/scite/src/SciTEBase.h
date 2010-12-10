@@ -58,105 +58,6 @@ private:
 };
 //!-end-[ExtendedContextMenu]
 
-//!-start-[VarAbbrev]
-class PropFileEx
-{
-public:
-	bool Open(FilePath filename) {
-		m_filename = filename;
-		FILE * file = filename.Open(fileRead);
-		if (file) {
-			char propsData[100];
-			int len;
-			while ( !feof(file) ) {
-				len = fread(propsData, 1, sizeof(propsData)-1, file);
-				propsData[len] = '\0';
-				m_buf += propsData;
-			}
-			fclose(file);
-			TypeEOL = GetEOLtype(m_buf);
-			return true;
-		}
-		return false;
-	}
-
-	void SetProperty(SString sProperty, int Value) {
-		char buf[1024] = {0};
-		sprintf(buf,"%s=%d", sProperty.c_str(), Value);
-		int insertPos =	m_buf.search(sProperty.c_str());
-		if (insertPos != -1 ) {
-			int firstPos = insertPos;
-			while (firstPos > 0 && m_buf[firstPos-1] != '\n' && m_buf[firstPos-1] != '\r' )
-				firstPos--;
-			int lastPos = m_buf.search(StringFromEOLMode(TypeEOL), insertPos);
-			m_buf.remove(firstPos,
-				lastPos > firstPos ? lastPos - firstPos : m_buf.length() - firstPos);
-			m_buf.insert(firstPos, buf);
-		}
-		else {
-			if ( !m_buf.endswith(StringFromEOLMode(TypeEOL)) )
-				m_buf += StringFromEOLMode(TypeEOL);
-			m_buf += buf;
-			m_buf += StringFromEOLMode(TypeEOL);
-		}
-	}
-
-	void Save() {
-		if (m_filename.IsSet())	{
-			FILE * file = m_filename.Open(fileWrite);
-			if (file) {
-				fwrite(m_buf.c_str(), sizeof(char), m_buf.length(), file);
-				fclose(file);
-			}
-		}
-	}
-
-	SString GetString() {
-		return m_buf;
-	}
-
-	int GetEOLtype() {
-		return TypeEOL;
-	}
-
-public:
-	static const char *StringFromEOLMode(int eolMode) {
-		if (eolMode == SC_EOL_CR) return "\r";
-		if (eolMode == SC_EOL_LF) return "\n";
-		return "\r\n";
-	}
-
-	static int GetEOLtype(SString &str) {
-		int linesCR = 0;
-		int linesLF = 0;
-		int linesCRLF = 0;
-
-		int lengthDoc = str.length();
-		char chPrev = ' ';
-		for (int i = 0; i < lengthDoc; i++) {
-			char ch = str[i];
-			char chNext = str[i + 1];
-			if (ch == '\r') {
-				(chNext == '\n') ? linesCRLF++ : linesCR++;
-			} else if (ch == '\n') {
-				if (chPrev != '\r') linesLF++;
-			}
-			chPrev = ch;
-		}
-		if (((linesLF >= linesCR) && (linesLF > linesCRLF)) || ((linesLF > linesCR) && (linesLF >= linesCRLF)))
-			return SC_EOL_LF;
-		if (((linesCR >= linesLF) && (linesCR > linesCRLF)) || ((linesCR > linesLF) && (linesCR >= linesCRLF)))
-			return  SC_EOL_CR;
-		return SC_EOL_CRLF;
-	}
-
-private:
-	int TypeEOL;
-	SString m_buf;
-	FilePath m_filename;
-};
-//!-end-[VarAbbrev]
-
 /**
  * The order of menus on Windows - the Buffers menu may not be present
  * and there is a Help menu at the end.
@@ -766,7 +667,7 @@ protected:
 	virtual bool StartAutoCompleteWord(bool onlyOneWord);
 	virtual bool StartExpandAbbreviation();
 	virtual bool StartInsertAbbreviation();
-	virtual bool InsertAbbreviation(const char* data); //!-add-[InsertAbbreviation]
+	virtual bool InsertAbbreviation(const char* data, int expandedLength); //!-add-[InsertAbbreviation]
 	virtual bool StartBlockComment();
 	virtual bool StartBoxComment();
 	virtual bool StartStreamComment();

@@ -32,7 +32,7 @@ public:
 	virtual void UpdateStatusBar(bool bUpdateSlowData)=0;
 	virtual void CheckMenus()=0; //!-add-[CheckMenus]
 	virtual bool ShowParametersDialog(const char *msg)=0; //!-add-[ParametersDialogFromLua]
-	virtual bool InsertAbbreviation(const char *data)=0; //!-add-[InsertAbbreviation]
+	virtual bool InsertAbbreviation(const char *data, int expandedLength)=0; //!-add-[InsertAbbreviation]
 	virtual char *GetTranslation(const char *s, bool retainIfNotFound = true)=0; //!-add-[LocalizationFromLua]
 };
 

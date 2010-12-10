@@ -270,18 +270,6 @@ public:
 	}
 //!-end-[SubMenu]
 
-//!-begin-[VarAbbrev]
-	int findcount(const char *sFind, lenpos_t start=0) const {
-		int c = 0;
-		int posFound = search(sFind, start);
-		while (posFound >= 0) {
-			posFound = search(sFind, posFound+1);
-			c++;
-		}
-		return c;
-	}
-//!-end-[VarAbbrev]
-
 //!-begin-[FindResultListStyle]
 	void trimleft(const char *prefix) {
 		if (s && sLen && prefix && strlen(prefix)) {
