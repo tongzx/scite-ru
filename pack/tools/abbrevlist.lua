@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 abbrevlist.lua
 Authors: Dmitry Maslov, frs, mozers™, Tymur Gubayev
-version 3.4.3
+version 3.4.4
 ------------------------------------------------------
   Если при вставке расшифровки аббревиатуры (Ctrl+B) не нашлось точного соответствия,
   то выводится список соответствий начинающихся с этой комбинации символов.
@@ -159,12 +159,7 @@ local function ShowExpansionList(event_IDM_ABBREV)
 	-- ищем начало сокращения - первый пробельный символ
 	local abbrev_start = editor:findtext(prev_chars, SCFIND_REGEXP, sel_start, line_start_pos)
 	abbrev_start = abbrev_start and abbrev_start+1 or line_start_pos
-	-- в html нарушаем общие правила и включаем в аббревиатуру ведущий символ-разделитель < или (
-	-- (не думаю что подобную практику стоит распостранять на другие языки)
-	if props['Language'] == 'hypertext' then
-		local prev_char = editor:textrange(abbrev_start-1, abbrev_start)
-		if prev_char == '(' or prev_char == '<' then abbrev_start = abbrev_start - 1 end
-	end
+
 	local abbrev = editor:textrange(abbrev_start, sel_start)
 	abbrev_length = #abbrev
 	if abbrev_length == 0 then return event_IDM_ABBREV end

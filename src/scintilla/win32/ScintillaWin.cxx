@@ -815,7 +815,7 @@ sptr_t ScintillaWin::WndProc(unsigned int iMessage, uptr_t wParam, sptr_t lParam
 						char inBufferCP[20];
 						int size = ::WideCharToMultiByte(cpDest,
 							0, wcs, 1, inBufferCP, sizeof(inBufferCP) - 1, 0, 0);
-						inBufferCP[size] = '\0';
+						inBufferCP[size] = '\0'; //!-add-[WM_CHAR.Buffer]
 						AddCharUTF(inBufferCP, size);
 					}
 				} else {
