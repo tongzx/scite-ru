@@ -2037,6 +2037,7 @@ void SciTEBase::FillFunctionDefinition(int pos /*= -1*/) {
 				functionDefinition.insert(1, "\002");
 			}
 			functionDefinition.substitute("\\n", "\n"); //!-add-[CalltipBreaks]
+			functionDefinition = EncodeString(functionDefinition); //!-add-[CalltipFixEncoding]
 			wEditor.CallString(SCI_CALLTIPSHOW, lastPosCallTip - currentCallTipWord.length(), functionDefinition.c_str());
 			ContinueCallTip();
 		}
