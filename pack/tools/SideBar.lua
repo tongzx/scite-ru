@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev, ur4ltz
-Version 1.26.7
+Version 1.26.8
 ------------------------------------------------------
   Note: Require gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
                lpeg.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/lpeg/>
@@ -1260,11 +1260,11 @@ local function Abbreviations_ListFILL()
 	local function ReadAbbrev(file)
 		local abbrev_file = io.open(file)
 		if abbrev_file then
-			for line in abbrev_file:lines() do
+			for line in scite_io_lines(abbrev_file) do
 				if line ~= '' then
 					local _abr, _exp = line:match('^([^#].-)=(.+)')
 					if _abr ~= nil then
-						list_abbrev:add_item({_abr, _exp}, _exp)
+						list_abbrev:add_item({_abr, _exp:gsub('\t','\\t')}, _exp)
 					else
 						local import_file = line:match('^import%s+(.+)')
 						if import_file ~= nil then

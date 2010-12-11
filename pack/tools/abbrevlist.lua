@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 abbrevlist.lua
 Authors: Dmitry Maslov, frs, mozers™, Tymur Gubayev
-version 3.4.4
+version 3.4.5
 ------------------------------------------------------
   Если при вставке расшифровки аббревиатуры (Ctrl+B) не нашлось точного соответствия,
   то выводится список соответствий начинающихся с этой комбинации символов.
@@ -79,11 +79,11 @@ local function CreateExpansionList()
 		local abbrev_file = io.open(file)
 		if abbrev_file then
 			local ignorecomment = tonumber(props['abbrev.'..props['Language']..'.ignore.comment'])==1
-			for line in abbrev_file:lines() do
+			for line in scite_io_lines(abbrev_file) do
 				if line ~= '' and (ignorecomment or line:sub(1,1) ~= '#' ) then
 					local _abr, _exp = line:match('^(.-)=(.+)')
 					if _abr then
-						table_abbr_exp[#table_abbr_exp+1] = {_abr:upper(), _exp}
+						table_abbr_exp[#table_abbr_exp+1] = {_abr:upper(), _exp:gsub('\t','\\t')}
 					else
 						local import_file = line:match('^import%s+(.+)')
 						-- если обнаружена запись import то рекурсивно вызываем эту же функцию
