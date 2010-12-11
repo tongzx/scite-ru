@@ -2394,6 +2394,8 @@ bool SciTEBase::InsertAbbreviation(const char* data, int expandedLength) {
 
 	wEditor.Call(SCI_BEGINUNDOACTION);
 //!-start-[InsertAbbreviation]
+	SString currentSel = EncodeString(SelectionExtend(0, false));
+	bool SelUsed = false;
 	if (expandedLength > 0) {
 		caret_pos -= expandedLength;
 		sel_start = caret_pos;
@@ -2503,7 +2505,7 @@ bool SciTEBase::InsertAbbreviation(const char* data, int expandedLength) {
 							strncpy(pPerc,&expbuf[i],lenPerc);
 							pPerc[lenPerc] = '\0';
 							if(strcmp(pPerc,"%SEL%")==0){
-								SStringEolFind currentSelection = EncodeString(SelectionExtend(0, false));
+								SStringEolFind currentSelection = currentSel;
 								if (at_start) {
 									int texteol = currentSelection.gettexteol();
 									int pos = currentSelection.search(texteol == SC_EOL_CRLF || texteol == SC_EOL_LF?"\n":"\r");
@@ -2521,6 +2523,7 @@ bool SciTEBase::InsertAbbreviation(const char* data, int expandedLength) {
 								}
 								abbrevText +=currentSelection;
 								i+=lenPerc-1;
+								SelUsed = true;
 							}else
 #if !defined(GTK)
 							if(strcmp(pPerc,"%CLP%")==0){
@@ -2603,7 +2606,9 @@ bool SciTEBase::InsertAbbreviation(const char* data, int expandedLength) {
 			}
 		}
 	}
-
+	
+	if(!SelUsed) //!-add-[InsertAbbreviation]
+		wEditor.CallString(SCI_INSERTTEXT, caret_pos, currentSel.c_str()); //!-add-[InsertAbbreviation]
 	// set the caret to the desired position
 	if (double_pipe) {
 		sel_length = 0;
