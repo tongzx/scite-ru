@@ -9,6 +9,7 @@
 #define EXTENDER_H
 
 #include "Scintilla.h"
+#include "SString.h"
 
 class StyleWriter;
 
@@ -31,6 +32,8 @@ public:
 	virtual void DoMenuCommand(int cmdID)=0;
 	virtual void UpdateStatusBar(bool bUpdateSlowData)=0;
 	virtual void CheckMenus()=0; //!-add-[CheckMenus]
+	virtual SString EncodeString(const SString &s, Pane p = paneEditor)=0; //!-add-[EncodingToLua]
+	virtual SString DecodeString(const SString &s, Pane p = paneEditor)=0; //!-add-[EncodingToLua]
 	virtual bool ShowParametersDialog(const char *msg)=0; //!-add-[ParametersDialogFromLua]
 	virtual bool InsertAbbreviation(const char *data, int expandedLength)=0; //!-add-[InsertAbbreviation]
 	virtual char *GetTranslation(const char *s, bool retainIfNotFound = true)=0; //!-add-[LocalizationFromLua]

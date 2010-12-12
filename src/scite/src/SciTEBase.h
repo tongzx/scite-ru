@@ -616,7 +616,9 @@ protected:
 	SString SelectionFilename();
 	void SelectionIntoProperties();
 	void SelectionIntoFind(bool stripEol = true);
-	virtual SString EncodeString(const SString &s);
+//!	virtual SString EncodeString(const SString &s);
+	virtual SString EncodeString(const SString &s, Pane p = paneEditor); //!-change-[FixEncoding]
+	virtual SString DecodeString(const SString &s, Pane p = paneEditor); //!-add-[FixEncoding]
 	virtual void Find() = 0;
 	virtual int WindowMessageBox(GUI::Window &w, const GUI::gui_string &msg, int style) = 0;
 	virtual void FindMessageBox(const SString &msg, const SString *findItem = 0) = 0;

@@ -334,6 +334,24 @@ static int cf_scite_check_menus(lua_State *) {
 }
 //!-end-[CheckMenus]
 
+//!-start-[EncodingToLua]
+static int cf_pane_encode_string(lua_State *L) {
+	ExtensionAPI::Pane p = check_pane_object(L, 1);
+	const char *s = luaL_checkstring(L, 2);
+	SString ss = host->EncodeString(s, p);
+	lua_pushstring(L, ss.c_str());
+	return 1;
+}
+
+static int cf_pane_decode_string(lua_State *L) {
+	ExtensionAPI::Pane p = check_pane_object(L, 1);
+	const char *s = luaL_checkstring(L, 2);
+	SString ss = host->DecodeString(s, p);
+	lua_pushstring(L, ss.c_str());
+	return 1;
+}
+//!-end-[EncodingToLua]
+
 static int cf_scite_update_status_bar(lua_State *L) {
 	bool bUpdateSlowData = (lua_gettop(L) > 0 ? lua_toboolean(L, 1) : false) != 0;
 	host->UpdateStatusBar(bUpdateSlowData);
@@ -1302,6 +1320,13 @@ void push_pane_object(lua_State *L, ExtensionAPI::Pane p) {
 		lua_setfield(L, -2, "remove");
 		lua_pushcfunction(L, cf_pane_append);
 		lua_setfield(L, -2, "append");
+
+		//!-start-[EncodingToLua]
+		lua_pushcfunction(luaState, cf_pane_encode_string);
+		lua_setfield(luaState, -2, "EncodeString");
+		lua_pushcfunction(luaState, cf_pane_decode_string);
+		lua_setfield(luaState, -2, "DecodeString");
+		//!-end-[EncodingToLua]
 
 		lua_pushcfunction(L, cf_pane_match_generator);
 		lua_pushcclosure(L, cf_pane_match, 1);

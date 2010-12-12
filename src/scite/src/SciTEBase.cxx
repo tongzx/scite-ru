@@ -1417,9 +1417,16 @@ void SciTEBase::SelectionIntoFind(bool stripEol /*=true*/) {
 	// else findWhat remains the same as last time.
 }
 
-SString SciTEBase::EncodeString(const SString &s) {
+//!SString SciTEBase::EncodeString(const SString &s) {
+SString SciTEBase::EncodeString(const SString &s, Pane p) { //!-change-[FixEncoding]
 	return SString(s);
 }
+
+//!-start-[FixEncoding]
+SString SciTEBase::DecodeString(const SString &s, Pane p) {
+	return SString(s);
+}
+//!-end-[FixEncoding]
 
 static int UnSlashAsNeeded(SString &s, bool escapes, bool regularExpression) {
 	if (escapes) {

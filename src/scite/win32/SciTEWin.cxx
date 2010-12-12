@@ -3388,36 +3388,37 @@ LRESULT PASCAL BaseWin::StWndProc(
 }
 
 // Convert String from UTF-8 to doc encoding
-SString SciTEWin::EncodeString(const SString &s) {
+//!SString SciTEWin::EncodeString(const SString &s) {
+SString SciTEWin::EncodeString(const SString &s, Pane p) { //!-change-[FixEncoding]
 	//::MessageBox(GetFocus(),SString(s).c_str(),"EncodeString:in",0);
-
-	UINT codePage = wEditor.Call(SCI_GETCODEPAGE);
-
+//! UINT codePage = wEditor.Call(SCI_GETCODEPAGE);
+	//!-start-[FixEncoding]
+	UINT codePage;
+	if (p == paneEditor) {
+		codePage = wEditor.Call(SCI_GETCODEPAGE);
+	} else {
+		codePage = wOutput.Call(SCI_GETCODEPAGE);
+	}
+	//!-end-[FixEncoding]
 	if (codePage != SC_CP_UTF8) {
-		codePage = CodePageFromCharSet(characterSet, codePage);
+//!		codePage = CodePageFromCharSet(characterSet, codePage);
+		//!-start-[FixEncoding]
+		if(characterSet == 255) {
+			codePage = 866;
+		} else {
+			codePage = CodePageFromCharSet(characterSet, codePage);
+		}
+		//!-end-[FixEncoding]
 
 		int cchWide = ::MultiByteToWideChar(CP_UTF8, 0, s.c_str(), s.length(), NULL, 0);
 		wchar_t *pszWide = new wchar_t[cchWide + 1];
 		::MultiByteToWideChar(CP_UTF8, 0, s.c_str(), s.length(), pszWide, cchWide + 1);
 
-		/*!int cchMulti = ::WideCharToMultiByte(codePage, 0, pszWide, cchWide, NULL, 0, NULL, NULL);
+		int cchMulti = ::WideCharToMultiByte(codePage, 0, pszWide, cchWide, NULL, 0, NULL, NULL);
 		char *pszMulti = new char[cchMulti + 1];
 		::WideCharToMultiByte(codePage, 0, pszWide, cchWide, pszMulti, cchMulti + 1, NULL, NULL);
-		pszMulti[cchMulti] = 0;*/
-		//!-start-[FixEncoding]
-		pszWide[cchWide] = 0;
+		pszMulti[cchMulti] = 0;
 
-		char *pszMulti;
-		if(characterSet == 255) {
-			pszMulti = new char[cchWide + 1];
-			::CharToOemW(pszWide, pszMulti);
-		} else {
-			int cchMulti = ::WideCharToMultiByte(codePage, 0, pszWide, cchWide, NULL, 0, NULL, NULL);
-			pszMulti = new char[cchMulti + 1];
-			::WideCharToMultiByte(codePage, 0, pszWide, cchWide, pszMulti, cchMulti + 1, NULL, NULL);
-			pszMulti[cchMulti] = 0;
-		}
-		//!-end-[FixEncoding]
 		SString result(pszMulti);
 
 		delete []pszWide;
@@ -3430,9 +3431,44 @@ SString SciTEWin::EncodeString(const SString &s) {
 }
 
 // Convert String from doc encoding to UTF-8
+//!-start-[FixEncoding]
+SString SciTEWin::DecodeString(const SString &s, Pane p) {
+	UINT codePage;
+	if (p == paneEditor) {
+		codePage = wEditor.Call(SCI_GETCODEPAGE);
+	} else {
+		codePage = wOutput.Call(SCI_GETCODEPAGE);
+	}
+
+	if (codePage != SC_CP_UTF8) {
+		if(characterSet == 255) {
+			codePage = 866;
+		} else {
+			codePage = CodePageFromCharSet(characterSet, codePage);
+		}
+
+		int cchWide = ::MultiByteToWideChar(codePage, 0, s.c_str(), s.length(), NULL, 0);
+		wchar_t *pszWide = new wchar_t[cchWide + 1];
+		::MultiByteToWideChar(codePage, 0, s.c_str(), s.length(), pszWide, cchWide + 1);
+		int cchMulti = ::WideCharToMultiByte(CP_UTF8, 0, pszWide, cchWide, NULL, 0, NULL, NULL);
+		char *pszMulti = new char[cchMulti + 1];
+		::WideCharToMultiByte(CP_UTF8, 0, pszWide, cchWide, pszMulti, cchMulti + 1, NULL, NULL);
+		pszMulti[cchMulti] = 0;
+
+		SString result(pszMulti);
+
+		delete []pszWide;
+		delete []pszMulti;
+
+		return result;
+	}
+	return SciTEBase::DecodeString(s);
+}
+//!-end-[FixEncoding]
+
 SString SciTEWin::GetRangeInUIEncoding(GUI::ScintillaWindow &win, int selStart, int selEnd) {
 	SString s = SciTEBase::GetRangeInUIEncoding(win, selStart, selEnd);
-
+	/*!-remove-[FixEncoding]
 	UINT codePage = wEditor.Call(SCI_GETCODEPAGE);
 
 	if (codePage != SC_CP_UTF8) {
@@ -3454,7 +3490,8 @@ SString SciTEWin::GetRangeInUIEncoding(GUI::ScintillaWindow &win, int selStart, 
 
 		return result;
 	}
-	return s;
+	return s;*/
+	return DecodeString(s); //!-add-[FixEncoding]
 }
 
 int SciTEWin::EventLoop() {
