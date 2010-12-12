@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 abbrevlist.lua
 Authors: Dmitry Maslov, frs, mozers™, Tymur Gubayev
-version 3.4.8
+version 3.4.9
 ------------------------------------------------------
   Если при вставке расшифровки аббревиатуры (Ctrl+B) не нашлось точного соответствия,
   то выводится список соответствий начинающихся с этой комбинации символов.
@@ -58,33 +58,13 @@ local num_hidden_indic = SetHiddenMarker()   -- номер маркера позиций курсора (д
 
 -- Чтение всех подключенных abbrev-файлов в таблицу table_abbr_exp
 local function CreateExpansionList()
-	-- Чтение одного из abbrev-файлов
-	local function ReadAbbrevFile(file)
-		local abbrev_file = io.open(file)
-		if abbrev_file then
-			local ignorecomment = tonumber(props['abbrev.'..props['Language']..'.ignore.comment'])==1
-			for line in scite_io_lines(abbrev_file) do
-				if line ~= '' and (ignorecomment or line:sub(1,1) ~= '#' ) then
-					local _abr, _exp = line:match('^(.-)=(.+)')
-					if _abr then
-						table_abbr_exp[#table_abbr_exp+1] = {_abr:upper(), _exp:gsub('\t','\\t')}
-					else
-						local import_file = line:match('^import%s+(.+)')
-						-- если обнаружена запись import то рекурсивно вызываем эту же функцию
-						if import_file then
-							ReadAbbrevFile(file:match('.+\\')..import_file)
-						end
-					end
-				end
-			end
-			abbrev_file:close()
-		end
-	end
-
-	table_abbr_exp = {}
 	local abbrev_filename = props["AbbrevPath"]
 	if abbrev_filename == '' then return end
-	ReadAbbrevFile(abbrev_filename)
+	table_abbr_exp = ReadAbbrevFile(abbrev_filename)
+	for k,v in pairs(table_abbr_exp) do
+		v.abbr = v.abbr:upper()
+		v.exp = v.exp:gsub('\t','\\t')
+	end
 end
 
 -- Вставка расшифровки, из раскрывающегося списка
@@ -162,8 +142,8 @@ local function ShowExpansionList(event_IDM_ABBREV)
 	table_user_list = {}
 	 -- выбираем из table_abbr_exp только записи соответствующие этой аббревиатуре
 	for i = 1, #table_abbr_exp do
-		if table_abbr_exp[i][1]:find(abbrev, 1, true) == 1 then
-			table_user_list[#table_user_list+1] = {table_abbr_exp[i][1], table_abbr_exp[i][2]}
+		if table_abbr_exp[i].abbr:find(abbrev, 1, true) == 1 then
+			table_user_list[#table_user_list+1] = {table_abbr_exp[i].abbr, table_abbr_exp[i].exp}
 		end
 	end
 	if #table_user_list == 0 then return event_IDM_ABBREV end

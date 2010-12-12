@@ -1,5 +1,5 @@
 -- COMMON.lua
--- Version: 1.9.0
+-- Version: 1.10.0
 ---------------------------------------------------
 -- Общие функции, использующиеся во многих скриптах
 ---------------------------------------------------
@@ -290,6 +290,33 @@ function scite_io_lines(file)
 	end
 
 	return scite_iter
+end
+
+
+--- Читает файлы .abbrev (понимает инструкцию #import)
+-- @return Таблица пар сокращение-расшифровка
+function ReadAbbrevFile(file)
+	local abbrev_file, err, errcode = io.open(file)
+	if not abbrev_file then return abbrev_file, err, errcode end
+	
+	local abbr_table = {}
+	local ignorecomment = tonumber(props['abbrev.'..props['Language']..'.ignore.comment'])==1
+	for line in scite_io_lines(abbrev_file) do
+		if line ~= '' and (ignorecomment or line:sub(1,1) ~= '#' ) then
+			local _abr, _exp = line:match('^(.-)=(.+)')
+			if _abr then
+				abbr_table[#abbr_table+1] = {abbr=_abr, exp=_exp}
+			else
+				local import_file = line:match('^import%s+(.+)')
+				-- если обнаружена запись import то рекурсивно вызываем эту же функцию
+				if import_file then
+					ReadAbbrevFile(file:match('.+\\')..import_file)
+				end
+			end
+		end
+	end
+	abbrev_file:close()
+	return abbr_table
 end
 
 -- Функции, выполняющиеся только один раз, при открытии первого файла
