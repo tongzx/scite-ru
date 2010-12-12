@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 abbrevlist.lua
 Authors: Dmitry Maslov, frs, mozers™, Tymur Gubayev
-version 3.4.9
+version 3.4.10
 ------------------------------------------------------
   Если при вставке расшифровки аббревиатуры (Ctrl+B) не нашлось точного соответствия,
   то выводится список соответствий начинающихся с этой комбинации символов.
@@ -121,7 +121,7 @@ local function ShowExpansionList(event_IDM_ABBREV)
 	local sel_start = editor.SelectionStart
 	local line_start_pos = editor:PositionFromLine(editor:LineFromPosition(sel_start))
 	-- ищем начало сокращения - первый пробельный символ
-	local abbrev_start = editor:findtext(prev_chars, SCFIND_REGEXP, sel_start, line_start_pos)
+	local abbrev_start = editor:findtext(prev_chars, SCFIND_REGEXP, sel_start-1, line_start_pos) --@ `-1` in `sel_start-1` is propably wrong, but so you can make "& =bla" abbreviation
 	abbrev_start = abbrev_start and abbrev_start+1 or line_start_pos
 
 	local abbrev = editor:textrange(abbrev_start, sel_start)
