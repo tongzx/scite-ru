@@ -499,9 +499,7 @@ public:
 	LRESULT ContextMenuMessage(UINT iMessage, WPARAM wParam, LPARAM lParam);
 	LRESULT WndProc(UINT iMessage, WPARAM wParam, LPARAM lParam);
 
-//!	virtual SString EncodeString(const SString &s);
-	virtual SString EncodeString(const SString &s, Pane p = paneEditor); //!-change-[FixEncoding]
-	virtual SString DecodeString(const SString &s, Pane p = paneEditor); //!-add-[FixEncoding]
+	virtual SString EncodeString(const SString &s);
 	virtual SString GetRangeInUIEncoding(GUI::ScintillaWindow &wCurrent, int selStart, int selEnd);
 
 	HACCEL GetAcceleratorTable() {

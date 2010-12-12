@@ -335,18 +335,61 @@ static int cf_scite_check_menus(lua_State *) {
 //!-end-[CheckMenus]
 
 //!-start-[EncodingToLua]
-static int cf_pane_encode_string(lua_State *L) {
+static int cf_pane_convert_from_utf8(lua_State *L) {
 	ExtensionAPI::Pane p = check_pane_object(L, 1);
 	const char *s = luaL_checkstring(L, 2);
-	SString ss = host->EncodeString(s, p);
+	UINT codePage = host->Send(p, SCI_GETCODEPAGE);
+	if(codePage != SC_CP_UTF8) {
+		unsigned int cs = SC_CHARSET_DEFAULT;
+		char* charSet = host->Property("character.set");
+		if(charSet != "")
+			cs = atoi(charSet);
+		codePage = GUI::CodePageFromCharSet(cs, codePage);
+	}
+	std::string ss = GUI::ConvertFromUTF8(s, codePage);
 	lua_pushstring(L, ss.c_str());
 	return 1;
 }
 
-static int cf_pane_decode_string(lua_State *L) {
+static int cf_pane_convert_to_utf8(lua_State *L) {
 	ExtensionAPI::Pane p = check_pane_object(L, 1);
 	const char *s = luaL_checkstring(L, 2);
-	SString ss = host->DecodeString(s, p);
+	UINT codePage = host->Send(p, SCI_GETCODEPAGE);
+	if(codePage != SC_CP_UTF8) {
+		unsigned int cs = SC_CHARSET_DEFAULT;
+		char* charSet = host->Property("character.set");
+		if(charSet != "")
+			cs = atoi(charSet);
+		codePage = GUI::CodePageFromCharSet(cs, codePage);
+		delete[] charSet;
+	}
+	std::string ss = GUI::ConvertToUTF8(s, codePage);
+	lua_pushstring(L, ss.c_str());
+	return 1;
+}
+
+static int cf_scite_convert_from_utf8(lua_State *L) {
+	const char *s = luaL_checkstring(L, 1);
+	int cp = 0;
+	if(!lua_isnumber(L, 2)) {
+		cp = GUI::CodePageFromName(lua_tostring(L, 2));
+	} else {
+		cp = lua_tointeger(L, 2);
+	}
+	std::string ss = GUI::ConvertFromUTF8(s, cp);
+	lua_pushstring(L, ss.c_str());
+	return 1;
+}
+
+static int cf_scite_convert_to_utf8(lua_State *L) {
+	const char *s = luaL_checkstring(L, 1);
+	int cp = 0;
+	if(lua_isstring(L, 2)) {
+		cp = GUI::CodePageFromName(lua_tostring(L, 2));
+	} else {
+		cp = lua_tointeger(L, 2);
+	}
+	std::string ss = GUI::ConvertToUTF8(s, cp);
 	lua_pushstring(L, ss.c_str());
 	return 1;
 }
@@ -1322,10 +1365,10 @@ void push_pane_object(lua_State *L, ExtensionAPI::Pane p) {
 		lua_setfield(L, -2, "append");
 
 		//!-start-[EncodingToLua]
-		lua_pushcfunction(luaState, cf_pane_encode_string);
-		lua_setfield(luaState, -2, "EncodeString");
-		lua_pushcfunction(luaState, cf_pane_decode_string);
-		lua_setfield(luaState, -2, "DecodeString");
+		lua_pushcfunction(luaState, cf_pane_convert_to_utf8);
+		lua_setfield(luaState, -2, "ConvertToUTF8");
+		lua_pushcfunction(luaState, cf_pane_convert_from_utf8);
+		lua_setfield(luaState, -2, "ConvertFromUTF8");
 		//!-end-[EncodingToLua]
 
 		lua_pushcfunction(L, cf_pane_match_generator);
@@ -1588,6 +1631,13 @@ static bool InitGlobalScope(bool checkProperties, bool forceReload = false) {
 	lua_pushcfunction(luaState, cf_editor_get_translation);
 	lua_setfield(luaState, -2, "GetTranslation");
 //!-end-[LocalizationFromLua]
+
+//!-start-[EncodingToLua]
+	lua_pushcfunction(luaState, cf_scite_convert_to_utf8);
+	lua_setfield(luaState, -2, "ConvertToUTF8");
+	lua_pushcfunction(luaState, cf_scite_convert_from_utf8);
+	lua_setfield(luaState, -2, "ConvertFromUTF8");
+//!-end-[EncodingToLua]
 
 	lua_setglobal(luaState, "scite");
 

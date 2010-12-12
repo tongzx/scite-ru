@@ -159,6 +159,59 @@ std::string UTF8FromString(const gui_string &s) {
 	return std::string(&vc[0], narrowLen);
 }
 
+//!-start-[FixEncoding]
+// from ScintillaWin.cxx
+unsigned int CodePageFromCharSet(unsigned long characterSet, unsigned int documentCodePage) {
+	CHARSETINFO ci = { 0, 0, { { 0, 0, 0, 0 }, { 0, 0 } } };
+	BOOL bci = ::TranslateCharsetInfo((DWORD*)characterSet,
+	                                  &ci, TCI_SRCCHARSET);
+
+	UINT cp;
+	if (bci)
+		cp = ci.ciACP;
+	else if(characterSet == SC_CHARSET_OEM)
+		cp = 866;
+	else
+		cp = documentCodePage;
+
+	CPINFO cpi;
+	if (!::IsValidCodePage(cp) && !::GetCPInfo(cp, &cpi))
+		cp = CP_ACP;
+
+	return cp;
+}
+
+std::string ConvertFromUTF8(const std::string &s, int codePage){
+	if (codePage == CP_UTF8) {
+		return s;
+	} else {
+		GUI::gui_string sWide = GUI::StringFromUTF8(s.c_str());
+		int cchMulti = ::WideCharToMultiByte(codePage, 0, sWide.c_str(), sWide.length(), NULL, 0, NULL, NULL);
+		char *pszMulti = new char[cchMulti + 1];
+		::WideCharToMultiByte(codePage, 0, sWide.c_str(), sWide.length(), pszMulti, cchMulti + 1, NULL, NULL);
+		pszMulti[cchMulti] = 0;
+		std::string ret(pszMulti);
+		delete []pszMulti;
+		return ret;
+	}
+}
+
+std::string ConvertToUTF8(const std::string &s, int codePage){
+	if (codePage == CP_UTF8) {
+		return s;
+	} else {
+		const char* original = s.c_str();
+		int cchWide = ::MultiByteToWideChar(codePage, 0, original, -1, NULL, 0);
+		wchar_t *pszWide = new wchar_t[cchWide + 1];
+		::MultiByteToWideChar(codePage, 0, original, -1, pszWide, cchWide + 1);
+		GUI::gui_string sWide(pszWide);
+		std::string ret = GUI::UTF8FromString(sWide);
+		delete []pszWide;
+		return ret;
+	}
+}
+//!-end-[FixEncoding]
+
 gui_string StringFromInteger(int i) {
 	gui_char number[32];
 #if defined(_MSC_VER) && (_MSC_VER > 1310)
