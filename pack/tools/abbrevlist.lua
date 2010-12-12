@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 abbrevlist.lua
 Authors: Dmitry Maslov, frs, mozers™, Tymur Gubayev
-version 3.4.5
+version 3.4.6
 ------------------------------------------------------
   Если при вставке расшифровки аббревиатуры (Ctrl+B) не нашлось точного соответствия,
   то выводится список соответствий начинающихся с этой комбинации символов.
@@ -115,7 +115,7 @@ local function InsertExpansion(expansion, abbrev_length)
 		abbrev_length = 0
 	end
 	-- вставка расшифровки c заменой всех меток курсора | (кроме первой) на символ cr
-	expansion = expansion:gsub("|", cr):gsub(cr..cr, "|"):gsub(cr, "|", 1)
+	expansion = expansion:gsub("|", cr):gsub(cr..cr, "||"):gsub(cr, "|", 1)
 	local _, tab_count = expansion:gsub(cr, cr) -- определяем кол-во дополнительных меток курсора
 	local before_length = editor.Length
 	scite.InsertAbbreviation(expansion)
