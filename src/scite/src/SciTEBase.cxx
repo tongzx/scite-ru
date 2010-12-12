@@ -2037,7 +2037,7 @@ void SciTEBase::FillFunctionDefinition(int pos /*= -1*/) {
 				functionDefinition.insert(1, "\002");
 			}
 			functionDefinition.substitute("\\n", "\n"); //!-add-[CalltipBreaks]
-			functionDefinition = EncodeString(functionDefinition); //!-add-[CalltipFixEncoding]
+			functionDefinition = EncodeString(functionDefinition); //!-add-[FixEncoding]
 			wEditor.CallString(SCI_CALLTIPSHOW, lastPosCallTip - currentCallTipWord.length(), functionDefinition.c_str());
 			ContinueCallTip();
 		}
@@ -2356,6 +2356,8 @@ bool SciTEBase::StartInsertAbbreviation() {
 }
 
 bool SciTEBase::InsertAbbreviation(const char* data, int expandedLength) {
+	SString tmp = EncodeString(data); //!-add-[FixEncoding]
+	data = tmp.c_str(); //!-add-[FixEncoding]
 	size_t dataLength = strlen(data);
 	if (dataLength == 0) {
 		return false; // returning if abbreviation is empty
