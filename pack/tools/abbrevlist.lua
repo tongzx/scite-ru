@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 abbrevlist.lua
 Authors: Dmitry Maslov, frs, mozers™, Tymur Gubayev
-version 3.4.10
+version 3.4.11
 ------------------------------------------------------
   Если при вставке расшифровки аббревиатуры (Ctrl+B) не нашлось точного соответствия,
   то выводится список соответствий начинающихся с этой комбинации символов.
@@ -60,7 +60,7 @@ local num_hidden_indic = SetHiddenMarker()   -- номер маркера позиций курсора (д
 local function CreateExpansionList()
 	local abbrev_filename = props["AbbrevPath"]
 	if abbrev_filename == '' then return end
-	table_abbr_exp = ReadAbbrevFile(abbrev_filename)
+	table_abbr_exp = ReadAbbrevFile(abbrev_filename) or {}
 	for k,v in pairs(table_abbr_exp) do
 		v.abbr = v.abbr:upper()
 		v.exp = v.exp:gsub('\t','\\t')

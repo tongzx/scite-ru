@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev, ur4ltz
-Version 1.26.11
+Version 1.26.12
 ------------------------------------------------------
   Note: Require gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
                lpeg.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/lpeg/>
@@ -1259,7 +1259,9 @@ end)
 local function Abbreviations_ListFILL()
 	list_abbrev:clear()
 	local abbrev_filename = props['AbbrevPath']
-	for i,v in ipairs(ReadAbbrevFile(abbrev_filename)) do
+	local abbr_table = ReadAbbrevFile(abbrev_filename)
+	if not abbr_table then return end
+	for i,v in ipairs(abbr_table) do
 		list_abbrev:add_item({v.abbr, v.exp:gsub('\t','\\t')}, v.exp)
 	end
 end
