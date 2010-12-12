@@ -2398,7 +2398,7 @@ bool SciTEBase::InsertAbbreviation(const char* data, int expandedLength) {
 	wEditor.Call(SCI_BEGINUNDOACTION);
 //!-start-[InsertAbbreviation]
 	SString currentSel = EncodeString(SelectionExtend(0, false));
-	bool SelUsed = false;
+	bool SelUsed = true;
 	if (expandedLength > 0) {
 		caret_pos -= expandedLength;
 		sel_start = caret_pos;
@@ -2406,6 +2406,7 @@ bool SciTEBase::InsertAbbreviation(const char* data, int expandedLength) {
 		wEditor.CallString(SCI_REPLACESEL, 0, "");
 	}
 	else {
+		SelUsed = false;
 		wEditor.CallString(SCI_REPLACESEL, 0, "");
 		sel_length = 0;
 	}
