@@ -3400,11 +3400,24 @@ SString SciTEWin::EncodeString(const SString &s) {
 		wchar_t *pszWide = new wchar_t[cchWide + 1];
 		::MultiByteToWideChar(CP_UTF8, 0, s.c_str(), s.length(), pszWide, cchWide + 1);
 
-		int cchMulti = ::WideCharToMultiByte(codePage, 0, pszWide, cchWide, NULL, 0, NULL, NULL);
+		/*!int cchMulti = ::WideCharToMultiByte(codePage, 0, pszWide, cchWide, NULL, 0, NULL, NULL);
 		char *pszMulti = new char[cchMulti + 1];
 		::WideCharToMultiByte(codePage, 0, pszWide, cchWide, pszMulti, cchMulti + 1, NULL, NULL);
-		pszMulti[cchMulti] = 0;
+		pszMulti[cchMulti] = 0;*/
+		//!-start-[FixEncoding]
+		pszWide[cchWide] = 0;
 
+		char *pszMulti;
+		if(characterSet == 255) {
+			pszMulti = new char[cchWide + 1];
+			::CharToOemW(pszWide, pszMulti);
+		} else {
+			int cchMulti = ::WideCharToMultiByte(codePage, 0, pszWide, cchWide, NULL, 0, NULL, NULL);
+			pszMulti = new char[cchMulti + 1];
+			::WideCharToMultiByte(codePage, 0, pszWide, cchWide, pszMulti, cchMulti + 1, NULL, NULL);
+			pszMulti[cchMulti] = 0;
+		}
+		//!-end-[FixEncoding]
 		SString result(pszMulti);
 
 		delete []pszWide;
