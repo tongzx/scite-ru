@@ -346,8 +346,8 @@ gsub (s, pat, repl [, n])\n returns copy of s with pat replaced by repl, and sub
 len (s)\n returns string length
 lower (s)\n returns string with letters in lower case
 rep (s, n)\n returns string with n copies of string s
-match (s, pattern [, init])\n looks for the first match of pattern in the string s \n {rus} поиск первого вхождения шаблона pattern в строку s
-gmatch (s, pattern)\n returns iterator function that returns next captures from pattern pat on s \n {rus} возвращает итератор, который, при каждом вызове, возвращает следующее захваченное значение
+match (s, pattern [, init])\n looks for the first match of pattern in the string s \n {rus} РїРѕРёСЃРє РїРµСЂРІРѕРіРѕ РІС…РѕР¶РґРµРЅРёСЏ С€Р°Р±Р»РѕРЅР° pattern РІ СЃС‚СЂРѕРєСѓ s
+gmatch (s, pattern)\n returns iterator function that returns next captures from pattern pat on s \n {rus} РІРѕР·РІСЂР°С‰Р°РµС‚ РёС‚РµСЂР°С‚РѕСЂ, РєРѕС‚РѕСЂС‹Р№, РїСЂРё РєР°Р¶РґРѕРј РІС‹Р·РѕРІРµ, РІРѕР·РІСЂР°С‰Р°РµС‚ СЃР»РµРґСѓСЋС‰РµРµ Р·Р°С…РІР°С‡РµРЅРЅРѕРµ Р·РЅР°С‡РµРЅРёРµ
 sub (s, i [, j])\n returns substring from index i to j of s, default j=-1 (string length)
 upper (s)\n returns string with letters in upper case
 

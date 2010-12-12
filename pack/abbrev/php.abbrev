@@ -1,4 +1,4 @@
-# Сокращения для PHP by visor {
+# РЎРѕРєСЂР°С‰РµРЅРёСЏ РґР»СЏ PHP by visor {
 #
 inc=include "|";
 inco=include_once "|";
@@ -6,14 +6,14 @@ php=<?php | ?>
 req=require "|";
 reqo=require_once "|";
 
-# Ветвления
+# Р’РµС‚РІР»РµРЅРёСЏ
 if=if (|)\n{\n\t%SEL%\n}
 els=else {\n\t%SEL%|\n}
 ife=if (|)\n{\n\t\n}\nelse\n{\n\t\n}
 ifif=if (|)\n{\n\t\n}\nelseif ()\n{\n\t\n}\nelse\n{\n\t\n}
 sw=switch (|) {\n\tcase:\n\t\t\n\t\tbreak;\n\tdefault:\n\t\tbreak;\n}
 
-# Циклы
+# Р¦РёРєР»С‹
 fri=for ($i = |; $i < ; $i++)\n{\n\t\n}
 for=for (|; ; )\n{\n\t\n}
 wh=while (|)\n{\n\t\n}
@@ -21,13 +21,13 @@ dow=do\n{\n\t\n}\nwhile (|);
 fe=foreach (| as )\n{\n\t\n}
 each=each (| as )\n{\n\t\n}
 
-# Управление
+# РЈРїСЂР°РІР»РµРЅРёРµ
 gl=global;
 st=static;
 br=break;
 co=continue;
 
-# Классы и Функции
+# РљР»Р°СЃСЃС‹ Рё Р¤СѓРЅРєС†РёРё
 #fnc=function |() {\n\t\n\treturn\n}
 fnc=function |()\n{\n\t\n\treturn\n}
 #class=class | {\n\n\tfunction () {\n\t\t\n\t\treturn\n\t}\n}
@@ -36,20 +36,20 @@ class=class |\n{\n\n\tfunction ()\n\t{\n\t\t\n\t\treturn\n\t}\n}
 classe=class | extends \n{\n\n\tfunction ()\n\t{\n\t\t\n\t\treturn\n\t}\n}
 par=parent::|();
 
-# Комментарии
+# РљРѕРјРјРµРЅС‚Р°СЂРёРё
 rem=/*\n * |\n */
 
-# Возвращаемые значения
+# Р’РѕР·РІСЂР°С‰Р°РµРјС‹Рµ Р·РЅР°С‡РµРЅРёСЏ
 ret=return |;
 rt=return true;
 rf=return false;
 
-# Полезные функции
+# РџРѕР»РµР·РЅС‹Рµ С„СѓРЅРєС†РёРё
 ec=echo "|";
 pr=print_r(|);
 
-# Разное
+# Р Р°Р·РЅРѕРµ
 dec=declare (|) {\n\t\n}
 def=define
-# } //Сокращения для PHP
+# } //РЎРѕРєСЂР°С‰РµРЅРёСЏ РґР»СЏ PHP
 

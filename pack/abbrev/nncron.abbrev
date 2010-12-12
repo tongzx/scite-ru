@@ -1,4 +1,4 @@
-# файл сокращений для программы nnCron
+# С„Р°Р№Р» СЃРѕРєСЂР°С‰РµРЅРёР№ РґР»СЏ РїСЂРѕРіСЂР°РјРјС‹ nnCron
 
 BEGR=BEGIN\n  %SEL%\nWHILE\n|  \nREPEAT
 BEGU=BEGIN\n  %SEL%\n|UNTIL
@@ -15,6 +15,6 @@ IFTL=IF | THEN
 MS=MSG: "|"
 TM=TMSG: "|" 15
 RE-M=RE-MATCH: "%SEL%" " "
-WIN-I=WIN-INPUT-TEXT: "заголовок окна" "запрос" "текст по умолчанию" 0
-# шаблон для новой задачи
+WIN-I=WIN-INPUT-TEXT: "Р·Р°РіРѕР»РѕРІРѕРє РѕРєРЅР°" "Р·Р°РїСЂРѕСЃ" "С‚РµРєСЃС‚ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ" 0
+# С€Р°Р±Р»РѕРЅ РґР»СЏ РЅРѕРІРѕР№ Р·Р°РґР°С‡Рё
 1=#( CLASSIC-TASK-#-Test_ttask\nNoActive\nSingleInstance\nAsLoggedUser\nTime: * * * * * *\nAction:\n  |\n)#
