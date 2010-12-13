@@ -342,7 +342,7 @@ static int cf_pane_convert_from_utf8(lua_State *L) {
 	if(codePage != SC_CP_UTF8) {
 		unsigned int cs = SC_CHARSET_DEFAULT;
 		char* charSet = host->Property("character.set");
-		if(!strcmp(charSet, ""))
+		if(strcmp(charSet, "") != 0)
 			cs = atoi(charSet);
 		codePage = GUI::CodePageFromCharSet(cs, codePage);
 	}
@@ -358,7 +358,7 @@ static int cf_pane_convert_to_utf8(lua_State *L) {
 	if(codePage != SC_CP_UTF8) {
 		unsigned int cs = SC_CHARSET_DEFAULT;
 		char* charSet = host->Property("character.set");
-		if(!strcmp(charSet, ""))
+		if(strcmp(charSet, "") != 0)
 			cs = atoi(charSet);
 		codePage = GUI::CodePageFromCharSet(cs, codePage);
 		delete[] charSet;
