@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev, ur4ltz
-Version 1.26.13
+Version 1.26.14
 ------------------------------------------------------
   Note: Require gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
                lpeg.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/lpeg/>
@@ -535,11 +535,13 @@ function Favorites_AddFile()
 	end
 	list_fav_table[#list_fav_table+1] = fname
 	Favorites_ListFILL()
+	Favorites_SaveList()
 end
 
 function Favorites_AddCurrentBuffer()
 	list_fav_table[#list_fav_table+1] = props['FilePath']
 	Favorites_ListFILL()
+	Favorites_SaveList()
 end
 
 function Favorites_DeleteItem()
@@ -547,6 +549,7 @@ function Favorites_DeleteItem()
 	if idx == -1 then return end
 	list_favorites:delete_item(idx)
 	table.remove (list_fav_table, idx+1)
+	Favorites_SaveList()
 end
 
 local function Favorites_OpenFile()
