@@ -48,6 +48,18 @@ std::string ConvertFromUTF8(const std::string &s, int codePage) {
 std::string ConvertToUTF8(const std::string &s, int codePage) {
 	return s;
 }
+
+std::string UTF8ToUpper(const std::string &str) {
+	gui_string s = StringFromUTF8(str.c_str());
+	transform(s.begin(), s.end(), s.begin(), towpper);
+	return UTF8FromString(s);
+}
+
+std::string UTF8ToLower(const std::string &str) {
+	gui_string s = StringFromUTF8(str.c_str());
+	transform(s.begin(), s.end(), s.begin(), towlower);
+	return UTF8FromString(s);
+}
 //!-end-[FixEncoding]
 
 static GtkWidget *PWidget(WindowID wid) {

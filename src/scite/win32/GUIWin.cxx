@@ -159,6 +159,22 @@ std::string UTF8FromString(const gui_string &s) {
 	return std::string(&vc[0], narrowLen);
 }
 
+inline wchar_t MyCharUpper(wchar_t c)
+{ return (wchar_t)(unsigned int)(UINT_PTR)CharUpperW((LPWSTR)(UINT_PTR)(unsigned int)c); }
+inline wchar_t MyCharLower(wchar_t c)
+{ return (wchar_t)(unsigned int)(UINT_PTR)CharLowerW((LPWSTR)(UINT_PTR)(unsigned int)c); }
+
+std::string UTF8ToUpper(const std::string &str) {
+	gui_string s = StringFromUTF8(str.c_str());
+	transform(s.begin(), s.end(), s.begin(), MyCharUpper);
+	return UTF8FromString(s);
+}
+
+std::string UTF8ToLower(const std::string &str) {
+	gui_string s = StringFromUTF8(str.c_str());
+	transform(s.begin(), s.end(), s.begin(), MyCharLower);
+	return UTF8FromString(s);
+}
 //!-start-[FixEncoding]
 // from ScintillaWin.cxx
 unsigned int CodePageFromCharSet(unsigned long characterSet, unsigned int documentCodePage) {

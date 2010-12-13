@@ -10,6 +10,8 @@
 #ifndef GUI_H
 #define GUI_H
 
+#include <algorithm>
+
 namespace GUI {
 
 class Point {
@@ -102,6 +104,8 @@ static int CodePageFromName(const std::string &encodingName) {
 unsigned int CodePageFromCharSet(unsigned long characterSet, unsigned int documentCodePage);
 std::string ConvertFromUTF8(const std::string &s, int codePage);
 std::string ConvertToUTF8(const std::string &s, int codePage);
+std::string UTF8ToUpper(const std::string &str);
+std::string UTF8ToLower(const std::string &str);
 //!-end-[FixEncoding]
 
 typedef void *WindowID;
