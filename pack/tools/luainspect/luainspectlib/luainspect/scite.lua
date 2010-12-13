@@ -1330,7 +1330,7 @@ function M.install()
 
   if props['extension.*.lua'] == '' then
     local thisfilepath = assert(assert(debug.getinfo(1).source):gsub('^@', ''))
-    print(thisfilepath)
+    --print(thisfilepath)
     props['extension.*.lua'] = thisfilepath
       -- Q: is there a cleaner way?
   end
