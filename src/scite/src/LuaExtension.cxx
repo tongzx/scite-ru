@@ -1378,12 +1378,12 @@ void push_pane_object(lua_State *L, ExtensionAPI::Pane p) {
 		lua_pushcfunction(L, cf_pane_append);
 		lua_setfield(L, -2, "append");
 
-		//!-start-[EncodingToLua]
+//!-start-[EncodingToLua]
 		lua_pushcfunction(luaState, cf_pane_convert_to_utf8);
 		lua_setfield(luaState, -2, "ConvertToUTF8");
 		lua_pushcfunction(luaState, cf_pane_convert_from_utf8);
 		lua_setfield(luaState, -2, "ConvertFromUTF8");
-		//!-end-[EncodingToLua]
+//!-end-[EncodingToLua]
 
 		lua_pushcfunction(L, cf_pane_match_generator);
 		lua_pushcclosure(L, cf_pane_match, 1);

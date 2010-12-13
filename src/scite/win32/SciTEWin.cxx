@@ -3395,13 +3395,14 @@ LRESULT PASCAL BaseWin::StWndProc(
 // Convert String from UTF-8 to doc encoding
 SString SciTEWin::EncodeString(const SString &s) {
 	//::MessageBox(GetFocus(),SString(s).c_str(),"EncodeString:in",0);
+
 	UINT codePage = wEditor.Call(SCI_GETCODEPAGE);
-	
+
 	if (codePage != SC_CP_UTF8) {
 //!		codePage = CodePageFromCharSet(characterSet, codePage);
 		codePage = GUI::CodePageFromCharSet(characterSet, codePage); //!-change-[FixEncoding]
 
-/*-remove-[FixEncoding]
+/*!-remove-[FixEncoding]
 		int cchWide = ::MultiByteToWideChar(CP_UTF8, 0, s.c_str(), s.length(), NULL, 0);
 		wchar_t *pszWide = new wchar_t[cchWide + 1];
 		::MultiByteToWideChar(CP_UTF8, 0, s.c_str(), s.length(), pszWide, cchWide + 1);
@@ -3417,8 +3418,9 @@ SString SciTEWin::EncodeString(const SString &s) {
 		delete []pszMulti;
 
 		//::MessageBox(GetFocus(),result.c_str(),"EncodeString:out",0);
+		return result;
 */
-		return SString(GUI::ConvertFromUTF8(s.c_str(), codePage).c_str());
+		return SString(GUI::ConvertFromUTF8(s.c_str(), codePage).c_str()); //!-add-[FixEncoding]
 	}
 	return SciTEBase::EncodeString(s);
 }
@@ -3426,7 +3428,7 @@ SString SciTEWin::EncodeString(const SString &s) {
 // Convert String from doc encoding to UTF-8
 SString SciTEWin::GetRangeInUIEncoding(GUI::ScintillaWindow &win, int selStart, int selEnd) {
 	SString s = SciTEBase::GetRangeInUIEncoding(win, selStart, selEnd);
-	
+
 	UINT codePage = wEditor.Call(SCI_GETCODEPAGE);
 
 	if (codePage != SC_CP_UTF8) {
