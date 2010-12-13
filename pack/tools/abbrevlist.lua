@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 abbrevlist.lua
 Authors: Dmitry Maslov, frs, mozers™, Tymur Gubayev
-version 3.4.12
+version 3.4.13
 ------------------------------------------------------
   Если при вставке расшифровки аббревиатуры (Ctrl+B) не нашлось точного соответствия,
   то выводится список соответствий начинающихся с этой комбинации символов.
@@ -62,7 +62,7 @@ local function CreateExpansionList()
 	if abbrev_filename == '' then return end
 	table_abbr_exp = ReadAbbrevFile(abbrev_filename) or {}
 	for k,v in pairs(table_abbr_exp) do
-		v.abbr = v.abbr:upper()
+		v.abbr = scite.UTF8ToUpper(v.abbr)
 		v.exp = v.exp:gsub('\t','\\t')
 	end
 end
@@ -138,8 +138,7 @@ local function ShowExpansionList(event_IDM_ABBREV)
 	if #table_abbr_exp == 0 then return event_IDM_ABBREV end
 
 	if tonumber(props["editor.unicode.mode"]) == IDM_ENCODING_DEFAULT then abbrev = editor:ConvertToUTF8(abbrev) end
-	abbrev = abbrev:upper()
-
+	abbrev = scite.UTF8ToUpper(abbrev)
 	table_user_list = {}
 	 -- выбираем из table_abbr_exp только записи соответствующие этой аббревиатуре
 	for i = 1, #table_abbr_exp do

@@ -294,6 +294,8 @@ setmetatable (table, metatable)\n  sets metatable, nil to remove metatable
 #$string_value=scite%.ConstantName%s*%b()
 #$string_value=scite%.ConvertFromUTF8%s*%b()
 #$string_value=scite%.ConvertToUTF8%s*%b()
+#$string_value=scite%.UTF8ToUpper%s*%b()
+#$string_value=scite%.UTF8ToLower%s*%b()
 #$string_value=props%s*%b[]
 #$string_value=editor:GetCurLine%s%b()
 #$string_value=editor:GetLine%s%b()
@@ -417,6 +419,8 @@ scite.ShowParametersDialog
 scite.UpdateStatusBar
 scite.ConvertFromUTF8
 scite.ConvertToUTF8
+scite.UTF8ToUpper
+scite.UTF8ToLower
 
 CheckMenus()\n allows to update the state of the menu and toolbar (only SciTE-Ru)
 ConstantName(number)\n returns the symbolic name of a Scintilla / SciTE constant
@@ -429,8 +433,10 @@ SendEditor(SCI_constant, ...)\n sends a message to the editor pane
 SendOutput(SCI_constant, ...)\n sends a message to the output pane
 ShowParametersDialog(text)\n show parametrs dialog with message (txt) and return result action (only SciTE-Ru)
 UpdateStatusBar([bUpdateSlowData])\n perform update status bar
-ConvertFromUTF8(utf8str, codePage) = str\nconverts string from UTF-8 in codePage\n{rus} конвертирует переданную строку из UTF-8 в кодировку codePage\ncodePage ∈ {\n "ascii", "utf-8", 65001,\n"windows-1251", "cyrillic", 1251,\n "latin1", 1252, "latin2", 28592,\n "big5", 950, "gbk", 936, "shift_jis", 932, "euc-kr", 949,\n "iso-8859-5", 28595, "iso8859-11", 874, "1250", 1250 }\n
-ConvertToUTF8(str, codePage) = utf8str\nconverts string from codePage in UTF-8\n{rus} конвертирует переданную строку из кодировки codePage в UTF-8\ncodePage ∈ {\n "ascii", "utf-8", 65001,\n"windows-1251", "cyrillic", 1251,\n "latin1", 1252, "latin2", 28592,\n "big5", 950, "gbk", 936, "shift_jis", 932, "euc-kr", 949,\n "iso-8859-5", 28595, "iso8859-11", 874, "1250", 1250 }\n
+ConvertFromUTF8(utf8str, codePage) = str\nconverts string from UTF-8 in codePage\n{rus} конвертирует переданную строку из UTF-8 в кодировку codePage\ncodePage ∈ {\n "ascii", "utf-8", 65001,\n"windows-1251", "cyrillic", 1251,\n "latin1", 1252, "latin2", 28592,\n "big5", 950, "gbk", 936, "shift_jis", 932, "euc-kr", 949,\n "iso-8859-5", 28595, "iso8859-11", 874, "1250", 1250,\n... }
+ConvertToUTF8(str, codePage) = utf8str\nconverts string from codePage in UTF-8\n{rus} конвертирует переданную строку из кодировки codePage в UTF-8\ncodePage ∈ {\n "ascii", "utf-8", 65001,\n"windows-1251", "cyrillic", 1251,\n "latin1", 1252, "latin2", 28592,\n "big5", 950, "gbk", 936, "shift_jis", 932, "euc-kr", 949,\n "iso-8859-5", 28595, "iso8859-11", 874, "1250", 1250,\n... }
+UTF8ToUpper(str)
+UTF8ToLower(str)
 
 editor:AddRefDocument
 editor:AddSelection
