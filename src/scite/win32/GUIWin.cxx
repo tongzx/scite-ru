@@ -167,13 +167,13 @@ inline wchar_t MyCharLower(wchar_t c)
 
 std::string UTF8ToUpper(const std::string &str) {
 	gui_string s = StringFromUTF8(str.c_str());
-	transform(s.begin(), s.end(), s.begin(), MyCharUpper);
+	std::transform(s.begin(), s.end(), s.begin(), MyCharUpper);
 	return UTF8FromString(s);
 }
 
 std::string UTF8ToLower(const std::string &str) {
 	gui_string s = StringFromUTF8(str.c_str());
-	transform(s.begin(), s.end(), s.begin(), MyCharLower);
+	std::transform(s.begin(), s.end(), s.begin(), MyCharLower);
 	return UTF8FromString(s);
 }
 //!-end-[EncodingToLua]
