@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev, ur4ltz
-Version 1.26.12
+Version 1.26.13
 ------------------------------------------------------
   Note: Require gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
                lpeg.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/lpeg/>
@@ -1291,7 +1291,7 @@ local function Abbreviations_ShowExpansion()
 	if sel_item == -1 then return end
 	local expansion = list_abbrev:get_item_data(sel_item)
 	expansion = expansion:gsub('\\\\','\4'):gsub('\\r','\r'):gsub('(\\n','\n'):gsub('\\t','\t'):gsub('\4','\\')
-	if tonumber(props["editor.unicode.mode"]) == IDM_ENCODING_DEFAULT then expansion=shell.from_utf8(expansion) end
+	if tonumber(props["editor.unicode.mode"]) == IDM_ENCODING_DEFAULT then expansion=editor:ConvertFromUTF8(expansion) end
 
 	local cur_pos = editor.CurrentPos
 	if Abbreviations_USECALLTIPS then

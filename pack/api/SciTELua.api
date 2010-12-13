@@ -292,6 +292,8 @@ setmetatable (table, metatable)\n  sets metatable, nil to remove metatable
 #$string_value=table%.concat%s*%b()
 #$string_value=editor:textrange%s*%b()
 #$string_value=scite%.ConstantName%s*%b()
+#$string_value=scite%.ConvertFromUTF8%s*%b()
+#$string_value=scite%.ConvertToUTF8%s*%b()
 #$string_value=props%s*%b[]
 #$string_value=editor:GetCurLine%s%b()
 #$string_value=editor:GetLine%s%b()
@@ -299,8 +301,8 @@ setmetatable (table, metatable)\n  sets metatable, nil to remove metatable
 #$string_value=editor:GetPropertyExpanded%s%b()
 #$string_value=editor:GetSelText%s%b()
 #$string_value=editor:GetText%s%b()
-#$string_value=editor:EncodeString%s%b()
-#$string_value=editor:DecodeString%s%b()
+#$string_value=editor:ConvertFromUTF8%s%b()
+#$string_value=editor:ConvertToUTF8%s%b()
 #$string_value=editor:TargetAsUTF%s%b()
 #string_value=editor.AutoCFillUps
 #$string_value=editor%.KeyWords%s*%b[]
@@ -390,8 +392,8 @@ editor:insert
 editor:match
 editor:remove
 editor:textrange
-editor:EncodeString
-editor:DecodeString
+editor:ConvertFromUTF8
+editor:ConvertToUTF8
 
 append(string text)\n appends text to the end of the document
 findtext(string searchText, [int searchFlags], [int searchStart, [int searchEnd]]) = int startMatch, int endMatch\n Find some text in the document. Returns the start and end of the first match, or nil if no match
@@ -399,8 +401,8 @@ insert(int pos, string text)\n inserts text at the specified position
 match(string searchText, [flags], [int startPos])\n returns a generator that allows you to loop over the matches\ni.e. for m in output:match(text, flags) do ... end
 remove(int startPos, int endPos)\n removes the text in the range
 textrange(int startPos, int endPos)\n gets the text in the specified range
-EncodeString(string utf8text) = text\nconverts string from UTF-8 in current pane's codepage\n{rus} конвертирует переданную строку из UTF-8 в кодировку окна к которому применен метод
-DecodeString(string text) = utf8text\nconverts string from current pane's codepage in UTF-8\n{rus} конвертирует переданную строку из кодировки активного окна к которому применен метод в UTF-8
+ConvertFromUTF8(string utf8text) = text\nconverts string from UTF-8 in current pane's codepage\n{rus} конвертирует переданную строку из UTF-8 в кодировку окна к которому применен метод
+ConvertToUTF8(string text) = utf8text\nconverts string from current pane's codepage in UTF-8\n{rus} конвертирует переданную строку из кодировки активного окна к которому применен метод в UTF-8
 
 scite.CheckMenus
 scite.ConstantName
@@ -413,6 +415,8 @@ scite.SendEditor
 scite.SendOutput
 scite.ShowParametersDialog
 scite.UpdateStatusBar
+scite.ConvertFromUTF8
+scite.ConvertToUTF8
 
 CheckMenus()\n allows to update the state of the menu and toolbar (only SciTE-Ru)
 ConstantName(number)\n returns the symbolic name of a Scintilla / SciTE constant
@@ -425,6 +429,8 @@ SendEditor(SCI_constant, ...)\n sends a message to the editor pane
 SendOutput(SCI_constant, ...)\n sends a message to the output pane
 ShowParametersDialog(text)\n show parametrs dialog with message (txt) and return result action (only SciTE-Ru)
 UpdateStatusBar([bUpdateSlowData])\n perform update status bar
+ConvertFromUTF8(utf8str, codePage) = str\nconverts string from UTF-8 in codePage\n{rus} конвертирует переданную строку из UTF-8 в кодировку codePage\ncodePage ∈ {\n "ascii", "utf-8", 65001,\n"windows-1251", "cyrillic", 1251,\n "latin1", 1252, "latin2", 28592,\n "big5", 950, "gbk", 936, "shift_jis", 932, "euc-kr", 949,\n "iso-8859-5", 28595, "iso8859-11", 874, "1250", 1250 }\n
+ConvertToUTF8(str, codePage) = utf8str\nconverts string from codePage in UTF-8\n{rus} конвертирует переданную строку из кодировки codePage в UTF-8\ncodePage ∈ {\n "ascii", "utf-8", 65001,\n"windows-1251", "cyrillic", 1251,\n "latin1", 1252, "latin2", 28592,\n "big5", 950, "gbk", 936, "shift_jis", 932, "euc-kr", 949,\n "iso-8859-5", 28595, "iso8859-11", 874, "1250", 1250 }\n
 
 editor:AddRefDocument
 editor:AddSelection
