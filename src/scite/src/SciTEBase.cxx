@@ -1602,11 +1602,11 @@ void SciTEBase::ReplaceOnce() {
 	if (!FindHasText())
 		return;
 
-	if (!havefound) {
+//	if (!havefound) { //!-remove-[FixReplaceOnce]
 		Sci_CharacterRange crange = GetSelection();
 		SetSelection(crange.cpMin, crange.cpMin);
 		FindNext(false);
-	}
+//	} //!-remove-[FixReplaceOnce]
 
 	if (havefound) {
 		SString replaceTarget = EncodeString(replaceWhat);
@@ -1621,9 +1621,10 @@ void SciTEBase::ReplaceOnce() {
 			wEditor.CallString(SCI_REPLACETARGET, replaceLen, replaceTarget.c_str());
 		SetSelection(cr.cpMin + lenReplaced, cr.cpMin);
 		havefound = false;
+		FindNext(false, false); //!-add-[FixReplaceOnce]
 	}
 
-	FindNext(false);
+//!	FindNext(false); //!-remove-[FixReplaceOnce]
 }
 
 int SciTEBase::DoReplaceAll(bool inSelection) {
