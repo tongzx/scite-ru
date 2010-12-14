@@ -1309,6 +1309,7 @@ bool Document::MatchesWordOptions(bool word, bool wordStart, int pos, int length
 long Document::FindText(int minPos, int maxPos, const char *search,
                         bool caseSensitive, bool word, bool wordStart, bool regExp, int flags,
                         int *length, CaseFolder *pcf) {
+	if ((minPos == maxPos) && (minPos == Length())) return -1; //!-add-[FixFind]
 	if (*length <= 0)
 		return minPos;
 	if (regExp) {
