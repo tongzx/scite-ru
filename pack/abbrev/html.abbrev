@@ -165,7 +165,7 @@ xmld=<?xml version="1.0"?>\n<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "h
 # Атрибуты тегов
 a-= alt="|"
 ak-= accesskey="|"
-с-= class="|"
+c-= class="|"
 ch-= checked="checked"
 cs-= colspan="|"
 d-= disabled="disabled"
