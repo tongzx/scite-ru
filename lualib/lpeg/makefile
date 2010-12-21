@@ -1,7 +1,7 @@
 INCLUDES  = -I../../src/scite/lua/include
 LIBS      = -L../lib -lscite
 DEFINES   = -DNDEBUG
-CFLAGS    = -Os $(DEFINES) $(INCLUDES)
+CFLAGS    = -O3 $(DEFINES) $(INCLUDES)
 LDFLAGS   = -s -shared
 
 CC        = gcc
@@ -20,4 +20,5 @@ $(TARGET): $(OBJECTS)
 	$(CC) $(LDFLAGS) -o $(TARGET) $(OBJECTS) $(LIBS)
 
 clean:
-	-$(RM) lpeg.dll
+	-$(RM) $(OBJECTS)
+	-$(RM) $(TARGET)
