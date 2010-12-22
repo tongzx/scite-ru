@@ -1,6 +1,6 @@
 --[[--------------------------------------------------
 Paired Tags (логическое продолжение скриптов highlighting_paired_tags.lua и HTMLFormatPainter.lua)
-Version: 2.4.0
+Version: 2.4.1
 Author: mozers™, VladVRO, TymurGubayev, nail333
 ------------------------------
 Подсветка парных и непарных тегов в HTML и XML
@@ -130,11 +130,11 @@ function GotoPairedTag()
 end
 
 function SelectWithTags()
-	if t.paired_start then -- the paired tag found
+	if t.tag_start and t.paired_start then -- the paired tag found
 		if t.tag_start < t.paired_start then
-			editor:SetSel(t.tag_start, t.paired_end+1)
+			editor:SetSel(t.paired_end+1, t.tag_start)
 		else
-			editor:SetSel(t.paired_start, t.tag_end+1)
+			editor:SetSel(t.tag_end+1, t.paired_start)
 		end
 	end
 end
