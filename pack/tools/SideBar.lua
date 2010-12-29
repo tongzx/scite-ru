@@ -1,6 +1,6 @@
 --[[--------------------------------------------------
 SideBar.lua
-Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev, ur4ltz
+Authors: Frank Wunderlich, mozersв„ў, VladVRO, frs, BioInfo, Tymur Gubayev, ur4ltz
 Version 1.26.14
 ------------------------------------------------------
   Note: Require gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
@@ -43,29 +43,24 @@ require 'gui'
 require 'lpeg'
 require 'shell'
 
--- local _DEBUG = true --включает вывод отладочной информации
+-- local _DEBUG = true --РІРєР»СЋС‡Р°РµС‚ РІС‹РІРѕРґ РѕС‚Р»Р°РґРѕС‡РЅРѕР№ РёРЅС„РѕСЂРјР°С†РёРё
 
 -- you can choose to make SideBar a stand-alone window
 local win = tonumber(props['sidebar.win']) == 1
--- Переключатель способа предпросмотра аббревиатур: true = calltip, false = annotation
+-- РџРµСЂРµРєР»СЋС‡Р°С‚РµР»СЊ СЃРїРѕСЃРѕР±Р° РїСЂРµРґРїСЂРѕСЃРјРѕС‚СЂР° Р°Р±Р±СЂРµРІРёР°С‚СѓСЂ: true = calltip, false = annotation
 local Abbreviations_USECALLTIPS = tonumber(props['sidebar.abbrev.calltip']) == 1
--- отображение флагов/параметров по умолчанию:
+-- РѕС‚РѕР±СЂР°Р¶РµРЅРёРµ С„Р»Р°РіРѕРІ/РїР°СЂР°РјРµС‚СЂРѕРІ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ:
 local _show_flags = tonumber(props['sidebar.functions.flags']) == 1
 local _show_params = tonumber(props['sidebar.functions.params']) == 1
 
 local tab_index = 0
 local panel_width = tonumber(props['sidebar.width']) or 216
 local win_height = tonumber(props['position.height']) or 600
-local sidebar_position = 'right'
-if props['sidebar.position']=='left' then sidebar_position = 'left' end
+local sidebar_position = props['sidebar.position']=='left' and 'left' or 'right'
 
 local style = props['style.*.32']
 local colorback = style:match('back:(#%x%x%x%x%x%x)')
-local colorfore
-if colorback then
-	colorfore = style:match('fore:(#%x%x%x%x%x%x)')
-	if colorfore == nil then colorfore = '' end
-end
+local colorfore = style:match('fore:(#%x%x%x%x%x%x)')
 
 ----------------------------------------------------------
 -- Common functions
@@ -197,6 +192,7 @@ if colorback then list_abbrev:set_list_colour(colorfore,colorback) end
 local win_parent
 if win then
 	win_parent = gui.window "Side Bar"
+	win_parent:size(panel_width + 24, 600)
 	win_parent:on_close(function() props['sidebar.show']=0 end)
 else
 	win_parent = gui.panel(panel_width)
@@ -209,15 +205,6 @@ tabs:add_tab("Abbrev", tab2)
 win_parent:client(tab2)
 win_parent:client(tab1)
 win_parent:client(tab0)
-
-if tonumber(props['sidebar.show'])==1 then
-	if win then
-		win_parent:size(panel_width + 24, 600)
-		win_parent:show()
-	else
-		gui.set_panel(win_parent, sidebar_position)
-	end
-end
 
 ----------------------------------------------------------
 -- tab0:memo_path   Path and Mask
@@ -603,7 +590,7 @@ local Lang2lpeg = {}
 do
 	local P, V, Cg, Ct, Cc, S, R, C, Carg, Cf, Cb, Cp, Cmt = lpeg.P, lpeg.V, lpeg.Cg, lpeg.Ct, lpeg.Cc, lpeg.S, lpeg.R, lpeg.C, lpeg.Carg, lpeg.Cf, lpeg.Cb, lpeg.Cp, lpeg.Cmt
 
-	--@todo: переписать с использованием lpeg.Cf
+	--@todo: РїРµСЂРµРїРёСЃР°С‚СЊ СЃ РёСЃРїРѕР»СЊР·РѕРІР°РЅРёРµРј lpeg.Cf
 	local function AnyCase(str)
 		local res = P'' --empty pattern to start with
 		local ch, CH
@@ -905,10 +892,10 @@ do
 	do --v----- * ------v--
 		-- redefine common patterns
 		local NL = P"\r\n"+P"\n"+P"\f"
-		local SC = S" \t\160" -- без понятия что за символ с кодом 160, но он встречается в SciTEGlobal.properties непосредственно после [Warnings] 10 раз.
+		local SC = S" \t\160" -- Р±РµР· РїРѕРЅСЏС‚РёСЏ С‡С‚Рѕ Р·Р° СЃРёРјРІРѕР» СЃ РєРѕРґРѕРј 160, РЅРѕ РѕРЅ РІСЃС‚СЂРµС‡Р°РµС‚СЃСЏ РІ SciTEGlobal.properties РЅРµРїРѕСЃСЂРµРґСЃС‚РІРµРЅРЅРѕ РїРѕСЃР»Рµ [Warnings] 10 СЂР°Р·.
 		local COMMENT = P'#'*(ANY - NL)^0*NL
 		-- define local patterns
-		local somedef = S'fFsS'*S'uU'*S'bBnN'*AZ^0 --пытаемся поймать что-нибудь, похожее на определение функции...
+		local somedef = S'fFsS'*S'uU'*S'bBnN'*AZ^0 --РїС‹С‚Р°РµРјСЃСЏ РїРѕР№РјР°С‚СЊ С‡С‚Рѕ-РЅРёР±СѓРґСЊ, РїРѕС…РѕР¶РµРµ РЅР° РѕРїСЂРµРґРµР»РµРЅРёРµ С„СѓРЅРєС†РёРё...
 		local section = P'['*(ANY-P']')^1*P']'
 		-- create flags
 		local somedef = Cg(somedef, '')
@@ -922,7 +909,7 @@ do
 
 		-- resulting pattern, which does the work
 		local patt = (def2 + def1 + COMMENT + IDENTIFIER + 1)^0 * EOF
-		-- local patt = (def2 + def1 + IDENTIFIER + 1)^0 * EOF -- чуть медленнее
+		-- local patt = (def2 + def1 + IDENTIFIER + 1)^0 * EOF -- С‡СѓС‚СЊ РјРµРґР»РµРЅРЅРµРµ
 
 		Lang2lpeg['*'] = lpeg.Ct(patt)
 	end --^----- * ------^--
@@ -955,7 +942,7 @@ do
 
 	do --v----- SQL ------v--
 		-- redefine common patterns
-		--идентификатор может включать точку
+		--РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РјРѕР¶РµС‚ РІРєР»СЋС‡Р°С‚СЊ С‚РѕС‡РєСѓ
 		local IDENTIFIER = AZ * (AZ+N+P".")^0
 		local STRING = (P'"' * (ANY - P'"')^0*P'"') + (P"'" * (ANY - P"'")^0*P"'")
 		local COMMENT = ((P"--" * (ANY - NL)^0*NL) + block_comment)^1
@@ -974,15 +961,15 @@ do
 		pr = Cg(cr*pr*SC^1*Cc(true),'pr')
 
 		local I = C(IDENTIFIER)*cl
-		--параметры процедур и вью - всё от имени до as
+		--РїР°СЂР°РјРµС‚СЂС‹ РїСЂРѕС†РµРґСѓСЂ Рё РІСЊСЋ - РІСЃС‘ РѕС‚ РёРјРµРЅРё РґРѕ as
 		local parpv = C((1-AnyCase"as")^0)*AnyCase"as"
-		--параметры таблиц содержат комментарии и параметры
+		--РїР°СЂР°РјРµС‚СЂС‹ С‚Р°Р±Р»РёС† СЃРѕРґРµСЂР¶Р°С‚ РєРѕРјРјРµРЅС‚Р°СЂРёРё Рё РїР°СЂР°РјРµС‚СЂС‹
 		local partb = C((P"("*(COMMENT + (1-S"()")+par)^1*P")"))
 		-- -- definitions to capture:
 		pr = pr*I*SC^0*parpv
 		vi = vi*I*SC^0*parpv
 		tb = tb*I*SC^0*partb
-		tr = tr*I*SC^1*AnyCase"on"*SC^1*I --"параметр" триггера - идентификатор после I
+		tr = tr*I*SC^1*AnyCase"on"*SC^1*I --"РїР°СЂР°РјРµС‚СЂ" С‚СЂРёРіРіРµСЂР° - РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РїРѕСЃР»Рµ I
 		local def = Ct(( pr + vi + tb + tr))
 
 		-- resulting pattern, which does the work
@@ -1304,7 +1291,7 @@ local function Abbreviations_ShowExpansion()
 		editor:AnnotationClearAll()
 		editor.AnnotationVisible = ANNOTATION_BOXED
 		local linenr = editor:LineFromPosition(cur_pos)
-		editor.AnnotationStyle[linenr] = 255 -- номер стиля, в котором вы задали параметры для аннотаций
+		editor.AnnotationStyle[linenr] = 255 -- РЅРѕРјРµСЂ СЃС‚РёР»СЏ, РІ РєРѕС‚РѕСЂРѕРј РІС‹ Р·Р°РґР°Р»Рё РїР°СЂР°РјРµС‚СЂС‹ РґР»СЏ Р°РЅРЅРѕС‚Р°С†РёР№
 		editor:AnnotationSetText(linenr, expansion:gsub('\t', '    '))
 	end
 end
@@ -1360,27 +1347,40 @@ tabs:on_select(function(ind)
 	OnSwitch()
 end)
 
--- Скрытие / показ панели
-function SideBar_ShowHide()
-	if tonumber(props['sidebar.show'])==1 then
-		if win then
-			win_parent:hide()
-		else
-			gui.set_panel()
-		end
-		props['sidebar.show']=0
-	else
-		if win then
-			win_parent:show()
-		else
-			gui.set_panel(win_parent, sidebar_position)
-		end
+--- Р¤СѓРЅРєС†РёРё РїРѕРєР°Р·С‹РІР°СЋС‰РёРµ/РїСЂСЏС‡СѓС‰РёРµ Р±РѕРєРѕРІСѓСЋ РїР°РЅРµР»СЊ
+local SideBar_Show, SideBar_Hide
+if win then
+	SideBar_Show = function()
+		win_parent:show()
 		props['sidebar.show']=1
 		OnSwitch()
 	end
+	SideBar_Hide = function()
+		win_parent:hide()
+		props['sidebar.show']=0
+	end
+else
+	SideBar_Show = function()
+		gui.set_panel(win_parent, sidebar_position)
+		props['sidebar.show']=1
+		OnSwitch()
+	end
+	SideBar_Hide = function()
+		gui.set_panel()
+		props['sidebar.show']=0
+	end
 end
 
--- Обновление списков Functions и Bookmarks при изменении кол-ва строк в активном документе
+--- РџРµСЂРµРєР»СЋС‡Р°РµС‚ РѕС‚РѕР±СЂР°Р¶РµРЅРёРµ Р±РѕРєРѕРІРѕР№ РїР°РЅРµР»Рё
+function SideBar_ShowHide()
+	if tonumber(props['sidebar.show'])==1 then
+		SideBar_Hide()
+	else
+		SideBar_Show()
+	end
+end
+
+-- РћР±РЅРѕРІР»РµРЅРёРµ СЃРїРёСЃРєРѕРІ Functions Рё Bookmarks РїСЂРё РёР·РјРµРЅРµРЅРёРё РєРѕР»-РІР° СЃС‚СЂРѕРє РІ Р°РєС‚РёРІРЅРѕРј РґРѕРєСѓРјРµРЅС‚Рµ
 AddEventHandler("OnUpdateUI", function()
 	if (editor.Focus and line_count) then
 		local line_count_new = editor.LineCount
@@ -1406,7 +1406,7 @@ end)
 -- Go to function definition
 ----------------------------------------------------------
 
--- По имени функции находим строку с ее объявлением (инфа берется из table_functions)
+-- РџРѕ РёРјРµРЅРё С„СѓРЅРєС†РёРё РЅР°С…РѕРґРёРј СЃС‚СЂРѕРєСѓ СЃ РµРµ РѕР±СЉСЏРІР»РµРЅРёРµРј (РёРЅС„Р° Р±РµСЂРµС‚СЃСЏ РёР· table_functions)
 local function Func2Line(funcname)
 	if not next(table_functions) then
 		Functions_GetNames()
@@ -1418,14 +1418,14 @@ local function Func2Line(funcname)
 	end
 end
 
--- Переход на строку с объявлением функции
+-- РџРµСЂРµС…РѕРґ РЅР° СЃС‚СЂРѕРєСѓ СЃ РѕР±СЉСЏРІР»РµРЅРёРµРј С„СѓРЅРєС†РёРё
 local function JumpToFuncDefinition()
 	local funcname = GetCurrentWord()
 	local line = Func2Line(funcname)
 	if line then
 		_backjumppos = editor.CurrentPos
 		editor:GotoLine(line)
-		return true -- обрываем дальнейшую обработку OnDoubleClick (выделение слова и пр.)
+		return true -- РѕР±СЂС‹РІР°РµРј РґР°Р»СЊРЅРµР№С€СѓСЋ РѕР±СЂР°Р±РѕС‚РєСѓ OnDoubleClick (РІС‹РґРµР»РµРЅРёРµ СЃР»РѕРІР° Рё РїСЂ.)
 	end
 end
 
@@ -1480,10 +1480,17 @@ props["dwell.period"] = 50
 local cur_word_old = ""
 AddEventHandler("OnKey", function()
 	if editor.Focus then
-		local cur_word = GetCurrentWord() -- слово, на котором стояла каретка ДО ТОГО КАК ЕЁ ПЕРЕМЕСТИЛИ
+		local cur_word = GetCurrentWord() -- СЃР»РѕРІРѕ, РЅР° РєРѕС‚РѕСЂРѕРј СЃС‚РѕСЏР»Р° РєР°СЂРµС‚РєР° Р”Рћ РўРћР“Рћ РљРђРљ Р•РЃ РџР•Р Р•РњР•РЎРўРР›Р
 		if cur_word ~= cur_word_old then
 			SetColour(cur_word)
 			cur_word_old = cur_word
 		end
 	end
 end)
+
+
+--========================================================
+-- now show SideBar:
+if tonumber(props['sidebar.show'])==1 then
+	AddEventHandler("OnOpen", SideBar_Show, 'RunOnce')
+end
