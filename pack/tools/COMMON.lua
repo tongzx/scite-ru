@@ -78,7 +78,7 @@ function string.pattern( s )
 end
 
 --------------------------------------------------------
--- ѕровер€ет параметр на nil и если это так то возвращает default иначе возвращает сам параметр
+-- ѕровер€ет параметр на nil и если это так, то возвращает default, иначе возвращает сам параметр
 function ifnil(val, default)
 	if val == nil then
 		return default
@@ -308,7 +308,7 @@ function ReadAbbrevFile(file, abbr_table)
 				abbr_table[#abbr_table+1] = {abbr=_abr, exp=_exp}
 			else
 				local import_file = line:match('^import%s+(.+)')
-				-- если обнаружена запись import то рекурсивно вызываем эту же функцию
+				-- если обнаружена запись import, то рекурсивно вызываем эту же функцию
 				if import_file then
 					ReadAbbrevFile(file:match('.+\\')..import_file, abbr_table)
 				end

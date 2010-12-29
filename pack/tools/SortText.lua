@@ -15,7 +15,7 @@ Connection:
 
 local lines_tbl = {} -- Таблица со строками нашего текста
 local sort_direction_decreasing = false -- Обратный порядок сортировки
-local patt = [[^[%s'"`«]*]] -- патерн для сортировки без учета пробелов и кавычек в начале строки
+local patt = [[^[%s'"`«]*]] -- паттерн для сортировки без учета пробелов и кавычек в начале строки
 
 -- сравниваем две строки
 local function CompareTwoLines(line1, line2)

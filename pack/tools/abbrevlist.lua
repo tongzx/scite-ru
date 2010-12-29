@@ -90,7 +90,7 @@ local function InsertExpansion(expansion, abbrev_length)
 		if clearmanual then
 			EditorMarkText(start_pos-1, 1, num_hidden_indic)
 		else
-			EditorClearMarks(num_hidden_indic) -- если от предыдущей вставки остались маркеры (пользователь заполнил не все поля) то удаляем их
+			EditorClearMarks(num_hidden_indic) -- если от предыдущей вставки остались маркеры (пользователь заполнил не все поля), то удаляем их
 		end
 
 		repeat -- убираем символы # из расшифровки, ставя вместо них невидимые маркеры
@@ -151,7 +151,7 @@ local function ShowExpansionList(event_IDM_ABBREV)
 	if (event_IDM_ABBREV)
 		-- и если найден единственный вариант расшифровки
 		and (#table_user_list == 1)
-		-- и аббревиатура полностью соотвествует введенной
+		-- и аббревиатура полностью соответствует введенной
 		and (abbrev == table_user_list[1][1])
 			-- то вставку производим немедленно
 			then
