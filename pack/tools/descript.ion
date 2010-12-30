@@ -2,6 +2,7 @@ Calculator SciTE Calculator - Калькулятор на Lua
 CIViewer Color Image Viewer - Предпросмотр цвета и изображений
 Helper SciTE Helper - ActiveX компонент для связи SciTE со скриптами и приложениями
 HexEdit SciTE HexEdit - Hex редактор на Lua
+luainspect LuaInspect <http://lua-users.org/wiki/LuaInspect>
 LuaLib Внешние Lua библиотеки
 SessionManager SciTE Session Manager - Менеджер сессий
 abbrevlist.lua При вводе слова, если это сокращение то вызывается список аббревиатур
@@ -12,27 +13,25 @@ AutocompleteObject.lua Автодополнение объектов их методами и свойствами
 ChangeCommentChar.lua Адекватный символ комментария для ini, inf, reg файлов
 code-poster-html.lua Конвертирование кода для публикации в HTML формате
 code-poster2.lua Конвертирование кода для публикации в форуме
-codepage.lua Показ текущей кодировки в статусной строке
+CodePage.lua Переключает и отображает текущую кодировку страницы
 ColorSet.lua Выбор цвета из системного диалога
 COMMON.lua Общие функции, использующиеся во многих скриптах
 CopyMarkedLines.lua Вставить отмеченные (по Ctrl+F2) cтроки
 css_formatter.lua Упорядочивает таблицы стилей
 descript.ion В этом файле хранятся комментарии
 display_com_object_in_ole_viewer.vbs Display COM object in OLE Viewer
+eventmanager.lua Менеджер обработчиков событий SciTE
 exec.lua Расчет выделенного текста как математического выражения или открытие URL
 FindText.lua Поиск выделенного в окне редактора (или консоли) текста с выводом содержащих его строк в консоль
 FoldText.lua Фолдинг для текстовых файлов
 FontChanger.lua Смена текущих установок шрифта
-FuncProcList.lua Вывод списка функций / процедур, имеющихся в коде
 goto_line.lua Сохранение позиции курсора на экране при переходе на букмарк
 highlighting_identical_text.lua Автоподсветка идентичных блоков текста
-highlighting_paired_tags.lua Подсветка парных и непарных тегов в HTML и XML
 highlighting_text.lua Маркировка произвольного текста
 HighlightLinks.lua Подсветка и открытие линков в тексте
 html_HELP.hta Оболочка для просмотра/поиска в HTML файлах справки
 html_tags_autoclose.lua Автозакрытие тегов в HTML файлах
 HTML_toolbar.hta HTML Toolbar
-HTMLFormatPainter.lua "Формат по образцу" для HTML
 IndentTabToSpace.lua Замена отступов в виде табуляторов на пробелы и наоборот
 InsertSpecialChar.lua Вставка спецсимволов (©,®,§,±,…) из раскрывающегося списка (для HTML вставляются их обозначения)
 lexer_name.lua Показ имени текущего лексера в строке статуса
@@ -68,10 +67,7 @@ SortText.lua Сортировка выделенных строк по алфавиту и наоборот
 SpellCheck.vbs Проверка орфографии выделенного текста
 style_changer.lua Быстрая смена стиля оформления файлов на С
 svn_menu.lua Подменю для команд SVN
-ToggleFoldAll.lua Автоматическое сворачивание всех секций при открытии файлов заданного типа
 translit.lua Транслитерация английских букв в русские
-UTF8_check.lua Переключение кодировки в UTF-8
 value.lua Показывает действующее значение переменных $(название_переменной)
-win2dos.lua Переключатель кодировки текущего ввода и отображения win1251/dos866
-xComment.lua Замена Ctrl+Q (комментирование/снятие комментария) 
+xComment.lua Замена Ctrl+Q (комментирование/снятие комментария)
 Zoom.lua Синхронное масштабирование отображаемого и печатаемого шрифта
