@@ -1,5 +1,5 @@
 --[[----------------------------------------------------------------------------
-HighlightLinks v1.5.2
+HighlightLinks v1.5.3
 јвтор: VladVRO, mozers
 
 - ѕодсветка линков в тексте (автоматическа€ или по команде меню)
@@ -21,7 +21,7 @@ HighlightLinks v1.5.2
   command.137.*=HighlightLinks
   command.mode.137.*=subsystem:lua,savebefore:no
 «адать стиль маркера дл€ подсветки линка:
-  indic.style.3=#0000FF,plain
+  indic.style.13=#0000FF,plain
 «адать файлы дл€ которых при открытии и при сохранении файла будет автоматически
 выполн€тьс€ подсветка:
 в виде списка имен лексеров через зап€тую (дл€ файлов без лексера им€ null)
@@ -35,7 +35,7 @@ HighlightLinks v1.5.2
 
 require "shell"
 
-local mark_number = 3
+local mark_number = 13
 local default_link_mask = "https*://[^ \t\r\n\"\']+"
 
 function HighlightLinks()

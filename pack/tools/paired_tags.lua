@@ -1,6 +1,6 @@
 --[[--------------------------------------------------
 Paired Tags (логическое продолжение скриптов highlighting_paired_tags.lua и HTMLFormatPainter.lua)
-Version: 2.4.1
+Version: 2.5.0
 Author: mozers™, VladVRO, TymurGubayev, nail333
 ------------------------------
 Подсветка парных и непарных тегов в HTML и XML
@@ -18,9 +18,9 @@ Author: mozers™, VladVRO, TymurGubayev, nail333
 	dofile (props["SciteDefaultHome"].."\\tools\\paired_tags.lua")
 Добавить в файл настроек параметр:
 	hypertext.highlighting.paired.tags=1
-Дополнительно можно задать стили используемых маркеров (1 и 2):
-	indic.style.1=#0099FF
-	indic.style.2=#FF0000 (если этот параметр не задан, то непарные теги не подсвечиваются)
+Дополнительно можно задать стили используемых маркеров (11 и 12):
+	indic.style.11=#0099FF
+	indic.style.22=#FF0000 (если этот параметр не задан, то непарные теги не подсвечиваются)
 
 Команды копирования, вставки, удаления тегов добавляются в меню Tools обычным порядком:
 	tagfiles=$(file.patterns.html);$(file.patterns.xml)
@@ -62,6 +62,7 @@ local t = {}
 -- t.tag_start, t.tag_end, t.paired_start, t.paired_end  -- positions
 -- t.begin, t.finish  -- contents of tags (when copying)
 local old_current_pos
+local blue_indic, red_indic = 11, 12 -- номера используемых маркеров
 
 function CopyTags()
 	if not t.tag_start then
@@ -142,8 +143,8 @@ end
 function highlighting_paired_tags_switch()
 	local prop_name = 'hypertext.highlighting.paired.tags'
 	props[prop_name] = 1 - tonumber(props[prop_name])
-	EditorClearMarks(1)
-	EditorClearMarks(2)
+	EditorClearMarks(blue_indic)
+	EditorClearMarks(red_indic)
 end
 
 local function FindPairedTag(tag)
@@ -191,8 +192,8 @@ local function PairedTagsFinder()
 		then
 			t.tag_start = nil
 			t.tag_end = nil
-			EditorClearMarks(1)
-			EditorClearMarks(2)
+			EditorClearMarks(blue_indic)
+			EditorClearMarks(red_indic)
 			return
 	end
 	if tag_start == t.tag_start then return end
@@ -212,17 +213,17 @@ local function PairedTagsFinder()
 		FindPairedTag(tag)
 	end
 
-	EditorClearMarks(1)
-	EditorClearMarks(2)
+	EditorClearMarks(blue_indic)
+	EditorClearMarks(red_indic)
 
 	if t.paired_start then
 		-- paint in Blue
-		EditorMarkText(t.tag_start + 1, t.tag_end - t.tag_start - 1, 1)
-		EditorMarkText(t.paired_start + 1, t.paired_end - t.paired_start - 1, 1)
+		EditorMarkText(t.tag_start + 1, t.tag_end - t.tag_start - 1, blue_indic)
+		EditorMarkText(t.paired_start + 1, t.paired_end - t.paired_start - 1, blue_indic)
 	else
-		if props["indic.style.2"] ~= '' then
+		if props["indic.style."..red_indic] ~= '' then
 			-- paint in Red
-			EditorMarkText(t.tag_start + 1, t.tag_end - t.tag_start - 1, 2)
+			EditorMarkText(t.tag_start + 1, t.tag_end - t.tag_start - 1, red_indic)
 		end
 	end
 end
