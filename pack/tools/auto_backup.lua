@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 auto_backup.lua
 Authors: mozers™
-Version: 1.5.0
+Version: 1.5.1
 ------------------------------------------------------
 Создание резервной копии сохраняемого после редактирования файла
 ------------------------------------------------------
@@ -52,8 +52,8 @@ local function BakupFile(filename)
 	filename = GetPath().."\\"..string.gsub(filename,'.*\\','')
 	local nbck = 1
 	while (sbck > nbck ) do
-		local fn1 = sbck-nbck 
-		local fn2 = sbck-nbck+1 
+		local fn1 = sbck-nbck
+		local fn2 = sbck-nbck+1
 		os.remove (filename.."."..fn2..".bak")
 		if fn1 == 1 then
 			os.rename (filename..".bak", filename.."."..fn2..".bak")
@@ -64,7 +64,7 @@ local function BakupFile(filename)
 	end
 	os.remove (filename..".bak")
 	if not shell.fileexists(sfilename) then
-		io.output(sfilename)
+		io.output(shell.to_utf8(sfilename))
 		io.close()
 	end
 	os.rename (sfilename, filename..".bak")
