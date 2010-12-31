@@ -151,5 +151,7 @@ end
 
 -- Тестовый лексер для выдуманного языка программирования zog
 dofile (props["SciteDefaultHome"].."\\languages\\zog.lua")
+-- Лексер для текстовых файлов
+dofile (props["SciteDefaultHome"].."\\languages\\text.lua")
 
 ------------------------------------------------------------------------------

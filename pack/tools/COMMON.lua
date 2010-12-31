@@ -1,10 +1,11 @@
 -- COMMON.lua
--- Version: 1.10.1
+-- Version: 1.11.0
 ---------------------------------------------------
 -- Общие функции, использующиеся во многих скриптах
 ---------------------------------------------------
 
--- Пути поиска подключаемых lua-библиотек
+-- Пути поиска подключаемых lua-библиотек и модулей
+package.path  = props["SciteDefaultHome"].."\\tools\\LuaLib\\?.lua;"..package.path
 package.cpath = props["SciteDefaultHome"].."\\tools\\LuaLib\\?.dll;"..package.cpath
 
 --------------------------------------------------------
@@ -17,6 +18,17 @@ function GetCurrentWord()
 	local current_pos = editor.CurrentPos
 	return editor:textrange(editor:WordStartPosition(current_pos, true),
 							editor:WordEndPosition(current_pos, true))
+end
+
+--- returns current hotspot's text
+function GetCurrentHotspot ()
+	local s = editor.CurrentPos
+	local e = s+1
+	local l = editor.Length
+	s = s-1 -- we know we're at hotspot
+	while editor.StyleHotSpot[editor.StyleAt[s]] and s>=0 do s = s-1 end
+	while editor.StyleHotSpot[editor.StyleAt[e]] and e<=l do e = e+1 end
+	return editor:textrange(s+1,e)
 end
 
 --------------------------------------------------------
