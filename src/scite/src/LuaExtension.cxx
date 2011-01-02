@@ -335,9 +335,8 @@ static int cf_scite_check_menus(lua_State *) {
 //!-end-[CheckMenus]
 
 //!-start-[EncodingToLua]
-static int cf_pane_convert_from_utf8(lua_State *L) {
+static int cf_pane_get_codepage(lua_State *L) {
 	ExtensionAPI::Pane p = check_pane_object(L, 1);
-	const char *s = luaL_checkstring(L, 2);
 	UINT codePage = host->Send(p, SCI_GETCODEPAGE);
 	if(codePage != SC_CP_UTF8) {
 		unsigned int cs = SC_CHARSET_DEFAULT;
@@ -346,29 +345,11 @@ static int cf_pane_convert_from_utf8(lua_State *L) {
 			cs = atoi(charSet);
 		codePage = GUI::CodePageFromCharSet(cs, codePage);
 	}
-	std::string ss = GUI::ConvertFromUTF8(s, codePage);
-	lua_pushstring(L, ss.c_str());
+	lua_pushinteger(L, codePage);
 	return 1;
 }
 
-static int cf_pane_convert_to_utf8(lua_State *L) {
-	ExtensionAPI::Pane p = check_pane_object(L, 1);
-	const char *s = luaL_checkstring(L, 2);
-	UINT codePage = host->Send(p, SCI_GETCODEPAGE);
-	if(codePage != SC_CP_UTF8) {
-		unsigned int cs = SC_CHARSET_DEFAULT;
-		char* charSet = host->Property("character.set");
-		if(strcmp(charSet, "") != 0)
-			cs = atoi(charSet);
-		codePage = GUI::CodePageFromCharSet(cs, codePage);
-		delete[] charSet;
-	}
-	std::string ss = GUI::ConvertToUTF8(s, codePage);
-	lua_pushstring(L, ss.c_str());
-	return 1;
-}
-
-static int cf_scite_convert_from_utf8(lua_State *L) {
+static int lua_string_from_utf8(lua_State *L) {
 	if(lua_gettop(L) != 2) raise_error(L, "Wrong arguments count for scite.ConvertFromUTF8");
 	const char *s = luaL_checkstring(L, 1);
 	int cp = 0;
@@ -381,7 +362,7 @@ static int cf_scite_convert_from_utf8(lua_State *L) {
 	return 1;
 }
 
-static int cf_scite_convert_to_utf8(lua_State *L) {
+static int lua_string_to_utf8(lua_State *L) {
 	if(lua_gettop(L) != 2) raise_error(L, "Wrong arguments count for scite.ConvertToUTF8");
 	const char *s = luaL_checkstring(L, 1);
 	int cp = 0;
@@ -394,17 +375,24 @@ static int cf_scite_convert_to_utf8(lua_State *L) {
 	return 1;
 }
 
-static int cf_scite_utf8_to_upper(lua_State *L) {
+static int lua_string_utf8_to_upper(lua_State *L) {
 	const char *s = luaL_checkstring(L, 1);
 	std::string ss = GUI::UTF8ToUpper(s);
 	lua_pushstring(L, ss.c_str());
 	return 1;
 }
 
-static int cf_scite_utf8_to_lower(lua_State *L) {
+static int lua_string_utf8_to_lower(lua_State *L) {
 	const char *s = luaL_checkstring(L, 1);
 	std::string ss = GUI::UTF8ToLower(s);
 	lua_pushstring(L, ss.c_str());
+	return 1;
+}
+
+static int lua_string_utf8len(lua_State *L) {
+	const char *str = luaL_checkstring(L, 1);
+	GUI::gui_string wstr = GUI::StringFromUTF8(str);
+	lua_pushinteger(L, wstr.length());
 	return 1;
 }
 //!-end-[EncodingToLua]
@@ -1379,10 +1367,8 @@ void push_pane_object(lua_State *L, ExtensionAPI::Pane p) {
 		lua_setfield(L, -2, "append");
 
 //!-start-[EncodingToLua]
-		lua_pushcfunction(luaState, cf_pane_convert_to_utf8);
-		lua_setfield(luaState, -2, "ConvertToUTF8");
-		lua_pushcfunction(luaState, cf_pane_convert_from_utf8);
-		lua_setfield(luaState, -2, "ConvertFromUTF8");
+		lua_pushcfunction(luaState, cf_pane_get_codepage);
+		lua_setfield(luaState, -2, "GetCodepage");
 //!-end-[EncodingToLua]
 
 		lua_pushcfunction(L, cf_pane_match_generator);
@@ -1646,18 +1632,22 @@ static bool InitGlobalScope(bool checkProperties, bool forceReload = false) {
 	lua_setfield(luaState, -2, "GetTranslation");
 //!-end-[LocalizationFromLua]
 
-//!-start-[EncodingToLua]
-	lua_pushcfunction(luaState, cf_scite_convert_to_utf8);
-	lua_setfield(luaState, -2, "ConvertToUTF8");
-	lua_pushcfunction(luaState, cf_scite_convert_from_utf8);
-	lua_setfield(luaState, -2, "ConvertFromUTF8");
-	lua_pushcfunction(luaState, cf_scite_utf8_to_upper);
-	lua_setfield(luaState, -2, "UTF8ToUpper");
-	lua_pushcfunction(luaState, cf_scite_utf8_to_lower);
-	lua_setfield(luaState, -2, "UTF8ToLower");
-//!-end-[EncodingToLua]
-
 	lua_setglobal(luaState, "scite");
+	
+//!-start-[EncodingToLua]
+	lua_getglobal(luaState, "string");
+	lua_pushcfunction(luaState, lua_string_to_utf8);
+	lua_setfield(luaState, -2, "to_utf8");
+	lua_pushcfunction(luaState, lua_string_from_utf8);
+	lua_setfield(luaState, -2, "from_utf8");
+	lua_pushcfunction(luaState, lua_string_utf8_to_upper);
+	lua_setfield(luaState, -2, "utf8upper");
+	lua_pushcfunction(luaState, lua_string_utf8_to_lower);
+	lua_setfield(luaState, -2, "utf8lower");
+	lua_pushcfunction(luaState, lua_string_utf8len);
+	lua_setfield(luaState, -2, "utf8len");
+	lua_pop(luaState, 1);
+//!-end-[EncodingToLua]
 
 	// Metatable for global namespace, to publish iface constants
 	if (luaL_newmetatable(luaState, "SciTE_MT_GlobalScope")) {
