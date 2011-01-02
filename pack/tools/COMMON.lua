@@ -1,5 +1,5 @@
 -- COMMON.lua
--- Version: 1.11.1
+-- Version: 1.11.2
 ---------------------------------------------------
 -- Общие функции, использующиеся во многих скриптах
 ---------------------------------------------------
@@ -22,7 +22,8 @@ function GetCurrentWord()
 							editor:WordEndPosition(current_pos, true))
 end
 
---- returns current hotspot's text
+--------------------------------------------------------
+--- Returns current hotspot's text
 function GetCurrentHotspot ()
 	local s = editor.CurrentPos
 	local e = s+1
@@ -252,25 +253,23 @@ end
 -- ==============================================================
 -- Функция копирования os_copy(source_path,dest_path)
 -- Автор z00n <http://www.lua.ru/forum/posts/list/15/89.page>
---// "библиотечная" функция
-local function unwind_protect(thunk,cleanup)
-	local ok,res = pcall(thunk)
-	if cleanup then cleanup() end
-	if not ok then error(res,0) else return res end
-end
-
---// общая функция для работы с открытыми файлами
-local function with_open_file(name,mode)
-	return function(body)
-	local f, err = io.open(name,mode)
-	if err then return end
-	return unwind_protect(function()return body(f) end,
-		function()return f and f:close() end)
-	end
-end
-
---// собственно os-copy --
 function os_copy(source_path,dest_path)
+	-- "библиотечная" функция
+	local function unwind_protect(thunk,cleanup)
+		local ok,res = pcall(thunk)
+		if cleanup then cleanup() end
+		if not ok then error(res,0) else return res end
+	end
+	-- общая функция для работы с открытыми файлами
+	local function with_open_file(name,mode)
+		return function(body)
+		local f, err = io.open(name,mode)
+		if err then return end
+		return unwind_protect(function()return body(f) end,
+			function()return f and f:close() end)
+		end
+	end
+	----------------------------------------------
 	return with_open_file(source_path,"rb") (function(source)
 		return with_open_file(dest_path,"wb") (function(dest)
 			assert(dest:write(assert(source:read("*a"))))
@@ -278,41 +277,38 @@ function os_copy(source_path,dest_path)
 		end)
 	end)
 end
+
 -- ==============================================================
-
---- Эмулирует чтение файла внутренней функцией редактора
---  Функция предназначена для использования вместо io.lines(filename),
--- а также вместо file:lines()
---  Читает файл по правилам SciTE: при наличии в конце строки
--- символа '\' считается, что текущая строка продолжается в
--- следующей.
--- @usage: for l in scite_io_lines('c:\\some.file') do print(l) end
--- -- alternative:
--- f = io.open('s:\\some.file')
--- for l in scite_io_lines(f) do print(l) end
-function scite_io_lines(file)
-	local line_iter = type(file)=='string' and io.lines(file) or file:lines()
-	local scite_iter = function()
-		local line = line_iter()
-		if not line then return end
-		-- start [SciTE]
-		while string.sub(line,-1)=='\\' do
-			line = string.sub(line,1,-2)..line_iter()
-		end
-		-- end [SciTE]
-		return line
-	end
-
-	return scite_iter
-end
-
-
 --- Читает файлы .abbrev (понимает инструкцию #import)
 -- @return Таблица пар сокращение-расшифровка
 function ReadAbbrevFile(file, abbr_table)
+	--[[------------------------------------------
+	Эмулирует чтение файла внутренней функцией редактора
+	Функция предназначена для использования вместо io.lines(filename), а также вместо file:lines()
+	Читает файл по правилам SciTE: при наличии в конце строки символа '\' считается, что текущая строка продолжается в следующей.
+	@usage: for l in scite_io_lines('c:\\some.file') do print(l) end
+	  alternative:
+	f = io.open('s:\\some.file')
+	for l in scite_io_lines(f) do print(l) end
+	--]]------------------------------------------
+	local function scite_io_lines(file)
+		local line_iter = type(file)=='string' and io.lines(file) or file:lines()
+		local scite_iter = function()
+			local line = line_iter()
+			if not line then return end
+			-- start [SciTE]
+			while string.sub(line,-1)=='\\' do
+				line = string.sub(line,1,-2)..line_iter()
+			end
+			-- end [SciTE]
+			return line
+		end
+		return scite_iter
+	end
+	--------------------------------------------
 	local abbrev_file, err, errcode = io.open(file)
 	if not abbrev_file then return abbrev_file, err, errcode end
-	
+
 	local abbr_table = abbr_table or {}
 	local ignorecomment = tonumber(props['abbrev.'..props['Language']..'.ignore.comment'])==1
 	for line in scite_io_lines(abbrev_file) do
@@ -333,6 +329,7 @@ function ReadAbbrevFile(file, abbr_table)
 	return abbr_table
 end
 
+-- ==============================================================
 -- Функции, выполняющиеся только один раз, при открытии первого файла
 --   ( Выполнить их сразу, при загрузке SciTEStartup.lua, нельзя
 --   получим сообщение об ошибке: "Editor pane is not accessible at this time." )
