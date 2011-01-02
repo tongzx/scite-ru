@@ -1,5 +1,5 @@
 -- COMMON.lua
--- Version: 1.11.0
+-- Version: 1.11.1
 ---------------------------------------------------
 -- Общие функции, использующиеся во многих скриптах
 ---------------------------------------------------
@@ -12,6 +12,8 @@ package.cpath = props["SciteDefaultHome"].."\\tools\\LuaLib\\?.dll;"..package.cp
 -- Подключение пользовательского обработчика к событию SciTE
 dofile(props["SciteDefaultHome"]..'\\tools\\eventmanager.lua')
 
+-- Функция распознавания URL
+dofile (props["SciteDefaultHome"].."\\tools\\URL_detect.lua")
 --------------------------------------------------------
 -- Замена порой неработающего props['CurrentWord']
 function GetCurrentWord()

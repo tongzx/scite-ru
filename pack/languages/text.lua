@@ -1,41 +1,18 @@
 --[[--------------------------------------------------
-text.lua
+Script Text Lexer
 Authors: Tymur Gubayev
-Version: 1.0
+Version: 1.1.0
 ------------------------------------------------------
 Description:	text-"lexer": colors latin chars, 
 	national chars and highlights links. There's
 	also possibility to 
-
-------------------------------------------------------
-Connection:
- In file SciTEStartup.lua add a line:
-    dofile (props["SciteDefaultHome"].."\\languages\\text.lua")
- Set in a file .properties:
-    lexer.*.txt=script_text
-	style.script_text.default=
-	style.script_text.identifier=fore:#8F6600
-	style.script_text.link=fore:#5555BB,hotspot
-	style.script_text.national_chars=fore:#B22222
 --]]--------------------------------------------------
 
-
--- initialize
-local IsURI = dofile (props["SciteDefaultHome"].."\\tools\\URL_detect.lua")
-
-local styles = {[0]='DEFAULT', 'IDENTIFIER', 'LINK', 'NATIONAL_CHARS'}
--- invert table, set props
-for i=0,#styles do
-	local v = styles[i]
-	styles[v]=i
-	props['style.script_text.'..i]=props['style.script_text.'..v:lower()]
-end
-
 local function TextLexer(styler)
-	-- this cycle is here, because there's no "OnPropsChanged" event
-	for i=0,#styles do
-		props['style.script_text.'..i]=props['style.script_text.'..styles[i]:lower()]
-	end
+	local S_DEFAULT = 0
+	local S_IDENTIFIER = 1
+	local S_LINK = 2
+	local S_NATIONAL_CHARS = 3
 
 	local IsIdentifier = function (c)
 		return c:find('^%a+$') ~= nil
@@ -58,32 +35,32 @@ local function TextLexer(styler)
 		local stst = styler:State()
 		local c = styler:Current()
 		-- Exit state if needed
-		if stst == styles.IDENTIFIER then
+		if stst == S_IDENTIFIER then
 			if not IsIdentifier(c) then -- End of identifier
 				-- local identifier = styler:Token()
-				styler:SetState(styles.DEFAULT)
+				styler:SetState(S_DEFAULT)
 			end
-		elseif stst == styles.NATIONAL_CHARS and not IsNational_Char(c) then
-			styler:SetState(styles.DEFAULT)
+		elseif stst == S_NATIONAL_CHARS and not IsNational_Char(c) then
+			styler:SetState(S_DEFAULT)
 		--[[--links are processed at once, so the state cannot be LINK
-			elseif stst == styles.LINK and not IsLink(c) then
-			styler:SetState(styles.DEFAULT)]]
+			elseif stst == LINK and not IsLink(c) then
+			styler:SetState(DEFAULT)]]
 		end
 
 		local n -- link special var
 		-- Enter state if needed
-		if styler:State() == styles.DEFAULT then
+		if styler:State() == S_DEFAULT then
 			local s = editor:textrange(styler.Position(), styler_endPos) --@todo: optimize: only current line
 			n = IsLink(s)
 			if n then
 				-- print(n,s:sub(1,n),'\n\t',s)
-				styler:SetState(styles.LINK)
+				styler:SetState(S_LINK)
 				for i = 1,n do styler:Forward() end
-				styler:SetState(styles.DEFAULT)
+				styler:SetState(S_DEFAULT)
 			elseif IsNational_Char(c) then
-				styler:SetState(styles.NATIONAL_CHARS)
+				styler:SetState(S_NATIONAL_CHARS)
 			elseif IsIdentifier(c) then
-				styler:SetState(styles.IDENTIFIER)
+				styler:SetState(S_IDENTIFIER)
 			end
 		end
 

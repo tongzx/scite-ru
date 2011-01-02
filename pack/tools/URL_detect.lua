@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 URL_detect.lua
 Authors: Tymur Gubayev
-Version: 1.0
+Version: 1.1.0
 ------------------------------------------------------
 Description:	a (simple) URI recognizer as Lua module
 	detects URI's very close to standart (rfc3986)
@@ -10,11 +10,7 @@ Description:	a (simple) URI recognizer as Lua module
 	this list (search for `scheme        <-`)
 ------------------------------------------------------
 Requires:	lpeg>=0.10 (with `re` module)
-------------------------------------------------------
-Usage:
-	local IsURI = dofile"URL_detect.lua"
 --]]--------------------------------------------------
-
 
 --[[http://tools.ietf.org/html/rfc3986#appendix-A
 Appendix A. Collected ABNF for URI
@@ -199,7 +195,8 @@ local mailto_patch = [[
 ]]
 
 local url = re.compile(mailto_patch..URI_re)
-return function(s)
+
+function IsURI(s)
 	local n = url:match(s)
 	return n and n-1 -- the `-1` is indeed needed
 end
