@@ -2,7 +2,7 @@
 ShowCalltip.lua
 Show calltip for current word
 Authors: mozers™, TymurGubayev
-version 1.2.2
+version 1.2.3
 ------------------------------------------------------
 Выводит всплывающую подсказку по слову на котором стоит курсор
   по команде меню "Показать подсказку" (Ctrl+Shift+Space) 
@@ -27,7 +27,8 @@ local function ShowCalltip()
 					local _start, _end, calltip = line:find('^('..word:pattern()..'[^%w%.%_%:].+)')
 					if _start == 1 then
 						editor:CallTipCancel()
-						if tonumber(props["editor.unicode.mode"]) == IDM_ENCODING_DEFAULT then calltip=editor:ConvertFromUTF8(calltip) end
+						local cp = editor:GetCodepage()
+						if cp ~= 65001 then calltip=calltip:from_utf8(cp) end
 						editor:CallTipShow(editor.CurrentPos, calltip:gsub('\\n','\n'))
 						editor:CallTipSetHlt(0, #word)
 						break
