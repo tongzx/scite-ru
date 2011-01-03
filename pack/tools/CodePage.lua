@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 CodePage.lua
 Authors: YuriNB, VladVRO, mozers™
-Version: 2.4.2
+Version: 2.4.3
 ------------------------------------------------------
 Ãèáðèä 2õ ñêðèïòîâ:
 win1251 to cp866 keyboard mapper (YuriNB icq#2614215)
@@ -31,39 +31,28 @@ local function UpdateStatusCodePage(mode)
 	props["code.page.866"]='0'
 	if mode == IDM_ENCODING_UCS2BE then
 		props["editor.code.page.name"]='UCS-2 BE'
-		props["cp.iconv"]='ucs-2 be'
 	elseif mode == IDM_ENCODING_UCS2LE then
 		props["editor.code.page.name"]='UCS-2 LE'
-		props["cp.iconv"]='ucs-2 le'
 	elseif mode == IDM_ENCODING_UTF8 then
 		props["editor.code.page.name"]='UTF-8 BOM'
-		props["cp.iconv"]='utf-8'
 	elseif mode == IDM_ENCODING_UCOOKIE then
 		props["editor.code.page.name"]='UTF-8'
-		props["cp.iconv"]='utf-8'
 	else
 		if props["character.set"]=='255' then
 			props["editor.code.page.name"]='DOS-866'
 			props["code.page.866"]='1'
-			props["cp.iconv"]='cp866'
 		elseif props["character.set"]=='204' then
 			props["editor.code.page.name"]='WIN-1251'
-			props["cp.iconv"]='windows-1251'
 		elseif tonumber(props["character.set"])==0 then
 			props["editor.code.page.name"]='CP1252'
-			props["cp.iconv"]='windows-1252'
 		elseif props["character.set"]=='238' then
 			props["editor.code.page.name"]='CP1250'
-			props["cp.iconv"]='windows-1250'
 		elseif props["character.set"]=='161' then
 			props["editor.code.page.name"]='CP1253'
-			props["cp.iconv"]='windows-1253'
 		elseif props["character.set"]=='162' then
 			props["editor.code.page.name"]='CP1254'
-			props["cp.iconv"]='windows-1254'
 		else
 			props["editor.code.page.name"]='???'
-			props["cp.iconv"]='?'
 		end
 	end
 	if props["editor.code.page.name"] == code_page_name then return end
