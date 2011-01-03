@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev, ur4ltz
-Version 1.27.1
+Version 1.27.2
 ------------------------------------------------------
   Note: Require gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
                lpeg.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/lpeg/>
@@ -1281,7 +1281,7 @@ local function Abbreviations_ShowExpansion()
 	if sel_item == -1 then return end
 	local expansion = list_abbrev:get_item_data(sel_item)
 	expansion = expansion:gsub('\\\\','\4'):gsub('\\r','\r'):gsub('(\\n','\n'):gsub('\\t','\t'):gsub('\4','\\')
-	local cp = editor:GetCodepage()
+	local cp = editor:codepage()
 	if cp ~= 65001 then expansion = expansion:from_utf8(cp) end
 
 	local cur_pos = editor.CurrentPos

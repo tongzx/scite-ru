@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 abbrevlist.lua
 Authors: Dmitry Maslov, frs, mozers™, Tymur Gubayev
-version 3.4.14
+version 3.4.15
 ------------------------------------------------------
   Если при вставке расшифровки аббревиатуры (Ctrl+B) не нашлось точного соответствия,
   то выводится список соответствий начинающихся с этой комбинации символов.
@@ -137,7 +137,7 @@ local function ShowExpansionList(event_IDM_ABBREV)
 	end
 	if #table_abbr_exp == 0 then return event_IDM_ABBREV end
 
-	local cp = editor:GetCodepage()
+	local cp = editor:codepage()
 	if cp ~= 65001 then abbrev = abbrev:to_utf8(cp) end
 	abbrev = abbrev:utf8upper()
 	table_user_list = {}
