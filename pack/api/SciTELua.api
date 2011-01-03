@@ -54,16 +54,16 @@ io.write
 #$file=io%.open%s*%b()
 #$file=io%.output%s*%b()
 #$file=io%.input%s*%b()
-file:close ([file])\n  closes file, or the default output file
-file:flush ()\n  flushes the default output file
-file:input ([file])\n  opens file in text mode, sets as default input file, or returns current default input file
-file:lines ([filename])\n  open file in read mode, returns iterator function to return lines, nil ends
-file:open (filename [, mode])\n  opens file in specified mode "[rawb+]", returns handle or nil
-file:output ([file])\n  opens file in text mode, sets as default output file, or returns current default output file
-file:read (format1, ...)\n  reads file according to given formats, returns read values or nil
-file:tmpfile ()\n  returns a handle for a temporary file, opened in update mode
-file:type (obj)\n  returns "file" if obj is an open file handle, "close file" if closed, or nil if not a file handle
-file:write (value1, ...)\n  writes strings or numbers to file
+file:close
+file:flush
+file:input
+file:lines
+file:open
+file:output
+file:read
+file:tmpfile
+file:type
+file:write
 close ([file])\n  closes file, or the default output file
 flush ()\n  flushes the default output file
 input ([file])\n  opens file in text mode, sets as default input file, or returns current default input file

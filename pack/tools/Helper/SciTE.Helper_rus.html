@@ -46,7 +46,7 @@
 <div class="example">
   On Error Resume Next<br>
   Set SciTE = CreateObject("SciTE.Helper")<br>
-  If Err.Number <> 0 Then<br>
+  If Err.Number &lt;&gt; 0 Then<br>
   &nbsp;&nbsp;&nbsp;&nbsp;WScript.Echo "Please install SciTE Helper before!"<br>
   &nbsp;&nbsp;&nbsp;&nbsp;WScript.Quit 1<br>
   End If<br>
@@ -76,10 +76,10 @@
       </p>
       <p>Пример использования:
       <div class="example">
-        WScript.Echo "position.left = " & SciTE.Left<br>
-        WScript.Echo "position.top = " & SciTE.Top<br>
-        WScript.Echo "position.width = " & SciTE.Width<br>
-        WScript.Echo "position.height = " & SciTE.Height
+        WScript.Echo "position.left = " &amp; SciTE.Left<br>
+        WScript.Echo "position.top = " &amp; SciTE.Top<br>
+        WScript.Echo "position.width = " &amp; SciTE.Width<br>
+        WScript.Echo "position.height = " &amp; SciTE.Height
       </div>
     </td>
   </tr>
@@ -241,7 +241,7 @@
       </p>
       <p>Пример использования:
       <div class="example">
-        SciTE.Trace "First line" & "\r\n" & "Second line" & "\r\n"
+        SciTE.Trace "First line" &amp; "\r\n" &amp; "Second line" &amp; "\r\n"
       </div>
     </td>
   </tr>
