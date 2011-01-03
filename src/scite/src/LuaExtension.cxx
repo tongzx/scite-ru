@@ -1377,7 +1377,7 @@ void push_pane_object(lua_State *L, ExtensionAPI::Pane p) {
 
 //!-start-[EncodingToLua]
 		lua_pushcfunction(luaState, cf_pane_get_codepage);
-		lua_setfield(luaState, -2, "GetCodepage");
+		lua_setfield(luaState, -2, "codepage");
 //!-end-[EncodingToLua]
 
 		lua_pushcfunction(L, cf_pane_match_generator);

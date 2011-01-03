@@ -160,6 +160,34 @@ std::string UTF8FromString(const gui_string &s) {
 }
 
 //!-start-[EncodingToLua]
+int CodePageFromName(const std::string &encodingName) {
+	struct Encoding {
+		const char *name;
+		int codePage;
+	} knownEncodings[] = {
+		{ "ascii", SC_CP_UTF8 },
+		{ "utf-8", SC_CP_UTF8 },
+		{ "latin1", 1252 },
+		{ "latin2", 28592 },
+		{ "big5", 950 },
+		{ "gbk", 936 },
+		{ "shift_jis", 932 },
+		{ "euc-kr", 949 },
+		{ "cyrillic", 1251 },
+		{ "iso-8859-5", 28595 },
+		{ "iso8859-11", 874 },
+		{ "1250", 1250 },
+		{ "windows-1251", 1251 },
+		{ 0, 0 },
+	};
+	for (Encoding *enc=knownEncodings; enc->name; enc++) {
+		if (encodingName == enc->name) {
+			return enc->codePage;
+		}
+	}
+	return SC_CP_UTF8;
+}
+
 inline wchar_t MyCharUpper(wchar_t c)
 { return (wchar_t)(unsigned int)(UINT_PTR)CharUpperW((LPWSTR)(UINT_PTR)(unsigned int)c); }
 inline wchar_t MyCharLower(wchar_t c)
