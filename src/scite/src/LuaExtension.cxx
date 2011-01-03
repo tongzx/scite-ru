@@ -344,6 +344,15 @@ static int cf_pane_get_codepage(lua_State *L) {
 		if(strcmp(charSet, "") != 0)
 			cs = atoi(charSet);
 		codePage = GUI::CodePageFromCharSet(cs, codePage);
+	} else { // temporary solution
+		unsigned int unimode = atoi(host->Property("editor.unicode.mode"));
+		switch(unimode) {
+			case 152: codePage = 1200; break; // UTF-16 LE
+			case 151: codePage = 1201; break; // UTF-16 BE
+			case 153: codePage = 65001; break; // UTF-8 BOM
+			case 154: codePage = 65001; break; // UTF-8 without BOM
+			default: codePage = SC_CP_UTF8;
+		}
 	}
 	lua_pushinteger(L, codePage);
 	return 1;
