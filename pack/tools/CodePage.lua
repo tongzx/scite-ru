@@ -1,18 +1,18 @@
 --[[--------------------------------------------------
 CodePage.lua
-Authors: YuriNB, VladVRO, mozers™
-Version: 2.4.3
+Authors: YuriNB, VladVRO, mozersâ„¢
+Version: 2.5.0
 ------------------------------------------------------
-Ãèáğèä 2õ ñêğèïòîâ:
+Ğ“Ğ¸Ğ±Ñ€Ğ¸Ğ´ 2Ñ… ÑĞºÑ€Ğ¸Ğ¿Ñ‚Ğ¾Ğ²:
 win1251 to cp866 keyboard mapper (YuriNB icq#2614215)
- Ïåğåêëş÷àòåëü êîäèğîâêè òåêóùåãî ââîäà è îòîáğàæåíèÿ win1251/dos866
- Îäíîâğåìåííî ïåğåêëş÷àåòñÿ êîäèğîâêà îêíà êîíñîëè
-è
+ ĞŸĞµÑ€ĞµĞºĞ»ÑÑ‡Ğ°Ñ‚ĞµĞ»ÑŒ ĞºĞ¾Ğ´Ğ¸Ñ€Ğ¾Ğ²ĞºĞ¸ Ñ‚ĞµĞºÑƒÑ‰ĞµĞ³Ğ¾ Ğ²Ğ²Ğ¾Ğ´Ğ° Ğ¸ Ğ¾Ñ‚Ğ¾Ğ±Ñ€Ğ°Ğ¶ĞµĞ½Ğ¸Ñ win1251/dos866
+ ĞĞ´Ğ½Ğ¾Ğ²Ñ€ĞµĞ¼ĞµĞ½Ğ½Ğ¾ Ğ¿ĞµÑ€ĞµĞºĞ»ÑÑ‡Ğ°ĞµÑ‚ÑÑ ĞºĞ¾Ğ´Ğ¸Ñ€Ğ¾Ğ²ĞºĞ° Ğ¾ĞºĞ½Ğ° ĞºĞ¾Ğ½ÑĞ¾Ğ»Ğ¸
+Ğ¸
 codepage.lua (VladVRO)
- Ïîêàç òåêóùåé êîäèğîâêè â ñòàòóñíîé ñòğîêå.
+ ĞŸĞ¾ĞºĞ°Ğ· Ñ‚ĞµĞºÑƒÑ‰ĞµĞ¹ ĞºĞ¾Ğ´Ğ¸Ñ€Ğ¾Ğ²ĞºĞ¸ Ğ² ÑÑ‚Ğ°Ñ‚ÑƒÑĞ½Ğ¾Ğ¹ ÑÑ‚Ñ€Ğ¾ĞºĞµ.
 
-Êğîìå òîãî, ñêğèïò ïûòàåòñÿ îòëè÷èòü êîäèğîâêó cp866 îò win1251 ïğè îòêğûòèè ôàéëà èëè ïğè ïåğåêëş÷åíèè íà íåãî.
-Åñëè ıòî óäàåòñÿ, òî ïğîèñõîäèò àâòîìàòè÷åñêîå ïåğåêëş÷åíèå îòîáğàæåíèÿ è ââîäà.
+ĞšÑ€Ğ¾Ğ¼Ğµ Ñ‚Ğ¾Ğ³Ğ¾, ÑĞºÑ€Ğ¸Ğ¿Ñ‚ Ğ¿Ñ‹Ñ‚Ğ°ĞµÑ‚ÑÑ Ğ¾Ñ‚Ğ»Ğ¸Ñ‡Ğ¸Ñ‚ÑŒ ĞºĞ¾Ğ´Ğ¸Ñ€Ğ¾Ğ²ĞºÑƒ cp866 Ğ¾Ñ‚ win1251 Ğ¿Ñ€Ğ¸ Ğ¾Ñ‚ĞºÑ€Ñ‹Ñ‚Ğ¸Ğ¸ Ñ„Ğ°Ğ¹Ğ»Ğ° Ğ¸Ğ»Ğ¸ Ğ¿Ñ€Ğ¸ Ğ¿ĞµÑ€ĞµĞºĞ»ÑÑ‡ĞµĞ½Ğ¸Ğ¸ Ğ½Ğ° Ğ½ĞµĞ³Ğ¾.
+Ğ•ÑĞ»Ğ¸ ÑÑ‚Ğ¾ ÑƒĞ´Ğ°ĞµÑ‚ÑÑ, Ñ‚Ğ¾ Ğ¿Ñ€Ğ¾Ğ¸ÑÑ…Ğ¾Ğ´Ğ¸Ñ‚ Ğ°Ğ²Ñ‚Ğ¾Ğ¼Ğ°Ñ‚Ğ¸Ñ‡ĞµÑĞºĞ¾Ğµ Ğ¿ĞµÑ€ĞµĞºĞ»ÑÑ‡ĞµĞ½Ğ¸Ğµ Ğ¾Ñ‚Ğ¾Ğ±Ñ€Ğ°Ğ¶ĞµĞ½Ğ¸Ñ Ğ¸ Ğ²Ğ²Ğ¾Ğ´Ğ°.
 ------------------------------------------------------
 Connection:
  In file SciTEStartup.lua add a line:
@@ -26,13 +26,15 @@ Connection:
     code.page.866.detect=1
 --]]--------------------------------------------------
 
+local chars_accented = 'ĞĞ°Ğ‘Ğ±Ğ’Ğ²Ğ“Ğ³Ğ”Ğ´Ğ•ĞµĞÑ‘Ğ–Ğ¶Ğ—Ğ·Ğ˜Ğ¸Ğ™Ğ¹ĞšĞºĞ›Ğ»ĞœĞ¼ĞĞ½ĞĞ¾ĞŸĞ¿Ğ Ñ€Ğ¡ÑĞ¢Ñ‚Ğ£ÑƒĞ¤Ñ„Ğ¥Ñ…Ğ¦Ñ†Ğ§Ñ‡Ğ¨ÑˆĞ©Ñ‰ĞªÑŠĞ«Ñ‹Ğ¬ÑŒĞ­ÑĞ®ÑĞ¯Ñ'
+
 local function UpdateStatusCodePage(mode)
 	local code_page_name = props["editor.code.page.name"]
 	props["code.page.866"]='0'
 	if mode == IDM_ENCODING_UCS2BE then
-		props["editor.code.page.name"]='UCS-2 BE'
+		props["editor.code.page.name"]='UTF-16 BE'
 	elseif mode == IDM_ENCODING_UCS2LE then
-		props["editor.code.page.name"]='UCS-2 LE'
+		props["editor.code.page.name"]='UTF-16 LE'
 	elseif mode == IDM_ENCODING_UTF8 then
 		props["editor.code.page.name"]='UTF-8 BOM'
 	elseif mode == IDM_ENCODING_UCOOKIE then
@@ -59,20 +61,21 @@ local function UpdateStatusCodePage(mode)
 
 	if mode == nil or mode == IDM_ENCODING_DEFAULT then
 		if props["character.set"]=='255' then
-			props["chars.accented"]='€ ¡‚¢ƒ£„¤…¥ğñ†¦‡§ˆ¨‰©Šª‹«Œ¬­®¯à‘á’â“ã”ä•å–æ—ç˜è™éšê›ëœìíîŸï'
+			props["chars.accented"] = chars_accented:from_utf8(806)
 			scite.Perform("reloadproperties:")
 -- print(' dos866 > '..props['CurrentWordCharacters'])
 		else
-			props["chars.accented"]='ÀàÁáÂâÃãÄäÅå¨¸ÆæÇçÈèÉéÊêËëÌìÍíÎîÏïĞğÑñÒòÓóÔôÕõÖö×÷ØøÙùÚúÛûÜüİıŞşßÿ'
+			props["chars.accented"] = chars_accented:from_utf8(1251)
 			scite.Perform("reloadproperties:")
 -- print('win1251 > '..props['CurrentWordCharacters'])
 		end
 	else -- utf8
-		props["chars.accented"]='ĞĞ°Ğ‘Ğ±Ğ’Ğ²Ğ“Ğ³Ğ”Ğ´Ğ•ĞµĞÑ‘Ğ–Ğ¶Ğ—Ğ·Ğ˜Ğ¸Ğ™Ğ¹ĞšĞºĞ›Ğ»ĞœĞ¼ĞĞ½ĞĞ¾ĞŸĞ¿Ğ Ñ€Ğ¡ÑĞ¢Ñ‚Ğ£ÑƒĞ¤Ñ„Ğ¥Ñ…Ğ¦Ñ†Ğ§Ñ‡Ğ¨ÑˆĞ©Ñ‰ĞªÑŠĞ«Ñ‹Ğ¬ÑŒĞ­ÑĞ®ÑĞ¯Ñ'
+		props["chars.accented"] = chars_accented
 		scite.Perform("reloadproperties:")
 -- print('   utf8 > '..props['CurrentWordCharacters'])
 	end
 
+	props["editor.code.page"]=editor:codepage()
 	scite.CheckMenus()
 	scite.UpdateStatusBar()
 end
@@ -102,21 +105,21 @@ local function CharsetDetect()
 	return false
 end
 
--- Äîáàâëÿåì ñâîé îáğàáîò÷èê ñîáûòèÿ OnSwitchFile
+-- Ğ”Ğ¾Ğ±Ğ°Ğ²Ğ»ÑĞµĞ¼ ÑĞ²Ğ¾Ğ¹ Ğ¾Ğ±Ñ€Ğ°Ğ±Ğ¾Ñ‚Ñ‡Ğ¸Ğº ÑĞ¾Ğ±Ñ‹Ñ‚Ğ¸Ñ OnSwitchFile
 AddEventHandler("OnSwitchFile", function(file)
 	if not CharsetDetect() then
 		UpdateStatusCodePage(tonumber(props["editor.unicode.mode"]))
 	end
 end)
 
--- Äîáàâëÿåì ñâîé îáğàáîò÷èê ñîáûòèÿ OnOpen
+-- Ğ”Ğ¾Ğ±Ğ°Ğ²Ğ»ÑĞµĞ¼ ÑĞ²Ğ¾Ğ¹ Ğ¾Ğ±Ñ€Ğ°Ğ±Ğ¾Ñ‚Ñ‡Ğ¸Ğº ÑĞ¾Ğ±Ñ‹Ñ‚Ğ¸Ñ OnOpen
 AddEventHandler("OnOpen", function(file)
 	if not CharsetDetect() then
 		UpdateStatusCodePage(tonumber(props["editor.unicode.mode"]))
 	end
 end)
 
--- Äîáàâëÿåì ñâîé îáğàáîò÷èê ñîáûòèÿ OnMenuCommand
+-- Ğ”Ğ¾Ğ±Ğ°Ğ²Ğ»ÑĞµĞ¼ ÑĞ²Ğ¾Ğ¹ Ğ¾Ğ±Ñ€Ğ°Ğ±Ğ¾Ñ‚Ñ‡Ğ¸Ğº ÑĞ¾Ğ±Ñ‹Ñ‚Ğ¸Ñ OnMenuCommand
 AddEventHandler("OnMenuCommand", function(cmd, source)
 	if cmd > 149 and cmd < 155 then -- IDM_ENCODING_DEFAULT, IDM_ENCODING_UCS2BE, IDM_ENCODING_UCS2LE, IDM_ENCODING_UTF8, IDM_ENCODING_UCOOKIE
 		UpdateStatusCodePage(cmd)
@@ -140,9 +143,9 @@ end
 
 local charset1251to866 =
 {
-[168]=240, --¨
-[184]=241, --¸
-[185]=252, --¹
+[168]=240, --Ğ
+[184]=241, --Ñ‘
+[185]=252, --â„–
 [192]=128,[193]=129,[194]=130,[195]=131,[196]=132,
 [197]=133,[198]=134,[199]=135,[200]=136,[201]=137,
 [202]=138,[203]=139,[204]=140,[205]=141,[206]=142,
@@ -167,7 +170,7 @@ local function Win2DOS(charAdded)
 	end
 end
 
--- Äîáàâëÿåì ñâîé îáğàáîò÷èê ñîáûòèÿ OnChar
+-- Ğ”Ğ¾Ğ±Ğ°Ğ²Ğ»ÑĞµĞ¼ ÑĞ²Ğ¾Ğ¹ Ğ¾Ğ±Ñ€Ğ°Ğ±Ğ¾Ñ‚Ñ‡Ğ¸Ğº ÑĞ¾Ğ±Ñ‹Ñ‚Ğ¸Ñ OnChar
 AddEventHandler("OnChar", function(char)
 	if props["character.set"]=='255' then
 		Win2DOS(char)
