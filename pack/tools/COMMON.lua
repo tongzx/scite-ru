@@ -1,5 +1,5 @@
 -- COMMON.lua
--- Version: 1.11.2
+-- Version: 1.12.0
 ---------------------------------------------------
 -- Общие функции, использующиеся во многих скриптах
 ---------------------------------------------------
@@ -35,53 +35,29 @@ function GetCurrentHotspot ()
 end
 
 --------------------------------------------------------
--- Замена ф-ций string.lower() и string.upper()
+-- Замена ф-ций string.lower(), string.upper(), string.len()
 -- Работает с любыми национальными кодировками
--- Требует наличие корректно заданного параметра chars.accented = АаБб...
-if props["chars.accented"] ~= "" then
-	local old_lower = string.lower
-	function string.lower(s)
-		local locale = props["chars.accented"]
-		if not s:find('['..locale..']') then return old_lower(s) end -- нет нац. символов => пользуемся старой функцией
-		local res = "" -- здесь будем собирать результат
-		local ch -- символ
-		local pos -- позиция в локали
-		for i = 1, #s do
-			ch = s:sub(i,i)
-			pos = locale:find(ch,1,true)
-			if pos then
-				if pos%2==1 then res = res..locale:sub(pos+1,pos+1)
-				else res = res..ch
-				end
-			else --if not in locale
-				res = res..old_lower(ch)
-			end
-		end
-		return res
-	end
+local function StringLower(s, cp)
+	if not cp then cp = props["editor.code.page"] end
+	if cp ~= 65001 then s = s:to_utf8(cp) end
+	s = s:utf8lower()
+	if cp ~= 65001 then s = s:from_utf8(cp) end
+	return s
+end
 
-	local old_upper = string.upper
-	function string.upper(s)
-		local locale = props["chars.accented"]
-		if not s:find('['..locale..']') then return old_upper(s) end -- нет нац. символов => пользуемся старой функцией
-		local res = "" -- здесь будем собирать результат
-		local ch -- символ
-		local pos -- позиция в локали
-		for i = 1, #s do
-			ch = s:sub(i,i)
-			pos = locale:find(ch,1,true)
-			if pos then
-				if pos%2==0 then res = res..locale:sub(pos-1,pos-1)
-				else res = res..ch
-				end
-			else --if not in locale
-				res = res..old_upper(ch)
-			end
-		end
-		return res
-	end
-	
-end -- IFDEF chars.accented
+local function StringUpper(s, cp)
+	if not cp then cp = props["editor.code.page"] end
+	if cp ~= 65001 then s = s:to_utf8(cp) end
+	s = s:utf8upper()
+	if cp ~= 65001 then s = s:from_utf8(cp) end
+	return s
+end
+
+local function StringLen(s, cp)
+	if not cp then cp = props["editor.code.page"] end
+	if cp ~= 65001 then s = s:to_utf8(cp) end
+	return s:utf8len()
+end
 
 --------------------------------------------------------
 -- string.to_pattern возращает строку, пригодную для использования
@@ -334,6 +310,9 @@ end
 --   ( Выполнить их сразу, при загрузке SciTEStartup.lua, нельзя
 --   получим сообщение об ошибке: "Editor pane is not accessible at this time." )
 AddEventHandler("OnOpen", function()
+	string.lower = StringLower
+	string.upper = StringUpper
+	string.len = StringLen
 	EditorInitMarkStyles()
 	SetMarginTypeN()
 end, 'RunOnce')
