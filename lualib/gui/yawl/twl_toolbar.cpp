@@ -434,6 +434,7 @@ void TListViewB::delete_item(int i)
 void TListViewB::select_item(int i)
 {
 	ListView_SetItemState((HWND)m_hwnd,i,LVIS_SELECTED | LVIS_FOCUSED,LVIS_SELECTED | LVIS_FOCUSED );
+	ListView_EnsureVisible((HWND)m_hwnd,i,true);
 }
 
 void TListViewB::get_item_text(int i, wchar_t* buff, int buffsize)
