@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 CodePage.lua
 Authors: YuriNB, VladVRO, mozers™
-Version: 2.5.0
+Version: 2.5.1
 ------------------------------------------------------
 Гибрид 2х скриптов:
 win1251 to cp866 keyboard mapper (YuriNB icq#2614215)
@@ -61,7 +61,7 @@ local function UpdateStatusCodePage(mode)
 
 	if mode == nil or mode == IDM_ENCODING_DEFAULT then
 		if props["character.set"]=='255' then
-			props["chars.accented"] = chars_accented:from_utf8(806)
+			props["chars.accented"] = chars_accented:from_utf8(866)
 			scite.Perform("reloadproperties:")
 -- print(' dos866 > '..props['CurrentWordCharacters'])
 		else

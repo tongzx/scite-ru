@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 Script Text Lexer
 Authors: Tymur Gubayev
-Version: 1.1.0
+Version: 1.1.1
 ------------------------------------------------------
 Description:	text-"lexer": colors latin chars, 
 	national chars and highlights links. There's
@@ -22,9 +22,13 @@ local function TextLexer(styler)
 		return c:find('[:%w_&%?.%%-@%$%+=%*~%/]')-- ~= nil
 	end
 
-	local national_chars=props['chars.accented']
+	local national_chars = props['chars.accented']
 	local IsNational_Char = function (c)
-		return c:find('['..national_chars..']') ~= nil --@todo: this wont work well for UTF
+		if national_chars ~= '' then
+			return c:find('['..national_chars..']') ~= nil --@todo: this wont work well for UTF
+		else
+			return
+		end
 	end
 
 	-- print("Styling: ", styler.startPos, styler.lengthDoc, styler.initStyle)
