@@ -29,19 +29,6 @@ Version: 2.7.4
 Обработка комментария в props # ( #~ )
 --]]--------------------------------------------------
 
--- Возвращает текущий символ перевода строки
-local function GetEOL()
-	local eol = "\r\n"
-	if editor.EOLMode == SC_EOL_CR
-	then
-		eol = "\r"
-	elseif editor.EOLMode == SC_EOL_LF
-	then
-		eol = "\n"
-	end
-	return eol
-end
-
 -- сделать текст шаблоном для поиска
 -- (фактически экранирование служебных символов)
 local function MakeFind( text )

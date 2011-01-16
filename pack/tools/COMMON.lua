@@ -1,5 +1,5 @@
 -- COMMON.lua
--- Version: 1.12.0
+-- Version: 1.13.0
 ---------------------------------------------------
 -- Общие функции, использующиеся во многих скриптах
 ---------------------------------------------------
@@ -32,6 +32,16 @@ function GetCurrentHotspot ()
 	while editor.StyleHotSpot[editor.StyleAt[s]] and s>=0 do s = s-1 end
 	while editor.StyleHotSpot[editor.StyleAt[e]] and e<=l do e = e+1 end
 	return editor:textrange(s+1,e)
+end
+
+--------------------------------------------------------
+--- Returns current EOL symbol and it's length
+function GetEOL()
+	local m = editor.EOLMode
+	if     m == SC_EOL_CRLF then return '\r\n', 2
+	elseif m == SC_EOL_CR then return '\r', 1
+	elseif m == SC_EOL_LF then return '\n', 1
+	end
 end
 
 --------------------------------------------------------

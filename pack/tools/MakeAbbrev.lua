@@ -14,17 +14,6 @@ add selected text to SciTE Abbreviation, enter the abbreviature in a dialog
 --]]-------------------------------------------------
 require 'shell'
 
--- Возвращает текущий символ перевода строки
-local function GetEOL()
-	local eol = "\r\n"
-	if editor.EOLMode == SC_EOL_CR then
-		eol = "\r"
-	elseif editor.EOLMode == SC_EOL_LF then
-		eol = "\n"
-	end
-	return eol
-end
-
 local sel_text = editor:GetSelText()
 if #sel_text < 10 then return end --ограничим минимум длины строки для аббревиатуры
 
