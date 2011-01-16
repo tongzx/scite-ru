@@ -1439,7 +1439,7 @@ style.script_lua.selection.back=#808080
   scite_Command("Inspect table contents|luainspect_inspect_variable_contents|*.lua|Ctrl+Alt+B")
   scite_Command("Select current statement, block or comment|luainspect_select_statementblockcomment|*.lua|Ctrl+Alt+S")
   scite_Command("Force full reinspection of all code|luainspect_force_reinspect|*.lua|Ctrl+Alt+Z")
-  scite_Command("Goto previous statement|luainspect_goto_previous_statement|*.lua|Ctrl+Alt+Up")
+  scite_Command("Goto previous statement|luainspect_goto_previous_statement|*.lua|Ctrl+Alt+P") --@was: +Up
   scite_Command("Autocomplete variable|luainspect_autocomplete_variable|*.lua|Ctrl+Alt+C")
   scite_Command("List all errors/warnings|luainspect_list_warnings|*.lua|Ctrl+Alt+E")
   --FIX: user.context.menu=Rename all instances of selected variable|1102 or props['user.contextmenu']
