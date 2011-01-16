@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 MoveLines.lua
-Authors: codewarlock1101
-Version: 1.1
+Authors: codewarlock1101, Tymur Gubayev
+Version: 1.2.0
 ------------------------------------------------------
 Description:
  Перемещение выделенных строк (или 1 строки) вверх, вниз, вправо, влево
@@ -13,6 +13,7 @@ Description:
 *     2 Для цикличного перемещения по одной строке
 *     3 блокировка цикличности
 --]]--------------------------------------------------
+local copy = ...
 
     local PIE_MOVE_TYPE=2
     local sel_start_line = editor:LineFromPosition(editor.SelectionStart)
@@ -59,7 +60,7 @@ Description:
             end 
         end
         end
-  else
+  elseif not copy then
       if (sel_txt == "") or (sel_start_line==sel_end_line) then
           local xsel_s=editor.SelectionStart-editor:PositionFromLine(sel_start_line)
           local xsel_e=editor.SelectionEnd-editor:PositionFromLine(sel_end_line)
@@ -104,5 +105,32 @@ Description:
         -- editor:EndUndoAction()
       end
     end
+  else -- copy line or selection up or down
+    local text, n_text, s,e
+    local eol, n_eol = GetEOL()
+    local ss, se = editor.SelectionStart, editor.SelectionEnd
+    if ss~=se then -- there's a selection
+        text, n_text = editor:GetSelText()
+        s = editor:PositionFromLine(editor:LineFromPosition(ss))
+        e = editor.LineEndPosition[editor:LineFromPosition(se)]
+    else
+        --- Returns current lines text, start and end position
+        local function GetCurrentLine(pos)
+            local current_pos = pos or editor.CurrentPos
+            local line_idx = editor:LineFromPosition(current_pos)
+            local linestart = editor:PositionFromLine(line_idx)
+            local lineend = editor.LineEndPosition[line_idx]
+            return editor:textrange(linestart, lineend), linestart, lineend
+        end
+        text, s, e = GetCurrentLine()
+        n_text = #text
+    end
+    if vertical == -1 then -- copy upwards
+        editor:InsertText(s, text..eol)
+        local d = n_text+1 --@todo: why +1 and not +n_eol? i have no idea.
+        ss, se = ss + d, se + d -- selection should stay at current line
+    else
+        editor:InsertText(e, eol..text)
+    end
+    if ss~=se then editor:SetSel(ss,se) end
   end
-
