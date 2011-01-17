@@ -1,6 +1,6 @@
 --[[-------------------------------------------------
 MakeAbbrev.lua
-Version: 1.5
+Version: 1.5.1
 Author: frs, mozers™
 -------------------------------------------------
 add selected text to SciTE Abbreviation, enter the abbreviature in a dialog
