@@ -2352,11 +2352,11 @@ bool SciTEBase::StartInsertAbbreviation() {
 	}
 */
 //!-start-[InsertAbbreviation]
-	InsertAbbreviation(data.c_str(), 0);
+	InsertAbbreviation(data.c_str());
 	return true;
 }
 
-bool SciTEBase::InsertAbbreviation(const char* data, int expandedLength) {
+bool SciTEBase::InsertAbbreviation(const char* data) {
 	SString tmp = EncodeString(data); //!-add-[FixEncoding]
 	data = tmp.c_str(); //!-add-[FixEncoding]
 	size_t dataLength = strlen(data);

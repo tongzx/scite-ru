@@ -295,10 +295,64 @@ static int cf_scite_perform(lua_State *L) {
 //!-end-[Perform]
 
 //!-start-[InsertAbbreviation]
+int get_codepage(ExtensionAPI::Pane p) {
+	UINT codePage = host->Send(p, SCI_GETCODEPAGE);
+	if(codePage != SC_CP_UTF8) {
+		unsigned int cs = SC_CHARSET_DEFAULT;
+		char* charSet = host->Property("character.set");
+		if(strcmp(charSet, "") != 0)
+			cs = atoi(charSet);
+		codePage = GUI::CodePageFromCharSet(cs, codePage);
+	} else { // temporary solution
+		unsigned int unimode = atoi(host->Property("editor.unicode.mode"));
+		switch(unimode) {
+			case 152: codePage = 1200; break; // UTF-16 LE
+			case 151: codePage = 1201; break; // UTF-16 BE
+			case 153: codePage = 65001; break; // UTF-8 BOM
+			case 154: codePage = 65001; break; // UTF-8 without BOM
+			default: codePage = SC_CP_UTF8;
+		}
+	}
+	return codePage;
+}
+
+inline void str_replace(GUI::gui_string &str, GUI::gui_string f, GUI::gui_string r) {
+	GUI::gui_string::size_type pos = 0; 
+	while(((pos = str.find(f, pos)) != GUI::gui_string::npos) && (pos < str.length()))
+	{
+		str.replace(pos, f.length(), r);
+		pos += r.length();
+	}
+}
+
 static int cf_editor_insert_abbrev(lua_State *L) {
-	const char *s = luaL_checkstring(L, 1);
-	if (s) {
-		host->InsertAbbreviation(s,0);
+	GUI::gui_string s = GUI::StringFromUTF8(luaL_checkstring(L, 1));
+	if (!s.empty()) {
+		if (s.find(L"%SEL%", 0) != GUI::gui_string::npos) {
+			int sel_start = host->Send(ExtensionAPI::paneEditor, SCI_GETSELECTIONSTART);
+			int sel_end = host->Send(ExtensionAPI::paneEditor, SCI_GETSELECTIONEND);
+			std::string ss = GUI::ConvertToUTF8(host->Range(ExtensionAPI::paneEditor, sel_start, sel_end), get_codepage(ExtensionAPI::paneEditor));
+			GUI::gui_string sel = GUI::StringFromUTF8(ss.c_str());
+			if(!sel.empty())
+				host->Send(ExtensionAPI::paneEditor, SCI_REPLACESEL, 0, reinterpret_cast<sptr_t>(""));
+			
+			str_replace(s, L"%SEL%", sel);
+		}
+		if (s.find(L"%CLP%", 0) != GUI::gui_string::npos) {
+			GUI::gui_string clpBuffer;		
+			BOOL IsOpen=OpenClipboard(0);		
+			if(IsOpen){		
+				HANDLE Data = GetClipboardData(CF_UNICODETEXT);		
+				if(Data != 0){		
+					clpBuffer = GUI::gui_string(static_cast<const wchar_t*>(GlobalLock(Data)));		
+					GlobalUnlock(Data);		
+				}		
+				CloseClipboard();		
+			}
+			str_replace(s, L"%CLP%", clpBuffer);
+		}
+
+		host->InsertAbbreviation(GUI::ConvertFromUTF8(GUI::UTF8FromString(s), get_codepage(ExtensionAPI::paneEditor)).c_str());
 	}
 	return 0;
 }
@@ -337,23 +391,7 @@ static int cf_scite_check_menus(lua_State *) {
 //!-start-[EncodingToLua]
 static int cf_pane_get_codepage(lua_State *L) {
 	ExtensionAPI::Pane p = check_pane_object(L, 1);
-	UINT codePage = host->Send(p, SCI_GETCODEPAGE);
-	if(codePage != SC_CP_UTF8) {
-		unsigned int cs = SC_CHARSET_DEFAULT;
-		char* charSet = host->Property("character.set");
-		if(strcmp(charSet, "") != 0)
-			cs = atoi(charSet);
-		codePage = GUI::CodePageFromCharSet(cs, codePage);
-	} else { // temporary solution
-		unsigned int unimode = atoi(host->Property("editor.unicode.mode"));
-		switch(unimode) {
-			case 152: codePage = 1200; break; // UTF-16 LE
-			case 151: codePage = 1201; break; // UTF-16 BE
-			case 153: codePage = 65001; break; // UTF-8 BOM
-			case 154: codePage = 65001; break; // UTF-8 without BOM
-			default: codePage = SC_CP_UTF8;
-		}
-	}
+	int codePage = get_codepage(p);
 	lua_pushinteger(L, codePage);
 	return 1;
 }
