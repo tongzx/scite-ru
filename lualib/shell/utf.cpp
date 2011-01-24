@@ -1,5 +1,4 @@
-#include <string.h>
-#include <xstring>
+#include <string>
 
 // ==========================================================================
 enum { SURROGATE_LEAD_FIRST = 0xD800 };

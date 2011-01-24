@@ -9,6 +9,10 @@ extern "C" {
 	#include "lualib.h"
 }
 
+#ifndef max
+#define max(a,b)            (((a) > (b)) ? (a) : (b))
+#endif
+
 //------------------------------------------------------------------------------
 struct Rect : public RECT {
 	Rect() {
