@@ -157,6 +157,8 @@ TWin* get_parent()
 
 TWin* get_last_parent()
 {
+	if(!s_last_parent)
+		throw "There is no parent panel to create new component";
 	return s_last_parent;
 }
 
@@ -959,8 +961,14 @@ int tabbar_add(lua_State* L)
 
 int new_memo(lua_State* L)
 {
-	TMemoLua *m = new TMemoLua(get_last_parent(),L,1);
-	return wrap_window(L,m);
+	try {
+		TMemoLua *m = new TMemoLua(get_last_parent(),L,1);
+		return wrap_window(L,m);
+	} catch(char* str) {
+		lua_pushstring(L, str);
+		lua_error(L);
+		return 0;
+	}
 }
 
 int memo_set(lua_State* L)
@@ -996,10 +1004,16 @@ int memo_set_colour(lua_State* L)
 */
 int new_list_window(lua_State* L)
 {
-	bool multiple_columns = optboolean(L,1,false);
-	bool single_select = optboolean(L,2,true);
-	TListViewLua *lv = new TListViewLua(get_last_parent(),L,multiple_columns,single_select);
-	return wrap_window(L,lv);
+	try {
+		bool multiple_columns = optboolean(L,1,false);
+		bool single_select = optboolean(L,2,true);
+		TListViewLua *lv = new TListViewLua(get_last_parent(),L,multiple_columns,single_select);
+		return wrap_window(L,lv);
+	} catch(char *str){
+		lua_pushstring(L, str);
+		lua_error(L);
+		return 0;
+	}
 }
 
 
