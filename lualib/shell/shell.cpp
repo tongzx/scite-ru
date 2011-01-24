@@ -837,52 +837,95 @@ static int getclipboardtext( lua_State* L )
 	return 1;
 }
 
+static void pushFFTime( lua_State *L, FILETIME *ft)
+{
+    SYSTEMTIME st;
+    FileTimeToSystemTime( ft, &st);
+    lua_newtable( L);
+    lua_pushstring( L, "year");
+    lua_pushnumber( L, st.wYear);
+    lua_rawset( L, -3);
+    lua_pushstring( L, "month");
+    lua_pushnumber( L, st.wMonth);
+    lua_rawset( L, -3);
+    lua_pushstring( L, "dayofweek");
+    lua_pushnumber( L, st.wDayOfWeek);
+    lua_rawset( L, -3);
+    lua_pushstring( L, "day");
+    lua_pushnumber( L, st.wDay);
+    lua_rawset( L, -3);
+    lua_pushstring( L, "hour");
+    lua_pushnumber( L, st.wHour);
+    lua_rawset( L, -3);
+    // lua_pushstring( L, "minute");
+    lua_pushstring( L, "min");
+    lua_pushnumber( L, st.wMinute);
+    lua_rawset( L, -3);
+    // lua_pushstring( L, "second");
+    lua_pushstring( L, "sec");
+    lua_pushnumber( L, st.wSecond);
+    lua_rawset( L, -3);
+    // lua_pushstring( L, "milliseconds");
+    lua_pushstring( L, "msec");
+    lua_pushnumber( L, st.wMilliseconds);
+    lua_rawset( L, -3);
+}
+
 static int findfiles( lua_State* L )
 {
-	const char* filename = luaL_checkstring( L, 1 );
+    const wchar_t* filename = StringFromUTF8(luaL_checkstring( L, 1 ));
 
-	WIN32_FIND_DATAA findFileData;
-	HANDLE hFind = ::FindFirstFileA( filename, &findFileData );
-	if ( hFind != INVALID_HANDLE_VALUE )
-	{
-		// create table for result
-		lua_createtable( L, 1, 0 );
+    WIN32_FIND_DATA findFileData;
+    HANDLE hFind = ::FindFirstFile( filename, &findFileData );
+    if ( hFind != INVALID_HANDLE_VALUE )
+    {
+        // create table for result
+        lua_createtable( L, 1, 0 );
 
-		lua_Integer num = 1;
-		BOOL isFound = TRUE;
-		while ( isFound != FALSE )
-		{
-			// store file info
-			lua_pushinteger( L, num );
-			lua_createtable( L, 0, 4 );
+        lua_Integer num = 1;
+        BOOL isFound = TRUE;
+        while ( isFound != FALSE )
+        {
+            // store file info
+            lua_pushinteger( L, num );
+            lua_createtable( L, 0, 7 );
 
-			lua_pushstring( L, findFileData.cFileName );
-			lua_setfield( L, -2, "name" );
+            lua_pushstring( L, UTF8FromString(findFileData.cFileName ));
+            lua_setfield( L, -2, "name" );
 
-			lua_pushboolean( L, findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY );
-			lua_setfield( L, -2, "isdirectory" );
+            lua_pushboolean( L, findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY );
+            lua_setfield( L, -2, "isdirectory" );
 
-			lua_pushnumber( L, findFileData.dwFileAttributes );
-			lua_setfield( L, -2, "attributes" );
+            lua_pushnumber( L, findFileData.dwFileAttributes );
+            lua_setfield( L, -2, "attributes" );
 
-			lua_pushnumber( L, findFileData.nFileSizeHigh * ((lua_Number)MAXDWORD + 1) +
-							   findFileData.nFileSizeLow );
-			lua_setfield( L, -2, "size" );
+            lua_pushnumber( L, findFileData.nFileSizeHigh * ((lua_Number)MAXDWORD + 1) +
+                               findFileData.nFileSizeLow );
+            lua_setfield( L, -2, "size" );
 
-			lua_settable( L, -3 );
-			num++;
+            pushFFTime( L, &( findFileData.ftCreationTime));
+            lua_setfield( L, -2, "creationtime");
 
-			// next
-			isFound = ::FindNextFileA( hFind, &findFileData );
-		}
+            pushFFTime( L, &( findFileData.ftLastAccessTime));
+            lua_setfield( L, -2, "lastaccesstime");
 
-		::FindClose( hFind );
+            pushFFTime( L, &( findFileData.ftLastWriteTime));
+            lua_setfield( L, -2, "lastwritetime");
 
-		return 1;
-	}
+            lua_settable( L, -3 );
+            num++;
 
-	// files not found
-	return 0;
+            // next
+            isFound = ::FindNextFile( hFind, &findFileData );
+        }
+
+        ::FindClose( hFind );
+
+        return 1;
+    }
+
+    // files not found
+    return 0;
 }
 
 struct W2MB
