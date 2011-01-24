@@ -557,6 +557,51 @@ public:
 	}
 };
 
+class TTreeViewLua: public TTreeView, public LuaControl
+{
+public:
+	TTreeViewLua(TEventWindow *parent, lua_State *l)
+		: TTreeView(parent),
+		LuaControl(l)
+	{
+	}
+
+	// implement
+	virtual void handle_select(int id)
+	{
+		dispatch_ref(L,select_idx,id);
+	}
+
+	virtual void handle_double_click(int id)
+	{
+		dispatch_ref(L,double_idx,id);
+	}
+
+	virtual void handle_onkey(int id)
+	{
+		dispatch_ref(L,onkey_idx,id);
+	}
+
+	virtual int handle_rclick(int id)
+	{
+		if(m_hpopup_menu) {
+			POINT p;
+			GetCursorPos(&p);
+			
+			HWND hwnd = (HWND)(get_parent_win()->handle());
+			TrackPopupMenu((HMENU)m_hpopup_menu, TPM_LEFTALIGN | TPM_TOPALIGN, p.x, p.y, 0, hwnd, NULL);
+			return 1;
+		}
+
+		return 0;
+	}
+
+	virtual void handle_onfocus(bool yes)
+	{
+		dispatch_ref_bool(L,onfocus_idx,yes);
+	}
+};
+
 class TTabControlLua: public TTabControlB, public LuaControl
 {
 	int selection_changing_idx;
@@ -996,6 +1041,18 @@ int memo_set_colour(lua_State* L)
 	return 0;
 }
 
+int new_tree(lua_State* L)
+{
+	try {
+		TTreeViewLua *lv = new TTreeViewLua((TEventWindow*)get_last_parent(),L);
+		return wrap_window(L,lv);
+	} catch(char *str){
+		lua_pushstring(L, str);
+		lua_error(L);
+		return 0;
+	}
+}
+
 
 /** lw:list(multiple_columns,multiple_selection)
 	@param multiple_columns (default false)
@@ -1096,32 +1153,36 @@ int window_add_column(lua_State* L)
 
 void window_aux_item(lua_State* L, bool at_index)
 {
-	TListViewLua* lv = list_window_arg(L);
-	int next_arg,ipos;
-	void *data = NULL;
-	if (at_index) {
-		next_arg = 3;
-		ipos = luaL_checkinteger(L,2);
-	} else {
-		next_arg = 2;
-		ipos = lv->count();
-	}
-	if (! lua_isnoneornil(L,next_arg+1)) {
-		lua_pushvalue(L,next_arg+1);
-		data = (void*)luaL_ref(L,LUA_REGISTRYINDEX);
-	}
-	if (lua_isstring(L,next_arg)) {
-		lv->add_item_at(ipos,StringFromUTF8(luaL_checkstring(L,next_arg)),0,data);
-	} else {
-		wchar_t** items = table_to_str_array(L,next_arg);
-		int i = 0, ncol = lv->columns();
-		int idx = lv->add_item_at(ipos,*items,0,data);
-		++items;
-		++i;
-		for(; *items && i < ncol; ++items) {
-			lv->add_subitem(idx,*items,i);
-			++i;
+	TWin* w = window_arg(L);
+	if(TListViewLua* lv = dynamic_cast<TListViewLua*>(w)) {
+		int next_arg,ipos;
+		void *data = NULL;
+		if (at_index) {
+			next_arg = 3;
+			ipos = luaL_checkinteger(L,2);
+		} else {
+			next_arg = 2;
+			ipos = lv->count();
 		}
+		if (! lua_isnoneornil(L,next_arg+1)) {
+			lua_pushvalue(L,next_arg+1);
+			data = (void*)luaL_ref(L,LUA_REGISTRYINDEX);
+		}
+		if (lua_isstring(L,next_arg)) {
+			lv->add_item_at(ipos,StringFromUTF8(luaL_checkstring(L,next_arg)),0,data);
+		} else {
+			wchar_t** items = table_to_str_array(L,next_arg);
+			int i = 0, ncol = lv->columns();
+			int idx = lv->add_item_at(ipos,*items,0,data);
+			++items;
+			++i;
+			for(; *items && i < ncol; ++items) {
+				lv->add_subitem(idx,*items,i);
+				++i;
+			}
+		}
+	} else if (TTreeViewLua* tv = dynamic_cast<TTreeViewLua*>(w)) {
+		tv->add_item(StringFromUTF8(luaL_checkstring(L, 2)), 0, NULL);
 	}
 }
 
@@ -1596,6 +1657,7 @@ static const struct luaL_reg gui[] = {
 	{"panel",new_panel},
 	{"tabbar",new_tabbar},
 	{"list",new_list_window},
+	{"tree",new_tree},
 	{"memo",new_memo},
 	{"prompt_value",do_prompt_value},
 	{"run",do_run},

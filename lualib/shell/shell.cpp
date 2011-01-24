@@ -501,12 +501,12 @@ static BOOL ExecuteHide( CPath& path, DWORD* out_exitcode, CSimpleString* strOut
 	try
 	{
 		// подключаем консоль
-		STARTUPINFOA si = { sizeof(STARTUPINFOA) };
+		STARTUPINFO si = { sizeof(STARTUPINFO) };
 		si.dwFlags = STARTF_USESHOWWINDOW;
 		si.wShowWindow = SW_HIDE;
 		PROCESS_INFORMATION pi = { 0 };
-		char command_line[] = "cmd";
-		::CreateProcessA( NULL, // не используем имя файла, все в строке запуска
+		wchar_t command_line[] = L"cmd";
+		::CreateProcess( NULL, // не используем имя файла, все в строке запуска
 						  command_line, // Command line
 						  NULL, // Process handle not inheritable
 						  NULL, // Thread handle not inheritable
@@ -519,7 +519,7 @@ static BOOL ExecuteHide( CPath& path, DWORD* out_exitcode, CSimpleString* strOut
 		// задержка чтобы консоль успела создаться
 		::WaitForSingleObject( pi.hProcess, 100 );
 		BOOL hResult = FALSE;
-		HMODULE hLib = LoadLibraryA("Kernel32.dll");
+		HMODULE hLib = LoadLibrary(L"Kernel32.dll");
 		if ( hLib != NULL )
 		{
 			typedef BOOL (STDAPICALLTYPE *ATTACHCONSOLE)( DWORD dwProcessId );

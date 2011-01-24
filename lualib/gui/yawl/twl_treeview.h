@@ -16,7 +16,9 @@ public:
 
    TTreeView(TEventWindow* form, bool has_lines = true, bool editable = false);
    Handle add(Handle parent, const wchar_t* caption, int idx1=0, int idx2=-1, bool has_children=false, void* data=0);
+   TWin* get_parent_win() { return m_form; };
    void* get_data(Handle pn);
+   int add_item(const wchar_t* text, int idx = 0, void* data = NULL);
    void select(Handle p);
    void set_image_list(TImageList* il, bool normal = true);
    // override

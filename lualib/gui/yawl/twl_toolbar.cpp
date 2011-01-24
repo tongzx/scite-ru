@@ -673,7 +673,6 @@ TTreeView::TTreeView(TEventWindow* form, bool has_lines, bool editable )
   if (has_lines) style |= (TVS_HASLINES | TVS_LINESATROOT);
   if (editable) style |= TVS_EDITLABELS;
   set(create_common_control(form,WC_TREEVIEW,style));
-
 }
 
 
@@ -681,6 +680,12 @@ void TTreeView::set_image_list(TImageList* il, bool normal)
 {
 	send_msg(TVM_SETIMAGELIST,normal ? TVSIL_NORMAL : TVSIL_STATE,(LPARAM)il->handle());
 	m_has_images = true;
+}
+
+int TTreeView::add_item(const wchar_t* text, int idx, void* data)
+{
+	this->add(NULL, text);
+	return 0;
 }
 
 Handle TTreeView::add(Handle parent, const wchar_t* caption, int idx1, int idx2, bool has_children, void* data)
