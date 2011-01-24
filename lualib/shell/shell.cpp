@@ -183,7 +183,7 @@ public:
 				}
 				else
 				{
-					// 5. Отделяем оргументы
+					// 5. Отделяем аргументы
 					wchar_t* pArg = ::PathGetArgs( sCanonical.GetBuffer() );
 					m_sFileParams.Append( pArg );
 					::PathRemoveArgs( sCanonical.GetBuffer() );
@@ -423,7 +423,7 @@ static BOOL RunProcessHide( CPath& path, DWORD* out_exitcode, CSimpleString* str
 		return FALSE;
 	}
 
-	// закрываем описатель потока, в нем нет необходимости 
+	// закрываем описатель потока, в нем нет необходимости
 	::CloseHandle( pi.hThread );
 
 	// ожидаем завершение работы процесса
@@ -539,28 +539,28 @@ static BOOL ExecuteHide( CPath& path, DWORD* out_exitcode, CSimpleString* strOut
 		HANDLE hChildStdinWrDup;
 		HANDLE hChildStdoutRd;
 
-		// Set the bInheritHandle flag so pipe handles are inherited. 
+		// Set the bInheritHandle flag so pipe handles are inherited.
 		SECURITY_ATTRIBUTES saAttr = { sizeof(SECURITY_ATTRIBUTES), NULL, TRUE };
 		BOOL fSuccess;
 
-		// The steps for redirecting child process's STDOUT: 
-		//     1. Save current STDOUT, to be restored later. 
-		//     2. Create anonymous pipe to be STDOUT for child process. 
-		//     3. Set STDOUT of the parent process to be write handle to 
-		//        the pipe, so it is inherited by the child process. 
+		// The steps for redirecting child process's STDOUT:
+		//     1. Save current STDOUT, to be restored later.
+		//     2. Create anonymous pipe to be STDOUT for child process.
+		//     3. Set STDOUT of the parent process to be write handle to
+		//        the pipe, so it is inherited by the child process.
 		//     4. Create a noninheritable duplicate of the read handle and
-		//        close the inheritable read handle. 
+		//        close the inheritable read handle.
 
-		// Save the handle to the current STDOUT. 
+		// Save the handle to the current STDOUT.
 		hSaveStdout = GetStdHandle( STD_OUTPUT_HANDLE );
 
 		// Create a pipe for the child process's STDOUT.
 		if ( !CreatePipe( &hChildStdoutRd, &hChildStdoutWr, &saAttr, 0 ) ) throw(1);
 
-		// Set a write handle to the pipe to be STDOUT. 
+		// Set a write handle to the pipe to be STDOUT.
 		if ( !SetStdHandle( STD_OUTPUT_HANDLE, hChildStdoutWr ) ) throw(1);
 
-		// Create noninheritable read handle and close the inheritable read 
+		// Create noninheritable read handle and close the inheritable read
 		// handle.
 		fSuccess = DuplicateHandle( GetCurrentProcess(),
 									hChildStdoutRd,
@@ -572,24 +572,24 @@ static BOOL ExecuteHide( CPath& path, DWORD* out_exitcode, CSimpleString* strOut
 		if( fSuccess == FALSE ) throw(1);
 		CloseHandle( hChildStdoutRd );
 
-		// The steps for redirecting child process's STDIN: 
-		//     1.  Save current STDIN, to be restored later. 
-		//     2.  Create anonymous pipe to be STDIN for child process. 
-		//     3.  Set STDIN of the parent to be the read handle to the 
-		//         pipe, so it is inherited by the child process. 
-		//     4.  Create a noninheritable duplicate of the write handle, 
-		//         and close the inheritable write handle. 
+		// The steps for redirecting child process's STDIN:
+		//     1.  Save current STDIN, to be restored later.
+		//     2.  Create anonymous pipe to be STDIN for child process.
+		//     3.  Set STDIN of the parent to be the read handle to the
+		//         pipe, so it is inherited by the child process.
+		//     4.  Create a noninheritable duplicate of the write handle,
+		//         and close the inheritable write handle.
 
-		// Save the handle to the current STDIN. 
+		// Save the handle to the current STDIN.
 		hSaveStdin = GetStdHandle( STD_INPUT_HANDLE );
 
-		// Create a pipe for the child process's STDIN. 
+		// Create a pipe for the child process's STDIN.
 		if ( !CreatePipe( &hChildStdinRd, &hChildStdinWr, &saAttr, 0 ) ) throw(1);
 
-		// Set a read handle to the pipe to be STDIN. 
+		// Set a read handle to the pipe to be STDIN.
 		if ( !SetStdHandle( STD_INPUT_HANDLE, hChildStdinRd ) ) throw(1);
 
-		// Duplicate the write handle to the pipe so it is not inherited. 
+		// Duplicate the write handle to the pipe so it is not inherited.
 		fSuccess = DuplicateHandle( GetCurrentProcess(),
 									hChildStdinWr,
 									GetCurrentProcess(),
@@ -839,93 +839,90 @@ static int getclipboardtext( lua_State* L )
 
 static void pushFFTime( lua_State *L, FILETIME *ft)
 {
-    SYSTEMTIME st;
-    FileTimeToSystemTime( ft, &st);
-    lua_newtable( L);
-    lua_pushstring( L, "year");
-    lua_pushnumber( L, st.wYear);
-    lua_rawset( L, -3);
-    lua_pushstring( L, "month");
-    lua_pushnumber( L, st.wMonth);
-    lua_rawset( L, -3);
-    lua_pushstring( L, "dayofweek");
-    lua_pushnumber( L, st.wDayOfWeek);
-    lua_rawset( L, -3);
-    lua_pushstring( L, "day");
-    lua_pushnumber( L, st.wDay);
-    lua_rawset( L, -3);
-    lua_pushstring( L, "hour");
-    lua_pushnumber( L, st.wHour);
-    lua_rawset( L, -3);
-    // lua_pushstring( L, "minute");
-    lua_pushstring( L, "min");
-    lua_pushnumber( L, st.wMinute);
-    lua_rawset( L, -3);
-    // lua_pushstring( L, "second");
-    lua_pushstring( L, "sec");
-    lua_pushnumber( L, st.wSecond);
-    lua_rawset( L, -3);
-    // lua_pushstring( L, "milliseconds");
-    lua_pushstring( L, "msec");
-    lua_pushnumber( L, st.wMilliseconds);
-    lua_rawset( L, -3);
+	SYSTEMTIME st;
+	FileTimeToSystemTime( ft, &st);
+	lua_newtable( L);
+	lua_pushstring( L, "year");
+	lua_pushnumber( L, st.wYear);
+	lua_rawset( L, -3);
+	lua_pushstring( L, "month");
+	lua_pushnumber( L, st.wMonth);
+	lua_rawset( L, -3);
+	lua_pushstring( L, "dayofweek");
+	lua_pushnumber( L, st.wDayOfWeek);
+	lua_rawset( L, -3);
+	lua_pushstring( L, "day");
+	lua_pushnumber( L, st.wDay);
+	lua_rawset( L, -3);
+	lua_pushstring( L, "hour");
+	lua_pushnumber( L, st.wHour);
+	lua_rawset( L, -3);
+	lua_pushstring( L, "min");
+	lua_pushnumber( L, st.wMinute);
+	lua_rawset( L, -3);
+	lua_pushstring( L, "sec");
+	lua_pushnumber( L, st.wSecond);
+	lua_rawset( L, -3);
+	lua_pushstring( L, "msec");
+	lua_pushnumber( L, st.wMilliseconds);
+	lua_rawset( L, -3);
 }
 
 static int findfiles( lua_State* L )
 {
-    const wchar_t* filename = StringFromUTF8(luaL_checkstring( L, 1 ));
+	const wchar_t* filename = StringFromUTF8(luaL_checkstring( L, 1 ));
 
-    WIN32_FIND_DATA findFileData;
-    HANDLE hFind = ::FindFirstFile( filename, &findFileData );
-    if ( hFind != INVALID_HANDLE_VALUE )
-    {
-        // create table for result
-        lua_createtable( L, 1, 0 );
+	WIN32_FIND_DATA findFileData;
+	HANDLE hFind = ::FindFirstFile( filename, &findFileData );
+	if ( hFind != INVALID_HANDLE_VALUE )
+	{
+		// create table for result
+		lua_createtable( L, 1, 0 );
 
-        lua_Integer num = 1;
-        BOOL isFound = TRUE;
-        while ( isFound != FALSE )
-        {
-            // store file info
-            lua_pushinteger( L, num );
-            lua_createtable( L, 0, 7 );
+		lua_Integer num = 1;
+		BOOL isFound = TRUE;
+		while ( isFound != FALSE )
+		{
+			// store file info
+			lua_pushinteger( L, num );
+			lua_createtable( L, 0, 7 );
 
-            lua_pushstring( L, UTF8FromString(findFileData.cFileName ));
-            lua_setfield( L, -2, "name" );
+			lua_pushstring( L, UTF8FromString(findFileData.cFileName ));
+			lua_setfield( L, -2, "name" );
 
-            lua_pushboolean( L, findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY );
-            lua_setfield( L, -2, "isdirectory" );
+			lua_pushboolean( L, findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY );
+			lua_setfield( L, -2, "isdirectory" );
 
-            lua_pushnumber( L, findFileData.dwFileAttributes );
-            lua_setfield( L, -2, "attributes" );
+			lua_pushnumber( L, findFileData.dwFileAttributes );
+			lua_setfield( L, -2, "attributes" );
 
-            lua_pushnumber( L, findFileData.nFileSizeHigh * ((lua_Number)MAXDWORD + 1) +
-                               findFileData.nFileSizeLow );
-            lua_setfield( L, -2, "size" );
+			lua_pushnumber( L, findFileData.nFileSizeHigh * ((lua_Number)MAXDWORD + 1) +
+							   findFileData.nFileSizeLow );
+			lua_setfield( L, -2, "size" );
 
-            pushFFTime( L, &( findFileData.ftCreationTime));
-            lua_setfield( L, -2, "creationtime");
+			pushFFTime( L, &( findFileData.ftCreationTime));
+			lua_setfield( L, -2, "creationtime");
 
-            pushFFTime( L, &( findFileData.ftLastAccessTime));
-            lua_setfield( L, -2, "lastaccesstime");
+			pushFFTime( L, &( findFileData.ftLastAccessTime));
+			lua_setfield( L, -2, "lastaccesstime");
 
-            pushFFTime( L, &( findFileData.ftLastWriteTime));
-            lua_setfield( L, -2, "lastwritetime");
+			pushFFTime( L, &( findFileData.ftLastWriteTime));
+			lua_setfield( L, -2, "lastwritetime");
 
-            lua_settable( L, -3 );
-            num++;
+			lua_settable( L, -3 );
+			num++;
 
-            // next
-            isFound = ::FindNextFile( hFind, &findFileData );
-        }
+			// next
+			isFound = ::FindNextFile( hFind, &findFileData );
+		}
 
-        ::FindClose( hFind );
+		::FindClose( hFind );
 
-        return 1;
-    }
+		return 1;
+	}
 
-    // files not found
-    return 0;
+	// files not found
+	return 0;
 }
 
 struct W2MB
@@ -1006,7 +1003,7 @@ extern int showinputbox( lua_State* );
 
 #pragma warning(pop)
 
-static const struct luaL_reg shell[] = 
+static const struct luaL_reg shell[] =
 {
 	{ "exec", exec },
 	{ "msgbox", msgbox },
