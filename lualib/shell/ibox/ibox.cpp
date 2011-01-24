@@ -1,19 +1,7 @@
-// Небольшая страховка, т.к. используем только "узкострочные" функции
-#if defined(UNICODE) && defined(_UNICODE)
-#  undef UNICODE
-#  undef _UNICODE
-#  define RESTOREUNICODENESS 3
-#elseif  defined(UNICODE)
-#  undef UNICODE
-#  define RESTOREUNICODENESS 2
-#elseif  defined(_UNICODE)
-#  undef _UNICODE
-#  define RESTOREUNICODENESS 1
-#endif
-
 #include <windows.h>
 #include "../utils/luaargs.h"
 #include "resource.h"
+#include "../utf.h"
 
 extern "C" {
 	#include "lua.h"
@@ -132,11 +120,11 @@ class InputBox {
 	enum { MAX_SHORT_STRING=128, MAX_MIDDLE_STRING=512, MAX_LONG_STRING=1024 };
 
 public:
-	InputBox(const char *Caption, const char *Prompt, const char *Value,
+	InputBox(const wchar_t *Caption, const wchar_t *Prompt, const wchar_t *Value,
 		int CharMinCount, int OnChar, lua_State* L);
 	~InputBox();
 	int  ShowModal();
-	const char *Text() const;
+	const wchar_t *Text() const;
 
 private:
 
@@ -159,9 +147,9 @@ private:
 
 	DlgData data;
 
-	char editText[MAX_MIDDLE_STRING];  // введённый пользователем текст
-	char caption[MAX_SHORT_STRING];    // заголовок окна диалога
-	char prompt[MAX_LONG_STRING];      // многострочная надпись над полем ввода
+	wchar_t editText[MAX_MIDDLE_STRING];  // введённый пользователем текст
+	wchar_t caption[MAX_SHORT_STRING];    // заголовок окна диалога
+	wchar_t prompt[MAX_LONG_STRING];      // многострочная надпись над полем ввода
 
 	int marginX;       // гор. отступ от края окна
 	int marginY;       // верт. отступ от края окна
@@ -313,8 +301,8 @@ int InputBox::PrepareTextOut(HWND hdlg)
 
 	SIZE size = { 0 };
 	int lnCount = 1;
-	const char *prev = prompt;
-	const char *p = prompt;
+	const wchar_t *prev = prompt;
+	const wchar_t *p = prompt;
 
 	for (; *p; ++p) {
 		if (*p == '\r' || *p == '\n') {
@@ -352,8 +340,8 @@ BOOL InputBox::OutText(HDC hdc)
 	SelectObject(hdc, GetStockObject(DEFAULT_GUI_FONT));
 	SelectObject(hdc, reinterpret_cast<HBRUSH>(COLOR_BTNFACE+1));
 	SetBkMode(hdc, TRANSPARENT);
-	const char *prev = prompt;
-	const char *p = prompt;
+	const wchar_t *prev = prompt;
+	const wchar_t *p = prompt;
 	int y = 0;
 
 	for (; *p; ++p) {
@@ -437,9 +425,9 @@ void OutputMessage(lua_State *L)
 {
 	if (lua_isstring(L, -1)) {
 		size_t len;
-		const char *msg = lua_tolstring(L, -1, &len);
-		char *buff = new char[len+2];
-		strncpy(buff, msg, len);
+		const wchar_t *msg = StringFromUTF8(lua_tolstring(L, -1, &len));
+		wchar_t *buff = new wchar_t[len+2];
+		wcsncpy(buff, msg, len);
 		buff[len] = '\n';
 		buff[len+1] = '\0';
 		lua_pop(L, 1);
@@ -447,7 +435,7 @@ void OutputMessage(lua_State *L)
 			lua_getglobal(L, "output");
 			lua_getfield(L, -1, "AddText");
 			lua_insert(L, -2);
-			lua_pushstring(L, buff);
+			lua_pushstring(L, UTF8FromString(buff));
 			lua_pcall(L, 2, 0, 0);
 		}
 		delete[] buff;
@@ -457,13 +445,13 @@ void OutputMessage(lua_State *L)
 //------------------------------------------------------------------------------
 // Передаёт пользовательской функции on_char вводимый текст для проверки
 //------------------------------------------------------------------------------
-bool IsInputValid(lua_State *L, const char *str, char ch, int checker)
+bool IsInputValid(lua_State *L, const wchar_t *str, wchar_t ch, int checker)
 {
 	if (checker) {
 		lua_rawgeti(L, LUA_REGISTRYINDEX, checker);
-		lua_pushstring(L, str);
+		lua_pushstring(L, UTF8FromString(str));
 		if (ch)
-			lua_pushlstring(L, &ch, 1);
+			lua_pushlstring(L, UTF8FromString(&ch), 1);
 		else
 			lua_pushnil(L);
 		if (lua_pcall(L, 2, 1, 0)) {
@@ -490,12 +478,12 @@ BOOL CALLBACK InputBox::EditHandler(HWND hctrl, UINT msg, WPARAM wParam, LPARAM 
 	switch (msg) {
 		case WM_CHAR:
 		{
-			unsigned char ch = static_cast<unsigned char>(wParam);
+			wchar_t ch = static_cast<wchar_t>(wParam);
 			if (ch != VK_BACK) {
 				int bSel = 0;
 				int eSel = 0;
-				char str[sizeof(self->editText)];
-				char tail[sizeof(self->editText)];
+				wchar_t str[sizeof(self->editText)];
+				wchar_t tail[sizeof(self->editText)];
 				tail[0] = '\0';
 				int len = GetWindowText(hctrl, str, sizeof(self->editText));
 
@@ -697,7 +685,7 @@ BOOL CALLBACK InputBox::DlgHandler(HWND hdlg, UINT msg, WPARAM wParam, LPARAM lP
 }
 
 //------------------------------------------------------------------------------
-InputBox::InputBox(const char *Caption, const char *Prompt, const char *Value,
+InputBox::InputBox(const wchar_t *Caption, const wchar_t *Prompt, const wchar_t *Value,
 	int CharMinCount, int OnChar, lua_State* L)
 	:
 	marginX      (10),
@@ -715,11 +703,11 @@ InputBox::InputBox(const char *Caption, const char *Prompt, const char *Value,
 	lstrcpyn(prompt, Prompt, sizeof(prompt));
 
 	smallIcon = static_cast<HICON>(
-		LoadImage(GetModuleHandle(0), "SCITE", IMAGE_ICON,
+		LoadImage(GetModuleHandle(0), L"SCITE", IMAGE_ICON,
 			GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON),
 			LR_DEFAULTCOLOR));
 	bigIcon = static_cast<HICON>(
-		LoadImage(GetModuleHandle(0), "SCITE", IMAGE_ICON,
+		LoadImage(GetModuleHandle(0), L"SCITE", IMAGE_ICON,
 			48, 48, LR_DEFAULTCOLOR));
 }
 
@@ -731,7 +719,7 @@ InputBox::~InputBox()
 }
 
 //------------------------------------------------------------------------------
-const char *InputBox::Text() const
+const wchar_t *InputBox::Text() const
 {
 	return editText;
 }
@@ -741,9 +729,9 @@ const char *InputBox::Text() const
 //------------------------------------------------------------------------------
 BOOL CALLBACK CheckSciteWindow(HWND hwnd, LPARAM lParam)
 {
-	char buff[120];
+	wchar_t buff[120];
     GetClassName(hwnd, buff, sizeof(buff));	
-    if (lstrcmp(buff, "SciTEWindow") == 0) {
+    if (lstrcmp(buff, L"SciTEWindow") == 0) {
 		*reinterpret_cast<HWND*>(lParam) = hwnd;
 		return FALSE;
     }
@@ -761,7 +749,7 @@ HWND FindScite()
 //------------------------------------------------------------------------------
 int InputBox::ShowModal()
 {
-	int result = DialogBoxParam(GetModuleHandle("shell.dll"), "IBOX_DLG",
+	int result = DialogBoxParam(GetModuleHandle(L"shell.dll"), L"IBOX_DLG",
 		FindScite(), DlgHandler, reinterpret_cast<LPARAM>(this));
 	if (result == -1) {
 		// Вообще-то, это означает, что произошла какая-то ошибка,
@@ -777,9 +765,9 @@ int InputBox::ShowModal()
 extern int showinputbox(lua_State* L)
 {
 	LuaArgs lua(L);
-	const char *caption = lua.gets(1, "InputBox");
-	const char *prompt  = lua.gets(2, "Enter:");
-	const char *value   = lua.gets(3, "");
+	const wchar_t *caption = StringFromUTF8(lua.gets(1, "InputBox"));
+	const wchar_t *prompt  = StringFromUTF8(lua.gets(2, "Enter:"));
+	const wchar_t *value   = StringFromUTF8(lua.gets(3, ""));
 	int         onchar  = lua.getf(4);
 	int         width   = lua.geti(5, 20);
 
@@ -787,7 +775,7 @@ extern int showinputbox(lua_State* L)
 	bool res = dlg.ShowModal() == IDOK;
 
 	if (res)
-		lua_pushstring(L, dlg.Text());
+		lua_pushstring(L, UTF8FromString(dlg.Text()));
 	else
 		lua_pushnil(L);
 

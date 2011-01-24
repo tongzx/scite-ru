@@ -2,6 +2,8 @@
 
 #include <windows.h>
 #include <shlwapi.h>
+#include <WinUser.h>
+#include "utf.h" // Needs for WideString and UTF8 conversions
 
 extern "C" {
 	#include "lua.h"
@@ -101,12 +103,12 @@ public:
 	{
 	}
 
-	const char* GetString()
+	const wchar_t* GetString()
 	{
-		return ( m_iLen == 0 || m_sData.IsBufferEmpty() ) ? "" : m_sData.GetBuffer();
+		return ( m_iLen == 0 || m_sData.IsBufferEmpty() ) ? L"" : m_sData.GetBuffer();
 	}
 
-	char& operator [] ( int nItem )
+	wchar_t& operator [] ( int nItem )
 	{
 		return m_sData[ nItem ];
 	}
@@ -122,75 +124,75 @@ public:
 		m_iLen = 0;
 	}
 
-	void Append( const char *str, int len = -1 )
+	void Append( const wchar_t *str, int len = -1 )
 	{
 		if ( str != NULL )
 		{
-			if ( len == -1 ) len = lstrlenA( str );
+			if ( len == -1 ) len = lstrlen( str );
 			int newLength = m_iLen + len;
 			if ( m_sData.SetLength( newLength + 1 ) )
 			{
 				m_sData[ m_iLen ] = '\0';
-				lstrcpynA( &m_sData[ m_iLen ], str, len + 1 );
+				lstrcpyn( &m_sData[ m_iLen ], str, len + 1 );
 				m_iLen = newLength;
 			}
 		}
 	}
 
 private:
-	CMemBuffer< char, 128 > m_sData;
+	CMemBuffer< wchar_t, 128 > m_sData;
 	int m_iLen;
 };
 
 class CPath
 {
 public:
-	CPath( const char* lpszFileName )
+	CPath( const wchar_t* lpszFileName )
 	{
 		if ( lpszFileName != NULL )
 		{
 			// сохраняем оригинал
 			m_sPathOriginal.Append( lpszFileName );
 
-			if ( ::PathIsURLA( lpszFileName ) == TRUE )
+			if ( ::PathIsURL( lpszFileName ) == TRUE )
 			{
 				m_sPath.Append( lpszFileName );
 			}
 			else // делаем преобразования
 			{
 				// 1. Раскрываем переменные окружения
-				CMemBuffer< char, 1024 > sExpanded;
-				::ExpandEnvironmentStringsA( lpszFileName, sExpanded.GetBuffer(), 1024 );
+				CMemBuffer< wchar_t, 1024 > sExpanded;
+				::ExpandEnvironmentStrings( lpszFileName, sExpanded.GetBuffer(), 1024 );
 				// 2. Убираем в пути .. и . (приводим к каноническому виду)
-				CMemBuffer< char, 1024 > sCanonical;
-				::PathCanonicalizeA( sCanonical.GetBuffer(), sExpanded.GetBuffer() );
+				CMemBuffer< wchar_t, 1024 > sCanonical;
+				::PathCanonicalize( sCanonical.GetBuffer(), sExpanded.GetBuffer() );
 				// 3. Убираем лишние пробелы
-				::PathRemoveBlanksA( sCanonical.GetBuffer() );
+				::PathRemoveBlanks( sCanonical.GetBuffer() );
 				// 4. Проверяем существует ли преобразованный путь
-				if ( ::PathFileExistsA( sCanonical.GetBuffer() ) == TRUE )
+				if ( ::PathFileExists( sCanonical.GetBuffer() ) == TRUE )
 				{
-					::PathMakePrettyA( sCanonical.GetBuffer() );
-					::PathRemoveBackslashA( sCanonical.GetBuffer() );
+					::PathMakePretty( sCanonical.GetBuffer() );
+					::PathRemoveBackslash( sCanonical.GetBuffer() );
 					m_sPath.Append( sCanonical.GetBuffer() );
-					if ( ::PathIsDirectoryA( sCanonical.GetBuffer() ) == FALSE )
+					if ( ::PathIsDirectory( sCanonical.GetBuffer() ) == FALSE )
 					{
-						m_sFileName.Append( ::PathFindFileNameA( sCanonical.GetBuffer() ) );
-						::PathRemoveFileSpecA( sCanonical.GetBuffer() );
+						m_sFileName.Append( ::PathFindFileName( sCanonical.GetBuffer() ) );
+						::PathRemoveFileSpec( sCanonical.GetBuffer() );
 					}
 					m_sPathDir.Append( sCanonical.GetBuffer() );
 				}
 				else
 				{
 					// 5. Отделяем оргументы
-					char* pArg = ::PathGetArgsA( sCanonical.GetBuffer() );
+					wchar_t* pArg = ::PathGetArgs( sCanonical.GetBuffer() );
 					m_sFileParams.Append( pArg );
-					::PathRemoveArgsA( sCanonical.GetBuffer() );
+					::PathRemoveArgs( sCanonical.GetBuffer() );
 					// 6. Делаем путь по красивше
-					::PathUnquoteSpacesA( sCanonical.GetBuffer() );
-					::PathRemoveBackslashA( sCanonical.GetBuffer() );
-					::PathMakePrettyA( sCanonical.GetBuffer() );
+					::PathUnquoteSpaces( sCanonical.GetBuffer() );
+					::PathRemoveBackslash( sCanonical.GetBuffer() );
+					::PathMakePretty( sCanonical.GetBuffer() );
 					// 7. Проверяем преобразованный путь это дирректория
-					if ( ::PathIsDirectoryA( sCanonical.GetBuffer() ) != FALSE )
+					if ( ::PathIsDirectory( sCanonical.GetBuffer() ) != FALSE )
 					{
 						m_sPath.Append( sCanonical.GetBuffer() );
 						m_sPathDir.Append( sCanonical.GetBuffer() );
@@ -198,25 +200,25 @@ public:
 					else
 					{
 						// 8. Добавляем расширение к файлу .exe, если нету
-						::PathAddExtensionA( sCanonical.GetBuffer(), NULL );
+						::PathAddExtension( sCanonical.GetBuffer(), NULL );
 						// 9. Проверяем есть ли такой файл
-						if ( ::PathFileExistsA( sCanonical.GetBuffer() ) == TRUE )
+						if ( ::PathFileExists( sCanonical.GetBuffer() ) == TRUE )
 						{
 							m_sPath.Append( sCanonical.GetBuffer() );
-							m_sFileName.Append( ::PathFindFileNameA( sCanonical.GetBuffer() ) );
-							::PathRemoveFileSpecA( sCanonical.GetBuffer() );
+							m_sFileName.Append( ::PathFindFileName( sCanonical.GetBuffer() ) );
+							::PathRemoveFileSpec( sCanonical.GetBuffer() );
 							m_sPathDir.Append( sCanonical.GetBuffer() );
 						}
 						else
 						{
 							// 10. Производим поиск
-							::PathFindOnPathA( sCanonical.GetBuffer(), NULL );
-							::PathMakePrettyA( sCanonical.GetBuffer() );
+							::PathFindOnPath( sCanonical.GetBuffer(), NULL );
+							::PathMakePretty( sCanonical.GetBuffer() );
 							m_sPath.Append( sCanonical.GetBuffer() );
-							if ( ::PathFileExistsA( sCanonical.GetBuffer() ) == TRUE )
+							if ( ::PathFileExists( sCanonical.GetBuffer() ) == TRUE )
 							{
-								m_sFileName.Append( ::PathFindFileNameA( sCanonical.GetBuffer() ) );
-								::PathRemoveFileSpecA( sCanonical.GetBuffer() );
+								m_sFileName.Append( ::PathFindFileName( sCanonical.GetBuffer() ) );
+								::PathRemoveFileSpec( sCanonical.GetBuffer() );
 								m_sPathDir.Append( sCanonical.GetBuffer() );
 							}
 						}
@@ -226,17 +228,17 @@ public:
 		}
 	}
 
-	const char* GetPath()
+	const wchar_t* GetPath()
 	{
 		return m_sPath.GetLenght() > 0 ? m_sPath.GetString() : NULL;
 	}
 
-	const char* GetDirectory()
+	const wchar_t* GetDirectory()
 	{
 		return m_sPathDir.GetLenght() > 0 ? m_sPathDir.GetString() : NULL;
 	}
 
-	const char* GetFileParams()
+	const wchar_t* GetFileParams()
 	{
 		return m_sFileParams.GetLenght() > 0 ? m_sFileParams.GetString() : NULL;
 	}
@@ -249,49 +251,49 @@ private:
 	CSimpleString m_sFileParams;
 
 public:
-	static DWORD GetFileAttributes( const char* lpszFileName )
+	static DWORD GetFileAttributes( const wchar_t* lpszFileName )
 	{
 		WIN32_FILE_ATTRIBUTE_DATA fad;
-		if ( ::GetFileAttributesExA( lpszFileName, GetFileExInfoStandard, &fad ) == FALSE )
+		if ( ::GetFileAttributesEx( lpszFileName, GetFileExInfoStandard, &fad ) == FALSE )
 		{
 			return ((DWORD)-1); //INVALID_FILE_ATTRIBUTES;
 		}
 		return fad.dwFileAttributes;
 	}
-	static BOOL SetFileAttributes( const char* lpszFileName, DWORD dwFileAttributes )
+	static BOOL SetFileAttributes( const wchar_t* lpszFileName, DWORD dwFileAttributes )
 	{
-		return ::SetFileAttributesA( lpszFileName, dwFileAttributes );
+		return ::SetFileAttributes( lpszFileName, dwFileAttributes );
 	}
-	static BOOL IsDirectory( const char* lpszFileName )
+	static BOOL IsDirectory( const wchar_t* lpszFileName )
 	{
-		return ::PathIsDirectoryA( lpszFileName ) != FALSE;
+		return ::PathIsDirectory( lpszFileName ) != FALSE;
 	}
-	static BOOL IsFileExists( const char* lpszFileName )
+	static BOOL IsFileExists( const wchar_t* lpszFileName )
 	{
 		return IsPathExist( lpszFileName ) == TRUE &&
 			   IsDirectory( lpszFileName ) == FALSE;
 	}
-	static BOOL IsPathExist( const char* lpszFileName )
+	static BOOL IsPathExist( const wchar_t* lpszFileName )
 	{
-		return ::PathFileExistsA( lpszFileName ) != FALSE;
+		return ::PathFileExists( lpszFileName ) != FALSE;
 	}
 };
 
 // получить последнее сообщение об ошибке
 // для возвращаемой строки нужно вызвать LocalFree
-static char* GetLastErrorString( DWORD* lastErrorCode, int* iLenMsg )
+static wchar_t* GetLastErrorString( DWORD* lastErrorCode, int* iLenMsg )
 {
-	char* lpMsgBuf;
+	wchar_t* lpMsgBuf;
 	*lastErrorCode = ::GetLastError();
-	::FormatMessageA( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
+	::FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
 					  NULL,
 					  *lastErrorCode,
 					  MAKELANGID( LANG_NEUTRAL, SUBLANG_DEFAULT ),
-					  (LPSTR)&lpMsgBuf,
+					  (LPWSTR)&lpMsgBuf,
 					  0,
 					  NULL );
 
-	*iLenMsg = lstrlenA( lpMsgBuf );
+	*iLenMsg = lstrlen( lpMsgBuf );
 
 	// trim right
 	while ( *iLenMsg > 0 )
@@ -313,22 +315,22 @@ static char* GetLastErrorString( DWORD* lastErrorCode, int* iLenMsg )
 	return lpMsgBuf;
 }
 
-static void lua_pushlasterr( lua_State* L, const char* lpszFunction )
+static void lua_pushlasterr( lua_State* L, const wchar_t* lpszFunction )
 {
 	DWORD dw;
 	int iLenMsg;
-	char* lpMsgBuf = GetLastErrorString( &dw, &iLenMsg );
+	wchar_t* lpMsgBuf = GetLastErrorString( &dw, &iLenMsg );
 
 	if ( lpszFunction == NULL )
 	{
-		lua_pushstring( L, lpMsgBuf );
+		lua_pushstring( L, UTF8FromString(lpMsgBuf) );
 	}
 	else
 	{
-		UINT uBytes = ( iLenMsg + lstrlenA( lpszFunction ) + 40 ) * sizeof(char);
-		char* lpDisplayBuf = (char*)::LocalAlloc( LMEM_ZEROINIT, uBytes );
-		sprintf( lpDisplayBuf, "%s failed with error %d: %s", lpszFunction, dw, lpMsgBuf );
-		lua_pushstring( L, lpDisplayBuf );
+		UINT uBytes = ( iLenMsg + lstrlen( lpszFunction ) + 40 ) * sizeof(char);
+		wchar_t* lpDisplayBuf = (wchar_t*)::LocalAlloc( LMEM_ZEROINIT, uBytes );
+		swprintf( lpDisplayBuf, L"%s failed with error %d: %s", lpszFunction, dw, lpMsgBuf );
+		lua_pushstring( L, UTF8FromString(lpDisplayBuf) );
 		::LocalFree( lpDisplayBuf );
 	}
 	::LocalFree( lpMsgBuf );
@@ -336,24 +338,24 @@ static void lua_pushlasterr( lua_State* L, const char* lpszFunction )
 
 static int msgbox( lua_State* L )
 {
-	const char* text = luaL_checkstring( L, 1 );
-	const char* title = lua_tostring( L, 2 );
+	const wchar_t* text = StringFromUTF8(luaL_checkstring( L, 1 ));
+	const wchar_t* title = StringFromUTF8(lua_tostring( L, 2 ));
 	int options = (int)lua_tonumber( L, 3 ) | MB_TASKMODAL;
-	int retCode = ::MessageBoxA( NULL, text, title == NULL ? "SciTE" : title, options );
+	int retCode = ::MessageBox( NULL, text, title == NULL ? L"SciTE" : title, options );
 	lua_pushnumber( L, retCode );
 	return 1;
 }
 
 static int getfileattr( lua_State *L )
 {
-	const char* FN = luaL_checkstring( L, -1 );
+	const wchar_t* FN = StringFromUTF8(luaL_checkstring( L, -1 ));
 	lua_pushnumber( L, CPath::GetFileAttributes( FN ) );
 	return 1;
 }
 
 static int setfileattr( lua_State* L )
 {
-	const char* FN = luaL_checkstring( L, -2 );
+	const wchar_t* FN = StringFromUTF8(luaL_checkstring( L, -2 ));
 	DWORD attr = luaL_checkint( L, -1 );
 	lua_pushboolean( L, CPath::SetFileAttributes( FN, attr ) );
 	return 1;
@@ -361,7 +363,7 @@ static int setfileattr( lua_State* L )
 
 static int fileexists( lua_State* L )
 {
-	const char* FN = luaL_checkstring( L, 1 );
+	const wchar_t* FN = StringFromUTF8(luaL_checkstring( L, 1 ));
 	lua_pushboolean( L, CPath::IsPathExist( FN ) );
 	return 1;
 }
@@ -371,7 +373,7 @@ static BOOL RunProcessHide( CPath& path, DWORD* out_exitcode, CSimpleString* str
 {
 	static const int MAX_CMD = 1024;
 
-	STARTUPINFOA si = { sizeof(STARTUPINFOA) };
+	STARTUPINFOW si = { sizeof(STARTUPINFOW) };
 	si.dwFlags = STARTF_USESHOWWINDOW;
 	si.wShowWindow = SW_HIDE;
 
@@ -390,19 +392,19 @@ static BOOL RunProcessHide( CPath& path, DWORD* out_exitcode, CSimpleString* str
 	}
 
 	// запускаем процесс
-	CMemBuffer< char, MAX_CMD > bufCmdLine; // строковой буфер длиной MAX_CMD
+	CMemBuffer< wchar_t, MAX_CMD > bufCmdLine; // строковой буфер длиной MAX_CMD
 	bufCmdLine.GetBuffer()[0] = 0;
-	strcat( bufCmdLine.GetBuffer(), "\"" );
-	strcat( bufCmdLine.GetBuffer(), path.GetPath() );
-	strcat( bufCmdLine.GetBuffer(), "\"" );
+	wcscat( bufCmdLine.GetBuffer(), L"\"" );
+	wcscat( bufCmdLine.GetBuffer(), path.GetPath() );
+	wcscat( bufCmdLine.GetBuffer(), L"\"" );
 	if ( path.GetFileParams() != NULL )
 	{
-		strcat( bufCmdLine.GetBuffer(), " " );
-		strcat( bufCmdLine.GetBuffer(), path.GetFileParams() );
+		wcscat( bufCmdLine.GetBuffer(), L" " );
+		wcscat( bufCmdLine.GetBuffer(), path.GetFileParams() );
 	}
 
 	PROCESS_INFORMATION pi = { 0 };
-	BOOL RetCode = ::CreateProcessA( NULL, // не используем имя файла, все в строке запуска
+	BOOL RetCode = ::CreateProcess( NULL, // не используем имя файла, все в строке запуска
 									 bufCmdLine.GetBuffer(), // строка запуска
 									 NULL, // Process handle not inheritable
 									 NULL, // Thread handle not inheritable
@@ -432,7 +434,7 @@ static BOOL RunProcessHide( CPath& path, DWORD* out_exitcode, CSimpleString* str
 		DWORD TotalBytesAvail = 0;
 		DWORD PipeReaded = 0;
 		DWORD exit_code = 0;
-		CMemBuffer< char, MAX_CMD > bufStr; // строковой буфер длиной MAX_CMD
+		CMemBuffer< wchar_t, MAX_CMD > bufStr; // строковой буфер длиной MAX_CMD
 		while ( ::PeekNamedPipe( FReadPipe, NULL, 0, &BytesRead, &TotalBytesAvail, NULL ) )
 		{
 			if ( TotalBytesAvail == 0 )
@@ -470,8 +472,8 @@ static BOOL RunProcessHide( CPath& path, DWORD* out_exitcode, CSimpleString* str
 					if ( PipeReaded <= 0 ) continue;
 					BytesRead += PipeReaded;
 					bufCmdLine[ PipeReaded ] = '\0';
-					::OemToAnsi( bufCmdLine.GetBuffer(), bufStr.GetBuffer() );
-					strOut->Append( bufStr.GetBuffer() );
+					//::OemToAnsi( bufCmdLine.GetBuffer(), bufStr.GetBuffer() );
+					strOut->Append( bufCmdLine.GetBuffer() /*bufStr.GetBuffer()*/ );
 				}
 			}
 		}
@@ -605,7 +607,7 @@ static BOOL ExecuteHide( CPath& path, DWORD* out_exitcode, CSimpleString* strOut
 	}
 
 	// Now create the child process.
-	SHELLEXECUTEINFOA shinf = { sizeof(SHELLEXECUTEINFOA) };
+	SHELLEXECUTEINFOW shinf = { sizeof(SHELLEXECUTEINFOW) };
 	shinf.lpFile = path.GetPath();
 	shinf.lpParameters = path.GetFileParams();
 	//shinf.lpDirectory = path.GetDirectory();
@@ -614,7 +616,7 @@ static BOOL ExecuteHide( CPath& path, DWORD* out_exitcode, CSimpleString* strOut
 				  SEE_MASK_FLAG_DDEWAIT |
 				  SEE_MASK_NOCLOSEPROCESS;
 	shinf.nShow = SW_HIDE;
-	BOOL bSuccess = ::ShellExecuteExA( &shinf );
+	BOOL bSuccess = ::ShellExecuteEx( &shinf );
 	if ( bSuccess && shinf.hInstApp <= (HINSTANCE)32 ) bSuccess = FALSE;
 	HANDLE hProcess = shinf.hProcess;
 
@@ -648,8 +650,8 @@ static BOOL ExecuteHide( CPath& path, DWORD* out_exitcode, CSimpleString* strOut
 			// Read output from the child process, and write to parent's STDOUT.
 			const int BUFSIZE = 1024;
 			DWORD dwRead;
-			CMemBuffer< char, BUFSIZE > bufStr; // строковой буфер
-			CMemBuffer< char, BUFSIZE > bufCmdLine; // строковой буфер
+			CMemBuffer< wchar_t, BUFSIZE > bufStr; // строковой буфер
+			CMemBuffer< wchar_t, BUFSIZE > bufCmdLine; // строковой буфер
 			for (;;)
 			{
 				if( ReadFile( hChildStdoutRdDup,
@@ -671,8 +673,8 @@ static BOOL ExecuteHide( CPath& path, DWORD* out_exitcode, CSimpleString* strOut
 					}
 				}
 				bufCmdLine[ dwRead ] = '\0';
-				::OemToAnsi( bufCmdLine.GetBuffer(), bufStr.GetBuffer() );
-				strOut->Append( bufStr.GetBuffer() );
+				//::OemToAnsi( bufCmdLine.GetBuffer(), bufStr.GetBuffer() );
+				strOut->Append( bufCmdLine.GetBuffer() /*bufStr.GetBuffer()*/ );
 			}
 			CloseHandle( hChildStdoutRdDup );
 			hChildStdoutRdDup = NULL;
@@ -696,8 +698,8 @@ static BOOL ExecuteHide( CPath& path, DWORD* out_exitcode, CSimpleString* strOut
 static int exec( lua_State* L )
 {
 	// считываем запускаемую команду
-	CPath file = luaL_checkstring( L, 1 );
-	const char* verb = lua_tostring( L, 2 );
+	CPath file = StringFromUTF8(luaL_checkstring( L, 1 ));
+	const wchar_t* verb = StringFromUTF8(lua_tostring( L, 2 ));
 	int noshow = lua_toboolean( L, 3 );
 	int dowait = lua_toboolean( L, 4 );
 
@@ -717,13 +719,13 @@ static int exec( lua_State* L )
 		HANDLE hProcess = NULL;
 		// запускаем процесс
 		if ( verb != NULL && // если есть команда запуска
-			 strcmp( verb, "explore" ) == 0 && // если команда запуска explore
+			 wcscmp( verb, L"explore" ) == 0 && // если команда запуска explore
 			 CPath::IsFileExists( file.GetPath() ) ) // проверяем файл ли это
 		{
-			SHELLEXECUTEINFOA shinf = { sizeof(SHELLEXECUTEINFOA) };
-			shinf.lpFile = "explorer.exe";
+			SHELLEXECUTEINFOW shinf = { sizeof(SHELLEXECUTEINFOW) };
+			shinf.lpFile = L"explorer.exe";
 			CSimpleString sFileParams;
-			sFileParams.Append( "/e, /select," );
+			sFileParams.Append( L"/e, /select," );
 			sFileParams.Append( file.GetPath() );
 			shinf.lpParameters = sFileParams.GetString();
 			shinf.fMask = SEE_MASK_FLAG_NO_UI |
@@ -731,18 +733,18 @@ static int exec( lua_State* L )
 						  SEE_MASK_FLAG_DDEWAIT |
 						  SEE_MASK_NOCLOSEPROCESS;
 			shinf.nShow = noshow ? SW_HIDE : SW_SHOWNORMAL;
-			bSuccess = ::ShellExecuteExA( &shinf );
+			bSuccess = ::ShellExecuteEx( &shinf );
 			if ( bSuccess && shinf.hInstApp <= (HINSTANCE)32 ) bSuccess = FALSE;
 			hProcess = shinf.hProcess;
 		}
 		else if ( verb != NULL && // если есть команда запуска
-				  strcmp( verb, "select" ) == 0 && // если команда запуска select
+				  wcscmp( verb, L"select" ) == 0 && // если команда запуска select
 				  CPath::IsPathExist( file.GetPath() ) ) // проверяем правильный путь
 		{
-			SHELLEXECUTEINFOA shinf = { sizeof(SHELLEXECUTEINFOA) };
-			shinf.lpFile = "explorer.exe";
+			SHELLEXECUTEINFOW shinf = { sizeof(SHELLEXECUTEINFOW) };
+			shinf.lpFile = L"explorer.exe";
 			CSimpleString sFileParams;
-			sFileParams.Append( "/select," );
+			sFileParams.Append( L"/select," );
 			sFileParams.Append( file.GetPath() );
 			shinf.lpParameters = sFileParams.GetString();
 			shinf.fMask = SEE_MASK_FLAG_NO_UI |
@@ -750,13 +752,13 @@ static int exec( lua_State* L )
 						  SEE_MASK_FLAG_DDEWAIT |
 						  SEE_MASK_NOCLOSEPROCESS;
 			shinf.nShow = noshow ? SW_HIDE : SW_SHOWNORMAL;
-			bSuccess = ::ShellExecuteExA( &shinf );
+			bSuccess = ::ShellExecuteEx( &shinf );
 			if ( bSuccess && shinf.hInstApp <= (HINSTANCE)32 ) bSuccess = FALSE;
 			hProcess = shinf.hProcess;
 		}
 		else
 		{
-			SHELLEXECUTEINFOA shinf = { sizeof(SHELLEXECUTEINFOA) };
+			SHELLEXECUTEINFOW shinf = { sizeof(SHELLEXECUTEINFOW) };
 			shinf.lpFile = file.GetPath();
 			shinf.lpParameters = file.GetFileParams();
 			shinf.lpVerb = verb;
@@ -773,7 +775,7 @@ static int exec( lua_State* L )
 				shinf.fMask |= SEE_MASK_INVOKEIDLIST;
 			}
 			shinf.nShow = noshow ? SW_HIDE : SW_SHOWNORMAL;
-			bSuccess = ::ShellExecuteExA( &shinf );
+			bSuccess = ::ShellExecuteEx( &shinf );
 			if ( bSuccess && shinf.hInstApp <= (HINSTANCE)32 ) bSuccess = FALSE;
 			hProcess = shinf.hProcess;
 		}
@@ -795,7 +797,7 @@ static int exec( lua_State* L )
 			::SetLastError( 0 );
 			DWORD dw;
 			int len;
-			char* lpMsgBuf = GetLastErrorString( &dw, &len );
+			wchar_t* lpMsgBuf = GetLastErrorString( &dw, &len );
 			strOut.Append( lpMsgBuf );
 			::LocalFree( lpMsgBuf );
 		}
@@ -809,7 +811,7 @@ static int exec( lua_State* L )
 	else
 	{
 		exit_code != (DWORD)-1 ? lua_pushnumber( L, exit_code ) : lua_pushboolean( L, TRUE );
-		lua_pushstring( L, strOut.GetString() );
+		lua_pushstring( L, UTF8FromString(strOut.GetString()) );
 	}
 
 	return 2;
@@ -818,20 +820,20 @@ static int exec( lua_State* L )
 static int getclipboardtext( lua_State* L )
 {
 	CSimpleString clipText;
-	if ( ::IsClipboardFormatAvailable( CF_TEXT ) )
+	if ( ::IsClipboardFormatAvailable( CF_UNICODETEXT ) )
 	{
 		if ( ::OpenClipboard( NULL ) )
 		{
-			HANDLE hData = ::GetClipboardData( CF_TEXT );
+			HANDLE hData = ::GetClipboardData( CF_UNICODETEXT );
 			if ( hData != NULL )
 			{
-				clipText.Append( (char*)::GlobalLock( hData ) );
+				clipText.Append( (wchar_t*)::GlobalLock( hData ) );
 				::GlobalUnlock( hData );
 			}
 			::CloseClipboard();
 		}
 	}
-	lua_pushstring( L, clipText.GetString() );
+	lua_pushstring( L, UTF8FromString(clipText.GetString()) );
 	return 1;
 }
 
