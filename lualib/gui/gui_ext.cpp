@@ -157,8 +157,6 @@ TWin* get_parent()
 
 TWin* get_last_parent()
 {
-	if(!s_last_parent)
-		throw "There is no parent panel to create new component";
 	return s_last_parent;
 }
 
@@ -1006,12 +1004,12 @@ int tabbar_add(lua_State* L)
 
 int new_memo(lua_State* L)
 {
-	try {
-		TMemoLua *m = new TMemoLua(get_last_parent(),L,1);
+	TWin* p = get_last_parent();
+	if(p) {
+		TMemoLua *m = new TMemoLua(p,L,1);
 		return wrap_window(L,m);
-	} catch(char* str) {
-		lua_pushstring(L, str);
-		lua_error(L);
+	} else {
+		luaL_error(L, "There is no parent panel to create 'gui.memo'");
 		return 0;
 	}
 }
@@ -1043,12 +1041,12 @@ int memo_set_colour(lua_State* L)
 
 int new_tree(lua_State* L)
 {
-	try {
-		TTreeViewLua *lv = new TTreeViewLua((TEventWindow*)get_last_parent(),L);
+	TWin* p = get_last_parent();
+	if(p) {
+		TTreeViewLua *lv = new TTreeViewLua((TEventWindow*)p,L);
 		return wrap_window(L,lv);
-	} catch(char *str){
-		lua_pushstring(L, str);
-		lua_error(L);
+	} else {
+		luaL_error(L, "There is no parent panel to create 'gui.tree'");
 		return 0;
 	}
 }
@@ -1061,14 +1059,14 @@ int new_tree(lua_State* L)
 */
 int new_list_window(lua_State* L)
 {
-	try {
+	TWin* p = get_last_parent();
+	if(p) {
 		bool multiple_columns = optboolean(L,1,false);
 		bool single_select = optboolean(L,2,true);
-		TListViewLua *lv = new TListViewLua(get_last_parent(),L,multiple_columns,single_select);
+		TListViewLua *lv = new TListViewLua(p,L,multiple_columns,single_select);
 		return wrap_window(L,lv);
-	} catch(char *str){
-		lua_pushstring(L, str);
-		lua_error(L);
+	} else {
+		luaL_error(L, "There is no parent panel to create 'gui.list'");
 		return 0;
 	}
 }
