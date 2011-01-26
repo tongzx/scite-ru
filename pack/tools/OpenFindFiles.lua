@@ -1,24 +1,24 @@
 --[[--------------------------------------------------
 OpenFindFiles.lua
-Author: mozers™
-Version: 1.4.0
+Author: mozersв„ў
+Version: 1.4.1
 ------------------------------------------------------
-После выполнения команды "Найти в файлах..."
-создает пункт в контекстном меню консоли - "Открыть найденные файлы"
+РџРѕСЃР»Рµ РІС‹РїРѕР»РЅРµРЅРёСЏ РєРѕРјР°РЅРґС‹ "РќР°Р№С‚Рё РІ С„Р°Р№Р»Р°С…..."
+СЃРѕР·РґР°РµС‚ РїСѓРЅРєС‚ РІ РєРѕРЅС‚РµРєСЃС‚РЅРѕРј РјРµРЅСЋ РєРѕРЅСЃРѕР»Рё - "РћС‚РєСЂС‹С‚СЊ РЅР°Р№РґРµРЅРЅС‹Рµ С„Р°Р№Р»С‹"
 ------------------------------------------------------
-Подключение:
-В файл SciTEStartup.lua добавьте строку:
+РџРѕРґРєР»СЋС‡РµРЅРёРµ:
+Р’ С„Р°Р№Р» SciTEStartup.lua РґРѕР±Р°РІСЊС‚Рµ СЃС‚СЂРѕРєСѓ:
   dofile (props["SciteDefaultHome"].."\\tools\\OpenFindFiles.lua")
 --]]--------------------------------------------------
 
-local user_outputcontext_menu           -- исходное контекстное меню консоли
-local outputcontextmenu_changed = false -- признак модификации контекстного меню
-local command_num                       -- номер команды "OpenFindFiles" в меню Tools
+local user_outputcontext_menu           -- РёСЃС…РѕРґРЅРѕРµ РєРѕРЅС‚РµРєСЃС‚РЅРѕРµ РјРµРЅСЋ РєРѕРЅСЃРѕР»Рё
+local outputcontextmenu_changed = false -- РїСЂРёР·РЅР°Рє РјРѕРґРёС„РёРєР°С†РёРё РєРѕРЅС‚РµРєСЃС‚РЅРѕРіРѕ РјРµРЅСЋ
+local command_num                       -- РЅРѕРјРµСЂ РєРѕРјР°РЅРґС‹ "OpenFindFiles" РІ РјРµРЅСЋ Tools
 local IDM_TOOLS = 9000
 require 'shell'
 
 --------------------------------------------------
--- Поиск незанятого пункта меню Tools
+-- РџРѕРёСЃРє РЅРµР·Р°РЅСЏС‚РѕРіРѕ РїСѓРЅРєС‚Р° РјРµРЅСЋ Tools
 local function GetFreeCommandNumber()
 	for i = 20, 299 do
 		if props["command."..i..".*"] == "" then return i end
@@ -26,24 +26,24 @@ local function GetFreeCommandNumber()
 end
 
 --------------------------------------------------
--- Создание команды в меню Tools и вставка ее в контекстное меню консоли
+-- РЎРѕР·РґР°РЅРёРµ РєРѕРјР°РЅРґС‹ РІ РјРµРЅСЋ Tools Рё РІСЃС‚Р°РІРєР° РµРµ РІ РєРѕРЅС‚РµРєСЃС‚РЅРѕРµ РјРµРЅСЋ РєРѕРЅСЃРѕР»Рё
 local function CreateMenu()
-	local command_name = shell.to_utf8(scite.GetTranslation("Open Find Files"))
+	local command_name = scite.GetTranslation("Open Find Files")
 	command_num = GetFreeCommandNumber()
 
-	-- пункт в в контекстном меню консоли
+	-- РїСѓРЅРєС‚ РІ РІ РєРѕРЅС‚РµРєСЃС‚РЅРѕРј РјРµРЅСЋ РєРѕРЅСЃРѕР»Рё
 	user_outputcontext_menu = props["user.outputcontext.menu.*"]
 	props["user.outputcontext.menu.*"] = command_name.."|"..(IDM_TOOLS+command_num).."|||"..user_outputcontext_menu
 	outputcontextmenu_changed = true
 
-	-- команда в меню Tools
+	-- РєРѕРјР°РЅРґР° РІ РјРµРЅСЋ Tools
 	props["command."..command_num..".*"] = "OpenFindFiles"
 	props["command.mode."..command_num..".*"] = "subsystem:lua,savebefore:no,clearbefore:no"
 
 end
 
 --------------------------------------------------
--- Удаление команды из меню Tools и восстановление исходного контекстного меню консоли
+-- РЈРґР°Р»РµРЅРёРµ РєРѕРјР°РЅРґС‹ РёР· РјРµРЅСЋ Tools Рё РІРѕСЃСЃС‚Р°РЅРѕРІР»РµРЅРёРµ РёСЃС…РѕРґРЅРѕРіРѕ РєРѕРЅС‚РµРєСЃС‚РЅРѕРіРѕ РјРµРЅСЋ РєРѕРЅСЃРѕР»Рё
 local function RemoveMenu()
 	props["user.outputcontext.menu.*"] = user_outputcontext_menu
 	outputcontextmenu_changed = false
@@ -51,18 +51,21 @@ local function RemoveMenu()
 end
 
 --------------------------------------------------
--- Открытие файлов, перечисленных в консоли
+-- РћС‚РєСЂС‹С‚РёРµ С„Р°Р№Р»РѕРІ, РїРµСЂРµС‡РёСЃР»РµРЅРЅС‹С… РІ РєРѕРЅСЃРѕР»Рё
 function OpenFindFiles()
 	local output_text = output:GetText()
+	local cp = output:codepage()
 	local str, path = output_text:match('"(.-)" in "(.-)"')
 	path = path:match('^.+\\')
 	local filename_prev = ''
-	for filename in output_text:gmatch('([^\r\n:]+):%d+:[^\r\n]+') do
+	for filename, lineno in output_text:gmatch('([^\r\n:]+):(%d+):[^\r\n]+') do
 		filename = filename:gsub('^%.\\', path)
 		if filename ~= filename_prev then
-			scite.Open(shell.to_utf8(filename))
+			scite.Open(filename:to_utf8(cp))
 			local pos = editor:findtext(str)
-			if pos ~= nil then editor:GotoPos(pos) end
+			if pos then editor:GotoPos(pos)
+			else editor:GotoLine(lineno)
+			end
 			filename_prev = filename
 		end
 	end

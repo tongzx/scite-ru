@@ -1,25 +1,25 @@
 --[[----------------------------------------------------------------------------
 Select_And_Open_Filename.lua
 Author: VladVRO
-version 1.4.4
+version 1.4.5
 
-Ðàñøèðåíèå êîìàíäû "Îòêðûòü âûäåëåííûé ôàéë" äëÿ ñëó÷àÿ êîãäà âûäåëåíèÿ íåò.
-À òàêæå âîçìîæíîñòü îòêðûòü ôàéë ïî äâîéíîìó êëèêó ìûøè íà åãî èìåíè ïðè íàæàòîé
-êëàâèøå Ctrl.
-Ñêðèïò âûäåëÿåò ïîäõîäÿùóþ îáëàñòü ðÿäîì ñ êóðñîðîì â êà÷åñòâå èìåíè èñêîìîãî
-ôàéëà è ïûòàåòñÿ îòêðûòü åãî â òåêóùåé ïàïêå, åñëè ôàéë íå íàéäåí, òî ñêðèïò
-ïûòàåòñÿ ðàñøèðèòü âûäåëåíèå äî èìåíè + ïóòü è ïîâòîðÿåò ïîïûòêó îòêðûòü, â
-ñëó÷àå íåóäà÷è ïîïûòêè ðàñøèðèòü âûäåëåíèå ïðîäîëæàþòñÿ äî òåõ ïîð, ïîêà íå
-áóäåò âûäåëåí âåñü ïóòü äî ôàéëà, è åñëè ôàéë âñå åùå íå íàéäåí, òî ïîèñê
-ïðîäîëæàåòñÿ â ïàïêå íà óðîâåíü âûøå è ò.ä. äî êîðíÿ.
+Ð Ð°ÑÑˆÐ¸Ñ€ÐµÐ½Ð¸Ðµ ÐºÐ¾Ð¼Ð°Ð½Ð´Ñ‹ "ÐžÑ‚ÐºÑ€Ñ‹Ñ‚ÑŒ Ð²Ñ‹Ð´ÐµÐ»ÐµÐ½Ð½Ñ‹Ð¹ Ñ„Ð°Ð¹Ð»" Ð´Ð»Ñ ÑÐ»ÑƒÑ‡Ð°Ñ ÐºÐ¾Ð³Ð´Ð° Ð²Ñ‹Ð´ÐµÐ»ÐµÐ½Ð¸Ñ Ð½ÐµÑ‚.
+Ð Ñ‚Ð°ÐºÐ¶Ðµ Ð²Ð¾Ð·Ð¼Ð¾Ð¶Ð½Ð¾ÑÑ‚ÑŒ Ð¾Ñ‚ÐºÑ€Ñ‹Ñ‚ÑŒ Ñ„Ð°Ð¹Ð» Ð¿Ð¾ Ð´Ð²Ð¾Ð¹Ð½Ð¾Ð¼Ñƒ ÐºÐ»Ð¸ÐºÑƒ Ð¼Ñ‹ÑˆÐ¸ Ð½Ð° ÐµÐ³Ð¾ Ð¸Ð¼ÐµÐ½Ð¸ Ð¿Ñ€Ð¸ Ð½Ð°Ð¶Ð°Ñ‚Ð¾Ð¹
+ÐºÐ»Ð°Ð²Ð¸ÑˆÐµ Ctrl.
+Ð¡ÐºÑ€Ð¸Ð¿Ñ‚ Ð²Ñ‹Ð´ÐµÐ»ÑÐµÑ‚ Ð¿Ð¾Ð´Ñ…Ð¾Ð´ÑÑ‰ÑƒÑŽ Ð¾Ð±Ð»Ð°ÑÑ‚ÑŒ Ñ€ÑÐ´Ð¾Ð¼ Ñ ÐºÑƒÑ€ÑÐ¾Ñ€Ð¾Ð¼ Ð² ÐºÐ°Ñ‡ÐµÑÑ‚Ð²Ðµ Ð¸Ð¼ÐµÐ½Ð¸ Ð¸ÑÐºÐ¾Ð¼Ð¾Ð³Ð¾
+Ñ„Ð°Ð¹Ð»Ð° Ð¸ Ð¿Ñ‹Ñ‚Ð°ÐµÑ‚ÑÑ Ð¾Ñ‚ÐºÑ€Ñ‹Ñ‚ÑŒ ÐµÐ³Ð¾ Ð² Ñ‚ÐµÐºÑƒÑ‰ÐµÐ¹ Ð¿Ð°Ð¿ÐºÐµ, ÐµÑÐ»Ð¸ Ñ„Ð°Ð¹Ð» Ð½Ðµ Ð½Ð°Ð¹Ð´ÐµÐ½, Ñ‚Ð¾ ÑÐºÑ€Ð¸Ð¿Ñ‚
+Ð¿Ñ‹Ñ‚Ð°ÐµÑ‚ÑÑ Ñ€Ð°ÑÑˆÐ¸Ñ€Ð¸Ñ‚ÑŒ Ð²Ñ‹Ð´ÐµÐ»ÐµÐ½Ð¸Ðµ Ð´Ð¾ Ð¸Ð¼ÐµÐ½Ð¸ + Ð¿ÑƒÑ‚ÑŒ Ð¸ Ð¿Ð¾Ð²Ñ‚Ð¾Ñ€ÑÐµÑ‚ Ð¿Ð¾Ð¿Ñ‹Ñ‚ÐºÑƒ Ð¾Ñ‚ÐºÑ€Ñ‹Ñ‚ÑŒ, Ð²
+ÑÐ»ÑƒÑ‡Ð°Ðµ Ð½ÐµÑƒÐ´Ð°Ñ‡Ð¸ Ð¿Ð¾Ð¿Ñ‹Ñ‚ÐºÐ¸ Ñ€Ð°ÑÑˆÐ¸Ñ€Ð¸Ñ‚ÑŒ Ð²Ñ‹Ð´ÐµÐ»ÐµÐ½Ð¸Ðµ Ð¿Ñ€Ð¾Ð´Ð¾Ð»Ð¶Ð°ÑŽÑ‚ÑÑ Ð´Ð¾ Ñ‚ÐµÑ… Ð¿Ð¾Ñ€, Ð¿Ð¾ÐºÐ° Ð½Ðµ
+Ð±ÑƒÐ´ÐµÑ‚ Ð²Ñ‹Ð´ÐµÐ»ÐµÐ½ Ð²ÐµÑÑŒ Ð¿ÑƒÑ‚ÑŒ Ð´Ð¾ Ñ„Ð°Ð¹Ð»Ð°, Ð¸ ÐµÑÐ»Ð¸ Ñ„Ð°Ð¹Ð» Ð²ÑÐµ ÐµÑ‰Ðµ Ð½Ðµ Ð½Ð°Ð¹Ð´ÐµÐ½, Ñ‚Ð¾ Ð¿Ð¾Ð¸ÑÐº
+Ð¿Ñ€Ð¾Ð´Ð¾Ð»Ð¶Ð°ÐµÑ‚ÑÑ Ð² Ð¿Ð°Ð¿ÐºÐµ Ð½Ð° ÑƒÑ€Ð¾Ð²ÐµÐ½ÑŒ Ð²Ñ‹ÑˆÐµ Ð¸ Ñ‚.Ð´. Ð´Ð¾ ÐºÐ¾Ñ€Ð½Ñ.
 
-Ïàðàìåòð select.and.open.include - îïðåäåëÿåò ñïèñîê äîïîëíèòåëüíûõ ïàïîê äëÿ
-ïîèñêà, ïàïêè ïåðå÷èñëÿþòñÿ ÷åðåç ñèìâîë ;
+ÐŸÐ°Ñ€Ð°Ð¼ÐµÑ‚Ñ€ select.and.open.include - Ð¾Ð¿Ñ€ÐµÐ´ÐµÐ»ÑÐµÑ‚ ÑÐ¿Ð¸ÑÐ¾Ðº Ð´Ð¾Ð¿Ð¾Ð»Ð½Ð¸Ñ‚ÐµÐ»ÑŒÐ½Ñ‹Ñ… Ð¿Ð°Ð¿Ð¾Ðº Ð´Ð»Ñ
+Ð¿Ð¾Ð¸ÑÐºÐ°, Ð¿Ð°Ð¿ÐºÐ¸ Ð¿ÐµÑ€ÐµÑ‡Ð¸ÑÐ»ÑÑŽÑ‚ÑÑ Ñ‡ÐµÑ€ÐµÐ· ÑÐ¸Ð¼Ð²Ð¾Ð» ;
 
-Ïîäêëþ÷åíèå:
-Äîáàâèòü â SciTEStartup.lua ñòðîêó:
+ÐŸÐ¾Ð´ÐºÐ»ÑŽÑ‡ÐµÐ½Ð¸Ðµ:
+Ð”Ð¾Ð±Ð°Ð²Ð¸Ñ‚ÑŒ Ð² SciTEStartup.lua ÑÑ‚Ñ€Ð¾ÐºÑƒ:
   dofile (props["SciteDefaultHome"].."\\tools\\Select_And_Open_Filename.lua")
-Äëÿ ñðàáàòûâàíèÿ ïî êëèêó ìûøè äîáàâèòü â ôàéë íàñòðîåê:
+Ð”Ð»Ñ ÑÑ€Ð°Ð±Ð°Ñ‚Ñ‹Ð²Ð°Ð½Ð¸Ñ Ð¿Ð¾ ÐºÐ»Ð¸ÐºÑƒ Ð¼Ñ‹ÑˆÐ¸ Ð´Ð¾Ð±Ð°Ð²Ð¸Ñ‚ÑŒ Ð² Ñ„Ð°Ð¹Ð» Ð½Ð°ÑÑ‚Ñ€Ð¾ÐµÐº:
   select.and.open.by.click=1
 --]]----------------------------------------------------------------------------
 require 'shell'
@@ -62,83 +62,80 @@ end
 local for_open
 local function launch_open()
 	if for_open then
-		scite.Open(shell.to_utf8(for_open))
+		scite.Open(for_open)
 		for_open = nil
 	end
 end
 
 local function Select_And_Open_File(immediately)
-	local sci
-	if editor.Focus then
-		sci = editor
-	else
-		sci = output
-	end 
+	local sci = editor.Focus and editor or output
+	local cp = sci:codepage()
 	local filename = sci:GetSelText()
+	if filename ~= '' then return; end -- do nothing for whatever reason
 
-	if filename == '' then
-		loadIncludes(props['select.and.open.include'])
+	loadIncludes(props['select.and.open.include'])
 
-		-- try to select file name near current position
-		local cursor = sci.CurrentPos
-		local s = cursor
-		local e = s
-		while isFilenameChar(sci.CharAt[s-1]) do -- find start
-			s = s - 1
-		end
-		while isFilenameChar(sci.CharAt[e]) do -- find end
-			e = e + 1
-		end
+	-- try to select file name near current position
+	local cursor = sci.CurrentPos
+	local s = cursor
+	local e = s
 
-		if s ~= e then
-			-- set selection and try to find file
-			sci:SetSel(s,e)
-			local dir = props["FileDir"].."\\"
-			filename = string.gsub(sci:GetSelText(), '\\\\', '\\')
-			foropen = dir..filename
-			local isFile = shell.fileexists(foropen)
+	while isFilenameChar(sci.CharAt[s-1]) do -- find start
+		s = s - 1
+	end
 
-			-- look at includes
-			if not isFile then
-				for _,path in ipairs(includes) do
-					foropen = path..filename
-					isFile = shell.fileexists(foropen)
-					if isFile then
-						break
-					end
-				end
-			end
+	while isFilenameChar(sci.CharAt[e]) do -- find end
+		e = e + 1
+	end
 
-			while not isFile do
-				ch = sci.CharAt[s-1]
-				if ch == 92 or ch == 47 then -- \ /
-					-- expand selection start
-					s = s - 1
-					while isFilenameChar(sci.CharAt[s-1]) do
-						s = s - 1
-					end
-					sci:SetSel(s,e)
-					filename = string.gsub(sci:GetSelText(), '\\\\', '\\')
-					foropen = dir..filename
-				elseif string.len(dir) > 3 then
-					-- up to parent dir
-					dir = string.gsub(dir, "(.*)\\([^\\]+)\\", "%1\\")
-					foropen = dir..filename
-				else
-					break
-				end
-				isFile = shell.fileexists(foropen)
-			end
+	if s == e then return; end
 
+	-- set selection and try to find file
+	sci:SetSel(s,e)
+	local dir = (props["FileDir"]..'\\'):gsub('\\+','\\')
+	filename = sci:GetSelText():gsub('\\+','\\'):to_utf8(cp)
+	foropen = dir..filename
+
+	local isFile = shell.fileexists(foropen)
+
+	-- look at includes
+	if not isFile then
+		for _,path in ipairs(includes) do
+			foropen = path..filename
+			isFile = shell.fileexists(foropen)
 			if isFile then
-				for_open = foropen
-				if immediately then
-					launch_open()
-				end
-				return true
+				break
 			end
 		end
+	end
 
+	while not isFile do
+		ch = sci.CharAt[s-1]
+		if ch == 92 or ch == 47 then -- \ /
+			-- expand selection start
+			s = s - 1
+			while isFilenameChar(sci.CharAt[s-1]) do
+				s = s - 1
+			end
+			sci:SetSel(s,e)
+			filename = sci:GetSelText():to_utf8(cp)
+			foropen = (dir..filename):gsub('\\+','\\')
+		elseif string.utf8len(dir) > 3 then
+			-- up to parent dir
+			dir = string.gsub(dir, "(.*)\\[^\\]+\\", "%1\\")
+			foropen = dir..filename
+		else
+			break
+		end
+		isFile = shell.fileexists(foropen)
+	end
+
+	if isFile then
+		for_open = foropen
+		if immediately then
+			launch_open()
+		end
+		return true
 	end
 end
 
@@ -151,7 +148,7 @@ end)
 AddEventHandler("OnMouseButtonUp", launch_open)
 
 AddEventHandler("OnDoubleClick", function(shift, ctrl, alt)
-	if ctrl and props["select.and.open.by.click"] == "1" then
+	if ctrl and not (shift or alt) and props["select.and.open.by.click"] == "1" then
 		local sci
 		if editor.Focus then
 			sci = editor

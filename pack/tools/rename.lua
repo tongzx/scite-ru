@@ -1,17 +1,17 @@
 --[[--------------------------------------------------
  Rename.lua
- Version: 2.2.2
- Author: mozers™ (идея codewarlock1101)
+ Version: 2.2.3
+ Author: mozersв„ў (РёРґРµСЏ codewarlock1101)
  ------------------------------------------------
- Переименовывает текущий файл
- Для подключения добавьте в свой файл .properties следующие строки: 
+ РџРµСЂРµРёРјРµРЅРѕРІС‹РІР°РµС‚ С‚РµРєСѓС‰РёР№ С„Р°Р№Р»
+ Р”Р»СЏ РїРѕРґРєР»СЋС‡РµРЅРёСЏ РґРѕР±Р°РІСЊС‚Рµ РІ СЃРІРѕР№ С„Р°Р№Р» .properties СЃР»РµРґСѓСЋС‰РёРµ СЃС‚СЂРѕРєРё: 
     command.name.31.*=Rename current file
     command.31.*=dofile $(SciteDefaultHome)\tools\rename.lua
     command.mode.31.*=subsystem:lua,savebefore:no
 --]]--------------------------------------------------
 require 'shell'
 
-local filename = shell.from_utf8(props["FileNameExt"])
+local filename = props["FileNameExt"]
 local filename_new = filename
 local title = scite.GetTranslation("File Rename")
 local msg1 = scite.GetTranslation("Please enter new file name:")
@@ -26,6 +26,6 @@ repeat
 until false
 
 local file_dir = props["FileDir"]
-filename_new = file_dir:gsub('\\','\\\\')..'\\\\'..shell.to_utf8(filename_new)
+filename_new = file_dir:gsub('\\','\\\\')..'\\\\'..filename_new
 scite.Perform("saveas:"..filename_new)
-os.remove(file_dir..'\\'..filename)
+os.remove(file_dir..'\\'..shell.from_utf8(filename))  --@todo: this won't work well with come paths (like D:\CH жјўиЄћ\DE ГјГ¶Г¤Гџ\RU С‘Р№С†Сѓ\EN.txt)

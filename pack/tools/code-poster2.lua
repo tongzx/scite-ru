@@ -1,19 +1,19 @@
 -- Code Poster
--- Version: 3.0.2
--- Author: mozers™, frs (Идея и первая реализация: VladVRO)
+-- Version: 3.0.3
+-- Author: mozersв„ў, frs (РРґРµСЏ Рё РїРµСЂРІР°СЏ СЂРµР°Р»РёР·Р°С†РёСЏ: VladVRO)
 ---------------------------------------------------
 -- Description:
--- конвертирует выделенный текст или весь файл в форматированный текст форума,
--- в точном соответствии с заданными в редакторе стилями (color, bold, italics)
+-- РєРѕРЅРІРµСЂС‚РёСЂСѓРµС‚ РІС‹РґРµР»РµРЅРЅС‹Р№ С‚РµРєСЃС‚ РёР»Рё РІРµСЃСЊ С„Р°Р№Р» РІ С„РѕСЂРјР°С‚РёСЂРѕРІР°РЅРЅС‹Р№ С‚РµРєСЃС‚ С„РѕСЂСѓРјР°,
+-- РІ С‚РѕС‡РЅРѕРј СЃРѕРѕС‚РІРµС‚СЃС‚РІРёРё СЃ Р·Р°РґР°РЅРЅС‹РјРё РІ СЂРµРґР°РєС‚РѕСЂРµ СЃС‚РёР»СЏРјРё (color, bold, italics)
 
--- Для подключения добавьте в свой файл .properties следующие строки:
---  command.name.125.*=Преобразовать в код для форума
+-- Р”Р»СЏ РїРѕРґРєР»СЋС‡РµРЅРёСЏ РґРѕР±Р°РІСЊС‚Рµ РІ СЃРІРѕР№ С„Р°Р№Р» .properties СЃР»РµРґСѓСЋС‰РёРµ СЃС‚СЂРѕРєРё:
+--  command.name.125.*=РџСЂРµРѕР±СЂР°Р·РѕРІР°С‚СЊ РІ РєРѕРґ РґР»СЏ С„РѕСЂСѓРјР°
 --  command.125.*=dofile $(SciteDefaultHome)\tools\code-poster2.lua
 --  command.mode.125.*=subsystem:lua,savebefore:no
 
--- ремарки по использованию:
---  в скрипте используются функция shell.msgbox
---  (сборка Ru-Board, http://scite.net.ru)
+-- СЂРµРјР°СЂРєРё РїРѕ РёСЃРїРѕР»СЊР·РѕРІР°РЅРёСЋ:
+--  РІ СЃРєСЂРёРїС‚Рµ РёСЃРїРѕР»СЊР·СѓСЋС‚СЃСЏ С„СѓРЅРєС†РёСЏ shell.msgbox
+--  (СЃР±РѕСЂРєР° Ru-Board, http://scite.net.ru)
 ---------------------------------------------------
 require 'shell'
 
@@ -46,7 +46,7 @@ end
 local sel_start = editor.SelectionStart
 local sel_end = editor.SelectionEnd
 local line_start = editor:LineFromPosition(sel_start)+1
--- Если ничего не выделено, то берем весь текст
+-- Р•СЃР»Рё РЅРёС‡РµРіРѕ РЅРµ РІС‹РґРµР»РµРЅРѕ, С‚Рѕ Р±РµСЂРµРј РІРµСЃСЊ С‚РµРєСЃС‚
 if sel_start == sel_end then
 	line_start = 0
 	sel_start = 0
@@ -122,10 +122,7 @@ if editor:LineFromPosition(sel_end) - line_start > 10 then
 	more_end = "[/more]"
 end
 
-local reclam = "Код создан и опубликован с помощью"
-if tonumber(props["editor.unicode.mode"]) ~= IDM_ENCODING_DEFAULT then
-	reclam = shell.to_utf8(reclam)
-end
+local reclam = ("РљРѕРґ СЃРѕР·РґР°РЅ Рё РѕРїСѓР±Р»РёРєРѕРІР°РЅ СЃ РїРѕРјРѕС‰СЊСЋ"):from_utf8(editor:codepage()) -- convert this string to the encoding of processed script
 forum_text = header.." : "..more.."[code]"..forum_text.."[/code]".."  [color=Purple][font=Wingdings][size=4]?[/size][/font]  [s]"..reclam.."[/s] [url=http://forum.ru-board.com/topic.cgi?forum=5&topic=35160&glp][s]SciTE-Ru[/s][/url][/color]"..more_end
 editor:CopyText(forum_text)
-shell.msgbox ("Код для форума успешно сформирован\n и помещен в буфер обмена", "Формирование кода для форума")
+shell.msgbox ("РљРѕРґ РґР»СЏ С„РѕСЂСѓРјР° СѓСЃРїРµС€РЅРѕ СЃС„РѕСЂРјРёСЂРѕРІР°РЅ\n Рё РїРѕРјРµС‰РµРЅ РІ Р±СѓС„РµСЂ РѕР±РјРµРЅР°", "Р¤РѕСЂРјРёСЂРѕРІР°РЅРёРµ РєРѕРґР° РґР»СЏ С„РѕСЂСѓРјР°")

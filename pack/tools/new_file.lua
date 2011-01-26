@@ -1,17 +1,17 @@
 --[[--------------------------------------------------
 new_file.lua
-mozers™, VladVRO
-version 3.3.0
+mozersв„ў, VladVRO
+version 3.3.1
 ----------------------------------------------
-Заменяет стандартную команду SciTE "File|New" (Ctrl+N)
-Создает новый буфер в текущем каталоге с расширением текущего файла
-Благодаря этому, сразу же включаются все фичи лексера (подсветка, подсказки и пр.)
+Р—Р°РјРµРЅСЏРµС‚ СЃС‚Р°РЅРґР°СЂС‚РЅСѓСЋ РєРѕРјР°РЅРґСѓ SciTE "File|New" (Ctrl+N)
+РЎРѕР·РґР°РµС‚ РЅРѕРІС‹Р№ Р±СѓС„РµСЂ РІ С‚РµРєСѓС‰РµРј РєР°С‚Р°Р»РѕРіРµ СЃ СЂР°СЃС€РёСЂРµРЅРёРµРј С‚РµРєСѓС‰РµРіРѕ С„Р°Р№Р»Р°
+Р‘Р»Р°РіРѕРґР°СЂСЏ СЌС‚РѕРјСѓ, СЃСЂР°Р·Сѓ Р¶Рµ РІРєР»СЋС‡Р°СЋС‚СЃСЏ РІСЃРµ С„РёС‡Рё Р»РµРєСЃРµСЂР° (РїРѕРґСЃРІРµС‚РєР°, РїРѕРґСЃРєР°Р·РєРё Рё РїСЂ.)
 ----------------------------------------------
-Подключение:
-В файл SciTEStartup.lua добавьте строку:
+РџРѕРґРєР»СЋС‡РµРЅРёРµ:
+Р’ С„Р°Р№Р» SciTEStartup.lua РґРѕР±Р°РІСЊС‚Рµ СЃС‚СЂРѕРєСѓ:
   dofile (props["SciteDefaultHome"].."\\tools\\new_file.lua")
 
-Задайте в файле .properties расширения файлов которые будут создаваться в кодировке UTF-8
+Р—Р°РґР°Р№С‚Рµ РІ С„Р°Р№Р»Рµ .properties СЂР°СЃС€РёСЂРµРЅРёСЏ С„Р°Р№Р»РѕРІ РєРѕС‚РѕСЂС‹Рµ Р±СѓРґСѓС‚ СЃРѕР·РґР°РІР°С‚СЊСЃСЏ РІ РєРѕРґРёСЂРѕРІРєРµ UTF-8
   file.make.as.utf8=htm,html
 
 -------------------------------------------------------------------
@@ -31,7 +31,7 @@ require 'shell'
 props["untitled.file.number"] = 0
 local unsaved_files = {}
 
--- Определяет надо ли файл с текущим расширением создавать и сохранять в UTF-8
+-- РћРїСЂРµРґРµР»СЏРµС‚ РЅР°РґРѕ Р»Рё С„Р°Р№Р» СЃ С‚РµРєСѓС‰РёРј СЂР°СЃС€РёСЂРµРЅРёРµРј СЃРѕР·РґР°РІР°С‚СЊ Рё СЃРѕС…СЂР°РЅСЏС‚СЊ РІ UTF-8
 local function isMakeUTF8()
 	local create_utf8_ext = props['file.make.as.utf8']:lower()
 	local current_ext = props['FileExt']:lower()
@@ -41,19 +41,19 @@ local function isMakeUTF8()
 	return false
 end
 
--- Создает новый буфер в текущем каталоге с расширением текущего файла
+-- РЎРѕР·РґР°РµС‚ РЅРѕРІС‹Р№ Р±СѓС„РµСЂ РІ С‚РµРєСѓС‰РµРј РєР°С‚Р°Р»РѕРіРµ СЃ СЂР°СЃС€РёСЂРµРЅРёРµРј С‚РµРєСѓС‰РµРіРѕ С„Р°Р№Р»Р°
 local function CreateUntitledFile()
 	local file_ext = "."..props["FileExt"]
 	if file_ext == "." then file_ext = props["default.file.ext"] end
 	repeat
-		local file_path = props["FileDir"].."\\"..shell.to_utf8(scite.GetTranslation("Untitled"))..props["untitled.file.number"]..file_ext
+		local file_path = props["FileDir"].."\\"..scite.GetTranslation("Untitled")..props["untitled.file.number"]..file_ext
 		props["untitled.file.number"] = tonumber(props["untitled.file.number"]) + 1
 		if not shell.fileexists(file_path) then
 			local warning_couldnotopenfile_disable = props['warning.couldnotopenfile.disable']
 			props['warning.couldnotopenfile.disable'] = 1
 			scite.Open(file_path)
 			if isMakeUTF8() then scite.MenuCommand(IDM_ENCODING_UCOOKIE) end
-			unsaved_files[file_path:upper()] = true --сохраняем путь к созданному буферу в таблице
+			unsaved_files[file_path:upper()] = true --СЃРѕС…СЂР°РЅСЏРµРј РїСѓС‚СЊ Рє СЃРѕР·РґР°РЅРЅРѕРјСѓ Р±СѓС„РµСЂСѓ РІ С‚Р°Р±Р»РёС†Рµ
 			props['warning.couldnotopenfile.disable'] = warning_couldnotopenfile_disable
 			return true
 		end
@@ -63,21 +63,21 @@ AddEventHandler("OnMenuCommand", function(msg, source)
 	if msg == IDM_NEW then
 		return CreateUntitledFile()
 	elseif msg == IDM_SAVEAS then
-		unsaved_files[props["FilePath"]:upper()] = nil --удаляем запись о буфере из таблицы
+		unsaved_files[props["FilePath"]:upper()] = nil --СѓРґР°Р»СЏРµРј Р·Р°РїРёСЃСЊ Рѕ Р±СѓС„РµСЂРµ РёР· С‚Р°Р±Р»РёС†С‹
 	end
 end)
 
--- Новый буфер, созданный функцией CreateUntitledFile имеет полное имя, поэтому при сохранении SciTE будет сохранять его молча по заданному пути (без вывода диалогового окна "SaveAs")
--- Обработчик события OnBeforeSave при сохранении такого буфера выводит диалоговое окно "SaveAs"
+-- РќРѕРІС‹Р№ Р±СѓС„РµСЂ, СЃРѕР·РґР°РЅРЅС‹Р№ С„СѓРЅРєС†РёРµР№ CreateUntitledFile РёРјРµРµС‚ РїРѕР»РЅРѕРµ РёРјСЏ, РїРѕСЌС‚РѕРјСѓ РїСЂРё СЃРѕС…СЂР°РЅРµРЅРёРё SciTE Р±СѓРґРµС‚ СЃРѕС…СЂР°РЅСЏС‚СЊ РµРіРѕ РјРѕР»С‡Р° РїРѕ Р·Р°РґР°РЅРЅРѕРјСѓ РїСѓС‚Рё (Р±РµР· РІС‹РІРѕРґР° РґРёР°Р»РѕРіРѕРІРѕРіРѕ РѕРєРЅР° "SaveAs")
+-- РћР±СЂР°Р±РѕС‚С‡РёРє СЃРѕР±С‹С‚РёСЏ OnBeforeSave РїСЂРё СЃРѕС…СЂР°РЅРµРЅРёРё С‚Р°РєРѕРіРѕ Р±СѓС„РµСЂР° РІС‹РІРѕРґРёС‚ РґРёР°Р»РѕРіРѕРІРѕРµ РѕРєРЅРѕ "SaveAs"
 AddEventHandler("OnBeforeSave", function(file)
 	if isMakeUTF8() and tonumber(props["editor.unicode.mode"]) == IDM_ENCODING_DEFAULT then
 		editor.TargetStart = 0
 		editor.TargetEnd = editor.Length
 		local txt_in = editor:GetText()
-		editor:ReplaceTarget(shell.to_utf8(txt_in))
+		editor:ReplaceTarget(txt_in:to_utf8(editor:codepage()))
 		scite.MenuCommand(IDM_ENCODING_UCOOKIE)
 	end
-	if unsaved_files[file:upper()] then -- если это созданный нами несохраненный буфер
+	if unsaved_files[file:upper()] then -- РµСЃР»Рё СЌС‚Рѕ СЃРѕР·РґР°РЅРЅС‹Р№ РЅР°РјРё РЅРµСЃРѕС…СЂР°РЅРµРЅРЅС‹Р№ Р±СѓС„РµСЂ
 		scite.MenuCommand(IDM_SAVEAS)
 		return true
 	end

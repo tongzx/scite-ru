@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev, ur4ltz
-Version 1.27.2
+Version 1.27.3
 ------------------------------------------------------
   Note: Require gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
                lpeg.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/lpeg/>
@@ -1160,7 +1160,7 @@ local function Bookmark_Add(line_number)
 	bmk.BufferNumber = GetBufferNumber()
 	bmk.LineNumber = line_number
 	if tonumber(props["editor.unicode.mode"]) == IDM_ENCODING_DEFAULT then
-		line_text = shell.to_utf8(line_text)
+		line_text = line_text:to_utf8(editor:codepage())
 	end
 	bmk.LineText = line_text
 	table_bookmarks[#table_bookmarks+1] = bmk

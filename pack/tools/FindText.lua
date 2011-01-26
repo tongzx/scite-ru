@@ -1,19 +1,19 @@
 --[[--------------------------------------------------
-FindText v7.3.1
-Авторы: mozers™, mimir, Алексей, codewarlock1101, VladVRO
+FindText v7.3.2
+РђРІС‚РѕСЂС‹: mozersT, mimir, РђР»РµРєСЃРµР№, codewarlock1101, VladVRO
 
-* Если текст выделен - ищется выделенная подстрока
-* Если текст не выделен - ищется текущее слово
-* Поиск возможен как в окне редактирования, так и в окне консоли
-* Строки, содержащие результаты поиска, выводятся в консоль
-* Перемещение по вхождениям - F3 (вперед), Shift+F3 (назад)
-* Каждый новый поиск оставляет маркеры своего цвета
-* Очистка от маркеров поиска - Ctrl+Alt+C
+* Р•СЃР»Рё С‚РµРєСЃС‚ РІС‹РґРµР»РµРЅ - РёС‰РµС‚СЃСЏ РІС‹РґРµР»РµРЅРЅР°СЏ РїРѕРґСЃС‚СЂРѕРєР°
+* Р•СЃР»Рё С‚РµРєСЃС‚ РЅРµ РІС‹РґРµР»РµРЅ - РёС‰РµС‚СЃСЏ С‚РµРєСѓС‰РµРµ СЃР»РѕРІРѕ
+* РџРѕРёСЃРє РІРѕР·РјРѕР¶РµРЅ РєР°Рє РІ РѕРєРЅРµ СЂРµРґР°РєС‚РёСЂРѕРІР°РЅРёСЏ, С‚Р°Рє Рё РІ РѕРєРЅРµ РєРѕРЅСЃРѕР»Рё
+* РЎС‚СЂРѕРєРё, СЃРѕРґРµСЂР¶Р°С‰РёРµ СЂРµР·СѓР»СЊС‚Р°С‚С‹ РїРѕРёСЃРєР°, РІС‹РІРѕРґСЏС‚СЃСЏ РІ РєРѕРЅСЃРѕР»СЊ
+* РџРµСЂРµРјРµС‰РµРЅРёРµ РїРѕ РІС…РѕР¶РґРµРЅРёСЏРј - F3 (РІРїРµСЂРµРґ), Shift+F3 (РЅР°Р·Р°Рґ)
+* РљР°Р¶РґС‹Р№ РЅРѕРІС‹Р№ РїРѕРёСЃРє РѕСЃС‚Р°РІР»СЏРµС‚ РјР°СЂРєРµСЂС‹ СЃРІРѕРµРіРѕ С†РІРµС‚Р°
+* РћС‡РёСЃС‚РєР° РѕС‚ РјР°СЂРєРµСЂРѕРІ РїРѕРёСЃРєР° - Ctrl+Alt+C
 
-Внимание:
-В скрипте используются функции из COMMON.lua (EditorMarkText, EditorClearMarks)
+Р’РЅРёРјР°РЅРёРµ:
+Р’ СЃРєСЂРёРїС‚Рµ РёСЃРїРѕР»СЊР·СѓСЋС‚СЃСЏ С„СѓРЅРєС†РёРё РёР· COMMON.lua (EditorMarkText, EditorClearMarks)
 -----------------------------------------------
-Для подключения добавьте в свой файл .properties следующие строки:
+Р”Р»СЏ РїРѕРґРєР»СЋС‡РµРЅРёСЏ РґРѕР±Р°РІСЊС‚Рµ РІ СЃРІРѕР№ С„Р°Р№Р» .properties СЃР»РµРґСѓСЋС‰РёРµ СЃС‚СЂРѕРєРё:
 	command.name.130.*=Find String/Word
 	command.130.*=dofile $(SciteDefaultHome)\tools\FindText.lua
 	command.mode.130.*=subsystem:lua,savebefore:no
@@ -24,7 +24,7 @@ FindText v7.3.1
 	command.mode.131.*=subsystem:lua,savebefore:no
 	command.shortcut.131.*=Ctrl+Alt+C
 
-Дополнительно необходимо задать в файле настроек стили используемых маркеров и номер первого из используемых стилей:
+Р”РѕРїРѕР»РЅРёС‚РµР»СЊРЅРѕ РЅРµРѕР±С…РѕРґРёРјРѕ Р·Р°РґР°С‚СЊ РІ С„Р°Р№Р»Рµ РЅР°СЃС‚СЂРѕРµРє СЃС‚РёР»Рё РёСЃРїРѕР»СЊР·СѓРµРјС‹С… РјР°СЂРєРµСЂРѕРІ Рё РЅРѕРјРµСЂ РїРµСЂРІРѕРіРѕ РёР· РёСЃРїРѕР»СЊР·СѓРµРјС‹С… СЃС‚РёР»РµР№:
 	findtext.first.mark=27
 	indic.style.27=#CC00FF
 	indic.style.28=#0000FF
@@ -32,24 +32,37 @@ FindText v7.3.1
 	indic.style.30=#CCCC00
 	indic.style.31=#336600
 
-Дополнительно можно задать дополнительные параметры поиска:
-	# Поиск с учетом регистра
+Р”РѕРїРѕР»РЅРёС‚РµР»СЊРЅРѕ РјРѕР¶РЅРѕ Р·Р°РґР°С‚СЊ РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹Рµ РїР°СЂР°РјРµС‚СЂС‹ РїРѕРёСЃРєР°:
+	# РџРѕРёСЃРє СЃ СѓС‡РµС‚РѕРј СЂРµРіРёСЃС‚СЂР°
 	findtext.matchcase=1
-	# Отмечать букмарками найденные строки
+	# РћС‚РјРµС‡Р°С‚СЊ Р±СѓРєРјР°СЂРєР°РјРё РЅР°Р№РґРµРЅРЅС‹Рµ СЃС‚СЂРѕРєРё
 	findtext.bookmarks=1
-	# Выводить все найденные строки в консоль
+	# Р’С‹РІРѕРґРёС‚СЊ РІСЃРµ РЅР°Р№РґРµРЅРЅС‹Рµ СЃС‚СЂРѕРєРё РІ РєРѕРЅСЃРѕР»СЊ
 	findtext.output=1
-	# Показывать подсказку по горячим клавишам
+	# РџРѕРєР°Р·С‹РІР°С‚СЊ РїРѕРґСЃРєР°Р·РєСѓ РїРѕ РіРѕСЂСЏС‡РёРј РєР»Р°РІРёС€Р°Рј
 	findtext.tutorial=1
 --]]----------------------------------------------------
+
+-- temporary replace for the `print` function.
+--- auto converts strings to the output's codepage
+local old_print = print
+local print = function (...)
+	local from = string.from_utf8
+	local to   = string.to_utf8
+	local arg = {...}
+	for i = 1, select('#',...) do
+		local a = arg[i]
+		if type(a)=='string' then
+			arg[i] = from( to(a, editor:codepage()), output:codepage() )
+		end
+	end
+	old_print(unpack(arg))
+end
 
 local firstNum = ifnil(tonumber(props['findtext.first.mark']),31)
 if firstNum < 1 or firstNum > 31 then firstNum = 31 end
 
 local sText = props['CurrentSelection']
-if tonumber(props["editor.unicode.mode"]) == IDM_ENCODING_DEFAULT then
-	sText = shell.from_utf8(sText)
-end
 local flag0 = 0
 if (sText == '') then
 	sText = props['CurrentWord']
@@ -63,7 +76,8 @@ local isTutorial = props['findtext.tutorial'] == '1'
 
 local current_mark_number = scite.SendEditor(SCI_GETINDICATORCURRENT)
 if current_mark_number < firstNum then current_mark_number = firstNum end
-if string.len(sText) > 0 then
+if sText~='' then
+	sText = sText:from_utf8(editor:codepage())
 	if bookmark then editor:MarkerDeleteAll(1) end
 	local msg
 	if isOutput then
@@ -76,15 +90,11 @@ if string.len(sText) > 0 then
 		scite.SendOutput(SCI_SETPROPERTY, 'lexer.errorlist.findtitle.begin', msg)
 		props['lexer.errorlist.findtitle.end'] = '"'
 		scite.SendOutput(SCI_SETPROPERTY, 'lexer.errorlist.findtitle.end', '"')
-		if tonumber(props["editor.unicode.mode"]) == IDM_ENCODING_DEFAULT then
-			print(msg..sText..'"')
-		else
-			print(msg..shell.from_utf8(sText)..'"')
-		end
+		print(msg..sText..'"')
 	end
 	local s,e = editor:findtext(sText, flag0 + flag1, 0)
 	local count = 0
-	if(s~=nil)then
+	if s then
 		local m = editor:LineFromPosition(s) - 1
 		while s do
 			local l = editor:LineFromPosition(s)
@@ -92,10 +102,7 @@ if string.len(sText) > 0 then
 			count = count + 1
 			if l ~= m then
 				if bookmark then editor:MarkerAdd(l,1) end
-				local str = string.gsub(' '..editor:GetLine(l),'%s+',' ')
-				if tonumber(props["editor.unicode.mode"]) ~= IDM_ENCODING_DEFAULT then
-					str = shell.from_utf8(str)
-				end
+				local str = string.gsub(editor:GetLine(l),'%s+',' ') --@was: ' '..editor:GetLine(l)
 				if isOutput then
 					print('./'..props['FileNameExt']..':'..(l + 1)..':\t'..str)
 				end
@@ -117,13 +124,13 @@ if string.len(sText) > 0 then
 	current_mark_number = current_mark_number + 1
 	if current_mark_number > 31 then current_mark_number = firstNum end
 	scite.SendEditor(SCI_SETINDICATORCURRENT, current_mark_number)
-		-- обеспечиваем возможность перехода по вхождениям с помощью F3 (Shift+F3)
+		-- РѕР±РµСЃРїРµС‡РёРІР°РµРј РІРѕР·РјРѕР¶РЅРѕСЃС‚СЊ РїРµСЂРµС…РѕРґР° РїРѕ РІС…РѕР¶РґРµРЅРёСЏРј СЃ РїРѕРјРѕС‰СЊСЋ F3 (Shift+F3)
 		if flag0 == SCFIND_WHOLEWORD then
 			editor:GotoPos(editor:WordStartPosition(editor.CurrentPos))
 		else
 			editor:GotoPos(editor.SelectionStart)
 		end
-		scite.Perform('find:'..sText)
+		scite.Perform('find:'..sText:to_utf8(editor:codepage()))
 else
 	EditorClearMarks()
 	if bookmark then editor:MarkerDeleteAll(1) end
@@ -132,4 +139,4 @@ else
 	print('> '..scite.GetTranslation('Or put cursor on the word for search. (search for word)'))
 	print('> '..scite.GetTranslation('You can also select text in console.'))
 end
---~ editor:CharRight() editor:CharLeft() --Снимает выделение с исходного текста
+--~ editor:CharRight() editor:CharLeft() --РЎРЅРёРјР°РµС‚ РІС‹РґРµР»РµРЅРёРµ СЃ РёСЃС…РѕРґРЅРѕРіРѕ С‚РµРєСЃС‚Р°

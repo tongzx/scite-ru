@@ -1,14 +1,14 @@
 --[[--------------------------------------------------
 Open_Selected_Filename.lua
-Authors: mozers™, VladVRO
-Version: 1.3.0
+Authors: mozersв„ў, VladVRO
+Version: 1.3.1
 ------------------------------------------------------
-Замена команды "Открыть выделенный файл"
-В отличии от встроенной команды SciTE, понимающей только явно заданный путь и относительные пути
-обрабатывает переменные SciTE, переменные окружения, конструкции LUA
+Р—Р°РјРµРЅР° РєРѕРјР°РЅРґС‹ "РћС‚РєСЂС‹С‚СЊ РІС‹РґРµР»РµРЅРЅС‹Р№ С„Р°Р№Р»"
+Р’ РѕС‚Р»РёС‡РёРё РѕС‚ РІСЃС‚СЂРѕРµРЅРЅРѕР№ РєРѕРјР°РЅРґС‹ SciTE, РїРѕРЅРёРјР°СЋС‰РµР№ С‚РѕР»СЊРєРѕ СЏРІРЅРѕ Р·Р°РґР°РЅРЅС‹Р№ РїСѓС‚СЊ Рё РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅС‹Рµ РїСѓС‚Рё
+РѕР±СЂР°Р±Р°С‚С‹РІР°РµС‚ РїРµСЂРµРјРµРЅРЅС‹Рµ SciTE, РїРµСЂРµРјРµРЅРЅС‹Рµ РѕРєСЂСѓР¶РµРЅРёСЏ, РєРѕРЅСЃС‚СЂСѓРєС†РёРё LUA
 -------------------------------------
-Подключение:
-Добавьте в SciTEStartup.lua строку
+РџРѕРґРєР»СЋС‡РµРЅРёРµ:
+Р”РѕР±Р°РІСЊС‚Рµ РІ SciTEStartup.lua СЃС‚СЂРѕРєСѓ
 dofile (props["SciteDefaultHome"].."\\tools\\Open_Selected_Filename.lua")
 -------------------------------------
 Connection:
@@ -21,7 +21,7 @@ local function GetOpenFilePath(text)
 	-- Example: $(SciteDefaultHome)\tools\RestoreRecent.js
 	local pattern_sci = '^$[(](.-)[)]'
 	local _, _, scite_var = string.find(text,pattern_sci)
-	if scite_var ~= nil then
+	if scite_var then
 		return string.gsub(text, pattern_sci, props[scite_var])
 	end
 
@@ -41,26 +41,18 @@ local function GetOpenFilePath(text)
 end
 
 local function GetSelText()
-	local text
-	if editor.Focus then
-		text = editor:GetSelText()
-	else
-		text = output:GetSelText()
-	end
-	if tonumber(props["editor.unicode.mode"])==IDM_ENCODING_DEFAULT then
-		return text
-	else
-		return shell.from_utf8(text)
-	end
+	local pane = editor.Focus and editor or output
+	local text = pane:GetSelText()
+	return text:to_utf8(editor:codepage())
 end
 
 local function OpenSelectedFilename()
 	local text = GetSelText()
 	if #text < 5 then return end
 	local filename = GetOpenFilePath(text)
-	if filename == nil then return end
+	if not filename then return end
 	filename = string.gsub(filename, '\\\\', '\\')
-	scite.Open (shell.to_utf8(filename))
+	scite.Open (filename)
 	return true
 end
 
