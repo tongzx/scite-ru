@@ -397,7 +397,7 @@ static int cf_pane_get_codepage(lua_State *L) {
 }
 
 static int lua_string_from_utf8(lua_State *L) {
-	if(lua_gettop(L) != 2) raise_error(L, "Wrong arguments count for scite.ConvertFromUTF8");
+	if(lua_gettop(L) != 2) raise_error(L, "Wrong arguments count for string.from_utf8");
 	const char *s = luaL_checkstring(L, 1);
 	int cp = 0;
 	if(!lua_isnumber(L, 2))
@@ -410,7 +410,7 @@ static int lua_string_from_utf8(lua_State *L) {
 }
 
 static int lua_string_to_utf8(lua_State *L) {
-	if(lua_gettop(L) != 2) raise_error(L, "Wrong arguments count for scite.ConvertToUTF8");
+	if(lua_gettop(L) != 2) raise_error(L, "Wrong arguments count for string.to_utf8");
 	const char *s = luaL_checkstring(L, 1);
 	int cp = 0;
 	if(!lua_isnumber(L, 2))
@@ -441,6 +441,31 @@ static int lua_string_utf8len(lua_State *L) {
 	GUI::gui_string wstr = GUI::StringFromUTF8(str);
 	lua_pushinteger(L, wstr.length());
 	return 1;
+}
+
+static int os_pushresult (lua_State *L, int i, GUI::gui_string fn) {
+  int en = errno;  /* calls to Lua API may change this value */
+  if (i) {
+    lua_pushboolean(L, 1);
+    return 1;
+  }
+  else {
+    lua_pushnil(L);
+	lua_pushfstring(L, "%s: %s", GUI::UTF8FromString(fn).c_str(), GUI::UTF8FromString(_wcserror(en)).c_str());
+    lua_pushinteger(L, en);
+    return 3;
+  }
+}
+
+static int lua_os_remove (lua_State *L) {
+	GUI::gui_string fn = GUI::StringFromUTF8(luaL_checkstring(L, 1));
+	return os_pushresult(L, _wremove(fn.c_str()) == 0, fn);
+}
+
+static int lua_os_rename (lua_State *L) {
+  GUI::gui_string fromname = GUI::StringFromUTF8(luaL_checkstring(L, 1));
+  GUI::gui_string toname = GUI::StringFromUTF8(luaL_checkstring(L, 2));
+  return os_pushresult(L, _wrename(fromname.c_str(), toname.c_str()) == 0, fromname);
 }
 //!-end-[EncodingToLua]
 
@@ -1693,6 +1718,12 @@ static bool InitGlobalScope(bool checkProperties, bool forceReload = false) {
 	lua_setfield(luaState, -2, "utf8lower");
 	lua_pushcfunction(luaState, lua_string_utf8len);
 	lua_setfield(luaState, -2, "utf8len");
+	lua_pop(luaState, 1);
+	lua_getglobal(luaState, "os");
+	lua_pushcfunction(luaState, lua_os_rename);
+	lua_setfield(luaState, -2, "rename");
+	lua_pushcfunction(luaState, lua_os_remove);
+	lua_setfield(luaState, -2, "remove");
 	lua_pop(luaState, 1);
 //!-end-[EncodingToLua]
 
