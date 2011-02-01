@@ -369,14 +369,13 @@ static int cf_scite_show_parameters_dialog(lua_State *L) {
 //!-start-[LocalizationFromLua]
 static int cf_editor_get_translation(lua_State *L) {
 	const char *s = luaL_checkstring(L, 1);
-	char *r = NULL;
+	std::string r;
 	if (lua_gettop(L) > 1) {
 		r = host->GetTranslation(s, (lua_toboolean(L, 2) != 0));
 	} else {
 		r = host->GetTranslation(s);
 	}
-	lua_pushstring(L, r);
-	delete []r;
+	lua_pushstring(L, r.c_str());
 	return 1;
 }
 //!-end-[LocalizationFromLua]

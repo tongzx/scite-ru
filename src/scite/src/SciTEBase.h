@@ -844,7 +844,7 @@ protected:
 	void Perform(const char *actions);
 	void DoMenuCommand(int cmdID);
 	bool ShowParametersDialog(const char *msg); //!-add-[ParametersDialogFromLua]
-	char *GetTranslation(const char *s, bool retainIfNotFound = true); //!-add-[LocalizationFromLua]
+	std::string GetTranslation(const char *s, bool retainIfNotFound = true); //!-add-[LocalizationFromLua]
 
 	// Valid CurrentWord characters
 	bool iswordcharforsel(char ch);
