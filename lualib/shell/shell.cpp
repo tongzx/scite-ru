@@ -368,6 +368,81 @@ static int fileexists( lua_State* L )
 	return 1;
 }
 
+
+struct W2MB
+{
+	W2MB( const wchar_t *src, int cp )
+			: buffer(0)
+		{
+			int len = ::WideCharToMultiByte( cp, 0, src, -1, 0, 0, 0, 0 );
+			if ( len )
+			{
+				buffer = new char[len];
+				len = ::WideCharToMultiByte( cp, 0, src, -1, buffer, len, 0, 0 );
+			}
+		}
+	~W2MB()
+		{ delete[] buffer; }
+	const char *c_str() const
+		{ return buffer; }
+private:
+	char *buffer;
+};
+
+struct MB2W
+{
+	MB2W( const char *src, int cp )
+			: buffer(0)
+		{
+			int len = ::MultiByteToWideChar( cp, 0, src, -1, 0, 0 );
+			if ( len )
+			{
+				buffer = new wchar_t[len];
+				len = ::MultiByteToWideChar( cp, 0, src, -1, buffer, len );
+			}
+		}
+	~MB2W()
+		{ delete[] buffer; }
+	const wchar_t *c_str() const
+		{ return buffer; }
+private:
+	wchar_t *buffer;
+};
+
+static int internalConv( lua_State *L, bool toUTF8 )
+{
+	bool success = false;
+	if ( lua_isstring(L, 1) )
+	{
+		size_t len;
+		const char *src = lua_tolstring( L, 1, &len );
+		ptrdiff_t cp = luaL_optinteger( L, 2, CP_ACP );
+		MB2W wc( src, toUTF8? cp:CP_UTF8 );
+		if ( wc.c_str() )
+		{
+			W2MB nc( wc.c_str(), toUTF8? CP_UTF8:cp );
+			if ( nc.c_str() )
+			{
+				lua_pushstring( L, nc.c_str() );
+				success = true;
+			}
+		}
+	}
+	if ( !success )
+		lua_pushnil( L );
+	return 1;
+}
+
+static int to_utf8( lua_State* L )
+{
+	return internalConv( L, true );
+}
+
+static int from_utf8( lua_State* L )
+{
+	return internalConv( L, false );
+}
+
 // запустить через CreateProcess в скрытом режиме
 static BOOL RunProcessHide( CPath& path, DWORD* out_exitcode, CSimpleString* strOut )
 {
@@ -434,7 +509,7 @@ static BOOL RunProcessHide( CPath& path, DWORD* out_exitcode, CSimpleString* str
 		DWORD TotalBytesAvail = 0;
 		DWORD PipeReaded = 0;
 		DWORD exit_code = 0;
-		CMemBuffer< wchar_t, MAX_CMD > bufStr; // строковой буфер длиной MAX_CMD
+		CMemBuffer< char, MAX_CMD > bufStr; // строковой буфер длиной MAX_CMD
 		while ( ::PeekNamedPipe( FReadPipe, NULL, 0, &BytesRead, &TotalBytesAvail, NULL ) )
 		{
 			if ( TotalBytesAvail == 0 )
@@ -462,7 +537,7 @@ static BOOL RunProcessHide( CPath& path, DWORD* out_exitcode, CSimpleString* str
 						BytesToRead = TotalBytesAvail - BytesRead;
 					}
 					if ( ::ReadFile( FReadPipe,
-									 bufCmdLine.GetBuffer(),
+									 bufStr.GetBuffer(),
 									 BytesToRead,
 									 &PipeReaded,
 									 NULL ) == FALSE )
@@ -471,9 +546,9 @@ static BOOL RunProcessHide( CPath& path, DWORD* out_exitcode, CSimpleString* str
 					}
 					if ( PipeReaded <= 0 ) continue;
 					BytesRead += PipeReaded;
-					bufCmdLine[ PipeReaded ] = '\0';
-					//::OemToAnsi( bufCmdLine.GetBuffer(), bufStr.GetBuffer() );
-					strOut->Append( bufCmdLine.GetBuffer() /*bufStr.GetBuffer()*/ );
+					bufStr[ PipeReaded ] = '\0';
+					MB2W wc( bufStr.GetBuffer(), 866);
+					strOut->Append( wc.c_str() );
 				}
 			}
 		}
@@ -923,80 +998,6 @@ static int findfiles( lua_State* L )
 
 	// files not found
 	return 0;
-}
-
-struct W2MB
-{
-	W2MB( const wchar_t *src, int cp )
-			: buffer(0)
-		{
-			int len = ::WideCharToMultiByte( cp, 0, src, -1, 0, 0, 0, 0 );
-			if ( len )
-			{
-				buffer = new char[len];
-				len = ::WideCharToMultiByte( cp, 0, src, -1, buffer, len, 0, 0 );
-			}
-		}
-	~W2MB()
-		{ delete[] buffer; }
-	const char *c_str() const
-		{ return buffer; }
-private:
-	char *buffer;
-};
-
-struct MB2W
-{
-	MB2W( const char *src, int cp )
-			: buffer(0)
-		{
-			int len = ::MultiByteToWideChar( cp, 0, src, -1, 0, 0 );
-			if ( len )
-			{
-				buffer = new wchar_t[len];
-				len = ::MultiByteToWideChar( cp, 0, src, -1, buffer, len );
-			}
-		}
-	~MB2W()
-		{ delete[] buffer; }
-	const wchar_t *c_str() const
-		{ return buffer; }
-private:
-	wchar_t *buffer;
-};
-
-static int internalConv( lua_State *L, bool toUTF8 )
-{
-	bool success = false;
-	if ( lua_isstring(L, 1) )
-	{
-		size_t len;
-		const char *src = lua_tolstring( L, 1, &len );
-		ptrdiff_t cp = luaL_optinteger( L, 2, CP_ACP );
-		MB2W wc( src, toUTF8? cp:CP_UTF8 );
-		if ( wc.c_str() )
-		{
-			W2MB nc( wc.c_str(), toUTF8? CP_UTF8:cp );
-			if ( nc.c_str() )
-			{
-				lua_pushstring( L, nc.c_str() );
-				success = true;
-			}
-		}
-	}
-	if ( !success )
-		lua_pushnil( L );
-	return 1;
-}
-
-static int to_utf8( lua_State* L )
-{
-	return internalConv( L, true );
-}
-
-static int from_utf8( lua_State* L )
-{
-	return internalConv( L, false );
 }
 
 extern int showinputbox( lua_State* );

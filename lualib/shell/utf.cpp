@@ -112,6 +112,7 @@ static size_t UTF16FromUTF8(const char *s, size_t len, wchar_t *tbuf, size_t tle
 }
 
 wchar_t* StringFromUTF8(const char *s) {
+	if(!s) return NULL;
 	size_t sLen = s ? strlen(s) : 0;
 	size_t wideLen = UTF16Length(s, sLen);
 	wchar_t* vgc = new wchar_t[wideLen + 1];
