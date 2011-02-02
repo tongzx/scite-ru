@@ -1,6 +1,6 @@
 --[[--------------------------------------------------
-FindText v7.3.2
-Авторы: mozersT, mimir, Алексей, codewarlock1101, VladVRO
+FindText v7.4.0
+Авторы: mozers™, mimir, Алексей, codewarlock1101, VladVRO
 
 * Если текст выделен - ищется выделенная подстрока
 * Если текст не выделен - ищется текущее слово
@@ -43,20 +43,8 @@ FindText v7.3.2
 	findtext.tutorial=1
 --]]----------------------------------------------------
 
--- temporary replace for the `print` function.
---- auto converts strings to the output's codepage
-local old_print = print
-local print = function (...)
-	local from = string.from_utf8
-	local to   = string.to_utf8
-	local arg = {...}
-	for i = 1, select('#',...) do
-		local a = arg[i]
-		if type(a)=='string' then
-			arg[i] = from( to(a, editor:codepage()), output:codepage() )
-		end
-	end
-	old_print(unpack(arg))
+local function uprint(str)
+	print(str:from_utf8(output:codepage()))
 end
 
 local firstNum = ifnil(tonumber(props['findtext.first.mark']),31)
@@ -87,10 +75,10 @@ if sText~='' then
 			msg = '> '..scite.GetTranslation('Search for selected text')..': "'
 		end
 		props['lexer.errorlist.findtitle.begin'] = msg
-		scite.SendOutput(SCI_SETPROPERTY, 'lexer.errorlist.findtitle.begin', msg)
+		scite.SendOutput(SCI_SETPROPERTY, 'lexer.errorlist.findtitle.begin', msg:from_utf8(output:codepage()))
 		props['lexer.errorlist.findtitle.end'] = '"'
 		scite.SendOutput(SCI_SETPROPERTY, 'lexer.errorlist.findtitle.end', '"')
-		print(msg..sText..'"')
+		uprint(msg .. sText:to_utf8(editor:codepage()) .. '"')
 	end
 	local s,e = editor:findtext(sText, flag0 + flag1, 0)
 	local count = 0
@@ -102,24 +90,24 @@ if sText~='' then
 			count = count + 1
 			if l ~= m then
 				if bookmark then editor:MarkerAdd(l,1) end
-				local str = string.gsub(editor:GetLine(l),'%s+',' ') --@was: ' '..editor:GetLine(l)
+				local str = string.gsub(editor:GetLine(l),'%s+',' '):to_utf8(editor:codepage())
 				if isOutput then
-					print('./'..props['FileNameExt']..':'..(l + 1)..':\t'..str)
+					uprint('./'..props['FileNameExt']..':'..(l + 1)..':\t'..str)
 				end
 				m = l
 			end
 			s,e = editor:findtext(sText, flag0 + flag1, e+1)
 		end
 		if isOutput then
-			print('> '..string.gsub(scite.GetTranslation('Found: @ results'), '@', count))
+			uprint('> '..string.gsub(scite.GetTranslation('Found: @ results'), '@', count))
 			if isTutorial then
-				print('F3 (Shift+F3) - '..scite.GetTranslation('Jump by markers')..
+				uprint('F3 (Shift+F3) - '..scite.GetTranslation('Jump by markers')..
 					'\nF4 (Shift+F4) - '..scite.GetTranslation('Jump by lines')..
 					'\nCtrl+Alt+C - '..scite.GetTranslation('Erase all markers'))
 			end
 		end
 	else
-		print('> '..string.gsub(scite.GetTranslation("Can't find [@]!"), '@', sText))
+		uprint('> '..string.gsub(scite.GetTranslation("Can't find [@]!"), '@', sText))
 	end
 	current_mark_number = current_mark_number + 1
 	if current_mark_number > 31 then current_mark_number = firstNum end
@@ -135,8 +123,8 @@ else
 	EditorClearMarks()
 	if bookmark then editor:MarkerDeleteAll(1) end
 	scite.SendEditor(SCI_SETINDICATORCURRENT, firstNum)
-	print('> '..scite.GetTranslation('Select text for search! (search for selection)'))
-	print('> '..scite.GetTranslation('Or put cursor on the word for search. (search for word)'))
-	print('> '..scite.GetTranslation('You can also select text in console.'))
+	uprint('> '..scite.GetTranslation('Select text for search! (search for selection)'))
+	uprint('> '..scite.GetTranslation('Or put cursor on the word for search. (search for word)'))
+	uprint('> '..scite.GetTranslation('You can also select text in console.'))
 end
 --~ editor:CharRight() editor:CharLeft() --Снимает выделение с исходного текста
