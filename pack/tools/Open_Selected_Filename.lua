@@ -1,11 +1,11 @@
 --[[--------------------------------------------------
 Open_Selected_Filename.lua
 Authors: mozers™, VladVRO
-Version: 1.3.1
+Version: 1.4.0
 ------------------------------------------------------
 Замена команды "Открыть выделенный файл"
 В отличии от встроенной команды SciTE, понимающей только явно заданный путь и относительные пути
-обрабатывает переменные SciTE, переменные окружения, конструкции LUA
+обрабатывает переменные SciTE, переменные окружения, конструкции LUA, неполные пути
 -------------------------------------
 Подключение:
 Добавьте в SciTEStartup.lua строку
@@ -16,7 +16,42 @@ In file SciTEStartup.lua add a line:
 dofile (props["SciteDefaultHome"].."\\tools\\Open_Selected_Filename.lua")
 --]]--------------------------------------------------
 require 'shell'
+require 'gui'
 ------------------------------------------------------
+
+-- Ищет файл в текущем и дочерних каталогах
+local function FindFileDown(filename)
+	local findfile
+	local function DIR(path)
+		local files = gui.files(path..'\\'..filename)
+		if files then
+			for _, file in pairs(files) do
+				if filename:find('\\') then file = filename:gsub('[^\\]*$','')..file end
+				findfile = path..'\\'..file
+				return
+			end
+		end
+		local folders = gui.files(path..'\\*', true)
+		if folders then
+			for _, folder in pairs(folders) do
+				DIR(path..'\\'..folder)
+			end
+		end
+	end
+	DIR(props['FileDir'])
+	return findfile
+end
+
+-- Ищет файл в родительских каталогах
+local function FindFileUp(filename)
+	local path = props['FileDir']
+	repeat
+		path = path:gsub('\\[^\\]+$', '')
+		filepath = path..'\\'..filename
+		if shell.fileexists(filepath) then return filepath end
+	until #path < 3
+end
+
 local function GetOpenFilePath(text)
 	-- Example: $(SciteDefaultHome)\tools\RestoreRecent.js
 	local pattern_sci = '^$[(](.-)[)]'
@@ -28,22 +63,34 @@ local function GetOpenFilePath(text)
 	-- Example: %APPDATA%\Opera\Opera\profile\opera6.ini
 	local pattern_env = '^[%%](.-)[%%]'
 	local _, _, os_env = string.find(text, pattern_env)
-	if os_env ~= nil then
+	if os_env then
 		return string.gsub(text, pattern_env, os.getenv(os_env))
 	end
 
 	-- Example: props["SciteDefaultHome"].."\\tools\\Zoom.lua"
 	local pattern_props = '^props%[%p(.-)%p%]%.%.%p(.*)%p'
 	local _, _, scite_prop1, scite_prop2 = string.find(text, pattern_props)
-	if scite_prop1 ~= nil then
+	if scite_prop1 then
 		return props[scite_prop1]..scite_prop2
+	end
+
+	-- Example: ..LuaLib\re.lua
+	local files = FindFileDown(text)
+	if files then
+		return files
+	end
+
+	-- Example: ..\languages\css.properties
+	local filepath = FindFileUp(text)
+	if filepath then
+		return filepath
 	end
 end
 
 local function GetSelText()
 	local pane = editor.Focus and editor or output
 	local text = pane:GetSelText()
-	return text:to_utf8(editor:codepage())
+	return text:to_utf8(pane:codepage())
 end
 
 local function OpenSelectedFilename()
