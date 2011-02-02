@@ -1,14 +1,14 @@
 --[[--------------------------------------------------
 auto_backup.lua
-Authors: mozers™
-Version: 1.5.2
+Authors: mozersв„ў
+Version: 1.5.3
 ------------------------------------------------------
-Создание резервной копии сохраняемого после редактирования файла
+РЎРѕР·РґР°РЅРёРµ СЂРµР·РµСЂРІРЅРѕР№ РєРѕРїРёРё СЃРѕС…СЂР°РЅСЏРµРјРѕРіРѕ РїРѕСЃР»Рµ СЂРµРґР°РєС‚РёСЂРѕРІР°РЅРёСЏ С„Р°Р№Р»Р°
 ------------------------------------------------------
-Подключение:
-В файл SciTEStartup.lua добавьте строку:
+РџРѕРґРєР»СЋС‡РµРЅРёРµ:
+Р’ С„Р°Р№Р» SciTEStartup.lua РґРѕР±Р°РІСЊС‚Рµ СЃС‚СЂРѕРєСѓ:
   dofile (props["SciteDefaultHome"].."\\tools\\auto_backup.lua")
-задайте в файле .properties кол-во сохраняемых вариантов и каталог для сохранения резервных копий:
+Р·Р°РґР°Р№С‚Рµ РІ С„Р°Р№Р»Рµ .properties РєРѕР»-РІРѕ СЃРѕС…СЂР°РЅСЏРµРјС‹С… РІР°СЂРёР°РЅС‚РѕРІ Рё РєР°С‚Р°Р»РѕРі РґР»СЏ СЃРѕС…СЂР°РЅРµРЅРёСЏ СЂРµР·РµСЂРІРЅС‹С… РєРѕРїРёР№:
   backup.files=1
   backup.path=$(TEMP)\SciTE
 ----------------------------------------------
@@ -36,8 +36,7 @@ local function GetPath()
 
 -- 	if backup folder not exist
 	if not shell.fileexists(path) then
-		shell.exec('CMD /C MD "'..path..'"', nil, true, true) -- Silent window (only SciTE-Ru)
---~ 		os.execute('CMD /C MD "'..path..'"')
+		shell.exec('CMD /C MD "'..path..'"', nil, true, true) -- Silent window
 	end
 	return path
 end
@@ -47,7 +46,6 @@ local function BakupFile(filename)
 	if sbck == nil or sbck == 0 then
 		return false
 	end
-	filename = shell.from_utf8(filename)
 	local sfilename = filename
 	filename = GetPath().."\\"..string.gsub(filename,'.*\\','')
 	local nbck = 1
@@ -64,7 +62,7 @@ local function BakupFile(filename)
 	end
 	os.remove (filename..".bak")
 	if not shell.fileexists(sfilename) then
-		io.output(shell.to_utf8(sfilename))
+		io.output(sfilename)
 		io.close()
 	end
 	os.rename (sfilename, filename..".bak")

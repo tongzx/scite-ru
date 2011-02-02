@@ -1,6 +1,6 @@
 --[[--------------------------------------------------
  Rename.lua
- Version: 2.2.3
+ Version: 2.2.4
  Author: mozers™ (идея codewarlock1101)
  ------------------------------------------------
  Переименовывает текущий файл
@@ -28,4 +28,4 @@ until false
 local file_dir = props["FileDir"]
 filename_new = file_dir:gsub('\\','\\\\')..'\\\\'..filename_new
 scite.Perform("saveas:"..filename_new)
-os.remove(file_dir..'\\'..shell.from_utf8(filename))  --@todo: this won't work well with come paths (like D:\CH 漢語\DE üöäß\RU ёйцу\EN.txt)
+os.remove(file_dir..'\\'..filename)
