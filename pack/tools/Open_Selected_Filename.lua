@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 Open_Selected_Filename.lua
 Authors: mozers™, VladVRO
-Version: 1.4.0
+Version: 1.4.1
 ------------------------------------------------------
 Замена команды "Открыть выделенный файл"
 В отличии от встроенной команды SciTE, понимающей только явно заданный путь и относительные пути
@@ -90,6 +90,7 @@ end
 local function GetSelText()
 	local pane = editor.Focus and editor or output
 	local text = pane:GetSelText()
+	text = string.gsub(text, '/', '\\')
 	return text:to_utf8(pane:codepage())
 end
 
