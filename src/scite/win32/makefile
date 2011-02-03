@@ -16,7 +16,8 @@ endif
 
 PROG	= ../bin/SciTE.exe
 PROGSTATIC = ../bin/Sc1.exe
-WIDEFLAGS=-DUNICODE -D_UNICODE
+#!-[Fix error Rev1722] WIDEFLAGS=-DUNICODE -D_UNICODE
+WIDEFLAGS=-DUNICODE -D_UNICODE -D__MSVCRT_VERSION__=0x0700
 
 vpath %.h ../src ../../scintilla/include ../../scintilla/win32
 vpath %.cxx ../src

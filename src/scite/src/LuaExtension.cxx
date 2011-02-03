@@ -317,7 +317,7 @@ int get_codepage(ExtensionAPI::Pane p) {
 }
 
 inline void str_replace(GUI::gui_string &str, GUI::gui_string f, GUI::gui_string r) {
-	GUI::gui_string::size_type pos = 0; 
+	GUI::gui_string::size_type pos = 0;
 	while(((pos = str.find(f, pos)) != GUI::gui_string::npos) && (pos < str.length()))
 	{
 		str.replace(pos, f.length(), r);
@@ -335,19 +335,19 @@ static int cf_editor_insert_abbrev(lua_State *L) {
 			GUI::gui_string sel = GUI::StringFromUTF8(ss.c_str());
 			if(!sel.empty())
 				host->Send(ExtensionAPI::paneEditor, SCI_REPLACESEL, 0, reinterpret_cast<sptr_t>(""));
-			
+
 			str_replace(s, L"%SEL%", sel);
 		}
 		if (s.find(L"%CLP%", 0) != GUI::gui_string::npos) {
-			GUI::gui_string clpBuffer;		
-			BOOL IsOpen=OpenClipboard(0);		
-			if(IsOpen){		
-				HANDLE Data = GetClipboardData(CF_UNICODETEXT);		
-				if(Data != 0){		
-					clpBuffer = GUI::gui_string(static_cast<const wchar_t*>(GlobalLock(Data)));		
-					GlobalUnlock(Data);		
-				}		
-				CloseClipboard();		
+			GUI::gui_string clpBuffer;
+			BOOL IsOpen=OpenClipboard(0);
+			if(IsOpen){
+				HANDLE Data = GetClipboardData(CF_UNICODETEXT);
+				if(Data != 0){
+					clpBuffer = GUI::gui_string(static_cast<const wchar_t*>(GlobalLock(Data)));
+					GlobalUnlock(Data);
+				}
+				CloseClipboard();
 			}
 			str_replace(s, L"%CLP%", clpBuffer);
 		}
@@ -1704,7 +1704,7 @@ static bool InitGlobalScope(bool checkProperties, bool forceReload = false) {
 //!-end-[LocalizationFromLua]
 
 	lua_setglobal(luaState, "scite");
-	
+
 //!-start-[EncodingToLua]
 	lua_getglobal(luaState, "string");
 	lua_pushcfunction(luaState, lua_string_to_utf8);
