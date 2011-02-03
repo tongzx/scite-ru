@@ -316,43 +316,60 @@ int get_codepage(ExtensionAPI::Pane p) {
 	return codePage;
 }
 
-inline void str_replace(GUI::gui_string &str, GUI::gui_string f, GUI::gui_string r) {
-	GUI::gui_string::size_type pos = 0;
-	while(((pos = str.find(f, pos)) != GUI::gui_string::npos) && (pos < str.length()))
-	{
-		str.replace(pos, f.length(), r);
-		pos += r.length();
+inline size_t get_next_p(GUI::gui_string &s, size_t pos = 0) {
+	pos = s.find(GUI_TEXT("%"), pos);
+	while((pos != std::string::npos)&&(pos != s.length()-1)) {
+		if (s.at(pos+1) == GUI::gui_char('%')) {
+			s.erase(pos+1, 1);
+			pos = s.find(GUI_TEXT("%"), pos+1);
+		} else break;
 	}
+	return pos;
 }
 
 static int cf_editor_insert_abbrev(lua_State *L) {
 	GUI::gui_string s = GUI::StringFromUTF8(luaL_checkstring(L, 1));
 	if (!s.empty()) {
-		if (s.find(L"%SEL%", 0) != GUI::gui_string::npos) {
-			int sel_start = host->Send(ExtensionAPI::paneEditor, SCI_GETSELECTIONSTART);
-			int sel_end = host->Send(ExtensionAPI::paneEditor, SCI_GETSELECTIONEND);
-			std::string ss = GUI::ConvertToUTF8(host->Range(ExtensionAPI::paneEditor, sel_start, sel_end), get_codepage(ExtensionAPI::paneEditor));
-			GUI::gui_string sel = GUI::StringFromUTF8(ss.c_str());
-			if(!sel.empty())
-				host->Send(ExtensionAPI::paneEditor, SCI_REPLACESEL, 0, reinterpret_cast<sptr_t>(""));
-
-			str_replace(s, L"%SEL%", sel);
-		}
-		if (s.find(L"%CLP%", 0) != GUI::gui_string::npos) {
-			GUI::gui_string clpBuffer;
-			BOOL IsOpen=OpenClipboard(0);
-			if(IsOpen){
-				HANDLE Data = GetClipboardData(CF_UNICODETEXT);
-				if(Data != 0){
-					clpBuffer = GUI::gui_string(static_cast<const wchar_t*>(GlobalLock(Data)));
-					GlobalUnlock(Data);
+		host->Send(ExtensionAPI::paneEditor, SCI_BEGINUNDOACTION);
+		int spos = 0;
+		int epos = 0;
+		GUI::gui_string tmp;
+		spos = get_next_p(s);
+		while(spos != std::string::npos) {
+			epos = s.find(GUI_TEXT("%"), spos+1);
+			if(epos == std::string::npos) break;
+			tmp = s.substr(spos+1, epos-spos-1);
+			if (tmp.find_first_of(GUI_TEXT(" ")) == std::string::npos) {
+				GUI::gui_string r;
+				if(tmp == GUI_TEXT("SEL")) {
+					int sel_start = host->Send(ExtensionAPI::paneEditor, SCI_GETSELECTIONSTART);
+					int sel_end = host->Send(ExtensionAPI::paneEditor, SCI_GETSELECTIONEND);
+					std::string ss = GUI::ConvertToUTF8(host->Range(ExtensionAPI::paneEditor, sel_start, sel_end), get_codepage(ExtensionAPI::paneEditor));
+					r = GUI::StringFromUTF8(ss.c_str());
+					if(!r.empty())
+						host->Send(ExtensionAPI::paneEditor, SCI_REPLACESEL, 0, reinterpret_cast<sptr_t>(""));
+				} else if (tmp == GUI_TEXT("CLP")) {    
+					BOOL IsOpen=OpenClipboard(0);        
+					if(IsOpen){        
+						HANDLE Data = GetClipboardData(CF_UNICODETEXT);        
+						if(Data != 0){        
+							r = GUI::gui_string(static_cast<const wchar_t*>(GlobalLock(Data)));        
+							GlobalUnlock(Data);        
+						}        
+						CloseClipboard();        
+					}
+				} else if (char* val = host->Property(GUI::UTF8FromString(tmp).c_str())) {
+					r = GUI::StringFromUTF8(val);
 				}
-				CloseClipboard();
+				
+				s.replace(spos, epos-spos+1, r);
+				spos = get_next_p(s, spos + r.length());
+			} else {
+				spos = get_next_p(s, epos);
 			}
-			str_replace(s, L"%CLP%", clpBuffer);
 		}
-
-		host->InsertAbbreviation(GUI::ConvertFromUTF8(GUI::UTF8FromString(s), get_codepage(ExtensionAPI::paneEditor)).c_str());
+		host->InsertAbbreviation(GUI::UTF8FromString(s).c_str());
+		host->Send(ExtensionAPI::paneEditor, SCI_ENDUNDOACTION);
 	}
 	return 0;
 }
@@ -1704,7 +1721,7 @@ static bool InitGlobalScope(bool checkProperties, bool forceReload = false) {
 //!-end-[LocalizationFromLua]
 
 	lua_setglobal(luaState, "scite");
-
+	
 //!-start-[EncodingToLua]
 	lua_getglobal(luaState, "string");
 	lua_pushcfunction(luaState, lua_string_to_utf8);
