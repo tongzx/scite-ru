@@ -327,12 +327,27 @@ inline size_t get_next_p(GUI::gui_string &s, size_t pos = 0) {
 	return pos;
 }
 
+inline void str_replace(GUI::gui_string &str, GUI::gui_string f, GUI::gui_string r) {
+	GUI::gui_string::size_type pos = 0;
+	while(((pos = str.find(f, pos)) != GUI::gui_string::npos) && (pos < str.length()))
+	{
+		str.replace(pos, f.length(), r);
+		pos += r.length();
+	
+	}
+}
+
 static int cf_editor_insert_abbrev(lua_State *L) {
 	GUI::gui_string s = GUI::StringFromUTF8(luaL_checkstring(L, 1));
 	if (!s.empty()) {
 		host->Send(ExtensionAPI::paneEditor, SCI_BEGINUNDOACTION);
-		int spos = 0;
-		int epos = 0;
+		int sel_start = host->Send(ExtensionAPI::paneEditor, SCI_GETSELECTIONSTART);
+		int sel_end = host->Send(ExtensionAPI::paneEditor, SCI_GETSELECTIONEND);
+		std::string ss = GUI::ConvertToUTF8(host->Range(ExtensionAPI::paneEditor, sel_start, sel_end), get_codepage(ExtensionAPI::paneEditor));
+		if(!ss.empty())
+			host->Send(ExtensionAPI::paneEditor, SCI_REPLACESEL, 0, reinterpret_cast<sptr_t>(""));
+		size_t spos = 0;
+		size_t epos = 0;
 		GUI::gui_string tmp;
 		spos = get_next_p(s);
 		while(spos != std::string::npos) {
@@ -342,12 +357,7 @@ static int cf_editor_insert_abbrev(lua_State *L) {
 			if (tmp.find_first_of(GUI_TEXT(" ")) == std::string::npos) {
 				GUI::gui_string r;
 				if(tmp == GUI_TEXT("SEL")) {
-					int sel_start = host->Send(ExtensionAPI::paneEditor, SCI_GETSELECTIONSTART);
-					int sel_end = host->Send(ExtensionAPI::paneEditor, SCI_GETSELECTIONEND);
-					std::string ss = GUI::ConvertToUTF8(host->Range(ExtensionAPI::paneEditor, sel_start, sel_end), get_codepage(ExtensionAPI::paneEditor));
 					r = GUI::StringFromUTF8(ss.c_str());
-					if(!r.empty())
-						host->Send(ExtensionAPI::paneEditor, SCI_REPLACESEL, 0, reinterpret_cast<sptr_t>(""));
 				} else if (tmp == GUI_TEXT("CLP")) {    
 					BOOL IsOpen=OpenClipboard(0);        
 					if(IsOpen){        
@@ -361,12 +371,11 @@ static int cf_editor_insert_abbrev(lua_State *L) {
 				} else if (char* val = host->Property(GUI::UTF8FromString(tmp).c_str())) {
 					r = GUI::StringFromUTF8(val);
 				}
-				
+				str_replace(r, GUI_TEXT("\\"), GUI_TEXT("\\\\")); //TODO> Must be "Slash" from StringHelper.cxx
 				s.replace(spos, epos-spos+1, r);
-				spos = get_next_p(s, spos + r.length());
-			} else {
-				spos = get_next_p(s, epos);
-			}
+				epos = spos + r.length();
+			} 
+			spos = get_next_p(s, epos);
 		}
 		host->InsertAbbreviation(GUI::UTF8FromString(s).c_str());
 		host->Send(ExtensionAPI::paneEditor, SCI_ENDUNDOACTION);
