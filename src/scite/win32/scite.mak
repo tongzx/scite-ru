@@ -180,7 +180,7 @@ LUA_CORE_OBJS = lapi.obj lcode.obj ldebug.obj ldo.obj ldump.obj lfunc.obj lgc.ob
 LUA_LIB_OBJS =	lauxlib.obj lbaselib.obj ldblib.obj liolib.obj lmathlib.obj ltablib.obj \
                 lstrlib.obj loadlib.obj loslib.obj linit.obj
 
-LUA_OBJS = LuaExtension.obj SingleThreadExtension.obj $(LUA_CORE_OBJS) $(LUA_LIB_OBJS)
+LUA_OBJS = LuaExtension.obj LuaUtf8.obj SingleThreadExtension.obj $(LUA_CORE_OBJS) $(LUA_LIB_OBJS)
 
 OBJS = $(OBJS) $(LUA_OBJS)
 OBJSSTATIC = $(OBJSSTATIC) $(LUA_OBJS)
@@ -512,6 +512,11 @@ LuaExtension.obj: \
 	../src/LuaExtension.h \
 	../src/IFaceTable.h \
 	../src/SciTEKeys.h
+
+LuaUtf8.obj: \
+	../src/LuaUtf8.cxx \
+	../../scintilla/include/Scintilla.h \
+	../src/GUI.h \
 
 IFaceTable.obj: \
 	../src/IFaceTable.cxx \

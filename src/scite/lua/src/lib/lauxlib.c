@@ -548,35 +548,6 @@ static int errfile (lua_State *L, const char *what, int fnameindex) {
   return LUA_ERRFILE;
 }
 
-//-start-[luaFileOpenFix]
-#ifdef _WIN32
-#include <windows.h>
-#endif
-
-static FILE *open_file(const char *filename, const char *mode) {
-#ifdef _WIN32
-	// convert from utf8
-	int cchWideFileName = 0;
-	wchar_t* pszWideFileName = NULL;
-	int cchWideMode = 0;
-	wchar_t* pszWideMode = NULL;
-	FILE* f = NULL;
-	cchWideFileName = MultiByteToWideChar(CP_UTF8, 0, filename, -1, NULL, 0);
-	pszWideFileName = (wchar_t*)malloc(sizeof(wchar_t)*(cchWideFileName+1));
-	MultiByteToWideChar(CP_UTF8, 0, filename, -1, pszWideFileName, cchWideFileName + 1);
-	cchWideMode = MultiByteToWideChar(CP_UTF8, 0, mode, -1, NULL, 0);
-	pszWideMode = (wchar_t*)malloc(sizeof(wchar_t)*(cchWideMode+1));
-	MultiByteToWideChar(CP_UTF8, 0, mode, -1, pszWideMode, cchWideMode + 1);
-	f = _wfopen(pszWideFileName, pszWideMode);
-	free(pszWideFileName);
-	free(pszWideMode);
-	if ( f == NULL ) f = fopen( filename, mode );
-	return f;
-#else
-	return fopen( filename, mode );
-#endif
-}
-//-end-[luaFileOpenFix]
 
 LUALIB_API int luaL_loadfile (lua_State *L, const char *filename) {
   LoadF lf;
@@ -590,8 +561,7 @@ LUALIB_API int luaL_loadfile (lua_State *L, const char *filename) {
   }
   else {
     lua_pushfstring(L, "@%s", filename);
-//!    lf.f = fopen(filename, "r");
-    lf.f = open_file(filename, "r"); //-change-[luaFileOpenFix]
+    lf.f = fopen(filename, "r");
     if (lf.f == NULL) return errfile(L, "open", fnameindex);
   }
   c = getc(lf.f);

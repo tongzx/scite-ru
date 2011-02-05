@@ -16,8 +16,7 @@ endif
 
 PROG	= ../bin/SciTE.exe
 PROGSTATIC = ../bin/Sc1.exe
-#!-[Fix error Rev1722] WIDEFLAGS=-DUNICODE -D_UNICODE
-WIDEFLAGS=-DUNICODE -D_UNICODE -D__MSVCRT_VERSION__=0x0700
+WIDEFLAGS=-DUNICODE -D_UNICODE
 
 vpath %.h ../src ../../scintilla/include ../../scintilla/win32
 vpath %.cxx ../src
@@ -32,7 +31,7 @@ LUA_CORE_OBJS = lapi.o lcode.o ldebug.o ldo.o ldump.o lfunc.o lgc.o llex.o \
 LUA_LIB_OBJS =	lauxlib.o lbaselib.o ldblib.o liolib.o lmathlib.o ltablib.o \
 		lstrlib.o loadlib.o loslib.o linit.o
 
-LUA_OBJS = LuaExtension.o SingleThreadExtension.o $(LUA_CORE_OBJS) $(LUA_LIB_OBJS)
+LUA_OBJS = LuaExtension.o LuaUtf8.o SingleThreadExtension.o $(LUA_CORE_OBJS) $(LUA_LIB_OBJS)
 
 vpath %.c ../lua/src ../lua/src/lib
 
