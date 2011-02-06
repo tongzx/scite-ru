@@ -1,5 +1,5 @@
 -- COMMON.lua
--- Version: 1.13.0
+-- Version: 1.13.1
 ---------------------------------------------------
 -- Общие функции, использующиеся во многих скриптах
 ---------------------------------------------------
@@ -323,6 +323,9 @@ AddEventHandler("OnOpen", function()
 	string.lower = StringLower
 	string.upper = StringUpper
 	string.len = StringLen
+	os.rename = os.utf8rename
+	os.remove = os.utf8remove
+	os.execute = os.utf8execute
 	EditorInitMarkStyles()
 	SetMarginTypeN()
 end, 'RunOnce')
