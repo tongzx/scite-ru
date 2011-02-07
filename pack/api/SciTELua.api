@@ -136,10 +136,13 @@ os.clock
 os.date
 os.difftime
 os.execute
+os.utf8execute
 os.exit
 os.getenv
 os.remove
+os.utf8remove
 os.rename
+os.utf8rename
 os.setlocale
 os.time
 os.tmpname
@@ -147,10 +150,13 @@ clock ()\n  returns CPU time used by program in seconds
 date ([format [, time]])\n  returns a string or table containing date and time, "*t" returns a table
 difftime (t2, t1)\n  returns number of seconds from time t1 to time t2
 execute (command)\n  executes command using C function system, returns status code
+utf8execute (utf8 command)\n  executes command using C function system, returns status code (only SciTE-Ru)
 exit ([code])\n  terminates host program with optional code, default is success code
 getenv (varname)\n  returns value of environment variable varname. nil if not defined
 remove (filename)\n  deletes file with given name, nil if fails
+utf8remove (utf8 filename)\n  deletes file with given name, nil if fails (only SciTE-Ru)
 rename (oldname, newname)\n  renames file oldname to newname, nil if fails
+utf8rename (utf8 oldname, utf8 newname)\n  renames file oldname to newname, nil if fails (only SciTE-Ru)
 setlocale (locale [, category])\n  set current locale of program, returns name of new locate or nil
 time ([table])\n  returns current time (usually seconds) or time as represented by table
 tmpname ()\n  returns a string with a filename for a temporary file (dangerous! tmpfile is better)
