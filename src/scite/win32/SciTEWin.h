@@ -166,7 +166,7 @@ class SearchStrip : public Strip {
 	GUI::Window wButton;
 	Searcher *pSearcher;
 public:
-	SearchStrip() : entered(0), pSearcher(0) {
+	SearchStrip() : entered(0), lineHeight(20), pSearcher(0) {
 	}
 	virtual void Creation();
 	virtual void Destruction();
@@ -250,7 +250,7 @@ public:
 	virtual bool KeyDown(WPARAM key);
 	void AddToPopUp(GUI::Menu &popup, const char *label, int cmd, bool checked);
 	void ShowPopup();
-//!	void HandleReplaceCommand(int cmd); 
+//!	void HandleReplaceCommand(int cmd);
 	void HandleReplaceCommand(int cmd, bool reverseFind = false); //!-change-[reverse.find]
 	virtual bool Command(WPARAM wParam);
 	virtual void Size();

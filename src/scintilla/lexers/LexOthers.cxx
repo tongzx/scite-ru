@@ -17,7 +17,7 @@
 #include "Scintilla.h"
 #include "SciLexer.h"
 
-#include "PropSetSimple.h"
+#include "PropSetSimple.h"  //!-add-[FindResultListStyle]
 #include "WordList.h"
 #include "LexAccessor.h"
 #include "Accessor.h"

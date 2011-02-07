@@ -157,6 +157,7 @@ static int io_tostring (lua_State *L) {
   return 1;
 }
 
+
 static int io_open (lua_State *L) {
   const char *filename = luaL_checkstring(L, 1);
   const char *mode = luaL_optstring(L, 2, "r");
@@ -382,6 +383,7 @@ static int io_read (lua_State *L) {
 static int f_read (lua_State *L) {
   return g_read(L, tofile(L), 2);
 }
+
 
 static int io_readline (lua_State *L) {
   FILE *f = *(FILE **)lua_touserdata(L, lua_upvalueindex(1));

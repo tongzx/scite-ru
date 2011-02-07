@@ -768,8 +768,11 @@ sptr_t ScintillaWin::WndProc(unsigned int iMessage, uptr_t wParam, sptr_t lParam
 			break;
 
 		case WM_RBUTTONDOWN:
-			if (!PointInSelection(Point::FromLong(lParam)))
+			::SetFocus(MainHWND());
+			if (!PointInSelection(Point::FromLong(lParam))) {
+				CancelModes();
 				SetEmptySelection(PositionFromLocation(Point::FromLong(lParam)));
+			}
 			break;
 
 		case WM_SETCURSOR:
@@ -782,11 +785,7 @@ sptr_t ScintillaWin::WndProc(unsigned int iMessage, uptr_t wParam, sptr_t lParam
 					::GetCursorPos(&pt);
 					::ScreenToClient(MainHWND(), &pt);
 					if (PointInSelMargin(Point(pt.x, pt.y))) {
-						DisplayCursor(Window::cursorReverseArrow);
-//!-start-[TrueTextSelMargin]
-					} else if (PointInMargin(Point(pt.x, pt.y))) {
-						DisplayCursor(Window::cursorArrow);
-//!-end-[TrueTextSelMargin]
+						DisplayCursor(GetMarginCursor(Point(pt.x, pt.y)));
 					} else if (PointInSelection(Point(pt.x, pt.y)) && !SelectionEmpty()) {
 						DisplayCursor(Window::cursorArrow);
 					} else if (PointIsHotspot(Point(pt.x, pt.y))) {
@@ -815,7 +814,7 @@ sptr_t ScintillaWin::WndProc(unsigned int iMessage, uptr_t wParam, sptr_t lParam
 						char inBufferCP[20];
 						int size = ::WideCharToMultiByte(cpDest,
 							0, wcs, 1, inBufferCP, sizeof(inBufferCP) - 1, 0, 0);
-						inBufferCP[size] = '\0'; //!-add-[WM_CHAR.Buffer]
+						inBufferCP[size] = '\0';
 						AddCharUTF(inBufferCP, size);
 					}
 				} else {
@@ -1618,7 +1617,7 @@ void ScintillaWin::Paste() {
 		return;
 	UndoGroup ug(pdoc);
 	bool isLine = SelectionEmpty() && (::IsClipboardFormatAvailable(cfLineSelect) != 0);
-	ClearSelection();
+	ClearSelection(multiPasteMode == SC_MULTIPASTE_EACH);
 	SelectionPosition selStart = sel.IsRectangular() ?
 		sel.Rectangular().Start() :
 		sel.Range(sel.Main()).Start();

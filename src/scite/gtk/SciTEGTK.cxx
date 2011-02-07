@@ -201,6 +201,11 @@ public:
 	WEntry entryGoto;
 };
 
+class DialogAbbrev : public Dialog {
+public:
+	WComboBoxEntry comboAbbrev;
+};
+
 class DialogTabSize : public Dialog {
 public:
 	WEntry entryTabSize;
@@ -347,6 +352,7 @@ protected:
 	Dialog dlgFileSelector;
 	DialogFindInFiles dlgFindInFiles;
 	DialogGoto dlgGoto;
+	DialogAbbrev dlgAbbrev;
 	DialogTabSize dlgTabSize;
 
 	GtkWidget *wIncrementPanel;
@@ -474,6 +480,10 @@ protected:
 
 	void GotoCmd();
 	void GotoResponse(int responseID);
+
+	void AbbrevCmd();
+	void AbbrevResponse(int responseID);
+
 	void TabSizeSet(int &tabSize, bool &useTabs);
 	void TabSizeCmd();
 	void TabSizeConvertCmd();
@@ -564,6 +574,7 @@ public:
 SciTEGTK *SciTEGTK::instance;
 
 SciTEGTK::SciTEGTK(Extension *ext) : SciTEBase(ext) {
+	toolbarDetachable = 0;
 	menuSource = 0;
 	// Control of sub process
 	icmd = 0;
@@ -574,6 +585,7 @@ SciTEGTK::SciTEGTK(Extension *ext) : SciTEBase(ext) {
 	exitStatus = 0;
 	pollID = 0;
 	inputHandle = 0;
+	lastFlags = 0;
 
 	startupTimestamp = 0;
 
@@ -587,12 +599,16 @@ SciTEGTK::SciTEGTK(Extension *ext) : SciTEBase(ext) {
 
 	ptOld = GUI::Point(0, 0);
 	xor_gc = 0;
+	focusEditor = false;
+	focusOutput = false;
 	saveFormat = sfSource;
+	wIncrementPanel = 0;
 	IncSearchEntry = 0;
 	btnCompile = 0;
 	btnBuild = 0;
 	btnStop = 0;
 	itemFactory = 0;
+	accelGroup = 0;
 
 	fileSelectorWidth = 580;
 	fileSelectorHeight = 480;
@@ -636,6 +652,7 @@ static gint messageBoxKey(GtkWidget *w, GdkEventKey *event, gpointer p) {
 
 static void messageBoxDestroy(GtkWidget *, gpointer *) {
 	messageBoxDialog = 0;
+	messageBoxResult = 0;
 }
 
 static void messageBoxOK(GtkWidget *, gpointer p) {
@@ -1451,6 +1468,20 @@ GtkWidget *SciTEGTK::TranslatedLabel(const char *original) {
 	return gtk_label_new_with_mnemonic(text.c_str());
 }
 
+static void FillComboFromProps(GtkWidget *combo, PropSetFile &props) {
+	const char *key;
+	const char *val;
+	for (int i = 0; i < 10; i++) {
+		gtk_combo_box_remove_text(GTK_COMBO_BOX(combo), 0);
+	}
+
+	if (props.GetFirst(key, val))
+		gtk_combo_box_append_text(GTK_COMBO_BOX(combo), key);
+
+	while (props.GetNext(key, val))
+		gtk_combo_box_append_text(GTK_COMBO_BOX(combo), key);
+}
+
 static void FillComboFromMemory(GtkWidget *combo, const ComboMemory &mem, bool useTop = false) {
 	for (int i = 0; i < 10; i++) {
 		gtk_combo_box_remove_text(GTK_COMBO_BOX(combo), 0);
@@ -1471,6 +1502,7 @@ SString SciTEGTK::EncodeString(const SString &s) {
 	SBuffer ret(len);
 	wEditor.CallString(SCI_ENCODEDFROMUTF8,
 		reinterpret_cast<uptr_t>(s.c_str()), ret.ptr());
+	ret.ptr()[len] = '\0';
 	return SString(ret);
 }
 
@@ -2167,7 +2199,54 @@ void SciTEGTK::GoLineDialog() {
 	dlgGoto.Display(PWidget(wSciTE));
 }
 
-bool SciTEGTK::AbbrevDialog() { return false; }
+void SciTEGTK::AbbrevCmd() {
+	SString sAbbrev = dlgAbbrev.comboAbbrev.Text();
+	strncpy(abbrevInsert, sAbbrev.c_str(), sizeof(abbrevInsert));
+	abbrevInsert[sizeof(abbrevInsert) - 1] = '\0';
+	dlgAbbrev.Destroy();
+}
+
+void SciTEGTK::AbbrevResponse(int responseID) {
+	switch (responseID) {
+		case GTK_RESPONSE_OK:
+			AbbrevCmd();
+			break;
+
+		case GTK_RESPONSE_CANCEL:
+			abbrevInsert[0] = '\0';
+			dlgAbbrev.Destroy();
+			break;
+	}
+}
+
+bool SciTEGTK::AbbrevDialog() {
+	dlgAbbrev.Create(localiser.Text("Insert Abbreviation"));
+
+	gtk_container_set_border_width(GTK_CONTAINER(PWidget(dlgAbbrev)), 0);
+
+	WTable table(1, 2);
+	table.PackInto(GTK_BOX(GTK_DIALOG(PWidget(dlgAbbrev))->vbox));
+
+	GtkWidget *labelAbbrev = TranslatedLabel("_Abbreviation:");
+	table.Label(labelAbbrev);
+
+	dlgAbbrev.comboAbbrev.Create();
+	gtk_entry_set_width_chars(dlgAbbrev.comboAbbrev.Entry(), 35);
+	FillComboFromProps(dlgAbbrev.comboAbbrev, propsAbbrev);
+	table.Add(dlgAbbrev.comboAbbrev, 2, true);
+
+	gtk_widget_grab_focus(dlgAbbrev.comboAbbrev);
+	gtk_label_set_mnemonic_widget(GTK_LABEL(labelAbbrev), dlgAbbrev.comboAbbrev);
+
+	AttachResponse<&SciTEGTK::AbbrevResponse>(PWidget(dlgAbbrev), this);
+	dlgAbbrev.ResponseButton(localiser.Text("_Cancel"), GTK_RESPONSE_CANCEL);
+	dlgAbbrev.ResponseButton(localiser.Text("_Insert"), GTK_RESPONSE_OK);
+	gtk_dialog_set_default_response(GTK_DIALOG(PWidget(dlgAbbrev)), GTK_RESPONSE_OK);
+
+	dlgAbbrev.Display(PWidget(wSciTE));
+
+	return TRUE;
+}
 
 void SciTEGTK::TabSizeSet(int &tabSize, bool &useTabs) {
 	tabSize = dlgTabSize.entryTabSize.Value();
@@ -3181,7 +3260,7 @@ void SciTEGTK::CreateMenu() {
 	                                      {"/Edit/Complete S_ymbol", "<control>I", menuSig, IDM_COMPLETE, 0},
 	                                      {"/Edit/Complete _Word", "<control>Return", menuSig, IDM_COMPLETEWORD, 0},
 	                                      {"/Edit/Expand Abbre_viation", "<control>B", menuSig, IDM_ABBREV, 0},
-	                                      //~ {"/Edit/_Insert Abbreviation", "<control>D", menuSig, IDM_INS_ABBREV, 0},
+	                                      {"/Edit/_Insert Abbreviation", "<control><shift>R", menuSig, IDM_INS_ABBREV, 0},
 	                                      {"/Edit/Block Co_mment or Uncomment", "<control>Q", menuSig, IDM_BLOCK_COMMENT, 0},
 	                                      {"/Edit/Bo_x Comment", "<control><shift>B", menuSig, IDM_BOX_COMMENT, 0},
 	                                      {"/Edit/Stream Comme_nt", "<control><shift>Q", menuSig, IDM_STREAM_COMMENT, 0},

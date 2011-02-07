@@ -9,8 +9,7 @@
 
 #ifndef GUI_H
 #define GUI_H
-
-#include <algorithm>
+#include <algorithm>  //!-add-[EncodingToLua]
 
 namespace GUI {
 

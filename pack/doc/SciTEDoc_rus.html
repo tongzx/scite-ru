@@ -1729,6 +1729,16 @@ style the path and line number separately from the rest of the line with style 2
 	</tr>
 
 	<tr>
+      <td><dfn><a name="lexer.sql.allow.dotted.word">lexer.sql.allow.dotted.word</a></dfn></td>
+      <td>Set to 1 to colourise recognized words with dots  (recommended for Oracle PL/SQL objects).</td>
+	</tr>
+
+	<tr>
+      <td><dfn><a name="lexer.sql.fold.at.else">lexer.sql.fold.at.else</a></dfn></td>
+      <td>This option enables SQL folding on a "ELSE" and "ELSIF"line of an IF statement.</td>
+	</tr>
+
+	<tr>
       <td><dfn><a name="lexer.sql.numbersign.comment">lexer.sql.numbersign.comment</a></dfn></td>
 	<td>If "lexer.sql.numbersign.comment" property is set to 0 a line beginning with '#' will not be a comment.</td>
 	</tr>
@@ -2545,45 +2555,83 @@ style the path and line number separately from the rest of the line with style 2
     </tr>
 
     <tr>
-      <td><dfn><a name="fold.at.else">fold.at.else</a></dfn></td>
+      <td><dfn><a name="fold.cpp.comment.multiline">fold.cpp.comment.multiline</a></dfn></td>
+      <td>Set this property to 0 to disable folding multi-line comments when fold.comment=1.</td>
+    </tr>
 
-      <td>В C++ данная переменная разрешает свертку строки &quot;<code>} else {</code>&quot; в операторе <code>if</code>.</td>
+    <tr>
+      <td><dfn><a name="fold.cpp.explicit.anywhere">fold.cpp.explicit.anywhere</a></dfn></td>
+      <td>Set this property to 1 to enable explicit fold points anywhere, not just in line comments.</td>
+    </tr>
+
+    <tr>
+      <td><dfn><a name="fold.cpp.explicit.end">fold.cpp.explicit.end</a></dfn></td>
+      <td>The string to use for explicit fold end points, replacing the standard //}.</td>
+    </tr>
+
+    <tr>
+      <td><dfn><a name="fold.cpp.explicit.start">fold.cpp.explicit.start</a></dfn></td>
+      <td>The string to use for explicit fold start points, replacing the standard //{.</td>
+    </tr>
+
+    <tr>
+      <td><dfn><a name="fold.cpp.syntax.based">fold.cpp.syntax.based</a></dfn></td>
+      <td>Set this property to 0 to disable syntax based folding.</td>
+    </tr>
+
+    <tr>
+      <td><dfn><a name="fold.html">fold.html</a></dfn></td>
+      <td>Folding is turned on or off for HTML and XML files with this option. The fold option must also be on for folding to occur.</td>
+    </tr>
+
+    <tr>
+      <td><dfn><a name="fold.html.preprocessor">fold.html.preprocessor</a></dfn></td>
+      <td>Folding is turned on or off for scripts embedded in HTML files with this option. The default is on.</td>
+    </tr>
+
+    <tr>
+      <td><dfn><a name="fold.hypertext.comment">fold.hypertext.comment</a></dfn></td>
+      <td>Allow folding for comments in scripts embedded in HTML. The default is off.</td>
+    </tr>
+
+    <tr>
+      <td><dfn><a name="fold.hypertext.heredoc">fold.hypertext.heredoc</a></dfn></td>
+      <td>Allow folding for heredocs in scripts embedded in HTML. The default is off.</td>
+    </tr>
+
+    <tr>
+      <td><dfn><a name="fold.perl.package">fold.perl.package</a></dfn></td>
+      <td>Enable folding packages when using the Perl lexer.</td>
+    </tr>
+
+    <tr>
+      <td><dfn><a name="fold.perl.pod">fold.perl.pod</a></dfn></td>
+      <td>Enable folding Pod blocks when using the Perl lexer.</td>
     </tr>
 
     <tr>
       <td><dfn><a name="fold.preprocessor">fold.preprocessor</a></dfn></td>
-
       <td>Данная переменная разрешает свертку директив препроцессора при использовании лексера C++, включая определенные в C# директивы свертки <code>#region</code> и <code>#endregion</code>.</td>
     </tr>
 
     <tr>
       <td><dfn><a name="fold.quotes.python">fold.quotes.python</a></dfn></td>
-
       <td>При использовании лексера Python данная переменная разрешает использовать свертку для многострочных фрагментов текста, заключенных в кавычки.</td>
-    </tr>
-
-    <tr>
-      <td><dfn><a name="fold.sql.exists">fold.sql.exists</a></dfn></td>
-
-      <td>Enables "EXISTS" to end a fold as is started by "IF" in "DROP TABLE IF EXISTS".</td>
     </tr>
 
     <tr>
       <td><dfn><a name="fold.perl">fold.perl.package<br>
       fold.perl.pod</a></dfn></td>
-
       <td>При использовании лексера Perl данные переменные разрешают использовать свертку для packages и POD-блоков.</td>
     </tr>
 
     <tr>
       <td><dfn><a name="title.full.path">title.full.path</a></dfn></td>
-
       <td>Указывает способ отображения имени файла в строке заголовка. Если значение переменной равно <var>0</var> (по умолчанию), отображается имя файла, <var>1</var> - отображается полный путь, <var>2</var> - заголовок окна отображается в виде &quot;имя файла в папке&quot;.</td>
     </tr>
 
     <tr>
       <td><dfn><a name="title.show.buffers">title.show.buffers</a></dfn></td>
-
       <td>Если значение данной переменной равно <var>1</var>, в заголовке окна отображается номер текущей вкладки.</td>
     </tr>
 
@@ -2988,7 +3036,7 @@ style the path and line number separately from the rest of the line with style 2
   <h3><a name="creatapi">Создание API файлов</a></h3>
 
   <p><code>*.api</code>-файл представляет собой текстовый документ, формат которого изложен в описании параметров <dfn><a href="#api">api.<i>filepattern</i></a></dfn> и <dfn><a href="#autocomplete.start.characters">autocomplete.<i>lexer</i></a></dfn>.<br>
-    Такие файлы можно создать вручную или с помощью программы. Существуют также уже готовые <a href="SciTEExtras.html">.api файлы.</a></p>
+    Такие файлы можно создать вручную или с помощью программы. Существуют также уже готовые <a href="http://code.google.com/p/scite-files/wiki/Customization">.api файлы.</a></p>
 
   <p>Для C/C++ файлов API-файлы можно создавать с помощью <a href="http://ctags.sourceforge.net/">ctags</a>, а затем скрипта на Python <a href="tags2api.py">tags2api</a> (что предполагает исходный код на C/C++) на основе файла тегов для выполения захвата прототипов функций, расположенных на нескольких строках. Некоторые часто используемые файлы заголовков окружают списки параметров макросом &quot;<code>__P</code>&quot; и могут иметь комментарии. Для таких файлов может быть использована утилита <a href="cleanapi.cc">cleanapi</a>.<br>
     API файл для модулей Python создается с помощью скрипта <a href="gen_python_api.py">gen_python_api</a>.<br>
@@ -3003,7 +3051,7 @@ style the path and line number separately from the rest of the line with style 2
 
   <p>Если в каталоге, определяемом переменной <a href="#SciteVar"><code>SciteDefaultHome</code></a> присутствует файл <code>locale.properties</code>, с записями в формате:
   <div class="example">Menu Item=Перевод данного пункта</div> то имеющиеся пункты интерфейса будут отображены SciTE на языке переводчика.<br>
-    Различные локализации SciTE можно найти на <a href="http://scintilla.sourceforge.net/SciTETranslation.html">этой странице</a>.</p>
+    Различные локализации SciTE можно найти на <a href="http://code.google.com/p/scite-files/wiki/Translations">этой странице</a>.</p>
 
   <h3><a name="build">Сборка SciTE</a></h3>
 
