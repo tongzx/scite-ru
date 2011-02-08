@@ -145,7 +145,7 @@ xmld=<?xml version="1.0"?>\n<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "h
 <sty=<style type="text/css">\n%SEL%|\n</style>\n
 <sub=<sub>%SEL%|</sub>
 <sup=<sup>%SEL%|</sup>
-<t=<table width="100%" cellpadding="0" cellspacing="0" border="0">\n\t<tr>\n\t\t<td>|</td>\n\t</tr>\n</table>\n
+<t=<table width="100%%" cellpadding="0" cellspacing="0" border="0">\n\t<tr>\n\t\t<td>|</td>\n\t</tr>\n</table>\n
 <td=<td>%SEL%|</td>
 <tr=<tr>\n\t%SEL%|\n</tr>
 <trd=<tr>\n\t<td>%SEL%|</td>\n\n</tr>

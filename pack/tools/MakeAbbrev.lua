@@ -1,12 +1,12 @@
 --[[-------------------------------------------------
 MakeAbbrev.lua
-Version: 1.5.1
-Author: frs, mozers™
+Version: 1.5.2
+Author: frs, mozersв„ў
 -------------------------------------------------
 add selected text to SciTE Abbreviation, enter the abbreviature in a dialog
-добавляем выделенный текст в аббревиатуры данного языка, задать аббревиатуру можно в диалоговом окне
+РґРѕР±Р°РІР»СЏРµРј РІС‹РґРµР»РµРЅРЅС‹Р№ С‚РµРєСЃС‚ РІ Р°Р±Р±СЂРµРІРёР°С‚СѓСЂС‹ РґР°РЅРЅРѕРіРѕ СЏР·С‹РєР°, Р·Р°РґР°С‚СЊ Р°Р±Р±СЂРµРІРёР°С‚СѓСЂСѓ РјРѕР¶РЅРѕ РІ РґРёР°Р»РѕРіРѕРІРѕРј РѕРєРЅРµ
 -------------------------------------------------
-Для подключения добавьте в свой файл .properties следующие строки:
+Р”Р»СЏ РїРѕРґРєР»СЋС‡РµРЅРёСЏ РґРѕР±Р°РІСЊС‚Рµ РІ СЃРІРѕР№ С„Р°Р№Р» .properties СЃР»РµРґСѓСЋС‰РёРµ СЃС‚СЂРѕРєРё:
  command.parent.96=9
  command.name.96.*=Add to Abbreviation
  command.96.*=dofile $(SciteDefaultHome)\tools\MakeAbbrev.lua
@@ -15,7 +15,7 @@ add selected text to SciTE Abbreviation, enter the abbreviature in a dialog
 require 'shell'
 
 local sel_text = editor:GetSelText()
-if #sel_text < 10 then return end --ограничим минимум длины строки для аббревиатуры
+if #sel_text < 10 then return end --РѕРіСЂР°РЅРёС‡РёРј РјРёРЅРёРјСѓРј РґР»РёРЅС‹ СЃС‚СЂРѕРєРё РґР»СЏ Р°Р±Р±СЂРµРІРёР°С‚СѓСЂС‹
 
 local title = scite.GetTranslation("Abbreviation")
 local text = scite.GetTranslation("Enter abbreviation for code:")
@@ -32,6 +32,6 @@ if abbrev_file then
 end
 
 io.output(props["AbbrevPath"])
-sel_text = sel_text:gsub("\\","\\\\"):gsub(GetEOL(),"\\n"):gsub("\t","\\t")
+sel_text = sel_text:gsub("\\","\\\\"):gsub(GetEOL(),"\\n"):gsub("\t","\\t"):gsub("%%","%%%%")
 io.write(abbrev_file_text..key.."="..sel_text)
 io.close()

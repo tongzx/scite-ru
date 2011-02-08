@@ -82,7 +82,6 @@ ULO=ULONG_PTR
 ULO=ULONG32
 ULO=ULONG64
 usi=using namespace |;
-guid="{%GUID%}"
 WC=WCHAR
 WI=WINAPI
 W=WORD

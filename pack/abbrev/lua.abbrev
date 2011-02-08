@@ -10,8 +10,8 @@ while=while x ~= 0 do\n\t\nend\n
 rep=repeat\n\t\nuntil x == 0\n
 tabf=for param, value in pairs(tbl) do\n\t|\nend\n
 tabs=table.sort(table_name, function(a, b) return a:upper() < b:upper() end)\n
-gmatch=for w in string.gmatch(s, "%a+") do\n\t|\nend\n
-gmatch=for p, v in string.gmatch(s, "(%w+)=(%w+)") do\n\t|\nend\n
+gmatch=for w in string.gmatch(s, "%%a+") do\n\t|\nend\n
+gmatch=for p, v in string.gmatch(s, "(%%w+)=(%%w+)") do\n\t|\nend\n
 
 #Functions
 tabprint=-- Print Table Content\ntable.foreach(tbl, print)\n
