@@ -2122,8 +2122,9 @@ style the path and line number separately from the rest of the line with style 2
     <tr>
       <td><dfn><a name="lexer">lexer.<i>filepattern</i></a></dfn></td>
       <td>Лексер разбивает текст на синтаксические части. После этого SciTE может отображать эти части в различных визуальных стилях. Лексеры, входящие в SciTE, предназначены для таких популярных языков программирования, как Python, Java, C/C++, JavaScript и VB. Часто несколько типов файлов относятся к одному языку (например, файлы с расширением .cpp, .cc, .h относятся к C++) и, следовательно, к одному лексеру. Данные опции ассоциируют имя файла с лексером.<br />
-          The lexers included in SciTE are written in C++ and compiled into the SciTE executable.
-          Lexers can also be written as a <a href="ScriptLexer.html">Lua script</a> or as a Lua LPeg lexer using <a href="http://code.google.com/p/scintillua/">scintillua</a>.</td>
+          Лексеры, входящие в SciTE, написаны на C++ и скомпилированы в исполняемое ядро программы.
+          Также лексеры могут быть написаны в виде <a href="ScriptLexer.html">Lua скриптов</a>.
+          Кроме этого возможно применение скриптовых лексеров из пакета <a href="http://code.google.com/p/scintillua/">scintillua</a>, которые используют Lua LPeg парсер.</td>
     </tr>
 
     <tr>
