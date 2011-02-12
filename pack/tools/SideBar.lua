@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev, ur4ltz
-Version 1.27.4
+Version 1.27.5
 ------------------------------------------------------
   Note: Require gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
                lpeg.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/lpeg/>
@@ -1087,7 +1087,11 @@ local function Functions_ListFILL()
 		return GetFlags(funcitem)..funcitem[1]..GetParams(funcitem)
 	end
 	for _, a in ipairs(table_functions) do
-		list_func:add_item(fixname(a), a[2])
+		local funcname = fixname(a)
+		if tonumber(props["editor.unicode.mode"]) == IDM_ENCODING_DEFAULT then
+			funcname = funcname:to_utf8(editor:codepage())
+		end
+		list_func:add_item(funcname, a[2])
 	end
 end
 
