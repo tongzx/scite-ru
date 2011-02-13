@@ -31,7 +31,6 @@ extern "C" {
 
 //!-start-[EncodingToLua]
 void lua_utf8_register_libs(lua_State *L);
-int utf8_luaL_loadfile (lua_State *L, const char *filename);
 //!-end-[EncodingToLua]
 
 #if !defined(GTK)
@@ -1685,8 +1684,7 @@ static bool InitGlobalScope(bool checkProperties, bool forceReload = false) {
 
 		FilePath fpTest(GUI::StringFromUTF8(startupScript));
 		if (fpTest.Exists()) {
-			//!luaL_loadfile(luaState, startupScript);
-			utf8_luaL_loadfile(luaState, startupScript); //!-change-[EncodingToLua]
+			luaL_loadfile(luaState, startupScript);
 			if (!call_function(luaState, 0, true)) {
 				host->Trace(">Lua: error occurred while loading startup script\n");
 			}
@@ -1759,8 +1757,7 @@ bool LuaExtension::Load(const char *filename) {
 		if (sl >= 4 && strcmp(filename+sl-4, ".lua")==0) {
 			if (luaState || InitGlobalScope(false)) {
 				extensionScript = filename;
-				//!luaL_loadfile(luaState, filename);
-				utf8_luaL_loadfile(luaState, filename); //!-cnahge-[EncodingToLua]
+				luaL_loadfile(luaState, filename);
 				if (!call_function(luaState, 0, true)) {
 					host->Trace(">Lua: error occurred while loading extension script\n");
 				}

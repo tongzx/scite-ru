@@ -392,7 +392,7 @@ void SciTEWin::GetWindowPosition(int *left, int *top, int *width, int *height, i
 
 // Allow UTF-8 file names and command lines to be used in calls to io.open and io.popen in Lua scripts.
 // The scite_lua_win.h header redirects fopen and _popen to these functions.
-
+/*!-remove-[EncodingToLua] # Moved to LuaUtf8.cxx
 extern "C" {
 
 FILE *scite_lua_fopen(const char *filename, const char *mode) {
@@ -416,7 +416,7 @@ FILE *scite_lua_popen(const char *filename, const char *mode) {
 }
 
 }
-
+*/
 void SciTEWin::ReadProperties() {
 	SciTEBase::ReadProperties();
 

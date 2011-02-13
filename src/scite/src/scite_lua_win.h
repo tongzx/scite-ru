@@ -17,4 +17,12 @@ FILE *scite_lua_fopen(const char *filename, const char *mode);
 #define fopen scite_lua_fopen
 FILE *scite_lua_popen(const char *filename, const char *mode);
 #define _popen scite_lua_popen
+//!-start-[EncodingToLua]
+int scite_lua_remove(const char *filename);
+#define remove scite_lua_remove
+int scite_lua_rename(const char *oldfilename, const char *newfilename);
+#define rename scite_lua_rename
+int scite_lua_system(const char *command);
+#define system scite_lua_system
+//!-end-[EncodingToLua]
 #endif
