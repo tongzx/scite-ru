@@ -1,21 +1,21 @@
 -- COMMON.lua
--- Version: 1.13.1
+-- Version: 1.13.2
 ---------------------------------------------------
--- Общие функции, использующиеся во многих скриптах
+-- РћР±С‰РёРµ С„СѓРЅРєС†РёРё, РёСЃРїРѕР»СЊР·СѓСЋС‰РёРµСЃСЏ РІРѕ РјРЅРѕРіРёС… СЃРєСЂРёРїС‚Р°С…
 ---------------------------------------------------
 
--- Пути поиска подключаемых lua-библиотек и модулей
+-- РџСѓС‚Рё РїРѕРёСЃРєР° РїРѕРґРєР»СЋС‡Р°РµРјС‹С… lua-Р±РёР±Р»РёРѕС‚РµРє Рё РјРѕРґСѓР»РµР№
 package.path  = props["SciteDefaultHome"].."\\tools\\LuaLib\\?.lua;"..package.path
 package.cpath = props["SciteDefaultHome"].."\\tools\\LuaLib\\?.dll;"..package.cpath
 
 --------------------------------------------------------
--- Подключение пользовательского обработчика к событию SciTE
+-- РџРѕРґРєР»СЋС‡РµРЅРёРµ РїРѕР»СЊР·РѕРІР°С‚РµР»СЊСЃРєРѕРіРѕ РѕР±СЂР°Р±РѕС‚С‡РёРєР° Рє СЃРѕР±С‹С‚РёСЋ SciTE
 dofile(props["SciteDefaultHome"]..'\\tools\\eventmanager.lua')
 
--- Функция распознавания URL
+-- Р¤СѓРЅРєС†РёСЏ СЂР°СЃРїРѕР·РЅР°РІР°РЅРёСЏ URL
 dofile (props["SciteDefaultHome"].."\\tools\\URL_detect.lua")
 --------------------------------------------------------
--- Замена порой неработающего props['CurrentWord']
+-- Р—Р°РјРµРЅР° РїРѕСЂРѕР№ РЅРµСЂР°Р±РѕС‚Р°СЋС‰РµРіРѕ props['CurrentWord']
 function GetCurrentWord()
 	local current_pos = editor.CurrentPos
 	return editor:textrange(editor:WordStartPosition(current_pos, true),
@@ -45,8 +45,8 @@ function GetEOL()
 end
 
 --------------------------------------------------------
--- Замена ф-ций string.lower(), string.upper(), string.len()
--- Работает с любыми национальными кодировками
+-- Р—Р°РјРµРЅР° С„-С†РёР№ string.lower(), string.upper(), string.len()
+-- Р Р°Р±РѕС‚Р°РµС‚ СЃ Р»СЋР±С‹РјРё РЅР°С†РёРѕРЅР°Р»СЊРЅС‹РјРё РєРѕРґРёСЂРѕРІРєР°РјРё
 local function StringLower(s, cp)
 	if not cp then cp = props["editor.code.page"] end
 	if cp ~= 65001 then s = s:to_utf8(cp) end
@@ -70,16 +70,16 @@ local function StringLen(s, cp)
 end
 
 --------------------------------------------------------
--- string.to_pattern возращает строку, пригодную для использования
--- в виде паттерна в string.find и т.п.
--- Например: "xx-yy" -> "xx%-yy"
-local lua_patt_chars = "[%(%)%.%+%-%*%?%[%]%^%$%%]" -- управляющие паттернами символов Луа:
+-- string.to_pattern РІРѕР·СЂР°С‰Р°РµС‚ СЃС‚СЂРѕРєСѓ, РїСЂРёРіРѕРґРЅСѓСЋ РґР»СЏ РёСЃРїРѕР»СЊР·РѕРІР°РЅРёСЏ
+-- РІ РІРёРґРµ РїР°С‚С‚РµСЂРЅР° РІ string.find Рё С‚.Рї.
+-- РќР°РїСЂРёРјРµСЂ: "xx-yy" -> "xx%-yy"
+local lua_patt_chars = "[%(%)%.%+%-%*%?%[%]%^%$%%]" -- СѓРїСЂР°РІР»СЏСЋС‰РёРµ РїР°С‚С‚РµСЂРЅР°РјРё СЃРёРјРІРѕР»РѕРІ Р›СѓР°:
 function string.pattern( s )
-	return (s:gsub(lua_patt_chars,'%%%0'))-- фактически экранирование служебных символов символом %
+	return (s:gsub(lua_patt_chars,'%%%0'))-- С„Р°РєС‚РёС‡РµСЃРєРё СЌРєСЂР°РЅРёСЂРѕРІР°РЅРёРµ СЃР»СѓР¶РµР±РЅС‹С… СЃРёРјРІРѕР»РѕРІ СЃРёРјРІРѕР»РѕРј %
 end
 
 --------------------------------------------------------
--- Проверяет параметр на nil и если это так, то возвращает default, иначе возвращает сам параметр
+-- РџСЂРѕРІРµСЂСЏРµС‚ РїР°СЂР°РјРµС‚СЂ РЅР° nil Рё РµСЃР»Рё СЌС‚Рѕ С‚Р°Рє, С‚Рѕ РІРѕР·РІСЂР°С‰Р°РµС‚ default, РёРЅР°С‡Рµ РІРѕР·РІСЂР°С‰Р°РµС‚ СЃР°Рј РїР°СЂР°РјРµС‚СЂ
 function ifnil(val, default)
 	if val == nil then
 		return default
@@ -89,7 +89,7 @@ function ifnil(val, default)
 end
 
 --------------------------------------------------------
--- Определение соответствует ли стиль символа стилю комментария
+-- РћРїСЂРµРґРµР»РµРЅРёРµ СЃРѕРѕС‚РІРµС‚СЃС‚РІСѓРµС‚ Р»Рё СЃС‚РёР»СЊ СЃРёРјРІРѕР»Р° СЃС‚РёР»СЋ РєРѕРјРјРµРЅС‚Р°СЂРёСЏ
 function IsComment(pos)
 	local style = editor.StyleAt[pos]
 	local lexer = props['Language']
@@ -136,7 +136,7 @@ function IsComment(pos)
 		vhdl = {1, 2}
 	}
 
-	-- Для лексеров, перечисленных в массиве:
+	-- Р”Р»СЏ Р»РµРєСЃРµСЂРѕРІ, РїРµСЂРµС‡РёСЃР»РµРЅРЅС‹С… РІ РјР°СЃСЃРёРІРµ:
 	for l,ts in pairs(comment) do
 		if l == lexer then
 			for _,s in pairs(ts) do
@@ -147,7 +147,7 @@ function IsComment(pos)
 			return false
 		end
 	end
-	-- Для остальных лексеров:
+	-- Р”Р»СЏ РѕСЃС‚Р°Р»СЊРЅС‹С… Р»РµРєСЃРµСЂРѕРІ:
 	-- asn1, ave, blitzbasic, cmake, conf, eiffel, eiffelkw, erlang, euphoria, fortran, f77, freebasic, kix, lisp, lout, octave, matlab, metapost, nncrontab, props, batch, makefile, diff, purebasic, vb, yaml
 	if style == 1 then return true end
 	return false
@@ -156,7 +156,7 @@ end
 
 ------[[ T E X T   M A R K S ]]-------------------------
 
--- Выделение текста маркером определенного стиля
+-- Р’С‹РґРµР»РµРЅРёРµ С‚РµРєСЃС‚Р° РјР°СЂРєРµСЂРѕРј РѕРїСЂРµРґРµР»РµРЅРЅРѕРіРѕ СЃС‚РёР»СЏ
 function EditorMarkText(start, length, indic_number)
 	local current_indic_number = scite.SendEditor(SCI_GETINDICATORCURRENT)
 	scite.SendEditor(SCI_SETINDICATORCURRENT, indic_number)
@@ -164,9 +164,9 @@ function EditorMarkText(start, length, indic_number)
 	scite.SendEditor(SCI_SETINDICATORCURRENT, current_indic_number)
 end
 
--- Очистка текста от маркерного выделения заданного стиля
---   если параметры отсутсвуют - очищаются все стили во всем тексте
---   если не указана позиция и длина - очищается весь текст
+-- РћС‡РёСЃС‚РєР° С‚РµРєСЃС‚Р° РѕС‚ РјР°СЂРєРµСЂРЅРѕРіРѕ РІС‹РґРµР»РµРЅРёСЏ Р·Р°РґР°РЅРЅРѕРіРѕ СЃС‚РёР»СЏ
+--   РµСЃР»Рё РїР°СЂР°РјРµС‚СЂС‹ РѕС‚СЃСѓС‚СЃРІСѓСЋС‚ - РѕС‡РёС‰Р°СЋС‚СЃСЏ РІСЃРµ СЃС‚РёР»Рё РІРѕ РІСЃРµРј С‚РµРєСЃС‚Рµ
+--   РµСЃР»Рё РЅРµ СѓРєР°Р·Р°РЅР° РїРѕР·РёС†РёСЏ Рё РґР»РёРЅР° - РѕС‡РёС‰Р°РµС‚СЃСЏ РІРµСЃСЊ С‚РµРєСЃС‚
 function EditorClearMarks(indic_number, start, length)
 	local _first_indic, _end_indic
 	local current_indic_number = scite.SendEditor(SCI_GETINDICATORCURRENT)
@@ -186,7 +186,7 @@ function EditorClearMarks(indic_number, start, length)
 end
 
 ----------------------------------------------------------------------------
--- Задание стиля для маркеров (затем эти маркеры можно будет использовать в скриптах, вызывая их по номеру)
+-- Р—Р°РґР°РЅРёРµ СЃС‚РёР»СЏ РґР»СЏ РјР°СЂРєРµСЂРѕРІ (Р·Р°С‚РµРј СЌС‚Рё РјР°СЂРєРµСЂС‹ РјРѕР¶РЅРѕ Р±СѓРґРµС‚ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ РІ СЃРєСЂРёРїС‚Р°С…, РІС‹Р·С‹РІР°СЏ РёС… РїРѕ РЅРѕРјРµСЂСѓ)
 
 -- Translate color from RGB to win
 local function encodeRGB2WIN(color)
@@ -223,30 +223,30 @@ local function EditorInitMarkStyles()
 end
 
 ----------------------------------------------------------------------------
--- Отрисовка вертикальной тонкой линии, отделяющей колонку маркеров фолдинга от текста (для красоты)
+-- РћС‚СЂРёСЃРѕРІРєР° РІРµСЂС‚РёРєР°Р»СЊРЅРѕР№ С‚РѕРЅРєРѕР№ Р»РёРЅРёРё, РѕС‚РґРµР»СЏСЋС‰РµР№ РєРѕР»РѕРЅРєСѓ РјР°СЂРєРµСЂРѕРІ С„РѕР»РґРёРЅРіР° РѕС‚ С‚РµРєСЃС‚Р° (РґР»СЏ РєСЂР°СЃРѕС‚С‹)
 local function SetMarginTypeN()
 	editor.MarginTypeN[3] = SC_MARGIN_TEXT
 	editor.MarginWidthN[3] = 1
 end
 
 ----------------------------------------------------------------------------
--- Инвертирование состояния заданного параметра (используется для снятия/установки "галок" в меню)
+-- РРЅРІРµСЂС‚РёСЂРѕРІР°РЅРёРµ СЃРѕСЃС‚РѕСЏРЅРёСЏ Р·Р°РґР°РЅРЅРѕРіРѕ РїР°СЂР°РјРµС‚СЂР° (РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РґР»СЏ СЃРЅСЏС‚РёСЏ/СѓСЃС‚Р°РЅРѕРІРєРё "РіР°Р»РѕРє" РІ РјРµРЅСЋ)
 function CheckChange(prop_name)
 	local cur_prop = ifnil(tonumber(props[prop_name]), 0)
 	props[prop_name] = 1 - cur_prop
 end
 
 -- ==============================================================
--- Функция копирования os_copy(source_path,dest_path)
--- Автор z00n <http://www.lua.ru/forum/posts/list/15/89.page>
+-- Р¤СѓРЅРєС†РёСЏ РєРѕРїРёСЂРѕРІР°РЅРёСЏ os_copy(source_path,dest_path)
+-- РђРІС‚РѕСЂ z00n <http://www.lua.ru/forum/posts/list/15/89.page>
 function os_copy(source_path,dest_path)
-	-- "библиотечная" функция
+	-- "Р±РёР±Р»РёРѕС‚РµС‡РЅР°СЏ" С„СѓРЅРєС†РёСЏ
 	local function unwind_protect(thunk,cleanup)
 		local ok,res = pcall(thunk)
 		if cleanup then cleanup() end
 		if not ok then error(res,0) else return res end
 	end
-	-- общая функция для работы с открытыми файлами
+	-- РѕР±С‰Р°СЏ С„СѓРЅРєС†РёСЏ РґР»СЏ СЂР°Р±РѕС‚С‹ СЃ РѕС‚РєСЂС‹С‚С‹РјРё С„Р°Р№Р»Р°РјРё
 	local function with_open_file(name,mode)
 		return function(body)
 		local f, err = io.open(name,mode)
@@ -265,13 +265,13 @@ function os_copy(source_path,dest_path)
 end
 
 -- ==============================================================
---- Читает файлы .abbrev (понимает инструкцию #import)
--- @return Таблица пар сокращение-расшифровка
+--- Р§РёС‚Р°РµС‚ С„Р°Р№Р»С‹ .abbrev (РїРѕРЅРёРјР°РµС‚ РёРЅСЃС‚СЂСѓРєС†РёСЋ #import)
+-- @return РўР°Р±Р»РёС†Р° РїР°СЂ СЃРѕРєСЂР°С‰РµРЅРёРµ-СЂР°СЃС€РёС„СЂРѕРІРєР°
 function ReadAbbrevFile(file, abbr_table)
 	--[[------------------------------------------
-	Эмулирует чтение файла внутренней функцией редактора
-	Функция предназначена для использования вместо io.lines(filename), а также вместо file:lines()
-	Читает файл по правилам SciTE: при наличии в конце строки символа '\' считается, что текущая строка продолжается в следующей.
+	Р­РјСѓР»РёСЂСѓРµС‚ С‡С‚РµРЅРёРµ С„Р°Р№Р»Р° РІРЅСѓС‚СЂРµРЅРЅРµР№ С„СѓРЅРєС†РёРµР№ СЂРµРґР°РєС‚РѕСЂР°
+	Р¤СѓРЅРєС†РёСЏ РїСЂРµРґРЅР°Р·РЅР°С‡РµРЅР° РґР»СЏ РёСЃРїРѕР»СЊР·РѕРІР°РЅРёСЏ РІРјРµСЃС‚Рѕ io.lines(filename), Р° С‚Р°РєР¶Рµ РІРјРµСЃС‚Рѕ file:lines()
+	Р§РёС‚Р°РµС‚ С„Р°Р№Р» РїРѕ РїСЂР°РІРёР»Р°Рј SciTE: РїСЂРё РЅР°Р»РёС‡РёРё РІ РєРѕРЅС†Рµ СЃС‚СЂРѕРєРё СЃРёРјРІРѕР»Р° '\' СЃС‡РёС‚Р°РµС‚СЃСЏ, С‡С‚Рѕ С‚РµРєСѓС‰Р°СЏ СЃС‚СЂРѕРєР° РїСЂРѕРґРѕР»Р¶Р°РµС‚СЃСЏ РІ СЃР»РµРґСѓСЋС‰РµР№.
 	@usage: for l in scite_io_lines('c:\\some.file') do print(l) end
 	  alternative:
 	f = io.open('s:\\some.file')
@@ -304,7 +304,7 @@ function ReadAbbrevFile(file, abbr_table)
 				abbr_table[#abbr_table+1] = {abbr=_abr, exp=_exp}
 			else
 				local import_file = line:match('^import%s+(.+)')
-				-- если обнаружена запись import, то рекурсивно вызываем эту же функцию
+				-- РµСЃР»Рё РѕР±РЅР°СЂСѓР¶РµРЅР° Р·Р°РїРёСЃСЊ import, С‚Рѕ СЂРµРєСѓСЂСЃРёРІРЅРѕ РІС‹Р·С‹РІР°РµРј СЌС‚Сѓ Р¶Рµ С„СѓРЅРєС†РёСЋ
 				if import_file then
 					ReadAbbrevFile(file:match('.+\\')..import_file, abbr_table)
 				end
@@ -316,16 +316,13 @@ function ReadAbbrevFile(file, abbr_table)
 end
 
 -- ==============================================================
--- Функции, выполняющиеся только один раз, при открытии первого файла
---   ( Выполнить их сразу, при загрузке SciTEStartup.lua, нельзя
---   получим сообщение об ошибке: "Editor pane is not accessible at this time." )
+-- Р¤СѓРЅРєС†РёРё, РІС‹РїРѕР»РЅСЏСЋС‰РёРµСЃСЏ С‚РѕР»СЊРєРѕ РѕРґРёРЅ СЂР°Р·, РїСЂРё РѕС‚РєСЂС‹С‚РёРё РїРµСЂРІРѕРіРѕ С„Р°Р№Р»Р°
+--   ( Р’С‹РїРѕР»РЅРёС‚СЊ РёС… СЃСЂР°Р·Сѓ, РїСЂРё Р·Р°РіСЂСѓР·РєРµ SciTEStartup.lua, РЅРµР»СЊР·СЏ
+--   РїРѕР»СѓС‡РёРј СЃРѕРѕР±С‰РµРЅРёРµ РѕР± РѕС€РёР±РєРµ: "Editor pane is not accessible at this time." )
 AddEventHandler("OnOpen", function()
 	string.lower = StringLower
 	string.upper = StringUpper
 	string.len = StringLen
-	os.rename = os.utf8rename
-	os.remove = os.utf8remove
-	os.execute = os.utf8execute
 	EditorInitMarkStyles()
 	SetMarginTypeN()
 end, 'RunOnce')
