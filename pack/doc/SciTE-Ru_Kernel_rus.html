@@ -101,11 +101,6 @@
 <div class="example">fold.highlight.colour=#0099FF</div>
 если цвет не задан, подсветка выключается.
 
-<h5 id="TrueTextSelMargin">
-[TrueTextSelMargin] <span class=desc>(Автор: VladVRO)</span></h5>
-Изменено отображение курсора над левым полем, там где отображаются номера строк, метки и фолдинг.<br>
-Курсор меняется на перевернутый указатель только тогда, когда доступна функция выделения текста, иначе курсор принимает свой обычный вид.
-
 <h5 id="SubMenu">
 [SubMenu] <span class=desc>(Автор: HSolo, Доработка: Дмитрий Маслов)</span></h5>
 Добавлена возможность создания вложенных подменю в меню Tools.<br>
@@ -253,8 +248,9 @@ command.name.6.<i>filepattern</i>=Date and Time</div>
 
 <h5 id="SetBookmark">
 [SetBookmark] <span class=desc>(Автор: Midas)</span></h5>
-Установка Bookmark'а по 1 щелчку на панели Bookmark'ов.<br>
-Новый параметр в .properties <span class="example">margin.bookmark.by.single.click=0</span> отключает эту возможность
+Новый параметр в .properties<br>
+<span class="example">margin.bookmark.by.single.click=1</span><br>
+включает возможность установки/снятия bookmark-ов по одинарному щелчку мышью на колонке bookmark-ов.
 
 <h5 id="clearbefore">
 [clearbefore] <span class=desc>(Автор: neo4max)</span></h5>
@@ -274,24 +270,6 @@ command.name.6.<i>filepattern</i>=Date and Time</div>
 <h5 id="NewIcons">
 [NewIcons] <span class=desc>(Автор: VladVRO)</span></h5>
 Новые иконки для файлов, ассоциированных с SciTE и для файлов сессий.
-
-<h5 id="VarAbbrev">
-<sup>updated</sup>
-[VarAbbrev] <span class=desc>(Автор: mimir, VladVRO, Дмитрий Маслов)</span></h5>
-В списки сокращений (abbrev) можно добавлять пользовательские переменные.<br>
-- <span class="example">%SEL%</span> - выделенный текст<br>
-- <span class="example">%CLP%</span> - текст из буфера обмена<br>
-- <span class="example">%[имя_переменной]%</span> - значение внутренней переменной SciTE (например, CurrentSelection, FileNameExt, SciteDefaultHome и т.п.)<br>
-- <span class="example">%GUID%</span> - уникальный GUID нового объекта (идея принадлежит codewarlock1101)<br>
-<br>
-Так, например, забив в файл abbrev такую строку:
-<div class="example">&lt;a+=&lt;a href="%CLP%" title="|"&gt;%SEL%&lt;/a&gt;</div>
-Копируем в буфер обмена текст "http://scite.net.ru/"<br>
-Пишем "&lt;a+Наш сайт", выделяем текст "Наш сайт", затем нажимаем Сtrl+B - получаем готовую конструкцию:
-<div class="example">&lt;a href="http://scite.net.ru/" title="|"&gt;Наш сайт&lt;/a&gt;</div>
-где курсор находится на месте символа '<span class="example">|</span>'.<br>
-<br>
-То же самое получится если написать "Наш сайт" и выделив этот текст, нажать Ctrl+Shift+R и выбрать "&lt;a+" из раскрывающегося списка.
 
 <h5 id="import">
 [import] <span class=desc>(Автор: mimir, VladVRO)</span></h5>
@@ -370,7 +348,7 @@ calltip.*.word.wrap</div>
 При 1 или отсутствии этого параметра действует режим по умолчанию.<br>
 Добавлена возможность установить этот параметр через SCI_SETOVERTYPE<br>
 0 - режим вставки (дефолтный)<br>
-1 - режим заменты<br>
+1 - режим замены<br>
 2 - игнорировать переключение режима<br>
 3 - не игнорировать переключение режима (дефолтный)<br>
 (через SCI_SETOVERTYPE можно переключать режим независимо от установки игнорирования)
@@ -400,7 +378,8 @@ calltip.*.word.wrap</div>
 Дополнительная информация в <a href="http://code.google.com/p/scite-ru/issues/detail?id=96">Issue 96</a>.
 
 <h5 id="LocalizationFromLua">
-[LocalizationFromLua] <span class=desc>(Автор: VladVRO)</span></h5>
+<sup>updated</sup>
+[LocalizationFromLua] <span class=desc>(Автор: VladVRO, neo4max)</span></h5>
 В SciTE Lua Scripting Extension добавлена новая команда:<br>
 <span class="example">scite.GetTranslation(s, [retainIfNotFound])</span>, которая возвращает перевод строки <span class="example"><i>s</i></span>,<br>
 где <span class="example"><i>retainIfNotFound</i></span> - (по умолчанию <span class="example"><i>true</i></span>) указывает на возврат исходного значения в случае, если перевод не найден.<br>
@@ -413,6 +392,27 @@ calltip.*.word.wrap</div>
 <h5 id="ABAP">
 [ABAP] <span class=desc>(Автор: VladVRO)</span></h5>
 Добавлен новый лексер для языка ABAP/4.
+
+<h5 id="EncodingToLua">
+<sup>new</sup>
+[EncodingToLua] <span class=desc>(Автор: neo4max)</span></h5>
+В SciTE Lua Scripting Extension добавлены новые команды:<br>
+<span class="example">string.to_utf8(codepage)</span> - конвертирует текст из указанной кодовой страницы в UTF-8<br>
+<span class="example">string.from_utf8(codepage)</span> - конвертирует текст из UTF-8 в указанную кодовую страницу<br>
+Параметр codepage задается в числовом виде.<br>
+<br>
+<span class="example">string.utf8upper()</span> - преобразует utf8-строку в верхний регистр<br>
+<span class="example">string.utf8lower()</span> - преобразует utf8-строку в нижний регистр<br>
+<span class="example">string.utf8len()</span> - возвращает длину (в символах) utf8-строки<br>
+<br>
+Так же добавлена новая функция<br>
+<span class="example">pane:codepage()</span>, где <span class="example">pane</span> - панель редактора (<span class="example">editor</span>|<span class="example">output</span>)<br>
+возвращающая текущую кодировку панели в числовом виде.<br>
+<br>
+Теперь функции <span class="example">os.rename</span>, <span class="example">os.remove</span>, <span class="example">os.execute</span> пытаются трактовать входные аргументы как UTF-8. Если не получается - то в системной кодировке.<br>
+<br>
+Модифицирована функция загрузки внешних библиотек и скриптов - <span class="example">require</span>.<br>
+Теперь у нее появилась возможность загрузки внешних библиотек даже если путь к ним содержит символы, отличные от системной кодировки.
 
 <h5 id="EditorUnicodeMode">
 [EditorUnicodeMode] <span class=desc>(Автор: VladVRO)</span></h5>
@@ -514,11 +514,16 @@ BufferNumber - новая внутренняя переменная SciTE. Cод
 
 <h5 id="InsertAbbreviation">
 <sup>updated</sup>
-[InsertAbbreviation] <span class=desc>(Автор: Дмитрий Маслов)</span></h5>
+[InsertAbbreviation] <span class=desc>(Авторы: mimir, VladVRO, Дмитрий Маслов, neo4max)</span></h5>
 В SciTE Lua Scripting Extension добавлена новая команда<br>
 <span class="example">InsertAbbreviation(string)</span><br>
 где "<span class="example">string</span>" - это текст, по формату аналогичный сокращениям (abbrev), например:
 <div class="example">scite.InsertAbbreviation("&lt;a href="|" title=""&gt;%SEL%&lt;/a&gt;")</div>
+В тексте расшифровки можно использовать пользовательские переменные:<br>
+- <span class="example">%SEL%</span> - выделенный текст<br>
+- <span class="example">%CLP%</span> - текст из буфера обмена<br>
+- <span class="example">%имя_переменной%</span> - значение внутренней переменной SciTE (например, CurrentSelection, FileNameExt, SciteDefaultHome и т.п.)<br>
+При использовании в расшифровке знака процента он удваивается.
 
 <h5 id="ParametersDialogFromLua">
 [ParametersDialogFromLua] <span class=desc>(Автор: VladVRO)</span></h5>
@@ -578,6 +583,24 @@ Tеперь можно задавать до 4х дополнительных н
       <a name="3"></a>
       Устранение ошибок
     </h3>
+
+<h5 id="FixReplaceOnce">
+<sup>new</sup>
+[FixReplaceOnce] <span class=desc>(Автор: neo4max)</span></h5>
+Исправлена ошибка в работе диалога "Заменить", в результате которой введенные в диалоговом окне параметры поиска-замены могут быть случайно модифицированы командой editor:findtext (Подробности - в <a href="http://code.google.com/p/scite-ru/issues/detail?id=175">Issue 175</a>).<br>
+Добавлено предупреждение, возникающее при нажатии кнопки "Заменить" после уже произведенной последней замены.<br>
+Исправлена ошибка, возникающая при перемещении курсора в процессе последовательной замены.
+
+<h5 id="FixFind">
+<sup>new</sup>
+[FixFind] <span class=desc>(Автор: neo4max)</span></h5>
+Если документ заканчивается пустой строкой, а в диалоговом окне поиска задан поиск "^$" (в режиме RegExp), то, при нажатии на "Пометить все" возникало зацикливание.
+
+<h5 id="FixEncoding">
+<sup>new</sup>
+[FixEncoding] <span class=desc>(Автор: neo4max)</span></h5>
+Теперь все калтипы и текст расшифровки аббревиатур отображаются и вставляются в текущей кодировке активного буфера.<br>
+Для этого требуется чтобы соответствующие API и ABBREV файлы были в кодировке UTF-8.
 
 <h5 id="cmdline.spaces.fix">
 <sup>new</sup>

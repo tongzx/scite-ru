@@ -100,11 +100,6 @@ New property for setup highlight color:<br>
 <div class="example">fold.highlight.colour=#0099FF</div>
 if color is not set then highlighting is off.
 
-<h5 id="TrueTextSelMargin">
-[TrueTextSelMargin] <span class=desc>(Author: VladVRO)</span></h5>
-Changed cursor image over left margin (line number, marker and fold margins).<br>
-Cursor is set as inverse arrow when we realy can to select text otherwise used default cursor.
-
 <h5 id="SubMenu">
 [SubMenu] <span class=desc>(Author: HSolo, Updated by: Dmitry Maslov)</span></h5>
 Added possibility of creation submenu in Tools menu.<br>
@@ -252,9 +247,9 @@ if option is present then after closing buffer current buffer will be next in bu
 
 <h5 id="SetBookmark">
 [SetBookmark] <span class=desc>(Author: Midas)</span></h5>
-You can set bookmark by single click on Bookmark's bar now.<br>
-And you can switch off this feature by setup new parameter in .properties:<br>
-<span class="example">margin.bookmark.by.single.click=0</span>
+New variable in properties files<br>
+<span class="example">margin.bookmark.by.single.click=1</span><br>
+you can to set/remove the bookmark by single mouse click on bookmarks column.
 
 <h5 id="clearbefore">
 [clearbefore] <span class=desc>(Author: neo4max)</span></h5>
@@ -274,24 +269,6 @@ Sets caret style of the output window.
 <h5 id="NewIcons">
 [NewIcons] <span class=desc>(Author: VladVRO)</span></h5>
 New icons for the files associated with SciTE and for sessions files.
-
-<h5 id="VarAbbrev">
-<sup>updated</sup>
-[VarAbbrev] <span class=desc>(Authors: mimir, VladVRO, Dmitry Maslov)</span></h5>
-It is possible to add user variables into list of abbreviation (abbrev).<br>
-- <span class="example">%SEL%</span> - selected text<br>
-- <span class="example">%CLP%</span> - text from clipboard<br>
-- <span class="example">%[var_name]%</span> - value of internal variable SciTE (for example , CurrentSelection, FileNameExt, SciteDefaultHome etc.)<br>
-- <span class="example">%GUID%</span> - unique GUID of new object (suggested by codewarlock1101)<br>
-<br>
-For example, add that string into abbrev file:
-<div class="example">&lt;a+=&lt;a href="%CLP%" title="|"&gt;%SEL%&lt;/a&gt;</div>
-Copy string "http://scite.net.ru/" to clipboard (Ctrl+C)<br>
-Type '&lt;a+My Site' and select 'My Site'. Then pushing Ctrl+B - have got a completed construction:
-<div class="example">&lt;a href="http://scite.net.ru/" title="|"&gt;My Site&lt;/a&gt;</div>
-and caret have position of first meeting of '<span class="example">|</span>'.<br>
-<br>
-    The same action: Type 'My Site' and select 'My Site'. Then press Ctrl+Shift+R and to choose "&lt;a+" from a drop-down list.
 
 <h5 id="import">
 [import] <span class=desc>(Author: mimir, VladVRO)</span></h5>
@@ -400,7 +377,8 @@ is setup this highlight on, by default it is off.<br>
 For more information look at <a href="http://code.google.com/p/scite-ru/issues/detail?id=96">Issue 96</a>.
 
 <h5 id="LocalizationFromLua">
-[LocalizationFromLua] <span class=desc>(Author: VladVRO)</span></h5>
+<sup>updated</sup>
+[LocalizationFromLua] <span class=desc>(Authors: VladVRO, neo4max)</span></h5>
 In SciTE Lua Scripting Extension added new command:<br>
 <span class="example">scite.GetTranslation(s, [retainIfNotFound])</span>, it returns translation of the sentance <span class="example"><i>s</i></span>,<br>
 <span class="example"><i>retainIfNotFound</i></span> - (by default is <span class="example"><i>true</i></span>) should return the input value if translation was not found.<br>
@@ -413,6 +391,27 @@ Added new SciTE event in Lua API <span class="example">OnFinalise()</span>. Even
 <h5 id="ABAP">
 [ABAP] <span class=desc>(Author: VladVRO)</span></h5>
 Added new lexer for ABAP/4 language.
+
+<h5 id="EncodingToLua">
+<sup>new</sup>
+[EncodingToLua] <span class=desc>(Authors: neo4max)</span></h5>
+In SciTE Lua Scripting Extension added new commands:<br>
+<span class="example">string.to_utf8(codepage)</span> - converts the text from the specified codepage to UTF-8<br>
+<span class="example">string.from_utf8(codepage)</span> - convert text from UTF-8 to the specified codepage<br>
+Codepage parameter is specified as a number.<br>
+<br>
+<span class="example">string.utf8upper()</span> - converts utf8-string to uppercase<br>
+<span class="example">string.utf8lower()</span> - converts utf8-string to lowercase<br>
+<span class="example">string.utf8len()</span> - returns utf8-string length (in characters)<br>
+<br>
+Added a new function<br>
+<span class="example">pane:codepage()</span>, where <span class="example">pane</span> -  this is one of the (<span class="example">editor</span>|<span class="example">output</span>)<br>
+returns the current encoding of the pane as number.<br>
+<br>
+Now function <span class="example">os.rename</span>, <span class="example">os.remove</span>, <span class="example">os.execute</span> trying to interpret the input arguments as UTF-8. If not - then the system default encoding.<br>
+<br>
+Modified the function to load external libraries and scripts - <span class="example">require</span>.<br>
+Now she has the ability to download the external libraries, even if the path to it contains characters other than the system encoding.
 
 <h5 id="EditorUnicodeMode">
 [EditorUnicodeMode] <span class=desc>(Author: VladVRO)</span></h5>
@@ -514,11 +513,16 @@ BufferNumber - new SciTE environment variable. Contains number of the current bu
 
 <h5 id="InsertAbbreviation">
 <sup>updated</sup>
-[InsertAbbreviation] <span class=desc>(Author: Dmitry Maslov)</span></h5>
+[InsertAbbreviation] <span class=desc>(Authors: mimir, VladVRO, Dmitry Maslov, neo4max)</span></h5>
 In SciTE Lua Scripting Extension added new command<br>
 <span class="example">InsertAbbreviation(string)</span><br>
 where "<span class="example">string</span>" - is a text, on a format similar to abbreviation, for example:
 <div class="example">scite.InsertAbbreviation("&lt;a href="|" title=""&gt;%SEL%&lt;/a&gt;")</div>
+The text of the expansion, you can use user variables:<br>
+- <span class="example">%SEL%</span> - selected text<br>
+- <span class="example">%CLP%</span> - text from clipboard<br>
+- <span class="example">%var_name%</span> - value of internal variable SciTE (for example, CurrentSelection, FileNameExt, SciteDefaultHome etc.)<br>
+When used in expansion a percent sign he doubled.
 
 <h5 id="ParametersDialogFromLua">
 [ParametersDialogFromLua] <span class=desc>(Author: VladVRO)</span></h5>
@@ -577,6 +581,24 @@ Now OnSendEditor can trace event SCI_SETZOOM arising at change of the size of a 
       <a name="3"></a>
       Bug fix
     </h3>
+
+<h5 id="FixReplaceOnce">
+<sup>new</sup>
+[FixReplaceOnce] <span class=desc>(Автор: neo4max)</span></h5>
+Fixed a bug in the dialogue "Replace". Entered in the dialog box, the search parameters can be accidentally modified command editor:findtext (more - in <a href="http://code.google.com/p/scite-ru/issues/detail?id=175">Issue 175</a>).<br>
+Added a warning appears when you click "Replace" after the last change has produced.<br>
+Fixed error when moving the cursor in the serial replacement.
+
+<h5 id="FixFind">
+<sup>new</sup>
+[FixFind] <span class=desc>(Автор: neo4max)</span></h5>
+If the document ends with a blank line, and in the dialog box, specify search "^$" (RegExp mode), then when you click on "Mark All" arose loop.
+
+<h5 id="FixEncoding">
+<sup>new</sup>
+[FixEncoding] <span class=desc>(Автор: neo4max)</span></h5>
+Now all calltip and text for the abbreviation are displayed and inserted in the current encoding of the active buffer.<br>
+This requires that by appropriate API and ABBREV files were encoded in UTF-8.
 
 <h5 id="cmdline.spaces.fix">
 <sup>new</sup>
