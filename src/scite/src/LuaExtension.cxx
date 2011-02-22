@@ -348,8 +348,6 @@ static int cf_editor_insert_abbrev(lua_State *L) {
 		int sel_start = host->Send(ExtensionAPI::paneEditor, SCI_GETSELECTIONSTART);
 		int sel_end = host->Send(ExtensionAPI::paneEditor, SCI_GETSELECTIONEND);
 		std::string ss = GUI::ConvertToUTF8(host->Range(ExtensionAPI::paneEditor, sel_start, sel_end), get_codepage(ExtensionAPI::paneEditor));
-		if(!ss.empty())
-			host->Send(ExtensionAPI::paneEditor, SCI_REPLACESEL, 0, reinterpret_cast<sptr_t>(""));
 		size_t spos = 0;
 		size_t epos = 0;
 		GUI::gui_string tmp;
@@ -361,6 +359,8 @@ static int cf_editor_insert_abbrev(lua_State *L) {
 			if (tmp.find_first_of(GUI_TEXT(" ")) == std::string::npos) {
 				GUI::gui_string r;
 				if(tmp == GUI_TEXT("SEL")) {
+					if(!ss.empty())
+						host->Send(ExtensionAPI::paneEditor, SCI_REPLACESEL, 0, reinterpret_cast<sptr_t>(""));
 					r = GUI::StringFromUTF8(ss.c_str());
 				} else if (tmp == GUI_TEXT("CLP")) {    
 					BOOL IsOpen=OpenClipboard(0);        
