@@ -2,7 +2,7 @@
 # а можно подключить их все вместе
 # Например так:
 # поскольку в веб-документах часто используются PHP, JS, и т.д.
-# Такая возможнось есть только в SciTE-Ru <http://scite.net.ru>
+# Такая возможнось есть только в SciTE-Ru <http://scite-ru.org>
 
 import html.abbrev
 import php.abbrev

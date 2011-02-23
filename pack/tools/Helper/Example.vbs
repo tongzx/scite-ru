@@ -33,7 +33,7 @@ SciTE.Trace ("Selected text: """ & sel_text & """\n")
 
 '  Replace selected on active page text on our
 '  Заменяем выделенный на активной странице текст на наш
-'~ SciTE.ReplaceSel ("<http://scite.net.ru>")
+'~ SciTE.ReplaceSel ("<http://scite-ru.org>")
 
 '  Run command use SciTE Lua Scripting Extension
 '  Запускаем LUA команду и получаем результат

@@ -7,7 +7,7 @@ rem -----------------------------------------------------
 CALL :if_exist "gcc.exe"
 IF ERRORLEVEL 1 (
 	ECHO Error : Please install MinGW!
-	ECHO - For more information visit: http://scite.net.ru
+	ECHO - For more information visit: http://scite-ru.org
 	GOTO error
 )
 
@@ -95,7 +95,7 @@ GOTO end
 ECHO.
 ECHO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ECHO Please install MinGW + UPX!
-ECHO For more information visit http://scite.net.ru
+ECHO For more information visit http://scite-ru.org
 GOTO end
 
 :if_exist
