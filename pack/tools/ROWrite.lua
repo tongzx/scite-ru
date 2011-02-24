@@ -1,12 +1,12 @@
 --[[--------------------------------------------------
 ROWrite.lua
 Authors: Midas, VladVRO
-Version: 1.1.1
+Version: 1.1.2
 ------------------------------------------------------
-Скрипт для поддержки сохранения RO/Hidden/System файлов
+РЎРєСЂРёРїС‚ РґР»СЏ РїРѕРґРґРµСЂР¶РєРё СЃРѕС…СЂР°РЅРµРЅРёСЏ RO/Hidden/System С„Р°Р№Р»РѕРІ
 ------------------------------------------------------
-Подключение:
-  Добавьте в SciTEStartup.lua строку
+РџРѕРґРєР»СЋС‡РµРЅРёРµ:
+  Р”РѕР±Р°РІСЊС‚Рµ РІ SciTEStartup.lua СЃС‚СЂРѕРєСѓ
     dofile (props["SciteDefaultHome"].."\\tools\\ROWrite.lua")
 --]]--------------------------------------------------
 
@@ -17,13 +17,12 @@ local function iif (expresion, onTrue, onFalse)
 end
 
 local function BSave(FN)
-	-- Получим аттрибуты файла.
+	-- РџРѕР»СѓС‡РёРј Р°С‚С‚СЂРёР±СѓС‚С‹ С„Р°Р№Р»Р°.
 	local FileAttr = props['FileAttr']
 	props['FileAttrNumber'] = 0
-	if string.find(FileAttr, '[RHS]') then --  Если в файл нельзя записать, то спросим
-		if shell.msgbox("Файл доступен только для чтения. Все равно сохранить?\n"
-			.."Аттрибуты файла: "..FileAttr, "SciTE", 65)==1 then
-			-- сохраним текущии, затем снимем все аттрибуты
+	if string.find(FileAttr, '[RHS]') then --  Р•СЃР»Рё РІ С„Р°Р№Р» РЅРµР»СЊР·СЏ Р·Р°РїРёСЃР°С‚СЊ, С‚Рѕ СЃРїСЂРѕСЃРёРј
+		if shell.msgbox(scite.GetTranslation("This file is read-only. Save anyway?\nFile attributes:").." "..FileAttr, "SciTE", 65)==1 then
+			-- СЃРѕС…СЂР°РЅРёРј С‚РµРєСѓС‰РёРё, Р·Р°С‚РµРј СЃРЅРёРјРµРј РІСЃРµ Р°С‚С‚СЂРёР±СѓС‚С‹
 			local FileAttrNumber, err = shell.getfileattr(FN)
 			if (FileAttrNumber == nil) then
 				print("> "..err)
@@ -37,15 +36,15 @@ local function BSave(FN)
 end
 
 local function AfterSave(FN)
-	-- Если была сохранена строка с аттрибутами, то установим их
+	-- Р•СЃР»Рё Р±С‹Р»Р° СЃРѕС…СЂР°РЅРµРЅР° СЃС‚СЂРѕРєР° СЃ Р°С‚С‚СЂРёР±СѓС‚Р°РјРё, С‚Рѕ СѓСЃС‚Р°РЅРѕРІРёРј РёС…
 	local FileAttrNumber = tonumber(props['FileAttrNumber'])
 	if FileAttrNumber ~= nil and FileAttrNumber > 0 then
 		shell.setfileattr(FN, FileAttrNumber)
 	end
 end
 
--- Добавляем свой обработчик события OnBeforeSave
+-- Р”РѕР±Р°РІР»СЏРµРј СЃРІРѕР№ РѕР±СЂР°Р±РѕС‚С‡РёРє СЃРѕР±С‹С‚РёСЏ OnBeforeSave
 AddEventHandler("OnBeforeSave", BSave)
 
--- Добавляем свой обработчик события OnSave
+-- Р”РѕР±Р°РІР»СЏРµРј СЃРІРѕР№ РѕР±СЂР°Р±РѕС‚С‡РёРє СЃРѕР±С‹С‚РёСЏ OnSave
 AddEventHandler("OnSave", AfterSave)
