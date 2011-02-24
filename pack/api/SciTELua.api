@@ -429,6 +429,7 @@ codepage() = int codePage\n return codepage of current pane (only SciTE-Ru)
 
 scite.CheckMenus
 scite.ConstantName
+scite.GetTranslation
 scite.InsertAbbreviation
 scite.MenuCommand
 scite.Open
@@ -441,6 +442,7 @@ scite.UpdateStatusBar
 
 CheckMenus()\n allows to update the state of the menu and toolbar (only SciTE-Ru)
 ConstantName(number)\n returns the symbolic name of a Scintilla / SciTE constant
+GetTranslation(text)\n returns translation of the text (only SciTE-Ru)
 InsertAbbreviation(text)\n insert a text, on a format similar to abbreviation (only SciTE-Ru)
 MenuCommand(IDM_constant)\n run specifed menu command
 Open(filename)\n opens a file in a new buffer
