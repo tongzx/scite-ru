@@ -2478,7 +2478,7 @@ bool SciTEBase::InsertAbbreviation(const char* data) {
 		sel_length = 0;
 	}/*! else if (!at_start && sel_length == 0) {
 		sel_start += static_cast<int>(expbuflen);
-	}*/ //!-remove-[InsertAbbreviation]
+	}*/ //!-remove-[Bug_InsertAbbreviation]
 	wEditor.Call(SCI_SETSEL, sel_start, sel_start + sel_length);
 
 	wEditor.Call(SCI_ENDUNDOACTION);
