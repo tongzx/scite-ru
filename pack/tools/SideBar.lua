@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev, ur4ltz
-Version 1.27.6
+Version 1.27.7
 ------------------------------------------------------
   Note: Require gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
                lpeg.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/lpeg/>
@@ -469,29 +469,29 @@ local function Favorites_ListFILL()
 			local function IsSession(filepath)
 				return filepath:gsub('^.*%.',''):upper() == 'SESSION'
 			end
-			local isAses = IsSession(a)
-			local isBses = IsSession(b)
+			local isAses = IsSession(a[1]:lower())
+			local isBses = IsSession(b[1]:lower())
 			if (isAses and isBses) or not (isAses or isBses) then
-				return a < b
+				return a[1]:lower() < b[1]:lower()
 			else
 				return isAses
 			end
 		end
 	)
-	for _, s in ipairs(list_fav_table) do
-		local fname = s:gsub('.+\\','')
-		if fname == '' then fname = s:gsub('.+\\(.-)\\','[%1]') end
-		list_favorites:add_item(fname, s)
+	for _, file in ipairs(list_fav_table) do
+		list_favorites:add_item(file[1], file[2])
 	end
 end
 
 local function Favorites_OpenList()
 	local favorites_file = io.open(favorites_filename)
 	if favorites_file then
-		for line in favorites_file:lines() do
-			if line ~= '' then
-				line = ReplaceWithoutCase(line, '$(SciteDefaultHome)', props['SciteDefaultHome'])
-				list_fav_table[#list_fav_table+1] = line
+		for fpath in favorites_file:lines() do
+			if fpath ~= '' then
+				fpath = ReplaceWithoutCase(fpath, '$(SciteDefaultHome)', props['SciteDefaultHome'])
+				local fname = fpath:gsub('.+\\','')
+				if fname == '' then fname = fpath:gsub('.+\\(.-)\\',' [%1]') end
+				list_fav_table[#list_fav_table+1] = {fname, fpath}
 			end
 		end
 		favorites_file:close()
@@ -502,28 +502,28 @@ Favorites_OpenList()
 
 local function Favorites_SaveList()
 	if pcall(io.output, favorites_filename) then
-		local list_string = table.concat(list_fav_table,'\n')
-		list_string = ReplaceWithoutCase(list_string, props['SciteDefaultHome'], '$(SciteDefaultHome)')
-		io.write(list_string)
+		for _, file in ipairs(list_fav_table) do
+			io.write(ReplaceWithoutCase(file[2], props['SciteDefaultHome'], '$(SciteDefaultHome)')..'\n')
+		end
 		io.close()
 	end
 end
-AddEventHandler("OnFinalise", Favorites_SaveList)
 
 function Favorites_AddFile()
 	local fname, attr = FileMan_GetSelectedItem()
 	if fname == '' then return end
-	fname = current_path..fname
+	local fpath = current_path..fname
 	if attr == 'd' then
-		fname = fname:gsub('\\\.\.$', '')..'\\'
+		fname = ' ['..fname..']'
+		fpath = fpath:gsub('\\\.\.$', '')..'\\'
 	end
-	list_fav_table[#list_fav_table+1] = fname
+	list_fav_table[#list_fav_table+1] = {fname, fpath}
 	Favorites_ListFILL()
 	Favorites_SaveList()
 end
 
 function Favorites_AddCurrentBuffer()
-	list_fav_table[#list_fav_table+1] = props['FilePath']
+	list_fav_table[#list_fav_table+1] = {props['FileNameExt'], props['FilePath']}
 	Favorites_ListFILL()
 	Favorites_SaveList()
 end
