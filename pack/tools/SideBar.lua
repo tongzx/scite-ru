@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev, ur4ltz
-Version 1.27.5
+Version 1.27.6
 ------------------------------------------------------
   Note: Require gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
                lpeg.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/lpeg/>
@@ -66,14 +66,12 @@ local colorfore = style:match('fore:(#%x%x%x%x%x%x)')
 -- Common functions
 ----------------------------------------------------------
 local function ReplaceWithoutCase(text, s_find, s_rep)
-	local i, j = 1
-	local replaced = nil
-	repeat
-		i, j = text:lower():find(s_find:lower(), j, true)
-		if j == nil then return text, replaced end
-		text = text:sub(1, i-1)..s_rep..text:sub(j+1)
-		replaced = true
-	until false
+	s_find = string.gsub(s_find, '.', function(ch)
+		local c,C = ch:lower(), ch:upper()
+		return c~=C and '['..c..C..']' -- i.e. ch was a letter
+				or '%'..ch -- not a letter, so escape it
+	end)
+	return string.gsub(text, s_find, s_rep)
 end
 
 local function ShowCompactedLine(line_num)
