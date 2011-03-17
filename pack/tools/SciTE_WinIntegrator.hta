@@ -12,7 +12,7 @@ scroll=no
 selection=no
 contextMenu=no
 singleinstance=yes
-version=4.0
+version=4.1
 >
 <style type="text/css">
 	body {margin:4px;}
@@ -286,15 +286,7 @@ function SetSessions(){
 	WshShell.RegWrite('HKCR\\.session\\', 'SciTE.Session');
 	WshShell.RegWrite('HKCR\\SciTE.Session\\', 'SciTE session file');
 	WshShell.RegWrite('HKCR\\SciTE.Session\\DefaultIcon\\', scite_path + '\\SciTE.exe,2');
-	WshShell.RegWrite('HKCR\\SciTE.Session\\shell\\open\\command\\', 'wscript "' + script_path + '\\' + open_ses_file + '" "%1"');
-	var text = 'var scite = "' + scite_path.replace(/\\/g,'\\\\') + '\\\\SciTE.exe";\n';
-	text += 'var WshShell = new ActiveXObject("WScript.Shell");\n';
-	text += 'var filename = WScript.Arguments(0);\n';
-	text += 'var opt = \'-check.if.already.open=0 \"-loadsession:\' + filename.replace(\/\\\\\/g,\"\\\\\\\\\") + \'\"\';\n';
-	text += 'var cmd = \'\"\' + scite + \'\" \' + opt;\nWshShell.Run(cmd, 0, false);\n\n';
-	var file = fso.OpenTextFile(script_path + '\\' + open_ses_file, 2, true);
-	file.Write(text);
-	file.Close();
+	WshShell.RegWrite('HKCR\\SciTE.Session\\shell\\open\\command\\', 'cmd /v:on /c "set "file=%1" && start "" "' + scite_path.replace(/\\/g,'\\\\') + '\\\\SciTE.exe" -check.if.already.open=0 "-loadsession:!file:\\=\\\\!"');
 	return true;
 }
 
