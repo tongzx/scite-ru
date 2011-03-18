@@ -1897,7 +1897,7 @@ bool LuaExtension::OnOpen(const char *filename) {
 //!-start-[StartupScriptReload]
 	static bool IsFirstCall = true;
 	if(IsFirstCall) {
-		CallNamedFunction("OnAfterInit", 0, 0);
+		CallNamedFunction("OnInit", 0, 0);
 		IsFirstCall = false;
 	}
 //!-end-[StartupScriptReload]
@@ -2454,7 +2454,7 @@ static int cf_editor_reload_startup_script(lua_State*) {
 	if (extensionScript.length()) {
 		reinterpret_cast<LuaExtension*>(host)->Load(extensionScript.c_str());
 	}
-	CallNamedFunction("OnAfterInit", 1, 0);
+	CallNamedFunction("OnInit", 1, 0);
 	return 0;
 }
 //!-end-[StartupScriptReload]

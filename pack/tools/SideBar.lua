@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev, ur4ltz
-Version 1.27.8
+Version 1.27.9
 ------------------------------------------------------
   Note: Require gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
                lpeg.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/lpeg/>
@@ -1494,5 +1494,5 @@ end)
 --========================================================
 -- now show SideBar:
 if tonumber(props['sidebar.show'])==1 then
-	AddEventHandler("OnAfterInit", SideBar_Show)
+	AddEventHandler("OnInit", SideBar_Show)
 end
