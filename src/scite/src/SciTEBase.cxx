@@ -2411,6 +2411,11 @@ bool SciTEBase::InsertAbbreviation(const char* data) {
 				indentExtra++;
 				SetLineIndentation(currentLineNumber, indent + indentSize * indentExtra);
 				caret_pos += indentSize / indentChars;
+				//!-start-[Bug_InsertAbbreviation]
+				if (!double_pipe && at_start) {
+					sel_start += indentSize / indentChars;
+				}
+				//!-end-[Bug_InsertAbbreviation]
 			}
 		} else {
 			switch (c) {
