@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev, ur4ltz
-Version 1.27.9
+Version 1.27.10
 ------------------------------------------------------
   Note: Require gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
                lpeg.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/lpeg/>
@@ -606,7 +606,7 @@ do
 	-- basics
 	local EOF = P(-1)
 	local BOF = P(function(s,i) return (i==1) and 1 end)
-	local NL = P"\n"-- + P"\f" -- pattern matching newline, platform-specific. \f = page break marker
+	local NL = P"\n"+P"\r\n"+P"\r"-- + P"\f" -- pattern matching newline, platform-specific. \f = page break marker
 	local AZ = R('AZ','az')+"_"
 	local N = R'09'
 	local ANY =  P(1)
@@ -637,7 +637,6 @@ do
 	do --v------- asm -------v--
 		-- redefine common patterns
 		local SPACE = S' \t'^1
-		local NL = P"\r\n"
 
 		local IGNORED = (ESCANY - NL)^0 * NL -- just skip line by line
 
