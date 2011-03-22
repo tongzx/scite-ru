@@ -1,5 +1,5 @@
 --[[--------------------------------------------------
-FindText v7.4.0
+FindText v7.4.1
 Авторы: mozers™, mimir, Алексей, codewarlock1101, VladVRO
 
 * Если текст выделен - ищется выделенная подстрока
@@ -36,7 +36,7 @@ FindText v7.4.0
 	# Поиск с учетом регистра
 	findtext.matchcase=1
 	# Отмечать букмарками найденные строки
-	findtext.bookmarks=1
+	find.bookmark=1
 	# Выводить все найденные строки в консоль
 	findtext.output=1
 	# Показывать подсказку по горячим клавишам
@@ -58,7 +58,7 @@ if (sText == '') then
 end
 local flag1 = 0
 if props['findtext.matchcase'] == '1' then flag1 = SCFIND_MATCHCASE end
-local bookmark = props['findtext.bookmarks'] == '1'
+local bookmark = props['find.bookmark'] == '1'
 local isOutput = props['findtext.output'] == '1'
 local isTutorial = props['findtext.tutorial'] == '1'
 
