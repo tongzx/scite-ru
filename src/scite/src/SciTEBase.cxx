@@ -23,10 +23,13 @@
 #include <map>
 #include <algorithm>
 
-#if defined(GTK)
+#if defined(__unix__)
 
 #include <unistd.h>
+
+#if defined(GTK)
 #include <gtk/gtk.h>
+#endif
 
 #else
 
@@ -66,6 +69,7 @@
 #include "SciTE.h"
 #include "Mutex.h"
 #include "JobQueue.h"
+
 #include "SciTEBase.h"
 
 #define _MAX_EXTENSION_RECURSIVE_CALL 100 //!-add-[OnSendEditor][OnMenuCommand]
@@ -334,6 +338,8 @@ const char *contributors[] = {
             "J\xc3\xa9r\xc3\xb4me Laforge",
             "Udo Lechner",
             "Marco Falda",
+            "Dariusz Knoci\xc5\x84ski",
+            "Ben Fisher",
         };
 
 // AddStyledText only called from About so static size buffer is OK
@@ -758,18 +764,18 @@ void SciTEBase::SetAboutMessage(GUI::ScintillaWindow &wsci, const char *appTitle
 		}
 #endif
 		AddStyledText(wsci, GetTranslationToAbout("Version").c_str(), trsSty);
-		AddStyledText(wsci, " 2.24 .91Ru\n", 1); //!-change-[SciTE-Ru]
+		AddStyledText(wsci, " 2.25 .91Ru\n", 1); //!-change-[SciTE-Ru]
 		AddStyledText(wsci, "    " __DATE__ " " __TIME__ "\n", 1);
 		SetAboutStyle(wsci, 4, ColourRGB(0, 0x7f, 0x7f)); //!-add-[SciTE-Ru]
 		AddStyledText(wsci, "http://scite-ru.org\n", 4); //!-add-[SciTE-Ru]
 		SetAboutStyle(wsci, 2, ColourRGB(0, 0, 0));
 		wsci.Send(SCI_STYLESETITALIC, 2, 1);
 		AddStyledText(wsci, GetTranslationToAbout("Based on version").c_str(), trsSty); //!-add-[SciTE-Ru]
-		AddStyledText(wsci, " 2.24 ", 1); //!-add-[SciTE-Ru]
+		AddStyledText(wsci, " 2.25 ", 1); //!-add-[SciTE-Ru]
 		AddStyledText(wsci, GetTranslationToAbout("by").c_str(), trsSty);
 		AddStyledText(wsci, " Neil Hodgson.\n", 2);
 		SetAboutStyle(wsci, 3, ColourRGB(0, 0, 0));
-		AddStyledText(wsci, "December 1998-February 2011.\n", 3);
+		AddStyledText(wsci, "December 1998-March 2011.\n", 3);
 		SetAboutStyle(wsci, 4, ColourRGB(0, 0x7f, 0x7f));
 		AddStyledText(wsci, "http://www.scintilla.org\n", 4);
 		AddStyledText(wsci, "Lua scripting language by TeCGraf, PUC-Rio\n", 3);
@@ -1493,10 +1499,10 @@ int SciTEBase::IncrementSearchMode() {
 	return 0;
 }
 
-int SciTEBase::FindInTarget(const char *findWhat, int lenFind, int startPosition, int endPosition) {
+int SciTEBase::FindInTarget(const char *findWhatText, int lenFind, int startPosition, int endPosition) {
 	wEditor.Call(SCI_SETTARGETSTART, startPosition);
 	wEditor.Call(SCI_SETTARGETEND, endPosition);
-	int posFind = wEditor.CallString(SCI_SEARCHINTARGET, lenFind, findWhat);
+	int posFind = wEditor.CallString(SCI_SEARCHINTARGET, lenFind, findWhatText);
 	while (findInStyle && posFind != -1 && findStyle != wEditor.Call(SCI_GETSTYLEAT, posFind)) {
 		if (startPosition < endPosition) {
 			wEditor.Call(SCI_SETTARGETSTART, posFind + 1);
@@ -1505,7 +1511,7 @@ int SciTEBase::FindInTarget(const char *findWhat, int lenFind, int startPosition
 			wEditor.Call(SCI_SETTARGETSTART, startPosition);
 			wEditor.Call(SCI_SETTARGETEND, posFind + 1);
 		}
-		posFind = wEditor.CallString(SCI_SEARCHINTARGET, lenFind, findWhat);
+		posFind = wEditor.CallString(SCI_SEARCHINTARGET, lenFind, findWhatText);
 	}
 	return posFind;
 }
@@ -2481,9 +2487,7 @@ bool SciTEBase::InsertAbbreviation(const char* data) {
 	// set the caret to the desired position
 	if (double_pipe) {
 		sel_length = 0;
-	}/*! else if (!at_start && sel_length == 0) {
-		sel_start += static_cast<int>(expbuflen);
-	}*/ //!-remove-[Bug_InsertAbbreviation]
+	}
 	wEditor.Call(SCI_SETSEL, sel_start, sel_start + sel_length);
 
 	wEditor.Call(SCI_ENDUNDOACTION);
@@ -4740,7 +4744,7 @@ void SciTEBase::CheckMenus() {
 		EnableAMenuItem(IDM_TOOLS + toolItem, !jobQueue.IsExecuting());
 	EnableAMenuItem(IDM_STOPEXECUTE, jobQueue.IsExecuting());
 	if (buffers.size > 0) {
-#if !defined(GTK)
+#if defined(WIN32)
 		// Tab Bar
 #ifndef TCM_DESELECTALL
 #define TCM_DESELECTALL TCM_FIRST+50
@@ -5219,14 +5223,15 @@ bool SciTEBase::RecordMacroCommand(SCNotification *notification) {
 		char *t;
 		bool handled;
 		t = (char*)(notification->lParam);
+		SString sWParam(static_cast<size_t>(notification->wParam));
 		if (t != NULL) {
 			//format : "<message>;<wParam>;1;<text>"
 			szMessage = new char[50 + strlen(t) + 4];
-			sprintf(szMessage, "%d;%ld;1;%s", notification->message, notification->wParam, t);
+			sprintf(szMessage, "%d;%s;1;%s", notification->message, sWParam.c_str(), t);
 		} else {
 			//format : "<message>;<wParam>;0;"
 			szMessage = new char[50];
-			sprintf(szMessage, "%d;%ld;0;", notification->message, notification->wParam);
+			sprintf(szMessage, "%d;%s;0;", notification->message, sWParam.c_str());
 		}
 		handled = extender->OnMacro("macro:record", szMessage);
 		delete []szMessage;

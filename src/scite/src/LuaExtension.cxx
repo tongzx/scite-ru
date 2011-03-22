@@ -33,7 +33,7 @@ extern "C" {
 void lua_utf8_register_libs(lua_State *L);
 //!-end-[EncodingToLua]
 
-#if !defined(GTK)
+#if !defined(__unix__)
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -1087,7 +1087,7 @@ static int iface_function_helper(lua_State *L, const IFaceFunction &func) {
 
 	int arg = 2;
 
-	long params[2] = {0,0};
+	sptr_t params[2] = {0,0};
 
 	char *stringResult = 0;
 	bool needStringResult = false;
@@ -1095,8 +1095,8 @@ static int iface_function_helper(lua_State *L, const IFaceFunction &func) {
 	int loopParamCount = 2;
 
 	if (func.paramType[0] == iface_length && func.paramType[1] == iface_string) {
-		params[0] = static_cast<long>(lua_strlen(L, arg));
-		params[1] = reinterpret_cast<long>(params[0] ? lua_tostring(L, arg) : "");
+		params[0] = lua_strlen(L, arg);
+		params[1] = reinterpret_cast<sptr_t>(params[0] ? lua_tostring(L, arg) : "");
 		loopParamCount = 0;
 	} else if (func.paramType[1] == iface_stringresult) {
 		needStringResult = true;
@@ -1112,7 +1112,7 @@ static int iface_function_helper(lua_State *L, const IFaceFunction &func) {
 	for (int i=0; i<loopParamCount; ++i) {
 		if (func.paramType[i] == iface_string) {
 			const char *s = lua_tostring(L, arg++);
-			params[i] = reinterpret_cast<long>(s ? s : "");
+			params[i] = reinterpret_cast<sptr_t>(s ? s : "");
 		} else if (func.paramType[i] == iface_keymod) {
 			int keycode = static_cast<int>(luaL_checknumber(L, arg++)) & 0xFFFF;
 			int modifiers = static_cast<int>(luaL_checknumber(L, arg++)) & (SCMOD_SHIFT|SCMOD_CTRL|SCMOD_ALT);
@@ -1131,7 +1131,7 @@ static int iface_function_helper(lua_State *L, const IFaceFunction &func) {
 			stringResult = new char[stringResultLen+1];
 			if (stringResult) {
 				stringResult[stringResultLen]='\0';
-				params[1] = reinterpret_cast<long>(stringResult);
+				params[1] = reinterpret_cast<sptr_t>(stringResult);
 			} else {
 				raise_error(L, "String result buffer allocation failed");
 				return 0;
@@ -1151,7 +1151,7 @@ static int iface_function_helper(lua_State *L, const IFaceFunction &func) {
 	// - numeric return type gets returned to lua as a number (following the stringresult)
 	// - other return types e.g. void get dropped.
 
-	int result = host->Send(p, func.value, reinterpret_cast<uptr_t&>(params[0]), reinterpret_cast<sptr_t&>(params[1]));
+	int result = host->Send(p, func.value, params[0], params[1]);
 
 	int resultCount = 0;
 
@@ -2071,23 +2071,23 @@ struct StylingContext {
 					(currentPos >= endPos);
 	}
 
-	void StartStyling(unsigned int startPos, unsigned int length, int initStyle) {
+	void StartStyling(unsigned int startPos_, unsigned int length, int initStyle_) {
 		endDoc = styler->Length();
-		endPos = startPos + length;
+		endPos = startPos_ + length;
 		if (endPos == endDoc)
 			endPos = endDoc + 1;
-		currentPos = startPos;
+		currentPos = startPos_;
 		atLineStart = true;
 		atLineEnd = false;
-		state = initStyle;
+		state = initStyle_;
 		cursorPos = 0;
 		lenCurrent = 0;
 		lenNext = 0;
 		memcpy(cursor[0], "\0\0\0\0\0\0\0\0", 8);
 		memcpy(cursor[1], "\0\0\0\0\0\0\0\0", 8);
 		memcpy(cursor[2], "\0\0\0\0\0\0\0\0", 8);
-		styler->StartAt(startPos, static_cast<char>(0xffu));
-		styler->StartSegment(startPos);
+		styler->StartAt(startPos_, static_cast<char>(0xffu));
+		styler->StartSegment(startPos_);
 
 		GetNextChar();
 		cursorPos++;

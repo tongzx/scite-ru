@@ -585,8 +585,8 @@ Embedded Properties Embedded.properties
 IDC_DRAGDROP       CURSOR  DISCARDABLE     "DragDrop.cur"
 
 VS_VERSION_INFO VERSIONINFO
-FILEVERSION	2, 2, 4, 91
-PRODUCTVERSION	2, 2, 4, 91
+FILEVERSION	2, 2, 5, 91
+PRODUCTVERSION	2, 2, 5, 91
 FILEFLAGSMASK	0x3fL
 FILEFLAGS 0
 FILEOS VOS_NT_WINDOWS32
@@ -603,12 +603,12 @@ BEGIN
 		BEGIN
 			VALUE	"CompanyName",	"scite-ru.org\0"
 			VALUE	"FileDescription",	"SciTE - a Scintilla based Text Editor\0"
-			VALUE	"FileVersion",	"2.24 .91Ru\0"
+			VALUE	"FileVersion",	"2.25 .91Ru\0"
 			VALUE	"InternalName",	"SciTE\0"
 			VALUE	"LegalCopyright",	"Copyright 1998-2011 by Neil Hodgson\0"
 			VALUE	"OriginalFilename",	"SciTE.EXE\0"
 			VALUE	"ProductName",	"SciTE\0"
-			VALUE	"ProductVersion",	"2.24 .91Ru\0"
+			VALUE	"ProductVersion",	"2.25 .91Ru\0"
 		END
 	END
 END

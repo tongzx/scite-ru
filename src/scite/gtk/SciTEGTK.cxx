@@ -934,7 +934,11 @@ void SciTEGTK::Command(unsigned long wParam, long) {
 		SciTEBase::MenuCommand(cmdID, menuSource);
 		menuSource = 0;
 	}
-	UpdateStatusBar(true);
+	if (notifyCode != SCEN_CHANGE) {
+		// Changes to document produce SCN_UPDATEUI as well as SCEN_CHANGE
+		// and SCN_UPDATEUI updates the status bar but not too frequently.
+		UpdateStatusBar(true);
+	}
 }
 
 void SciTEGTK::ReadLocalization() {
@@ -2304,7 +2308,7 @@ void SciTEGTK::TabSizeDialog() {
 	GtkWidget *labelTabSize = TranslatedLabel("_Tab Size:");
 	table.Label(labelTabSize);
 
-	SString tabSize(wEditor.Call(SCI_GETTABWIDTH));
+	SString tabSize(static_cast<int>(wEditor.Call(SCI_GETTABWIDTH)));
 	dlgTabSize.entryTabSize.Create(tabSize.c_str());
 	table.Add(dlgTabSize.entryTabSize);
 	dlgTabSize.entryTabSize.ActivatesDefault();
@@ -2314,7 +2318,7 @@ void SciTEGTK::TabSizeDialog() {
 	GtkWidget *labelIndentSize = TranslatedLabel("_Indent Size:");
 	table.Label(labelIndentSize);
 
-	SString indentSize(wEditor.Call(SCI_GETINDENT));
+	SString indentSize(static_cast<int>(wEditor.Call(SCI_GETINDENT)));
 	dlgTabSize.entryIndentSize.Create(indentSize.c_str());
 	table.Add(dlgTabSize.entryIndentSize);
 	dlgTabSize.entryIndentSize.ActivatesDefault();

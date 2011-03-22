@@ -89,13 +89,13 @@ LEXPROPS=\
 ../bin/html.properties ../bin/inno.properties ../bin/kix.properties \
 ../bin/latex.properties ../bin/lisp.properties ../bin/lot.properties \
 ../bin/lout.properties ../bin/lua.properties ../bin/matlab.properties \
-../bin/metapost.properties ../bin/mmixal.properties ../bin/nimrod.properties \
-../bin/nncrontab.properties ../bin/nsis.properties ../bin/opal.properties \
-../bin/others.properties ../bin/pascal.properties ../bin/perl.properties \
-../bin/pov.properties ../bin/powerpro.properties ../bin/powershell.properties \
-../bin/ps.properties ../bin/purebasic.properties ../bin/python.properties \
-../bin/r.properties ../bin/rebol.properties ../bin/ruby.properties \
-../bin/scriptol.properties ../bin/smalltalk.properties \
+../bin/metapost.properties ../bin/mmixal.properties ../bin/modula3.properties \
+../bin/nimrod.properties ../bin/nncrontab.properties ../bin/nsis.properties \
+../bin/opal.properties ../bin/others.properties ../bin/pascal.properties \
+../bin/perl.properties ../bin/pov.properties ../bin/powerpro.properties \
+../bin/powershell.properties ../bin/ps.properties ../bin/purebasic.properties \
+../bin/python.properties ../bin/r.properties ../bin/rebol.properties \
+../bin/ruby.properties ../bin/scriptol.properties ../bin/smalltalk.properties \
 ../bin/sorcins.properties ../bin/specman.properties ../bin/spice.properties \
 ../bin/sql.properties ../bin/tacl.properties ../bin/tal.properties \
 ../bin/tcl.properties ../bin/tex.properties ../bin/txt2tags.properties \

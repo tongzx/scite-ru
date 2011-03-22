@@ -20,10 +20,13 @@
 #include <vector>
 #include <map>
 
-#if defined(GTK)
+#if defined(__unix__)
 
 #include <unistd.h>
+
+#if defined(GTK)
 #include <gtk/gtk.h>
+#endif
 
 #else
 
@@ -338,16 +341,16 @@ void SciTEBase::OpenFile(int fileSize, bool suppressMessage) {
 		wEditor.Call(SCI_CLEARALL);
 		char data[blockSize];
 		size_t lenFile = fread(data, 1, sizeof(data), fp);
-		UniMode codingCookie = CodingCookieValue(data, lenFile);
+		UniMode umCodingCookie = CodingCookieValue(data, lenFile);
 
 //!-start-[utf8.auto.check]
 		int check_utf8=props.GetInt("utf8.auto.check");
-		if (codingCookie==uni8Bit && check_utf8==2) {
+		if (umCodingCookie==uni8Bit && check_utf8==2) {
 			if (Has_UTF8_Char((unsigned char*)(data),lenFile)) {
-				codingCookie=uniCookie;
+				umCodingCookie=uniCookie;
 			}
 		}
-		Utf8_16_Read convert(codingCookie==uni8Bit && check_utf8==1);
+		Utf8_16_Read convert(umCodingCookie==uni8Bit && check_utf8==1);
 //!-end-[utf8.auto.check]
 
 		wEditor.Call(SCI_ALLOCATE, fileSize + 1000);
@@ -374,7 +377,7 @@ void SciTEBase::OpenFile(int fileSize, bool suppressMessage) {
 		            static_cast<int>(convert.getEncoding()));
 		// Check the first two lines for coding cookies
 		if (CurrentBuffer()->unicodeMode == uni8Bit) {
-			CurrentBuffer()->unicodeMode = codingCookie;
+			CurrentBuffer()->unicodeMode = umCodingCookie;
 		}
 		if (CurrentBuffer()->unicodeMode != uni8Bit) {
 			// Override the code page if Unicode
@@ -1013,7 +1016,7 @@ void SciTEBase::OpenFromStdin(bool UseOutputPane) {
 		wEditor.Call(SCI_CLEARALL);
 	}
 	size_t lenFile = fread(data, 1, sizeof(data), stdin);
-	UniMode codingCookie = CodingCookieValue(data, lenFile);
+	UniMode umCodingCookie = CodingCookieValue(data, lenFile);
 	while (lenFile > 0) {
 		lenFile = convert.convert(data, lenFile);
 		if (UseOutputPane) {
@@ -1037,7 +1040,7 @@ void SciTEBase::OpenFromStdin(bool UseOutputPane) {
 	            static_cast<int>(convert.getEncoding()));
 	// Check the first two lines for coding cookies
 	if (CurrentBuffer()->unicodeMode == uni8Bit) {
-		CurrentBuffer()->unicodeMode = codingCookie;
+		CurrentBuffer()->unicodeMode = umCodingCookie;
 	}
 	if (CurrentBuffer()->unicodeMode != uni8Bit) {
 		// Override the code page if Unicode

@@ -26,10 +26,13 @@
 
 #include "GUI.h"
 
-#if defined(GTK)
+#if defined(__unix__)
 
 #include <unistd.h>
+
+#if defined(GTK)
 #include <gtk/gtk.h>
+#endif
 
 const GUI::gui_char menuAccessIndicator[] = GUI_TEXT("_");
 
@@ -119,7 +122,7 @@ const GUI::gui_char propDirectoryFileName[] = GUI_TEXT("SciTEDirectory.propertie
 Read global and user properties files.
 */
 void SciTEBase::ReadGlobalPropFile() {
-#ifdef __unix__
+#if defined(__unix__)
 	extern char **environ;
 	char **e=environ;
 #else
@@ -428,7 +431,8 @@ void SciTEBase::SetOneStyle(GUI::ScintillaWindow &win, int style, const StyleDef
 }
 
 void SciTEBase::SetStyleFor(GUI::ScintillaWindow &win, const char *lang) {
-	for (int style = 0; style <= STYLE_MAX; style++) {
+	int maxStyle = (1 << win.Call(SCI_GETSTYLEBITS)) - 1;
+	for (int style = 0; style <= maxStyle; style++) {
 		if (style != STYLE_DEFAULT) {
 			char key[200];
 			sprintf(key, "style.%s.%0d", lang, style);
@@ -499,12 +503,12 @@ static int FileLength(const char *path) {
 }
 
 void SciTEBase::ReadAPI(const SString &fileNameForExtension) {
-	SString apisFileNames = props.GetNewExpand("api.",
+	SString sApiFileNames = props.GetNewExpand("api.",
 	                        fileNameForExtension.c_str());
-	size_t nameLength = apisFileNames.length();
+	size_t nameLength = sApiFileNames.length();
 	if (nameLength) {
-		apisFileNames.substitute(';', '\0');
-		const char *apiFileName = apisFileNames.c_str();
+		sApiFileNames.substitute(';', '\0');
+		const char *apiFileName = sApiFileNames.c_str();
 		const char *nameEnd = apiFileName + nameLength;
 
 		int tlen = 0;    // total api length
@@ -519,7 +523,7 @@ void SciTEBase::ReadAPI(const SString &fileNameForExtension) {
 		if (tlen > 0) {
 			char *buffer = apis.Allocate(tlen);
 			if (buffer) {
-				apiFileName = apisFileNames.c_str();
+				apiFileName = sApiFileNames.c_str();
 				tlen = 0;
 				while (apiFileName < nameEnd) {
 					FILE *fp = fopen(apiFileName, "rb");
@@ -577,7 +581,18 @@ static const char *propertiesToForward[] = {
 //**\(\t"\*",\n\)
 	"asp.default.language",
 	"fold",
+	"fold.asm.comment.explicit",
+	"fold.asm.comment.multiline",
+	"fold.asm.explicit.anywhere",
+	"fold.asm.explicit.end",
+	"fold.asm.explicit.start",
+	"fold.asm.syntax.based",
 	"fold.at.else",
+	"fold.basic.comment.explicit",
+	"fold.basic.explicit.anywhere",
+	"fold.basic.explicit.end",
+	"fold.basic.explicit.start",
+	"fold.basic.syntax.based",
 	"fold.comment",
 	"fold.comment.nimrod",
 	"fold.comment.yaml",
@@ -588,6 +603,12 @@ static const char *propertiesToForward[] = {
 	"fold.cpp.explicit.end",
 	"fold.cpp.explicit.start",
 	"fold.cpp.syntax.based",
+	"fold.d.comment.explicit",
+	"fold.d.comment.multiline",
+	"fold.d.explicit.anywhere",
+	"fold.d.explicit.end",
+	"fold.d.explicit.start",
+	"fold.d.syntax.based",
 	"fold.directive",
 	"fold.html",
 	"fold.html.preprocessor",
@@ -602,6 +623,7 @@ static const char *propertiesToForward[] = {
 	"fold.symbols",
 	"fold.verilog.flags",
 	"html.tags.case.sensitive",
+	"lexer.asm.comment.delimiter",
 	"lexer.batch.enabledelayedexpansion",
 	"lexer.caml.magic",
 	"lexer.cpp.allow.dollars",
@@ -756,17 +778,17 @@ void SciTEBase::ReadProperties() {
 	if (language.length()) {
 		if (language.startswith("script_")) {
 			wEditor.Call(SCI_SETLEXER, SCLEX_CONTAINER);
-		} else {
-			if (lexLanguage != lexLPeg) {
-				wEditor.CallString(SCI_SETLEXERLANGUAGE, 0, language.c_str());
-				int lex = wEditor.Call(SCI_GETLEXER);
-				if (lex != SCLEX_NULL && strcmp(language.c_str(), "lpeg") == 0) {
-					lexLPeg = lex;
-					wEditor.CallString(SCI_PRIVATELEXERCALL, SCI_SETLEXERLANGUAGE, "container");
-				}
-			} else {
-				wEditor.CallString(SCI_PRIVATELEXERCALL, SCI_SETLEXERLANGUAGE, language.c_str());
+		} else if (language.startswith("lpeg_")) {
+			modulePath = props.GetNewExpand("lexerpath.*.lpeg");
+			if (modulePath.length()) {
+				wEditor.CallString(SCI_LOADLEXERLIBRARY, 0, modulePath.c_str());
+				wEditor.CallString(SCI_SETLEXERLANGUAGE, 0, "lpeg");
+				lexLPeg = wEditor.Call(SCI_GETLEXER);
+				const char *lexer = language.c_str() + language.search("_") + 1;
+				wEditor.CallString(SCI_PRIVATELEXERCALL, SCI_SETLEXERLANGUAGE, lexer);
 			}
+		} else {
+			wEditor.CallString(SCI_SETLEXERLANGUAGE, 0, language.c_str());
 		}
 	} else {
 		wEditor.Call(SCI_SETLEXER, SCLEX_NULL);
@@ -1462,8 +1484,10 @@ void SciTEBase::SetPropertiesInitial() {
 }
 
 GUI::gui_string Localization::Text(const char *s, bool retainIfNotFound) {
+	const char *utfEllipse = "\xe2\x80\xa6";	// A UTF-8 ellipse
 	SString translation = s;
 	int ellipseIndicator = translation.remove("...");
+	int utfEllipseIndicator = translation.remove(utfEllipse);
 	char menuAccessIndicatorChar[2] = "!";
 	menuAccessIndicatorChar[0] = static_cast<char>(menuAccessIndicator[0]);
 	int accessKeyPresent = translation.remove(menuAccessIndicatorChar);
@@ -1473,6 +1497,8 @@ GUI::gui_string Localization::Text(const char *s, bool retainIfNotFound) {
 	if (translation.length()) {
 		if (ellipseIndicator)
 			translation += "...";
+		if (utfEllipseIndicator)
+			translation += utfEllipse;
 		if (0 == accessKeyPresent) {
 #if !defined(GTK)
 			// Following codes are required because accelerator is not always
@@ -1591,7 +1617,7 @@ void SciTEBase::ReadPropertiesInitial() {
 	// end load the user defined short cut props
 
 
-#if !defined(GTK)
+#if defined(WIN32)
 
 	if (tabMultiLine) {	// Windows specific!
 		long wl = ::GetWindowLong(reinterpret_cast<HWND>(wTabBar.GetID()), GWL_STYLE);

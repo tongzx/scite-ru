@@ -10,7 +10,7 @@
 #include "Platform.h" //!-add-[no_wornings]
 #include "SciTEWin.h"
 
-#ifdef DTBG_CLIPRECT
+#if defined(DTBG_CLIPRECT) && !defined(DISABLE_THEMES)
 #define THEME_AVAILABLE
 #endif
 
@@ -465,7 +465,7 @@ FilePath SciTEWin::GetSciteUserHome() {
 // Help command lines contain topic!path
 void SciTEWin::ExecuteOtherHelp(const char *cmd) {
 	GUI::gui_string s = GUI::StringFromUTF8(cmd);
-	unsigned int pos = s.find_first_of('!');
+	size_t pos = s.find_first_of('!');
 	if (pos != GUI::gui_string::npos) {
 		GUI::gui_string topic = s.substr(0, pos);
 		GUI::gui_string path = s.substr(pos+1);
@@ -495,7 +495,7 @@ void SciTEWin::ExecuteHelp(const char *cmd) {
 
 	if (hHH) {
 		GUI::gui_string s = GUI::StringFromUTF8(cmd);
-		unsigned int pos = s.find_first_of('!');
+		size_t pos = s.find_first_of('!');
 		if (pos != GUI::gui_string::npos) {
 			GUI::gui_string topic = s.substr(0, pos);
 			GUI::gui_string path = s.substr(pos + 1);
@@ -1023,7 +1023,7 @@ DWORD SciTEWin::ExecuteOne(const Job &jobToRun, bool &seenOutput) {
 			::TerminateProcess(pi.hProcess, 2);
 		}
 		::GetExitCodeProcess(pi.hProcess, &exitcode);
-		SString sExitMessage(exitcode);
+		SString sExitMessage(static_cast<int>(exitcode));
 		sExitMessage.insert(0, ">Exit code: ");
 		if (jobQueue.TimeCommands()) {
 			sExitMessage += "    Time: ";
