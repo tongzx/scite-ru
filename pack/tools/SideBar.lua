@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev, ur4ltz
-Version 1.27.10
+Version 1.27.11
 ------------------------------------------------------
   Note: Require gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
                lpeg.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/lpeg/>
@@ -1252,7 +1252,7 @@ local function Abbreviations_ListFILL()
 	local abbr_table = ReadAbbrevFile(abbrev_filename)
 	if not abbr_table then return end
 	for i,v in ipairs(abbr_table) do
-		list_abbrev:add_item({v.abbr, v.exp:gsub('\t','\\t')}, v.exp)
+		list_abbrev:add_item({v.abbr, v.exp:gsub('\t','\\t'):gsub('%%%%','%%')}, v.exp)
 	end
 end
 
@@ -1280,7 +1280,7 @@ local function Abbreviations_ShowExpansion()
 	local sel_item = list_abbrev:get_selected_item()
 	if sel_item == -1 then return end
 	local expansion = list_abbrev:get_item_data(sel_item)
-	expansion = expansion:gsub('\\\\','\4'):gsub('\\r','\r'):gsub('(\\n','\n'):gsub('\\t','\t'):gsub('\4','\\')
+	expansion = expansion:gsub('\\\\','\4'):gsub('\\r','\r'):gsub('(\\n','\n'):gsub('\\t','\t'):gsub('\4','\\'):gsub('%%%%','%%')
 	local cp = editor:codepage()
 	if cp ~= 65001 then expansion = expansion:from_utf8(cp) end
 
