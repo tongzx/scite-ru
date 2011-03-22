@@ -764,7 +764,7 @@ void SciTEBase::SetAboutMessage(GUI::ScintillaWindow &wsci, const char *appTitle
 		}
 #endif
 		AddStyledText(wsci, GetTranslationToAbout("Version").c_str(), trsSty);
-		AddStyledText(wsci, " 2.25 .91Ru\n", 1); //!-change-[SciTE-Ru]
+		AddStyledText(wsci, " 2.25 .92Ru\n", 1); //!-change-[SciTE-Ru]
 		AddStyledText(wsci, "    " __DATE__ " " __TIME__ "\n", 1);
 		SetAboutStyle(wsci, 4, ColourRGB(0, 0x7f, 0x7f)); //!-add-[SciTE-Ru]
 		AddStyledText(wsci, "http://scite-ru.org\n", 4); //!-add-[SciTE-Ru]
@@ -1475,14 +1475,12 @@ int SciTEBase::MarkAll() {
 		CurrentBuffer()->findMarks = Buffer::fmMarked;
 	}
 
-	bool findBookmarkEnabled = props.GetInt("find.bookmark.disable") < 1; //-add-[find.bookmark.disable]
-
 	if (posFirstFound != -1) {
 		int posFound = posFirstFound;
 		do {
 			marked++;
 			int line = wEditor.Call(SCI_LINEFROMPOSITION, posFound);
-			if ( findBookmarkEnabled ) //-add-[find.bookmark.disable]
+			if (props.GetInt("find.bookmark", 1)) //-add-[find.bookmark]
 			BookmarkAdd(line);
 			if (findMark.length()) {
 				wEditor.Call(SCI_INDICATORFILLRANGE, posFound, wEditor.Call(SCI_GETTARGETEND) - posFound);
