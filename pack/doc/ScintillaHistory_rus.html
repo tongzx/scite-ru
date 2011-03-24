@@ -388,61 +388,62 @@
     </h3>
     <ul>
 	<li>
-	Released 21 March 2011.
+	Версия 2.25 от 21 марта 2011 г.
 	</li>
 	<li>
-	SparseState class makes it easier to write lexers which have to remember complex state between lines.
+	Класс SparseState упрощает написание лексеров, для которых требуется сохранять сложное состояние положения строк.
 	</li>
 	<li>
-	Visual Studio project (.dsp) files removed. The make files should be used instead as described in the README.
+	Удалены файлы проекта Visual Studio (.dsp). Вместо них должны использоваться make-файлы (описание см. в README).
 	</li>
 	<li>
-	Modula 3 lexer added along with SciTE support.
+	Добавлен лексер Modula 3 наряду с поддержкой SciTE.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=352439&aid=3173374&group_id=2439">Feature #3173374.</a>
 	</li>
 	<li>
-	Asm, Basic, and D lexers add extra folding properties.
+	В лексеры Asm, Basic и D добавлены дополнительные настраиваемые параметры свёртки.
 	</li>
 	<li>
-	Raw string literals for C++0x supported in C++ lexer.
+	"Сырые" строковые литералы C++0x (буквальные строки, начинающиеся с @) поддерживаются в лексере C++.
 	</li>
 	<li>
-	Triple-quoted strings used in Vala language supported in C++ lexer.
+	В лексере C++ поддерживаются строки в тройных кавычках, используемые в языке Vala.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=352439&aid=3177601&group_id=2439">Feature #3177601.</a>
 	</li>
 	<li>
- 	The errorlist lexer used in SciTE's output pane colours lines that start with '&lt;' as diff deletions.
+	Лексер errorlist, используемый в окне консоли SciTE, подсвечивает строки, которые начинаются с '&lt;', например, удаляемые утилитой diff.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=352439&aid=3172878&group_id=2439">Feature #3172878.</a>
 	</li>
 	<li>
- 	The Fortran lexer correctly folds type-bound procedures from Fortran 2003.
+	Лексер Fortran правильно сворачивает типизированные процедуры в Fortran 2003.
 	</li>
 	<li>
-	LPeg lexer support‎ improved in SciTE.
+	Улучшена поддержка лексера LPeg в SciTE.
 	</li>
 	<li>
-	SciTE on Windows-64 fixes for menu localisation and Lua scripts.
+	Исправлены ошибки SciTE в Windows-64 с локализацией меню и работой скриптов Lua.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3204502&group_id=2439">Bug #3204502.</a>
 	</li>
 	<li>
-	SciTE on Windows avoids locking folders when using the open or save dialogs.
+	В SciTE в Windows исправлена блокировка папок при использовании диалогов Открыть или Сохранить.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=1795484&group_id=2439">Bug #1795484.</a>
 	</li>
 	<li>
-	Diff lexer fixes problem where diffs of diffs producing lines that start with "----".
+	В лексере Diff исправлена проблема, когда полученные в результате сравнения строки начинаются с "----".
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3197952&group_id=2439">Bug #3197952.</a>
 	</li>
 	<li>
-	Bug fixed when searching upwards in Chinese code page 936.
+	Исправлена ошибка при поиске вверх в текстах с китайской кодовой страницей 936.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3176271&group_id=2439">Bug #3176271.</a>
 	</li>
 	<li>
-	On Cocoa, translucent drawing performed as on other platforms instead of 2.5 times less translucent.
+	В Cocoa полупрозрачные рисунки представляются в 2,5 раза менее прозрачными, чем на других платформах.
 	</li>
 	<li>
-	Performance issue and potential bug fixed on GTK+ with caret line for long lines.
+	В GTK+ исправлена проблема производительности и потенциальная ошибка с курсором для длинных строк.
 	</li>
     </ul>
+	<li>Перевод: <b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=ALeXkRU" target=_blank>ALeXkRU</a></b>
 
     <h3>
        <a href="http://prdownloads.sourceforge.net/scintilla/scite224.zip?download">Release 2.24</a>
