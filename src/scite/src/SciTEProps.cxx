@@ -431,9 +431,10 @@ void SciTEBase::SetOneStyle(GUI::ScintillaWindow &win, int style, const StyleDef
 }
 
 void SciTEBase::SetStyleFor(GUI::ScintillaWindow &win, const char *lang) {
-//!*	int maxStyle = (1 << win.Call(SCI_GETSTYLEBITS)) - 1;
-//!*	for (int style = 0; style <= maxStyle; style++) {
-	for (int style = 0; style <= STYLE_MAX; style++) { //!-change-[FixStyleBits]
+	int maxStyle = (1 << win.Call(SCI_GETSTYLEBITS)) - 1;
+	if (maxStyle < STYLE_LASTPREDEFINED)
+		maxStyle = STYLE_LASTPREDEFINED;
+	for (int style = 0; style <= maxStyle; style++) {
 		if (style != STYLE_DEFAULT) {
 			char key[200];
 			sprintf(key, "style.%s.%0d", lang, style);
