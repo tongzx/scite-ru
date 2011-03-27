@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 Open_Selected_Filename.lua
 Authors: mozers™, VladVRO
-Version: 1.5.0
+Version: 1.5.1
 ------------------------------------------------------
 Замена команды "Открыть выделенный файл"
 В отличии от встроенной команды SciTE, понимающей только явно заданный путь и относительные пути
@@ -11,6 +11,8 @@ Version: 1.5.0
 Подключение:
 Добавьте в SciTEStartup.lua строку
 dofile (props["SciteDefaultHome"].."\\tools\\Open_Selected_Filename.lua")
+Параметром open.selected.filename.minlength можно задать минимальную длину выделенной строки, которая будет анализироваться как возможное имя файла.
+По умолчанию open.selected.filename.minlength=4
 -------------------------------------
 Connection:
 In file SciTEStartup.lua add a line:
@@ -19,6 +21,7 @@ dofile (props["SciteDefaultHome"].."\\tools\\Open_Selected_Filename.lua")
 require 'shell'
 require 'gui'
 ------------------------------------------------------
+local open_selected_filename_minlength = tonumber(props['open.selected.filename.minlength']) or 4
 
 -- Ищет файл в текущем и дочерних каталогах
 local function FindFileDown(filename)
@@ -97,7 +100,7 @@ end
 
 local function OpenSelectedFilename()
 	local text = GetSelText()
-	if #text < 5 then return end
+	if #text < open_selected_filename_minlength then return end
 	local filename = GetOpenFilePath(text)
 	if not filename then
 		local alert = scite.GetTranslation('File')..' "'..text..'" '..scite.GetTranslation('does not exist\nYou want to create a file with that name?')
