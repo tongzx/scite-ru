@@ -12,8 +12,7 @@ RM = del
 # line when debugging.
 # OMIT_FRAME_POINTER = -fomit-frame-pointer
 
-# CFLAGS = -I. -I../../src/scite/lua/include -O3
-CFLAGS = -I. -I../../src/scite/lua/include -Os
+CFLAGS = -O3 -I. -I../../src/scite/lua/include
 
 # comma separated list (e.g. "iconv.dll,libiconv.dll")
 # DEFAULT_LIBICONV_DLL ?= \"\"

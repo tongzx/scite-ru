@@ -1,7 +1,7 @@
 @ECHO OFF
 SET root=%~dp0
 MODE CON COLS=120 LINES=2000
-SET PATH=C:\MinGW\bin\;C:\Program Files\CodeBlocks\bin;C:\MinGW\upx\;%PATH%
+SET PATH=C:\MinGW\bin\;C:\Program Files\CodeBlocks\bin;%PATH%
 
 rem -----------------------------------------------------
 CALL :if_exist "gcc.exe"
@@ -26,57 +26,47 @@ mingw32-make
 IF ERRORLEVEL 1 GOTO error
 
 CD ..\bin
-REM IF NOT EXIST Sc1.exe PAUSE
 IF NOT EXIST SciTE.exe PAUSE
-
-rem -----------------------------------------------------
-CALL :if_exist "upx.exe"
-IF NOT ERRORLEVEL 1 (
-	CALL :header Packing
-	upx --best --compress-icons=0 SciLexer.dll SciTE.exe
-) ELSE (
-	ECHO WARNING: UPX not found! SciTE.exe and SciLexer.dll not packing
-)
 
 rem -----------------------------------------------------
 MOVE /Y SciTE.exe ..\..\..\pack\
 MOVE /Y SciLexer.dll ..\..\..\pack\
 IF ERRORLEVEL 1 GOTO error
 
-IF "%1"=="/build" GOTO completed
-
-rem -----------------------------------------------------
-CALL :clear
-
 rem -----------------------------------------------------
 CALL :header Make SHELL.DLL
 CD %root%lualib\shell
 CALL make.cmd
-MOVE /Y *.dll ..\..\pack\tools\LuaLib\
+MOVE /Y shell.dll ..\..\pack\tools\LuaLib\
 
 rem -----------------------------------------------------
 CALL :header Make GUI.DLL
 CD %root%lualib\gui
 CALL make.cmd
-MOVE /Y *.dll ..\..\pack\tools\LuaLib\
+MOVE /Y gui.dll ..\..\pack\tools\LuaLib\
 
 rem -----------------------------------------------------
 CALL :header Make LPEG.DLL
 CD %root%lualib\lpeg
 CALL make.cmd
-MOVE /Y *.dll ..\..\pack\tools\LuaLib\
+MOVE /Y lpeg.dll ..\..\pack\tools\LuaLib\
 
 rem -----------------------------------------------------
 CALL :header Make COOL.DLL
 CD %root%iconlib\cool
 CALL make.cmd
-MOVE /Y *.dll ..\..\pack\toolbar\
+MOVE /Y cool.dll ..\..\pack\toolbar\
 
 rem -----------------------------------------------------
 CALL :header Make GNOME.DLL
-CD %root%iconlib\gnome\
+CD %root%iconlib\gnome
 CALL make.cmd
-MOVE /Y *.dll ..\..\pack\toolbar\
+MOVE /Y gnome.dll ..\..\pack\toolbar\
+
+rem -----------------------------------------------------
+IF "%1"=="/build" GOTO completed
+
+CALL :clear
 
 :completed
 ECHO.
@@ -94,7 +84,7 @@ GOTO end
 :error_install
 ECHO.
 ECHO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-ECHO Please install MinGW + UPX!
+ECHO Please install MinGW!
 ECHO For more information visit http://scite-ru.org
 GOTO end
 
@@ -111,7 +101,6 @@ GOTO :EOF
 :clear
 CD %root%src
 DEL /S /Q *.a *.aps *.bsc *.dll *.dsw *.exe *.idb *.ilc *.ild *.ilf *.ilk *.ils *.lib *.map *.ncb *.obj *.o *.opt *.pdb *.plg *.res *.sbr *.tds *.exp > NUL 2<&1
-rem DEL /Q %root%src\scite\bin\*.properties > NUL 2<&1
 GOTO :EOF
 
 :end

@@ -5,12 +5,12 @@ OUTFILE= shell.dll
 
 LUA= ../../src/scite/lua/include
 
-CFLAGS= -O2 -s -I$(LUA) -DUNICODE
+CFLAGS = -O2 -s -I$(LUA) -DUNICODE
 
-CC= g++
+CXX = g++
 
 $(OUTFILE): resfile.o
-	$(CC) $(CFLAGS) -shared -o $(OUTFILE) shell.cpp utf.cpp ibox/ibox.cpp utils/luaargs.cpp resfile.o $(LIBDIR) $(LIBS)
+	$(CXX) $(CFLAGS) -shared -o $(OUTFILE) shell.cpp utf.cpp ibox/ibox.cpp utils/luaargs.cpp resfile.o $(LIBDIR) $(LIBS)
 
 resfile.o: shell.rc
 	windres -o resfile.o shell.rc

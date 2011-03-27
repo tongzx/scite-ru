@@ -21,4 +21,3 @@ $(TARGET): $(OBJECTS)
 
 clean:
 	-$(RM) $(OBJECTS)
-	-$(RM) $(TARGET)

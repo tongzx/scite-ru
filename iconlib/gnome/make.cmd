@@ -1,5 +1,5 @@
 @ECHO OFF
-SET PATH=C:\MinGW\bin;%ProgramFiles%\CodeBlocks\bin
+SET PATH=C:\MinGW\bin;%ProgramFiles%\CodeBlocks\bin;%PATH%
 
 CD /D "%~dp0"
 windres -o resfile.o toolbar.rc

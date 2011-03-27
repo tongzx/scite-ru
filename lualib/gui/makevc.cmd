@@ -10,5 +10,3 @@ nmake -nologo -f makefile.vc
 if errorlevel 1 exit
 
 nmake -nologo -f makefile.vc clean
-set path=C:\MinGW\upx
-upx.exe --best -f gui.dll
