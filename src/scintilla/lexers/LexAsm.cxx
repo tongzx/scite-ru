@@ -30,7 +30,6 @@
 
 #include "WordList.h"
 #include "LexAccessor.h"
-#include "Accessor.h"
 #include "StyleContext.h"
 #include "CharacterSet.h"
 #include "LexerModule.h"
