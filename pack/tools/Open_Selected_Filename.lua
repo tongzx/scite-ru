@@ -81,7 +81,7 @@ local function GetOpenFilePath(text)
 		return props[scite_prop1]..scite_prop2
 	end
 
-	-- Example: ..LuaLib\re.lua
+	-- Example: ..\LuaLib\re.lua
 	local files = FindFileDown(text)
 	if files then
 		return files
