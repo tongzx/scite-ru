@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 Open_Selected_Filename.lua
 Authors: mozers™, VladVRO
-Version: 1.5.1
+Version: 1.6.0
 ------------------------------------------------------
 Замена команды "Открыть выделенный файл"
 В отличии от встроенной команды SciTE, понимающей только явно заданный путь и относительные пути
@@ -11,8 +11,11 @@ Version: 1.5.1
 Подключение:
 Добавьте в SciTEStartup.lua строку
 dofile (props["SciteDefaultHome"].."\\tools\\Open_Selected_Filename.lua")
+
 Параметром open.selected.filename.minlength можно задать минимальную длину выделенной строки, которая будет анализироваться как возможное имя файла.
 По умолчанию open.selected.filename.minlength=4
+
+Параметр open.filename.by.click=1 разрешает открытие файла с помощью двойного клика мыши на его имени при нажатой клавише Ctrl
 -------------------------------------
 Connection:
 In file SciTEStartup.lua add a line:
@@ -94,16 +97,33 @@ end
 local function GetSelText()
 	local pane = editor.Focus and editor or output
 	local text = pane:GetSelText()
-	text = string.gsub(text, '/', '\\')
 	return text:to_utf8(pane:codepage())
 end
 
-local function OpenSelectedFilename()
-	local text = GetSelText()
+local function GetClickedText()
+	local pane = editor.Focus and editor or output
+	local cur_line, pos_cur = pane:GetCurLine()
+	local pos_start, pos_end = 0, 0
+	local q = "'"
+	local no_filepath_chars = '%s=:,*?<>|"'..q  -- символы, недопутимые в имени файла
+	local no_filepath_end_char = '.\\/[('       -- символы, недопутимые в последнем символе имени файла
+	local re = '[^'..no_filepath_chars..']+[^'..no_filepath_chars..no_filepath_end_char..']'
+	repeat
+		pos_end = pos_end + 1
+		pos_start, pos_end = cur_line:find(re, pos_end)
+		if not pos_start then return end
+	until (pos_start-1 <= pos_cur) and (pos_end >= pos_cur)
+	local line_start_pos = pane:PositionFromLine(pane:LineFromPosition(pane.CurrentPos))
+	pane:SetSel(line_start_pos+pos_start-1, line_start_pos+pos_end)
+	return cur_line:sub(pos_start,pos_end):to_utf8(pane:codepage())
+end
+
+local function OpenSelectedFilename(text)
 	if #text < open_selected_filename_minlength then return end
+	text = string.gsub(text, '/', '\\')
 	local filename = GetOpenFilePath(text)
 	if not filename then
-		local alert = scite.GetTranslation('File')..' "'..text..'" '..scite.GetTranslation('does not exist\nYou want to create a file with that name?')
+		local alert = scite.GetTranslation('File')..' "'..props['FileDir']..'\\'..text..'" '..scite.GetTranslation('does not exist\nYou want to create a file with that name?')
 		if shell.msgbox(alert, "New File", 4+256) == 6 then
 			filename = props['FileDir']..'\\'..string.gsub(text, '\\\\', '\\')
 			local warning_couldnotopenfile_disable = props['warning.couldnotopenfile.disable']
@@ -120,6 +140,12 @@ end
 
 AddEventHandler("OnMenuCommand", function(msg, source)
 	if msg == IDM_OPENSELECTED then
-		return OpenSelectedFilename()
+		return OpenSelectedFilename(GetSelText())
+	end
+end)
+
+AddEventHandler("OnDoubleClick", function(shift, ctrl, alt)
+	if ctrl and not (shift or alt) and props["open.filename.by.click"] == "1" then
+		return OpenSelectedFilename(GetClickedText())
 	end
 end)

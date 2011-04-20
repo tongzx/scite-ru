@@ -64,15 +64,6 @@ dofile (props["SciteDefaultHome"].."\\tools\\html_tags_autoclose.lua")
 dofile (props["SciteDefaultHome"].."\\tools\\xComment.lua")
 --~ dofile (props["SciteDefaultHome"].."\\tools\\smartcomment.lua")
 
-----[[ О Т К Р Ы Т Ь  Ф А Й Л ]]----------------------------------------------
-
--- Замена стандартной команды SciTE "Открыть выделенный файл"
-dofile (props["SciteDefaultHome"].."\\tools\\Open_Selected_Filename.lua")
-
--- Расширение стандартной команды SciTE "Открыть выделенный файл" (открывает без предварительного выделения)
--- А также возможность открыть файл по двойному клику мыши на его имени при нажатой клавише Ctrl.
-dofile (props["SciteDefaultHome"].."\\tools\\Select_And_Open_Filename.lua")
-
 ----[[ А В Т О М А Т И З А Ц И Я ]]-------------------------------------------
 
 -- Подключение LuaInspect <http://lua-users.org/wiki/LuaInspect>
@@ -83,6 +74,10 @@ dofile (props["SciteDefaultHome"].."\\tools\\goto_line.lua")
 
 -- Заменяет стандартную команду SciTE "File|New" (Ctrl+N). Создает новый буфер в текущем каталоге с расширением текущего файла
 dofile (props["SciteDefaultHome"].."\\tools\\new_file.lua")
+
+-- Замена стандартной команды SciTE "Открыть выделенный файл"
+-- А также возможность открыть файл по двойному клику мыши на его имени при нажатой клавише Ctrl.
+dofile (props["SciteDefaultHome"].."\\tools\\Open_Selected_Filename.lua")
 
 -- Включает HTML подсветку для файлов без расширения, открываемых из меню "просмотр HTML-кода" Internet Explorer
 dofile (props["SciteDefaultHome"].."\\tools\\set_html.lua")
