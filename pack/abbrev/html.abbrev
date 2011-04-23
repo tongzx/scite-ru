@@ -39,13 +39,15 @@ xmld=<?xml version="1.0"?>\n<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "h
 <arp=<area shape="poly" coords="|" href="|" alt="|">|</area>
 <arr=<area shape="rect" coords="|" href="|" alt="">|</area>
 <b=<b>%SEL%|</b>
-<ba=<base href="|" />\n
+<ba=<base href="|">\n
+<ba/=<base href="|" />\n
 <bdl=<bdo dir="ltr">%SEL%|</bdo>
 <bdr=<bdo dir="rtl">%SEL%|</bdo>
 <bi=<big>%SEL%|</big>
 <bl=<blockquote cite="|">%SEL%|</blockquote>\n
 <bo=<body>\n\t%SEL%|\n</body>\n
-</=<br />
+</=<br>
+<//=<br />
 <bu=<button name="|" value="|" type="|">|</button>
 <ca=<caption>%SEL%|</caption>\n
 <ce=<center>|</center>
@@ -82,23 +84,37 @@ xmld=<?xml version="1.0"?>\n<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "h
 <h5=<h5>%SEL%|</h5>\n
 <h6=<h6>%SEL%|</h6>\n
 <he=<head>\n\t%SEL%|\n</head>\n
-<-=<hr />\n
+<-=<hr>\n
+<-/=<hr />\n
 <ht=<html>\n\t%SEL%|\n</html>
 <i=<i>%SEL%|</i>
-<im=<img src="%SEL%|" alt="|" />
+<im=<img src="%SEL%|" alt="|">
+<im/=<img src="%SEL%|" alt="|" />
 <ins=<ins>%SEL%|</ins>
-<it=<input type="text" value="%SEL%|" />
-<ip=<input type="password" value="%SEL%|" />
-<ic=<input type="checkbox" value="%SEL%|" />
-<icc=<input type="checkbox" checked="checked" value="%SEL%|" />
-<ir=<input type="radio" name="|" value="%SEL%|" />
-<irc=<input type="radio" checked="checked" name="|" value="%SEL%|" />
-<if=<input type="file" />
-<ib=<input type="button" value="%SEL%|" />
-<is=<input type="submit" value="%SEL%|" />
-<irs=<input type="reset" value="%SEL%|" />
-<ii=<input type="image" src="%SEL%|" />
-<ih=<input type="hidden" value="%SEL%|" />
+<it=<input type="text" value="%SEL%|">
+<it/=<input type="text" value="%SEL%|" />
+<ip=<input type="password" value="%SEL%|">
+<ip/=<input type="password" value="%SEL%|" />
+<ic=<input type="checkbox" value="%SEL%|">
+<ic/=<input type="checkbox" value="%SEL%|" />
+<icc=<input type="checkbox" checked="checked" value="%SEL%|">
+<icc/=<input type="checkbox" checked="checked" value="%SEL%|" />
+<ir=<input type="radio" name="|" value="%SEL%|">
+<ir/=<input type="radio" name="|" value="%SEL%|" />
+<irc=<input type="radio" checked="checked" name="|" value="%SEL%|">
+<irc/=<input type="radio" checked="checked" name="|" value="%SEL%|" />
+<if=<input type="file">
+<if/=<input type="file" />
+<ib=<input type="button" value="%SEL%|">
+<ib/=<input type="button" value="%SEL%|" />
+<is=<input type="submit" value="%SEL%|">
+<is/=<input type="submit" value="%SEL%|" />
+<irs=<input type="reset" value="%SEL%|">
+<irs/=<input type="reset" value="%SEL%|" />
+<ii=<input type="image" src="%SEL%|">
+<ii/=<input type="image" src="%SEL%|" />
+<ih=<input type="hidden" value="%SEL%|">
+<ih/=<input type="hidden" value="%SEL%|" />
 <js=<script type="text/javascript">\n%SEL%|\n</script>\n
 <jss=<script type="text/javascript" src="%SEL%|.js"></script>\n
 <k=<kbd>%SEL%|</kbd>
@@ -107,31 +123,48 @@ xmld=<?xml version="1.0"?>\n<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "h
 <lb=<label>%SEL%|</label>
 <lf=<label for="%SEL%|">|</label>
 <le=<legend>%SEL%|</legend>\n
-<lfi=<link rel="shortcut icon" type="image/x-icon" href="|favicon.ico"/>\n
-<lcss=<link rel="stylesheet" type="text/css" href="%SEL%|.css" />\n
-<lpr=<link rel="stylesheet" type="text/css" href="|print.css" media="print"/>\n
-<lrss=<link rel="alternate" type="application/rss+xml" title="RSS" href="|rss.xml"/>\n
-<latom=<link rel="alternate" type="application/atom+xml" title="Atom" href="|atom.xml"/>\n
+<lfi=<link rel="shortcut icon" type="image/x-icon" href="|favicon.ico">\n
+<lfi/=<link rel="shortcut icon" type="image/x-icon" href="|favicon.ico" />\n
+<lcss=<link rel="stylesheet" type="text/css" href="%SEL%|.css">\n
+<lcss/=<link rel="stylesheet" type="text/css" href="%SEL%|.css" />\n
+<lpr=<link rel="stylesheet" type="text/css" href="|print.css" media="print">\n
+<lpr/=<link rel="stylesheet" type="text/css" href="|print.css" media="print" />\n
+<lrss=<link rel="alternate" type="application/rss+xml" title="RSS" href="|rss.xml">\n
+<lrss/=<link rel="alternate" type="application/rss+xml" title="RSS" href="|rss.xml" />\n
+<latom=<link rel="alternate" type="application/atom+xml" title="Atom" href="|atom.xml">\n
+<latom/=<link rel="alternate" type="application/atom+xml" title="Atom" href="|atom.xml" />\n
 <map=<map>\n%SEL%|\n</map>\n
 <met=<meta content="|">%SEL%|</meta>\n
-<mi=<meta http-equiv="imagetoolbar" content="no"/>\n
-<mu=<meta http-equiv="content-type" content="text/html; charset=utf-8"/>\n
-<mw=<meta http-equiv="content-type" content="text/html; charset=windows-1251"/>\n
-<ma=<meta name="author" content="%SEL%|"/>\n
-<mc=<meta name="copyright" content="%SEL%|"/>\n
-<md=<meta name="description" content="%SEL%|"/>\n
-<mk=<meta name="keywords" content="%SEL%|"/>\n
-<mr=<meta name="robots" content="%SEL%|"/>\n
-<mg=<meta name="generator" content="SciTE-RU"/>\n
-<mt=<meta name="title" content="%SEL%|"/>\n
-<m7=<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7"/>\n
+<mi=<meta http-equiv="imagetoolbar" content="no">\n
+<mi/=<meta http-equiv="imagetoolbar" content="no" />\n
+<mu=<meta http-equiv="content-type" content="text/html; charset=utf-8">\n
+<mu/=<meta http-equiv="content-type" content="text/html; charset=utf-8" />\n
+<mw=<meta http-equiv="content-type" content="text/html; charset=windows-1251">\n
+<mw/=<meta http-equiv="content-type" content="text/html; charset=windows-1251" />\n
+<ma=<meta name="author" content="%SEL%|">\n
+<ma/=<meta name="author" content="%SEL%|" />\n
+<mc=<meta name="copyright" content="%SEL%|">\n
+<mc/=<meta name="copyright" content="%SEL%|" />\n
+<md=<meta name="description" content="%SEL%|">\n
+<md/=<meta name="description" content="%SEL%|" />\n
+<mk=<meta name="keywords" content="%SEL%|">\n
+<mk/=<meta name="keywords" content="%SEL%|" />\n
+<mr=<meta name="robots" content="%SEL%|">\n
+<mr/=<meta name="robots" content="%SEL%|" />\n
+<mg=<meta name="generator" content="SciTE-RU">\n
+<mg/=<meta name="generator" content="SciTE-RU" />\n
+<mt=<meta name="title" content="%SEL%|">\n
+<mt/=<meta name="title" content="%SEL%|" />\n
+<m7=<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7">\n
+<m7/=<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />\n
 <nos=<noscript>%SEL%|</noscript>\n
 <o=<ol>\n\t<li>%SEL%|</li>\n\n</ol>\n
 <ob=<object>%SEL%|</object>\n
 <op=<option value="|">%SEL%|</option>
 <opg=<optgroup label="%SEL%|">\n\t<option value=""></option>\n\n</optgroup>\n
 <p=<p>%SEL%|</p>\n
-<pa=<param name="|" value="|" />
+<pa=<param name="|" value="|">
+<pa/=<param name="|" value="|" />
 <pr=<pre>\n%SEL%|\n</pre>\n
 <q=<q>%SEL%|</q>
 <s=<s>%SEL%|</s>
