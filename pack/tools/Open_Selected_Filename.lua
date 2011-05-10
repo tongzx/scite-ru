@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 Open_Selected_Filename.lua
 Authors: mozers™, VladVRO
-Version: 1.6.0
+Version: 1.6.1
 ------------------------------------------------------
 Замена команды "Открыть выделенный файл"
 В отличии от встроенной команды SciTE, понимающей только явно заданный путь и относительные пути
@@ -120,12 +120,16 @@ end
 
 local function OpenSelectedFilename(text)
 	if #text < open_selected_filename_minlength then return end
+	if shell.fileexists(text) then return end
 	text = string.gsub(text, '/', '\\')
 	local filename = GetOpenFilePath(text)
 	if not filename then
-		local alert = scite.GetTranslation('File')..' "'..props['FileDir']..'\\'..text..'" '..scite.GetTranslation('does not exist\nYou want to create a file with that name?')
+		if not text:find('^%a:') then
+			text = props['FileDir']..'\\'..text
+		end
+		local alert = scite.GetTranslation('File')..' "'..text..'" '..scite.GetTranslation('does not exist\nYou want to create a file with that name?')
 		if shell.msgbox(alert, "New File", 4+256) == 6 then
-			filename = props['FileDir']..'\\'..string.gsub(text, '\\\\', '\\')
+			filename = string.gsub(text, '\\\\', '\\')
 			local warning_couldnotopenfile_disable = props['warning.couldnotopenfile.disable']
 			props['warning.couldnotopenfile.disable'] = 1
 			scite.Open(filename)
