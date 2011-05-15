@@ -1,11 +1,12 @@
 --[[--------------------------------------------------
 Open_Selected_Filename.lua
 Authors: mozers™, VladVRO
-Version: 1.6.1
+Version: 1.7.0
 ------------------------------------------------------
 Замена команды "Открыть выделенный файл"
 В отличии от встроенной команды SciTE, понимающей только явно заданный путь и относительные пути
-обрабатывает переменные SciTE, переменные окружения, конструкции LUA, неполные пути
+обрабатывает переменные SciTE, переменные окружения, конструкции LUA, неполные пути.
+При открытии файла с помощью двойного клика мыши на его имени при нажатой клавише Ctrl, в случае неполных путей, поиск будет производится только если не нажата клавиша Shift.
 Если файл не найден, то выводится предложение о его создании.
 -------------------------------------
 Подключение:
@@ -59,7 +60,8 @@ local function FindFileUp(filename)
 	until #path < 3
 end
 
-local function GetOpenFilePath(text)
+-- Возвращает абсолютный путь к файлу
+local function GetOpenFilePath(text, shift)
 	-- Example: $(SciteDefaultHome)\tools\RestoreRecent.js
 	local pattern_sci = '^$[(](.-)[)]'
 	local _, _, scite_var = string.find(text,pattern_sci)
@@ -81,16 +83,18 @@ local function GetOpenFilePath(text)
 		return props[scite_prop1]..scite_prop2
 	end
 
-	-- Example: ..\LuaLib\re.lua
-	local files = FindFileDown(text)
-	if files then
-		return files
-	end
+	if not shift then -- поиск производится только если не нажата клавиша Shift
+		-- Example: ..\LuaLib\re.lua
+		local files = FindFileDown(text)
+		if files then
+			return files
+		end
 
-	-- Example: ..\languages\css.properties
-	local filepath = FindFileUp(text)
-	if filepath then
-		return filepath
+		-- Example: ..\languages\css.properties
+		local filepath = FindFileUp(text)
+		if filepath then
+			return filepath
+		end
 	end
 end
 
@@ -107,7 +111,7 @@ local function GetClickedText()
 	local q = "'"
 	local no_filepath_chars = '%s=:,*?<>|"'..q  -- символы, недопутимые в имени файла
 	local no_filepath_end_char = '.\\/[('       -- символы, недопутимые в последнем символе имени файла
-	local re = '[^'..no_filepath_chars..']+[^'..no_filepath_chars..no_filepath_end_char..']'
+	local re = '%a?:?\\?[^'..no_filepath_chars..']+[^'..no_filepath_chars..no_filepath_end_char..']'
 	repeat
 		pos_end = pos_end + 1
 		pos_start, pos_end = cur_line:find(re, pos_end)
@@ -118,27 +122,29 @@ local function GetClickedText()
 	return cur_line:sub(pos_start,pos_end):to_utf8(pane:codepage())
 end
 
-local function OpenSelectedFilename(text)
+local function OpenSelectedFilename(text, shift)
 	if #text < open_selected_filename_minlength then return end
-	if shell.fileexists(text) then return end
-	text = string.gsub(text, '/', '\\')
-	local filename = GetOpenFilePath(text)
-	if not filename then
-		if not text:find('^%a:') then
-			text = props['FileDir']..'\\'..text
-		end
-		local alert = scite.GetTranslation('File')..' "'..text..'" '..scite.GetTranslation('does not exist\nYou want to create a file with that name?')
-		if shell.msgbox(alert, "New File", 4+256) == 6 then
-			filename = string.gsub(text, '\\\\', '\\')
+	text = text:gsub('/', '\\')
+	local filename = GetOpenFilePath(text, shift) or text
+	if not filename:find('^%a:\\') then
+		filename = props['FileDir']..'\\'..filename
+	end
+	if shell.fileexists(filename) then
+		scite.Open (filename)
+	else
+		-- Создание нового файла
+		local alert = scite.GetTranslation('File')..' "'..filename..'" '..scite.GetTranslation('does not exist\nYou want to create a file with that name?')
+		if shell.msgbox(alert, scite.GetTranslation('Create New File'), 4+256) == 6 then
+			local folder = filename:gsub('\\[^\\]-$', '')
+			if not shell.fileexists(folder) then
+				shell.exec('cmd /c md "'..folder..'"', nil, true, true)
+			end
 			local warning_couldnotopenfile_disable = props['warning.couldnotopenfile.disable']
 			props['warning.couldnotopenfile.disable'] = 1
 			scite.Open(filename)
 			props['warning.couldnotopenfile.disable'] = warning_couldnotopenfile_disable
 		end
-		return true
 	end
-	filename = string.gsub(filename, '\\\\', '\\')
-	scite.Open (filename)
 	return true
 end
 
@@ -149,7 +155,7 @@ AddEventHandler("OnMenuCommand", function(msg, source)
 end)
 
 AddEventHandler("OnDoubleClick", function(shift, ctrl, alt)
-	if ctrl and not (shift or alt) and props["open.filename.by.click"] == "1" then
-		return OpenSelectedFilename(GetClickedText())
+	if ctrl and not alt and props["open.filename.by.click"] == "1" then
+		return OpenSelectedFilename(GetClickedText(), shift)
 	end
 end)
