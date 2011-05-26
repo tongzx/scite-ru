@@ -2,7 +2,7 @@
 /** @file SciTEBase.cxx
  ** Platform independent base class of editor.
  **/
-// Copyright 1998-2010 by Neil Hodgson <neilh@scintilla.org>
+// Copyright 1998-2011 by Neil Hodgson <neilh@scintilla.org>
 // The License.txt file describes the conditions under which this software may be distributed.
 
 #include <stdlib.h>
@@ -73,298 +73,6 @@
 #include "SciTEBase.h"
 
 #define _MAX_EXTENSION_RECURSIVE_CALL 100 //!-add-[OnSendEditor][OnMenuCommand]
-
-// Contributor names are in UTF-8
-const char *contributors[] = {
-            "Atsuo Ishimoto",
-            "Mark Hammond",
-            "Francois Le Coguiec",
-            "Dale Nagata",
-            "Ralf Reinhardt",
-            "Philippe Lhoste",
-            "Andrew McKinlay",
-            "Stephan R. A. Deibel",
-            "Hans Eckardt",
-            "Vassili Bourdo",
-            "Maksim Lin",
-            "Robin Dunn",
-            "John Ehresman",
-            "Steffen Goeldner",
-            "Deepak S.",
-            "DevelopMentor http://www.develop.com",
-            "Yann Gaillard",
-            "Aubin Paul",
-            "Jason Diamond",
-            "Ahmad Baitalmal",
-            "Paul Winwood",
-            "Maxim Baranov",
-#if defined(GTK)
-            "Icons Copyright(C) 1998 by Dean S. Jones",
-            "    http://jfa.javalobby.org/projects/icons/",
-#endif
-            "Ragnar H\xc3\xb8jland",
-            "Christian Obrecht",
-            "Andreas Neukoetter",
-            "Adam Gates",
-            "Steve Lhomme",
-            "Ferdinand Prantl",
-            "Jan Dries",
-            "Markus Gritsch",
-            "Tahir Karaca",
-            "Ahmad Zawawi",
-            "Laurent le Tynevez",
-            "Walter Braeu",
-            "Ashley Cambrell",
-            "Garrett Serack",
-            "Holger Schmidt",
-            "ActiveState http://www.activestate.com",
-            "James Larcombe",
-            "Alexey Yutkin",
-            "Jan Hercek",
-            "Richard Pecl",
-            "Edward K. Ream",
-            "Valery Kondakoff",
-            "Sm\xc3\xa1ri McCarthy",
-            "Clemens Wyss",
-            "Simon Steele",
-            "Serge A. Baranov",
-            "Xavier Nodet",
-            "Willy Devaux",
-            "David Clain",
-            "Brendon Yenson",
-            "Vamsi Potluru http://www.baanboard.com",
-            "Praveen Ambekar",
-            "Alan Knowles",
-            "Kengo Jinno",
-            "Valentin Valchev",
-            "Marcos E. Wurzius",
-            "Martin Alderson",
-            "Robert Gustavsson",
-            "Jos\xc3\xa9 Fonseca",
-            "Holger Kiemes",
-            "Francis Irving",
-            "Scott Kirkwood",
-            "Brian Quinlan",
-            "Ubi",
-            "Michael R. Duerig",
-            "Deepak T",
-            "Don Paul Beletsky",
-            "Gerhard Kalab",
-            "Olivier Dagenais",
-            "Josh Wingstrom",
-            "Bruce Dodson",
-            "Sergey Koshcheyev",
-            "Chuan-jian Shen",
-            "Shane Caraveo",
-            "Alexander Scripnik",
-            "Ryan Christianson",
-            "Martin Steffensen",
-            "Jakub Vr\xc3\xa1na",
-            "The Black Horus",
-            "Bernd Kreuss",
-            "Thomas Lauer",
-            "Mike Lansdaal",
-            "Yukihiro Nakai",
-            "Jochen Tucht",
-            "Greg Smith",
-            "Steve Schoettler",
-            "Mauritius Thinnes",
-            "Darren Schroeder",
-            "Pedro Guerreiro",
-            "Steven te Brinke",
-            "Dan Petitt",
-            "Biswapesh Chattopadhyay",
-            "Kein-Hong Man",
-            "Patrizio Bekerle",
-            "Nigel Hathaway",
-            "Hrishikesh Desai",
-            "Sergey Puljajev",
-            "Mathias Rauen",
-            "Angelo Mandato http://www.spaceblue.com",
-            "Denis Sureau",
-            "Kaspar Schiess",
-            "Christoph H\xc3\xb6sler",
-            "Jo\xc3\xa3o Paulo F Farias",
-            "Ron Schofield",
-            "Stefan Wosnik",
-            "Marius Gheorghe",
-            "Naba Kumar",
-            "Sean O'Dell",
-            "Stefanos Togoulidis",
-            "Hans Hagen",
-            "Jim Cape",
-            "Roland Walter",
-            "Brian Mosher",
-            "Nicholas Nemtsev",
-            "Roy Wood",
-            "Peter-Henry Mander",
-            "Robert Boucher",
-            "Christoph Dalitz",
-            "April White",
-            "S. Umar",
-            "Trent Mick",
-            "Filip Yaghob",
-            "Avi Yegudin",
-            "Vivi Orunitia",
-            "Manfred Becker",
-            "Dimitris Keletsekis",
-            "Yuiga",
-            "Davide Scola",
-            "Jason Boggs",
-            "Reinhold Niesner",
-            "Jos van der Zande",
-            "Pescuma",
-            "Pavol Bosik",
-            "Johannes Schmid",
-            "Blair McGlashan",
-            "Mikael Hultgren",
-            "Florian Balmer",
-            "Hadar Raz",
-            "Herr Pfarrer",
-            "Ben Key",
-            "Gene Barry",
-            "Niki Spahiev",
-            "Carsten Sperber",
-            "Phil Reid",
-            "Iago Rubio",
-            "R\xc3\xa9gis Vaquette",
-            "Massimo Cor\xc3\xa0",
-            "Elias Pschernig",
-            "Chris Jones",
-            "Josiah Reynolds",
-            "Robert Roessler http://www.rftp.com",
-            "Steve Donovan",
-            "Jan Martin Pettersen",
-            "Sergey Philippov",
-            "Borujoa",
-            "Michael Owens",
-            "Franck Marcia",
-            "Massimo Maria Ghisalberti",
-            "Frank Wunderlich",
-            "Josepmaria Roca",
-            "Tobias Engvall",
-            "Suzumizaki Kimitaka",
-            "Michael Cartmell",
-            "Pascal Hurni",
-            "Andre",
-            "Randy Butler",
-            "Georg Ritter",
-            "Michael Goffioul",
-            "Ben Harper",
-            "Adam Strzelecki",
-            "Kamen Stanev",
-            "Steve Menard",
-            "Oliver Yeoh",
-            "Eric Promislow",
-            "Joseph Galbraith",
-            "Jeffrey Ren",
-            "Armel Asselin",
-            "Jim Pattee",
-            "Friedrich Vedder",
-            "Sebastian Pipping",
-            "Andre Arpin",
-            "Stanislav Maslovski",
-            "Martin Stone",
-            "Fabien Proriol",
-            "mimir",
-            "Nicola Civran",
-            "Snow",
-            "Mitchell Foral",
-            "Pieter Holtzhausen",
-            "Waldemar Augustyn",
-            "Jason Haslam",
-            "Sebastian Steinlechner",
-            "Chris Rickard",
-            "Rob McMullen",
-            "Stefan Schwendeler",
-            "Cristian Adam",
-            "Nicolas Chachereau",
-            "Istvan Szollosi",
-            "Xie Renhui",
-            "Enrico Tr\xc3\xb6ger",
-            "Todd Whiteman",
-            "Yuval Papish",
-            "instanton",
-            "Sergio Lucato",
-            "VladVRO",
-            "Dmitry Maslov",
-            "chupakabra",
-            "Juan Carlos Arevalo Baeza",
-            "Nick Treleaven",
-            "Stephen Stagg",
-            "Jean-Paul Iribarren",
-            "Tim Gerundt",
-            "Sam Harwell",
-            "Boris",
-            "Jason Oster",
-            "Gertjan Kloosterman",
-            "alexbodn",
-            "Sergiu Dotenco",
-            "Anders Karlsson",
-            "ozlooper",
-            "Marko Njezic",
-            "Eugen Bitter",
-            "Christoph Baumann",
-            "Christopher Bean",
-            "Sergey Kishchenko",
-            "Kai Liu",
-            "Andreas Rumpf",
-            "James Moffatt",
-            "Yuzhou Xin",
-            "Nic Jansma",
-            "Evan Jones",
-            "Mike Lischke",
-            "Eric Kidd",
-            "maXmo",
-            "David Severwright",
-            "Jon Strait",
-            "Oliver Kiddle",
-            "Etienne Girondel",
-            "Haimag Ren",
-            "Andrey Moskalyov",
-            "Xavi",
-            "Toby Inkster",
-            "Eric Forgeot",
-            "Colomban Wendling",
-            "Neo",
-            "Jordan Russell",
-            "Farshid Lashkari",
-            "Sam Rawlins",
-            "Michael Mullin",
-            "Carlos SS",
-            "vim",
-            "Martial Demolins",
-            "Tino Weinkauf",
-            "J\xc3\xa9r\xc3\xb4me Laforge",
-            "Udo Lechner",
-            "Marco Falda",
-            "Dariusz Knoci\xc5\x84ski",
-            "Ben Fisher",
-        };
-
-// AddStyledText only called from About so static size buffer is OK
-void AddStyledText(GUI::ScintillaWindow &wsci, const char *s, int attr) {
-	char buf[1000];
-	size_t len = strlen(s);
-	for (size_t i = 0; i < len; i++) {
-		buf[i*2] = s[i];
-		buf[i*2 + 1] = static_cast<char>(attr);
-	}
-	wsci.SendPointer(SCI_ADDSTYLEDTEXT,
-	        static_cast<int>(len*2), const_cast<char *>(buf));
-}
-
-void SetAboutStyle(GUI::ScintillaWindow &wsci, int style, Colour fore) {
-	wsci.Send(SCI_STYLESETFORE, style, fore);
-}
-
-static void HackColour(int &n) {
-	n += (rand() % 100) - 50;
-	if (n > 0xE7)
-		n = 0x60;
-	if (n < 0)
-		n = 0x80;
-}
 
 Searcher::Searcher() {
 	wholeWord = false;
@@ -721,87 +429,6 @@ SString SciTEBase::GetTranslationToAbout(const char * const propname, bool retai
 	// On GTK+, localiser.Text always converts to UTF-8.
 	return SString(localiser.Text(propname, retainIfNotFound).c_str());
 #endif
-}
-
-void SciTEBase::SetAboutMessage(GUI::ScintillaWindow &wsci, const char *appTitle) {
-	if (wsci.Created()) {
-		wsci.Send(SCI_SETSTYLEBITS, 7, 0);
-		wsci.Send(SCI_STYLERESETDEFAULT, 0, 0);
-		int fontSize = 15;
-#if defined(GTK)
-		wsci.Send(SCI_STYLESETFONT, STYLE_DEFAULT,
-		        reinterpret_cast<uptr_t>("!Serif"));
-		fontSize = 14;
-#endif
-
-		wsci.Send(SCI_SETCODEPAGE, SC_CP_UTF8, 0);
-
-		wsci.Send(SCI_STYLESETSIZE, STYLE_DEFAULT, fontSize);
-		wsci.Send(SCI_STYLESETBACK, STYLE_DEFAULT, ColourRGB(0xff, 0xff, 0xff));
-		wsci.Send(SCI_STYLECLEARALL, 0, 0);
-
-		SetAboutStyle(wsci, 0, ColourRGB(0xff, 0xff, 0xff));
-		wsci.Send(SCI_STYLESETSIZE, 0, fontSize);
-		wsci.Send(SCI_STYLESETBACK, 0, ColourRGB(0, 0, 0x80));
-		AddStyledText(wsci, appTitle, 0);
-		AddStyledText(wsci, "\n", 0);
-		SetAboutStyle(wsci, 1, ColourRGB(0, 0, 0));
-		int trsSty = 5; // define the stylenumber to assign font for translators.
-		SString translator = GetTranslationToAbout("TranslationCredit", false);
-		SetAboutStyle(wsci, trsSty, ColourRGB(0, 0, 0));
-#if !defined(GTK)
-		// On Windows Me (maybe 9x also), we must assign another font to display translation.
-		if (translator.length()) {
-			SString fontBase = props.GetExpanded("font.translators");
-			StyleDefinition sd(fontBase.c_str());
-			if (sd.specified & StyleDefinition::sdFont) {
-				wsci.Send(SCI_STYLESETFONT, trsSty,
-				        reinterpret_cast<uptr_t>(sd.font.c_str()));
-			}
-			if (sd.specified & StyleDefinition::sdSize) {
-				wsci.Send(SCI_STYLESETSIZE, trsSty, sd.size);
-			}
-		}
-#endif
-		AddStyledText(wsci, GetTranslationToAbout("Version").c_str(), trsSty);
-		AddStyledText(wsci, " 2.25 .93Ru\n", 1); //!-change-[SciTE-Ru]
-		AddStyledText(wsci, "    " __DATE__ " " __TIME__ "\n", 1);
-		SetAboutStyle(wsci, 4, ColourRGB(0, 0x7f, 0x7f)); //!-add-[SciTE-Ru]
-		AddStyledText(wsci, "http://scite-ru.org\n", 4); //!-add-[SciTE-Ru]
-		SetAboutStyle(wsci, 2, ColourRGB(0, 0, 0));
-		wsci.Send(SCI_STYLESETITALIC, 2, 1);
-		AddStyledText(wsci, GetTranslationToAbout("Based on version").c_str(), trsSty); //!-add-[SciTE-Ru]
-		AddStyledText(wsci, " 2.25 ", 1); //!-add-[SciTE-Ru]
-		AddStyledText(wsci, GetTranslationToAbout("by").c_str(), trsSty);
-		AddStyledText(wsci, " Neil Hodgson.\n", 2);
-		SetAboutStyle(wsci, 3, ColourRGB(0, 0, 0));
-		AddStyledText(wsci, "December 1998-March 2011.\n", 3);
-		SetAboutStyle(wsci, 4, ColourRGB(0, 0x7f, 0x7f));
-		AddStyledText(wsci, "http://www.scintilla.org\n", 4);
-		AddStyledText(wsci, "Lua scripting language by TeCGraf, PUC-Rio\n", 3);
-		AddStyledText(wsci, "    http://www.lua.org\n", 4);
-		if (translator.length()) {
-			AddStyledText(wsci, translator.c_str(), trsSty);
-			AddStyledText(wsci, "\n", 5);
-		}
-		AddStyledText(wsci, GetTranslationToAbout("Contributors:").c_str(), trsSty);
-		srand(static_cast<unsigned>(time(0)));
-		for (unsigned int co = 0;co < ELEMENTS(contributors);co++) {
-			int colourIndex = 50 + (co % 78);
-			AddStyledText(wsci, "\n    ", colourIndex);
-			AddStyledText(wsci, contributors[co], colourIndex);
-		}
-		int r = rand() % 256;
-		int g = rand() % 256;
-		int b = rand() % 256;
-		for (unsigned int sty = 0;sty < 78; sty++) {
-			HackColour(r);
-			HackColour(g);
-			HackColour(b);
-			SetAboutStyle(wsci, sty + 50, ColourRGB(r, g, b));
-		}
-		wsci.Send(SCI_SETREADONLY, 1, 0);
-	}
 }
 
 void SciTEBase::ViewWhitespace(bool view) {
@@ -1273,6 +900,54 @@ bool SciTEBase::islexerwordcharforsel(char ch) {
 		return iswordcharforsel(ch);
 }
 
+void SciTEBase::HighlightCurrentWord(bool highlight) {
+	if (!currentWordHighlight.isEnabled)
+		return;
+	GUI::ScintillaWindow &wCurrent = wOutput.HasFocus() ? wOutput : wEditor;
+	// Remove old indicators if any exist.
+	wCurrent.Call(SCI_SETINDICATORCURRENT, indicatorHightlightCurrentWord);
+	int lenDoc = wCurrent.Call(SCI_GETLENGTH);
+	wCurrent.Call(SCI_INDICATORCLEARRANGE, 0, lenDoc);
+	if (!highlight)
+		return;
+	// Get start & end selection.
+	int selStart = wCurrent.Call(SCI_GETSELECTIONSTART);
+	int selEnd = wCurrent.Call(SCI_GETSELECTIONEND);
+	bool noUserSelection = selStart == selEnd;
+	SString wordToFind = RangeExtendAndGrab(wCurrent, selStart, selEnd,
+	        &SciTEBase::islexerwordcharforsel);
+	if (wordToFind.length() == 0 || wordToFind.contains('\n') || wordToFind.contains('\r'))
+		return; // No highlight when no selection or multi-lines selection.
+	if (noUserSelection && currentWordHighlight.statesOfDelay == currentWordHighlight.noDelay) {
+		// Manage delay before highlight when no user selection but there is word at the caret.
+		currentWordHighlight.statesOfDelay = currentWordHighlight.delay;
+		// Reset timer
+		currentWordHighlight.elapsedTimes.Duration(true);
+		return;
+	}
+	// Get style of the current word to highlight only word with same style.
+	int selectedStyle = wCurrent.Call(SCI_GETSTYLEAT, selStart);
+
+	// Case sensitive & whole word only.
+	wCurrent.Call(SCI_SETSEARCHFLAGS, SCFIND_MATCHCASE | SCFIND_WHOLEWORD);
+	wCurrent.Call(SCI_SETTARGETSTART, 0);
+	wCurrent.Call(SCI_SETTARGETEND, lenDoc);
+	// Find the first occurrence of word.
+	int indexOf = wCurrent.CallString(SCI_SEARCHINTARGET,
+	        wordToFind.length(), wordToFind.c_str());
+	while (indexOf != -1 && indexOf < lenDoc) {
+		if (!currentWordHighlight.isOnlyWithSameStyle || selectedStyle ==
+		        wCurrent.Call(SCI_GETSTYLEAT, indexOf)) {
+			wCurrent.Call(SCI_INDICATORFILLRANGE, indexOf, wordToFind.length());
+		}
+		// Try to find next occurrence of word.
+		wCurrent.Call(SCI_SETTARGETSTART, indexOf + wordToFind.length() + 1);
+		wCurrent.Call(SCI_SETTARGETEND, lenDoc);
+		indexOf = wCurrent.CallString(SCI_SEARCHINTARGET, wordToFind.length(),
+		        wordToFind.c_str());
+	}
+}
+
 SString SciTEBase::GetRange(GUI::ScintillaWindow &win, int selStart, int selEnd) {
 	SBuffer sel(selEnd - selStart);
 	Sci_TextRange tr;
@@ -1474,7 +1149,6 @@ int SciTEBase::MarkAll() {
 		RemoveFindMarks();
 		CurrentBuffer()->findMarks = Buffer::fmMarked;
 	}
-
 	if (posFirstFound != -1) {
 		int posFound = posFirstFound;
 		do {
@@ -2283,7 +1957,7 @@ bool SciTEBase::StartAutoCompleteWord(bool onlyOneWord) {
 	SString root = line.substr(startword, current - startword);
 	int doclen = LengthDocument();
 	Sci_TextToFind ft = {{0, 0}, 0, {0, 0}};
-	ft.lpstrText = const_cast<char*>(root.c_str());
+	ft.lpstrText = const_cast<char *>(root.c_str());
 	ft.chrg.cpMin = 0;
 	ft.chrg.cpMax = doclen;
 	ft.chrgText.cpMin = 0;
@@ -2960,7 +2634,7 @@ void SciTEBase::SetTextProperties(
 	} else if (selLastLine == selFirstLine) {
 		sprintf(temp, "%d", 1);
 	} else if ((wEditor.Call(SCI_GETCOLUMN, caretPos) == 0 && (selAnchor <= caretPos)) ||
-	        ((wEditor.Call( SCI_GETCOLUMN, selAnchor) == 0) && (selAnchor > caretPos ))) {
+	        ((wEditor.Call(SCI_GETCOLUMN, selAnchor) == 0) && (selAnchor > caretPos ))) {
 		sprintf(temp, "%d", selLastLine - selFirstLine);
 	} else {
 		sprintf(temp, "%d", selLastLine - selFirstLine + 1);
@@ -3075,7 +2749,7 @@ void SciTEBase::ConvertIndentation(int tabSize, int useTabs) {
 
 bool SciTEBase::RangeIsAllWhitespace(int start, int end) {
 	TextReader acc(wEditor);
-	for (int i = start;i < end;i++) {
+	for (int i = start; i < end; i++) {
 		if ((acc[i] != ' ') && (acc[i] != '\t'))
 			return false;
 	}
@@ -3235,6 +2909,40 @@ void SciTEBase::AutomaticIndentation(char ch) {
 	int thisLineStart = wEditor.Call(SCI_POSITIONFROMLINE, curLine);
 	int indentSize = wEditor.Call(SCI_GETINDENT);
 	int indentBlock = IndentOfBlock(curLine - 1);
+
+	if ((wEditor.Call(SCI_GETLEXER) == SCLEX_PYTHON) &&
+			(props.GetInt("indent.python.colon") == 1)) {
+		int eolMode = wEditor.Call(SCI_GETEOLMODE);
+		int eolChar = (eolMode == SC_EOL_CR ? '\r' : '\n');
+		int eolChars = (eolMode == SC_EOL_CRLF ? 2 : 1);
+		int prevLineStart = wEditor.Call(SCI_POSITIONFROMLINE, curLine - 1);
+		int prevIndentPos = GetLineIndentPosition(curLine - 1);
+		int indentExisting = GetLineIndentation(curLine);
+
+		if (ch == eolChar) {
+			// Find last noncomment, nonwhitespace character on previous line
+			int character = 0;
+			int style = 0;
+			for (int p = selStart - eolChars - 1; p > prevLineStart; p--) {
+				style = wEditor.Call(SCI_GETSTYLEAT, p);
+				if (style != SCE_P_DEFAULT && style != SCE_P_COMMENTLINE &&
+						style != SCE_P_COMMENTBLOCK) {
+					character = wEditor.Call(SCI_GETCHARAT, p);
+					break;
+				}
+			}
+			indentBlock = GetLineIndentation(curLine - 1);
+			if (style == SCE_P_OPERATOR && character == ':') {
+				SetLineIndentation(curLine, indentBlock + indentSize);
+			} else if (selStart == prevIndentPos + eolChars) {
+				// Preserve the indentation of preexisting text beyond the caret
+				SetLineIndentation(curLine, indentBlock + indentExisting);
+			} else {
+				SetLineIndentation(curLine, indentBlock);
+			}
+		}
+		return;
+	}
 
 	if (blockEnd.IsSingleChar() && ch == blockEnd.words[0]) {	// Dedent maybe
 		if (!indentClosing) {
@@ -3434,8 +3142,8 @@ SString SciTEBase::FindOpenXmlTag(const char sel[], int nSize) {
 		// Smallest tag is "<p>" which is 3 characters
 		return strRet;
 	}
-	const char* pBegin = &sel[0];
-	const char* pCur = &sel[nSize - 1];
+	const char *pBegin = &sel[0];
+	const char *pCur = &sel[nSize - 1];
 
 	pCur--; // Skip past the >
 	while (pCur > pBegin) {
@@ -4412,6 +4120,19 @@ void SciTEBase::NewLineInOutput() {
 void SciTEBase::Notify(SCNotification *notification) {
 	bool handled = false;
 	switch (notification->nmhdr.code) {
+	case SCN_PAINTED:
+		// Manage delay before highlight when no user selection but there is word at the caret.
+		// So the Delay is based on the blinking of caret, scroll...
+		// If currentWordHighlight.statesOfDelay == currentWordHighlight.delay,
+		// then there is word at the caret without selection, and need some delay.
+		if (currentWordHighlight.statesOfDelay == currentWordHighlight.delay) {
+			if (currentWordHighlight.elapsedTimes.Duration() >= 0.5) {
+				currentWordHighlight.statesOfDelay = currentWordHighlight.delayJustEnded;
+				HighlightCurrentWord(true);
+				(wOutput.HasFocus() ? wOutput : wEditor).InvalidateAll();
+			}
+		}
+		break;
 	case SCEN_SETFOCUS:
 	case SCEN_KILLFOCUS:
 		CheckMenus();
@@ -4564,6 +4285,14 @@ void SciTEBase::Notify(SCNotification *notification) {
 		if (CurrentBuffer()->findMarks == Buffer::fmModified) {
 			RemoveFindMarks();
 		}
+		if (notification->updated & (SC_UPDATE_SELECTION | SC_UPDATE_CONTENT)) {
+			if (notification->updated & SC_UPDATE_SELECTION)
+				currentWordHighlight.statesOfDelay = currentWordHighlight.noDelay; // Selection has just been updated, so delay is disabled.
+			if (currentWordHighlight.statesOfDelay != currentWordHighlight.delayJustEnded)
+				HighlightCurrentWord(notification->updated != SC_UPDATE_CONTENT);
+			else
+				currentWordHighlight.statesOfDelay = currentWordHighlight.delayAlreadyElapsed;
+		}
 		break;
 
 	case SCN_MODIFIED:
@@ -4574,8 +4303,8 @@ void SciTEBase::Notify(SCNotification *notification) {
 			EnableAMenuItem(IDM_REDO, CallFocused(SCI_CANREDO));
 		} else if (notification->modificationType & (SC_MOD_INSERTTEXT | SC_MOD_DELETETEXT)) {
 			//this will be called a lot, and usually means "typing".
-			EnableAMenuItem(IDM_UNDO, TRUE);
-			EnableAMenuItem(IDM_REDO, FALSE);
+			EnableAMenuItem(IDM_UNDO, true);
+			EnableAMenuItem(IDM_REDO, false);
 			if (CurrentBuffer()->findMarks == Buffer::fmMarked) {
 				CurrentBuffer()->findMarks = Buffer::fmModified;
 			}
@@ -4742,22 +4471,7 @@ void SciTEBase::CheckMenus() {
 		EnableAMenuItem(IDM_TOOLS + toolItem, !jobQueue.IsExecuting());
 	EnableAMenuItem(IDM_STOPEXECUTE, jobQueue.IsExecuting());
 	if (buffers.size > 0) {
-#if defined(WIN32)
-		// Tab Bar
-#ifndef TCM_DESELECTALL
-#define TCM_DESELECTALL TCM_FIRST+50
-#endif
-		if (wTabBar.GetID()) {
-			::SendMessage(reinterpret_cast<HWND>(wTabBar.GetID()), TCM_DESELECTALL, (WPARAM)0, (LPARAM)0);
-			::SendMessage(reinterpret_cast<HWND>(wTabBar.GetID()), TCM_SETCURSEL, (WPARAM)buffers.Current(), (LPARAM)0);
-		}
-#endif
-#if defined(GTK)
-
-		if (wTabBar.GetID())
-			gtk_notebook_set_page(GTK_NOTEBOOK(wTabBar.GetID()), buffers.Current());
-#endif
-
+		TabSelect(buffers.Current());
 		for (int bufferItem = 0; bufferItem < buffers.length; bufferItem++) {
 			CheckAMenuItem(IDM_BUFFER + bufferItem, bufferItem == buffers.Current());
 		}
@@ -5220,7 +4934,7 @@ bool SciTEBase::RecordMacroCommand(SCNotification *notification) {
 		char *szMessage;
 		char *t;
 		bool handled;
-		t = (char*)(notification->lParam);
+		t = (char *)(notification->lParam);
 		SString sWParam(static_cast<size_t>(notification->wParam));
 		if (t != NULL) {
 			//format : "<message>;<wParam>;1;<text>"
@@ -5320,6 +5034,7 @@ void SciTEBase::ExecuteMacroCommand(const char *command) {
 
 	uptr_t message = ReadNum(nextarg);
 	strncpy(params, nextarg, 3);
+	params[3] = '\0';
 	nextarg += 4;
 	if (*(params + 1) == 'R') {
 		// in one function wParam is a string  : void SetProperty(string key,string name)

@@ -2,7 +2,7 @@
 /** @file SciTEProps.cxx
  ** Properties management.
  **/
-// Copyright 1998-2004 by Neil Hodgson <neilh@scintilla.org>
+// Copyright 1998-2011 by Neil Hodgson <neilh@scintilla.org>
 // The License.txt file describes the conditions under which this software may be distributed.
 
 #include <stdlib.h>
@@ -487,10 +487,11 @@ void SciTEBase::ForwardPropertyToEditor(const char *key) {
 	}
 }
 
-void SciTEBase::DefineMarker(int marker, int markerType, Colour fore, Colour back) {
+void SciTEBase::DefineMarker(int marker, int markerType, Colour fore, Colour back, Colour backSelected) {
 	wEditor.Call(SCI_MARKERDEFINE, marker, markerType);
 	wEditor.Call(SCI_MARKERSETFORE, marker, fore);
 	wEditor.Call(SCI_MARKERSETBACK, marker, back);
+	wEditor.Call(SCI_MARKERSETBACKSELECTED, marker, backSelected);
 }
 
 static int FileLength(const char *path) {
@@ -616,11 +617,14 @@ static const char *propertiesToForward[] = {
 	"fold.html.preprocessor",
 	"fold.hypertext.comment",
 	"fold.hypertext.heredoc",
+	"fold.perl.at.else",
+	"fold.perl.comment.explicit",
 	"fold.perl.package",
 	"fold.perl.pod",
 	"fold.preprocessor",
 	"fold.quotes.nimrod",
 	"fold.quotes.python",
+	"fold.sql.at.else",
 	"fold.sql.only.begin",
 	"fold.symbols",
 	"fold.verilog.flags",
@@ -630,6 +634,7 @@ static const char *propertiesToForward[] = {
 	"lexer.caml.magic",
 	"lexer.cpp.allow.dollars",
 	"lexer.cpp.track.preprocessor",
+	"lexer.cpp.triplequoted.strings",
 	"lexer.cpp.update.preprocessor",
 	"lexer.d.fold.at.else",
 	"lexer.errorlist.value.separate",
@@ -647,7 +652,6 @@ static const char *propertiesToForward[] = {
 	"lexer.python.strings.u",
 	"lexer.sql.allow.dotted.word",
 	"lexer.sql.backticks.identifier",
-	"lexer.sql.fold.at.else",
 	"lexer.sql.numbersign.comment",
 	"lexer.tex.auto.if",
 	"lexer.tex.comment.process",
@@ -909,18 +913,16 @@ void SciTEBase::ReadProperties() {
 	wEditor.Call(SCI_SETCARETLINEBACKALPHA,
 		props.GetInt("caret.line.back.alpha", SC_ALPHA_NOALPHA));
 
-//!-start-[output.caret]
-	wOutput.Call(SCI_SETCARETFORE, ColourOfProperty(props, "output.caret.fore", ColourRGB(0x00, 0x00, 0x00)));
-
-	SString outputCaretLineBack = props.Get("output.caret.line.back");
-	if (outputCaretLineBack.length()) {
-		wOutput.Call(SCI_SETCARETLINEVISIBLE, 1);
-		wOutput.Call(SCI_SETCARETLINEBACK, ColourFromString(outputCaretLineBack));
-	} else {
-		wOutput.Call(SCI_SETCARETLINEVISIBLE, 0);
+	int alphaIndicator = props.GetInt("indicators.alpha", 30);
+	if (alphaIndicator < 0 || 255 < alphaIndicator) // If invalid value,
+		alphaIndicator = 30; //then set default value.
+	bool underIndicator = props.GetInt("indicators.under", 0) == 1;
+	for (int index = INDIC_CONTAINER; index < indicatorSentinel; ++index) {
+		wEditor.Call(SCI_INDICSETALPHA, index, alphaIndicator);
+		wOutput.Call(SCI_INDICSETALPHA, index, alphaIndicator);
+		wEditor.Call(SCI_INDICSETUNDER, index, underIndicator);
+		wOutput.Call(SCI_INDICSETUNDER, index, underIndicator);
 	}
-	wOutput.Call(SCI_SETCARETLINEBACKALPHA, props.GetInt("output.caret.line.back.alpha", SC_ALPHA_NOALPHA));
-//!-end-[output.caret]
 
 	SString findMark = props.Get("find.mark");
 	if (findMark.length()) {
@@ -1008,14 +1010,6 @@ void SciTEBase::ReadProperties() {
 	} else {
 		CallChildren(SCI_SETFOLDMARGINHICOLOUR, 0, 0);
 	}
-//!-start-[HighlightCurrFolder]
-	SString foldHighlightColour = props.Get("fold.highlight.colour");
-	if (foldHighlightColour.length()) {
-		CallChildren(SCI_SETFOLDHIGHLIGHTCOLOUR, 1, ColourFromString(foldHighlightColour));
-	} else {
-		CallChildren(SCI_SETFOLDMARGINHICOLOUR, 0, 0);
-	}
-//!-end-[HighlightCurrFolder]
 
 	SString whitespaceFore = props.Get("whitespace.fore");
 	if (whitespaceFore.length()) {
@@ -1256,52 +1250,89 @@ void SciTEBase::ReadProperties() {
 	if (props.GetInt("margin.bookmark.by.single.click",1)==1) //!-add-[SetBookmark]
 		wEditor.Call(SCI_SETMARGINSENSITIVEN, 1, 1);	//!-add-[SetBookmark]
 
+	// Enable/disable highlight for current folding bloc (smallest one that contains the caret)
+	int isHighlightEnabled = props.GetInt("fold.highlight", 0);
+	// Define the colour of highlight
+	SString foldBlockHighlight = props.Get("fold.highlight.colour");
+	if (foldBlockHighlight.length() == 0) {
+		//Set default colour for highlight
+		foldBlockHighlight = "#FF0000";
+	}
+	Colour colourFoldBlockHighlight = ColourFromString(foldBlockHighlight);
 	switch (props.GetInt("fold.symbols")) {
 	case 0:
 		// Arrow pointing right for contracted folders, arrow pointing down for expanded
 		DefineMarker(SC_MARKNUM_FOLDEROPEN, SC_MARK_ARROWDOWN,
-		             ColourRGB(0, 0, 0), ColourRGB(0, 0, 0));
+					 ColourRGB(0, 0, 0), ColourRGB(0, 0, 0), colourFoldBlockHighlight);
 		DefineMarker(SC_MARKNUM_FOLDER, SC_MARK_ARROW,
-		             ColourRGB(0, 0, 0), ColourRGB(0, 0, 0));
+					 ColourRGB(0, 0, 0), ColourRGB(0, 0, 0), colourFoldBlockHighlight);
 		DefineMarker(SC_MARKNUM_FOLDERSUB, SC_MARK_EMPTY,
-		             ColourRGB(0, 0, 0), ColourRGB(0, 0, 0));
+					 ColourRGB(0, 0, 0), ColourRGB(0, 0, 0), colourFoldBlockHighlight);
 		DefineMarker(SC_MARKNUM_FOLDERTAIL, SC_MARK_EMPTY,
-		             ColourRGB(0, 0, 0), ColourRGB(0, 0, 0));
+					 ColourRGB(0, 0, 0), ColourRGB(0, 0, 0), colourFoldBlockHighlight);
 		DefineMarker(SC_MARKNUM_FOLDEREND, SC_MARK_EMPTY,
-		             ColourRGB(0xff, 0xff, 0xff), ColourRGB(0, 0, 0));
+					 ColourRGB(0xff, 0xff, 0xff), ColourRGB(0, 0, 0), colourFoldBlockHighlight);
 		DefineMarker(SC_MARKNUM_FOLDEROPENMID, SC_MARK_EMPTY,
-		             ColourRGB(0xff, 0xff, 0xff), ColourRGB(0, 0, 0));
-		DefineMarker(SC_MARKNUM_FOLDERMIDTAIL, SC_MARK_EMPTY, ColourRGB(0xff, 0xff, 0xff), ColourRGB(0, 0, 0));
+					 ColourRGB(0xff, 0xff, 0xff), ColourRGB(0, 0, 0), colourFoldBlockHighlight);
+		DefineMarker(SC_MARKNUM_FOLDERMIDTAIL, SC_MARK_EMPTY,
+					 ColourRGB(0xff, 0xff, 0xff), ColourRGB(0, 0, 0), colourFoldBlockHighlight);
+		// The highlight is disabled for arrow.
+		wEditor.Call(SCI_MARKERENABLEHIGHLIGHT, false);
 		break;
 	case 1:
 		// Plus for contracted folders, minus for expanded
-		DefineMarker(SC_MARKNUM_FOLDEROPEN, SC_MARK_MINUS, ColourRGB(0xff, 0xff, 0xff), ColourRGB(0, 0, 0));
-		DefineMarker(SC_MARKNUM_FOLDER, SC_MARK_PLUS, ColourRGB(0xff, 0xff, 0xff), ColourRGB(0, 0, 0));
-		DefineMarker(SC_MARKNUM_FOLDERSUB, SC_MARK_EMPTY, ColourRGB(0xff, 0xff, 0xff), ColourRGB(0, 0, 0));
-		DefineMarker(SC_MARKNUM_FOLDERTAIL, SC_MARK_EMPTY, ColourRGB(0xff, 0xff, 0xff), ColourRGB(0, 0, 0));
-		DefineMarker(SC_MARKNUM_FOLDEREND, SC_MARK_EMPTY, ColourRGB(0xff, 0xff, 0xff), ColourRGB(0, 0, 0));
-		DefineMarker(SC_MARKNUM_FOLDEROPENMID, SC_MARK_EMPTY, ColourRGB(0xff, 0xff, 0xff), ColourRGB(0, 0, 0));
-		DefineMarker(SC_MARKNUM_FOLDERMIDTAIL, SC_MARK_EMPTY, ColourRGB(0xff, 0xff, 0xff), ColourRGB(0, 0, 0));
+		DefineMarker(SC_MARKNUM_FOLDEROPEN, SC_MARK_MINUS,
+		             ColourRGB(0xff, 0xff, 0xff), ColourRGB(0, 0, 0), colourFoldBlockHighlight);
+		DefineMarker(SC_MARKNUM_FOLDER, SC_MARK_PLUS,
+		             ColourRGB(0xff, 0xff, 0xff), ColourRGB(0, 0, 0), colourFoldBlockHighlight);
+		DefineMarker(SC_MARKNUM_FOLDERSUB, SC_MARK_EMPTY,
+		             ColourRGB(0xff, 0xff, 0xff), ColourRGB(0, 0, 0), colourFoldBlockHighlight);
+		DefineMarker(SC_MARKNUM_FOLDERTAIL, SC_MARK_EMPTY,
+		             ColourRGB(0xff, 0xff, 0xff), ColourRGB(0, 0, 0), colourFoldBlockHighlight);
+		DefineMarker(SC_MARKNUM_FOLDEREND, SC_MARK_EMPTY,
+		             ColourRGB(0xff, 0xff, 0xff), ColourRGB(0, 0, 0), colourFoldBlockHighlight);
+		DefineMarker(SC_MARKNUM_FOLDEROPENMID, SC_MARK_EMPTY,
+		             ColourRGB(0xff, 0xff, 0xff), ColourRGB(0, 0, 0), colourFoldBlockHighlight);
+		DefineMarker(SC_MARKNUM_FOLDERMIDTAIL, SC_MARK_EMPTY,
+		             ColourRGB(0xff, 0xff, 0xff), ColourRGB(0, 0, 0), colourFoldBlockHighlight);
+		// The highlight is disabled for plus/minus.
+		wEditor.Call(SCI_MARKERENABLEHIGHLIGHT, false);
 		break;
 	case 2:
 		// Like a flattened tree control using circular headers and curved joins
-		DefineMarker(SC_MARKNUM_FOLDEROPEN, SC_MARK_CIRCLEMINUS, ColourRGB(0xff, 0xff, 0xff), ColourRGB(0x40, 0x40, 0x40));
-		DefineMarker(SC_MARKNUM_FOLDER, SC_MARK_CIRCLEPLUS, ColourRGB(0xff, 0xff, 0xff), ColourRGB(0x40, 0x40, 0x40));
-		DefineMarker(SC_MARKNUM_FOLDERSUB, SC_MARK_VLINE, ColourRGB(0xff, 0xff, 0xff), ColourRGB(0x40, 0x40, 0x40));
-		DefineMarker(SC_MARKNUM_FOLDERTAIL, SC_MARK_LCORNERCURVE, ColourRGB(0xff, 0xff, 0xff), ColourRGB(0x40, 0x40, 0x40));
-		DefineMarker(SC_MARKNUM_FOLDEREND, SC_MARK_CIRCLEPLUSCONNECTED, ColourRGB(0xff, 0xff, 0xff), ColourRGB(0x40, 0x40, 0x40));
-		DefineMarker(SC_MARKNUM_FOLDEROPENMID, SC_MARK_CIRCLEMINUSCONNECTED, ColourRGB(0xff, 0xff, 0xff), ColourRGB(0x40, 0x40, 0x40));
-		DefineMarker(SC_MARKNUM_FOLDERMIDTAIL, SC_MARK_TCORNERCURVE, ColourRGB(0xff, 0xff, 0xff), ColourRGB(0x40, 0x40, 0x40));
+		DefineMarker(SC_MARKNUM_FOLDEROPEN, SC_MARK_CIRCLEMINUS,
+		             ColourRGB(0xff, 0xff, 0xff), ColourRGB(0x40, 0x40, 0x40), colourFoldBlockHighlight);
+		DefineMarker(SC_MARKNUM_FOLDER, SC_MARK_CIRCLEPLUS,
+		             ColourRGB(0xff, 0xff, 0xff), ColourRGB(0x40, 0x40, 0x40), colourFoldBlockHighlight);
+		DefineMarker(SC_MARKNUM_FOLDERSUB, SC_MARK_VLINE,
+		             ColourRGB(0xff, 0xff, 0xff), ColourRGB(0x40, 0x40, 0x40), colourFoldBlockHighlight);
+		DefineMarker(SC_MARKNUM_FOLDERTAIL, SC_MARK_LCORNERCURVE,
+		             ColourRGB(0xff, 0xff, 0xff), ColourRGB(0x40, 0x40, 0x40), colourFoldBlockHighlight);
+		DefineMarker(SC_MARKNUM_FOLDEREND, SC_MARK_CIRCLEPLUSCONNECTED,
+		             ColourRGB(0xff, 0xff, 0xff), ColourRGB(0x40, 0x40, 0x40), colourFoldBlockHighlight);
+		DefineMarker(SC_MARKNUM_FOLDEROPENMID, SC_MARK_CIRCLEMINUSCONNECTED,
+		             ColourRGB(0xff, 0xff, 0xff), ColourRGB(0x40, 0x40, 0x40), colourFoldBlockHighlight);
+		DefineMarker(SC_MARKNUM_FOLDERMIDTAIL, SC_MARK_TCORNERCURVE,
+		             ColourRGB(0xff, 0xff, 0xff), ColourRGB(0x40, 0x40, 0x40), colourFoldBlockHighlight);
+		wEditor.Call(SCI_MARKERENABLEHIGHLIGHT, isHighlightEnabled);
 		break;
 	case 3:
 		// Like a flattened tree control using square headers
-		DefineMarker(SC_MARKNUM_FOLDEROPEN, SC_MARK_BOXMINUS, ColourRGB(0xff, 0xff, 0xff), ColourRGB(0x80, 0x80, 0x80));
-		DefineMarker(SC_MARKNUM_FOLDER, SC_MARK_BOXPLUS, ColourRGB(0xff, 0xff, 0xff), ColourRGB(0x80, 0x80, 0x80));
-		DefineMarker(SC_MARKNUM_FOLDERSUB, SC_MARK_VLINE, ColourRGB(0xff, 0xff, 0xff), ColourRGB(0x80, 0x80, 0x80));
-		DefineMarker(SC_MARKNUM_FOLDERTAIL, SC_MARK_LCORNER, ColourRGB(0xff, 0xff, 0xff), ColourRGB(0x80, 0x80, 0x80));
-		DefineMarker(SC_MARKNUM_FOLDEREND, SC_MARK_BOXPLUSCONNECTED, ColourRGB(0xff, 0xff, 0xff), ColourRGB(0x80, 0x80, 0x80));
-		DefineMarker(SC_MARKNUM_FOLDEROPENMID, SC_MARK_BOXMINUSCONNECTED, ColourRGB(0xff, 0xff, 0xff), ColourRGB(0x80, 0x80, 0x80));
-		DefineMarker(SC_MARKNUM_FOLDERMIDTAIL, SC_MARK_TCORNER, ColourRGB(0xff, 0xff, 0xff), ColourRGB(0x80, 0x80, 0x80));
+		DefineMarker(SC_MARKNUM_FOLDEROPEN, SC_MARK_BOXMINUS,
+		             ColourRGB(0xff, 0xff, 0xff), ColourRGB(0x80, 0x80, 0x80), colourFoldBlockHighlight);
+		DefineMarker(SC_MARKNUM_FOLDER, SC_MARK_BOXPLUS,
+		             ColourRGB(0xff, 0xff, 0xff), ColourRGB(0x80, 0x80, 0x80), colourFoldBlockHighlight);
+		DefineMarker(SC_MARKNUM_FOLDERSUB, SC_MARK_VLINE,
+		             ColourRGB(0xff, 0xff, 0xff), ColourRGB(0x80, 0x80, 0x80), colourFoldBlockHighlight);
+		DefineMarker(SC_MARKNUM_FOLDERTAIL, SC_MARK_LCORNER,
+		             ColourRGB(0xff, 0xff, 0xff), ColourRGB(0x80, 0x80, 0x80), colourFoldBlockHighlight);
+		DefineMarker(SC_MARKNUM_FOLDEREND, SC_MARK_BOXPLUSCONNECTED,
+		             ColourRGB(0xff, 0xff, 0xff), ColourRGB(0x80, 0x80, 0x80), colourFoldBlockHighlight);
+		DefineMarker(SC_MARKNUM_FOLDEROPENMID, SC_MARK_BOXMINUSCONNECTED,
+		             ColourRGB(0xff, 0xff, 0xff), ColourRGB(0x80, 0x80, 0x80), colourFoldBlockHighlight);
+		DefineMarker(SC_MARKNUM_FOLDERMIDTAIL, SC_MARK_TCORNER,
+		             ColourRGB(0xff, 0xff, 0xff), ColourRGB(0x80, 0x80, 0x80), colourFoldBlockHighlight);
+		wEditor.Call(SCI_MARKERENABLEHIGHLIGHT, isHighlightEnabled);
 		break;
 	}
 
@@ -1334,6 +1365,30 @@ void SciTEBase::ReadProperties() {
 
 	wEditor.Call(SCI_SETENDATLASTLINE, props.GetInt("end.at.last.line", 1));
 	wEditor.Call(SCI_SETCARETSTICKY, props.GetInt("caret.sticky", 0));
+
+	// Clear all previous indicators.
+	wEditor.Call(SCI_SETINDICATORCURRENT, indicatorHightlightCurrentWord);
+	wEditor.Call(SCI_INDICATORCLEARRANGE, 0, wEditor.Call(SCI_GETLENGTH));
+	wOutput.Call(SCI_SETINDICATORCURRENT, indicatorHightlightCurrentWord);
+	wOutput.Call(SCI_INDICATORCLEARRANGE, 0, wOutput.Call(SCI_GETLENGTH));
+	currentWordHighlight.statesOfDelay = currentWordHighlight.noDelay;
+
+	currentWordHighlight.isEnabled = props.GetInt("highlight.current.word", 0) == 1;
+	if (currentWordHighlight.isEnabled) {
+		SString highlightCurrentWordColourString = props.Get("highlight.current.word.colour");
+		if (highlightCurrentWordColourString.length() == 0) {
+			// Set default colour for highlight.
+			highlightCurrentWordColourString = "#A0A000";
+		}
+		Colour highlightCurrentWordColour = ColourFromString(highlightCurrentWordColourString);
+
+		wEditor.Call(SCI_INDICSETSTYLE, indicatorHightlightCurrentWord, INDIC_ROUNDBOX);
+		wEditor.Call(SCI_INDICSETFORE, indicatorHightlightCurrentWord, highlightCurrentWordColour);
+		wOutput.Call(SCI_INDICSETSTYLE, indicatorHightlightCurrentWord, INDIC_ROUNDBOX);
+		wOutput.Call(SCI_INDICSETFORE, indicatorHightlightCurrentWord, highlightCurrentWordColour);
+		currentWordHighlight.isOnlyWithSameStyle = props.GetInt("highlight.current.word.by.style", 0) == 1;
+		HighlightCurrentWord(true);
+	}
 
 	if (extender) {
 		FilePath defaultDir = GetDefaultDirectory();
@@ -1372,7 +1427,7 @@ void SciTEBase::ReadFontProperties() {
 		for (int i = 0; i < STYLE_MAX; i++) {
 			sprintf(key, "style.lpeg.%0d", i);
 			wEditor.Send(SCI_PRIVATELEXERCALL, i - STYLE_MAX, reinterpret_cast<sptr_t>(propStr));
-			props.Set(key, static_cast<const char*>(propStr));
+			props.Set(key, static_cast<const char *>(propStr));
 		}
 		languageName = "lpeg";
 	}

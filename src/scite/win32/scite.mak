@@ -56,6 +56,7 @@ INCLUDEDIRS=-I../../scintilla/include -I../../scintilla/win32 -I../src
 
 OBJS=\
 	SciTEBase.obj \
+	Credits.obj \
 	FilePath.obj \
 	SciTEBuffers.obj \
 	SciTEIO.obj \
@@ -80,6 +81,7 @@ LEXLIB=..\..\scintilla\win32\Lexers.lib
 
 OBJSSTATIC=\
 	SciTEBase.obj \
+	Credits.obj \
 	FilePath.obj \
 	SciTEBuffers.obj \
 	SciTEIO.obj \
@@ -148,10 +150,10 @@ $(DIR_BIN)\erlang.properties $(DIR_BIN)\escript.properties \
 $(DIR_BIN)\euphoria.properties $(DIR_BIN)\flagship.properties \
 $(DIR_BIN)\forth.properties $(DIR_BIN)\fortran.properties \
 $(DIR_BIN)\freebasic.properties $(DIR_BIN)\gap.properties \
-$(DIR_BIN)\html.properties $(DIR_BIN)\inno.properties \
-$(DIR_BIN)\kix.properties $(DIR_BIN)\latex.properties \
-$(DIR_BIN)\lisp.properties $(DIR_BIN)\lot.properties \
-$(DIR_BIN)\lout.properties $(DIR_BIN)\lua.properties \
+$(DIR_BIN)\haskell.properties $(DIR_BIN)\html.properties \
+$(DIR_BIN)\inno.properties $(DIR_BIN)\kix.properties \
+$(DIR_BIN)\latex.properties $(DIR_BIN)\lisp.properties \
+$(DIR_BIN)\lot.properties $(DIR_BIN)\lout.properties $(DIR_BIN)\lua.properties \
 $(DIR_BIN)\matlab.properties $(DIR_BIN)\metapost.properties \
 $(DIR_BIN)\mmixal.properties $(DIR_BIN)\modula3.properties \
 $(DIR_BIN)\nimrod.properties $(DIR_BIN)\nncrontab.properties \
@@ -428,6 +430,21 @@ SciTEBase.obj: \
 	../src/SciTEBase.cxx \
 	../../scintilla/include/Scintilla.h \
 	../../scintilla/include/SciLexer.h \
+	../src/GUI.h \
+	../src/SString.h \
+	../src/StringHelpers.h \
+	../src/StringList.h \
+	../src/FilePath.h \
+	../src/PropSetFile.h \
+	../src/StyleWriter.h \
+	../src/Extender.h \
+	../src/SciTE.h \
+	../src/Mutex.h \
+	../src/JobQueue.h \
+	../src/SciTEBase.h
+Credits.obj: \
+	../src/Credits.cxx \
+	../../scintilla/include/Scintilla.h \
 	../src/GUI.h \
 	../src/SString.h \
 	../src/StringHelpers.h \

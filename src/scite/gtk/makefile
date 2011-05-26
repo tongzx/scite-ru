@@ -14,11 +14,17 @@ CCOMP = gcc
 endif
 AR = ar
 
+ifdef GTK3
+GTKVERSION=gtk+-3.0
+else
+GTKVERSION=gtk+-2.0
+endif
+
 # For the Gnome desktop stuff to work, prefix must point to where Gnome thinks it is.
-CONFIGFLAGS:=$(shell pkg-config --cflags gtk+-2.0)
-CONFIGLIB:=$(shell pkg-config --libs gtk+-2.0 gthread-2.0)
+CONFIGFLAGS:=$(shell pkg-config --cflags $(GTKVERSION))
+CONFIGLIB:=$(shell pkg-config --libs $(GTKVERSION) gthread-2.0)
 CONFIGTHREADS:=
-gnomeprefix:=$(shell pkg-config --variable=prefix gtk+-2.0 2>/dev/null)
+gnomeprefix:=$(shell pkg-config --variable=prefix $(GTKVERSION) 2>/dev/null)
 ifndef prefix
 ifdef gnomeprefix
   prefix=$(gnomeprefix)
@@ -41,7 +47,9 @@ vpath %.h ../src ../../scintilla/include
 vpath %.cxx ../src
 
 INCLUDEDIRS=-I ../../scintilla/include -I ../src
-#~ DEPRECATED=-DGDK_PIXBUF_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED
+ifdef CHECK_DEPRECATED
+DEPRECATED=-DGDK_PIXBUF_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED
+endif
 CXXBASEFLAGS=-W -Wall -Wno-char-subscripts -pedantic -DGTK -DSCI_LEXER -DPIXMAP_PATH=\"$(pixmapdir)\" -DSYSCONF_PATH=\"$(SYSCONF_PATH)\" $(INCLUDEDIRS) $(DEPRECATED)
 
 ifdef DEBUG
@@ -70,6 +78,8 @@ else
 CXXFLAGS=$(CXXTFLAGS) -DNO_LUA
 endif
 
+CXXFLAGS:=$(CXXFLAGS) -Wno-long-long
+
 ifeq ($(shell uname), Darwin)
 CXXFLAGS:=$(CXXFLAGS) -Dunix
 endif
@@ -87,7 +97,7 @@ deps:
 COMPLIB=../../scintilla/bin/scintilla.a
 
 $(PROG): SciTEGTK.o GUIGTK.o Widget.o \
-FilePath.o SciTEBase.o SciTEBuffers.o SciTEIO.o StringList.o Exporters.o StringHelpers.o \
+FilePath.o SciTEBase.o Credits.o SciTEBuffers.o SciTEIO.o StringList.o Exporters.o StringHelpers.o \
 PropSetFile.o MultiplexExtension.o DirectorExtension.o SciTEProps.o StyleWriter.o Utf8_16.o \
 	JobQueue.o GTKMutex.o IFaceTable.o $(COMPLIB) $(LUA_OBJS)
 	$(CC) `$(CONFIGTHREADS)` -rdynamic -Wl,--as-needed -Wl,--version-script lua.vers -DGTK $^ -o $@ $(CONFIGLIB) -ldl -lstdc++
