@@ -39,7 +39,7 @@
     <li><a href="#descr">Авторское предисловие</a></li>
 
     <li><a href="#intro">Введение</a></li>
-    
+
     <li><a href="#command.subsystem">command.subsystem</a></li>
 
     <li><a href="#cmdline">Параметры командной строки</a></li>
@@ -1029,7 +1029,7 @@ NameError: mistake
 
   <p>C помощью оператора <dfn>if</dfn> можно выборочно применять отдельные параметры настройки. Условие <code>if MY_VALUE</code> считается выполненным, если параметру <code>MY_VALUE</code> было присвоено значение <var>1</var>. Если условие выполнено, то идущим далее с отступом от начала строки параметрам настройки присваиваются заданные значения. Действие условия распостраняется до первого параметра, записанного с начала строки без отступа.</p>
 
-  <p>Обычно оператор <dfn>if</dfn> используется для подключения определенных блоков в файлах настроек в зависимости от значения переменных <var>PLAT_GTK</var> или <var>PLAT_WIN</var>, с помощью которых SciTE идентифицирует используемую ОС. При использовании оператора <dfn>if</dfn> в своих файлах настроек, учтите, что проверка условия происходит только при загрузке файла настроек, а не во время работы программы.</p>
+  <p>Обычно оператор <dfn>if</dfn> используется для подключения определенных блоков в файлах настроек в зависимости от значения переменных <var>PLAT_GTK</var>, <var>PLAT_WIN</var> или <var>PLAT_MAC</var>, с помощью которых SciTE идентифицирует используемую ОС. При использовании оператора <dfn>if</dfn> в своих файлах настроек, учтите, что проверка условия происходит только при загрузке файла настроек, а не во время работы программы.</p>
 
   <h3><a name="encodings">Кодировки</a></h3>
 
@@ -1053,52 +1053,46 @@ NameError: mistake
 
   <table cellpadding="1" cellspacing="0" border="1" summary="Переменные, определяемые в файлах настроек">
     <tr>
-      <td><dfn><a name="position.*">position.left<br>
+      <td><dfn><a name="position.*">
+      position.left<br>
       position.top<br>
       position.width<br>
       position.height<br>
       position.maximize</a></dfn></td>
-
       <td>Задают первоначальный размер и позицию окна. Если эти переменные не заданы, первоначальный размер и позиция окна определяются системой. Если <span class="example">position.width=-1</span> или <span class="example">position.height=-1</span> или <span class="example">position.maximize=1</span> - окно развернуто до максимального размера.</td>
     </tr>
 
     <tr class="windowsonly">
       <td><dfn><a name="position.tile">position.tile</a></dfn></td>
-
       <td>При установке <span class="example">position.tile=1</span> левая граница нового окна будет равна <code>position.left + position.width</code> первого окна (т.е. новое окно будет касаться правого края первого окна). Таким образом окна не будут перекрывать друг друга. Если <span class="example">position.left=0</span>, а <code>position.width</code> равна половине ширины экрана, то два окна SciTE перекроют экран целиком, разделив его ширину между собой ровно пополам.</td>
     </tr>
 
     <tr>
       <td><dfn><a name="buffers">buffers</a></dfn></td>
-
       <td>Задает количество вкладок, каждая из которых может содержать открытый файл. Может принимать значение от <var>1</var> до <var>100</var>. Значения, не входящие в этот диапазон, устанавливаются в его граничные значения. По умолчанию значение равно <var>1</var>. При этом значении вкладки не отображаются.<br>
       Данное значение считывается только из файлов глобальных настроек (т.е. из <code>SciTEGlobal.properties</code>, <code>SciTEUser.properties</code>, а также всех остальных файлов настроек, подключенных к названным с помощью директивы <dfn><a href="#import">import</a></dfn>). Поскольку данное значение считывается только один раз при запуске программы, необходимо перезапустить SciTE, чтобы изменение вступило в силу.</td>
     </tr>
 
-    <tr class="windowsonly">
+    <tr>
       <td><dfn><a name="buffers.zorder.switching">buffers.zorder.switching</a></dfn></td>
-
       <td>Данная настройка задает порядок переключения между вкладками при нажатии комбинации <code>Ctrl+Tab</code>. Если задать значение <var>1</var>, переключение будет происходить в том порядке, в котором вкладки открывались ранее. В противном случае переключение будет происходить по порядку номеров вкладок.</td>
     </tr>
 
     <tr>
       <td><dfn><a name="are.you.sure">are.you.sure<br>
       are.you.sure.for.build</a></dfn></td>
-
       <td>Если задать переменной <dfn>are.you.sure</dfn> значение <var>0</var>, файл при закрытии будет сохраняться автоматически, не беспокоя пользователя вопросом о сохранении изменений. В этом случае отказаться от сохранения изменений можно, только если параметр <dfn><a href="#buffers">buffers</a></dfn> у вас отстутствует. Тогда, выбрав из меню команду для создания нового файла, можно заставить SciTE показать диалоговое окно с запросом о сохранении текущего (поскольку новый файл займет его место).<br>
       SciTE автоматически сохраняет текущий файл перед выполнением, компиляцией или запуском других команд из меню &quot;<cite>Tools</cite>&quot;. Установка <span class="example">are.you.sure.for.build=1</span> будет вызывать диалоговое окно с запросом о сохранении при выполнении этих команд.</td>
     </tr>
 
     <tr>
       <td><dfn><a name="save.all.for.build">save.all.for.build</a></dfn></td>
-
       <td>Обычно перед выполнением команд &quot;<cite>Compile</cite>&quot;, &quot;<cite>Build</cite>&quot; или &quot;<cite>Go</cite>&quot; SciTE сохраняет текущую вкладку. Чтобы сохранять все вкладки, задайте <span class="example">save.all.for.build=1</span>.</td>
     </tr>
 
     <tr>
       <td><dfn><a name="view.whitespace">view.whitespace<br>
       view.indentation.whitespace</a></dfn></td>
-
       <td>При <span class="example">view.whitespace=1</span> будут видимы пробелы и знаки табуляции.<br>
       При <span class="example">view.indentation.whitespace=1</span> будут видимы пробелы и знаки табуляции, используемые в отступах строк.</td>
     </tr>
@@ -1106,140 +1100,130 @@ NameError: mistake
     <tr>
       <td><dfn><a name="whitespace">whitespace.fore<br>
       whitespace.back</a></dfn></td>
-
       <td>Задает цвета символов и фона для всех видимых пробелов и знаков табуляци, отменяя при этом цвета, заданные текущим лексером.</td>
     </tr>
 
     <tr>
-      <td><dfn><a name="indentation.guides">view.indentation.guides<br>
-      highlight.indentation.guides</a></dfn></td>
-
-      <td>При <span class="example">view.indentation.guides=1</span> отображаются пунктирные вертикальные линии в пределах отступа, заданного командой <dfn><a href="#tabsize">indent.size</a></dfn>.<br>
+      <td><dfn><a name="indentation.guides">
+          view.indentation.guides<br />
+          view.indentation.examine<br />
+          view.indentation.examine.<i>filepattern</i><br />
+          highlight.indentation.guides
+      </a></dfn></td>
+      <td>
+      При <span class="example">view.indentation.guides=1</span> отображаются пунктирные вертикальные линии в пределах отступа, заданного командой <dfn><a href="#tabsize">indent.size</a></dfn>.<br>
       При <span class="example">highlight.indentation.guides=1</span> выделяется относящаяся к скобке направляющая отступа (indentation guide), когда эта скобка выделена.<br>
-      При установке <span class="example">highlight.indentation.guides=1</span>, и <span class="example"><a href="#braces">braces.check</a>=1</span> установка курсора на одну из парных скобок будет окрашивать не только скобки, но и направляющую отступа, относящуюся к ним.</td>
+      При установке <span class="example">highlight.indentation.guides=1</span>, и <span class="example"><a href="#braces">braces.check</a>=1</span> установка курсора на одну из парных скобок будет окрашивать не только скобки, но и направляющую отступа, относящуюся к ним.
+          Setting view.indentation.guides to 1 displays dotted vertical lines within indentation white
+          space every indent.size columns.<br />
+          Setting view.indentation.examine to 1 to display guides within real indentation whitespace only,
+	  2 according to the next non-empty line (good for Python) or 3 according to both the next and
+	  previous non-empty lines (good for most languages).<br />
+          Setting highlight.indentation.guides to 1 highlights the indentation guide associated with a
+          brace when that brace is highlighted.
+      </td>
     </tr>
 
     <tr>
       <td><dfn><a name="view.eol">view.eol</a></dfn></td>
-
       <td>Задайте этой переменной значение <var>1</var> с тем, чтобы отобразить символы конца строки, которые будут выглядеть как (<code>CR</code>), (<code>LF</code>) или (<code>CR</code>)(<code>LF</code>). Полезно при использовании файлов, созданных на другой операционной системе, с программным обеспечением, чувствительным к оформлению концов строк.</td>
     </tr>
 
     <tr>
       <td><dfn><a name="eol.mode">eol.mode</a></dfn></td>
-
       <td>
         Режим EOL по умолчанию (символы конца строки) зависит от платформы. Можно изменить этот режим, задав:
-
         <div class="example">
-          <code>LF</code> для формата UNIX<br>
-          <code>CR</code> для формата Macintosh<br>
+          <code>LF</code> для формата UNIX и OS X<br>
+          <code>CR</code> для формата Macintosh до OS X<br>
           <code>CRLF</code> для формата DOS/Windows
-        </div>Как мы видим, операционная система Windows объединила в себе все самое лучшее ;-)
+        </div>
       </td>
     </tr>
 
     <tr>
       <td><dfn><a name="eol.auto">eol.auto</a></dfn></td>
-
       <td>Эта настройка перекрывает значение, заданное переменной <dfn>eol.mode</dfn> и выбирает последовательность символов конца строки на основании текущего содержимого открытого файла. При этом отдается предпочтение символу, который чаще всего используется в этом файле.</td>
     </tr>
 
     <tr>
       <td><dfn><a name="blank.margin">blank.margin.left<br>
       blank.margin.right</a></dfn></td>
-
       <td>С обеих сторон текста расположен пустой отступ, цвет которого совпадает с цветом фона текста. По умолчанию, размер этого отступа равен одному пикселю как для правой, так и для левой стороны. Однако с помощью данной настройки размер отступов можно изменить.</td>
     </tr>
 
     <tr>
       <td><dfn><a name="margin.width">margin.width</a></dfn></td>
-
       <td>Эта переменная задает ширину в пикселях левой вертикальной колонки для меток (bookmarks).</td>
     </tr>
 
     <tr class="windowsonly">
       <td><dfn><a name="full.screen.hides.menu">full.screen.hides.menu</a></dfn></td>
-
       <td>Задайте этой переменной значение <var>1</var> с тем, чтобы скрыть строку меню при полноэкранном режиме в Windows. В GTK+ это меню отображается всегда.</td>
     </tr>
 
     <tr class="windowsonly">
       <td><dfn><a name="minimize.to.tray">minimize.to.tray</a></dfn></td>
-
       <td>Задайте этой переменной значение <var>1</var> с тем, чтобы сворачивать SciTE в трей, а не на панель задач.</td>
     </tr>
 
     <tr>
       <td><dfn><a name="line.margin">line.margin.visible<br>
       line.margin.width</a></dfn></td>
-
       <td>SciTE может отображать слева от колонки меток колонку с номерами строк. Если задать переменной <dfn>line.margin.visible</dfn> значение <var>1</var>, эта колонка будет видна при запуске редактора. Свойство <dfn>line.margin.width</dfn> резервирует ширину колонки, исходя из заданного в этом параметре количества отображаемых цифр. Чтобы колонка могла расширяться при увеличении количества цифр, после значения, определяющего количество цифр, добавьте &#39;<code>+</code>&#39;, например: <span class="example">line.margin.width=3+</span>.<br>
       Данные переменные являются заменой свойства <code>line.numbers</code> которое использовалось раньше и выполняло функции обоих переменных, описанных выше. В настоящее время свойство <code>line.numbers</code> в программе больше не используется.</td>
     </tr>
 
     <tr>
-      <td><dfn><a name="tabbar">tabbar.visible<br>
-      tabbar.hide.one</a></dfn></td>
+      <td><dfn><a name="tabbar">tabbar.visible</a></dfn></td>
+      <td>Задайте переменной <code>tabbar.visible</code> значение <var>1</var>, чтобы сделать видимой панель файловых вкладок (tab bar). Чтобы эта опция работала, необходимо свойству <dfn><a href="#buffers">buffers</a></dfn> присвоить значение, превышающее <var>1</var>.</td>
+    </tr>
 
-      <td>Задайте переменной <code>tabbar.visible</code> значение <var>1</var>, чтобы сделать видимой панель файловых вкладок (tab bar). Чтобы эта опция работала, необходимо свойству <dfn><a href="#buffers">buffers</a></dfn> присвоить значение, превышающее <var>1</var>.<br>
-      Задайте переменной <code>tabbar.hide.one</code> значение <var>1</var>, чтобы спрятать панель файловых вкладок до тех пор, пока не появится больше одной вкладки.</td>
+    <tr>
+      <td><dfn><a name="tabbar.hide.one">tabbar.hide.one</a></dfn></td>
+      <td>Задайте переменной <code>tabbar.hide.one</code> значение <var>1</var>, чтобы спрятать панель файловых вкладок до тех пор, пока не появится больше одной вкладки.</td>
     </tr>
 
     <tr class="windowsonly">
       <td><dfn><a name="tabbar.multiline">tabbar.multiline</a></dfn></td>
-
       <td>Переменная <code>tabbar.multiline</code> позволяет расположить панель файловых вкладок на нескольких строках</td>
     </tr>
 
     <tr>
       <td><dfn><a name="toolbar.visible">toolbar.visible</a></dfn></td>
-
       <td>Задайте данной переменной значение <var>1</var>, чтобы сделать видимой панель инструментов.</td>
     </tr>
 
     <tr class="gtkonly">
       <td><dfn><a name="toolbar.detachable">toolbar.detachable</a></dfn></td>
-
       <td>Задайте данной переменной значение <var>1</var> для того, чтобы панель инструментов можно было отделять от главного окна.</td>
     </tr>
 
     <tr class="gtkonly">
       <td><dfn><a name="toolbar.usestockicons">toolbar.usestockicons</a></dfn></td>
-
       <td>В SciTE имеются встроенные иконки для панели инструментов. Если задать данной переменной значение <var>1</var>, будут использоваться иконки темы, заданной в данный момент для рабочего стола GNOME.</td>
     </tr>
 
     <tr class="gtkonly">
       <td><dfn><a name="pathbar.visible">pathbar.visible</a></dfn></td>
-
       <td>PathBar - линия текста под файловыми вкладками, показывающая полный путь текущей вкладки. Установка <dfn>pathbar.visible</dfn>=<var>1</var> делает эту информационную линию видимой на GTK+.
       </td>
     </tr>
 
-    <tr class="gtkonly">
-      <td><dfn><a name="menubar.detachable">menubar.detachable</a></dfn></td>
-
-      <td>Задайте данной переменной значение <var>1</var> для того, чтобы панель меню можно было отделять от главного окна.</td>
-    </tr>
-
     <tr>
       <td><dfn><a name="undo.redo.lazy">undo.redo.lazy</a></dfn></td>
-
       <td>Кнопки &quot;<cite>Undo</cite> (<cite>Отменить</cite>)&quot; и &quot;<cite>Redo</cite> (<cite>Вернуть</cite>)&quot; не активны до тех пор, пока в текст не вносили никаких изменений. Например, как только внесены изменения, становится активна &quot;<cite>Undo</cite>&quot; (т.е. можно отменить свое действие).<br>
       Задайте данной переменной значение <var>1</var> для того, чтобы поменять метод, который определяет, когда сделать доступными или недоступными эти кнопки панели инструментов. Значение <var>1</var> может увеличить быстродействие на медленных машинах.</td>
     </tr>
 
     <tr>
       <td><dfn><a name="statusbar.visible">statusbar.visible</a></dfn></td>
-
       <td>Задайте данной переменной значение 1 для того, чтобы сделать видимой строку состояния.</td>
     </tr>
 
-    <tr class="windowsonly">
+    <tr>
       <td><dfn><a name="statusbar.number">statusbar.number<br>
       statusbar.text.<i>number</i></a></dfn></td>
-
       <td>С помощью опции <code>statusbar.text.1</code> задается информация, по умолчанию отображаемая в строке состояния. Опция поддерживается всеми платформами. В значениях свойств может быть использован синтаксис <code>$()</code>. Среди наиболее часто используемых свойств - <code>ReadOnly</code>, <code>EOLMode</code>, <code>BufferLength</code>, <code>NbOfLines</code> (во вкладках), <code>SelLength</code> (символы), <code>SelHeight</code> (строки). Кроме того, для строки состояния задаются дополнительные свойства: <code>LineNumber</code>, <code>ColumnNumber</code> и <code>OverType</code>, которая принимает значение &quot;<var>OVR</var>&quot; или &quot;<var>INS</var>&quot;, в зависимости от состояния способа вставки (overtype status). Можно также использовать свойства файлов, которые, в отличие от вышеназванных, не обновляются при каждом нажатии клавиши: <code>FileName</code> или <code>FileNameExt</code>, <code>FileDate</code> и <code>FileTime</code> и <code>FileAttr</code>. А также <code>CurrentDate</code> и <code>CurrentTime</code>.<br>
       Под Windows (только) можно задать дополнительный текст как <code>statusbar.text.2</code> и т.д. Тогда между заданными текстами можно циклически переключаться, щелкая по строке состояния.<br>
       Переменная <code>statusbar.number</code> определяет, между каким количеством текстов будет происходить это переключение.</td>
@@ -1247,58 +1231,74 @@ NameError: mistake
 
     <tr class="windowsonly">
       <td><dfn><a name="use.palette">use.palette</a></dfn></td>
-
       <td>Задайте данной переменной значение <var>1</var> для того, чтобы разрешить SciTE использовать на 8-битных дисплеях цветовую палитру с большим количеством цветов. Без этой опции SciTE будет использовать системную палитру Windows, состоящую из 20 цветов. Недостатком этой опции является то, что при активации окон возникает некоторое мигание. Данная опция не используется на GTK+, где цветовая палитра всегда подключена.</td>
     </tr>
 
     <tr>
       <td><dfn><a name="buffered.draw">buffered.draw</a></dfn></td>
-
       <td>Если задать этой переменной значение <var>0</var> (по умолчанию <var>1</var>), SciTE выводит выходные данные непосредственно на экран, в отличие от обычного режима, когда данные вначале помещаются в буфер и только затем выводятся на экран. Буферизованный вывод предотвращает мерцание экрана, но на слабых компьютерах работает медленнее.</td>
     </tr>
 
     <tr>
       <td><dfn><a name="two.phase.draw">two.phase.draw</a></dfn></td>
-
       <td>Двухфазовый вывод данных - более удачный способ отрисовки текста, но при этом более медленный. При однофазовом способе каждая последовательность символов, имеющих один стиль, отрисовываются вместе с фоном. Если конец одного символа &quot;нависает&quot; над началом другого символа, например: &quot;<code>V_</code>&quot; где стиль &quot;<code>V</code>&quot; отличается от стиля &quot;<code>_</code>&quot;, то правая часть символа &quot;<code>V</code>&quot; будет перекрыта фоном &quot;<code>_</code>&quot;. В двухфазовом способе эта проблема устраняется тем, что вначале отрисовывается фон, а затем, в прозрачном режиме, текст. При двухфазовом способе отрисовки мерцание экрана может проявляться в большей степени, чем при однофазовом, если только не включена опция <dfn>buffered.draw</dfn>. По умолчанию используется двухфазовый способ.</td>
     </tr>
 
     <tr>
       <td><dfn><a name="load.on.activate">load.on.activate<br>
       save.on.deactivate</a></dfn></td>
-
       <td>Задайте переменную <dfn>load.on.activate</dfn>, чтобы SciTE при выборе вкладки с открытым файлом проверял, не был ли тот изменен другой программой. Эта опция полезна в том случае, если совместно со SciTE используется другой редактор (например, WYSIWYG HTML).<br>
       Задайте переменную <dfn>save.on.deactivate</dfn>, чтобы SciTE сохранял файл каждый раз, когда приложение SciTE теряет фокус. Это удобно, когда в процессе разработки web-страниц нужно часто контролировать внешний вид страницы в браузере</td>
     </tr>
 
     <tr>
       <td><dfn><a name="are.you.sure.on.reload">are.you.sure.on.reload</a></dfn></td>
-
       <td>Если данной переменной и переменной <dfn>load.on.activate</dfn> одновременно задано значение <var>1</var>, SciTE будет спрашивать, действительно ли вы хотите обновить измененный файл, давая вам возможность сохранить файл таким, какой он есть. По умолчанию эта опция отключена и SciTE обновляет файл, не беспокоя при этом пользователя.</td>
     </tr>
 
     <tr>
       <td><dfn><a name="reload.preserves.undo">reload.preserves.undo</a></dfn></td>
-
       <td>Задайте этой переменной значение <var>1</var>, чтобы при обновлении файла не уничтожалась вся история команд для отмены (undo). Это позволяет отменить изменения, автоматически внесенные другой программой при установленной опции <span class="example"><a href="#load.on.activate">load.on.activate</a>=1</span>.</td>
     </tr>
 
     <tr>
       <td><dfn><a name="check.if.already.open">check.if.already.open</a></dfn></td>
-
       <td>Данная опция позволяет открывать файлы в существующем экземпляре SciTE, не запуская каждый раз новый экземпляр. При <span class="example">check.if.already.open=1</span> новый файл, асоциированный со SciTE, открывается не в новом окне программы, а в том экземпляре, в котором отмечен галочкой пункт меню &quot;<cite>Настройки</cite>&quot; - &quot;<cite>Открывать только одну копию программы</cite>&quot; (<cite>Options</cite> - <cite>Open Files Here</cite>). Под GTK+ файл открывается в произвольном экземпляре.</td>
     </tr>
 
     <tr>
       <td><dfn><a name="read.only">read.only</a></dfn></td>
-
       <td>При <span class="example">read.only=1</span> все открытые документы недоступны для редактирования (до явной отмены этой опции через меню &quot;<cite>Настройки</cite>&quot; - &quot;<cite>Только для чтения</cite>&quot;). Данная настройка не действует для новых файлов.</td>
+    </tr>
+
+    <tr class="windowsonly">
+      <td><dfn><a name="temp.files.sync.load">temp.files.sync.load</a></dfn></td>
+      <td>Files dropped on SciTE on Windows are normally opened asynchronously
+	as there may be a long list. However, files dragged from some applications
+	such as 7-Zip may only exist for a moment in the temporary directory and
+	be deleted once the drop has occurred.<br />
+	Setting this to 1 makes SciTE open dropped files in the temporary directory
+	immediately.</td>
     </tr>
 
     <tr>
       <td><dfn><a name="quit.on.close.last">quit.on.close.last</a></dfn></td>
-
       <td>Если задана эта переменная, при закрытии последней вкладки (напр. с помощью &quot;<cite>File | Close</cite>&quot;) закрывается весь SciTE. (Если данная опция не задана, по умолчанию, после закрытия последней вкладки, SciTE не завершает работу, а создает пустой документ.)</td>
+    </tr>
+
+    <tr>
+      <td><dfn><a name="highlight.current.word">highlight.current.word</a></dfn></td>
+      <td>When set to 1, all occurrences of the selected word are highlighted with the
+	colour defined by highlight.current.word.colour. By default, this option is disabled. (See indicators.alpha and indicators.under)</td>
+    </tr>
+
+    <tr>
+      <td><dfn><a name="highlight.current.word.colour">highlight.current.word.colour<br />highlight.current.word.by.style</a></dfn></td>
+      <td>The option highlight.current.word.colour defines the colour of highlight.
+	The default value is #A0A000.<br />
+	If the option highlight.current.word.by.style is set, then only words with the same style
+        are highlighted (e.g. if you select this word in a comment, then only occurrences of words in
+	comments are selected).</td>
     </tr>
 
     <tr class="gtkonly">
@@ -1319,13 +1319,11 @@ NameError: mistake
       <td><dfn><a name="selection">selection.fore<br>
       selection.back<br>
       selection.alpha</a></dfn></td>
-
       <td>Задают цвета, используемые для отображения выделенного текста. По умолчанию, фон выделенного текста - светло-серый, а передний план остается таким же, как до выделения. Опция <dfn>selection.alpha</dfn> задает степень прозрачности выделенного текста. Значение <code>256</code> соответствует полной непрозрачности.</td>
     </tr>
 
     <tr>
       <td><dfn><a name="caret.fore">caret.fore</a></dfn></td>
-
       <td>Задает цвет курсора вставки.</td>
     </tr>
 
@@ -1333,14 +1331,12 @@ NameError: mistake
       <td><dfn><a name="selection.additional">selection.additional.fore<br />
          selection.additional.back<br />
          selection.additional.alpha</dfn></td>
-
       <td>Действует подобно <dfn>selection.fore</dfn>, <dfn>selection.back</dfn>, <dfn>selection.alpha</dfn>
       для задания цветов и прозрачности при многократном выделении или при выделении прямоугольной области.</td>
     </tr>
 
     <tr>
       <td><dfn><a name="caret.additional.blinks">caret.additional.blinks</a></dfn></td>
-
       <td>
         При установке <var>0</var> мерцает только главный значок каретки. При установке <var>1</var> мерцают все символы каретки во всех выделенных областях. Установка по умолчанию - <var>1</var>.
       </td>
@@ -1348,33 +1344,29 @@ NameError: mistake
 
     <tr>
       <td><dfn><a name="caret.line.back">caret.line.back</a></dfn></td>
-
       <td>Задает цвет фона для строки, в которой стоит курсор.</td>
     </tr>
 
     <tr>
       <td><dfn><a name="caret.line.back.alpha">caret.line.back.alpha</a></dfn></td>
-
       <td>Задает степень прозрачности для строки, в которой стоит курсор. Степень прозрачности изменяется от <var>0</var> (полная прозрачность) до <var>255</var> (полная непрозрачность). Значение <var>256</var> означает полную прозрачность строки для символов при наличии наиболее яркого выделения строки цветом. Учтите, что <span class="example">caret.line.back.alpha=256</span> будет сказываться на производительности SciTE, тогда как простое комментирование этого параметра, приводя к такому же эффекту, не будет замедлять работу.</td>
     </tr>
 
     <tr>
       <td><dfn><a name="caret.period">caret.period</a></dfn></td>
-
       <td>Задает частоту, с которой мерцает курсор вставки. Значение данной переменной представляет собой время в миллисекундах, в течение которого курсор виден. Затем курсор исчезает из поля зрения на тот же самый промежуток времени. Для того чтобы курсор не мигал, задайте этой переменной значение <var>0</var>.</td>
     </tr>
 
     <tr>
       <td><dfn><a name="caret.width">caret.width</a></dfn></td>
-
       <td>Задает ширину курсора вставки в пикселях. Возможны значения <var>1</var>, <var>2</var> и <var>3</var>.</td>
     </tr>
 
     <tr>
-      <td><dfn><a name="selection.multiple">selection.multiple<br />
-        selection.additional.typing</a></dfn>
+      <td><dfn><a name="selection.multiple">
+      selection.multiple<br />
+      selection.additional.typing</a></dfn>
       </td>
-
       <td>Установка <dfn>selection.multiple</dfn> позволяет делать многкратные выделения мышью, удерживая клавишу Ctrl<br />
       При <dfn>selection.additional.typing</dfn>=<var>1</var> печать текста, нажатие на клавиши <code>BackSpace</code> или <code>Delete</code> будет одновременно применятся на все выделенные части текста.<br />
       При <dfn>selection.additional.typing</dfn>=<var>0</var> эффект будет распостранятся только на главное выделение.</td>
@@ -1382,7 +1374,6 @@ NameError: mistake
 
     <tr>
       <td><dfn><a name="virtual.space">virtual.space</a></dfn></td>
-
       <td>
         Позволяет перемещать каретку дальше последнего символа на линии (в т.н. "виртуальное пространство").<br />
         Установка параметра на <var>1</var> разрешает виртуальные пробелы при прямоугольном выделении.<br />
@@ -1403,7 +1394,6 @@ NameError: mistake
       caret.policy.ystrict<br>
       caret.policy.yeven<br>
       caret.policy.yjumps</a></dfn></td>
-
       <td>
         <p>Данные параметры задают поведение программы при приближении текстового курсора к краю окна. Например, если текст по высоте намного длиннее окна редактора, бывает необходимо всегда видеть несколько строк выше или ниже редактируемой строки, чтобы не использовать прокрутку вручную каждый раз, когда курсор подходит к краю.<br>
         Для использования <i>нежелательных зон</i> (НЗ) слева и справа необходимо установить параметр <dfn>caret.policy.xslop</dfn> равным <var>1</var>, и в параметре <dfn>caret.policy.width</dfn> указать ширину нежелательной зоны в пикселях от левого и правого края окна. Для использования нежелательных зон сверху и снизу необходимо установить параметр <dfn>caret.policy.yslop</dfn> равным <var>1</var>, и в параметре <dfn>caret.policy.lines</dfn> указать высоту зоны в строках от верхнего и нижнего краев.<br>
@@ -1420,7 +1410,6 @@ NameError: mistake
       <td><dfn><a name="visible.policy">visible.policy.strict<br>
       visible.policy.slop<br>
       visible.policy.lines</a></dfn></td>
-
       <td>Определяют, как прокручивать область экрана после команд &quot;<cite>Go</cite>&quot;, &quot;<cite>Build</cite>&quot;, &quot;<cite>Compile</cite>&quot; или таких, как &quot;<cite>Find</cite>&quot; или &quot;<cite>Next Message</cite>&quot;. Данные опции похожи на опции <dfn>caret.policy.*</dfn>.</td>
     </tr>
 
@@ -1428,7 +1417,6 @@ NameError: mistake
       <td><dfn><a name="edge">edge.mode<br>
       edge.column<br>
       edge.colour</a></dfn></td>
-
       <td>Эти параметры определяют способ отображения &quot;слишком&quot; длинных строк. Параметр <dfn>edge.column</dfn> определяет максимальную длину &quot;нормальной&quot; строки.<br>
       Если значение переменной <dfn>edge.mode</dfn> равно <var>0</var> (по умолчанию), длинные строки никак не помечаются. Если значение равно <var>1</var>, отображается специальная вертикальная линия, которая показывает границу строки &quot;нормальной&quot; длины. При значении <var>2</var> изменяется цвет фона символов той части строки, которая превышает заданную максимальную длину.<br>
       Параметр <dfn>edge.colour</dfn> определяет цвет фона символов той части строки, которая превышает заданную максимальную длину, или цвет вертикальной линии, которая показывает границу (в зависимости от значения параметра <dfn>edge.mode</dfn>).</td>
@@ -1436,14 +1424,12 @@ NameError: mistake
 
     <tr>
       <td><dfn><a name="control.char.symbol">control.char.symbol</a></dfn></td>
-
       <td>Задает символ, используемый для отображения непечатаемых символов (например, переводов строк). Если данная переменная не задана, такие символы отображаются с помощью специальных мнемоник (например, нажмите <code>Ctrl+Shift+9</code>, чтобы отобразить символы переводов строк).</td>
     </tr>
 
     <tr>
       <td><dfn><a name="error.marker">error.marker.fore<br>
       error.marker.back</a></dfn></td>
-
       <td>Задают цвета для указания на ошибку в панели редактирования (после того щелчка по строке с ошибкой, появившейся в панели вывода). Если в панели есть поле (колонка) для меток, то на нем будет отображаться символ, который указывает на строку с ошибкой. Переменная <dfn>error.marker.back</dfn> используется для того, чтобы задать для символа заполняющий цвет, а переменная <dfn>error.marker.fore</dfn> - цвет контура. Если поля (колонки) меток нет, фон строки задает переменная <dfn>error.marker.back</dfn>.<br>
       Примечание: поле (колонку) для меток можно убрать, установив <span class="example">line.margin.visible=0</span> или <span class="example">margin.width=0</span>, или через меню &quot;<cite>Вид</cite>&quot; - &quot;<cite>Метки</cite>&quot;.<br>
       (<span class="ruboardonly">В SciTE-Ru параметром <dfn>error.line.back</dfn> также можно задать цвет фона строки с текстом ошибки в окне консоли, отличный от цвета, заданного значением <dfn>error.marker.back</dfn></span>)</td>
@@ -1453,20 +1439,29 @@ NameError: mistake
       <td><dfn><a name="bookmark">bookmark.fore<br>
       bookmark.back<br>
       bookmark.alpha</a></dfn></td>
-
       <td>Параметр <dfn>bookmark.back</dfn> задает цвет метки. Если поле с метками убрано (<span class="example">line.margin.visible=0</span> или <span class="example">margin.width=0</span>, или через меню &quot;<cite>Вид</cite> | <cite>Поля</cite>&quot;), то этим фоном будет подсвечиваться строка. С помощью <dfn>bookmark.alpha</dfn> можно задать степень прозрачности этой строки.<br>
       Если переменная <dfn>bookmark.fore</dfn> не задана, то в качестве метки используется объемный синий шарик.</td>
     </tr>
 
     <tr>
       <td><dfn><a name="find.mark">find.mark</a></dfn></td>
+      <td>Задайте эту переменную, чтобы команда &quot;<cite>Пометить все</cite>&quot; (<cite>Mark All</cite>) в диалоге &quot;<cite>Найти</cite>&quot; поверх каждого найденного вхождения отобразила полупрозрачные прямоугольники. (See indicators.alpha and indicators.under) [<em>Значение переменной - цвет полупрозрачного маркера выделения</em>].</td>
+    </tr>
 
-      <td>Задайте эту переменную, чтобы команда &quot;<cite>Пометить все</cite>&quot; (<cite>Mark All</cite>) в диалоге &quot;<cite>Найти</cite>&quot; поверх каждого найденного вхождения отобразила полупрозрачные прямоугольники. [<em>Значение переменной - цвет полупрозрачного маркера выделения</em>].</td>
+    <tr>
+      <td><dfn><a name="indicators.alpha">indicators.alpha</a></dfn></td>
+      <td>This property defines the alpha level for indicators (default value is 30).
+	   The alpha value can range from 0 (completely transparent) to 255 (no transparency).
+	   A value out of this range is ignored and the default one is used.</td>
+    </tr>
+
+    <tr>
+      <td><dfn><a name="indicators.under">indicators.under</a></dfn></td>
+      <td>If set, the indicators are drawn under text or over (by default, it is over).</td>
     </tr>
 
     <tr>
       <td><dfn><a name="error.select.line">error.select.line</a></dfn></td>
-
       <td>Если при исполнении кода в окно консоли выводится сообщение об ошибке и производится нажатие на <code>F4</code> (или двойной клик на строке с ошибкой), то курсор в окне редактора перемещается на строку с ошибкой.<br>
       Установка <span class="example">error.select.line=1</span> кроме этого, дополнительно выделяет строку с ошибкой.<br>
       В тех случаях, когда сообщение об ошибке дополнительно содержит позицию ошибки в строке, выделение начинается с этой позиции.<br>
@@ -1475,11 +1470,9 @@ NameError: mistake
 
     <tr>
       <td><dfn><a name="openpath">openpath.<i>filepattern</i></a></dfn></td>
-
       <td>
-        Задает путь к файлу при выполнении команды &quot;<cite>Открыть выделенный файл</cite>&quot; (<cite>Open Selected Filename</cite>) в меню &quot;<cite>Файл</cite>&quot;. Поиск пути ведется в том случае, если выбранное имя файла не содержит абсолютный путь или файл не найден в каталоге &quot;<code>Мои документы</code>&quot;. В <dfn>openpath</dfn> каталоги разделяются точкой с запятой в Windows и двоеточием в GTK+.<br>
+        Задает путь к файлу при выполнении команды &quot;<cite>Открыть выделенный файл</cite>&quot; (<cite>Open Selected Filename</cite>) в меню &quot;<cite>Файл</cite>&quot;. Поиск пути ведется в том случае, если выбранное имя файла не содержит абсолютный путь или файл не найден в каталоге &quot;<code>Мои документы</code>&quot;. В <dfn>openpath</dfn> каталоги разделяются точкой с запятой в Windows и двоеточием в OS X и GTK+.<br>
         Переменная <dfn>openpath</dfn> может выглядеть следующим образом:
-
         <div class="example">
           openpath.*.txt=c:\dos\;f:\;<br>
           openpath.$(file.patterns.cpp)=$(cpp_includes)
@@ -1489,11 +1482,9 @@ NameError: mistake
 
     <tr>
       <td><dfn><a name="open.suffix">open.suffix.<i>filepattern</i></a></dfn></td>
-
       <td>
         Задает расширение, которое команда &quot;<cite>Открыть выделенный файл</cite>&quot; (<cite>Open Selected Filename</cite>) в меню &quot;<cite>Файл</cite>&quot; добавит к выбранному имени файла. Используется в языках, в которых при обращении к файлу расширение не задается. Например, в Питоне <span class="example">import xlib</span> чаще всего означает &quot;импортировать из файла под названием <code>xlib.py</code>&quot;.<br>
         Пример переменной <dfn>open.suffix</dfn>:<br>
-
         <div class="example">
           open.suffix.*.py=.py
         </div>
@@ -1502,19 +1493,16 @@ NameError: mistake
 
     <tr>
       <td><dfn><a name="strip.trailing.spaces">strip.trailing.spaces</a></dfn></td>
-
       <td>При сохранении удаляет пробелы на концах строк.</td>
     </tr>
 
     <tr>
       <td><dfn><a name="ensure.final.line.end">ensure.final.line.end</a></dfn></td>
-
       <td>При сохранении добавляет в конец файла перенос строки.</td>
     </tr>
 
     <tr>
       <td><dfn><a name="ensure.consistent.line.ends">ensure.consistent.line.ends</a></dfn></td>
-
       <td>При сохранении добавляет (если нужно) в конец каждой строки текущий символ окончания строки.</td>
     </tr>
 
@@ -1523,7 +1511,6 @@ NameError: mistake
 
       <td>
         Загружает файл аббревиатур конкретного языка, который заменяет файл аббревиатур, установленный по умолчанию. Например:
-
         <div class="example">
           abbreviations.*.c=$(SciteUserHome)/c_abbrev.properties<br>
         </div>
@@ -1532,14 +1519,11 @@ NameError: mistake
 
     <tr>
       <td><dfn><a name="api">api.<i>filepattern</i></a></dfn></td>
-
       <td>
         Загружает API-файлы конкретного языка. Если API-файлов несколько, имена файлов разделяются точкой с запятой. API-файлы содержат отсортированный список идентификаторов и прототипов функций, по одному на каждую строку. Команда Завершить символ (&quot;<cite>Complete Symbol</cite>&quot;, <code>Ctrl+I</code>) выводит список вариантов завершения набранного слова, просматривая строки API-файла. При введении открывающей скобки или другого символа, заданного в параметре <dfn><a href="#calltip.parameters">calltip.lexer.parameters.start</a></dfn>, в файле ищется текст, который предшествует курсору ввода. Если обнаруживается прототип функции, он отображается как всплывающая подсказка (calltip). Например, опцию
-
         <div class="example">
           api.*.c=w.api<br>
         </div>можно использовать с файлом <code>w.api</code>, содержащим
-
         <div class="example">
           fclose(FILE* fileClose)<br>
           FILE<br>
@@ -1556,14 +1540,12 @@ NameError: mistake
 
     <tr>
       <td><dfn><a name="autocomplete.choose.single">autocomplete.choose.single</a></dfn></td>
-
       <td>Если значение этой переменной равно <var>1</var>, то при использовании автоматического завершения и при наличии единственного варианта завершения слова, этот вариант подставляется автоматически, без отображения списка вариантов.</td>
     </tr>
 
     <tr>
       <td><dfn><a name="autocomplete.ignorecase">autocomplete.<i>lexer</i>.ignorecase<br>
       autocomplete.*.ignorecase</a></dfn></td>
-
       <td>Если значение этой переменной равно <var>1</var>, поиск элементов автодополнения в API-файле производится без учета регистра. В противном случае учитывается регистр.<br>
       Форма <dfn>*</dfn> используется для всех остальных лексеров, у которых данный параметр не задан явно.</td>
     </tr>
@@ -1571,7 +1553,6 @@ NameError: mistake
     <tr>
       <td><dfn><a name="autocomplete.start.characters">autocomplete.<i>lexer</i>.start.characters<br>
       autocomplete.*.start.characters</a></dfn></td>
-
       <td>Набор любого из символов, перечисленных как значения данной переменной, вызовет запуск функции автозавершения. Например, если <span class="example">autocomplete.python.start.characters=.</span> и API-файл для Питона содержит &quot;<code>string.rjust</code>&quot; и &quot;<code>string.replace</code>&quot;, то если напечатать &quot;<code>string.</code>&quot;, автозавершение отобразит оба варианта завершения.<br>
       Форма <dfn>*</dfn> используется для всех остальных лексеров, у которых данный параметр не задан явно.</td>
     </tr>
@@ -1579,7 +1560,6 @@ NameError: mistake
     <tr>
       <td><dfn><a name="autocomplete.fillups">autocomplete.<i>lexer</i>.fillups<br>
       autocomplete.*.fillups</a></dfn></td>
-
       <td>Завершить выбор из списка автозавершения (возникающего после нажатия на <code>Ctrl+Space</code>) можно с помощью клавиш <code>Tab</code>, <code>Enter</code>, а так же введя с клавиатуры любой из символов, перечисленных в параметре <dfn>autocomplete.<i>lexer</i>.fillups</dfn>.<br>
       Например, если <code>autocomplete.python.fillups=(</code> и API-файл для Питона содержит &quot;<code>string.replace</code>&quot;, то в результате набора &quot;<code>string.r(</code>&quot; в текст будет вставлено &quot;<code>string.replace(</code>&quot;.<br>
       Форма <dfn>*</dfn> используется для всех остальных лексеров, у которых данный параметр не задан явно.</td>
@@ -1600,7 +1580,6 @@ NameError: mistake
     <tr>
       <td><dfn><a name="calltip.ignorecase">calltip.<i>lexer</i>.ignorecase<br>
       calltip.*.ignorecase</a></dfn></td>
-
       <td>Если значение этой переменной равно <var>1</var>, поиск функции, параметры и описание которой будет отображаться как всплывающая подсказка, ведётся без учета регистра.<br>
       Форма <dfn>*</dfn> используется для всех остальных лексеров, у которых данный параметр не задан явно.</td>
     </tr>
@@ -1608,7 +1587,6 @@ NameError: mistake
     <tr>
       <td><dfn><a name="calltip.word.characters">calltip.<i>lexer</i>.word.characters<br>
       calltip.*.word.characters</a></dfn></td>
-
       <td>Задает набор символов из которых строятся функции языка программирования. Несмотря на то, что может использоваться такая же настройка, как для <dfn><a href="#word.characters">word.characters</a></dfn>, иногда необходимо добавлять к набору дополнительные символы. Например, в Питоне точка (&#39;<code>.</code>&#39;) обычно не рассматривается как часть слова, однако, если мы хотим увидеть всплывающую подсказку после того, как наберем &quot;<code>string.replace</code>&quot;, то нам необходимо добавить точку в набор <span class="example">calltip.python.word.characters=._$(chars.alpha)</span>, чтобы SciTE рассматривал &quot;<code>string.replace</code>&quot; как целую функцию (одно слово) и искал в api-файле подсказку к нему.<br>
       Форма <dfn>*</dfn> используется для всех остальных лексеров, у которых данный параметр не задан явно.</td>
     </tr>
@@ -1620,7 +1598,6 @@ NameError: mistake
       calltip.*.parameters.start<br>
       calltip.*.parameters.end<br>
       calltip.*.parameters.separators</a></dfn></td>
-
       <td>Задают символы, которые начинают, завершают и разделяют параметры. (<em>Неверная настройка <dfn>parameters.start</dfn> может привести к отсутствию всплывающей подсказки, несмотря на то, что она будет верно описана в корректно подключенном api-файле. Неверная настройка <dfn>calltip.lexer.parameters.separators</dfn> приведет к тому, что при наборе параметров функции подсветка не будет перемещатся по подсказке.</em>)<br>
       В большинстве общеупотребительных языков в начале используется левая фигурная скобка, в конце - правая фигурная скобка, и запятая или точка с запятой используются как разделитель. Например, в CSS используется двоеточие для начала, пробел как разделитель и ничего для конца.<br>
       Для каждой опции можно задать несколько различных символов.<br>
@@ -1630,7 +1607,6 @@ NameError: mistake
     <tr>
       <td><dfn><a name="calltip.end.definition">calltip.<i>lexer</i>.end.definition<br>
       calltip.*.end.definition</a></dfn></td>
-
       <td>В API-файлах после определения каждой функции может содержаться пояснительный текст. Чтобы отобразить пояснение во второй строке, задайте в этой настройке символ, использующийся в конце определения функции. В большинстве языков этим символом является &#39;<code>)</code>&#39;.<br>
       Форма <dfn>*</dfn> используется для всех остальных лексеров, у которых данный параметр не задан явно.</td>
     </tr>
@@ -1638,40 +1614,219 @@ NameError: mistake
     <tr class="ruboardonly">
       <td><dfn><a name="calltip.lexer.automatic">calltip.<i>lexer</i>.automatic</a><br>
       calltip.*.automatic</a></dfn></td>
-
       <td>Установка этого параметра в 0 означает что не будет происходить автоматическое отображение окошка с calltip&#39;ом при наборе текста, но останется возможность вызвать его вручную. (Только в SciTE-Ru)</td>
     </tr>
 
     <tr class="ruboardonly">
       <td><dfn><a name="calltip.lexer.show.per.page">calltip.<i>lexer</i>.show.per.page<br>
       calltip.*.show.per.page</a></dfn></td>
-
       <td>Возможность указать количество определений, отображаемых одновременно в calltip&#39;е. Значение по умолчанию - 1. (Только в SciTE-Ru)</td>
     </tr>
 
     <tr class="ruboardonly">
       <td><dfn><a name="calltip.lexer.word.wrap"></a>calltip.<i>lexer</i>.word.wrap</a><br>
       calltip.*.word.wrap</a></dfn></td>
-
       <td>Опция включает возможность переноса по словам длинных calltip&#39;ов, её значение определяет максимальный размер строки calltip&#39;а в символах, 0 означает что данная функция будет отключена. (Только в SciTE-Ru)</td>
     </tr>
 
     <tr>
       <td><dfn><a name="xml.auto.close.tags">xml.auto.close.tags</a></dfn></td>
-
       <td>Если в XML и HTML задать этой переменной значение <var>1</var>, то при наборе &#39;<code>&gt;</code>&#39; в качестве завершения открывающего тэга, будет автоматически вставлен соответствующий закрывающий тэг. Наберите &quot;<code>&lt;td&gt;</code>&quot; и в результате получите &quot;<code>&lt;td&gt;&lt;/td&gt;</code>&quot;, причем курсор ввода будет установлен между тэгами.</td>
     </tr>
 
     <tr>
-      <td><dfn><a name="html.tags.case.sensitive">html.tags.case.sensitive</a></dfn></td>
+      <td><dfn><a name="asp.default.language">asp.default.language</a></dfn></td>
+      <td>Скрипт в ASP-коде первоначально принимается за скрипт, написанный на JavaScript. Для того, чтобы заменить JavaScript на VBScript, задайте переменной <dfn>asp.default.language</dfn> значение <var>2</var>. Чтобы заменить на Python - значение <var>3</var>.</td>
+    </tr>
 
-      <td>Если в XML и HTML задать этой переменной значение <var>1</var>, тэги становятся чувствительными к регистру, что является обычным режимом для XML и XHTML.</td>
+	<tr>
+	<td>fold.asm.comment.explicit</td>
+	<td>This option enables folding explicit fold points when using the Asm lexer. Explicit fold points allows adding extra folding by placing a ;{ comment at the start and a ;} at the end of a section that should fold.</td>
+	</tr>
+
+	<tr>
+	<td>fold.asm.comment.multiline</td>
+	<td>Set this property to 1 to enable folding multi-line comments.</td>
+	</tr>
+
+	<tr>
+	<td>fold.asm.explicit.anywhere</td>
+	<td>Set this property to 1 to enable explicit fold points anywhere, not just in line comments.</td>
+	</tr>
+
+	<tr>
+	<td>fold.asm.explicit.end</td>
+	<td>The string to use for explicit fold end points, replacing the standard ;}.</td>
+	</tr>
+
+	<tr>
+	<td>fold.asm.explicit.start</td>
+	<td>The string to use for explicit fold start points, replacing the standard ;{.</td>
+	</tr>
+
+	<tr>
+	<td>fold.asm.syntax.based</td>
+	<td>Set this property to 0 to disable syntax based folding.</td>
+	</tr>
+
+	<tr>
+	<td>fold.at.else</td>
+	<td>This option enables C++ folding on a "} else {" line of an if statement.</td>
+	</tr>
+
+	<tr>
+	<td>fold.basic.comment.explicit</td>
+	<td>This option enables folding explicit fold points when using the Basic lexer. Explicit fold points allows adding extra folding by placing a ;{ (BB/PB) or '{ (FB) comment at the start and a ;} (BB/PB) or '} (FB) at the end of a section that should be folded.</td>
+	</tr>
+
+	<tr>
+	<td>fold.basic.explicit.anywhere</td>
+	<td>Set this property to 1 to enable explicit fold points anywhere, not just in line comments.</td>
+	</tr>
+
+	<tr>
+	<td>fold.basic.explicit.end</td>
+	<td>The string to use for explicit fold end points, replacing the standard ;} (BB/PB) or '} (FB).</td>
+	</tr>
+
+	<tr>
+	<td>fold.basic.explicit.start</td>
+	<td>The string to use for explicit fold start points, replacing the standard ;{ (BB/PB) or '{ (FB).</td>
+	</tr>
+
+	<tr>
+	<td>fold.basic.syntax.based</td>
+	<td>Set this property to 0 to disable syntax based folding.</td>
+	</tr>
+
+    <tr>
+      <td><dfn><a name="fold.comment">fold.comment</a></dfn></td>
+      <td>При использовании лексера C++ данная переменная включает свертку для многострочных комментариев и явно указаных точек свертки. Точки свертки позволяют добавлять дополнительную свертку с помощью комментариев <code>//{</code> и <code>//}</code>, помещаемых соответственно в начале и в конце секции, которую необходимо свернуть.</td>
     </tr>
 
     <tr>
-      <td><dfn><a name="asp.default.language">asp.default.language</a></dfn></td>
+      <td><dfn><a name="fold.comment.python">fold.comment.python</a></dfn></td>
+      <td>This option enables folding multi-line comments when using the Python lexer.</td>
+    </tr>
 
-      <td>Скрипт в ASP-коде первоначально принимается за скрипт, написанный на JavaScript. Для того, чтобы заменить JavaScript на VBScript, задайте переменной <dfn>asp.default.language</dfn> значение <var>2</var>. Чтобы заменить на Python - значение <var>3</var>.</td>
+    <tr>
+      <td><dfn><a name="fold.cpp.comment.explicit">fold.cpp.comment.explicit</a></dfn></td>
+      <td>Set this property to 0 to disable folding explicit fold points when fold.comment=1.</td>
+    </tr>
+
+    <tr>
+      <td><dfn><a name="fold.cpp.comment.multiline">fold.cpp.comment.multiline</a></dfn></td>
+      <td>Set this property to 0 to disable folding multi-line comments when fold.comment=1.</td>
+    </tr>
+
+    <tr>
+      <td><dfn><a name="fold.cpp.explicit.anywhere">fold.cpp.explicit.anywhere</a></dfn></td>
+      <td>Set this property to 1 to enable explicit fold points anywhere, not just in line comments.</td>
+    </tr>
+
+    <tr>
+      <td><dfn><a name="fold.cpp.explicit.end">fold.cpp.explicit.end</a></dfn></td>
+      <td>The string to use for explicit fold end points, replacing the standard //}.</td>
+    </tr>
+
+    <tr>
+      <td><dfn><a name="fold.cpp.explicit.start">fold.cpp.explicit.start</a></dfn></td>
+      <td>The string to use for explicit fold start points, replacing the standard //{.</td>
+    </tr>
+
+    <tr>
+      <td><dfn><a name="fold.cpp.syntax.based">fold.cpp.syntax.based</a></dfn></td>
+      <td>Set this property to 0 to disable syntax based folding.</td>
+    </tr>
+
+	<tr>
+	<td>fold.d.comment.explicit</td>
+	<td>Set this property to 0 to disable folding explicit fold points when fold.comment=1.</td>
+	</tr>
+
+	<tr>
+	<td>fold.d.comment.multiline</td>
+	<td>Set this property to 0 to disable folding multi-line comments when fold.comment=1.</td>
+	</tr>
+
+	<tr>
+	<td>fold.d.explicit.anywhere</td>
+	<td>Set this property to 1 to enable explicit fold points anywhere, not just in line comments.</td>
+	</tr>
+
+	<tr>
+	<td>fold.d.explicit.end</td>
+	<td>The string to use for explicit fold end points, replacing the standard //}.</td>
+	</tr>
+
+	<tr>
+	<td>fold.d.explicit.start</td>
+	<td>The string to use for explicit fold start points, replacing the standard //{.</td>
+	</tr>
+    
+	<tr>
+	<td>fold.d.syntax.based</td>
+	<td>Set this property to 0 to disable syntax based folding.</td>
+	</tr>
+
+    <tr>
+      <td><dfn><a name="fold.html">fold.html</a></dfn></td>
+      <td>Данная переменная включает и выключает свертку кода для HTML и XML файлов. Чтобы свертка работала, необходимо также включить параметр <dfn><a href="#fold">fold</a></dfn>.</td>
+    </tr>
+
+    <tr>
+      <td><dfn><a name="fold.html.preprocessor">fold.html.preprocessor</a></dfn></td>
+      <td>Если данная переменная равна <var>0</var> (<var>1</var> - значение по умолчанию), то команда "<cite>Свернуть все блоки текста</cite>" выполненная на  файле содержащем только код <code>php</code> (не php внедренный в html) свернет файл корректно, оставляя видимыми заголовки процедур. По умолчанию этого не происходит и команда сворачивает все содержимое файла целиком.</td>
+    </tr>
+
+    <tr>
+      <td><dfn><a name="fold.hypertext.comment">fold.hypertext.comment</a></dfn></td>
+      <td>Разрешает свертку в комментариях скриптов внедренных в HTML. По умолчанию отключено.</td>
+    </tr>
+
+    <tr>
+      <td><dfn><a name="fold.hypertext.heredoc">fold.hypertext.heredoc</a></dfn></td>
+      <td>Разрешает свертку скриптов внедренных в HTML. По умолчанию отключено.</td>
+    </tr>
+
+	<tr>
+	<td>fold.perl.at.else</td>
+	<td>This option enables Perl folding on a "} else {" line of an if statement.</td>
+	</tr>
+
+	<tr>
+	<td>fold.perl.comment.explicit</td>
+	<td>Set to 0 to disable explicit folding.</td>
+	</tr>
+
+    <tr>
+      <td><dfn><a name="fold.perl.package">fold.perl.package</a></dfn></td>
+      <td>Значение 0 запрещает свертку для packages в Perl.</td>
+    </tr>
+
+    <tr>
+      <td><dfn><a name="fold.perl.pod">fold.perl.pod</a></dfn></td>
+      <td>Значение 0 запрещает свертку для POD-блоков в Perl.</td>
+    </tr>
+
+    <tr>
+      <td><dfn><a name="fold.preprocessor">fold.preprocessor</a></dfn></td>
+      <td>Данная переменная разрешает свертку директив препроцессора при использовании лексера C++, включая определенные в C# директивы свертки <code>#region</code> и <code>#endregion</code>.</td>
+    </tr>
+
+    <tr>
+      <td><dfn><a name="fold.quotes.python">fold.quotes.python</a></dfn></td>
+      <td>При использовании лексера Python данная переменная разрешает использовать свертку для многострочных фрагментов текста, заключенных в кавычки.</td>
+    </tr>
+
+	<tr>
+	<td>fold.sql.at.else</td>
+	<td>This option enables SQL folding on a "ELSE" and "ELSIF" line of an IF statement.</td>
+	</tr>
+
+    <tr>
+      <td><dfn><a name="html.tags.case.sensitive">html.tags.case.sensitive</a></dfn></td>
+      <td>Если в XML и HTML задать этой переменной значение <var>1</var>, тэги становятся чувствительными к регистру, что является обычным режимом для XML и XHTML.</td>
     </tr>
 
 	<tr>
@@ -1689,15 +1844,20 @@ NameError: mistake
       <td>Set to 1 to interpret #if/#else/#endif to grey out code that is not active.</td>
     </tr>
 
+	<tr>
+	<td>lexer.cpp.triplequoted.strings</td>
+	<td>Set to 1 to enable highlighting of triple-quoted strings.</td>
+	</tr>
+
     <tr>
       <td><dfn><a name="lexer.cpp.update.preprocessor">lexer.cpp.update.preprocessor</a></dfn></td>
       <td>Set to 1 to update preprocessor definitions when #define found.</td>
     </tr>
 
-    <tr>
-      <td><dfn><a name="lexer.xml.allow.scripts">lexer.xml.allow.scripts</a></dfn></td>
-      <td>Set to 0 to disable scripts in XML.</td>
-    </tr>
+	<tr>
+	<td>lexer.d.fold.at.else</td>
+	<td>This option enables D folding on a "} else {" line of an if statement.</td>
+	</tr>
 
     <tr>
       <td><dfn><a name="lexer.errorlist.value.separate">lexer.errorlist.value.separate</a></dfn></td>
@@ -1751,11 +1911,6 @@ style the path and line number separately from the rest of the line with style 2
 	</tr>
 
 	<tr>
-      <td><dfn><a name="lexer.sql.fold.at.else">lexer.sql.fold.at.else</a></dfn></td>
-      <td>This option enables SQL folding on a "ELSE" and "ELSIF"line of an IF statement.</td>
-	</tr>
-
-	<tr>
       <td><dfn><a name="lexer.sql.numbersign.comment">lexer.sql.numbersign.comment</a></dfn></td>
 	<td>If "lexer.sql.numbersign.comment" property is set to 0 a line beginning with '#' will not be a comment.</td>
 	</tr>
@@ -1767,26 +1922,22 @@ style the path and line number separately from the rest of the line with style 2
 
     <tr>
       <td><dfn><a name="sql.backslash.escapes">sql.backslash.escapes</a></dfn></td>
-
       <td>Разрешает использование обратного слеша в качестве escape-символа в SQL.</td>
     </tr>
 
     <tr>
       <td><dfn><a name="styling.within.preprocessor">styling.within.preprocessor</a></dfn></td>
-
       <td>В C++ определяет, весь ли код препроцессора имеет стиль препроцессора (значение <var>0</var>, установленное по умолчанию) или только начиная с начальной <var>#</var> и до конца управляющего слова (значение <var>1</var>).</td>
     </tr>
 
     <tr>
       <td><dfn><a name="tab.timmy.whinge.level">tab.timmy.whinge.level</a></dfn></td>
-
       <td>В Питоне контролирует, происходит ли деление на абзацы последовательно и непротиворечиво. По умолчанию этой переменной задано значение <var>0</var>. При этом функция проверки деления на абзацы выключена. При значении <var>1</var> проверяется, согласуется ли каждая строка с предыдущей строкой, при <var>2</var> проверяется, есть ли перед символом табуляции пробелы, при <var>3</var> проверяется наличие пробелов при делении кода на абзацы, а при значении <var>4</var> проверяется наличие символов табуляции.<br>
       Удобно использовать значение <var>1</var>.</td>
     </tr>
 
     <tr>
       <td><dfn><a name="user.shortcuts">user.shortcuts</a></dfn></td>
-
       <td>
         Задает горячие клавиши для выполнения команд. Представляет собой разделенный символом &#39;<code>|</code>&#39; список горячих клавиш и запускаемых ими команд. Команды представляют собой либо строковый, либо числовой идентификатор.<br>
         В качестве команды можно использовать:<br>
@@ -1795,7 +1946,6 @@ style the path and line number separately from the rest of the line with style 2
         - любую команду пользовательского меню <cite>Tools</cite>. (Для этого необходимо к номеру нужной команды из этого меню прибавить <var>1200</var> [<span class="ruboardonly">или <var>9000</var> для SciTE-Ru</span>] и полученную сумму вставить как числовой идентификатор.<br>
         Все доступные команды и их значения перечислены в документации (<a href="CommandValues_rus.html">Command Values</a>).<br>
         Модификаторами являются клавиши <code>Ctrl</code>, <code>Shift</code> и <code>Alt</code>, а в качестве именованных клавиш используются <code>Left</code>, <code>Right</code>, <code>Up</code>, <code>Down</code>, <code>Insert</code>, <code>End</code>, <code>Home</code>, <code>Enter</code>, <code>Space</code>, <code>Tab</code>, <code>KeypadPlus</code>, <code>KeypadMinus</code>, <code>KeypadMultiply</code>, <code>KeypadDivide</code>, <code>Escape</code>, <code>Delete</code>, <code>PageUp</code>, <code>PageDown</code>, <code>Slash</code>, <code>Question</code>, <code>Equal</code>, <code>Win</code>:
-
         <div class="example">
           user.shortcuts=\<br>
           Ctrl+Shift+I|IDM_OPEN|\<br>
@@ -1806,10 +1956,8 @@ style the path and line number separately from the rest of the line with style 2
 
     <tr>
       <td><dfn><a name="user.context.menu">user.context.menu</a></dfn></td>
-
       <td>
         Задает дополнительные команды для контекстного меню. Представляет собой разделенный символом &#39;&#39; список пунктов меню и запускаемых ими команд. При этом команды задаются так же, как и в переменной <dfn>user.shortcuts</dfn>. Пустой пункт меню создает разделитель.
-
         <div class="example">
           user.context.menu=\<br>
           ||\<br>
@@ -1824,7 +1972,6 @@ style the path and line number separately from the rest of the line with style 2
     <tr>
       <td><dfn><a name="magnification">magnification<br>
       output.magnification</a></dfn></td>
-
       <td>Данные параметры задают начальное значение (по умолчанию - <var>0</var>) на которое будет изменятся размер шрифта, заданный для каждого стиля, при его отображении в панели редактирования и вывода. Отрицательные значения уменьшают размер, а положительные - увеличивают.<br>
   (<em>Именно эти параметры меняются при нажатии на <code>Ctrl+</code> и <code>Ctrl-</code></em>)
       </td>
@@ -1835,73 +1982,78 @@ style the path and line number separately from the rest of the line with style 2
       output.horizontal.size<br>
       output.vertical.size<br>
       output.initial.hide</a></dfn></td>
-
       <td>Если задать переменной <dfn>split.vertical</dfn> значение <var>1</var>, панель вывода будет размешена справа от панели редактирования. При значении <var>0</var> панель вывода будет расположена ниже панели редактирования. Переменная <dfn>output.*.size</dfn> задает первоначальный размер панели вывода. Если значение переменной <dfn>output.initial.hide</dfn> равно <var>1</var>, при первом запуске SciTE панель вывода становится невидимой, даже если задана переменная <dfn>output.*.size</dfn>. В противном случае, панель вывода при запуске появляется.</td>
     </tr>
 
     <tr>
       <td><dfn><a name="clear.before.execute">clear.before.execute</a></dfn></td>
-
       <td>Если задать данной переменной значение <var>1</var>, перед запуском команд меню <cite>Tools</cite> панель вывода очищается, т.е. автоматически выполняется lua-команда <span class="example">output:ClearAll()</span>.</td>
     </tr>
 
     <tr>
-      <td><dfn><a name="horizontal.scrollbar">horizontal.scrollbar<br>
-      horizontal.scroll.width<br>
-      output.horizontal.scrollbar<br>
-      output.horizontal.scroll.width</a></dfn></td>
-
+      <td><dfn><a name="horizontal.scrollbar">
+          horizontal.scrollbar<br />
+        horizontal.scroll.width<br />
+        horizontal.scroll.width.tracking<br />
+        output.horizontal.scrollbar<br />
+        output.horizontal.scroll.width<br />
+        output.horizontal.scroll.width.tracking
+      </a></dfn></td>
       <td>Если переменной <dfn>horizontal.scrollbar</dfn> задать значение <var>0</var>, то в панели редактирования горизонтальная прокрутка отображена не будет. Переменная <dfn>horizontal.scroll.width</dfn> задает ширину горизонтальной области прокрутки.<br>
       Подобным образом, переменные <dfn>output.horizontal.scrollbar</dfn> и <dfn>output.horizontal.scroll.width</dfn> контролируют горизонтальную линейку прокрутки панели вывода.</td>
     </tr>
 
     <tr>
       <td><dfn><a name="output.scroll">output.scroll</a></dfn></td>
-
       <td>При выполнении консольных команд заполнение окна вывода данными вызывает его автоматическую прокрутку. При <span class="example">output.scroll=0</span> такой прокрутки происходить не будет. При <span class="example">output.scroll=1</span> (значение по умолчанию), текст будет прокручиваться вниз, а после того, как команда отработает, он будет прокручен вверх, к самой команде. Если вы хотите, чтобы прокрутка осуществлялась, и после выполнения команды текст вывода не был прокручен обратно вверх, задайте <dfn>output.scroll</dfn> значение <var>2</var></td>
     </tr>
 
     <tr>
       <td><dfn><a name="end.at.last.line">end.at.last.line</a></dfn></td>
-
       <td>Диапазон вертикальной прокрутки обычно задается так, чтобы при максимальной позиции прокрутки последняя строка была видна в самом низу области просмотра. Задайте переменной <dfn>end.at.last.line</dfn> значение <var>0</var>, чтобы разрешить прокрутку ниже последней строки</td>
     </tr>
 
     <tr>
       <td><dfn><a name="wrap">wrap<br>
       output.wrap</a></dfn></td>
-
       <td>Значение <var>1</var> включает перенос длинных строк в окне редактирования и/или в окне вывода соответственно. Данные опции замедляют быстродействие прямо пропорционально количеству текста, поэтому их лучше отключать при работе с крупными документами на медленных машинах.</td>
     </tr>
 
     <tr>
       <td><dfn><a name="wrap.style">wrap.style</a></dfn></td>
-
       <td>В зависимости от заданного значения (<var>1</var> - по умолчанию, или <var>2</var>) переносит на новую строку соответственно слово или символ. Перенос символов является лучшим выбором для азиатских языков, где нет пробелов между словами.</td>
     </tr>
 
     <tr>
       <td><dfn><a name="wrap.visual.flags">wrap.visual.flags</a></dfn></td>
-
       <td>Помечает маркерами конец и начало перенесенной строки, чтобы их можно было визуально отличить. Про значении <var>0</var> (по умолчанию) маркеры не отображаются. Задайте значение <var>1</var>, чтобы маркеры отображались в конце перенесенной строки, <var>2</var> - в начале и <var>3</var> - и в начале и в конце.</td>
     </tr>
 
     <tr>
       <td><dfn><a name="wrap.visual.flags.location">wrap.visual.flags.location</a></dfn></td>
-
       <td>Указывает место отображения маркеров (если разрешено): рядом с текстом или рядом с границей. При значении <var>0</var> (по умолчанию) начальные и конечные маркеры отображаются рядом с границей. Если задано значение <var>1</var>, конечные маркеры отображаются рядом с текстом, <var>2</var> - начальные маркеры отображаются рядом с текстом и <var>3</var> - все маркеры располагаются рядом с тектом.</td>
     </tr>
 
+      <tr>
+        <td>
+          wrap.indent.mode
+        </td>
+        <td>
+          Wrapped sublines can be indented in various ways relative to the initial subline.
+          Default mode 0 indents sublines to the left of window plus wrap.visual.startindent.
+          Mode 1 aligns sublines to the first subline.
+          Mode 2 aligns sublines to the first subline plus one more level of indentation.
+        </td>
+      </tr>
+
     <tr>
       <td><dfn><a name="wrap.visual.startindent">wrap.visual.startindent</a></dfn></td>
-
       <td>Задает отступ для перенесенных строк, с тем, чтобы визуально лучше видеть переносы. По умолчанию задается значение <var>0</var> (отступы не ставятся).<br>
       Обратите внимание, что если переменной <dfn>wrap.visual.flags</dfn> заданы значение <var>2</var> или <var>3</var>, т.е. отображаются начальные маркеры, отступ ставится по крайней мере один раз, даже если значение переменной <dfn>wrap.visual.startindent</dfn> равно <var>0</var>.</td>
     </tr>
 
     <tr>
       <td><dfn><a name="wrap.aware.home.end.keys">wrap.aware.home.end.keys</a></dfn></td>
-
       <td>Данная опция изменяет поведение клавиш <code>Home</code> и <code>End</code> в том случае, если включена опция динамического переноса строк.<br>
       По умолчанию значение переменной равно <var>0</var>. При этом клавиши <cite>Home</cite> и <code>End</code> передвигают курсор ввода в самое начало или конец &quot;логической&quot; строки, вне зависимости от того, перенесена ли эта строка при отображении.<br>
       Если переменной задано значение <var>1</var>, то при нажатии клавиши <code>End</code> один раз курсор ввода передвигается в конец текущей отображаемой строки, а при нажатии этой же клавиши два раза курсор передвигается в конец &quot;логической&quot; строки. Подобным образом однократное нажатие клавиши <code>Home</code> передвигает курсор в самое начало отображаемой строки, а двукратное - в начало &quot;логической&quot; строки.<br>
@@ -1911,7 +2063,6 @@ style the path and line number separately from the rest of the line with style 2
     <tr>
       <td><dfn><a name="cache.layout">cache.layout<br>
       output.cache.layout</a></dfn></td>
-
       <td>SciTE тратит большое количество времени на то, чтобы проанализировать текст перед тем, как отрисовать его. Эта информация обычно остается статичной между обновлениями текста, поэтому при помощи данных опций ее можно поместить в кэш. Существует четыре уровня кэширования. Если значение равно <var>0</var>, кэширование не производится, <var>1</var> - кэшируется строка, на которой стоит курсор ввода, <var>2</var> - кэшируется видимая область страницы, а также курсор ввода, и <var>3</var> - кэшируется весь документ. Чем больше текста подвергается кэшированию, тем больше на это уходит памяти. Таким образом, при значении <var>3</var> используется в 7 раз больше памяти, чем занимает сам текст. Однако в этом случае значительно ускоряется динамический перенос слов и символов. В больших файлах перенос ускоряется примерно в 25 раз, поэтому данные переменные очень полезны при включенном динамическом переносе слов и символов и большом количестве свободной памяти.</td>
     </tr>
 
@@ -1944,10 +2095,9 @@ style the path and line number separately from the rest of the line with style 2
     </tr>
 
     <tr>
-      <td><dfn><a name="save.recent">save.recent<br>
-      save.session<br>
+      <td><dfn><a name="save.recent">save.session<br>
+      save.recent<br>
       save.position</a></dfn></td>
-
       <td>Установка этих переменных в <var>1</var> заставляет SciTE сохранять в файле сеанса список последних использованных файлов, список открытых в настоящее время буферов и положение окна SciTE на экране соответственно.<br>
       В Windows файл называется <code>SciTE.session</code> и расположен в каталоге, заданном переменной окружения <code>SciTE_HOME</code>. Если эта переменная не задана, тогда он расположен в каталоге, заданном значением переменной окружения <code>USERPROFILE</code>, а если и эта переменная не задана, тогда файл расположен в каталоге, в котором находится исполняемый файл <code>scite.exe</code><br>
       Под GTK+ этот файл называется &quot;<code>.SciTE.session</code>&quot;. Он расположен в каталоге, заданном переменной окружения <code>SciTE_HOME</code>. Если эта переменная не задана, тогда он расположен в каталоге, заданном значением переменной окружения HOME, а если и эта переменная не задана, тогда файл расположен в каталоге верхнего уровня.</td>
@@ -1987,7 +2137,6 @@ style the path and line number separately from the rest of the line with style 2
 
     <tr>
       <td><dfn><a name="find.use.strip">find.use.strip<br />replace.use.strip</a></dfn></td>
-
       <td>Use in-window strips rather than dialogs for performing Find or Replace commands.</td>
     </tr>
 
@@ -2000,14 +2149,12 @@ style the path and line number separately from the rest of the line with style 2
 
     <tr>
       <td><dfn><a name="find.replace.advanced">find.replace.advanced</a></dfn></td>
-
       <td>В диалоге &quot;<cite>Заменить</cite>&quot; разрешает кнопку &quot;<cite>Заменить во всех файлах</cite>&quot; и флажок &quot;<cite>Только в этом стиле</cite>&quot;. Если флажок &quot;<cite>Только в этом стиле</cite>&quot; установлен, поиск ограничивается только этим стилем.</td>
     </tr>
 
     <tr>
       <td><dfn><a name="find.command">find.command<br>
       <span class="windowsonly">find.input</span></a></dfn></td>
-
       <td>
         Команда меню &quot;<cite>Поиск</cite>&quot; - &quot;<cite>Найти в файлах</cite>&quot; отрабатывает так же, как обычная команда из меню &quot;<cite>Tools</cite>&quot;, производящая запуск утилиты командной строки, вывод которой перенаправляется в панель консоли.<br>
         Поскольку результатом выполнения команды являются данные, содержащие имена файлов и номера строк, содержащих искомый текст (т.е. этот текст по формату аналогичен сообщениям об ошибках, которые выводят в процессе работы компиляторы, и т.п.), то для перехода между найденными вхождениями могут использоваться клавиши <code>F4</code> и <code>Shift+F4</code> (или двойной клик по строке с найденным текстом).<br>
@@ -2017,11 +2164,9 @@ style the path and line number separately from the rest of the line with style 2
         В качестве параметров командной строки разрешается использовать переменные <code>$(find.directory)</code> (каталог для поиска, будет взят из поля &quot;<cite>Каталог:</cite>&quot;), <code>$(find.files)</code> (маска файловых расширений, будет взята из поля &quot;<cite>В файлах:</cite>&quot;) и <code>$(find.what)</code> (искомый текст, будет взят из поля &quot;<cite>Что:</cite>&quot;). Задание параметров &quot;<cite>Только слово целиком</cite>&quot; и &quot;<cite>Учитывать регистр</cite>&quot; через диалоговое окно недоступно.<br>
         Если утилита может принимать входные параметры через стандартный поток ввода, то SciTE может сформировать выходной поток с помощью параметра <dfn>find.input</dfn> (доступен только для Windows), например так: <cite>find.input=$(find.what)</cite> - для того, чтобы избежать проблем, связанных с интерпретацией кавычек.<br>
         В качестве внешних утилит для поиска текста в файлах можно использовать <code>FINDSTR</code> (имеется в стандартной поставке Windows). Пример командной строки для ее запуска:
-
         <div class="example">
           find.command=FINDSTR /n /s /c:&quot;$(find.what)&quot; $(find.files)
         </div>Кроме того, можно воспользоватся пакетом Cygwin (~60Mб, множество утилит):<br>
-
         <div class="example">
           find.command=cmd /c c:\cygwin\bin\find &quot;$(find.directory)&quot; -name &quot;$(find.files)&quot; -print0 | c:\cygwin\bin\xargs -0 fgrep -G -n &quot;$(find.what)&quot;
         </div>В примере необходимо исправить путь к каталогу установки <code>Cygwin</code>, если он у вас отличается от указанного.<br>
@@ -2031,7 +2176,6 @@ style the path and line number separately from the rest of the line with style 2
 
     <tr>
       <td><dfn><a name="find.files">find.files</a></dfn></td>
-
       <td>Определяет содержимое раскрывающегося списка &quot;<cite>В файлах:</cite>&quot; в диалоге &quot;<cite>Найти в файлах</cite>&quot;. Переменная <dfn>find.files</dfn> содержит список расширений файлов, разделенных символом &#39;<code>|</code>&#39;, как, например <span class="example">*.cxx *.h*.py *.pyw|*.html</span>. В этом примере в список добавляется три строчки, среди которых первая будет использоваться по умолчанию.<br>
       Обработка данного параметра немного необычна, т.к. содержимое аналогичного параметра в файле локальных настроек не заменяет значение, заданное в <code>SciTEGlobal.properties</code>, а добавляется в конец списка, в том случае, если строка с расширениями не совпадает ни с одной из строк, заданных в <code>SciTEGlobal.properties</code>.<br>
       Максимальное количество строк в этом списке - 10.</td>
@@ -2039,26 +2183,22 @@ style the path and line number separately from the rest of the line with style 2
 
     <tr>
       <td><dfn><a name="find.in.dot">find.in.dot</a></dfn></td>
-
       <td>Если значение переменной <dfn>find.in.dot</dfn> равно <var>1</var>, команда &quot;<cite>Найти в файлах</cite>&quot; производит поиск в каталогах, название которых начинается с символа &#39;<code>.</code>&#39;. По умолчанию SciTE не производит поиск в служебных каталогах Subversion, которые называются <code>.svn</code>.</td>
     </tr>
 
     <tr>
       <td><dfn><a name="find.in.binary">find.in.binary</a></dfn></td>
-
       <td>Если значение переменной <dfn>find.in.binary</dfn> равно <var>1</var>, команда &quot;<cite>Найти в файлах</cite>&quot; отображает совпадения в двоичных файлах. Двоичным для команды &quot;<cite>Найти в файлах</cite>&quot; является файл, который в первых 64 Кб содержит байт NUL.</td>
     </tr>
 
     <tr class="windowsonly">
       <td><dfn>find.in.files.close.on.find</dfn></td>
-
       <td>Задайте данной переменной значение <var>0</var>, чтобы при нажатии кнопки &quot;<cite>Найти</cite>&quot; диалог &quot;<cite>Найти в файлах</cite>&quot; оставался открытым.</td>
     </tr>
 
     <tr>
       <td><dfn><a name="code.page">code.page<br>
       output.code.page</a></dfn></td>
-
       <td>
         Чтобы SciTE мог поддерживать язык с набором двухбайтовых символов (например, японский), здесь необходимо задать кодовую страницу. Это нужно для того, чтобы двухбайтовые символы рассматривались как единое целое, и курсор ввода никогда не оказывался между двумя байтами двухбайтового символа.
   	  <table>
@@ -2079,7 +2219,6 @@ style the path and line number separately from the rest of the line with style 2
 
     <tr>
       <td><dfn><a name="character.set">character.set</a></dfn></td>
-
       <td>Данная настройка позволяет изменять набор символов, который запрашивается при настройке шрифтов. Не все из этих значений будут работать на всех платформах.
 	  <table>
 	  <thead><th>Character set</th><th>Value</th></thead>
@@ -2115,7 +2254,6 @@ style the path and line number separately from the rest of the line with style 2
       comment.box.start.<i>lexer</i><br>
       comment.box.middle.<i>lexer</i><br>
       comment.box.end.<i>lexer</i></a></dfn></td>
-
       <td>Данные переменные используются для комментирования команд через меню &quot;<cite>Правка</cite>&quot; и задаются раздельно для каждого лексера. Однако не все языки поддерживают и потоковые, и блочные комментарии.<br>
       Блочные комментарии начинаются с определенной строки и продолжаются до ее конца. В переменной <dfn>comment.block</dfn> задается строка, которая при выполнении команды &quot;<cite>Закомментировать или раскомментироватть текст</cite>&quot; (<cite>Block Comment or Uncomment</cite>) вставляется или удаляется в начале выделенных строк. Для того, чтобы одна и та же команда (<code>Ctrl+Q</code>) могла и устанавливать и снимать комментарии, заданная в переменной строка должна содержать символ (например &#39;<code>~</code>&#39;), который не используется в реальных комментариях.<br>
       Задайте переменной <dfn>comment.block.at.line.start</dfn> значение <var>1</var>, чтобы символы блокового комментария помещались в начале строк, а не перед первым непустым символом.<br>
@@ -2131,7 +2269,6 @@ style the path and line number separately from the rest of the line with style 2
       preprocessor.start.<i>filepattern</i><br>
       preprocessor.middle.<i>filepattern</i><br>
       preprocessor.end.<i>filepattern</i></a></dfn></td>
-
       <td>Данные переменные задают символ начала директив и команды условного перехода препроцессора, используемые в файлах, попадающих под заданный в <dfn><i>filepattern</i></dfn> перечень расширений.<br>
       Символ, который определяет строки препроцессора, указывается в переменной <dfn>preprocessor.symbol</dfn>. Ключевые слова препроцессора, которые задают начало (<code>if</code>), середину (<code>else</code>) и конец (<code>end</code>) условных директив препроцессора, задаются остальными тремя переменными. Каждая из них может иметь множество значений. Например, в Cи для определения условных директив препроцессора используются значения &quot;<code>if</code>&quot;, &quot;<code>ifdef</code>&quot; и &quot;<code>ifndef</code>&quot;.</td>
     </tr>
@@ -2165,7 +2302,6 @@ style the path and line number separately from the rest of the line with style 2
       keywords8.<i>filepattern</i><br>
       keywords9.<i>filepattern</i><br>
       keywordclass.<i>lexer</i></a></dfn></td>
-
       <td>Большинство лексеров различают имена и ключевые слова, используя для этого переменные <dfn>keywords</dfn>. Каждый <dfn>keywords</dfn> соответствует строго определенному типу (например комментарию, строковой константе, оператору и т.п.), в качестве значения которого указывается список слов, разделенных пробелами, которые в данном языке попадают под заданное определение.<br>
       Зачастую списки ключевых слов не приравнивают к <dfn>keywords</dfn> непосредственно, а создают несколько условных пользовательских переменных <dfn>keywordclass.lexer</dfn>, и все ключевые слова задают в них. После этого <dfn>keywords</dfn> присваивают значение одного или нескольких <dfn>keywordclass.lexer</dfn>. Поэтому <dfn>keywordclass.lexer</dfn> не являются самостоятельными параметрами SciTE и присутствуют в настройках только для удобства.<br>
       Некоторые лексеры могут анализировать несколько языков программирования одновременно. Для них необходимо задание нескольких наборов ключевых слов, которые будут отображаться в стиле, отличающемся от стиля первого набора. Эта особенность используется в лексере HTML для отображения ключевых слов JavaScript в стиле, отличном от стиля тегов и аттрибутов HTML.<br>
@@ -2174,28 +2310,24 @@ style the path and line number separately from the rest of the line with style 2
 
     <tr>
       <td><dfn><a name="default.file.ext">default.file.ext</a></dfn></td>
-
       <td>Данная переменная задает язык, который используется по умолчанию до того, как файл получит имя.<br>
       Например: если задано <span class="example">default.file.ext=.py</span>, то при создании нового файла с помощью команды &quot;<cite>New</cite>&quot;, используется синтаксическая подсветка для языка Python.</td>
     </tr>
 
     <tr>
       <td><dfn><a name="word.characters">word.characters.<i>filepattern</i></a></dfn></td>
-
       <td>Указывает, какие символы могут быть частью слов. Значением этой переменной по умолчанию являются все буквенно-цифровые символы и символ подчеркивания &quot;<code>_</code>&quot;, которые приемлемы для таких языков, как C++.<br>
       <em>Функции SciTE, основанные на обработке слов, различают начало и конец слова по этой установке. Например, если добавить точку в значение этого параметра, SciTE будет считать составные конструкции вида <span class="example">WScript.Echo</span> одним словом.</em></td>
     </tr>
 
     <tr>
       <td><dfn><a name="whitespace.characters">whitespace.characters.<i>filepattern</i></a></dfn></td>
-
       <td>Указывает, какие символы будут считаться пробелами. Значение по умолчанию задано Scintilla и содержит пробел и все символы с кодами меньше 0x20. При таких операциях, как перемещение курсора (Ctrl+влево/вправо), данная переменная позволяет использовать в Scintilla в качестве пробелов другие символы (например, пунктуацию).</td>
     </tr>
 
     <tr>
       <td><dfn><a name="style">style.*.<i>stylenumber</i><br>
       style.<i>lexer</i>.<i>stylenumber</i></a></dfn></td>
-
       <td>
         SciTE каждому участку поля редактирования присваивает определенный номер стиля - <dfn><i>stylenumber</i></dfn> (от <var>0</var> до <var>128</var>). С помощью лексеров номера стилей присваиваются отдельным словам и конструкциям кода. С помощью параметров <dfn>style.</dfn> в соответствие этому номеру ставится строка, определяющая, как будет отображаться этот стиль в SciTE.<br>
         Строка для задания параметров стиля представляет собой набор полей, разделенных запятой. Некоторые поля имеют подзначения, которое следует после символа &quot;<code>:</code>&quot;. Полный синтаксис данной строки представлен ниже:<br>
@@ -2215,7 +2347,6 @@ style the path and line number separately from the rest of the line with style 2
         <span class="example">hotspot|nothotspot</span> - один из вариантов: "hotspot" (при наведении мыши, такой текст подчеркивается и вид курсора принимает форму руки) | обычный текст<br>
         Ни один из параметров не является обязательным. Очередность также не имеет значения. Но если в строке стиля параметр упоминается дважды (чего следует избегать!), то действует крайнее правое значение.<br>
         <em>Часто длинные строки описания стиля присваивают пользовательским переменным, а затем используют эти переменные при задании стиля. Если при использовании таких подстановок в строку стиля помимо этой переменной будут добавлены и другие параметры, то возможна ситуация, когда их значения полностью перекроют одноименные параметры пользовательской переменной, и ее существование в строке описания стиля станет просто бессмысленным. Пример:</em>
-
         <div class="example">
           colour.number=fore:#AC00A9, back:#FEFEFE<br>
           style.vb.2=$(colour.number), bold, fore:#7F7F00, back:#808080
@@ -2232,7 +2363,6 @@ style the path and line number separately from the rest of the line with style 2
       style.<i>lexer</i>.36<br>
       style.<i>lexer</i>.37<br>
       style.<i>lexer</i>.38</a></dfn></td>
-
       <td>Помимо стилей, генерируемых различными лексерами, в SciTe используется ряд встроенных стилей.<br>
       Стиль <dfn>32</dfn> используется по умолчанию. Его свойства наследуется всеми другими стилями до тех пор, пока не будут перекрыты.<br>
       Стиль <dfn>33</dfn> используется для отображения номеров строк на соответствующем поле.<br>
@@ -2249,13 +2379,11 @@ style the path and line number separately from the rest of the line with style 2
       style.<i>lexer</i>.34<br>
       style.<i>lexer</i>.35<br>
       braces.<i>lexer</i>.style</a></dfn></td>
-
       <td>Подсветка скобок используется для того, чтобы выделить заключенное внутри них выражение и появляется, когда курсор ввода стоит непосредственно за одной из скобок. Данное свойство особенно полезно при использовании текста со множеством вложеных скобок. Скобками являются символы &quot;<code>(</code>&quot;, &quot;<code>)</code>&quot;, &quot;<code>[</code>&quot;, &quot;<code>]</code>&quot;, &quot;<code>{</code>&quot; и &quot;<code>}</code>&quot;. По умолчанию, эта опция отключена, поскольку замедляет перемещение каретки. Для того чтобы ее включить, необходимо переменной <dfn>braces.check</dfn> задать значение <var>1</var>. Если значение переменной <dfn>braces.sloppy</dfn> равно <var>1</var>, то при отсутствии скобки непосредственно перед курсором ввода, проверяется символ после него. Подсветка осуществляется стилем <dfn>34</dfn> или, если нет согласованной (парной) скобки, стилем <dfn>35</dfn>. Несмотря на то, что данный стиль является полноценным, для избежания частичного отображения скобок лучше сделать его отличным от стандартного стиля скобок только в том, что касается цвета текста и цвета фона.</td>
     </tr>
 
     <tr>
       <td><dfn><a name="font.monospace">font.monospace</a></dfn></td>
-
       <td>Задает название шрифта и размер, которые будут использоваться при исполнении команды &quot;<cite>Использовать моноширинные шрифты</cite>&quot;. При этом используется такой же синтаксис, как и для параметров стиля. <em>Правда, в отличии от переменных определяющих стиль, <dfn>font.monospace</dfn> поддерживает только два параметра <var>font:&lt;name&gt;</var> и <var>size:&lt;number&gt;</var>.<br>
       При нажатии <code>Ctrl+F11</code> эти параметры применяются ко всем стилям, кроме 33 - 37.</em></td>
     </tr>
@@ -2268,7 +2396,6 @@ style the path and line number separately from the rest of the line with style 2
       command.build.directory.<i>filepattern</i><br>
       command.go.<i>filepattern</i><br>
       command.go.subsystem.<i>filepattern</i></a></dfn></td>
-
       <td>При помощи данных переменных указывается, какие команды будут выполняться при выборе пунктов меню &quot;<cite>Компилировать</cite>&quot;, &quot;<cite>Собрать</cite>&quot; и &quot;<cite>Выполнить</cite>&quot;. Опции <dfn>subsystem</dfn> указывают, как в Windows запускать инструменты: как командную строку (<var>0</var>), в оконном режиме (<var>1</var>), через ShellExecute (<var>2</var>) или как команду Lua (<var>3</var>). (см. <a href="#command.subsystem">тут</a> для подробностей).<br>
       Если исходные файлы в находятся не в том каталоге, где будет производиться сборка, то перед выполнением сборки необходимо указать в переменной <dfn>command.build.directory</dfn> путь к каталогу для сборки.</td>
     </tr>
@@ -2276,10 +2403,8 @@ style the path and line number separately from the rest of the line with style 2
     <tr>
       <td><dfn><a name="command.go.needs">command.go.needs.<i>filepattern</i><br>
       command.go.needs.subsystem.<i>filepattern</i></a></dfn></td>
-
       <td>
         Иногда перед запуском файла его необходимо собрать или скомпилировать. В этом случае в данной переменной указывается команда, которая используется для сборки или компиляции. После завершения компиляции, состояние файла запоминается, с тем чтобы при последующих запусках компиляция или сборка не производились. Чтобы создать команду &quot;<cite>Компилировать и выполнить</cite>&quot; для <code>.c</code> файлов, необходимо сделать следующее:
-
         <div class="example">
           command.go.*.c=$(FileName)<br>
           command.go.needs.*.c=g++ $(FileNameExt) -o $(FileName)<br>
@@ -2298,16 +2423,13 @@ style the path and line number separately from the rest of the line with style 2
       <span class="windowsonly">command.quiet.<i>number</i>.<i>filepattern</i></span><br>
       command.mode.<i>number</i>.<i>filepattern</i><br>
       command.shortcut.<i>number</i>.<i>filepattern</i></a></dfn></td>
-
       <td>
         В меню &quot;<cite>Tools</cite>&quot; можно добавить дополнительные команды. Например, для того чтобы добавить в меню вызов внешней консольной утилиты для оптимизации кода &quot;<code>astyle</code>&quot;, файл настроек должен содержать следующее:
-
         <div class="example">
           command.name.3.*.cc=Indent<br>
           command.3.*.cc=astyle -taO $(FileNameExt)<br>
           command.is.filter.3.*.cc=1
         </div>В первой строке задается наименование команды, которая будет отображаться в меню &quot;<cite>Tools</cite>&quot; ниже комманды &quot;<cite>Выполнить</cite>&quot;. Вторая строка представляет собой собственно команду, подобную командам &quot;<cite>Компилировать</cite>&quot;, &quot;<cite>Собрать</cite>&quot; и &quot;<cite>Выполнить</cite>&quot;. Необязательная переменная <dfn>command.is.filter</dfn> указывает на то, что команда модифицирует файл, поэтому после выполнения команды, в случае, если включена опция <dfn><a href="#load.on.activate">load.on.activate</a></dfn>, может возникнуть необходимость его прочитать. С помощью опции <dfn><a href="#load.on.activate">load.on.activate</a></dfn> SciTE следит за тем, был ли изменен редактируемый файл внешней программой, и перезагружает его при необходимости.
-
         <p>Опция <dfn>subsystem</dfn> указывает, как будет выполнятся заданная коммандная строка:<br>
         <var>0</var> - в скрытом виде, с выводом результатов в консоль (значение по умолчанию),<br>
         <var>1</var> - в оконном режиме,<br>
@@ -2316,22 +2438,17 @@ style the path and line number separately from the rest of the line with style 2
         <var>4</var> - подобно тому, как это осуществляет программа <code>HtmlHelp</code><br>
         <var>5</var> - подобно тому, как это осуществляет программа <code>WinHelp</code><br>
         (<em>См. <a href="#command.subsystem">начало справки</a> где изложены особенности опции <dfn>subsystem</dfn></em>)</p>
-
         <p>Опция <dfn>command.save.before</dfn> определяет, будет ли текущий файл сохранен перед выпонением команды автоматически (при <var>1</var>), или же SciTE сделает запрос на сохранение (при <var>2</var>).</p>
-
         <p>Опция <dfn>command.input</dfn> задает текст, который будет передан команде через стандартный поток вывода. (Естественно, приложение, запускаемое из коммандной строки, должно поддерживать чтение со стандартного входного потока.)<br>
         Данный параметр можно использовать как альтернативный вариант, вместо передачи параметров команде через коммандную строку. Эта переменная также может содержать ссылку на другой параметр. Например, переменная <span class="example">command.input.0.*.cc=$(CurrentSelection)</span> передаст текущее выделение командному процессу.<br>
         Переменная <dfn>command.input</dfn> поддерживается только для программ командной строки (т.е. для <dfn>subsystem</dfn>, равном <var>0</var>).</p>
-
         <p>Опция <dfn>command.replace.selection</dfn> задает режим для замены выделенного текста на выходные данные (или, если текст не выделен, то выходные данные вставляются в место расположения курсора). Данная переменная может иметь три значения:<br>
         <var>0</var> - выделенный текст не заменяется (значение по умолчанию),<br>
         <var>1</var> - выделенный текст заменяется, когда команда завершает работу,<br>
         <var>2</var> - выделенный текст заменяется только в том случае, если команда завершается с нулевым кодом выхода.<br>
         Если пользователь отменяет выполнение команды с помощью &quot;<cite>Tools / Stop Executing</cite>&quot;, замена выделенного текста не будет произведена, даже если задано значение <var>1</var>.<br>
         Обратите внимание, что команды исполняются асинхронно, поэтому во время исполнения команды вы не застрахованы от изменения документа или переключения буферов. Однако помните, что по завершении исполнения команды переменная <dfn>command.replace.selection</dfn> отправит выходные данные в то окно, которое на тот момент будет активно.</p>
-
         <p>При значении <dfn>command.quiet</dfn>, равном <var>1</var>, ввод-вывод команды не отображается на панели вывода. Это свойство может быть полезно в комбинации с переменными <dfn>command.input</dfn> и <dfn>command.replace.selection</dfn>.</p>
-
         <p>Вместо того, чтобы задавать все вышеперечисленные параметры отдельно, имеется возможность задать их в одной строке с помощью параметра <dfn>command.mode.</dfn><br>
         Значение этого параметра представляет собой список флагов/настроек, разделенный запятыми. Каждая настройка режима может иметь аргумент, отделенный от имени настройки двоеточием. Для большинства настроек аргументы не обязательны: если имя настройки не будет содержать аргументов, это будет восприниматься как <span class="example">setting:yes</span>. Если настройка включена в переменную <dfn>command.mode</dfn>, однако в то же время встречается в качестве отдельного параметра команды, настройка режима будет отменена. Подобным образом, если одна и та же настройка встречается более одного раза с различными аргументами, приоритет будет иметь последний правильный аргумент. Ниже перечислены поддерживаемые настройки переменной <dfn>command.mode</dfn>:<br>
         <var>filter</var> - принимает аргументы <code>yes</code> и <code>no</code><br>
@@ -2341,23 +2458,17 @@ style the path and line number separately from the rest of the line with style 2
         <var>subsystem</var> - <code>console, windows, shellexec, lua, director, winhelp, htmlhelp</code><br>
         <var>groupundo</var> - принимает аргументы <code>yes</code> и <code>no</code><br>
         Все вышеперечисленные настройки, за исключением <var>groupundo</var>, основаны на индивидуальных параметрах с похожими именами, поэтому здесь они по-отдельности не описаны. Настройка <var>groupundo</var> работатет с подсистемой <var>3</var> (lua/director) и указывает SciTE воспринимать все изменения, сделанные командой, как одно действие отмены. Команда, которая использует <var>groupundo</var>, не должна менять активный буфер.</p>
-
         <p>Переменная <dfn>command.shortcut</dfn> позволяет задавать клавиатурные комбинации для быстрого запуска команды. По умолчанию команды от <var>0</var> до <var>9</var> имеют быстрые клавиши от <code>Ctrl+0</code> до <code>Ctrl+9</code> соответственно. Однако, эти сочетания клавиш можно изменить. Для команд с номером больше 9 быстрых клавиш по умолчанию нет. Система символов, используемая для задания клавиатурных комбинаций такая же, как для переменной <a href="#user.shortcuts">user.shortcuts</a>.</p>
-
         <p>В строке значения параметра <dfn>command.</dfn> можно использовать переменные <var>$(1)</var> .. <var>$(4)</var>. Например, так:<br></p>
-
         <div class="example">
           command.11.*=*CMD /K COPY $(1) $(2)
         </div>
-
         <p>Эти переменные можно задать предварительно (как и все остальные пользовательские переменные), а можно и через немодальное диалоговое окно &quot;<cite>Параметры</cite>&quot; <code>(Shift+F8)</code> в меню &quot;<cite>Вид | Параметры</cite>&quot;. Пока диалог открыт, все пункты меню и горячие клавиши главного окна остаются активными, поэтому можно несколько раз запустить одну и ту же команду с разными параметрами.<br>
         Данное окно может возникать автоматически, для этого необходимо поместить в начале команды символ &#39;<code>*</code>&#39; (как в вышеприведенном примере). При этом начальный символ &quot;<code>*</code>&quot; в исполняемую команду не включается.<br>
         Если диалог &quot;<cite>Параметры</cite>&quot; уже открыт, то символ &#39;<code>*</code>&#39; в командной строке просто игнорируется (т.е. второго диалогового окна при повторном вызове этой же команды не появится).</p>
-
         <p>Если переменная <dfn>command.name</dfn> не имеет значения, то соответсвующие пункты в меню <cite>Tools</cite> не отображаются. Независимо от того, отображается команда в меню <cite>Tools</cite> или нет, ее можно вызвать с помощью <a href="#user.shortcuts">быстрых клавиш</a> или использовать для задания собственных <a href="#user.context.menu">пунктов в контекстном меню</a>.<br>
         Для задания пользовательской комманды в <dfn>user.context.menu</dfn> к номеру этой команды в меню Tools, который располагается в диапазоне от <var>0</var> до <var>49</var> (<span class="ruboardonly">от <var>0</var> до <var>299</var> для SciTE-Ru</span>), прибавляется начальный <code>ID</code> (<code>IDM_TOOLS</code>) равный <var>1100</var> (<span class="ruboardonly"><var>9000</var> для SciTE-Ru</span>).<br>
         Например, добавим команду <cite>Indent</cite> (которая у нас находится под номером <var>3</var>) в контекстное меню и зададим комбинацию клавиш для ее быстрого вызова:</p>
-
         <div class="example">
           user.context.menu=Indent|1103|<br>
           user.shortcuts=Ctrl+Alt+I|1103|
@@ -2368,7 +2479,6 @@ style the path and line number separately from the rest of the line with style 2
     <tr>
       <td><dfn><a name="command.help">command.help.<i>filepattern</i><br>
       command.help.subsystem.<i>filepattern</i></a></dfn></td>
-
       <td>Задает команду, которая выполняется при вызове команды &quot;<cite>Справка</cite>&quot; или нажатии клавиши <code>F1</code>. <em>Без данных команд вполне можно было бы обойтись, т.к. они, по сути, являются частным случаем описанных выше параметров <dfn>command.*</dfn></em>.<br>
       Под Windows типичным значением <dfn>command.help.<i>filepattern</i></dfn> является строка вида <span class="example">$(CurrentSelection)!help.hlp</span> (или <code>help.chm</code>), а значение <dfn>subsystem</dfn> равно <var>4</var> или <var>5</var>.<br>
       Под Linux наиболее распространенными способами отображения справки является запуск мануала или браузера.</td>
@@ -2377,7 +2487,6 @@ style the path and line number separately from the rest of the line with style 2
     <tr>
       <td><dfn><a name="command.scite.help">command.scite.help<br>
       command.scite.help.subsystem</a></dfn></td>
-
       <td>Задает команду для вызова справки SciTE, что также является частным случаем описанных выше параметров <dfn>command.*</dfn>.<br>
       Поскольку оринальная справка написана в html формате, то в качестве команды обычно задается строка для отображения этого файла в браузере.</td>
     </tr>
@@ -2385,19 +2494,16 @@ style the path and line number separately from the rest of the line with style 2
     <tr class="gtkonly">
       <td><dfn><a name="command.print">command.print.<i>filepattern</i><br>
       command.print.subsystem.<i>filepattern</i></a></dfn></td>
-
       <td>Задает команду, выполняемую при печати под GTK+.</td>
     </tr>
 
     <tr>
       <td><dfn><a name="time.commands">time.commands</a></dfn></td>
-
       <td>При значении данного параметра <var>1</var>, команды, вывод которых перенаправляется в окно консоли, будут дополнительно выводить время выполнения в секундах.</td>
     </tr>
 
     <tr class="windowsonly">
       <td><dfn><a name="print.magnification">print.magnification</a></dfn></td>
-
       <td>Размер шрифта, используемый для печати, соответствует заданному в параметрах каждого стиля. (При этом <em><code>Ctrl+</code> и <code>Ctrl-</code>, меняя размер шрифта на экране, не изменяют размера для печати</em>).<br>
       Чтобы увеличить или уменьшить размер печатного шрифта, задайте переменной <dfn>print.magnification</dfn> значение, которое будет суммироваться с размером шрифта заданного для каждого стиля. Отрицательные значения будут уменьшать текст на указанное количество пунктов.<br>
       <span class="ruboardonly">В SciTE-Ru использовано скриптовое решение, позволяющее изменять размер шрифта для печати одновременно с изменением экранного представления</span></td>
@@ -2405,7 +2511,6 @@ style the path and line number separately from the rest of the line with style 2
 
     <tr class="windowsonly">
       <td><dfn><a name="print.colour.mode">print.colour.mode</a></dfn></td>
-
       <td>Некоторые программисты предпочитают, чтобы на экране отображался светлый текст на темном фоне, а на печать выводился темный текст на светлом фоне.<br>
       Если переменной <dfn>print.colour.mode</dfn> задать значение <var>1</var>, то во время печати каждый цвет будет инвертироваться.<br>
       При значении <var>2</var> на печать будет выводиться черный текст на белом фоне.<br>
@@ -2414,18 +2519,15 @@ style the path and line number separately from the rest of the line with style 2
 
     <tr class="windowsonly">
       <td><dfn><a name="print.margins">print.margins</a></dfn></td>
-
       <td>Под Windows данная переменная задает поля по умолчанию для вывода на печать. Поля задаются в следующем порядке: левое поле, затем правое, верхнее и нижнее. Единицы измерения, в которых задаются значения переменной, зависят от национальных настроек и могут быть или сотыми миллиметра или тысячными дюйма. Какие единицы измерения используются на вашем компьютере, можно увидеть в диалоге &quot;<cite>Параметры страницы</cite>&quot;. Данная настройка считывается только при запуске SciTE.</td>
     </tr>
 
     <tr class="windowsonly">
       <td><dfn><a name="print.format">print.header.format<br>
       print.footer.format</a></dfn></td>
-
       <td>
         Данные переменные задают текст, который будет печататься в верхнем и нижнем колонтитуле. При помощи синтаксиса $(параметр) в качестве значений можно подставить другие параметры. Есть несколько дополнительных переменных: <code>CurrentPage</code>, <code>FileTime</code>, <code>FileDate</code>, <code>CurrentDate</code>, и <code>CurrentTime</code> (на начало печати). Чаще всего в верхнем и нижнем колонтитулах используются переменные <code>FileNameExt</code> и <code>FilePath</code>.<br>
         Верхний колонтитул может выглядеть следующим образом:
-
         <div class="example">
           print.header.format=$(FileNameExt) - Распечатано $(CurrentDate),$(CurrentTime) - Страница $(CurrentPage)
         </div>
@@ -2435,13 +2537,11 @@ style the path and line number separately from the rest of the line with style 2
     <tr class="windowsonly">
       <td><dfn><a name="print.style">print.header.style<br>
       print.footer.style</a></dfn></td>
-
       <td>При помощи данных переменных задается стиль для колонтитулов. При этом используется тот же формат, что и для других стилей SciTE. Поддерживаются только следующие аттрибуты: <code>fore, back, font, size, bold, italics</code> и <code>underlined</code>.</td>
     </tr>
 
     <tr>
       <td><dfn><a name="export.keep.ext">export.keep.ext</a></dfn></td>
-
       <td>Данная переменная указывает, как трансформируется имя файла (например, <code>LineMarker.cxx</code>) при экспорте, когда к нему добавляется соответствующее экспортируемому формату расширение - <code>.html</code> для HTML и <code>.rtf</code> для RTF.<br>
       Если значение переменной <dfn>export.keep.ext</dfn> равно <var>0</var> (по умолчанию), текущее расширение изменяется (<code>LineMarker.html</code>).<br>
       Если значение равно <var>1</var> - расширение, соответствующее экспортируемому формату, присоединяется в конец (<code>LineMarker.cxx.html</code>).<br>
@@ -2454,7 +2554,6 @@ style the path and line number separately from the rest of the line with style 2
       export.html.folding<br>
       export.html.styleused<br>
       export.html.title.fullpath</a></dfn></td>
-
       <td>Если значение переменной <dfn>export.html.wysiwyg</dfn> равно <var>0</var>, то при экспорте в HTML получается файл меньшего размера, но менее детально описанный, поэтому при выводе на экран этот файл может выглядеть по-другому. Если значение переменной <dfn>export.html.tabs</dfn> равно <var>1</var>, а значение переменной <dfn>export.html.wysiwyg</dfn> равно <var>0</var>, символы табуляции будут экспортированы как символы табуляции, а не как последовательность символов пробела.<br>
       В браузерах, хорошо поддерживающих CSS (Mozilla и Internet Explorer), экспортируемый файл может иметь свертку. Для этого переменной <dfn>export.html.folding</dfn> необходимо задать значение <var>1</var>.<br>
       Если значение переменной <dfn>export.html.styleused</dfn> равно <var>1</var>, используются только экспортируемые стили.<br>
@@ -2467,7 +2566,6 @@ style the path and line number separately from the rest of the line with style 2
       export.rtf.font.face<br>
       export.rtf.font.size<br>
       export.rtf.tabsize</a></dfn></td>
-
       <td>Когда значение переменной <dfn>export.rtf.wysiwyg</dfn> равно <var>0</var>, при экспорте в RTF получается файл меньшего размера, но менее детально описанный, поэтому при выводе на экран этот файл может выглядеть по-другому.<br>
       Если значение переменной <dfn>export.rtf.tabs</dfn> равно <var>1</var>, то символы табуляции будут экспортироваться как символы табуляции, а не как последовательность символов пробела. (Это верно при <code>export.rtf.wysiwyg=0</code>)<br>
       Переменная <dfn>export.rtf.font.face</dfn> используется для задания шрифта для экспортируемого RTF-файла.<br>
@@ -2479,7 +2577,6 @@ style the path and line number separately from the rest of the line with style 2
       export.pdf.font<br>
       export.pdf.pagesize<br>
       export.pdf.margins</a></dfn></td>
-
       <td>Значение переменной <dfn>export.pdf.magnification</dfn> добавляется к размеру шрифта, используемому по умолчанию при выводе на экран. Положительное значение увеличивает размер шрифта в документе PDF, и наоборот.<br>
       Переменная <dfn>export.pdf.font</dfn> принимает однословное значение, задающее шрифт по умолчанию в документе PDF: <var>Courier</var>, <var>Helvetica</var> или <var>Times</var>. <var>Helvetica</var> используется по умолчанию. При использовании <var>Helvetica</var> и <var>Times</var> нельзя переносить строки, при использовании <var>Courier</var> можно.<br>
       Переменная <dfn>export.pdf.pagesize</dfn> используется для того, чтобы задать размер страницы PDF. Единицей измерения здесь является точка (1/72 дюйма). Напрмер, формат <code>Letter</code> (8.5 дюймов x 11 дюймов) будет указан как <code>612,792</code>.<br>
@@ -2487,10 +2584,19 @@ style the path and line number separately from the rest of the line with style 2
       Экспорт в PDF ограничен в возможностях, что неизбежно, поскольку PDF является архивным форматом документа. Поддержка полного набора возможностей сильно увеличит размер SciTE. Перенос Helvetica или Times невозможен без сложностей управления метриками и кернингом шрифтов. Документ PDF создается с использованием WinAnsiEncoding, поэтому, если вы хотите использовать расширеный набор символов, перед экспортом в PDF необходимо сделать предварительную перекодировку.</td>
     </tr>
 
+      <tr>
+        <td>
+        export.tex.title.fullpath
+        </td>
+        <td>
+        The full path name of the file is put in the title, instead of just the file name
+        when export.tex.title.fullpath set to 1.
+        </td>
+      </tr>
+
     <tr>
       <td><dfn><a name="export.xml.collapse">export.xml.collapse.spaces<br>
       export.xml.collapse.lines</a></dfn></td>
-
       <td>Данные переменные являются флагами, контролирующими то, как пустые строки и последовательности из нескольких символов пробела конвертируются в XML.<br>
       Если при экспорте в XML значение параметра <dfn>export.xml.collapse.spaces</dfn> равно <var>1</var>, то последовательности из нескольких символов пробела будут отконвертированы как единственный знак пробела с указанием количества повторений (<code>&lt;s n=&#39;5&#39;/&gt;</code>).<br>
       Если при экспорте в XML значение параметра <dfn>export.xml.collapse.lines</dfn> равно <var>1</var>, то последовательности из нескольких пустых строк будут отконвертированны в единственный знак перевода строки (<code>&lt;line/&gt;</code>).<br>
@@ -2537,185 +2643,25 @@ style the path and line number separately from the rest of the line with style 2
       <td>Для файлов HTML, XML, Lua, C++ и подобных включение данной опции ведет к тому, что пустые строки после элемента свертки свертываются вместе с ней. По умолчанию включено.</td>
     </tr>
 
-    <tr>
-      <td><dfn><a name="fold.html">fold.html</a></dfn></td>
-      <td>Данная переменная включает и выключает свертку кода для HTML и XML файлов. Чтобы свертка работала, необходимо также включить параметр <dfn><a href="#fold">fold</a></dfn>.</td>
-    </tr>
+      <tr>
+        <td>
+          fold.highlight<br />
+        </td>
+        <td>
+        Set to 1 to enable highlight for current folding block (smallest one that contains the caret).
+	By default, it's disable. Note : The highlight is enabled only when fold.symbols equals
+	to 2 (round headers) or 3 (square headers).
+        </td>
+      </tr>
 
-    <tr>
-      <td><dfn><a name="fold.html.preprocessor">fold.html.preprocessor</a></dfn></td>
-      <td>Если данная переменная равна <var>0</var> (<var>1</var> - значение по умолчанию), то команда "<cite>Свернуть все блоки текста</cite>" выполненная на  файле содержащем только код <code>php</code> (не php внедренный в html) свернет файл корректно, оставляя видимыми заголовки процедур. По умолчанию этого не происходит и команда сворачивает все содержимое файла целиком.</td>
-    </tr>
-
-    <tr>
-      <td><dfn><a name="fold.hypertext.comment">fold.hypertext.comment</a></dfn></td>
-      <td>Разрешает свертку в комментариях скриптов внедренных в HTML. По умолчанию отключено.</td>
-    </tr>
-
-    <tr>
-      <td><dfn><a name="fold.hypertext.heredoc">fold.hypertext.heredoc</a></dfn></td>
-      <td>Разрешает свертку скриптов внедренных в HTML. По умолчанию отключено.</td>
-    </tr>
-
-	<tr>
-	<td>fold.asm.comment.explicit</td>
-	<td>This option enables folding explicit fold points when using the Asm lexer. Explicit fold points allows adding extra folding by placing a ;{ comment at the start and a ;} at the end of a section that should fold.</td>
-	</tr>
-	<tr>
-	<td>fold.asm.comment.multiline</td>
-	<td>Set this property to 1 to enable folding multi-line comments.</td>
-	</tr>
-	<tr>
-	<td>fold.asm.explicit.anywhere</td>
-	<td>Set this property to 1 to enable explicit fold points anywhere, not just in line comments.</td>
-	</tr>
-	<tr>
-	<td>fold.asm.explicit.end</td>
-	<td>The string to use for explicit fold end points, replacing the standard ;}.</td>
-	</tr>
-	<tr>
-	<td>fold.asm.explicit.start</td>
-	<td>The string to use for explicit fold start points, replacing the standard ;{.</td>
-	</tr>
-	<tr>
-	<td>fold.asm.syntax.based</td>
-	<td>Set this property to 0 to disable syntax based folding.</td>
-	</tr>
-	<tr>
-	<td>fold.at.else</td>
-	<td>This option enables C++ folding on a "} else {" line of an if statement.</td>
-	</tr>
-	<tr>
-	<td>fold.basic.comment.explicit</td>
-	<td>This option enables folding explicit fold points when using the Basic lexer. Explicit fold points allows adding extra folding by placing a ;{ (BB/PB) or '{ (FB) comment at the start and a ;} (BB/PB) or '} (FB) at the end of a section that should be folded.</td>
-	</tr>
-	<tr>
-	<td>fold.basic.explicit.anywhere</td>
-	<td>Set this property to 1 to enable explicit fold points anywhere, not just in line comments.</td>
-	</tr>
-	<tr>
-	<td>fold.basic.explicit.end</td>
-	<td>The string to use for explicit fold end points, replacing the standard ;} (BB/PB) or '} (FB).</td>
-	</tr>
-	<tr>
-	<td>fold.basic.explicit.start</td>
-	<td>The string to use for explicit fold start points, replacing the standard ;{ (BB/PB) or '{ (FB).</td>
-	</tr>
-	<tr>
-	<td>fold.basic.syntax.based</td>
-	<td>Set this property to 0 to disable syntax based folding.</td>
-	</tr>
-
-    <tr>
-      <td><dfn><a name="fold.comment">fold.comment</a></dfn></td>
-      <td>При использовании лексера C++ данная переменная включает свертку для многострочных комментариев и явно указаных точек свертки. Точки свертки позволяют добавлять дополнительную свертку с помощью комментариев <code>//{</code> и <code>//}</code>, помещаемых соответственно в начале и в конце секции, которую необходимо свернуть.</td>
-    </tr>
-
-    <tr>
-      <td><dfn><a name="fold.comment.python">fold.comment.python</a></dfn></td>
-      <td>This option enables folding multi-line comments when using the Python lexer.</td>
-    </tr>
-
-    <tr>
-      <td><dfn><a name="fold.cpp.comment.explicit">fold.cpp.comment.explicit</a></dfn></td>
-      <td>Set this property to 0 to disable folding explicit fold points when fold.comment=1.</td>
-    </tr>
-
-    <tr>
-      <td><dfn><a name="fold.cpp.comment.multiline">fold.cpp.comment.multiline</a></dfn></td>
-      <td>Set this property to 0 to disable folding multi-line comments when fold.comment=1.</td>
-    </tr>
-
-    <tr>
-      <td><dfn><a name="fold.cpp.explicit.anywhere">fold.cpp.explicit.anywhere</a></dfn></td>
-      <td>Set this property to 1 to enable explicit fold points anywhere, not just in line comments.</td>
-    </tr>
-
-    <tr>
-      <td><dfn><a name="fold.cpp.explicit.end">fold.cpp.explicit.end</a></dfn></td>
-      <td>The string to use for explicit fold end points, replacing the standard //}.</td>
-    </tr>
-
-    <tr>
-      <td><dfn><a name="fold.cpp.explicit.start">fold.cpp.explicit.start</a></dfn></td>
-      <td>The string to use for explicit fold start points, replacing the standard //{.</td>
-    </tr>
-
-    <tr>
-      <td><dfn><a name="fold.cpp.syntax.based">fold.cpp.syntax.based</a></dfn></td>
-      <td>Set this property to 0 to disable syntax based folding.</td>
-    </tr>
-
-	<tr>
-	<td>fold.d.comment.explicit</td>
-	<td>Set this property to 0 to disable folding explicit fold points when fold.comment=1.</td>
-	</tr>
-	<tr>
-	<td>fold.d.comment.multiline</td>
-	<td>Set this property to 0 to disable folding multi-line comments when fold.comment=1.</td>
-	</tr>
-	<tr>
-	<td>fold.d.explicit.anywhere</td>
-	<td>Set this property to 1 to enable explicit fold points anywhere, not just in line comments.</td>
-	</tr>
-	<tr>
-	<td>fold.d.explicit.end</td>
-	<td>The string to use for explicit fold end points, replacing the standard //}.</td>
-	</tr>
-	<tr>
-	<td>fold.d.explicit.start</td>
-	<td>The string to use for explicit fold start points, replacing the standard //{.</td>
-	</tr>
-	<tr>
-	<td>fold.d.syntax.based</td>
-	<td>Set this property to 0 to disable syntax based folding.</td>
-	</tr>
-
-    <tr>
-      <td><dfn><a name="fold.html">fold.html</a></dfn></td>
-      <td>Folding is turned on or off for HTML and XML files with this option. The fold option must also be on for folding to occur.</td>
-    </tr>
-
-    <tr>
-      <td><dfn><a name="fold.html.preprocessor">fold.html.preprocessor</a></dfn></td>
-      <td>Folding is turned on or off for scripts embedded in HTML files with this option. The default is on.</td>
-    </tr>
-
-    <tr>
-      <td><dfn><a name="fold.hypertext.comment">fold.hypertext.comment</a></dfn></td>
-      <td>Allow folding for comments in scripts embedded in HTML. The default is off.</td>
-    </tr>
-
-    <tr>
-      <td><dfn><a name="fold.hypertext.heredoc">fold.hypertext.heredoc</a></dfn></td>
-      <td>Allow folding for heredocs in scripts embedded in HTML. The default is off.</td>
-    </tr>
-
-    <tr>
-      <td><dfn><a name="fold.perl.package">fold.perl.package</a></dfn></td>
-      <td>Enable folding packages when using the Perl lexer.</td>
-    </tr>
-
-    <tr>
-      <td><dfn><a name="fold.perl.pod">fold.perl.pod</a></dfn></td>
-      <td>Enable folding Pod blocks when using the Perl lexer.</td>
-    </tr>
-
-    <tr>
-      <td><dfn><a name="fold.preprocessor">fold.preprocessor</a></dfn></td>
-      <td>Данная переменная разрешает свертку директив препроцессора при использовании лексера C++, включая определенные в C# директивы свертки <code>#region</code> и <code>#endregion</code>.</td>
-    </tr>
-
-    <tr>
-      <td><dfn><a name="fold.quotes.python">fold.quotes.python</a></dfn></td>
-      <td>При использовании лексера Python данная переменная разрешает использовать свертку для многострочных фрагментов текста, заключенных в кавычки.</td>
-    </tr>
-
-    <tr>
-      <td><dfn><a name="fold.perl">fold.perl.package<br>
-      fold.perl.pod</a></dfn></td>
-      <td>При использовании лексера Perl данные переменные разрешают использовать свертку для packages и POD-блоков.</td>
-    </tr>
+      <tr>
+        <td>
+          fold.highlight.colour<br />
+        </td>
+        <td>
+        Define the colour of highlight. The colour by default is red (#FF0000).
+        </td>
+      </tr>
 
     <tr>
       <td><dfn><a name="title.full.path">title.full.path</a></dfn></td>
@@ -2737,13 +2683,11 @@ style the path and line number separately from the rest of the line with style 2
       indent.auto<br>
       tab.indents<br>
       backspace.unindents</a></dfn></td>
-
       <td>
         Переменная <dfn>tabsize</dfn> задает размер символа табуляции. Если данный параметр не задан, то размер табуляции равен <var>8</var> символам.<br>
         Переменная <dfn>indent.size</dfn> определяет размер отступов при автоматическом структурировании текста. По умолчанию этот размер равен размеру табуляции. Многие программисты задают размер табуляции равным <var>8</var>, а размер отступа - равным <var>4</var>.<br>
         При структурировании текста переменная <dfn>use.tabs</dfn> определяет, каким должен быть отступ: состоять из последовательности символов пробела или из сочетания символов табуляции и пробела с использованием как можно больше символов табуляции.<br>
         Глобальные переменные <dfn>tabsize</dfn>, <dfn>indent.size</dfn> и <dfn>use.tabs</dfn> могут перекрываться для файлов, соответствующих определенному шаблону:
-
         <div class="example">
           indent.size.*.pas=3
         </div>Если задана переменная <dfn>indent.auto</dfn>, то значения переменных <dfn>tabsize</dfn> и <dfn>indent.size</dfn> определяются согласно содержимому открытого документа.<br>
@@ -2757,17 +2701,14 @@ style the path and line number separately from the rest of the line with style 2
       indent.opening<br>
       indent.closing<br>
       indent.maintain.<i>filepattern</i></a></dfn></td>
-
       <td>
         Определяют вид автоматического структурирования текста. Автоматическое структутрирование включено, если значение переменной <dfn>indent.automatic</dfn> равно <var>1</var>. Чтобы сделать отступ в строке, содержащей открывающую скобку в начале блочного оператора, задайте переменной <dfn>indent.opening</dfn> значение <var>1</var>. То же верно и для закрывающей скобки. Например, если оба параметра равны <var>0</var>, то:
-
         <div class="example">
           if (c)<br>
           {<br>
           &nbsp;&nbsp;&nbsp;&nbsp;s;<br>
           }<br>
         </div>Если оба равны 1:
-
         <div class="example">
           if (c)<br>
           &nbsp;&nbsp;&nbsp;&nbsp;{<br>
@@ -2778,14 +2719,15 @@ style the path and line number separately from the rest of the line with style 2
     </tr>
 
     <tr>
-      <td><dfn><a name="statement">statement.indent.<i>filepattern</i><br>
-      statement.lookback.<i>filepattern</i><br>
-      block.start.<i>filepattern</i><br>
-      block.end.<i>filepattern</i></a></dfn></td>
-
+      <td><dfn><a name="statement">
+        statement.indent.<i>filepattern</i><br />
+        statement.end.<i>filepattern</i><br />
+        statement.lookback.<i>filepattern</i><br />
+        block.start.<i>filepattern</i><br />
+        block.end.<i>filepattern</i>
+      </a></dfn></td>
       <td>
         Данные настройки влияют на распознавание блочных операторов, таких как <code>begin...end</code>, <cite>if..else</cite>, <code>while...wend</code>. Данные переменные начинаются с номера стиля, затем идет набор слов или символов, который указывает, как распознавать это свойство. Если в значении переменной более 1 пробела, это трактуется как набор слов, иначе это набор символов. Набор ключевых слов, используемый для обозначения начала блочного оператора, объявляется в <dfn>statement.indent.</dfn> Например:
-
         <div class="example">
           statement.indent.$(file.patterns.cpp)=5 if else while
         </div>означает, что для C++ слова &quot;<code>if</code>&quot;, &quot;<code>else</code>&quot;, и &quot;<code>while</code>&quot; используют стиль номер <var>5</var> для ключевых слов и начинают блочный оператор, поэтому, если не повлияют другие факторы, следующая строка будет иметь отступ.<br>
@@ -2794,9 +2736,19 @@ style the path and line number separately from the rest of the line with style 2
       </td>
     </tr>
 
+      <tr>
+        <td>
+        indent.python.colon
+        </td>
+        <td>
+          For Python, automatically indent by one level if the previous line ended in a ':'
+	ignoring comments and whitespace. Otherwise use the same indentation as the previous line.
+	This property overrides other indentation settings.
+         </td>
+      </tr>
+
     <tr>
       <td><dfn><a name="vc.home.key">vc.home.key</a></dfn></td>
-
       <td>Данная переменная задает поведение клавиш <code>Home</code> и <code>Shift+Home</code>. Если значение переменной равно <var>1</var> (по умолчанию), курсор, как в Visual C++, переносится в конец отступа. Если курсор уже находится там, курсор помещается в начало строки. Если переменная равна <var>0</var>, курсор перемещается в начало строки.</td>
     </tr>
 
@@ -2807,10 +2759,8 @@ style the path and line number separately from the rest of the line with style 2
       warning.executeok<br>
       warning.executeko<br>
       warning.nootherbookmark</a></dfn></td>
-
       <td>
         Если заданы данные переменные, то при возникновении определенных событий под Windows проигрываются звуки и мигают окна. Значение переменной состоит из 3 частей, разделенных символом &quot;<code>,</code>&quot; : продолжительность мигания окна, звук и продолжительность звука. Если звук задан числом, это значение рассматривается как высота звука, и звук проигрывается с заданой продолжительностью в миллисекундах. В противном случае, оно считается путем к предназначенному для воспроизведения звуковому файлу. Если мигание окна нежелательно, укажите в качестве продолжительности мигания <var>0</var>. Например,
-
         <div class="example">
           warning.wrongfile=0,C:\Windows\Media\SFX\Glass.wav
         </div>при попытке открыть файл с неправильным именем воспроизведет звук вибрирующего стекла.<br>
@@ -2822,34 +2772,28 @@ style the path and line number separately from the rest of the line with style 2
     <tr class="gtkonly">
       <td><dfn><a name="fileselector">fileselector.width<br>
       fileselector.height</a></dfn></td>
-
       <td>В версии SciTe для GTK+ данные переменные определяют начальные размеры окна диалога выбора файлов, вызываемого командами <cite>Открыть</cite> и <cite>Сохранить</cite>. В Windows данные переменные не работают.</td>
     </tr>
 
     <tr class="gtkonly">
       <td><dfn><a name="fileselector.show.hidden">fileselector.show.hidden</a></dfn></td>
-
       <td>В GTK+, если значение данной переменной равно <var>1</var>, в диалоге выбора файлов, вызываемом командой &quot;<cite>Открыть</cite>&quot;, автоматически отображаются скрытые файлы.</td>
     </tr>
 
     <tr>
       <td><dfn><a name="locale.properties">locale.properties</a></dfn></td>
-
       <td>Задает имя файла локализации. Для многопользовательской установки это позволяет каждому пользователю устанавливать предпочтительный язык интерфейса.</td>
     </tr>
 
     <tr>
       <td><dfn><a name="translation.missing">translation.missing</a></dfn></td>
-
       <td>При использовании локализованной версии SciTe и отсутствии термина в файле перевода locale.properties, используется значение переменной <dfn>translation.missing</dfn>. Задав этой переменной маркер <var>***</var>, можно легко проверить, какие термины не поддерживаются переводом.</td>
     </tr>
 
     <tr>
       <td><dfn><a name="menu.language">menu.language</a></dfn></td>
-
       <td>
         Задает пункты в меню <cite>Подсветка</cite> (<cite>Language</cite>) и определяет расширения файлов, которые они отображают. Каждый пункт меню объявляется 3 элементами: название языка, расширение и опциональный клавиатурный эквивалент. Каждый элемент заканчивается символом &#39;<code>|</code>&#39;. Например:
-
         <div class="example">
           H&amp;ypertext|html|F12|
         </div>Пункты меню могут быть закомментированы с помощью указания перед именем символа &#39;<code>#</code>&#39;.
@@ -2858,14 +2802,11 @@ style the path and line number separately from the rest of the line with style 2
 
     <tr class="gtkonly">
       <td><dfn><a name="menukey">menukey.*</a></dfn></td>
-
       <td>
         Переменная <dfn>menukey.*</dfn> позволяет пользователю задавать другие клавиши быстрого доступа для меню без изменения исходного кода SciTE. Синтаксис для этой переменной выглядит следующим образом:
-
         <div class="example">
           menukey.menu_title.menu_name=&lt;modifier&gt;key
         </div>Например, быстрый доступ к <cite>File</cite> | <cite>Exit</cite> будет объявлен так:
-
         <div class="example">
           menukey.file.exit=&lt;control&gt;Q
         </div>Пробелы в заголовках меню и именах должны быть заменены символом подчеркивания, а многоточия в конце - удалены. Например, &quot;<code>File | Save As....</code>&quot; будет представлено как &quot;<code>menukey.file.save_as</code>&quot;.<br>
@@ -2877,7 +2818,6 @@ style the path and line number separately from the rest of the line with style 2
 
     <tr class="windowsonly">
       <td><dfn><a name="source.default.extensions">source.default.extensions</a></dfn></td>
-
       <td>
         Если имя, указанное в командной строке, не может быть найдено как директория или файл (включая поиск по групповому символу), содержимое свойства трактуется как расширение по умолчанию, которое и будет использоваться для определения местонахождения имени файла. Например:
 
@@ -2892,7 +2832,6 @@ style the path and line number separately from the rest of the line with style 2
       ext.lua.auto.reload<br>
       ext.lua.reset<br>
       extension.<i>filepattern</i></a></dfn></td>
-
       <td>Переменные <dfn>ext.lua</dfn> используются исключительно для <a href="SciTELua_rus.html">SciTE Lua Scripting Extension</a>. Переменная <dfn>extension.<i>filepattern</i></dfn> является частью общего <a href="SciTEExtension_rus.html">интерфейса расширений SciTE (SciTE Extension Interface)</a>, но в настоящее время используется только в <a href="SciTELua_rus.html">Lua Scripting Extension</a><br>
       Переменная <dfn>ext.lua.startup.script</dfn> задает имя файла скрипта Lua, который будет загружаться вместе со SciTE и настраивать глобальное окружение для Lua. Значение по-умолчанию равно <code>$(SciteUserHome)/SciTEStartup.lua</code>. В этой переменной необходимо использовать абсолютный путь, однако можно ссылаться на <code>$(SciteDefaultHome)</code> или <code>$(SciteUserHome)</code>. Здесь могут быть объявлены обработчики глобальных событий, командные функции, а также другие функции и объекты.<br>
       Переменная <dfn>ext.lua.auto.reload</dfn> определяет, что случится, если вы сохраните загрузочный скрипт или скрипт для активного расширения из SciTE. Если значение переменной равно <var>0</var>, то загрузочный скрипт будет запускаться только во время загрузки или при переключении вкладок (в зависимости от <dfn>ext.lua.reset</dfn>), а изменения в скрипте для расширения будут применяться только при переключении вкладок. Если значение переменной <dfn>ext.lua.auto.reload</dfn> равно <var>1</var> (по умолчанию), SciTE заново инициализирует глобальное окружение непосредственно после того, как какой-либо скрипт будет сохранен в пределах SciTE. <i>Однако даже если опция <dfn>ext.lua.auto.reload</dfn> включена, SciTE не посылает уведомления, если файлы были изменены другой программой (см. ниже <dfn>ext.lua.reset</dfn>.)</i><br>
@@ -2903,13 +2842,11 @@ style the path and line number separately from the rest of the line with style 2
 
     <tr>
       <td><dfn><a name="caret.sticky">caret.sticky</a></dfn></td>
-
       <td>Контролирует момент изменения последней позиции курсора. Если значение переменной равно <var>1</var>, при наборе символа, табуляции, вставке содержимого буфера или нажатии клавиши возврата (backspace), позиция не изменяется. По умолчанию значение равно <var>0</var>, что означает отключение данной опции.</td>
     </tr>
 
     <tr>
       <td><dfn><a name="properties.directory.enable">properties.directory.enable</a></dfn></td>
-
       <td>Разрешает или запрещает использование файлов настроек папки. Если значение данной переменной равно <var>0</var> (по умолчанию), опция отключена. Любое другое значение разрешает использование файлов настроек.</td>
     </tr>
   </table>
@@ -3161,11 +3098,11 @@ style the path and line number separately from the rest of the line with style 2
   <hr>
 
   <ul>
-    <li>Перевод на русский язык: 
-    <b><a href="http://forum.script-coding.info/profile.php?id=6"><font color="#FF00CC">Gourmet</font></a></b> и 
+    <li>Перевод на русский язык:
+    <b><a href="http://forum.script-coding.info/profile.php?id=6"><font color="#FF00CC">Gourmet</font></a></b> и
     <b><a href="http://forum.ru-board.com/profile.cgi?action=show&amp;member=s_mart" target="_blank">s_mart</a></b></li>
 
-    <li>Смысловая правка и дополнения: 
+    <li>Смысловая правка и дополнения:
     <b><a href="http://forum.script-coding.info/profile.php?id=2"><font color="#FF00CC">The gray Cardinal</font></a></b>,
     <b><a href="http://forum.ru-board.com/profile.cgi?action=show&amp;member=mozers" target="_blank">mozers&copy;</a></b>,
     <b><a href="http://forum.ru-board.com/profile.cgi?action=show&amp;member=vladvro" target="_blank">VladVRO</a></b>,
