@@ -1496,7 +1496,7 @@ int DecodeMessage(const char *cdoc, char *sourcePath, int format, int &column) {
 				startPath++;
 				const char *endPath = strchr(startPath, '\"');
 				if (endPath) {
-					int length = endPath - startPath;
+					ptrdiff_t length = endPath - startPath;
 					if (length > 0) {
 						strncpy(sourcePath, startPath, length);
 						sourcePath[length] = 0;
@@ -1535,7 +1535,7 @@ int DecodeMessage(const char *cdoc, char *sourcePath, int format, int &column) {
 				start++;
 			}
 			const char *endPath = strchr(start, '(');
-			int length = endPath - start;
+			ptrdiff_t length = endPath - start;
 			if ((length > 0) && (length < MAX_PATH)) {
 				strncpy(sourcePath, start, length);
 				sourcePath[length] = 0;
@@ -1572,7 +1572,7 @@ int DecodeMessage(const char *cdoc, char *sourcePath, int format, int &column) {
 						space2--;
 					}
 
-					int length = space2 - space;
+					ptrdiff_t length = space2 - space;
 
 					if (length > 0) {
 						strncpy(sourcePath, space, length);
@@ -1587,7 +1587,7 @@ int DecodeMessage(const char *cdoc, char *sourcePath, int format, int &column) {
 			// perl
 			const char *at = strstr(cdoc, " at ");
 			const char *line = strstr(cdoc, " line ");
-			int length = line - (at + 4);
+			ptrdiff_t length = line - (at + 4);
 			if (at && line && length > 0) {
 				strncpy(sourcePath, at + 4, length);
 				sourcePath[length] = 0;
@@ -1796,7 +1796,7 @@ int DecodeMessage(const char *cdoc, char *sourcePath, int format, int &column) {
 				 */
 			const char *startPath = strrchr(cdoc, '(') + 1;
 			const char *endPath = strchr(startPath, ':');
-			int length = endPath - startPath;
+			ptrdiff_t length = endPath - startPath;
 			if (length > 0) {
 				strncpy(sourcePath, startPath, length);
 				sourcePath[length] = 0;
@@ -1812,7 +1812,7 @@ int DecodeMessage(const char *cdoc, char *sourcePath, int format, int &column) {
 			const char *startPath = cdoc + 4;
 			const char *endPath = strchr(startPath, '\t');
 			if (endPath) {
-				int length = endPath - startPath;
+				ptrdiff_t length = endPath - startPath;
 				strncpy(sourcePath, startPath, length);
 				sourcePath[length] = 0;
 				return 0;
@@ -1828,7 +1828,7 @@ bool SciTEBase::GoMessage(int dir) { //!-change-[GoMessageImprovement]
 	Sci_CharacterRange crange;
 	crange.cpMin = wOutput.Call(SCI_GETSELECTIONSTART);
 	crange.cpMax = wOutput.Call(SCI_GETSELECTIONEND);
-	int selStart = crange.cpMin;
+	long selStart = crange.cpMin;
 	int curLine = wOutput.Call(SCI_LINEFROMPOSITION, selStart);
 	int maxLine = wOutput.Call(SCI_GETLINECOUNT);
 	int lookLine = curLine + dir;
@@ -1858,7 +1858,7 @@ bool SciTEBase::GoMessage(int dir) { //!-change-[GoMessageImprovement]
 			SString message = GetRange(wOutput, startPosLine, startPosLine + lineLength);
 			char source[MAX_PATH];
 			int column;
-			int sourceLine = DecodeMessage(message.c_str(), source, style, column);
+			long sourceLine = DecodeMessage(message.c_str(), source, style, column);
 			if (sourceLine >= 0) {
 //!-start-[FindResultListStyle]
 				if (props.GetInt("lexer.errorlist.findliststyle", 1)&& '.' == source[0] && pathSepChar == source[1]) {

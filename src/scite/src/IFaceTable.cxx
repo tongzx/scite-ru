@@ -94,8 +94,8 @@ int IFaceTable::GetConstantName(int value, char *nameOut, unsigned nameBufferLen
 	// Look in both the constants table and the functions table.  Start with functions.
 	for (int funcIdx = 0; funcIdx < functionCount; ++funcIdx) {
 		if (functions[funcIdx].value == value) {
-			size_t len = strlen(functions[funcIdx].name) + 4;
-			if (nameOut && (nameBufferLen > len)) {
+			int len = static_cast<int>(strlen(functions[funcIdx].name)) + 4;
+			if (nameOut && (static_cast<int>(nameBufferLen) > len)) {
 				strcpy(nameOut, "SCI_");
 				strcat(nameOut, functions[funcIdx].name);
 				// fix case
@@ -113,8 +113,8 @@ int IFaceTable::GetConstantName(int value, char *nameOut, unsigned nameBufferLen
 
 	for (int constIdx = 0; constIdx < constantCount; ++constIdx) {
 		if (constants[constIdx].value == value) {
-			size_t len = strlen(constants[constIdx].name);
-			if (nameOut && (nameBufferLen > len)) {
+			int len = static_cast<int>(strlen(constants[constIdx].name));
+			if (nameOut && (static_cast<int>(nameBufferLen) > len)) {
 				strcpy(nameOut, constants[constIdx].name);
 				return len;
 			} else {
@@ -300,7 +300,9 @@ static IFaceConstant ifaceConstants[] = {
 	{"INDICS_MASK",0xE0},
 	{"INDIC_BOX",6},
 	{"INDIC_CONTAINER",8},
+	{"INDIC_DASH",9},
 	{"INDIC_DIAGONAL",3},
+	{"INDIC_DOTS",10},
 	{"INDIC_HIDDEN",5},
 	{"INDIC_MAX",31},
 	{"INDIC_PLAIN",0},
@@ -2821,7 +2823,7 @@ static IFaceProperty ifaceProperties[] = {
 
 enum {
 	ifaceFunctionCount = 283,
-	ifaceConstantCount = 2225,
+	ifaceConstantCount = 2227,
 	ifacePropertyCount = 173
 };
 
