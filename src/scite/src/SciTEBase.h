@@ -234,7 +234,6 @@ struct StyleAndWords {
 	bool IsEmpty() { return words.length() == 0; }
 	bool IsSingleChar() { return words.length() == 1; }
 };
-
 struct CurrentWordHighlight {
 	enum {
 		noDelay,            // No delay, and no word at the caret.
@@ -830,7 +829,7 @@ protected:
 	void StopRecordMacro();
 	void StartPlayMacro();
 	bool RecordMacroCommand(SCNotification *notification);
-	void ExecuteMacroCommand(const char *command);
+	void ExecuteMacroCommand(const char * command);
 	void AskMacroList();
 	bool StartMacroList(const char *words);
 	void ContinueMacroList(const char *stxt);
@@ -843,7 +842,8 @@ protected:
 	    grepDot = 8, grepBinary = 16
 	};
 	virtual bool GrepIntoDirectory(const FilePath &directory);
-	void GrepRecursive(GrepFlags gf, FilePath baseDir, const char *searchString, const GUI::gui_char *fileTypes);
+//!	void GrepRecursive(GrepFlags gf, FilePath baseDir, const char *searchString, const GUI::gui_char *fileTypes);
+	void GrepRecursive(GrepFlags gf, FilePath baseDir, const char *searchString, const GUI::gui_char *fileTypes, unsigned int basePath); //!-change-[FindResultListStyle]
 	void InternalGrep(GrepFlags gf, const GUI::gui_char *directory, const GUI::gui_char *files, const char *search);
 	void EnumProperties(const char *action);
 	void SendOneProperty(const char *kind, const char *key, const char *val);
