@@ -1576,7 +1576,8 @@ static bool InitGlobalScope(bool checkProperties, bool forceReload = false) {
 	}
 
 	// ...register standard libraries
-	luaL_openlibs(luaState);
+	//! luaL_openlibs(luaState);
+	lua_utf8_register_libs(luaState); //!-change-[EncodingToLua]
 
 	lua_register(luaState, "_ALERT", cf_global_print);
 
