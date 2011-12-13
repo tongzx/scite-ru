@@ -14,7 +14,6 @@
 // an #ifdef in LuaExtension.  But I did it this way so that other
 // extensions can leverage it without needing to do anything special.
 
-#include "Platform.h" //!-add-[no_wornings]
 #include <string>
 
 #include "Scintilla.h"
@@ -135,19 +134,16 @@ bool SingleThreadExtension::OnDoubleClick(int modifiers){
 	return ext->OnDoubleClick(modifiers);
 }
 //!-end-[OnDoubleClick]
-
 //!-start-[OnClick]
 bool SingleThreadExtension::OnClick(int modifiers){
 	return ext->OnClick(modifiers);
 }
 //!-end-[OnClick]
-
 //!-start-[OnHotSpotReleaseClick]
 bool SingleThreadExtension::OnHotSpotReleaseClick(int modifiers){
 	return ext->OnHotSpotReleaseClick(modifiers);
 }
 //!-end-[OnHotSpotReleaseClick]
-
 //!-start-[OnMouseButtonUp]
 bool SingleThreadExtension::OnMouseButtonUp(int modifiers){
 	return ext->OnMouseButtonUp(modifiers);
@@ -176,13 +172,11 @@ bool SingleThreadExtension::OnUserListSelection(int listType, const char *select
 	return ext->OnUserListSelection(listType, selection, id);
 }
 //!-end-[UserListItemID]
-
 //!-start-[OnMenuCommand]
 bool SingleThreadExtension::OnMenuCommand(int cmd, int source) {
 	return ext->OnMenuCommand(cmd, source);
 }
 //!-end-[OnMenuCommand]
-
 //!-start-[OnSendEditor]
 const char *SingleThreadExtension::OnSendEditor(unsigned int msg, unsigned int wp, const char *lp) {
 	return ext->OnSendEditor(msg, wp, lp);
@@ -198,7 +192,7 @@ bool SingleThreadExtension::SendProperty(const char *prop) {
 }
 
 //!-start-[OnKey]
-#if !defined(GTK)
+#if defined(WIN32)
 bool SingleThreadExtension::OnKey(int keyval, int modifiers, char ch) {
 	return ext->OnKey(keyval, modifiers, ch);
 }
@@ -208,6 +202,7 @@ bool SingleThreadExtension::OnKey(int keyval, int modifiers) {
 	return ext->OnKey(keyval, modifiers);
 }
 #endif //!-add-[OnKey]
+
 bool SingleThreadExtension::OnDwellStart(int pos, const char *word) {
 	return ext->OnDwellStart(pos, word);
 }

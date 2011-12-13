@@ -5,15 +5,18 @@
 // Copyright 1998-2011 by Neil Hodgson <neilh@scintilla.org>
 // The License.txt file describes the conditions under which this software may be distributed.
 
+#include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 
 #include <string>
 #include <vector>
+#include <set>
 #include <map>
 
 #include "Scintilla.h"
+#include "ILexer.h"
 
 #include "GUI.h"
 #include "SString.h"
@@ -27,6 +30,8 @@
 #include "Mutex.h"
 #include "JobQueue.h"
 
+#include "Cookie.h"
+#include "Worker.h"
 #include "SciTEBase.h"
 
 // Contributor names are in UTF-8
@@ -300,6 +305,17 @@ const char *contributors[] = {
             "Adobe",
             "Elizabeth A. Irizarry",
             "Mike Schroeder",
+            "Morten MacFly",
+            "Jaime Gimeno",
+            "Thomas Linder Puls",
+            "Artyom Zuikov",
+            "Gerrit",
+            "Occam's Razor",
+            "Ben Bluemel",
+            "David Wolfendale",
+            "Chris Angelico",
+            "Marat Dukhan",
+            "Stefan Weil",
         };
 
 // AddStyledText only called from About so static size buffer is OK
@@ -362,23 +378,19 @@ void SciTEBase::SetAboutMessage(GUI::ScintillaWindow &wsci, const char *appTitle
 				        reinterpret_cast<uptr_t>(sd.font.c_str()));
 			}
 			if (sd.specified & StyleDefinition::sdSize) {
-				wsci.Send(SCI_STYLESETSIZE, trsSty, sd.size);
+				wsci.Send(SCI_STYLESETSIZEFRACTIONAL, trsSty, sd.FractionalSize());
 			}
 		}
 #endif
 		AddStyledText(wsci, GetTranslationToAbout("Version").c_str(), trsSty);
-		AddStyledText(wsci, " 2.26 .93Ru\n", 1); //!-change-[SciTE-Ru]
+		AddStyledText(wsci, " " VERSION_SCITE "\n", 1);
 		AddStyledText(wsci, "    " __DATE__ " " __TIME__ "\n", 1);
-		SetAboutStyle(wsci, 4, ColourRGB(0, 0x7f, 0x7f)); //!-add-[SciTE-Ru]
-		AddStyledText(wsci, "http://scite-ru.org\n", 4); //!-add-[SciTE-Ru]
 		SetAboutStyle(wsci, 2, ColourRGB(0, 0, 0));
 		wsci.Send(SCI_STYLESETITALIC, 2, 1);
-		AddStyledText(wsci, GetTranslationToAbout("Based on version").c_str(), trsSty); //!-add-[SciTE-Ru]
-		AddStyledText(wsci, " 2.26 ", 1); //!-add-[SciTE-Ru]
 		AddStyledText(wsci, GetTranslationToAbout("by").c_str(), trsSty);
 		AddStyledText(wsci, " Neil Hodgson.\n", 2);
 		SetAboutStyle(wsci, 3, ColourRGB(0, 0, 0));
-		AddStyledText(wsci, "December 1998-May 2011.\n", 3);
+		AddStyledText(wsci, COPYRIGHT_DATES ".\n", 3);
 		SetAboutStyle(wsci, 4, ColourRGB(0, 0x7f, 0x7f));
 		AddStyledText(wsci, "http://www.scintilla.org\n", 4);
 		AddStyledText(wsci, "Lua scripting language by TeCGraf, PUC-Rio\n", 3);

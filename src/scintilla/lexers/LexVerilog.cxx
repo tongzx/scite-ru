@@ -267,6 +267,11 @@ static void FoldNoBoxVerilogDoc(unsigned int startPos, int length, int initStyle
                 if (style == SCE_V_WORD && stylePrev != SCE_V_WORD) {
                         unsigned int j = i;
                         if (styler.Match(j, "case") ||
+//!-start-[SystemVerilog_syntax_compliance]
+                            styler.Match(j, "class") ||
+                            styler.Match(j, "interface") ||
+                            styler.Match(j, "package") ||
+//!-end-[SystemVerilog_syntax_compliance]
                             styler.Match(j, "casex") ||
                             styler.Match(j, "casez") ||
                             styler.Match(j, "class") ||
@@ -285,11 +290,14 @@ static void FoldNoBoxVerilogDoc(unsigned int startPos, int length, int initStyle
                             styler.Match(j, "begin")) {
                                 levelNext++;
                         } else if (styler.Match(j, "endcase") ||
+//!-start-[SystemVerilog_syntax_compliance]
                                    styler.Match(j, "endclass") ||
+                                   styler.Match(j, "endinterface") ||
                                    styler.Match(j, "endfunction") ||
                                    styler.Match(j, "endgenerate") ||
                                    styler.Match(j, "endgroup") ||
                                    styler.Match(j, "endpackage") ||
+//!-end-[SystemVerilog_syntax_compliance]
                                    styler.Match(j, "endprimitive") ||
                                    styler.Match(j, "endprogram") ||
                                    styler.Match(j, "endsequence") ||

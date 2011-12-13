@@ -29,7 +29,7 @@ public:
 	virtual bool OnSavePointLeft();
 	virtual bool OnStyle(unsigned int startPos, int lengthDoc, int initStyle, StyleWriter *styler);
 //!	virtual bool OnDoubleClick();
-	virtual bool OnDoubleClick(int); //!-add-[OnDoubleClick]
+	virtual bool OnDoubleClick(int); //!-change-[OnDoubleClick]
 	virtual bool OnClick(int); //!-add-[OnClick]
 	virtual bool OnMouseButtonUp(int); //!-add-[OnMouseButtonUp]
 	virtual bool OnHotSpotReleaseClick(int); //!-add-[OnHotSpotReleaseClick]

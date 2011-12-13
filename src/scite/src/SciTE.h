@@ -8,10 +8,17 @@
 #ifndef SCITE_H
 #define SCITE_H
 
+// Version numbers and dates
+//!#define VERSION_SCITE "3.0.2"
+#define VERSION_SCITE "3.0.2Ru" //!-change-[SciTE-Ru]
+#define VERSION_WORDS 3, 0, 2, 0
+#define COPYRIGHT_DATES "December 1998-December 2011"
+#define COPYRIGHT_YEARS "1998-2011"
+
 // Menu IDs.
 // These are located 100 apart. No one will want more than 100 in each menu ;)
 #define IDM_MRUFILE			1000
-//! #define IDM_TOOLS			1100
+//!#define IDM_TOOLS			1100
 //!-start-[ToolsMax]
 #define IDM_TOOLS			9000
 #define IDM_TOOLSMAX		9300
@@ -173,7 +180,6 @@
 
 //#define IDM_SELECTIONMARGIN	490
 //#define IDM_BUFFEREDDRAW	491
-//#define IDM_USEPALETTE		492
 
 // Buffers
 #define IDM_PREVFILE			501
@@ -260,7 +266,7 @@
 #define IDD_REPLACE_ADV		404
 
 // Resource IDs
-//! #define IDR_CLOSEFILE 100
+//!#define IDR_CLOSEFILE 100
 #define IDR_BUTTONS			100	//!-change-[user.toolbar]
 #define IDC_DRAGDROP        401
 #define IDBM_WORD 101

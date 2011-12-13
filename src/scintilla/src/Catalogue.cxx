@@ -12,7 +12,6 @@
 #include <stdarg.h>
 #include <assert.h>
 
-#include "Platform.h" //!-add-[no_wornings]
 #include <vector>
 
 #include "ILexer.h"
@@ -118,6 +117,7 @@ int Scintilla_LinkLexers() {
 	LINK_LEXER(lmEuphoria);
 	LINK_LEXER(lmF77);
 	LINK_LEXER(lmFlagShip);
+	LINK_LEXER(lmForth);
 	LINK_LEXER(lmForth);
 	LINK_LEXER(lmFortran);
 	LINK_LEXER(lmFreeBasic);

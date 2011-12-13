@@ -12,12 +12,9 @@
 #include <fcntl.h>
 #include <time.h>
 
-#ifdef _MSC_VER
-#pragma warning(disable: 4786)
-#endif
-
 #include <string>
 #include <vector>
+#include <set>
 #include <map>
 
 #if defined(__unix__)
@@ -51,6 +48,7 @@
 #endif
 
 #include "Scintilla.h"
+#include "ILexer.h"
 
 #include "GUI.h"
 
@@ -64,28 +62,22 @@
 #include "SciTE.h"
 #include "Mutex.h"
 #include "JobQueue.h"
+#include "Cookie.h"
+#include "Worker.h"
+#include "FileWorker.h"
 #include "SciTEBase.h"
 #include "Utf8_16.h"
 
 #if defined(GTK)
 const GUI::gui_char propUserFileName[] = GUI_TEXT(".SciTEUser.properties");
 #elif defined(__APPLE__)
-const GUI::gui_char propUserFileName[] = GUI_TEXT("org.scintilla.SciTEUser.properties");
+const GUI::gui_char propUserFileName[] = GUI_TEXT("SciTEUser.properties");
 #else
 // Windows
 const GUI::gui_char propUserFileName[] = GUI_TEXT("SciTEUser.properties");
 #endif
 const GUI::gui_char propGlobalFileName[] = GUI_TEXT("SciTEGlobal.properties");
 const GUI::gui_char propAbbrevFileName[] = GUI_TEXT("abbrev.properties");
-
-#define PROPERTIES_EXTENSION	".properties"
-
-static bool IsPropertiesFile(const FilePath &filename) {
-	FilePath ext = filename.Extension();
-	if (EqualCaseInsensitive(ext.AsUTF8().c_str(), PROPERTIES_EXTENSION + 1))
-		return true;
-	return false;
-}
 
 void SciTEBase::SetFileName(FilePath openName, bool fixCase) {
 	if (openName.AsInternal()[0] == '\"') {
@@ -115,10 +107,10 @@ void SciTEBase::SetFileName(FilePath openName, bool fixCase) {
 	props.Set("FileExt", filePath.Extension().AsUTF8().c_str());
 	props.Set("FileNameExt", FileNameExt().AsUTF8().c_str());
 	SetFileProperties(props);	//!-add-[FileAttr in PROPS]
+
 	SetWindowName();
 	if (buffers.buffers)
 		buffers.buffers[buffers.Current()].Set(filePath);
-	BuffersMenu();
 }
 
 // See if path exists.
@@ -157,75 +149,11 @@ void SciTEBase::CountLineEnds(int &linesCR, int &linesLF, int &linesCRLF) {
 			if (chPrev != '\r') {
 				linesLF++;
 			}
+		} else if (i > 1000000) {
+			return;
 		}
 		chPrev = ch;
 	}
-}
-
-static bool isEncodingChar(char ch) {
-	return (ch == '_') || (ch == '-') || (ch == '.') ||
-	       (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') ||
-	       (ch >= '0' && ch <= '9');
-}
-
-static bool isSpaceChar(char ch) {
-	return (ch == ' ') || (ch == '\t');
-}
-
-static SString ExtractLine(const char *buf, size_t length) {
-	unsigned int endl = 0;
-	if (length > 0) {
-		while ((endl < length) && (buf[endl] != '\r') && (buf[endl] != '\n')) {
-			endl++;
-		}
-		if (((endl + 1) < length) && (buf[endl] == '\r') && (buf[endl+1] == '\n')) {
-			endl++;
-		}
-		if (endl < length) {
-			endl++;
-		}
-	}
-	return SString(buf, 0, endl);
-}
-
-static const char codingCookie[] = "coding";
-
-static UniMode CookieValue(const SString &s) {
-	int posCoding = s.search(codingCookie);
-	if (posCoding >= 0) {
-		posCoding += static_cast<int>(strlen(codingCookie));
-		if ((s[posCoding] == ':') || (s[posCoding] == '=')) {
-			posCoding++;
-			if ((s[posCoding] == '\"') || (s[posCoding] == '\'')) {
-				posCoding++;
-			}
-			while ((posCoding < static_cast<int>(s.length())) &&
-			        (isSpaceChar(s[posCoding]))) {
-				posCoding++;
-			}
-			size_t endCoding = static_cast<size_t>(posCoding);
-			while ((endCoding < s.length()) &&
-			        (isEncodingChar(s[endCoding]))) {
-				endCoding++;
-			}
-			SString code(s.c_str(), posCoding, endCoding);
-			code.lowercase();
-			if (code == "utf-8") {
-				return uniCookie;
-			}
-		}
-	}
-	return uni8Bit;
-}
-
-static UniMode CodingCookieValue(const char *buf, size_t length) {
-	SString l1 = ExtractLine(buf, length);
-	UniMode unicodeMode = CookieValue(l1);
-	if (unicodeMode == uni8Bit) {
-		SString l2 = ExtractLine(buf + l1.length(), length - l1.length());
-		unicodeMode = CookieValue(l2);
-	}
-	return unicodeMode;
 }
 
 void SciTEBase::DiscoverEOLSetting() {
@@ -245,7 +173,11 @@ void SciTEBase::DiscoverEOLSetting() {
 }
 
 // Look inside the first line for a #! clue regarding the language
-SString SciTEBase::DiscoverLanguage(const char *buf, size_t length) {
+SString SciTEBase::DiscoverLanguage() {
+	char buf[64 * 1024];
+	int length = Minimum(LengthDocument(), sizeof(buf)-1);
+	GetRange(wEditor, 0, length, buf);
+	buf[length] = '\0';
 	SString languageOverride = "";
 	SString l1 = ExtractLine(buf, length);
 	if (l1.startswith("<?xml")) {
@@ -334,19 +266,53 @@ void SciTEBase::DiscoverIndentSetting() {
 	}
 }
 
-void SciTEBase::OpenFile(long fileSize, bool suppressMessage) {
+void SciTEBase::OpenFile(long fileSize, bool suppressMessage, bool asynchronous) {
+	if (CurrentBuffer()->pFileWorker) {
+		// Already performing an asynchronous load or save so do not restart load
+		if (!suppressMessage) {
+			GUI::gui_string msg = LocaliseMessage("Could not open file '^0'.", filePath.AsInternal());
+			WindowMessageBox(wSciTE, msg, MB_OK | MB_ICONWARNING);
+		}
+		return;
+	}
+
 	FILE *fp = filePath.Open(fileRead);
-	if (fp) {
-//!		Utf8_16_Read convert; //!-remove-[utf8.auto.check]
-		CurrentBuffer()->SetTimeFromFile();
-		wEditor.Call(SCI_BEGINUNDOACTION);	// Group together clear and insert
-		wEditor.Call(SCI_CLEARALL);
+//!	Utf8_16_Read convert; //!-remove-[utf8.auto.check]
+	int check_utf8=props.GetInt("utf8.auto.check"); //!-add-[utf8.auto.check]
+	if (!fp) {
+		if (!suppressMessage) {
+			GUI::gui_string msg = LocaliseMessage("Could not open file '^0'.", filePath.AsInternal());
+			WindowMessageBox(wSciTE, msg, MB_OK | MB_ICONWARNING);
+		}
+		if (!wEditor.Call(SCI_GETUNDOCOLLECTION)) {
+			wEditor.Call(SCI_SETUNDOCOLLECTION, 1);
+		}
+		return;
+	}
+
+	CurrentBuffer()->SetTimeFromFile();
+
+	wEditor.Call(SCI_BEGINUNDOACTION);	// Group together clear and insert
+	wEditor.Call(SCI_CLEARALL);
+
+	CurrentBuffer()->lifeState = Buffer::reading;
+	if (asynchronous) {
+		// Turn grey while loading
+		wEditor.Call(SCI_STYLESETBACK, STYLE_DEFAULT, 0xEEEEEE);
+		wEditor.Call(SCI_SETREADONLY, 1);
+		assert(CurrentBuffer()->pFileWorker == NULL);
+		ILoader *pdocLoad = reinterpret_cast<ILoader *>(wEditor.CallReturnPointer(SCI_CREATELOADER, fileSize + 1000));
+		CurrentBuffer()->pFileWorker = new FileLoader(this, pdocLoad, filePath, fileSize, fp);
+		CurrentBuffer()->pFileWorker->sleepTime = props.GetInt("asynchronous.sleep");
+        CurrentBuffer()->pFileWorker->check_utf8 = check_utf8; //!-add-[utf8.auto.check]
+		PerformOnNewThread(CurrentBuffer()->pFileWorker);
+	} else {
+		wEditor.Call(SCI_ALLOCATE, fileSize + 1000);
+
 		char data[blockSize];
 		size_t lenFile = fread(data, 1, sizeof(data), fp);
 		UniMode umCodingCookie = CodingCookieValue(data, lenFile);
-
 //!-start-[utf8.auto.check]
-		int check_utf8=props.GetInt("utf8.auto.check");
 		if (umCodingCookie==uni8Bit && check_utf8==2) {
 			if (Has_UTF8_Char((unsigned char*)(data),lenFile)) {
 				umCodingCookie=uniCookie;
@@ -354,67 +320,190 @@ void SciTEBase::OpenFile(long fileSize, bool suppressMessage) {
 		}
 		Utf8_16_Read convert(umCodingCookie==uni8Bit && check_utf8==1);
 //!-end-[utf8.auto.check]
-
-		wEditor.Call(SCI_ALLOCATE, fileSize + 1000);
-		SString languageOverride;
-		bool firstBlock = true;
 		while (lenFile > 0) {
 			lenFile = convert.convert(data, lenFile);
 			char *dataBlock = convert.getNewBuf();
-			if ((firstBlock) && (language == "")) {
-				languageOverride = DiscoverLanguage(dataBlock, lenFile);
-			}
-			firstBlock = false;
 			wEditor.CallString(SCI_ADDTEXT, lenFile, dataBlock);
 			lenFile = fread(data, 1, sizeof(data), fp);
 		}
 		fclose(fp);
 		wEditor.Call(SCI_ENDUNDOACTION);
+
+		CurrentBuffer()->unicodeMode = static_cast<UniMode>(
+			    static_cast<int>(convert.getEncoding()));
+		// Check the first two lines for coding cookies
+		if (CurrentBuffer()->unicodeMode == uni8Bit) {
+			CurrentBuffer()->unicodeMode = umCodingCookie;
+		}
+
+		CompleteOpen(ocSynchronous);
+	}
+}
+
+void SciTEBase::TextRead(FileWorker *pFileWorker) {
+	FileLoader *pFileLoader = static_cast<FileLoader *>(pFileWorker);
+	int iBuffer = buffers.GetDocumentByWorker(pFileLoader);
+	// May not be found if load cancelled
+	if (iBuffer >= 0) {
+		buffers.buffers[iBuffer].unicodeMode = pFileLoader->unicodeMode;
+		buffers.buffers[iBuffer].lifeState = Buffer::readAll;
+		if (pFileLoader->err) {
+			GUI::gui_string msg = LocaliseMessage("Could not open file '^0'.", pFileLoader->path.AsInternal());
+			WindowMessageBox(wSciTE, msg, MB_OK | MB_ICONWARNING);
+			// Should refuse to save when failure occurs
+			buffers.buffers[iBuffer].lifeState = Buffer::empty;
+		}
+		// Switch documents
+		sptr_t pdocLoading = reinterpret_cast<sptr_t>(pFileLoader->pLoader->ConvertToDocument());
+		pFileLoader->pLoader = 0;
+		SwitchDocumentAt(iBuffer, pdocLoading);
+		if (iBuffer == buffers.Current()) {
+			CompleteOpen(ocCompleteCurrent);
+			if (extender)
+				extender->OnOpen(buffers.buffers[iBuffer].AsUTF8().c_str());
+			RestoreState(buffers.buffers[iBuffer], true);
+			DisplayAround(buffers.buffers[iBuffer]);
+			wEditor.Call(SCI_SCROLLCARET);
+		}
+	}
+}
+
+void SciTEBase::PerformDeferredTasks() {
+	if (buffers.buffers[buffers.Current()].futureDo & Buffer::fdFinishSave) {
+		wEditor.Call(SCI_SETSAVEPOINT);
+		wEditor.Call(SCI_SETREADONLY, isReadOnly);
+		buffers.FinishedFuture(buffers.Current(), Buffer::fdFinishSave);
+	}
+}
+
+void SciTEBase::CompleteOpen(OpenCompletion oc) {
+	wEditor.Call(SCI_SETREADONLY, isReadOnly);
+	if (language == "") {
+		SString languageOverride = DiscoverLanguage();
 		if (languageOverride.length()) {
 			CurrentBuffer()->overrideExtension = languageOverride;
 			ReadProperties();
 			SetIndentSettings();
 		}
-		CurrentBuffer()->unicodeMode = static_cast<UniMode>(
-		            static_cast<int>(convert.getEncoding()));
-		// Check the first two lines for coding cookies
-		if (CurrentBuffer()->unicodeMode == uni8Bit) {
-			CurrentBuffer()->unicodeMode = umCodingCookie;
-		}
-		if (CurrentBuffer()->unicodeMode != uni8Bit) {
-			// Override the code page if Unicode
-			codePage = SC_CP_UTF8;
-		} else {
-			codePage = props.GetInt("code.page");
-		}
 		props.SetInteger("editor.unicode.mode", CurrentBuffer()->unicodeMode + IDM_ENCODING_DEFAULT); //!-add-[EditorUnicodeMode]
-		wEditor.Call(SCI_SETCODEPAGE, codePage);
-
-		DiscoverEOLSetting();
-
-		if (props.GetInt("indent.auto")) {
-			DiscoverIndentSetting();
-		}
-
-	} else if (!suppressMessage) {
 		if (props.GetInt("warning.couldnotopenfile.disable") != 1) { //!-add-[warning.couldnotopenfile.disable]
-		GUI::gui_string msg = LocaliseMessage("Could not open file '^0'.", filePath.AsInternal());
-		WindowMessageBox(wSciTE, msg, MB_OK | MB_ICONWARNING);
 		} //!-add-[warning.couldnotopenfile.disable]
 	}
+
+	if (oc != ocSynchronous) {
+		ReadProperties();
+		SetIndentSettings();
+		SetEol();
+		UpdateBuffersCurrent();
+		SizeSubWindows();
+	}
+
+	if (CurrentBuffer()->unicodeMode != uni8Bit) {
+		// Override the code page if Unicode
+		codePage = SC_CP_UTF8;
+	} else {
+		codePage = props.GetInt("code.page");
+	}
+	wEditor.Call(SCI_SETCODEPAGE, codePage);
+
+	DiscoverEOLSetting();
+
+	if (props.GetInt("indent.auto")) {
+		DiscoverIndentSetting();
+	}
+
 	if (!wEditor.Call(SCI_GETUNDOCOLLECTION)) {
 		wEditor.Call(SCI_SETUNDOCOLLECTION, 1);
 	}
-	// Flick focus to the output window and back to
-	// ensure palette realised correctly.
-	WindowSetFocus(wOutput);
-	WindowSetFocus(wEditor);
 	wEditor.Call(SCI_SETSAVEPOINT);
 	if (props.GetInt("fold.on.open") > 0) {
 		FoldAll();
 	}
 	wEditor.Call(SCI_GOTOPOS, 0);
+
+	CurrentBuffer()->CompleteLoading();
+
 	Redraw();
+}
+
+void SciTEBase::TextWritten(FileWorker *pFileWorker) {
+	FileStorer *pFileStorer = static_cast<FileStorer *>(pFileWorker);
+	int iBuffer = buffers.GetDocumentByWorker(pFileStorer);
+
+	FilePath pathSaved = pFileStorer->path;
+	int errSaved = pFileStorer->err;
+
+	// May not be found if save cancelled or buffer closed
+	if (iBuffer >= 0) {
+		// Complete and release
+		//pFileStorer->pStorer->SaveCompleted();
+		//pFileStorer->pStorer = 0;
+		buffers.buffers[iBuffer].CompleteStoring();
+		if (errSaved) {
+			// Background save failed (possibly out-of-space) so resurrect the 
+			// buffer so can be saved to another disk or retried after making room.
+			buffers.SetVisible(iBuffer, true);
+			SetBuffersMenu();
+			if (iBuffer == buffers.Current()) {
+				wEditor.Call(SCI_SETREADONLY, isReadOnly);
+			}
+		} else {
+			if (!buffers.GetVisible(iBuffer)) {
+				buffers.RemoveInvisible(iBuffer);
+			}
+			if (iBuffer == buffers.Current()) {
+				wEditor.Call(SCI_SETSAVEPOINT);
+				wEditor.Call(SCI_SETREADONLY, isReadOnly);
+				if (extender)
+					extender->OnSave(buffers.buffers[iBuffer].AsUTF8().c_str());
+			} else {
+				// Need to make writable and set save point when next receive focus.
+				buffers.AddFuture(iBuffer, Buffer::fdFinishSave);
+			}
+		}
+	} else {
+		GUI::gui_string msg = LocaliseMessage("Could not find buffer '^0'.", pathSaved.AsInternal());
+		WindowMessageBox(wSciTE, msg, MB_OK | MB_ICONWARNING);
+	}
+
+	if (errSaved) {
+		GUI::gui_string msg = LocaliseMessage("Could not save file '^0'.", pathSaved.AsInternal());
+		WindowMessageBox(wSciTE, msg, MB_OK | MB_ICONWARNING);
+	}
+
+	if (IsPropertiesFile(pathSaved)) {
+		ReloadProperties();
+	}
+	UpdateStatusBar(true);
+	if (!jobQueue.executing && (jobQueue.commandCurrent > 0)) {
+		Execute();
+	}
+	if (quitting && !buffers.SavingInBackground()) {
+		QuitProgram();
+	}
+}
+
+void SciTEBase::UpdateProgress(Worker *) {
+	GUI::gui_string prog;
+	BackgroundActivities bgActivities = buffers.CountBackgroundActivities();
+	int countBoth = bgActivities.loaders + bgActivities.storers;
+	if (countBoth == 0) {
+		// Should hide UI
+		ShowBackgroundProgress(GUI_TEXT(""), 0, 0);
+	} else {
+		if (countBoth == 1) {
+			prog += LocaliseMessage(bgActivities.loaders ? "Opening '^0'" : "Saving '^0'",
+				bgActivities.fileNameLast.c_str());
+		} else {
+			if (bgActivities.loaders) {
+				prog += LocaliseMessage("Opening ^0 files ", GUI::StringFromInteger(bgActivities.loaders).c_str());
+			}
+			if (bgActivities.storers) {
+				prog += LocaliseMessage("Saving ^0 files ", GUI::StringFromInteger(bgActivities.storers).c_str());
+			}
+		}
+		ShowBackgroundProgress(prog, bgActivities.totalWork, bgActivities.totalProgress);
+	}
 }
 
 bool SciTEBase::PreOpenCheck(const GUI::gui_char *) {
@@ -427,7 +516,9 @@ bool SciTEBase::Open(FilePath file, OpenFlags of) {
 	FilePath absPath = file.AbsolutePath();
 	int index = buffers.GetDocumentByName(absPath);
 	if (index >= 0) {
+		buffers.SetVisible(index, true);
 		SetDocumentAt(index);
+		RemoveFileFromStack(absPath);
 		DeleteFileStackMenu();
 		SetFileStackMenu();
 		if (!(of & ofForceLoad)) // Just rotate into view
@@ -457,7 +548,7 @@ bool SciTEBase::Open(FilePath file, OpenFlags of) {
 	}
 
 	if (buffers.size == buffers.length) {
-		AddFileToStack(filePath, GetSelection(), GetCurrentScrollPosition());
+		AddFileToStack(filePath, GetSelectedRange(), GetCurrentScrollPosition());
 		ClearDocument();
 		if (extender)
 			extender->InitBuffer(buffers.Current());
@@ -467,14 +558,28 @@ bool SciTEBase::Open(FilePath file, OpenFlags of) {
 		}
 	}
 
+	assert(CurrentBuffer()->pFileWorker == NULL);
 	SetFileName(absPath);
+
+	propsDiscovered.Clear();
+	SString discoveryScript = props.GetExpanded("command.discover.properties");
+	if (discoveryScript.length()) {
+		std::string propertiesText = CommandExecute(GUI::StringFromUTF8(discoveryScript.c_str()).c_str(),
+			absPath.Directory().AsInternal());
+		if (propertiesText.size()) {
+			propsDiscovered.ReadFromMemory(propertiesText.c_str(), propertiesText.size(), absPath.Directory(), filter);
+		}
+	}
+	CurrentBuffer()->props = propsDiscovered;
 	CurrentBuffer()->overrideExtension = "";
 	ReadProperties();
 	SetIndentSettings();
 	SetEol();
 	UpdateBuffersCurrent();
 	SizeSubWindows();
+	SetBuffersMenu();
 
+	bool asynchronous = false;
 	if (!filePath.IsUntitled()) {
 		wEditor.Call(SCI_SETREADONLY, 0);
 		wEditor.Call(SCI_CANCEL);
@@ -484,7 +589,9 @@ bool SciTEBase::Open(FilePath file, OpenFlags of) {
 			wEditor.Call(SCI_SETUNDOCOLLECTION, 0);
 		}
 
-		OpenFile(size, of & ofQuiet);
+		asynchronous = (size > props.GetInt("background.open.size", -1)) && 
+			!(of & (ofPreserveUndo|ofSynchronous));
+		OpenFile(size, of & ofQuiet, asynchronous);
 
 		if (of & ofPreserveUndo) {
 			wEditor.Call(SCI_ENDUNDOACTION);
@@ -501,7 +608,7 @@ bool SciTEBase::Open(FilePath file, OpenFlags of) {
 	if (lineNumbers && lineNumbersExpand)
 		SetLineNumberWidth();
 	UpdateStatusBar(true);
-	if (extender)
+	if (extender && !asynchronous)
 		extender->OnOpen(filePath.AsUTF8().c_str());
 	return true;
 }
@@ -626,7 +733,7 @@ bool SciTEBase::OpenSelected() {
 
 void SciTEBase::Revert() {
 	RecentFile rf = GetFilePosition();
-	OpenFile(filePath.GetFileLength(), false);
+	OpenFile(filePath.GetFileLength(), false, false);
 	DisplayAround(rf);
 }
 
@@ -743,6 +850,9 @@ FilePath SciTEBase::SaveName(const char *ext) {
 }
 
 int SciTEBase::SaveIfUnsure(bool forceQuestion) {
+	if (CurrentBuffer()->pFileWorker && !CurrentBuffer()->pFileWorker->IsLoading()) {
+		return IDNO;
+	}
 	if ((CurrentBuffer()->isDirty) && (LengthDocument() || !filePath.IsUntitled() || forceQuestion)) {
 		if (props.GetInt("are.you.sure", 1) ||
 		        filePath.IsUntitled() ||
@@ -772,7 +882,7 @@ int SciTEBase::SaveIfUnsureAll(bool forceQuestion) {
 		return IDCANCEL;
 	}
 	if (props.GetInt("save.recent")) {
-		for (int i = 0; i < buffers.length; ++i) {
+		for (int i = 0; i < buffers.lengthVisible; ++i) {
 			Buffer buff = buffers.buffers[i];
 			AddFileToStack(buff, buff.selection, buff.scrollPosition);
 		}
@@ -783,7 +893,7 @@ int SciTEBase::SaveIfUnsureAll(bool forceQuestion) {
 	}
 
 	// Ensure extender is told about each buffer closing
-	for (int k = 0; k < buffers.length; k++) {
+	for (int k = 0; k < buffers.lengthVisible; k++) {
 		SetDocumentAt(k);
 		if (extender) {
 			extender->OnClose(filePath.AsUTF8().c_str());
@@ -792,13 +902,15 @@ int SciTEBase::SaveIfUnsureAll(bool forceQuestion) {
 
 	// Definitely going to exit now, so delete all documents
 	// Set editor back to initial document
-	if (buffers.length > 0) {
+	if (buffers.lengthVisible > 0) {
 		wEditor.Call(SCI_SETDOCPOINTER, 0, buffers.buffers[0].doc);
 	}
 	// Release all the extra documents
 	for (int j = 0; j < buffers.size; j++) {
-		if (buffers.buffers[j].doc)
+		if (buffers.buffers[j].doc) {
 			wEditor.Call(SCI_RELEASEDOCUMENT, 0, buffers.buffers[j].doc);
+			buffers.buffers[j].doc = 0;
+		}
 	}
 	// Initial document will be deleted when editor deleted
 	return IDYES;
@@ -809,7 +921,7 @@ int SciTEBase::SaveIfUnsureForBuilt() {
 		return SaveAllBuffers(false, !props.GetInt("are.you.sure.for.build"));
 	}
 //!	if (CurrentBuffer()->isDirty) {
-	if (CurrentBuffer()->DocumentNotSaved()) { //-change-[OpenNonExistent]
+	if (CurrentBuffer()->DocumentNotSaved()) { //!-change-[OpenNonExistent]
 		if (props.GetInt("are.you.sure.for.build"))
 			return SaveIfUnsure(true);
 
@@ -861,7 +973,7 @@ void SciTEBase::EnsureFinalNewLine() {
 /**
  * Writes the buffer to the given filename.
  */
-bool SciTEBase::SaveBuffer(FilePath saveName) {
+bool SciTEBase::SaveBuffer(FilePath saveName, bool asynchronous) {
 	bool retVal = false;
 	// Perform clean ups on text before saving
 	SetFileProperties(props);	//!-add-[FileAttr in PROPS]
@@ -879,33 +991,42 @@ bool SciTEBase::SaveBuffer(FilePath saveName) {
 	wEditor.Call(SCI_ENDUNDOACTION);
 
 	if (!retVal) {
-		Utf8_16_Write convert;
-		if (CurrentBuffer()->unicodeMode != uniCookie) {	// Save file with cookie without BOM.
-			convert.setEncoding(static_cast<Utf8_16::encodingType>(
-				    static_cast<int>(CurrentBuffer()->unicodeMode)));
-		}
 
 		FILE *fp = saveName.Open(fileWrite);
 		if (fp) {
-			convert.setfile(fp);
-			char data[blockSize + 1];
 			int lengthDoc = LengthDocument();
-			retVal = true;
-			int grabSize;
-			for (int i = 0; i < lengthDoc; i += grabSize) {
-				grabSize = lengthDoc - i;
-				if (grabSize > blockSize)
-					grabSize = blockSize;
-				// Round down so only whole characters retrieved.
-				grabSize = wEditor.Call(SCI_POSITIONBEFORE, i + grabSize + 1) - i;
-				GetRange(wEditor, i, i + grabSize, data);
-				size_t written = convert.fwrite(data, grabSize);
-				if (written == 0) {
-					retVal = false;
-					break;
+			if (asynchronous) {
+				wEditor.Call(SCI_SETREADONLY, 1);
+				const char *documentBytes = reinterpret_cast<const char *>(wEditor.CallReturnPointer(SCI_GETCHARACTERPOINTER));
+				CurrentBuffer()->pFileWorker = new FileStorer(this, documentBytes, filePath, lengthDoc, fp, CurrentBuffer()->unicodeMode);
+				CurrentBuffer()->pFileWorker->sleepTime = props.GetInt("asynchronous.sleep");
+				PerformOnNewThread(CurrentBuffer()->pFileWorker);
+				retVal = true;
+			} else {
+				Utf8_16_Write convert;
+				if (CurrentBuffer()->unicodeMode != uniCookie) {	// Save file with cookie without BOM.
+					convert.setEncoding(static_cast<Utf8_16::encodingType>(
+							static_cast<int>(CurrentBuffer()->unicodeMode)));
 				}
+				convert.setfile(fp);
+				char data[blockSize + 1];
+				retVal = true;
+				int grabSize;
+				for (int i = 0; i < lengthDoc; i += grabSize) {
+					grabSize = lengthDoc - i;
+					if (grabSize > blockSize)
+						grabSize = blockSize;
+					// Round down so only whole characters retrieved.
+					grabSize = wEditor.Call(SCI_POSITIONBEFORE, i + grabSize + 1) - i;
+					GetRange(wEditor, i, i + grabSize, data);
+					size_t written = convert.fwrite(data, grabSize);
+					if (written == 0) {
+						retVal = false;
+						break;
+					}
+				}
+				convert.fclose();
 			}
-			convert.fclose();
 		}
 	}
 
@@ -931,6 +1052,24 @@ void SciTEBase::ReloadProperties() {
 bool SciTEBase::Save() {
 	if (!filePath.IsUntitled()) {
 		GUI::gui_string msg;
+		if (CurrentBuffer()->ShouldNotSave()) {
+			msg = LocaliseMessage(
+				"The file '^0' has not yet been loaded entirely, so it can not be saved right now. Please retry in a while.",
+				filePath.AsInternal());
+			WindowMessageBox(wSciTE, msg, MB_ICONWARNING);
+			// It is OK to not save this file
+			return true;
+		}
+
+		if (CurrentBuffer()->pFileWorker) {
+			msg = LocaliseMessage(
+				"The file '^0' is already being saved.",
+				filePath.AsInternal());
+			WindowMessageBox(wSciTE, msg, MB_ICONWARNING);
+			// It is OK to not save this file
+			return true;
+		}
+
 		int decision;
 
 		if (props.GetInt("save.deletes.first")) {
@@ -948,11 +1087,14 @@ bool SciTEBase::Save() {
 			}
 		}
 
-		if (SaveBuffer(filePath)) {
+		bool asynchronous = LengthDocument() > props.GetInt("background.save.size", -1);
+		if (SaveBuffer(filePath, asynchronous)) {
 			CurrentBuffer()->SetTimeFromFile();
-			wEditor.Call(SCI_SETSAVEPOINT);
-			if (IsPropertiesFile(filePath)) {
-				ReloadProperties();
+			if (!asynchronous) {
+				wEditor.Call(SCI_SETSAVEPOINT);
+				if (IsPropertiesFile(filePath)) {
+					ReloadProperties();
+				}
 			}
 		} else {
 			msg = LocaliseMessage(
@@ -1082,7 +1224,7 @@ void SciTEBase::OpenFilesFromStdin() {
 			* pNL = '\0';
 		Open(GUI::StringFromUTF8(data).c_str(), ofQuiet);
 	}
-	if (buffers.length == 0)
+	if (buffers.lengthVisible == 0)
 		Open(GUI_TEXT(""));
 }
 
@@ -1250,17 +1392,17 @@ bool SciTEBase::GrepIntoDirectory(const FilePath &directory) {
     return sDirectory[0] != '.';
 }
 
-//! void SciTEBase::GrepRecursive(GrepFlags gf, FilePath baseDir, const char *searchString, const GUI::gui_char *fileTypes) {
+//!void SciTEBase::GrepRecursive(GrepFlags gf, FilePath baseDir, const char *searchString, const GUI::gui_char *fileTypes) {
 void SciTEBase::GrepRecursive(GrepFlags gf, FilePath baseDir, const char *searchString, const GUI::gui_char *fileTypes, unsigned int basePath) { //!-change-[FindResultListStyle]
 	FilePathSet directories;
 	FilePathSet files;
 	baseDir.List(directories, files);
 	size_t searchLength = strlen(searchString);
 	SString os;
-	for (size_t i = 0; i < files.Length(); i ++) {
+	for (size_t i = 0; i < files.size(); i ++) {
 		if (jobQueue.Cancelled())
 			return;
-		FilePath fPath = files.At(i);
+		FilePath fPath = files[i];
 		if (fPath.Matches(fileTypes)) {
 			//OutputAppendStringSynchronised(i->AsInternal());
 			//OutputAppendStringSynchronised("\n");
@@ -1280,21 +1422,21 @@ void SciTEBase::GrepRecursive(GrepFlags gf, FilePath baseDir, const char *search
 							}
 						}
 						if (match) {
-//!-begin-[FindResultListStyle]
+//!-start-[FindResultListStyle]
 							if (props.GetInt("lexer.errorlist.findliststyle", 1)) {
 #if !defined(GTK)
 								os.append(".");
 #endif
 								os.append(fPath.AsUTF8().c_str() + basePath);
 							}
-							else 
+							else
 //!-end-[FindResultListStyle]
 							os.append(fPath.AsUTF8().c_str());
 							os.append(":");
 							SString lNumber(fr.LineNumber());
 							os.append(lNumber.c_str());
 							os.append(":");
-//!-begin-[FindResultListStyle]
+//!-start-[FindResultListStyle]
 							if (props.GetInt("lexer.errorlist.findliststyle", 1) == 1) {
 								lNumber = fr.Original();
 								lNumber.substitute('\t',' ');
@@ -1303,7 +1445,7 @@ void SciTEBase::GrepRecursive(GrepFlags gf, FilePath baseDir, const char *search
 								while ( lNumber.substitute("  "," ") );
 								os.append(lNumber.c_str());
 							}
-							else 
+							else
 //!-end-[FindResultListStyle]
 							os.append(fr.Original());
 							os.append("\n");
@@ -1320,8 +1462,8 @@ void SciTEBase::GrepRecursive(GrepFlags gf, FilePath baseDir, const char *search
 			OutputAppendStringSynchronised(os.c_str());
 		}
 	}
-	for (size_t j = 0; j < directories.Length(); j++) {
-		FilePath fPath = directories.At(j);
+	for (size_t j = 0; j < directories.size(); j++) {
+		FilePath fPath = directories[j];
 		if ((gf & grepDot) || GrepIntoDirectory(fPath.Name())) {
 //!			GrepRecursive(gf, fPath, searchString, fileTypes);
 			GrepRecursive(gf, fPath, searchString, fileTypes, basePath); //!-change-[FindResultListStyle]
@@ -1330,7 +1472,7 @@ void SciTEBase::GrepRecursive(GrepFlags gf, FilePath baseDir, const char *search
 }
 
 void SciTEBase::InternalGrep(GrepFlags gf, const GUI::gui_char *directory, const GUI::gui_char *fileTypes, const char *search) {
-	int originalEnd = 0;
+	sptr_t originalEnd = 0;
 	GUI::ElapsedTime commandTime;
 	unsigned int basePathLen = 0; //!-add-[FindResultListStyle]
 	if (!(gf & grepStdOut)) {
@@ -1370,7 +1512,7 @@ void SciTEBase::InternalGrep(GrepFlags gf, const GUI::gui_char *directory, const
 		}
 		sExitMessage += "\n";
 		OutputAppendStringSynchronised(sExitMessage.c_str());
-		if (props.GetInt("output.scroll", 1) == 1 && returnOutputToCommand)
+		if ((gf & grepScroll) && returnOutputToCommand)
 			wOutput.Send(SCI_GOTOPOS, originalEnd, 0);
 	}
 }

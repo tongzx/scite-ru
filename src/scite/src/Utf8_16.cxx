@@ -37,7 +37,6 @@ Utf8_16_Read::Utf8_16_Read() {
 	m_nLen = 0;
 	m_nAutoCheckUtf8 = false;//!-add-[utf8.auto.check]
 }
-
 //!-start-[utf8.auto.check]
 Utf8_16_Read::Utf8_16_Read(bool AutoCheckUtf8) {
 	m_eEncoding = eUnknown;
@@ -99,7 +98,6 @@ size_t Utf8_16_Read::convert(char* buf, size_t len) {
 	// Return number of bytes writen out
 	return pCur - m_pNewBuf;
 }
-
 //!-start-[utf8.auto.check]
 //[mhb] 07/05/09 : check whether a data block contains UTF8 chars
 int Has_UTF8_Char(unsigned char *buf,int size) {

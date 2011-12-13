@@ -156,7 +156,7 @@ static void ColouriseInnoDoc(unsigned int startPos, int length, int, WordList *k
 					// Check if the buffer contains a section name
 					if (sectionKeywords.InList(buffer)) {
 						styler.ColourTo(i,SCE_INNO_SECTION);
-						isCode = !CompareCaseInsensitive(buffer, "code");
+//!						isCode = !CompareCaseInsensitive(buffer, "code"); //!-remove-[update.inno]
 					} else {
 						styler.ColourTo(i,SCE_INNO_DEFAULT);
 					}
@@ -226,6 +226,8 @@ static void ColouriseInnoDoc(unsigned int startPos, int length, int, WordList *k
 					if (ch == '}' || (ch == ')' && chPrev == '*')) {
 						state = SCE_INNO_DEFAULT;
 						styler.ColourTo(i,SCE_INNO_COMMENT_PASCAL);
+/*!					} else if (isEOL) {
+						styler.ColourTo(i,SCE_INNO_DEFAULT);*/ //!-remove-[update.inno]
 					} else if (isEOL) {
 						state = SCE_INNO_DEFAULT;
 						styler.ColourTo(i,SCE_INNO_DEFAULT);

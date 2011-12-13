@@ -17,12 +17,6 @@ endif
 AR = ar
 RANLIB = touch
 
-ifdef GTK3
-GTKVERSION=gtk+-3.0
-else
-GTKVERSION=gtk+-2.0
-endif
-
 # Environment variable windir always defined on Win32
 
 ifndef windir
@@ -43,9 +37,7 @@ vpath %.h ../src ../include ../lexlib
 vpath %.cxx ../src ../lexlib ../lexers
 
 INCLUDEDIRS=-I ../include -I ../src -I ../lexlib
-ifdef CHECK_DEPRECATED
-DEPRECATED=-DGDK_PIXBUF_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED -DDISABLE_GDK_FONT
-endif
+#~ DEPRECATED=-DGDK_PIXBUF_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED -DDISABLE_GDK_FONT
 CXXBASEFLAGS=-Wall -Wno-missing-braces -Wno-char-subscripts -Wno-long-long -pedantic -DGTK -DSCI_LEXER $(INCLUDEDIRS) $(DEPRECATED)
 
 ifdef NOTHREADS
@@ -60,15 +52,13 @@ else
 CXXFLAGS=-DNDEBUG -Os $(CXXBASEFLAGS) $(THREADFLAGS)
 endif
 
-CFLAGS:=$(CXXFLAGS)
-
-CONFIGFLAGS:=$(shell pkg-config --cflags $(GTKVERSION))
+CONFIGFLAGS:=$(shell pkg-config --cflags gtk+-2.0)
 MARSHALLER=scintilla-marshal.o
 
 .cxx.o:
 	$(CC) $(CONFIGFLAGS) $(CXXFLAGS) -c $<
 .c.o:
-	$(CCOMP) $(CONFIGFLAGS) $(CFLAGS) -w -c $<
+	$(CCOMP) $(CONFIGFLAGS) $(CXXFLAGS) -w -c $<
 
 LEXOBJS:=$(addsuffix .o,$(basename $(notdir $(wildcard ../lexers/Lex*.cxx))))
 

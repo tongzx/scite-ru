@@ -37,7 +37,7 @@ public:
 	virtual bool OnSavePointLeft();
 	virtual bool OnStyle(unsigned int, int, int, StyleWriter *);
 //!	virtual bool OnDoubleClick();
-	virtual bool OnDoubleClick(int modifiers); //!-add-[OnDoubleClick]
+	virtual bool OnDoubleClick(int modifiers); //!-change-[OnDoubleClick]
 	virtual bool OnClick(int modifiers); //!-add-[OnClick]
 	virtual bool OnMouseButtonUp(int modifiers); //!-add-[OnMouseButtonUp]
 	virtual bool OnHotSpotReleaseClick(int modifiers); //!-add-[OnHotSpotReleaseClick]
@@ -48,7 +48,7 @@ public:
 	virtual bool OnUserListSelection(int, const char *, int); //!-change-[UserListItemID]
 	virtual bool SendProperty(const char *);
 //!-start-[OnKey]
-#if !defined(GTK)
+#if defined(WIN32)
 	virtual bool OnKey(int, int, char);
 #else
 //!-end-[OnKey]

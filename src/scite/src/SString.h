@@ -256,27 +256,25 @@ public:
 	int remove(const char *sFind) {
 		return substitute(sFind, "");
 	}
-
 //!-start-[SubMenu]
-	SString operator+(const char *sOther) {		
+	SString operator+(const char *sOther) {
 		return SString(*this).append(sOther, static_cast<lenpos_t>(measure_length));
 	}
 
-	friend SString operator+(const char *strChar, const SString &sOther) {		
+	friend SString operator+(const char *strChar, const SString &sOther) {
 		return SString(strChar).append(sOther.s, sOther.sLen);
 	}
 
-	SString operator+(const SString &sOther) {		
+	SString operator+(const SString &sOther) {
 		return SString(*this).append(sOther.s, sOther.sLen);
 	}
 //!-end-[SubMenu]
-
-//!-begin-[FindResultListStyle]
+//!-start-[FindResultListStyle]
 	void trimleft(const char *prefix) {
 		if (s && sLen && prefix && strlen(prefix)) {
 			lenpos_t preflen = strlen(prefix);
 			bool bContinue;
-			do 
+			do
 			{
 				bContinue = false;
 				for (lenpos_t i=0; i<preflen; i++) {
@@ -286,14 +284,14 @@ public:
 					}
 				}
 			} while(bContinue);
-		}	
+		}
 	}
 
 	void trimright(const char *prefix) {
 		if (s && sLen && prefix && strlen(prefix)) {
 			lenpos_t preflen = strlen(prefix);
 			bool bContinue;
-			do 
+			do
 			{
 				bContinue = false;
 				for (lenpos_t i=0; i<preflen; i++) {
@@ -303,7 +301,7 @@ public:
 					}
 				}
 			} while(bContinue);
-		}	
+		}
 	}
 //!-end-[FindResultListStyle]
 };

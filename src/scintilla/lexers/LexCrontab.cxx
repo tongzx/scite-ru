@@ -298,7 +298,6 @@ static void FoldNncrontabDoc(unsigned int startPos, int length, int initStyle,
 	}
 }
 //!-end-[ForthImprovement]
-
 static const char * const cronWordListDesc[] = {
 	"Section keywords and Forth words",
 	"nnCrontab keywords",

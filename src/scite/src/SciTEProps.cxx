@@ -13,16 +13,14 @@
 #include <time.h>
 #include <locale.h>
 
-#ifdef _MSC_VER
-#pragma warning(disable: 4786)
-#endif
-
 #include <string>
 #include <vector>
+#include <set>
 #include <map>
 
 #include "Scintilla.h"
 #include "SciLexer.h"
+#include "ILexer.h"
 
 #include "GUI.h"
 
@@ -67,14 +65,16 @@ const GUI::gui_char menuAccessIndicator[] = GUI_TEXT("&");
 #include "IFaceTable.h"
 #include "Mutex.h"
 #include "JobQueue.h"
+#include "Cookie.h"
+#include "Worker.h"
 #include "SciTEBase.h"
 
 void SciTEBase::SetImportMenu() {
 	for (int i = 0; i < importMax; i++) {
 		DestroyMenuItem(menuOptions, importCmdID + i);
 	}
-	if (importFiles[0].IsSet()) {
-		for (int stackPos = 0; stackPos < importMax; stackPos++) {
+	if (!importFiles.empty()) {
+		for (int stackPos = 0; stackPos < static_cast<int>(importFiles.size()) && stackPos < importMax; stackPos++) {
 			int itemID = importCmdID + stackPos;
 			if (importFiles[stackPos].IsSet()) {
 				GUI::gui_string entry = localiser.Text("Open");
@@ -139,24 +139,37 @@ void SciTEBase::ReadGlobalPropFile() {
 		}
 	}
 
-	for (int stackPos = 0; stackPos < importMax; stackPos++) {
-		importFiles[stackPos] = GUI_TEXT("");
-	}
-
-	propsBase.Clear();
-	FilePath propfileBase = GetDefaultPropertiesFileName();
-	propsBase.Read(propfileBase, propfileBase.Directory(), importFiles, importMax);
-
 //!-start-[scite.userhome]
 	FilePath homepath = GetSciteDefaultHome();
 	props.Set("SciteDefaultHome", homepath.AsUTF8().c_str());
 	homepath = GetSciteUserHome();
 	props.Set("SciteUserHome", homepath.AsUTF8().c_str());
 //!-end-[scite.userhome]
+	SString excludes;
+	SString includes;
 
-	propsUser.Clear();
-	FilePath propfileUser = GetUserPropertiesFileName();
-	propsUser.Read(propfileUser, propfileUser.Directory(), importFiles, importMax);
+	for (int attempt=0; attempt<2; attempt++) {
+
+		SString excludesRead = props.Get("imports.exclude");
+		SString includesRead = props.Get("imports.include");
+		if ((attempt > 0) && ((excludesRead == excludes) && (includesRead == includes)))
+			break;
+
+		excludes = excludesRead;
+		includes = includesRead;
+
+		filter.SetFilter(excludes.c_str(), includes.c_str());
+
+		importFiles.clear();
+
+		propsBase.Clear();
+		FilePath propfileBase = GetDefaultPropertiesFileName();
+		propsBase.Read(propfileBase, propfileBase.Directory(), filter, &importFiles);
+
+		propsUser.Clear();
+		FilePath propfileUser = GetUserPropertiesFileName();
+		propsUser.Read(propfileUser, propfileUser.Directory(), filter, &importFiles);
+	}
 
 	if (!localiser.read) {
 		ReadLocalization();
@@ -165,7 +178,7 @@ void SciTEBase::ReadGlobalPropFile() {
 
 void SciTEBase::ReadAbbrevPropFile() {
 	propsAbbrev.Clear();
-	propsAbbrev.Read(pathAbbreviations, pathAbbreviations.Directory(), importFiles, importMax);
+	propsAbbrev.Read(pathAbbreviations, pathAbbreviations.Directory(), filter, &importFiles);
 }
 
 /**
@@ -181,7 +194,7 @@ void SciTEBase::ReadDirectoryPropFile() {
 		FilePath propfile = GetDirectoryPropertiesFileName();
 		props.Set("SciteDirectoryHome", propfile.Directory().AsUTF8().c_str());
 
-		propsDirectory.Read(propfile, propfile.Directory());
+		propsDirectory.Read(propfile, propfile.Directory(), filter);
 	}
 }
 
@@ -196,7 +209,7 @@ void SciTEBase::ReadLocalPropFile() {
 	FilePath propfile = GetLocalPropertiesFileName();
 
 	propsLocal.Clear();
-	propsLocal.Read(propfile, propfile.Directory());
+	propsLocal.Read(propfile, propfile.Directory(), filter);
 
 	props.Set("Chrome", "#C0C0C0");
 	props.Set("ChromeHighlight", "#FFFFFF");
@@ -248,7 +261,7 @@ const char *SciTEBase::GetNextPropItem(
 	char *pPropItem,	///< pointer on a buffer receiving the requested prop item
 	int maxLen)			///< size of the above buffer
 {
-	long size = maxLen - 1;
+	ptrdiff_t size = maxLen - 1;
 
 	*pPropItem = '\0';
 	if (pStart == NULL) {
@@ -268,9 +281,9 @@ const char *SciTEBase::GetNextPropItem(
 }
 
 StyleDefinition::StyleDefinition(const char *definition) :
-//!		size(0), fore("#000000"), back("#FFFFFF"),
-		size(0), fore(""), back(""), //!-change-[StyleDefault]
-		bold(false), italics(false), eolfilled(false), underlined(false),
+//!		sizeFractional(10.0), size(0), fore("#000000"), back("#FFFFFF"),
+		sizeFractional(10.0), size(0), fore(""), back(""), //!-change-[StyleDefault]
+		weight(SC_WEIGHT_NORMAL), italics(false), eolfilled(false), underlined(false),
 		caseForce(SC_CASE_MIXED),
 		visible(true), changeable(true),
 //!		specified(sdNone) {
@@ -306,12 +319,16 @@ bool StyleDefinition::ParseStyleDefinition(const char *definition) {
 			italics = false;
 		}
 		if (0 == strcmp(opt, "bold")) {
-			specified = static_cast<flags>(specified | sdBold);
-			bold = true;
+			specified = static_cast<flags>(specified | sdWeight);
+			weight = SC_WEIGHT_BOLD;
 		}
 		if (0 == strcmp(opt, "notbold")) {
-			specified = static_cast<flags>(specified | sdBold);
-			bold = false;
+			specified = static_cast<flags>(specified | sdWeight);
+			weight = SC_WEIGHT_NORMAL;
+		}
+		if ((0 == strcmp(opt, "weight")) && colon) {
+			specified = static_cast<flags>(specified | sdWeight);
+			weight = atoi(colon);
 		}
 		if (0 == strcmp(opt, "font")) {
 			specified = static_cast<flags>(specified | sdFont);
@@ -328,7 +345,8 @@ bool StyleDefinition::ParseStyleDefinition(const char *definition) {
 		}
 		if ((0 == strcmp(opt, "size")) && colon) {
 			specified = static_cast<flags>(specified | sdSize);
-			size = atoi(colon);
+			sizeFractional = static_cast<float>(atof(colon));
+			size = static_cast<int>(sizeFractional);
 		}
 		if (0 == strcmp(opt, "eolfilled")) {
 			specified = static_cast<flags>(specified | sdEOLFilled);
@@ -399,11 +417,19 @@ long StyleDefinition::BackAsLong() const {
 	return ColourFromString(back);
 }
 
+int StyleDefinition::FractionalSize() const {
+	return static_cast<int>(sizeFractional * SC_FONT_SIZE_MULTIPLIER);
+}
+
+bool StyleDefinition::IsBold() const {
+	return weight > SC_WEIGHT_NORMAL;
+}
+
 void SciTEBase::SetOneStyle(GUI::ScintillaWindow &win, int style, const StyleDefinition &sd) {
 	if (sd.specified & StyleDefinition::sdItalics)
 		win.Send(SCI_STYLESETITALIC, style, sd.italics ? 1 : 0);
-	if (sd.specified & StyleDefinition::sdBold)
-		win.Send(SCI_STYLESETBOLD, style, sd.bold ? 1 : 0);
+	if (sd.specified & StyleDefinition::sdWeight)
+		win.Send(SCI_STYLESETWEIGHT, style, sd.weight);
 	if (sd.specified & StyleDefinition::sdFont)
 		win.SendPointer(SCI_STYLESETFONT, style,
 			const_cast<char *>(sd.font.c_str()));
@@ -412,7 +438,7 @@ void SciTEBase::SetOneStyle(GUI::ScintillaWindow &win, int style, const StyleDef
 	if (sd.specified & StyleDefinition::sdBack)
 		win.Send(SCI_STYLESETBACK, style, sd.BackAsLong());
 	if (sd.specified & StyleDefinition::sdSize)
-		win.Send(SCI_STYLESETSIZE, style, sd.size);
+		win.Send(SCI_STYLESETSIZEFRACTIONAL, style, sd.FractionalSize());
 	if (sd.specified & StyleDefinition::sdEOLFilled)
 		win.Send(SCI_STYLESETEOLFILLED, style, sd.eolfilled ? 1 : 0);
 	if (sd.specified & StyleDefinition::sdUnderlined)
@@ -430,20 +456,24 @@ void SciTEBase::SetOneStyle(GUI::ScintillaWindow &win, int style, const StyleDef
 	win.Send(SCI_STYLESETCHARACTERSET, style, characterSet);
 }
 
-void SciTEBase::SetStyleFor(GUI::ScintillaWindow &win, const char *lang) {
-	int maxStyle = (1 << win.Call(SCI_GETSTYLEBITS)) - 1;
-	if (maxStyle < STYLE_LASTPREDEFINED)
-		maxStyle = STYLE_LASTPREDEFINED;
-	for (int style = 0; style <= maxStyle; style++) {
+void SciTEBase::SetStyleBlock(GUI::ScintillaWindow &win, const char *lang, int start, int last) {
+	for (int style = start; style <= last; style++) {
 		if (style != STYLE_DEFAULT) {
 			char key[200];
-			sprintf(key, "style.%s.%0d", lang, style);
+			sprintf(key, "style.%s.%0d", lang, style-start);
 			SString sval = props.GetExpanded(key);
 			if (sval.length()) {
 				SetOneStyle(win, style, sval.c_str());
 			}
 		}
 	}
+}
+
+void SciTEBase::SetStyleFor(GUI::ScintillaWindow &win, const char *lang) {
+	int maxStyle = (1 << win.Call(SCI_GETSTYLEBITS)) - 1;
+	if (maxStyle < STYLE_LASTPREDEFINED)
+		maxStyle = STYLE_LASTPREDEFINED;
+	SetStyleBlock(win, lang, 0, maxStyle);
 }
 
 void LowerCaseString(char *s) {
@@ -514,7 +544,7 @@ void SciTEBase::ReadAPI(const SString &fileNameForExtension) {
 		const char *apiFileName = sApiFileNames.c_str();
 		const char *nameEnd = apiFileName + nameLength;
 
-		int tlen = 0;    // total api length
+		size_t tlen = 0;    // total api length
 
 		// Calculate total length
 		while (apiFileName < nameEnd) {
@@ -524,7 +554,7 @@ void SciTEBase::ReadAPI(const SString &fileNameForExtension) {
 
 		// Load files
 		if (tlen > 0) {
-			char *buffer = apis.Allocate(tlen);
+			char *buffer = apis.Allocate(static_cast<int>(tlen));
 			if (buffer) {
 				apiFileName = sApiFileNames.c_str();
 				tlen = 0;
@@ -556,7 +586,6 @@ SString SciTEBase::FindLanguageProperty(const char *pattern, const char *default
 		ret = defaultValue;
 	return ret;
 }
-
 //!-start-[BetterCalltips]
 int SciTEBase::FindIntLanguageProperty(const char *pattern, int defaultValue /*=0*/) {
 	SString key = pattern;
@@ -633,6 +662,7 @@ static const char *propertiesToForward[] = {
 	"lexer.batch.enabledelayedexpansion",
 	"lexer.caml.magic",
 	"lexer.cpp.allow.dollars",
+	"lexer.cpp.hashquoted.strings",
 	"lexer.cpp.track.preprocessor",
 	"lexer.cpp.triplequoted.strings",
 	"lexer.cpp.update.preprocessor",
@@ -646,6 +676,7 @@ static const char *propertiesToForward[] = {
 	"lexer.metapost.interface.default",
 	"lexer.pascal.smart.highlighting",
 	"lexer.props.allow.initial.spaces",
+	"lexer.python.keywords2.no.sub.identifiers",
 	"lexer.python.literals.binary",
 	"lexer.python.strings.b",
 	"lexer.python.strings.over.newline",
@@ -791,7 +822,8 @@ void SciTEBase::ReadProperties() {
 				wEditor.CallString(SCI_SETLEXERLANGUAGE, 0, "lpeg");
 				lexLPeg = wEditor.Call(SCI_GETLEXER);
 				const char *lexer = language.c_str() + language.search("_") + 1;
-				wEditor.CallString(SCI_PRIVATELEXERCALL, SCI_SETLEXERLANGUAGE, lexer);
+				wEditor.CallReturnPointer(SCI_PRIVATELEXERCALL, SCI_SETLEXERLANGUAGE,
+					reinterpret_cast<sptr_t>(lexer));
 			}
 		} else {
 			wEditor.CallString(SCI_SETLEXERLANGUAGE, 0, language.c_str());
@@ -804,7 +836,7 @@ void SciTEBase::ReadProperties() {
 
 	lexLanguage = wEditor.Call(SCI_GETLEXER);
 
-	if (language.startswith("script_"))
+	if (language.startswith("script_") || language.startswith("lpeg_"))
 		wEditor.Call(SCI_SETSTYLEBITS, 8);
 	else
 		wEditor.Call(SCI_SETSTYLEBITS, wEditor.Call(SCI_GETSTYLEBITSNEEDED));
@@ -848,8 +880,10 @@ void SciTEBase::ReadProperties() {
 	}
 
 	props.Set("AbbrevPath", pathAbbreviations.AsUTF8().c_str());
+	wEditor.Call(SCI_SETOVERTYPE, props.GetInt("change.overwrite.enable", 1) + 2); //!-add-[ignore_overstrike_change]
 
-	wEditor.Call(SCI_SETOVERTYPE, props.GetInt("change.overwrite.enable", 1) + 2); //-add-[ignore_overstrike_change]
+	int tech = props.GetInt("technology");
+	wEditor.Call(SCI_SETTECHNOLOGY, tech);
 
 	codePage = props.GetInt("code.page");
 	if (CurrentBuffer()->unicodeMode != uni8Bit) {
@@ -892,7 +926,6 @@ void SciTEBase::ReadProperties() {
 
 	wEditor.Call(SCI_SETMOUSEDWELLTIME,
 	           props.GetInt("dwell.period", SC_TIME_FOREVER), 0);
-
 //!-start-[caret]
 	tmp_str=props.GetNewExpand("caret.width.", fileNameForExtension.c_str());
 	if(tmp_str.length()){
@@ -926,6 +959,18 @@ void SciTEBase::ReadProperties() {
 		wEditor.Call(SCI_INDICSETUNDER, index, underIndicator);
 		wOutput.Call(SCI_INDICSETUNDER, index, underIndicator);
 	}
+//!-start-[output.caret]
+	wOutput.Call(SCI_SETCARETFORE, ColourOfProperty(props, "output.caret.fore", ColourRGB(0x00, 0x00, 0x00)));
+
+	SString outputCaretLineBack = props.Get("output.caret.line.back");
+	if (outputCaretLineBack.length()) {
+		wOutput.Call(SCI_SETCARETLINEVISIBLE, 1);
+		wOutput.Call(SCI_SETCARETLINEBACK, ColourFromString(outputCaretLineBack));
+	} else {
+		wOutput.Call(SCI_SETCARETLINEVISIBLE, 0);
+	}
+	wOutput.Call(SCI_SETCARETLINEBACKALPHA, props.GetInt("output.caret.line.back.alpha", SC_ALPHA_NOALPHA));
+//!-end-[output.caret]
 
 	SString findMark = props.Get("find.mark");
 	if (findMark.length()) {
@@ -1033,7 +1078,6 @@ void SciTEBase::ReadProperties() {
 
 	char key[200];
 	SString sval;
-
 //!-start-[BetterCalltips]
 	sval = FindLanguageProperty("calltip.*.automatic", "1");
 	callTipAutomatic = sval == "1";
@@ -1041,7 +1085,6 @@ void SciTEBase::ReadProperties() {
 
 	sval = FindLanguageProperty("calltip.*.ignorecase");
 	callTipIgnoreCase = sval == "1";
-
 //!-start-[BetterCalltips]
 	calltipShowPerPage = FindIntLanguageProperty("calltip.*.show.per.page", 1);
 	if (calltipShowPerPage < 1) calltipShowPerPage = 1;
@@ -1055,7 +1098,6 @@ void SciTEBase::ReadProperties() {
 	calltipParametersSeparators = FindLanguageProperty("calltip.*.parameters.separators", ",;");
 
 	calltipEndDefinition = FindLanguageProperty("calltip.*.end.definition");
-
 //!-start-[BetterCalltips]
 	int calltipWordWrap = FindIntLanguageProperty("calltip.*.word.wrap");
 	wEditor.Call(SCI_CALLTIPSETWORDWRAP, calltipWordWrap > 0 ? calltipWordWrap : 0);
@@ -1097,7 +1139,6 @@ void SciTEBase::ReadProperties() {
 
 	ReadFontProperties();
 
-	wEditor.Call(SCI_SETUSEPALETTE, props.GetInt("use.palette"));
 	wEditor.Call(SCI_SETPRINTMAGNIFICATION, props.GetInt("print.magnification"));
 	wEditor.Call(SCI_SETPRINTCOLOURMODE, props.GetInt("print.colour.mode"));
 
@@ -1190,33 +1231,42 @@ void SciTEBase::ReadProperties() {
  	wEditor.Call(SCI_SETWRAPSTARTINDENT, props.GetInt("wrap.visual.startindent"));
  	wEditor.Call(SCI_SETWRAPINDENTMODE, props.GetInt("wrap.indent.mode"));
 
-	if (props.GetInt("wrap.aware.home.end.keys",0)) {
-		if (props.GetInt("vc.home.key", 1)) {
-			AssignKey(SCK_HOME, 0, SCI_VCHOMEWRAP);
-			AssignKey(SCK_HOME, SCMOD_SHIFT, SCI_VCHOMEWRAPEXTEND);
-			AssignKey(SCK_HOME, SCMOD_SHIFT | SCMOD_ALT, SCI_VCHOMERECTEXTEND);
-		} else {
-			AssignKey(SCK_HOME, 0, SCI_HOMEWRAP);
-			AssignKey(SCK_HOME, SCMOD_SHIFT, SCI_HOMEWRAPEXTEND);
-			AssignKey(SCK_HOME, SCMOD_SHIFT | SCMOD_ALT, SCI_HOMERECTEXTEND);
-		}
-		AssignKey(SCK_END, 0, SCI_LINEENDWRAP);
-		AssignKey(SCK_END, SCMOD_SHIFT, SCI_LINEENDWRAPEXTEND);
+	if (props.GetInt("os.x.home.end.keys")) {
+		AssignKey(SCK_HOME, 0, SCI_SCROLLTOSTART);
+		AssignKey(SCK_HOME, SCMOD_SHIFT, SCI_NULL);
+		AssignKey(SCK_HOME, SCMOD_SHIFT | SCMOD_ALT, SCI_NULL);
+		AssignKey(SCK_END, 0, SCI_SCROLLTOEND);
+		AssignKey(SCK_END, SCMOD_SHIFT, SCI_NULL);
 	} else {
-		if (props.GetInt("vc.home.key", 1)) {
-			AssignKey(SCK_HOME, 0, SCI_VCHOME);
-			AssignKey(SCK_HOME, SCMOD_SHIFT, SCI_VCHOMEEXTEND);
-			AssignKey(SCK_HOME, SCMOD_SHIFT | SCMOD_ALT, SCI_VCHOMERECTEXTEND);
+		if (props.GetInt("wrap.aware.home.end.keys",0)) {
+			if (props.GetInt("vc.home.key", 1)) {
+				AssignKey(SCK_HOME, 0, SCI_VCHOMEWRAP);
+				AssignKey(SCK_HOME, SCMOD_SHIFT, SCI_VCHOMEWRAPEXTEND);
+				AssignKey(SCK_HOME, SCMOD_SHIFT | SCMOD_ALT, SCI_VCHOMERECTEXTEND);
+			} else {
+				AssignKey(SCK_HOME, 0, SCI_HOMEWRAP);
+				AssignKey(SCK_HOME, SCMOD_SHIFT, SCI_HOMEWRAPEXTEND);
+				AssignKey(SCK_HOME, SCMOD_SHIFT | SCMOD_ALT, SCI_HOMERECTEXTEND);
+			}
+			AssignKey(SCK_END, 0, SCI_LINEENDWRAP);
+			AssignKey(SCK_END, SCMOD_SHIFT, SCI_LINEENDWRAPEXTEND);
 		} else {
-			AssignKey(SCK_HOME, 0, SCI_HOME);
-			AssignKey(SCK_HOME, SCMOD_SHIFT, SCI_HOMEEXTEND);
-			AssignKey(SCK_HOME, SCMOD_SHIFT | SCMOD_ALT, SCI_HOMERECTEXTEND);
+			if (props.GetInt("vc.home.key", 1)) {
+				AssignKey(SCK_HOME, 0, SCI_VCHOME);
+				AssignKey(SCK_HOME, SCMOD_SHIFT, SCI_VCHOMEEXTEND);
+				AssignKey(SCK_HOME, SCMOD_SHIFT | SCMOD_ALT, SCI_VCHOMERECTEXTEND);
+			} else {
+				AssignKey(SCK_HOME, 0, SCI_HOME);
+				AssignKey(SCK_HOME, SCMOD_SHIFT, SCI_HOMEEXTEND);
+				AssignKey(SCK_HOME, SCMOD_SHIFT | SCMOD_ALT, SCI_HOMERECTEXTEND);
+			}
+			AssignKey(SCK_END, 0, SCI_LINEEND);
+			AssignKey(SCK_END, SCMOD_SHIFT, SCI_LINEENDEXTEND);
 		}
-		AssignKey(SCK_END, 0, SCI_LINEEND);
-		AssignKey(SCK_END, SCMOD_SHIFT, SCI_LINEENDEXTEND);
 	}
 
 	AssignKey('L', SCMOD_SHIFT | SCMOD_CTRL, SCI_LINEDELETE);
+
 
 	scrollOutput = props.GetInt("output.scroll", 1);
 
@@ -1343,7 +1393,7 @@ void SciTEBase::ReadProperties() {
 		ColourOfProperty(props, "bookmark.fore", ColourRGB(0, 0, 0x7f)));
 	wEditor.Call(SCI_MARKERSETBACK, markerBookmark,
 		ColourOfProperty(props, "bookmark.back", ColourRGB(0x80, 0xff, 0xff)));
-	wEditor.Call(SCI_MARKERSETALPHA,
+	wEditor.Call(SCI_MARKERSETALPHA, markerBookmark,
 		props.GetInt("bookmark.alpha", SC_ALPHA_NOALPHA));
 	SString bookMarkXPM = props.Get("bookmark.pixmap");
 	if (bookMarkXPM.length()) {
@@ -1484,6 +1534,14 @@ void SciTEBase::ReadFontProperties() {
 
 	SetStyleFor(wEditor, "*");
 	SetStyleFor(wEditor, languageName);
+	if (props.GetInt("error.inline")) {
+		wEditor.Send(SCI_STYLESETFORE, diagnosticStyleEnd, 0);	// Ensure styles allocated
+		SetStyleBlock(wEditor, "error", diagnosticStyleStart, diagnosticStyleEnd);
+	}
+
+	// Turn grey while loading
+	if (CurrentBuffer()->lifeState == Buffer::reading)
+		wEditor.Call(SCI_STYLESETBACK, STYLE_DEFAULT, 0xEEEEEE);
 
 	wOutput.Call(SCI_STYLECLEARALL, 0, 0);
 
@@ -1505,7 +1563,7 @@ void SciTEBase::ReadFontProperties() {
 					wEditor.CallString(SCI_STYLESETFONT, style, sd.font.c_str());
 				}
 				if (sd.specified & StyleDefinition::sdSize) {
-					wEditor.Call(SCI_STYLESETSIZE, style, sd.size);
+					wEditor.Call(SCI_STYLESETSIZEFRACTIONAL, style, sd.FractionalSize());
 				}
 			}
 		}
@@ -1605,7 +1663,7 @@ void SciTEBase::ReadLocalization() {
 	}
 	FilePath propdir = GetSciteDefaultHome();
 	FilePath localePath(propdir, title);
-	localiser.Read(localePath, propdir, importFiles, importMax);
+	localiser.Read(localePath, propdir, filter, &importFiles);
 	localiser.SetMissing(props.Get("translation.missing"));
 	localiser.read = true;
 }

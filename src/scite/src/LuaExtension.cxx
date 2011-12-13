@@ -10,6 +10,7 @@
 #include <time.h>
 
 #include <string>
+#include <vector>
 
 #include "Scintilla.h"
 
@@ -28,7 +29,6 @@ extern "C" {
 #include "lualib.h"
 #include "lauxlib.h"
 }
-
 //!-start-[EncodingToLua]
 void lua_utf8_register_libs(lua_State *L);
 //!-end-[EncodingToLua]
@@ -287,7 +287,6 @@ static int cf_scite_menu_command(lua_State *L) {
 	}
 	return 0;
 }
-
 //!-start-[Perform]
 static int cf_scite_perform(lua_State *L) {
 	const char *s = luaL_checkstring(L, 1);
@@ -297,7 +296,6 @@ static int cf_scite_perform(lua_State *L) {
 	return 0;
 }
 //!-end-[Perform]
-
 //!-start-[InsertAbbreviation]
 int get_codepage(ExtensionAPI::Pane p) {
 	UINT codePage = host->Send(p, SCI_GETCODEPAGE);
@@ -337,7 +335,7 @@ inline void str_replace(GUI::gui_string &str, GUI::gui_string f, GUI::gui_string
 	{
 		str.replace(pos, f.length(), r);
 		pos += r.length();
-	
+
 	}
 }
 
@@ -362,15 +360,15 @@ static int cf_editor_insert_abbrev(lua_State *L) {
 					if(!ss.empty())
 						host->Send(ExtensionAPI::paneEditor, SCI_REPLACESEL, 0, reinterpret_cast<sptr_t>(""));
 					r = GUI::StringFromUTF8(ss.c_str());
-				} else if (tmp == GUI_TEXT("CLP")) {    
-					BOOL IsOpen=OpenClipboard(0);        
-					if(IsOpen){        
-						HANDLE Data = GetClipboardData(CF_UNICODETEXT);        
-						if(Data != 0){        
-							r = GUI::gui_string(static_cast<const wchar_t*>(GlobalLock(Data)));        
-							GlobalUnlock(Data);        
-						}        
-						CloseClipboard();        
+				} else if (tmp == GUI_TEXT("CLP")) {
+					BOOL IsOpen=OpenClipboard(0);
+					if(IsOpen){
+						HANDLE Data = GetClipboardData(CF_UNICODETEXT);
+						if(Data != 0){
+							r = GUI::gui_string(static_cast<const wchar_t*>(GlobalLock(Data)));
+							GlobalUnlock(Data);
+						}
+						CloseClipboard();
 					}
 				} else if (char* val = host->Property(GUI::UTF8FromString(tmp).c_str())) {
 					r = GUI::StringFromUTF8(val);
@@ -378,7 +376,7 @@ static int cf_editor_insert_abbrev(lua_State *L) {
 				str_replace(r, GUI_TEXT("\\"), GUI_TEXT("\\\\")); //TODO> Must be "Slash" from StringHelper.cxx
 				s.replace(spos, epos-spos+1, r);
 				epos = spos + r.length();
-			} 
+			}
 			spos = get_next_p(s, epos);
 		}
 		host->InsertAbbreviation(GUI::UTF8FromString(s).c_str());
@@ -387,7 +385,6 @@ static int cf_editor_insert_abbrev(lua_State *L) {
 	return 0;
 }
 //!-end-[InsertAbbreviation]
-
 //!-start-[ParametersDialogFromLua]
 static int cf_scite_show_parameters_dialog(lua_State *L) {
 	const char *s = luaL_checkstring(L, 1);
@@ -395,7 +392,6 @@ static int cf_scite_show_parameters_dialog(lua_State *L) {
 	return 1;
 }
 //!-end-[ParametersDialogFromLua]
-
 //!-start-[LocalizationFromLua]
 static int cf_editor_get_translation(lua_State *L) {
 	const char *s = luaL_checkstring(L, 1);
@@ -409,14 +405,12 @@ static int cf_editor_get_translation(lua_State *L) {
 	return 1;
 }
 //!-end-[LocalizationFromLua]
-
 //!-start-[CheckMenus]
 static int cf_scite_check_menus(lua_State *) {
 	host->CheckMenus();
 	return 0;
 }
 //!-end-[CheckMenus]
-
 //!-start-[EncodingToLua]
 static int cf_pane_get_codepage(lua_State *L) {
 	ExtensionAPI::Pane p = check_pane_object(L, 1);
@@ -504,7 +498,7 @@ static int cf_pane_remove(lua_State *L) {
 static int cf_pane_append(lua_State *L) {
 	ExtensionAPI::Pane p = check_pane_object(L, 1);
 	const char *s = luaL_checkstring(L, 2);
-	host->Insert(p, host->Send(p, SCI_GETLENGTH, 0, 0), s);
+	host->Insert(p, static_cast<int>(host->Send(p, SCI_GETLENGTH, 0, 0)), s);
 	return 0;
 }
 
@@ -536,12 +530,12 @@ static int cf_pane_findtext(lua_State *L) {
 				ft.chrg.cpMax = static_cast<int>(luaL_checkint(L,5));
 				hasError = (lua_gettop(L) > nArgs);
 			} else {
-				ft.chrg.cpMax = host->Send(p, SCI_GETLENGTH, 0, 0);
+				ft.chrg.cpMax = static_cast<long>(host->Send(p, SCI_GETLENGTH, 0, 0));
 			}
 		}
 
 		if (!hasError) {
-			int result = host->Send(p, SCI_FINDTEXT, static_cast<uptr_t>(flags), reinterpret_cast<sptr_t>(&ft));
+			sptr_t result = host->Send(p, SCI_FINDTEXT, static_cast<uptr_t>(flags), reinterpret_cast<sptr_t>(&ft));
 			if (result >= 0) {
 				lua_pushnumber(L, ft.chrgText.cpMin);
 				lua_pushnumber(L, ft.chrgText.cpMax);
@@ -566,10 +560,10 @@ static int cf_pane_findtext(lua_State *L) {
 
 struct PaneMatchObject {
 	ExtensionAPI::Pane pane;
-	long startPos;
-	long endPos;
+	int startPos;
+	int endPos;
 	int flags; // this is really part of the state, but is kept here for convenience
-	long endPosOrig; // has to do with preventing infinite loop on a 0-length match
+	int endPosOrig; // has to do with preventing infinite loop on a 0-length match
 };
 
 static int cf_match_replace(lua_State *L) {
@@ -593,7 +587,7 @@ static int cf_match_replace(lua_State *L) {
 	host->Send(pmo->pane, SCI_SETTARGETSTART, pmo->startPos, 0);
 	host->Send(pmo->pane, SCI_SETTARGETEND, pmo->endPos, 0);
 	host->Send(pmo->pane, SCI_REPLACETARGET, lua_strlen(L, 2), reinterpret_cast<sptr_t>(replacement));
-	pmo->endPos = host->Send(pmo->pane, SCI_GETTARGETEND, 0, 0);
+	pmo->endPos = static_cast<int>(host->Send(pmo->pane, SCI_GETTARGETEND, 0, 0));
 	return 0;
 }
 
@@ -736,14 +730,14 @@ static int cf_pane_match_generator(lua_State *L) {
 
 	Sci_TextToFind ft = { {0,0}, 0, {0,0} };
 	ft.chrg.cpMin = searchPos;
-	ft.chrg.cpMax = host->Send(pmo->pane, SCI_GETLENGTH, 0, 0);
+	ft.chrg.cpMax = static_cast<long>(host->Send(pmo->pane, SCI_GETLENGTH, 0, 0));
 	ft.lpstrText = const_cast<char *>(text);
 
 	if (ft.chrg.cpMax > ft.chrg.cpMin) {
-		int result = host->Send(pmo->pane, SCI_FINDTEXT, static_cast<uptr_t>(pmo->flags), reinterpret_cast<sptr_t>(&ft));
+		sptr_t result = host->Send(pmo->pane, SCI_FINDTEXT, static_cast<uptr_t>(pmo->flags), reinterpret_cast<sptr_t>(&ft));
 		if (result >= 0) {
-			pmo->startPos = ft.chrgText.cpMin;
-			pmo->endPos = pmo->endPosOrig = ft.chrgText.cpMax;
+			pmo->startPos = static_cast<int>(ft.chrgText.cpMin);
+			pmo->endPos = pmo->endPosOrig = static_cast<int>(ft.chrgText.cpMax);
 			lua_pushvalue(L, 2);
 			return 1;
 		}
@@ -908,7 +902,6 @@ static bool call_function(lua_State *L, int nargs, bool ignoreFunctionReturnValu
 	}
 	return handled;
 }
-
 //!-start-[macro] [OnSendEditor]
 static const char *call_sfunction(lua_State *L, int nargs, bool ignoreFunctionReturnValue=false) {
 	const char *handled = NULL;
@@ -997,7 +990,6 @@ static bool CallNamedFunction(const char *name, int numberArg, const char *strin
 	}
 	return handled;
 }
-
 //!-start-[macro]
 static bool CallNamedFunction(const char *name, const char *stringArg, const char *stringArg2) {
 	bool handled = false;
@@ -1014,7 +1006,6 @@ static bool CallNamedFunction(const char *name, const char *stringArg, const cha
 	return handled;
 }
 //!-end-[macro]
-
 //!-start-[OnMenuCommand]
 static bool CallNamedFunction(const char *name, int numberArg, int numberArg2) {
 	bool handled = false;
@@ -1031,7 +1022,6 @@ static bool CallNamedFunction(const char *name, int numberArg, int numberArg2) {
 	return handled;
 }
 //!-end-[OnMenuCommand]
-
 //!-start-[OnSendEditor]
 static const char *CallNamedFunction(const char *name, unsigned int numberArg, unsigned int numberArg2, const char *stringArg) {
 	const char *handled = NULL;
@@ -1125,7 +1115,7 @@ static int iface_function_helper(lua_State *L, const IFaceFunction &func) {
 	}
 
 	if (needStringResult) {
-		int stringResultLen = host->Send(p, func.value, params[0], 0);
+		sptr_t stringResultLen = host->Send(p, func.value, params[0], 0);
 		if (stringResultLen > 0) {
 			// not all string result methods are guaranteed to add a null terminator
 			stringResult = new char[stringResultLen+1];
@@ -1151,7 +1141,7 @@ static int iface_function_helper(lua_State *L, const IFaceFunction &func) {
 	// - numeric return type gets returned to lua as a number (following the stringresult)
 	// - other return types e.g. void get dropped.
 
-	int result = host->Send(p, func.value, params[0], params[1]);
+	sptr_t result = host->Send(p, func.value, params[0], params[1]);
 
 	int resultCount = 0;
 
@@ -1162,10 +1152,10 @@ static int iface_function_helper(lua_State *L, const IFaceFunction &func) {
 	}
 
 	if (func.returnType == iface_bool) {
-		lua_pushboolean(L, result);
+		lua_pushboolean(L, static_cast<int>(result));
 		resultCount++;
 	} else if (IFaceTypeIsNumeric(func.returnType)) {
-		lua_pushnumber(L, result);
+		lua_pushnumber(L, static_cast<int>(result));
 		resultCount++;
 	}
 
@@ -1394,7 +1384,6 @@ void push_pane_object(lua_State *L, ExtensionAPI::Pane p) {
 		lua_setfield(L, -2, "remove");
 		lua_pushcfunction(L, cf_pane_append);
 		lua_setfield(L, -2, "append");
-
 //!-start-[EncodingToLua]
 		lua_pushcfunction(luaState, cf_pane_get_codepage);
 		lua_setfield(luaState, -2, "codepage");
@@ -1499,7 +1488,6 @@ void PublishGlobalBufferData() {
 	}
 	lua_rawset(luaState, LUA_GLOBALSINDEX);
 }
-
 static int cf_editor_reload_startup_script(lua_State*); //!-add-[StartupScriptReload]
 
 static bool InitGlobalScope(bool checkProperties, bool forceReload = false) {
@@ -1576,7 +1564,7 @@ static bool InitGlobalScope(bool checkProperties, bool forceReload = false) {
 	}
 
 	// ...register standard libraries
-	//! luaL_openlibs(luaState);
+//!	luaL_openlibs(luaState);
 	lua_utf8_register_libs(luaState); //!-change-[EncodingToLua]
 
 	lua_register(luaState, "_ALERT", cf_global_print);
@@ -1628,35 +1616,29 @@ static bool InitGlobalScope(bool checkProperties, bool forceReload = false) {
 
 	lua_pushcfunction(luaState, cf_scite_menu_command);
 	lua_setfield(luaState, -2, "MenuCommand");
-
-	//!-start-[CheckMenus]
+//!-start-[CheckMenus]
 	lua_pushcfunction(luaState, cf_scite_check_menus);
 	lua_setfield(luaState, -2, "CheckMenus");
-	//!-end-[CheckMenus]
+//!-end-[CheckMenus]
 
 	lua_pushcfunction(luaState, cf_scite_update_status_bar);
 	lua_setfield(luaState, -2, "UpdateStatusBar");
-
 //!-start-[Perform]
 	lua_pushcfunction(luaState, cf_scite_perform);
 	lua_setfield(luaState, -2, "Perform");
 //!-end-[Perform]
-
-//!-begin-[InsertAbbreviation]
+//!-start-[InsertAbbreviation]
 	lua_pushcfunction(luaState, cf_editor_insert_abbrev);
 	lua_setfield(luaState, -2, "InsertAbbreviation");
 //!-end-[InsertAbbreviation]
-
 //!-start-[ParametersDialogFromLua]
 	lua_pushcfunction(luaState, cf_scite_show_parameters_dialog);
 	lua_setfield(luaState, -2, "ShowParametersDialog");
 //!-end-[ParametersDialogFromLua]
-
 //!-start-[ReloadStartupScript]
 	lua_pushcfunction(luaState, cf_editor_reload_startup_script);
 	lua_setfield(luaState, -2, "ReloadStartupScript");
 //!-end-[ReloadStartupScript]
-
 //!-start-[LocalizationFromLua]
 	lua_pushcfunction(luaState, cf_editor_get_translation);
 	lua_setfield(luaState, -2, "GetTranslation");
@@ -2250,7 +2232,7 @@ bool LuaExtension::OnStyle(unsigned int startPos, int lengthDoc, int initStyle, 
 			sc.lengthDoc = lengthDoc;
 			sc.initStyle = initStyle;
 			sc.styler = styler;
-			sc.codePage = host->Send(ExtensionAPI::paneEditor, SCI_GETCODEPAGE);
+			sc.codePage = static_cast<int>(host->Send(ExtensionAPI::paneEditor, SCI_GETCODEPAGE));
 
 			lua_newtable(luaState);
 
@@ -2327,7 +2309,6 @@ bool LuaExtension::OnDoubleClick(int modifiers) {
 	return handled;
 }
 //!-end-[OnDoubleClick]
-
 //!-start-[OnClick]
 bool LuaExtension::OnClick(int modifiers) {
 	bool handled = false;
@@ -2345,7 +2326,6 @@ bool LuaExtension::OnClick(int modifiers) {
 	return handled;
 }
 //!-end-[OnClick]
-
 //!-start-[OnHotSpotReleaseClick]
 bool LuaExtension::OnHotSpotReleaseClick(int modifiers) {
 	bool handled = false;
@@ -2361,7 +2341,6 @@ bool LuaExtension::OnHotSpotReleaseClick(int modifiers) {
 	return handled;
 }
 //!-end-[OnHotSpotReleaseClick]
-
 //!-start-[OnMouseButtonUp]
 bool LuaExtension::OnMouseButtonUp(int modifiers) {
 	bool handled = false;
@@ -2385,6 +2364,7 @@ bool LuaExtension::OnUpdateUI() {
 bool LuaExtension::OnMarginClick() {
 	return CallNamedFunction("OnMarginClick");
 }
+
 /*!
 bool LuaExtension::OnUserListSelection(int listType, const char *selection) {
 	return CallNamedFunction("OnUserListSelection", listType, selection);
@@ -2394,9 +2374,8 @@ bool LuaExtension::OnUserListSelection(int listType, const char *selection, int 
 	return CallNamedFunction("OnUserListSelection", listType, selection, id) != NULL;
 }
 //!-end-[UserListItemID]
-
-//! bool LuaExtension::OnKey(int keyval, int modifiers) {
-bool LuaExtension::OnKey(int keyval, int modifiers, char ch) { //!-chage-[OnKey]
+//!bool LuaExtension::OnKey(int keyval, int modifiers) {
+bool LuaExtension::OnKey(int keyval, int modifiers, char ch) { //!-change-[OnKey]
 	bool handled = false;
 	if (luaState) {
 		lua_getglobal(luaState, "OnKey");
@@ -2425,19 +2404,16 @@ bool LuaExtension::OnDwellStart(int pos, const char *word) {
 bool LuaExtension::OnClose(const char *filename) {
 	return CallNamedFunction("OnClose", filename);
 }
-
 //!-start-[macro]
 bool LuaExtension::OnMacro(const char *p, const char *q) {
 	return CallNamedFunction("OnMacro", p, q);
 }
 //!-end-[macro]
-
 //!-start-[OnMenuCommand]
 bool LuaExtension::OnMenuCommand(int cmd, int source) {
 	return CallNamedFunction("OnMenuCommand", cmd, source);
 }
 //!-end-[OnMenuCommand]
-
 //!-start-[OnSendEditor]
 const char *LuaExtension::OnSendEditor(unsigned int msg, unsigned int wp, const char *lp) {
 	return CallNamedFunction("OnSendEditor", msg, wp, lp);
@@ -2447,7 +2423,6 @@ const char *LuaExtension::OnSendEditor(unsigned int msg, unsigned int wp, long l
 	return CallNamedFunction("OnSendEditor", msg, wp, lp);
 }
 //!-end-[OnSendEditor]
-
 //!-start-[StartupScriptReload]
 static int cf_editor_reload_startup_script(lua_State*) {
 	InitGlobalScope(false, true);

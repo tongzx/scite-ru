@@ -63,7 +63,7 @@ public:
 	virtual bool OnSavePointLeft();
 	virtual bool OnStyle(unsigned int, int, int, StyleWriter *);
 //!	virtual bool OnDoubleClick();
-	virtual bool OnDoubleClick(int); //!-add-[OnDoubleClick]
+	virtual bool OnDoubleClick(int); //!-change-[OnDoubleClick]
 	virtual bool OnClick(int); //!-add-[OnClick]
 	virtual bool OnMouseButtonUp(int); //!-add-[OnMouseButtonUp]
 	virtual bool OnHotSpotReleaseClick(int); //!-add-[OnHotSpotReleaseClick]
@@ -79,7 +79,6 @@ public:
 	virtual bool OnKey(int, int, char); //!-change-[OnKey]
 	virtual bool OnDwellStart(int, const char *);
 	virtual bool OnClose(const char *);
-
 	virtual bool OnMenuCommand(int, int); //!-add-[OnMenuCommand]
 	virtual const char *OnSendEditor(unsigned int, unsigned int, const char *); //!-add-[OnSendEditor]
 	virtual const char *OnSendEditor(unsigned int, unsigned int, long); //!-add-[OnSendEditor]

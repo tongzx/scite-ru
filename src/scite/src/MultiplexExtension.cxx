@@ -199,7 +199,6 @@ bool MultiplexExtension::OnDoubleClick(int modifiers) {
 	return handled;
 }
 //!-end-[OnDoubleClick]
-
 //!-start-[OnClick]
 bool MultiplexExtension::OnClick(int modifiers) {
 	bool handled = false;
@@ -209,7 +208,6 @@ bool MultiplexExtension::OnClick(int modifiers) {
 		return handled;
 }
 //!-end-[OnClick]
-
 //!-start-[OnHotSpotReleaseClick]
 bool MultiplexExtension::OnHotSpotReleaseClick(int modifiers) {
 	bool handled = false;
@@ -219,7 +217,6 @@ bool MultiplexExtension::OnHotSpotReleaseClick(int modifiers) {
 		return handled;
 }
 //!-end-[OnHotSpotReleaseClick]
-
 //!-start-[OnMouseButtonUp]
 bool MultiplexExtension::OnMouseButtonUp(int modifiers) {
 	bool handled = false;
@@ -254,6 +251,7 @@ bool MultiplexExtension::OnMacro(const char *p, const char *q) {
 	return handled;
 }
 
+
 //!bool MultiplexExtension::OnUserListSelection(int listType, const char *selection) {
 bool MultiplexExtension::OnUserListSelection(int listType, const char *selection, int id) { //!-change-[UserListItemID]
 	bool handled = false;
@@ -270,7 +268,7 @@ bool MultiplexExtension::SendProperty(const char *prop) {
 	return false;
 }
 
-/*
+/*!
 bool MultiplexExtension::OnKey(int keyval, int modifiers) {
 	bool handled = false;
 	for (int i = 0; i < extensionCount; ++i)
@@ -310,7 +308,6 @@ bool MultiplexExtension::OnMenuCommand(int cmd, int source) {
 	return handled;
 }
 //!-end-[OnMenuCommand]
-
 //!-start-[OnSendEditor]
 const char *MultiplexExtension::OnSendEditor(unsigned int msg, unsigned int wp, const char *lp) {
 	const char *result = 0;

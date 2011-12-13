@@ -114,6 +114,7 @@ NSString *SCIUpdateUINotification = @"SCIUpdateUI";
   [super resetCursorRects];
   
   // We only have one cursor rect: our bounds.
+  NSRect bounds = [self bounds];
   [self addCursorRect: [self bounds] cursor: mCurrentCursor];
   [mCurrentCursor setOnMouseEntered: YES];
 }
@@ -238,15 +239,9 @@ NSString *SCIUpdateUINotification = @"SCIUpdateUI";
  */
 - (void) insertText: (id) aString
 {
-	// Remove any previously marked text first.
-	[self removeMarkedText];
-	NSString* newText = @"";
-	if ([aString isKindOfClass:[NSString class]])
-		newText = (NSString*) aString;
-	else if ([aString isKindOfClass:[NSAttributedString class]])
-		newText = (NSString*) [aString string];
-	
-	mOwner.backend->InsertText(newText);
+  // Remove any previously marked text first.
+  [self removeMarkedText];
+  mOwner.backend->InsertText((NSString*) aString);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -279,12 +274,7 @@ NSString *SCIUpdateUINotification = @"SCIUpdateUI";
 {
   // Since we did not return any valid attribute for marked text (see validAttributesForMarkedText)
   // we can safely assume the passed in text is an NSString instance.
-	NSString* newText = @"";
-	if ([aString isKindOfClass:[NSString class]])
-		newText = (NSString*) aString;
-	else if ([aString isKindOfClass:[NSAttributedString class]])
-		newText = (NSString*) [aString string];
-
+  NSString* newText = (NSString*) aString;
   int currentPosition = [mOwner getGeneralProperty: SCI_GETCURRENTPOS parameter: 0];
 
   // Replace marked text if there is one.
@@ -373,8 +363,7 @@ NSString *SCIUpdateUINotification = @"SCIUpdateUI";
  */
 - (void) keyDown: (NSEvent *) theEvent
 {
-  if (mMarkedTextRange.length == 0)
-	mOwner.backend->KeyboardInput(theEvent);
+  mOwner.backend->KeyboardInput(theEvent);
   NSArray* events = [NSArray arrayWithObject: theEvent];
   [self interpretKeyEvents: events];
 }
@@ -648,8 +637,6 @@ NSString *SCIUpdateUINotification = @"SCIUpdateUI";
       [self setGeneralProperty: SCI_SETZOOM value: zoom];
       break;
     }
-    default:
-      break;
   };
 }
 
@@ -790,9 +777,9 @@ static void notification(intptr_t windowid, unsigned int iMessage, uintptr_t wPa
     
     // Setup a special indicator used in the editor to provide visual feedback for 
     // input composition, depending on language, keyboard etc.
-    [self setColorProperty: SCI_INDICSETFORE parameter: INPUT_INDICATOR fromHTML: @"#FF0000"];
+    [self setColorProperty: SCI_INDICSETFORE parameter: INPUT_INDICATOR fromHTML: @"#FF9A00"];
     [self setGeneralProperty: SCI_INDICSETUNDER parameter: INPUT_INDICATOR value: 1];
-    [self setGeneralProperty: SCI_INDICSETSTYLE parameter: INPUT_INDICATOR value: INDIC_PLAIN];
+    [self setGeneralProperty: SCI_INDICSETSTYLE parameter: INPUT_INDICATOR value: INDIC_ROUNDBOX];
     [self setGeneralProperty: SCI_INDICSETALPHA parameter: INPUT_INDICATOR value: 100];
   }
   return self;
@@ -1375,17 +1362,6 @@ static void notification(intptr_t windowid, unsigned int iMessage, uintptr_t wPa
   const char* result = (const char*) mBackend->WndProc(SCI_SETPROPERTY, (sptr_t) rawName, 0);
   return [NSString stringWithUTF8String: result];
 }
-
-//--------------------------------------------------------------------------------------------------
-
-/**
- * Sets the notification callback
- */
-- (void) registerNotifyCallback: (intptr_t) windowid value: (Scintilla::SciNotifyFunc) callback
-{
-	mBackend->RegisterNotifyCallback(windowid, callback);
-}
-
 
 //--------------------------------------------------------------------------------------------------
 

@@ -138,5 +138,4 @@ protected:
 	size_t m_nBufSize;
 	bool m_bFirstWrite;
 };
-
-int Has_UTF8_Char(unsigned char *buf,int size);//!-add-[utf8.auto.check]
+int Has_UTF8_Char(unsigned char *buf,int size); //!-add-[utf8.auto.check]

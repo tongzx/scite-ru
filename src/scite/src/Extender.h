@@ -65,7 +65,7 @@ public:
 		return false;
 	}
 //!	virtual bool OnDoubleClick() { return false; }
-	virtual bool OnDoubleClick(int) { return false; } //!-add-[OnDoubleClick]
+	virtual bool OnDoubleClick(int) { return false; } //!-change-[OnDoubleClick]
 	virtual bool OnClick(int) { return false; } //!-add-[OnClick]
 	virtual bool OnMouseButtonUp(int) { return false; } //!-add-[OnMouseButtonUp]
 	virtual bool OnHotSpotReleaseClick(int) { return false; } //!-add-[OnHotSpotReleaseClick]
@@ -82,7 +82,6 @@ public:
 
 //!	virtual bool OnKey(int, int) { return false; }
 	virtual bool OnKey(int, int, char) { return false; } //!-change-[OnKey]
-
 	virtual bool OnDwellStart(int, const char *) { return false; }
 	virtual bool OnClose(const char *) { return false; }
 };
