@@ -1,7 +1,7 @@
 --[[-------------------------------------------------
 Open_Selected_Filename.lua
 Authors: mozers™, VladVRO
-Version: 1.7.0
+Version: 1.7.1
 -----------------------------------------------------
 Замена команды "Открыть выделенный файл"
 В отличии от встроенной команды SciTE, понимающей только явно заданный путь и относительные пути
@@ -126,7 +126,7 @@ local function OpenSelectedFilename(text, shift)
 	if #text < open_selected_filename_minlength then return end
 	text = text:gsub('/', '\\')
 	local filename = GetOpenFilePath(text, shift) or text
-	if not filename:find('^%a:\\') then
+	if not (filename:find('^%a:\\') or filename:find('\\\\')) then
 		filename = props['FileDir']..'\\'..filename
 	end
 	if shell.fileexists(filename) then
