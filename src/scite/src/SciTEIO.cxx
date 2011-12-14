@@ -267,6 +267,10 @@ void SciTEBase::DiscoverIndentSetting() {
 }
 
 void SciTEBase::OpenFile(long fileSize, bool suppressMessage, bool asynchronous) {
+//!-start-[warning.couldnotopenfile.disable]
+    if (!suppressMessage && props.GetInt("warning.couldnotopenfile.disable") == 1)
+        suppressMessage = true;
+//!-end-[warning.couldnotopenfile.disable]
 	if (CurrentBuffer()->pFileWorker) {
 		// Already performing an asynchronous load or save so do not restart load
 		if (!suppressMessage) {
@@ -386,8 +390,6 @@ void SciTEBase::CompleteOpen(OpenCompletion oc) {
 			SetIndentSettings();
 		}
 		props.SetInteger("editor.unicode.mode", CurrentBuffer()->unicodeMode + IDM_ENCODING_DEFAULT); //!-add-[EditorUnicodeMode]
-		if (props.GetInt("warning.couldnotopenfile.disable") != 1) { //!-add-[warning.couldnotopenfile.disable]
-		} //!-add-[warning.couldnotopenfile.disable]
 	}
 
 	if (oc != ocSynchronous) {

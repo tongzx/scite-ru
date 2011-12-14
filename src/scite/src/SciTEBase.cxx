@@ -376,12 +376,12 @@ int SciTEBase::ScintillaWindowEditor::Call( unsigned int msg, uptr_t wParam, spt
 		return reinterpret_cast<sptr_t>(result);
 	} else {
 //>!-start-[ReadOnlyTabMarker]
-		if (msg == SCI_SETREADONLY) {
+/*		if (msg == SCI_SETREADONLY) {
 			if (pBase->buffers.buffers[pBase->buffers.Current()].ROMarker != NULL) {
 				delete[] pBase->buffers.buffers[pBase->buffers.Current()].ROMarker;
 				pBase->buffers.buffers[pBase->buffers.Current()].ROMarker = NULL;
 			}
-			if (wParam) {
+            if (wParam) {
 				GUI::gui_string mark = GUI::StringFromUTF8( pBase->props.Get("tabbar.readonly.marker").c_str() );
 				if (mark.length())
 				{
@@ -394,7 +394,7 @@ int SciTEBase::ScintillaWindowEditor::Call( unsigned int msg, uptr_t wParam, spt
 					pBase->buffers.buffers[pBase->buffers.Current()].ROMarker = ROMarker;
 				}
 			}
-		}
+		}*/
 //>!-end-[ReadOnlyTabMarker]
 		return ScintillaWindow::Call( msg, wParam, lParam);
 	}
