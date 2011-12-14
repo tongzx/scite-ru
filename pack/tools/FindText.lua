@@ -1,6 +1,6 @@
---[[--------------------------------------------------
-FindText v7.4.1
-Авторы: mozers™, mimir, Алексей, codewarlock1101, VladVRO
+--[==[--------------------------------------------------
+FindText v8.0.0
+Авторы: mozers™, mimir, Алексей, codewarlock1101, VladVRO, Tymur Gubayev
 
 * Если текст выделен - ищется выделенная подстрока
 * Если текст не выделен - ищется текущее слово
@@ -15,7 +15,7 @@ FindText v7.4.1
 -----------------------------------------------
 Для подключения добавьте в свой файл .properties следующие строки:
 	command.name.130.*=Find String/Word
-	command.130.*=dofile $(SciteDefaultHome)\tools\FindText.lua
+	command.130.*=dostring loadfile([[$(SciteDefaultHome)\tools\FindText.lua]])($(findtext.first.mark))
 	command.mode.130.*=subsystem:lua,savebefore:no
 	command.shortcut.130.*=Ctrl+Alt+F
 
@@ -36,16 +36,17 @@ FindText v7.4.1
 	# Поиск с учетом регистра
 	findtext.matchcase=1
 	# Отмечать букмарками найденные строки
-	find.bookmark=1
+	findtext.bookmarks=1
 	# Выводить все найденные строки в консоль
 	findtext.output=1
 	# Показывать подсказку по горячим клавишам
 	findtext.tutorial=1
---]]----------------------------------------------------
+--]==]----------------------------------------------------
 
-local function uprint(str)
-	print(str:from_utf8(output:codepage()))
-end
+--- Gets translation of current string in proper encoding for output pane
+local L = function ( str )
+	return scite.GetTranslation( str ):from_utf8( props["output.code.page"] )
+end -- L
 
 local firstNum = ifnil(tonumber(props['findtext.first.mark']),31)
 if firstNum < 1 or firstNum > 31 then firstNum = 31 end
@@ -53,32 +54,31 @@ if firstNum < 1 or firstNum > 31 then firstNum = 31 end
 local sText = props['CurrentSelection']
 local flag0 = 0
 if (sText == '') then
-	sText = props['CurrentWord']
+	sText = GetCurrentWord()
 	flag0 = SCFIND_WHOLEWORD
 end
 local flag1 = 0
 if props['findtext.matchcase'] == '1' then flag1 = SCFIND_MATCHCASE end
-local bookmark = props['find.bookmark'] == '1'
+local bookmark = props['findtext.bookmarks'] == '1'
 local isOutput = props['findtext.output'] == '1'
 local isTutorial = props['findtext.tutorial'] == '1'
 
-local current_mark_number = scite.SendEditor(SCI_GETINDICATORCURRENT)
+local current_mark_number = ... or 31
 if current_mark_number < firstNum then current_mark_number = firstNum end
-if sText~='' then
-	sText = sText:from_utf8(editor:codepage())
+if sText ~= '' then
 	if bookmark then editor:MarkerDeleteAll(1) end
 	local msg
 	if isOutput then
 		if flag0 == SCFIND_WHOLEWORD then
-			msg = '> '..scite.GetTranslation('Search for current word')..': "'
+			msg = '> '..L'Search for current word'..': "'
 		else
-			msg = '> '..scite.GetTranslation('Search for selected text')..': "'
+			msg = '> '..L'Search for selected text'..': "'
 		end
 		props['lexer.errorlist.findtitle.begin'] = msg
-		scite.SendOutput(SCI_SETPROPERTY, 'lexer.errorlist.findtitle.begin', msg:from_utf8(output:codepage()))
+		scite.SendOutput(SCI_SETPROPERTY, 'lexer.errorlist.findtitle.begin', msg)
 		props['lexer.errorlist.findtitle.end'] = '"'
 		scite.SendOutput(SCI_SETPROPERTY, 'lexer.errorlist.findtitle.end', '"')
-		uprint(msg .. sText:to_utf8(editor:codepage()) .. '"')
+		print(msg..sText:to_utf8(props["editor.code.page"]):from_utf8(props["output.code.page"])..'"')
 	end
 	local s,e = editor:findtext(sText, flag0 + flag1, 0)
 	local count = 0
@@ -90,41 +90,42 @@ if sText~='' then
 			count = count + 1
 			if l ~= m then
 				if bookmark then editor:MarkerAdd(l,1) end
-				local str = string.gsub(editor:GetLine(l),'%s+',' '):to_utf8(editor:codepage())
+				local str = string.gsub(' '..editor:GetLine(l),'%s+',' '):to_utf8(props["editor.code.page"]):from_utf8(props["output.code.page"])
 				if isOutput then
-					uprint('./'..props['FileNameExt']..':'..(l + 1)..':\t'..str)
+					print('./'..props['FileNameExt']..':'..(l + 1)..':\t'..str)
 				end
 				m = l
 			end
 			s,e = editor:findtext(sText, flag0 + flag1, e+1)
 		end
 		if isOutput then
-			uprint('> '..string.gsub(scite.GetTranslation('Found: @ results'), '@', count))
+			print('> '..string.gsub(L('Found: @ results'), '@', count))
 			if isTutorial then
-				uprint('F3 (Shift+F3) - '..scite.GetTranslation('Jump by markers')..
-					'\nF4 (Shift+F4) - '..scite.GetTranslation('Jump by lines')..
-					'\nCtrl+Alt+C - '..scite.GetTranslation('Erase all markers'))
+				print('F3 (Shift+F3) - '..L'Jump by markers' )
+				print('F4 (Shift+F4) - '..L'Jump by lines'   )
+				print('Ctrl+Alt+C - '..L'Erase all markers'  )
 			end
 		end
 	else
-		uprint('> '..string.gsub(scite.GetTranslation("Can't find [@]!"), '@', sText))
+		print('> '..string.gsub(L"Can't find [@]!", '@', sText))
 	end
 	current_mark_number = current_mark_number + 1
 	if current_mark_number > 31 then current_mark_number = firstNum end
-	scite.SendEditor(SCI_SETINDICATORCURRENT, current_mark_number)
+	-- scite.SendEditor(SCI_SETINDICATORCURRENT, current_mark_number)
+	props['command.80.*']=[=[dostring loadfile([[$(SciteDefaultHome)\tools\FindText.lua]])]=]..'('..current_mark_number..')'
 		-- обеспечиваем возможность перехода по вхождениям с помощью F3 (Shift+F3)
 		if flag0 == SCFIND_WHOLEWORD then
 			editor:GotoPos(editor:WordStartPosition(editor.CurrentPos))
 		else
 			editor:GotoPos(editor.SelectionStart)
 		end
-		scite.Perform('find:'..sText:to_utf8(editor:codepage()))
+		scite.Perform('find:'..sText)
 else
 	EditorClearMarks()
 	if bookmark then editor:MarkerDeleteAll(1) end
 	scite.SendEditor(SCI_SETINDICATORCURRENT, firstNum)
-	uprint('> '..scite.GetTranslation('Select text for search! (search for selection)'))
-	uprint('> '..scite.GetTranslation('Or put cursor on the word for search. (search for word)'))
-	uprint('> '..scite.GetTranslation('You can also select text in console.'))
+	print('> '..L'Select text for search! (search for selection)' )
+	print('> '..L'Or put cursor on the word for search. (search for word)' )
+	print('> '..L'You can also select text in console.' )
 end
 --~ editor:CharRight() editor:CharLeft() --Снимает выделение с исходного текста
