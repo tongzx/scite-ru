@@ -372,6 +372,24 @@
 	<td>Ben Fisher</td>
 	<td>Don Gobin</td>
 	<td>John Yeung</td>
+      </tr><tr>
+	<td>Adobe</td>
+	<td>Elizabeth A. Irizarry</td>
+	<td>Mike Schroeder</td>
+	<td>Morten MacFly</td>
+      </tr><tr>
+	<td>Jaime Gimeno</td>
+	<td>Thomas Linder Puls</td>
+	<td>Artyom Zuikov</td>
+	<td>Gerrit</td>
+      </tr><tr>
+	<td>Occam's Razor</td>
+	<td>Ben Bluemel</td>
+	<td>David Wolfendale</td>
+	<td>Chris Angelico</td>
+      </tr><tr>
+	<td>Marat Dukhan</td>
+	<td>Stefan Weil</td>
     </tr>
     </table>
 	<p>
@@ -386,139 +404,608 @@
 	</ul>
 
     <h3>
+       <a href="http://prdownloads.sourceforge.net/scintilla/scite302.zip?download">Release 3.0.2</a>
+    </h3>
+    <ul>
+	<li>
+	Released 9 December 2011.
+	</li>
+	<li>
+	SciTE saves files in the background without blocking the user interface.
+	</li>
+	<li>
+	Printing implemented in SciTE on GTK+ 3.x.
+	</li>
+	<li>
+	ILoader interface for background loading finalised and documented.
+	</li>
+	<li>
+	CoffeeScript lexer added.
+	</li>
+	<li>
+	C++ lexer fixes crash with "#if defined( XXX 1".
+	</li>
+	<li>
+	Crash with Direct2D on Windows fixed.
+	</li>
+	<li>
+	Backspace removing protected range fixed.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3445911&group_id=2439">Bug #3445911.</a>
+	</li>
+	<li>
+	Cursor setting failure on Windows when screen saver on fixed.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3438780&group_id=2439">Bug #3438780.</a>
+	</li>
+	<li>
+	SciTE on GTK+ hang fixed with -open:file option.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3441980&group_id=2439">Bug #3441980.</a>
+	</li>
+	<li>
+	Failure to evaluate shbang fixed in SciTE.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3441801&group_id=2439">Bug #3441801.</a>
+	</li>
+	<li>
+	SciTE failure to treat files starting with "&lt;?xml" as XML fixed.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3440718&group_id=2439">Bug #3440718.</a>
+	</li>
+	<li>
+	Made untitled tab saveable when created by closing all files.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3440244&group_id=2439">Bug #3440244.</a>
+	</li>
+	<li>
+	SciTE crash fixed when using Scintillua.
+	</li>
+	<li>
+	SciTE revert command fixed so that undo works on individual actions instead of undoing to revert point.
+	</li>
+	<li>
+	Focus loss in SciTE when opening a recent file fixed.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3440142&group_id=2439">Bug #3440142.</a>
+	</li>
+	<li>
+	Fixed SciTE SelLength property to measure characters instead of bytes.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3283519&group_id=2439">Bug #3283519.</a>
+	</li>
+    </ul>
+
+    <h3>
+       <a href="http://prdownloads.sourceforge.net/scintilla/scite301.zip?download">Release 3.0.1</a>
+    </h3>
+    <ul>
+	<li>
+	Версия 3.0.1 от 15 ноября 2011 г.
+	</li>
+	<li>
+	SciTE в Windows теперь выполняет скрипты Lua непосредственно в основном процессе вместо того, чтобы стартовать их во вторичном процессе, а затем переносить обратно в основной процесс.
+	</li>
+	<li>
+	Подсвечивается "else" в качестве ключевого слова для TCL аналогично другим языкам.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=1836954&group_id=2439">Bug #1836954.</a>
+	</li>
+	<li>
+	Исправлены проблемы с настройкой шрифтов для списков автозавершения в Windows, когда дескриптор шрифта был скопирован, а затем удалён при использовании системного шрифта по умолчанию.
+	</li>
+	<li>
+	Исправлен размер шрифта, используемого в Windows для методов ввода азиатских языков, который иногда приводил к потере элементов редактора метода ввода (IME).
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3436753&group_id=2439">Bug #3436753.</a>
+	</li>
+	<li>
+	Исправлена отрисовка полигона в Windows, чтобы символы свёртки не исчезали.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3433558&group_id=2439">Bug #3433558.</a>
+	</li>
+	<li>
+	Изменена отрисовка фона в GTK+ при позиционировании дробных символов, аналогично OS X, что позволяет избежать нечётких линий на границах лексем.
+	</li>
+	<li>
+	Обеспечивается размещение растровых изображений перед отображением, чтобы исключить фатальный сбой, когда Scintilla выводила изображение без общих вызовов инициализации.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3432354&group_id=2439">Bug #3432354.</a>
+	</li>
+	<li>
+	Исправлена ошибка SciTE в Windows, вызывающая неправильное положение каретки после добавления отступов в выделении.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3433433&group_id=2439">Bug #3433433.</a>
+	</li>
+	<li>
+	Исправлено сохранение сессии SciTE для хранения позиции в буфере соответствующего буфера.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3434372&group_id=2439">Bug #3434372.</a>
+	</li>
+	<li>
+	Исправлена утечка объектов документа в SciTE.
+	</li>
+	<li>
+	Распознаются символы '?' и '%' в URL-адресах команды Открыть выделенный файл в SciTE.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3429409&group_id=2439">Bug #3429409.</a>
+	</li>
+    </ul>
+	<li>Перевод: <b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=ALeXkRU" target=_blank>ALeXkRU</a></b>
+
+    <h3>
+       <a href="http://prdownloads.sourceforge.net/scintilla/scite300.zip?download">Release 3.0.0</a>
+    </h3>
+    <ul>
+	<li>
+	Версия 3.0.0 от 1 ноября 2011 г.
+	</li>
+	<li>
+	Удалена поддержка платформы Carbon. Приложения OS X должны перейти на Cocoa.
+	</li>
+	<li>
+	В Windows Vista или новее, отображение может быть выполнено с помощью Direct2D и DirectWrite вместо GDI.
+	</li>
+	<li>
+	Библиотека Cairo теперь используется для всех изображений в GTK+. Отображение с помощью GDK удалено. 
+	</li>
+	<li>
+	Удалена поддержка вывода изображения с помощью палитр.
+	</li>
+	<li>
+	Можно выбрать дробные размеры шрифта.
+	</li>
+	<li>
+	Поддерживается использование различного веса текста (толщины) на некоторых платформах, а не только нормальный и жирный шрифт.
+	</li>
+	<li>
+	Поддерживается субпиксельный характер позиционирования.
+	</li>
+	<li>
+	SciTE загружает файлы в фоновом режиме, не блокируя пользовательский интерфейс.
+	</li>
+	<li>
+	SciTE может отображать диагностические сообщения, чередуя их с текстом файла, сразу после строки, на которую ссылается диагностическое сообщение.
+	</li>
+	<li>
+	Новые API, которые могут быть использованы для оптимизации обработки уведомлений структуры свёртки, чтобы убедиться, что все строки видимы.
+	</li>
+	<li>
+	Прокрутка оптимизирована, чтобы избегать недействительных границ блоков свёртки при перерисовке всего окна.
+	</li>
+	<li>
+	Оптимизирована SCI_MARKERNEXT.
+	</li>
+	<li>
+	Лексер C++ поддерживает строки в кавычках языка Pike при включении параметра lexer.cpp.hashquoted.strings.
+	</li>
+	<li>
+	Исправлена некорректная высота линии с аннотациями в свернутом режиме, когда есть несколько видов.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3388159&group_id=2439">Bug #3388159.</a>
+	</li>
+	<li>
+	Всплывающие сообщения могут быть показаны как выше текста, так и ниже.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3410830&group_id=2439">Bug #3410830.</a>
+	</li>
+	<li>
+	Для больших файлов SciTE проверяет только первый мегабайт при открытии новой строки.
+	</li>
+	<li>
+	В SciTE в GTK+ удалены свойство fileselector.show.hidden и соответствующий флажок, которые вызывали ошибки, и GTK+ теперь поддерживает эквивалентные функции.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3413630&group_id=2439">Bug #3413630.</a>
+	</li>
+	<li>
+	SciTE в GTK+ поддерживает мнемоники в динамических меню.
+	</li>
+	<li>
+	SciTE в GTK+ отображает домашнюю директорию пользователя в меню как "~", для сокращения.
+	</li>
+    </ul>
+	<li>Перевод: <b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=ALeXkRU" target=_blank>ALeXkRU</a></b>
+
+    <h3>
+       <a href="http://prdownloads.sourceforge.net/scintilla/scite229.zip?download">Release 2.29</a>
+    </h3>
+    <ul>
+	<li>
+	Версия 2.29 от 16 сентября 2011 г.
+	</li>
+	<li>
+	Чтобы автоматически обнаружить кодировку файла при его открытии, SciTE может запустить программу с параметром command.discover.properties.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=352439&aid=3324341&group_id=2439">Feature #3324341.</a>
+	</li>
+	<li>
+	Для отрисовки в GTK+ всегда используется Cairo.
+	</li>
+	<li>
+	Набором свойств файлов, импортированных SciTE, можно управлять с помощью параметров imports.include и imports.exclude. Оператор импорта расширен возможностью использовать "import *". Свойства файлов для некоторых языков больше не загружаются автоматически по умолчанию. Свойства файлов затрагивают avenue, baan, escript, lot, metapost и mmixal.
+	</li>
+	<li>
+	Исправлена ошибка лексера C++ с обработкой строк, когда строки слишком легко признавались raw string.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3388122&group_id=2439">Bug #3388122.</a>
+	</li>
+	<li>
+	Улучшена поддержка лексера LaTeX при работе с большинством структур и исправлены многие старые ошибки.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=1493111&group_id=2439">Bug #1493111.</a>
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=1856356&group_id=2439">Bug #1856356.</a>
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3081692&group_id=2439">Bug #3081692.</a>
+	</li>
+	<li>
+	Лексер Lua обновлен для поддержки бета-версии Lua 5.2 с обработкой переходов к метке и управляющей последовательности "\z".
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=352439&aid=3386330&group_id=2439">Feature #3386330.</a>
+	</li>
+	<li>
+	Подсвечиваются строки Perl, содержащие интерполированные переменные.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=352439&aid=3394258&group_id=2439">Feature #3394258.</a>
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3076629&group_id=2439">Bug #3076629.</a>
+	</li>
+	<li>
+	Лексер Perl обновлен для поддержки Perl 5.14.0: добавлены поддержка числовых литералов с префиксами 0X и 0B (двоичные и шестнадцатиричные числа), ключевого слова 'break' и символа "+" в прототипах подпрограмм.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=352439&aid=3388802&group_id=2439">Feature #3388802.</a>
+	</li>
+	<li>
+	В Perl исправлена ошибка строк с окончаниями CRLF.
+	</li>
+	<li>
+	В лексере Markdown исправлено изменение состояния с "_" в середине слова.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3398184&group_id=2439">Bug #3398184.</a>
+	</li>
+	<li>
+	В Cocoa восстановлена совместимость с OS X 10.5.
+	</li>
+	<li>
+	Курсор мыши изменяется вблизи начала выделения на стрелочку при прокрутке по горизонтали.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3389055&group_id=2439">Bug #3389055.</a>
+	</li>
+	<li>
+	Подсветка в конце документа, больше не увеличивается при добавлении текста.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3378718&group_id=2439">Bug #3378718.</a>
+	</li>
+	<li>
+	Исправлено слияние SparseState при проверке, если другой диапазон пуст.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3387053&group_id=2439">Bug #3387053.</a>
+	</li>
+	<li>
+	В Windows будет прокручиваться список автозавершения вместо документа при вращении колеса мыши.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=352439&aid=3403600&group_id=2439">Feature #3403600.</a>
+	</li>
+	<li>
+	SciTE выполняет более быстро опрос для завершения команды, ответ так вернется быстрее и сообщит более точное время.
+	</li>
+	<li>
+	SciTE изменяет размеры панелей пропорционально при переключении между горизонтальным и вертикальным размещением.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=352439&aid=3376784&group_id=2439">Feature #3376784.</a>
+	</li>
+	<li>
+	SciTE в GTK+ открывает несколько файлов в одном экземпляре более надежно.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3363754&group_id=2439">Bug #3363754.</a>
+	</li>
+    </ul>
+	<li>Перевод: <b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=ALeXkRU" target=_blank>ALeXkRU</a></b>
+
+    <h3>
+       <a href="http://prdownloads.sourceforge.net/scintilla/scite228.zip?download">Release 2.28</a>
+    </h3>
+    <ul>
+	<li>
+	Версия 2.28 от 1 августа 2011 г.
+	</li>
+	<li>
+	В GTK+ Cairo снова работает поддержка GTK+ версии 2.8. Требуется изменение исходного кода Scintilla, прежде чем включить GTK+ 2.22.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3322351&group_id=2439">Bug #3322351.</a>
+	</li>
+	<li>
+	Для задания боковых иконок в списках автозавершения могут быть использованы полупрозрачные изображения в формате RGBA.
+	</li>
+	<li>
+	Добавлен INDIC_DOTBOX как индикатор полупрозрачного пунктирного прямоугольника.
+	</li>
+	<li>
+	Ввод азиатского текста с использованием IME работает для GTK+ 3.x и GTK+ 2.x с Cairo.
+	</li>
+	<li>
+	В GTK+, IME работает ввод на юникод (Unicode) при нажатии Ctrl+Shift+U в Scintilla. Для SciTE нажатие Ctrl+Shift+U до сих пор выполняет перевод в верхний регистр.
+	</li>
+	<li>
+	Привязки клавиш для GTK+ на OS X обеспечивают совместимость с портом Cocoa и согласование платформ.
+	</li>
+	<li>
+	Порт Cocoa поддерживает различные кодировки, улучшает производительность прокрутки и перетаскивание изображений внешнего вида. Идентификатор (ID) элемента управления включен в уведомление WM_COMMAND. Текст может быть удален перетаскиванием в корзину. Добавлены команды клавиш ScrollToStart и ScrollToEnd для упрощения выполнения действий "в начало" (Home) и "в конец" (End) стандартного поведения OS X.
+	</li>
+	<li>
+	SciTE в GTK+ используется виджет панелей для поддержки редактирования и вывода панели вместо обычного кода. Это позволяет легко перемещать разделитель в GTK+ 3 и его появление позволяет более точно следовать соглашениям GTK+.
+	</li>
+	<li>
+	SciTE собирается и устанавливается на BSD.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3324644&group_id=2439">Bug #3324644.</a>
+	</li>
+	<li>
+	Исправлена поддержка комментариев формата Cobol.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3014850&group_id=2439">Bug #3014850.</a>
+	</li>
+	<li>
+	Синтаксис языковых блоков шаблонов Mako расширен, распознаются комментарии ##.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=352439&aid=3325178&group_id=2439">Feature #3325178.</a>
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3318818&group_id=2439">Bug #3318818.</a>
+	</li>
+	<li>
+	Свёртка шаблонов Mako в HTML исправлена.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3324563&group_id=2439">Bug #3324563.</a>
+	</li>
+	<li>
+	Лексер Python имеет lexer.python.keywords2.no.sub.identifiers опцию, чтобы избежать выделения второго набора ключевых слов после '.'.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3325333&group_id=2439">Bug #3325333.</a>
+	</li>
+	<li>
+	Исправлена ошибка свёртки Python, при которой блок не разворачивался на последней строке.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3349157&group_id=2439">Bug #3349157.</a>
+	</li>
+	<li>
+	SciTE обрабатывает лексеры LPEG так же, как лексеры скриптов, установив все 8 бит стиля.
+	</li>
+	<li>
+	Для Cocoa исправлены крах из-за неподдерживаемых вариантов шрифтов и утечки памяти для цветных объектов.
+	</li>
+	<li>
+	Диапазон ведущих байтов кодировки Shift-JIS изменен, чтобы соответствовать Windows.
+	</li>
+	<li>
+	Курсор мыши изменяется над выделением на стрелку более единообразно.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3315756&group_id=2439">Bug #3315756.</a>
+	</li>
+	<li>
+	Исправлена ошибка с аннотациями/примечаниями за концом документа.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3347268&group_id=2439">Bug #3347268.</a>
+	</li>
+	<li>
+	Исправлена неправильная отрисовка для изменения сочетания цвет фона и полупрозрачного выделения.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3377116&group_id=2439">Bug #3377116.</a>
+	</li>
+	<li>
+	Лексеры инициализируются корректно при старте в позиции, отличной от начала строки.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3377148&group_id=2439">Bug #3377148.</a>
+	</li>
+	<li>
+	Исправлено отображение подсветки свёртки в некоторых ситуациях.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3323015&group_id=2439">Bug #3323015.</a>
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3323805&group_id=2439">Bug #3323805.</a>
+	</li>
+	<li>
+	Исправлен поиск без учета регистра для случаев, когда символ свёртки использует меньше байтов, чем основные символы.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3362038&group_id=2439">Bug #3362038.</a>
+	</li>
+	<li>
+	Исправлена работа опции bookmark.alpha в SciTE.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3373907&group_id=2439">Bug #3373907.</a>
+	</li>
+    </ul>
+	<li>Перевод: <b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=ALeXkRU" target=_blank>ALeXkRU</a></b>
+
+    <h3>
+       <a href="http://prdownloads.sourceforge.net/scintilla/scite227.zip?download">Release 2.27</a>
+    </h3>
+    <ul>
+	<li>
+	Версия 2.27 от 20 июня 2011 г.
+	</li>
+	<li>
+	В последних версиях GTK+ 2.x при использовании Cairo исправлена ошибка неправильного отображения цвета.
+	</li>
+	<li>
+	В SciTE в GTK+ исправлено снижение производительности при обслуживании меню.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3315233&group_id=2439">Bug #3315233.</a>
+	</li>
+	<li>
+	Поддержка 64-битной сборки платформы Cocoa и используются только не устаревшие API. Поддерживаются азиатские методы ввода. Реализованы списки автозавершения и всплывающие подсказки. Идентификатор элемента управления используется в уведомлениях.
+	</li>
+	<li>
+	На Cocoa для прямоугольного выделения теперь используется клавиша Alt для совместимости с Apple Human Interface Guidelines и другими приложениями. Клавиша Control передаёт сообщение SCMOD_META с модифицированным битом.
+	</li>
+	<li>
+	Добавлены API для задания и получения номера идентификатора, который используется в уведомлениях.
+	</li>
+	<li>
+	Добавлен метод SCI_SETEMPTYSELECTION для задания выделения без дополнительной прокрутки или перерисовки.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=352439&aid=3314877&group_id=2439">Feature #3314877.</a>
+	</li>
+	<li>
+	Добавлены новые индикаторы. INDIC_DASH и INDIC_DOTS задают варианты подчеркивания. Индикатор INDIC_SQUIGGLELOW добавлен в качестве короткой альтернативы INDIC_SQUIGGLE для мелких шрифтов.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3314591&group_id=2439">Bug #3314591</a>
+	</li>
+	<li>
+	Граница выделения строки может быть изменена для выбора отображения строк вместо строк документа.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3312763&group_id=2439">Bug #3312763.</a>
+	</li>
+	<li>
+	В Windows в SciTE можно выполнять обратный поиск при нажатии Shift+Enter в панели или окне Найти или Заменить.
+	</li>
+	<li>
+	Лексер Matlab не работал в отдельных случаях в строках с одинарными кавычками, содержащих '\'.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=948757&group_id=2439">Bug #948757</a>
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=1755950&group_id=2439">Bug #1755950</a>
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=1888738&group_id=2439">Bug #1888738</a>
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3316852&group_id=2439">Bug #3316852.</a>
+	</li>
+	<li>
+	Лексер Verilog поддерживает сворачивание SystemVerilog и ключевые слова.
+	</li>
+	<li>
+	Исправлена утечка шрифтов.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3306156&group_id=2439">Bug #3306156.</a>
+	</li>
+	<li>
+	Автоматическая прокрутка работает в длинных перенесенных строках.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3312763&group_id=2439">Bug #3312763.</a>
+	</li>
+	<li>
+	Множественный ввод работает в случаях, когда выделение сжимается вместе.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3309906&group_id=2439">Bug #3309906.</a>
+	</li>
+	<li>
+	Свертка раскрывается при необходимости в режиме переноса слов.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3291579&group_id=2439">Bug #3291579.</a>
+	</li>
+	<li>
+	Исправлена ошибка с отображением края в неположенном месте на перенесенных строках.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3314807&group_id=2439">Bug #3314807.</a>
+	</li>
+	<li>
+	Исправлена ошибка с ненужной прокруткой для SCI_GOTOLINE.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3303406&group_id=2439">Bug #3303406.</a>
+	</li>
+	<li>
+	Исправлена ошибка, когда требовался дополнительный шаг для отмены действия SCI_CLEAR в виртуальном пространстве.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3159691&group_id=2439">Bug #3159691.</a>
+	</li>
+	<li>
+	Исправлен поиск регулярного выражения \$ на последней строке диапазона поиска.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3313746&group_id=2439">Bug #3313746.</a>
+	</li>
+	<li>
+	В SciTE улучшена производительность при переключении на вкладку с очень большим файлом.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3311421&group_id=2439">Bug #3311421.</a>
+	</li>
+	<li>
+	В Windows в SciTE расширенный поиск помнит настройки "Искать только в этом стиле".
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3313344&group_id=2439">Bug #3313344.</a>
+	</li>
+	<li>
+	В GTK+ в SciTE для открытия справки используется "xdg-open" вместо "netscape", так как "netscape" больше обычно не устанавливается.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3314377&group_id=2439">Bug #3314377.</a>
+	</li>
+	<li>
+	Скриптовые лексеры SciTE могут использовать до 256 стилей.
+	</li>
+	<li>
+	Подсветка слов в SciTE работает для слов, содержащих символы в кодировке DBCS.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3315173&group_id=2439">Bug #3315173.</a>
+	</li>
+	<li>
+	Исправлена компиляция для WxWidgets.
+	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3306156&group_id=2439">Bug #3306156.</a>
+	</li>
+    </ul>
+	<li>Перевод: <b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=ALeXkRU" target=_blank>ALeXkRU</a></b>
+
+    <h3>
        <a href="http://prdownloads.sourceforge.net/scintilla/scite226.zip?download">Release 2.26</a>
     </h3>
     <ul>
 	<li>
-	Released 25 May 2011.
+	Версия 2.26 от 25 мая 2011 г.
 	</li>
 	<li>
-	Folding margin symbols can be highlighted for the current folding block.
+	Символы границы свертки могут быть подсвечены для текущего блока.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=352439&aid=3147069&group_id=2439">Feature #3147069.</a>
 	</li>
 	<li>
-	Selected lines can be moved up or down together.
+	Выбранные строки можно перемещать вверх или вниз совместно.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=352439&aid=3304850&group_id=2439">Feature #3304850.</a>
 	</li>
 	<li>
-	SciTE can highlight all occurrences of the current word or selected text.
+	В SciTE можно подсветить все вхождения текущего слова или выделенного текста.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=352439&aid=3291636&group_id=2439">Feature #3291636.</a>
 	</li>
 	<li>
-	Experimental GTK+ 3.0 support: build with "make GTK3=1".
+	Поддержка экспериментальной версии GTK+ 3.0: компиляция с параметром "make GTK3=1".
 	</li>
 	<li>
-	INDIC_STRAIGHTBOX added. Is similar to INDIC_ROUNDBOX but without rounded corners.
+	Добавлен индикатор INDIC_STRAIGHTBOX. Аналогичен INDIC_ROUNDBOX но без закругленных углов.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3290435&group_id=2439">Bug #3290435.</a>
 	</li>
 	<li>
-	Can show brace matching and mismatching with indicators instead of text style.
-	Translucency of outline can be altered for INDIC_ROUNDBOX and INDIC_STRAIGHTBOX.
+	Можно показать совпадение и несовпадение скобок с индикаторами вместо стиля текста.
+	Прозрачность внешней линии может быть изменена для INDIC_ROUNDBOX и INDIC_STRAIGHTBOX.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=352439&aid=3290434&group_id=2439">Feature #3290434.</a>
 	</li>
 	<li>
-	SciTE can automatically indent python by examining previous line for scope-starting ':' with indent.python.colon.
+	SciTE с параметром indent.python.colon может автоматически создавать отступы Python, проверяя предыдущие строки на наличие разделителя ':'.
 	</li>
 	<li>
-	Batch file lexer allows braces '(' or ')' inside variable names.
+	Лексер пакетных файлов позволяет использовать скобки '(' или ')' внутри имен переменных.
 	</li>
 	<li>
-	The cpp lexer only recognises Vala triple quoted strings when lexer.cpp.triplequoted.strings property is set.
+	Лексер CPP распознает тройные кавычки Vala если свойству lexer.cpp.triplequoted.strings задано значение.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3239234&group_id=2439">Bug #3239234.</a>
 	</li>
 	<li>
-	Make file lexer treats a variable with a nested variable like $(f$(qx)b) as one variable.
+	Лексер Make-файлов обрабатывает переменные с вложенной переменной, например $(f$(qx)b), как одну переменную.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3298223&group_id=2439">Bug #3298223.</a>
 	</li>
 	<li>
-	Folding bug fixed for JavaScript with nested PHP.
+	Исправлена ошибка сворачивания блоков для JavaScript с вложенным PHP.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3193530&group_id=2439">Bug #3193530.</a>
 	</li>
 	<li>
-	HTML lexer styles Django's {# #} comments.
+	Лексер HTML поддерживает комментарии {# #} стиля Django.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3013798&group_id=2439">Bug #3013798.</a>
 	</li>
 	<li>
-	HTML lexer styles JavaScript regular expression correctly for /abc/i.test('abc');.
+	Лексер HTML правильно обрабатывает в вложениях JavaScript регулярное выражение /abc/i.test('abc');.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3209108&group_id=2439">Bug #3209108.</a>
 	</li>
 	<li>
-	Inno Setup Script lexer now works properly when it restarts from middle of [CODE] section.
+	Лексер сценариев Inno Setup Script теперь работает правильно, если код возобновляется с середины секции [CODE].
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3283880&group_id=2439">Bug #3283880.</a>
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3129044&group_id=2439">Bug #3129044.</a>
 	</li>
 	<li>
-	Lua lexer updated for Lua 5.2 with hexadecimal floating-point numbers and '\*' whitespace escaping in strings.
+	Лексер Lua обновлен для поддержки Lua 5.2 при работе с шестнадцатеричными числами с плавающей точкой и управляющей последовательностью '\*' с в строках.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=352439&aid=3243811&group_id=2439">Feature #3243811.</a>
 	</li>
 	<li>
-	Perl folding folds "here doc"s and adds options fold.perl.at.else and fold.perl.comment.explicit. Fold structure for Perl fixed.
+	Добавлены в Perl свёртка блоков "here doc" и опции fold.perl.at.else и fold.perl.comment.explicit. Исправлена поддержка блоков для Perl.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=352439&aid=3112671&group_id=2439">Feature #3112671.</a>
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3265401&group_id=2439">Bug #3265401.</a>
 	</li>
 	<li>
-	Python lexer supports cpdef keyword for Cython.
+	Лексер Python поддерживает ключевое слово cpdef для Cython.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3279728&group_id=2439">Bug #3279728.</a>
 	</li>
 	<li>
-	SQL folding option lexer.sql.fold.at.else renamed to fold.sql.at.else.
+	В SQL параметр свёртка lexer.sql.fold.at.else переименован в fold.sql.at.else.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3271474&group_id=2439">Bug #3271474.</a>
 	</li>
 	<li>
-	SQL lexer no longer treats ';' as terminating a comment.
+	Лексер SQL больше не воспринимает ';' как завершение комментария.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3196071&group_id=2439">Bug #3196071.</a>
 	</li>
 	<li>
-	Text drawing and measurement segmented into smaller runs to avoid platform bugs.
+	Отрисовка текста и размеры разделены на меньшие циклы, чтобы избежать ошибок платформы.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3277449&group_id=2439">Bug #3277449.</a>
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3165743&group_id=2439">Bug #3165743.</a>
 	</li>
 	<li>
-	SciTE on Windows adds temp.files.sync.load property to open dropped temporary files synchronously as they may
-	be removed before they can be opened asynchronously.
+	В SciTE в Windows добавлено свойство temp.files.sync.load, чтобы открывать сброшенные временные файлы синхронно, поскольку они могут быть удалены прежде чем будут открыты в асинхронном режиме.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3072009&group_id=2439">Bug #3072009.</a>
 	</li>
 	<li>
-	Bug fixed with indentation guides ignoring first line in SC_IV_LOOKBOTH mode.
+	Исправлена ошибка с отступами, когда игнорировалась первая строка в режиме SC_IV_LOOKBOTH.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3291317&group_id=2439">Bug #3291317.</a>
 	</li>
 	<li>
-	Bugs fixed in backward regex search.
+	Исправлены ошибки при обратном поиске регулярных выражений.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3292659&group_id=2439">Bug #3292659.</a>
 	</li>
 	<li>
-	Bugs with display of folding structure fixed for wrapped lines and where there is a fold header but no body.
+	Исправлены ошибки с отображением структуры свертки для перенесенных строк и блоков, состоящих из заголовков без тела.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3291579&group_id=2439">Bug #3291579.</a>
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3265401&group_id=2439">Bug #3265401.</a>
 	</li>
 	<li>
-	SciTE on Windows cursor changes to an arrow now when over horizontal splitter near top of window.
+	В SciTE в Windows курсор принимает вид стрелки при нахождении над горизонтальным разделителем вблизи верха окна.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3286620&group_id=2439">Bug #3286620.</a>
 	</li>
 	<li>
-	Fixed default widget size problem on GTK+.
+	Исправлена проблема с размером элементов управления окном по умолчанию в GTK+.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3267892&group_id=2439">Bug #3267892.</a>
 	</li>
 	<li>
-	Fixed font size when using Cairo on GTK+.
+	Исправлен размер шрифта при использовании библиотеки Cairo в GTK+.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3272662&group_id=2439">Bug #3272662.</a>
 	</li>
 	<li>
-	Fixed primary selection and cursor issues on GTK+ when unrealized then realized.
+	Исправлена ошибка первичного выбора и опроса курсора в GTK+, когда невыполненный потом выполнялся.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3256153&group_id=2439">Bug #3256153.</a>
 	</li>
 	<li>
-	Right click now cancels selection on GTK+ like on Windows.
+	Щелчок правой кнопки мыши теперь отменяет выделение в GTK+, как в Windows.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3235190&group_id=2439">Bug #3235190.</a>
 	</li>
 	<li>
-	SciTE on GTK+ implements z-order buffer switching like on Windows.
+	SciTE в GTK+ реализовано переключение буфера порядка наложения (z-order), как в Windows.
 	<a href="https://sourceforge.net/tracker/?func=detail&atid=102439&aid=3228384&group_id=2439">Bug #3228384.</a>
 	</li>
 	<li>
-	Improve selection position after SciTE Insert Abbreviation command when abbreviation expansion includes '|'.
+	Улучшен выбор позиции после команды SciTE "Insert Abbreviation", когда полное значение содержит '|'.
 	</li>
     </ul>
+	<li>Перевод: <b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=ALeXkRU" target=_blank>ALeXkRU</a></b>
 
     <h3>
        <a href="http://prdownloads.sourceforge.net/scintilla/scite225.zip?download">Release 2.25</a>
