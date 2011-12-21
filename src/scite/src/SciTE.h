@@ -10,8 +10,9 @@
 
 // Version numbers and dates
 //!#define VERSION_SCITE "3.0.2"
-#define VERSION_SCITE "3.0.2Ru" //!-change-[SciTE-Ru]
-#define VERSION_WORDS 3, 0, 2, 0
+#define VERSION_SCITE "3.0.2 .94Ru" //!-change-[SciTE-Ru]
+//!#define VERSION_WORDS 3, 0, 2, 0
+#define VERSION_WORDS 3, 0, 2, 94 //!-change-[SciTE-Ru]
 #define COPYRIGHT_DATES "December 1998-December 2011"
 #define COPYRIGHT_YEARS "1998-2011"
 
