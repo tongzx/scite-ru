@@ -242,17 +242,9 @@ bool SciTEWin::OpenDialog(FilePath directory, const GUI::gui_char *filter) {
 	GUI::gui_char openName[maxBufferSize]; // maximum common dialog buffer size (says mfc..)
 	openName[0] = '\0';
 
-//!-start-[no wornings]
-#if defined(_MSC_VER) && _MSC_VER < 1300
-	OPENFILENAMEW ofn = {
-	       sizeof(ofn), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-	};
-#else
-//!-end-[no wornings]
 	OPENFILENAMEW ofn = {
 	       sizeof(ofn), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 	};
-#endif //!-add-[no wornings]
 	ofn.hwndOwner = MainHWND();
 	ofn.hInstance = hInstance;
 	ofn.lpstrFile = openName;
@@ -303,17 +295,9 @@ FilePath SciTEWin::ChooseSaveName(FilePath directory, const char *title, const G
 		if (!savePath.IsUntitled()) {
 			wcscpy(saveName, savePath.AsInternal());
 		}
-//!-start-[no wornings]
-#if defined(_MSC_VER) && _MSC_VER < 1300
-		OPENFILENAMEW ofn = {
-			   sizeof(ofn), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-		};
-#else
-//!-end-[no wornings]
 		OPENFILENAMEW ofn = {
 		                       sizeof(ofn), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 		                   };
-#endif //!-add-[no wornings]
 		ofn.hwndOwner = MainHWND();
 		ofn.hInstance = hInstance;
 		ofn.lpstrFile = saveName;
@@ -392,17 +376,9 @@ void SciTEWin::SaveAsXML() {
 
 void SciTEWin::LoadSessionDialog() {
 	GUI::gui_char openName[MAX_PATH] = GUI_TEXT("");
-//!-start-[no wornings]
-#if defined(_MSC_VER) && _MSC_VER < 1300
-	OPENFILENAMEW ofn = {
-		   sizeof(ofn), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-	};
-#else
-//!-end-[no wornings]
 	OPENFILENAMEW ofn = {
 	                       sizeof(ofn), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 	                   };
-#endif //!-add-[no wornings]
 	ofn.hwndOwner = MainHWND();
 	ofn.hInstance = hInstance;
 	ofn.lpstrFile = openName;
@@ -420,17 +396,9 @@ void SciTEWin::LoadSessionDialog() {
 void SciTEWin::SaveSessionDialog() {
 	GUI::gui_char saveName[MAX_PATH] = GUI_TEXT("\0");
 	wcscpy(saveName, GUI_TEXT("SciTE.session"));
-//!-start-[no wornings]
-#if defined(_MSC_VER) && _MSC_VER < 1300
-	OPENFILENAMEW ofn = {
-		   sizeof(ofn), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-	};
-#else
-//!-end-[no wornings]
 	OPENFILENAMEW ofn = {
 			       sizeof(ofn), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 			   };
-#endif //!-add-[no wornings]
 	ofn.hwndOwner = MainHWND();
 	ofn.hInstance = hInstance;
 	ofn.lpstrDefExt = GUI_TEXT("session");

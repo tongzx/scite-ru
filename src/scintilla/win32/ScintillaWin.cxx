@@ -965,6 +965,18 @@ sptr_t ScintillaWin::WndProc(unsigned int iMessage, uptr_t wParam, sptr_t lParam
 		case WM_SYSKEYDOWN:
 		case WM_KEYDOWN: {
 			//Platform::DebugPrintf("S keydown %d %x %x %x %x\n",iMessage, wParam, lParam, ::IsKeyDown(VK_SHIFT), ::IsKeyDown(VK_CONTROL));
+//!-start-[BetterCalltips]
+                if (ct.wCallTip.Created() && Platform::IsKeyDown(VK_CONTROL) && ((wParam == VK_UP) || (wParam == VK_DOWN))) {
+                    if (wParam == VK_UP) {
+                        ct.clickPlace = 1;
+                        CallTipClick();
+                    } else if (wParam == VK_DOWN) {
+                        ct.clickPlace = 2;
+                        CallTipClick();
+                    }
+                    return ::DefWindowProc(MainHWND(), iMessage, wParam, lParam);
+                }
+//!-end-[BetterCalltips]
 				lastKeyDownConsumed = false;
 				int ret = KeyDown(KeyTranslate(wParam),
 					Platform::IsKeyDown(VK_SHIFT),

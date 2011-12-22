@@ -4238,10 +4238,10 @@ void SciTEBase::Notify(SCNotification *notification) {
 		}
 		CheckMenus();
 		SetWindowName();
-/*!
 		SetBuffersMenu();
 		break;
 
+/*!
 	case SCN_DOUBLECLICK:
 		if (extender)
 			handled = extender->OnDoubleClick();
