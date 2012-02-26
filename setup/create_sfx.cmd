@@ -11,7 +11,7 @@ CD /D "%distrib_path%"
 IF ERRORLEVEL 1 GOTO error
 
 CD /D "%cur_path%"
-%RAR% SSciTE.sfx %sfx_filename%.rar -Ztext.html -iiconc:SciBall.ico
+%RAR% SSciTE.sfx %sfx_filename%.rar -Ztext.html
 IF ERRORLEVEL 1 GOTO error
 
 DEL %sfx_filename%.rar
