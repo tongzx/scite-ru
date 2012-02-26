@@ -2213,9 +2213,9 @@ bool SciTEBase::GoMessage(int dir) { //!-change-[GoMessageImprovement]
 						}
 					}
 					if (bExists) {
+						if (!Open(messagePath, ofSynchronous)) {
 //!							return;
 							return false; //!-change-[GoMessageImprovement]
-						if (!Open(messagePath, ofSynchronous)) {
 						}
 						CheckReload();
 					}
