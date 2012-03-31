@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev, ur4ltz
-Version 1.27.11
+Version 1.27.12
 ------------------------------------------------------
   Note: Require gui.dll <http://scite-ru.googlecode.com/hg/lualib/gui/>
                lpeg.dll <http://scite-ru.googlecode.com/hg/lualib/lpeg/>
@@ -1365,6 +1365,7 @@ else
 		gui.set_panel(win_parent, sidebar_position)
 		props['sidebar.show']=1
 		OnSwitch()
+		gui.pass_focus()
 	end
 	SideBar_Hide = function()
 		gui.set_panel()
