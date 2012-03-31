@@ -151,6 +151,10 @@ void SciTEBase::SaveToRTF(FilePath saveName, int start, int end) {
 
 	StyleDefinition defaultStyle(valdefDefault);
 	defaultStyle.ParseStyleDefinition(valDefault);
+//!-start-[StyleDefault]
+	if (defaultStyle.fore == "") defaultStyle.fore = "#000000";
+	if (defaultStyle.back == "") defaultStyle.back = "#FFFFFF";
+//!-end-[StyleDefault]
 
 	delete []valDefault;
 	delete []valdefDefault;

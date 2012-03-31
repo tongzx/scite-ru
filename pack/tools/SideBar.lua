@@ -59,7 +59,7 @@ local win_height = tonumber(props['position.height']) or 600
 local sidebar_position = props['sidebar.position']=='left' and 'left' or 'right'
 
 local style = props['style.*.32']
-local colorback = style:match('back:(#%x%x%x%x%x%x)') or ''
+local colorback = style:match('back:(#%x%x%x%x%x%x)')
 local colorfore = style:match('fore:(#%x%x%x%x%x%x)') or '#000000'
 
 ----------------------------------------------------------
