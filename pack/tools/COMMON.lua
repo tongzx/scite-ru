@@ -1,5 +1,5 @@
 -- COMMON.lua
--- Version: 1.13.3
+-- Version: 1.13.4
 ---------------------------------------------------
 -- Общие функции, использующиеся во многих скриптах
 ---------------------------------------------------
@@ -325,4 +325,5 @@ AddEventHandler("OnOpen", function()
 	string.len = StringLen
 	EditorInitMarkStyles()
 	SetMarginTypeN()
+	props["pane.accessible"] = '1'
 end, 'RunOnce')

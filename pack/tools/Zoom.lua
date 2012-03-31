@@ -1,6 +1,6 @@
 --[[-------------------------------------------------
 Zoom.lua
-Version: 1.2.2
+Version: 1.2.3
 Authors: mozers™, Дмитрий Маслов
 -----------------------------------------------------
 Обработка стандартной команды Zoom
@@ -20,7 +20,9 @@ local function ChangeFontSize(zoom)
 	else
 		props["magnification"] = zoom
 		props["print.magnification"] = zoom
-		editor.PrintMagnification = zoom
+		if props["pane.accessible"] == '1' then
+			editor.PrintMagnification = zoom
+		end
 		local font_current_size = props["style.*.32"]:match("size:(%d+)")
 		props["font.current.size"] = font_current_size + zoom -- Used in statusbar
 		scite.UpdateStatusBar()
