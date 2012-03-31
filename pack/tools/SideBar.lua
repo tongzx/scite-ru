@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev, ur4ltz
-Version 1.27.12
+Version 1.27.13
 ------------------------------------------------------
   Note: Require gui.dll <http://scite-ru.googlecode.com/hg/lualib/gui/>
                lpeg.dll <http://scite-ru.googlecode.com/hg/lualib/lpeg/>
@@ -59,8 +59,8 @@ local win_height = tonumber(props['position.height']) or 600
 local sidebar_position = props['sidebar.position']=='left' and 'left' or 'right'
 
 local style = props['style.*.32']
-local colorback = style:match('back:(#%x%x%x%x%x%x)')
-local colorfore = style:match('fore:(#%x%x%x%x%x%x)')
+local colorback = style:match('back:(#%x%x%x%x%x%x)') or ''
+local colorfore = style:match('fore:(#%x%x%x%x%x%x)') or '#000000'
 
 ----------------------------------------------------------
 -- Common functions
