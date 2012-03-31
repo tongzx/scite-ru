@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 ColorSet.lua
 Authors: mozers™
-version 1.1
+version 1.2
 ------------------------------------------------------
   Connection:
    Set in a file .properties:
@@ -9,7 +9,7 @@ version 1.1
      command.6.*=dofile $(SciteDefaultHome)\tools\ColorSet.lua
      command.mode.6.*=subsystem:lua,savebefore:no
 
-  Note: Needed gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
+  Note: Needed gui.dll <http://scite-ru.googlecode.com/hg/lualib/gui/>
 --]]--------------------------------------------------
 require 'gui'
 

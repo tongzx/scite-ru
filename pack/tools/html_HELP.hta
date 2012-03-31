@@ -14,7 +14,7 @@ scroll=no
 selection=yes
 contextMenu=yes
 singleinstance=yes
-version=1.8.1
+version=1.8.2
 >
 <script language=JavaScript>
 function ParseCmdLine(cmd){
@@ -78,7 +78,7 @@ function CopyURL(event){
 		id_name = element.name||element.id;
 	}
 	var url = html_doc.document.URL.replace(/^.*\\(.*?\\.*?)(#.*?)?$/gi, '$1').replace(/\\/gi,'/');
-	url = 'http://scite-ru.googlecode.com/svn/trunk/pack/' + url;
+	url = 'http://scite-ru.googlecode.com/hg/pack/' + url;
 	var url_tag = '[url=' + url + ']' + url.replace(/^.*\//, '') + '[/url]';
 	if (id_name){url_tag = '[url=' + url + '#' + id_name + ']' + id_name + '[/url]';}
 	window.clipboardData.setData('Text',url_tag);

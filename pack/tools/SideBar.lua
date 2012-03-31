@@ -3,9 +3,9 @@ SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev, ur4ltz
 Version 1.27.11
 ------------------------------------------------------
-  Note: Require gui.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/gui/>
-               lpeg.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/lpeg/>
-              shell.dll <http://scite-ru.googlecode.com/svn/trunk/lualib/shell/>
+  Note: Require gui.dll <http://scite-ru.googlecode.com/hg/lualib/gui/>
+               lpeg.dll <http://scite-ru.googlecode.com/hg/lualib/lpeg/>
+              shell.dll <http://scite-ru.googlecode.com/hg/lualib/shell/>
              COMMON.lua (function GetCurrentWord)
              eventmanager.lua (function AddEventHandler)
 
