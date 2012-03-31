@@ -12,7 +12,7 @@ scroll=no
 selection=no
 contextMenu=no
 singleinstance=yes
-version=4.1
+version=4.1.1
 >
 <style type="text/css">
 	body {margin:4px;}
@@ -384,7 +384,7 @@ function SetHelper(){
 			AlertMSVBVM50();
 			return false;
 		} else {
-			WshShell.Run('Regsvr32 "' + file_dll + '"',0,false);
+			WshShell.Run('Regsvr32 "' + file_dll + '"', 1, false);
 		}
 	}
 	return true;
@@ -393,7 +393,7 @@ function SetHelper(){
 function UnSetHelper(){
 	var file_dll = scite_path + '\\tools\\Helper\\SciTE.dll';
 	if (fso.FileExists(file_dll)){
-		WshShell.Run('Regsvr32 /u "' + file_dll + '"',0,false);
+		WshShell.Run('Regsvr32 /u "' + file_dll + '"', 1, false);
 	}
 	return true;
 }
