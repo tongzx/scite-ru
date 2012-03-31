@@ -389,8 +389,8 @@ void SciTEBase::CompleteOpen(OpenCompletion oc) {
 			ReadProperties();
 			SetIndentSettings();
 		}
-		props.SetInteger("editor.unicode.mode", CurrentBuffer()->unicodeMode + IDM_ENCODING_DEFAULT); //!-add-[EditorUnicodeMode]
 	}
+	props.SetInteger("editor.unicode.mode", CurrentBuffer()->unicodeMode + IDM_ENCODING_DEFAULT); //!-add-[EditorUnicodeMode]
 
 	if (oc != ocSynchronous) {
 		ReadProperties();
