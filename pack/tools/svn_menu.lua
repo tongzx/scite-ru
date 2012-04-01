@@ -31,7 +31,7 @@ local RootMenuCommands =
 	"||"..
 	"Update All|9190|"..
 	"Commit All…|9191|"..
-	"Show log for All|9192|"
+	"Show log for All|9192|"..
 	"Check for modifications for All|9193|"
 local BranchMenuCommands =
 	"||"..
