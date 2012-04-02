@@ -2,7 +2,7 @@
 /** @file LexEuphoria.cxx
  ** Lexer for Euphoria.
  **
- ** adapted for euphoria by M Duffy 
+ ** adapted for euphoria by M Duffy
  **/
 // Copyright 1998-2002 by Neil Hodgson <neilh@scintilla.org>
 // The License.txt file describes the conditions under which this software may be distributed.
@@ -34,7 +34,7 @@ static inline bool IsAWordChar(int ch) {
 }
 
 static inline bool IsAHexChar(int ch) {
-	return (isdigit(ch) || 
+	return (isdigit(ch) ||
 		ch == 'A' || ch == 'B' || ch == 'C' ||
 		ch == 'D' || ch == 'E' || ch == 'F' );
 }
@@ -120,9 +120,14 @@ static void ColouriseEuphoriaDoc(unsigned int startPos,  int length, int initSty
 				}
 				sc.SetState(SCE_EUPHORIA_DEFAULT);
 			}
-		} else if (sc.state == SCE_EUPHORIA_COMMENT) {
+		} else if (sc.state == SCE_EUPHORIA_COMMENTLINE) {
 			if (sc.atLineEnd) {
 				sc.SetState(SCE_EUPHORIA_DEFAULT);
+			}
+		} else if (sc.state == SCE_EUPHORIA_COMMENT) {
+			if (sc.Match('*', '/')) {
+				sc.Forward();
+				sc.ForwardSetState(SCE_EUPHORIA_DEFAULT);
 			}
 		} else if (sc.state == SCE_EUPHORIA_STRING) {
 			if (sc.ch == '\\' ) {
@@ -183,6 +188,9 @@ static void ColouriseEuphoriaDoc(unsigned int startPos,  int length, int initSty
 				sc.SetState(SCE_EUPHORIA_CHARACTER);
 				charStart = sc.currentPos;
 			} else if (sc.Match('-', '-')) {
+				sc.SetState(SCE_EUPHORIA_COMMENTLINE);
+				sc.Forward();
+			} else if (sc.Match('/', '*')) {
 				sc.SetState(SCE_EUPHORIA_COMMENT);
 				sc.Forward();
 			} else if (sc.ch == '#') {
@@ -236,6 +244,7 @@ static void FoldEuphoriaDocKeyWord(unsigned int startPos, int length, int iInitS
 		char chPrev = ch;
 		ch = chNext;
 		chNext = styler.SafeGetCharAt(i + 1);
+		int stylePrev = style;
 		style = styleNext;
 		styleNext = styler.StyleAt(i + 1);
 		bool atEOL = (ch == '\r' && chNext != '\n') || ch == '\n' ;
@@ -281,7 +290,7 @@ static void FoldEuphoriaDocKeyWord(unsigned int startPos, int length, int iInitS
 					levelNext--;
 				}
 			}
-		} else if (style == SCE_EUPHORIA_COMMENT && foldComment) {
+		} else if (style == SCE_EUPHORIA_COMMENTLINE && foldComment) {
 			// Euphoria does not have a stream comment, these character pairs
 			// can  be embeded in a comment line to serve the purpose for folding
 			if (ch == '<' && chNext == '<') {
@@ -290,6 +299,12 @@ static void FoldEuphoriaDocKeyWord(unsigned int startPos, int length, int iInitS
 				if (levelNext > 0) {
 					levelNext--;
 				}
+			}
+		} else if (style == SCE_EUPHORIA_COMMENT && foldComment) {
+			if (stylePrev != SCE_EUPHORIA_COMMENT) {
+				levelNext++;
+			} else if ((styleNext != SCE_EUPHORIA_COMMENT) && !atEOL) {
+				levelNext--;
 			}
 		}
 		if (atEOL) {
@@ -374,13 +389,13 @@ static const char * const euphoriaWordLists[] = {
 static void FoldEuphoriaDoc(unsigned int startPos, int length, int iInitStyle, WordList *keywords[], Accessor &styler) {
 	if (0 != styler.GetPropertyInt("fold", 0)) {
 		int foldingStyle = 3 & styler.GetPropertyInt("fold", 0);
-		switch (foldingStyle) { 
-			case 0: 
+		switch (foldingStyle) {
+			case 0:
 				break;
-			case 1: 
+			case 1:
 				FoldEuphoriaDocKeyWord( startPos, length, iInitStyle, keywords, styler);
 				break;
-			case 2: 
+			case 2:
 				FoldEuphoriaDocIndent(startPos,  length,  iInitStyle, keywords, styler);
 				break;
 			default:
