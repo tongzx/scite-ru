@@ -5,8 +5,8 @@
 #include <windows.h>
 
 VS_VERSION_INFO VERSIONINFO
-FILEVERSION	3, 0, 2, 94
-PRODUCTVERSION	3, 0, 2, 94
+FILEVERSION	3, 0, 2, 95
+PRODUCTVERSION	3, 0, 2, 95
 FILEFLAGSMASK	0x3fL
 FILEFLAGS 0
 FILEOS VOS_NT_WINDOWS32
@@ -23,12 +23,12 @@ BEGIN
 		BEGIN
 			VALUE	"CompanyName",	"scite-ru.org\0"
 			VALUE	"FileDescription",	"Scintilla.DLL - a Source Editing Component\0"
-			VALUE	"FileVersion",	"3.0.2 .94Ru\0"
+			VALUE	"FileVersion",	"3.0.2 .95Ru\0"
 			VALUE	"InternalName",	"Scintilla\0"
 			VALUE	"LegalCopyright",	"Copyright 1998-2011 by Neil Hodgson\0"
 			VALUE	"OriginalFilename",	"Scintilla.DLL\0"
 			VALUE	"ProductName",	"Scintilla\0"
-			VALUE	"ProductVersion",	"3.0.2 .94Ru\0"
+			VALUE	"ProductVersion",	"3.0.2 .95Ru\0"
 		END
 	END
 END
