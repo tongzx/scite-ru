@@ -1,0 +1,12 @@
+syntax: glob
+
+*.o
+*.obj
+*.pyc
+*.pdb
+*.res
+*.bak
+
+# vim/gvim files
+*.swp
+*~
