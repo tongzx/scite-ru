@@ -85,8 +85,10 @@ SOBJS=\
 #**LEXOBJS=\\\n\(\t$(DIR_O)\\\*.obj \\\n\)
 LEXOBJS=\
 	$(DIR_O)\LexA68k.obj \
+	$(DIR_O)\LexABAP.obj \
 	$(DIR_O)\LexAbaqus.obj \
 	$(DIR_O)\LexAda.obj \
+	$(DIR_O)\LexAHK1.obj \
 	$(DIR_O)\LexAPDL.obj \
 	$(DIR_O)\LexAsm.obj \
 	$(DIR_O)\LexAsn1.obj \
@@ -113,6 +115,7 @@ LEXOBJS=\
 	$(DIR_O)\LexEiffel.obj \
 	$(DIR_O)\LexErlang.obj \
 	$(DIR_O)\LexEScript.obj \
+	$(DIR_O)\LexEuphoria.obj \
 	$(DIR_O)\LexFlagship.obj \
 	$(DIR_O)\LexForth.obj \
 	$(DIR_O)\LexFortran.obj \
@@ -287,9 +290,13 @@ $(DIR_O)\KeyMap.obj: ../src/KeyMap.cxx ../include/Platform.h ../include/Scintill
 
 $(DIR_O)\LexA68k.obj: ..\lexers\LexA68k.cxx $(LEX_HEADERS)
 
+$(DIR_O)\LexABAP.obj: ..\lexers\LexABAP.cxx $(LEX_HEADERS)
+
 $(DIR_O)\LexAbaqus.obj: ..\lexers\LexAbaqus.cxx $(LEX_HEADERS)
 
 $(DIR_O)\LexAda.obj: ..\lexers\LexAda.cxx $(LEX_HEADERS)
+
+$(DIR_O)\LexAHK1.obj: ..\lexers\LexAHK1.cxx $(LEX_HEADERS)
 
 $(DIR_O)\LexAPDL.obj: ..\lexers\LexAPDL.cxx $(LEX_HEADERS)
 
@@ -342,6 +349,8 @@ $(DIR_O)\LexEiffel.obj: ..\lexers\LexEiffel.cxx $(LEX_HEADERS)
 $(DIR_O)\LexErlang.obj: ..\lexers\LexErlang.cxx $(LEX_HEADERS)
 
 $(DIR_O)\LexEScript.obj: ..\lexers\LexEScript.cxx $(LEX_HEADERS)
+
+$(DIR_O)\LexEuphoria.obj: ..\lexers\LexEuphoria.cxx $(LEX_HEADERS)
 
 $(DIR_O)\LexFlagship.obj: ..\lexers\LexFlagship.cxx $(LEX_HEADERS)
 

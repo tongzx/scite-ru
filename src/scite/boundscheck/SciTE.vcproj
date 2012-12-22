@@ -342,11 +342,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\scintilla\lexers\LexABAP.cxx"
+				>
+			</File>
+			<File
 				RelativePath="..\..\scintilla\lexers\LexAbaqus.cxx"
 				>
 			</File>
 			<File
 				RelativePath="..\..\scintilla\lexers\LexAda.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\scintilla\lexers\LexAHK1.cxx"
 				>
 			</File>
 			<File
@@ -463,6 +471,10 @@
 			</File>
 			<File
 				RelativePath="..\..\scintilla\lexers\LexEScript.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\scintilla\lexers\LexEuphoria.cxx"
 				>
 			</File>
 			<File

@@ -347,7 +347,8 @@ void AddStyledText(GUI::ScintillaWindow &wsci, const char *s, int attr) {
 		buf[i*2 + 1] = static_cast<char>(attr);
 	}
 	wsci.SendPointer(SCI_ADDSTYLEDTEXT,
-		static_cast<int>(len*2), const_cast<char *>(&buf.front()));
+//!	        static_cast<int>(len*2), const_cast<char *>(buf.data()));
+		static_cast<int>(len*2), const_cast<char *>(&buf.front())); //!-change-[temporary.fix]
 }
 
 void SetAboutStyle(GUI::ScintillaWindow &wsci, int style, Colour fore) {

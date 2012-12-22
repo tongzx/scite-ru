@@ -523,8 +523,8 @@ void SCI_METHOD LexerCPP::Lex(unsigned int startPos, int length, int initStyle, 
 
 	int activitySet = preproc.IsInactive() ? activeFlag : 0;
 
-//!	for (; sc.More(); sc.Forward()) {
-	for (bool doing = sc.More(); doing; doing = sc.More(), sc.Forward()) { //!-change-[LexersLastWordFix]
+//!	for (; sc.More();) {
+	for (bool doing = sc.More(); doing; doing = sc.More()) { //!-change-[LexersLastWordFix]
 
 		if (sc.atLineStart) {
 			// Using MaskActive() is not needed in the following statement.
