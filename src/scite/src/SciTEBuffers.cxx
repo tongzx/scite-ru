@@ -1230,9 +1230,10 @@ void SciTEBase::SetBuffersMenu() {
 				titleTab += GUI_TEXT(" *");
 			}
 //!-start-[ReadOnlyTabMarker]
-			if (buffers.buffers[pos].ROMarker != NULL) {
-				entry += buffers.buffers[pos].ROMarker;
-				titleTab += buffers.buffers[pos].ROMarker;
+			if (buffers.buffers[pos].isReadOnly) {
+				GUI::gui_string mark = GUI::StringFromUTF8(props.Get("tabbar.readonly.marker").c_str());
+				entry += mark;
+				titleTab += mark;
 			}
 //!-end-[ReadOnlyTabMarker]
 

@@ -109,7 +109,6 @@ public:
 	sptr_t doc;
 	bool isDirty;
 	bool isReadOnly;
-	GUI::gui_char *ROMarker; //!-add-[ReadOnlyTabMarker]
 	bool useMonoFont;
 	enum { empty, reading, readAll, open } lifeState;
 	UniMode unicodeMode;
@@ -124,8 +123,7 @@ public:
 	PropSetFile props;
 	enum FutureDo { fdNone=0, fdFinishSave=1 } futureDo;
 	Buffer() :
-//!			RecentFile(), doc(0), isDirty(false), isReadOnly(false), useMonoFont(false), lifeState(empty),
-			RecentFile(), doc(0), isDirty(false), isReadOnly(false), ROMarker(0), useMonoFont(false), lifeState(empty),  //!-change-[ReadOnlyTabMarker]
+			RecentFile(), doc(0), isDirty(false), isReadOnly(false), useMonoFont(false), lifeState(empty),
 			unicodeMode(uni8Bit), fileModTime(0), fileModLastAsk(0), documentModTime(0),
 			findMarks(fmNone), pFileWorker(0), futureDo(fdNone) {}
 
@@ -133,7 +131,6 @@ public:
 		RecentFile::Init();
 		isDirty = false;
 		isReadOnly = false;
-		ROMarker = NULL; //!-add-[ReadOnlyTabMarker]
 		useMonoFont = false;
 		lifeState = empty;
 		unicodeMode = uni8Bit;
