@@ -139,12 +139,6 @@ void SciTEBase::ReadGlobalPropFile() {
 		}
 	}
 
-//!-start-[scite.userhome]
-	FilePath homepath = GetSciteDefaultHome();
-	props.Set("SciteDefaultHome", homepath.AsUTF8().c_str());
-	homepath = GetSciteUserHome();
-	props.Set("SciteUserHome", homepath.AsUTF8().c_str());
-//!-end-[scite.userhome]
 	SString excludes;
 	SString includes;
 
@@ -281,13 +275,11 @@ const char *SciTEBase::GetNextPropItem(
 }
 
 StyleDefinition::StyleDefinition(const char *definition) :
-//!		sizeFractional(10.0), size(0), fore("#000000"), back("#FFFFFF"),
-		sizeFractional(10.0), size(0), fore(""), back(""), //!-change-[StyleDefault]
+		sizeFractional(10.0), size(10), fore("#000000"), back("#FFFFFF"),
 		weight(SC_WEIGHT_NORMAL), italics(false), eolfilled(false), underlined(false),
 		caseForce(SC_CASE_MIXED),
 		visible(true), changeable(true),
-//!		specified(sdNone) {
-		hotspot(false), specified(sdNone) { //!-change-[StyleDefHotspot]
+		specified(sdNone) {
 	ParseStyleDefinition(definition);
 }
 
@@ -390,16 +382,6 @@ bool StyleDefinition::ParseStyleDefinition(const char *definition) {
 			specified = static_cast<flags>(specified | sdChangeable);
 			changeable = false;
 		}
-//!-start-[StyleDefHotspot]
-		if (0 == strcmp(opt, "hotspot")) {
-			specified = static_cast<flags>(specified | sdHotspot);
-			hotspot = true;
-		}
-		if (0 == strcmp(opt, "nothotspot")) {
-			specified = static_cast<flags>(specified | sdHotspot);
-			hotspot = false;
-		}
-//!-end-[StyleDefHotspot]
 		if (cpComma)
 			opt = cpComma + 1;
 		else
@@ -449,10 +431,6 @@ void SciTEBase::SetOneStyle(GUI::ScintillaWindow &win, int style, const StyleDef
 		win.Send(SCI_STYLESETVISIBLE, style, sd.visible ? 1 : 0);
 	if (sd.specified & StyleDefinition::sdChangeable)
 		win.Send(SCI_STYLESETCHANGEABLE, style, sd.changeable ? 1 : 0);
-//!-start-[StyleDefHotspot]
-	if (sd.specified & StyleDefinition::sdHotspot)
-		win.Send(SCI_STYLESETHOTSPOT, style, sd.hotspot ? 1 : 0);
-//!-end-[StyleDefHotspot]
 	win.Send(SCI_STYLESETCHARACTERSET, style, characterSet);
 }
 
@@ -476,15 +454,6 @@ void SciTEBase::SetStyleFor(GUI::ScintillaWindow &win, const char *lang) {
 	SetStyleBlock(win, lang, 0, maxStyle);
 }
 
-void LowerCaseString(char *s) {
-	while (*s) {
-		if ((*s >= 'A') && (*s <= 'Z')) {
-			*s = static_cast<char>(*s - 'A' + 'a');
-		}
-		s++;
-	}
-}
-
 SString SciTEBase::ExtensionFileName() {
 	if (CurrentBuffer()->overrideExtension.length()) {
 		return CurrentBuffer()->overrideExtension;
@@ -492,15 +461,14 @@ SString SciTEBase::ExtensionFileName() {
 		FilePath name = FileNameExt();
 		if (name.IsSet()) {
 			// Force extension to lower case
-			char fileNameWithLowerCaseExtension[MAX_PATH];
-			strcpy(fileNameWithLowerCaseExtension, name.AsUTF8().c_str());
+			SString fileNameWithLowerCaseExtension = name.AsUTF8().c_str();
 #if !defined(GTK)
-			char *extension = strrchr(fileNameWithLowerCaseExtension, '.');
+			const char *extension = strrchr(fileNameWithLowerCaseExtension.c_str(), '.');
 			if (extension) {
-				LowerCaseString(extension);
+				fileNameWithLowerCaseExtension.lowercase(extension - fileNameWithLowerCaseExtension.c_str());
 			}
 #endif
-			return SString(fileNameWithLowerCaseExtension);
+			return fileNameWithLowerCaseExtension;
 		} else {
 			return props.Get("default.file.ext");
 		}
@@ -586,20 +554,6 @@ SString SciTEBase::FindLanguageProperty(const char *pattern, const char *default
 		ret = defaultValue;
 	return ret;
 }
-//!-start-[BetterCalltips]
-int SciTEBase::FindIntLanguageProperty(const char *pattern, int defaultValue /*=0*/) {
-	SString key = pattern;
-	key.substitute("*", language.c_str());
-	SString val = props.GetExpanded(key.c_str());
-	if (val == "") {
-		val = props.GetExpanded(pattern);
-	}
-	if (val == "") {
-		return defaultValue;
-	}
-	return val.value();
-}
-//!-end-[BetterCalltips]
 
 /**
  * A list of all the properties that should be forwarded to Scintilla lexers.
@@ -625,6 +579,7 @@ static const char *propertiesToForward[] = {
 	"fold.basic.explicit.end",
 	"fold.basic.explicit.start",
 	"fold.basic.syntax.based",
+	"fold.coffeescript.comment",
 	"fold.comment",
 	"fold.comment.nimrod",
 	"fold.comment.yaml",
@@ -655,21 +610,21 @@ static const char *propertiesToForward[] = {
 	"fold.quotes.python",
 	"fold.sql.at.else",
 	"fold.sql.only.begin",
-	"fold.symbols",
 	"fold.verilog.flags",
 	"html.tags.case.sensitive",
 	"lexer.asm.comment.delimiter",
-	"lexer.batch.enabledelayedexpansion",
 	"lexer.caml.magic",
 	"lexer.cpp.allow.dollars",
 	"lexer.cpp.hashquoted.strings",
 	"lexer.cpp.track.preprocessor",
 	"lexer.cpp.triplequoted.strings",
 	"lexer.cpp.update.preprocessor",
+	"lexer.css.hss.language",
+	"lexer.css.less.language",
+	"lexer.css.scss.language",
 	"lexer.d.fold.at.else",
 	"lexer.errorlist.value.separate",
 	"lexer.flagship.styling.within.preprocessor",
-	"lexer.forth.no.interpretation",
 	"lexer.html.django",
 	"lexer.html.mako",
 	"lexer.metapost.comment.process",
@@ -880,7 +835,6 @@ void SciTEBase::ReadProperties() {
 	}
 
 	props.Set("AbbrevPath", pathAbbreviations.AsUTF8().c_str());
-	wEditor.Call(SCI_SETOVERTYPE, props.GetInt("change.overwrite.enable", 1) + 2); //!-add-[ignore_overstrike_change]
 
 	int tech = props.GetInt("technology");
 	wEditor.Call(SCI_SETTECHNOLOGY, tech);
@@ -890,7 +844,6 @@ void SciTEBase::ReadProperties() {
 		// Override properties file to ensure Unicode displayed.
 		codePage = SC_CP_UTF8;
 	}
-	props.SetInteger("editor.unicode.mode", CurrentBuffer()->unicodeMode + IDM_ENCODING_DEFAULT); //!-add-[EditorUnicodeMode]
 	wEditor.Call(SCI_SETCODEPAGE, codePage);
 	int outputCodePage = props.GetInt("output.code.page", codePage);
 	wOutput.Call(SCI_SETCODEPAGE, outputCodePage);
@@ -907,15 +860,6 @@ void SciTEBase::ReadProperties() {
 
 	wrapStyle = props.GetInt("wrap.style", SC_WRAP_WORD);
 
-//!-start-[caret]
-	SString tmp_str;
-	tmp_str=props.GetNewExpand("caret.fore.", fileNameForExtension.c_str());
-	//Writing caret.fore.$(FilePattern) into tmp_str
-	//And test for existing
-	if(tmp_str.length())
-		wEditor.Call(SCI_SETCARETFORE,ColourFromString(tmp_str));
-	else
-//!-end-[caret]
 	CallChildren(SCI_SETCARETFORE,
 	           ColourOfProperty(props, "caret.fore", ColourRGB(0, 0, 0)));
 
@@ -926,18 +870,9 @@ void SciTEBase::ReadProperties() {
 
 	wEditor.Call(SCI_SETMOUSEDWELLTIME,
 	           props.GetInt("dwell.period", SC_TIME_FOREVER), 0);
-//!-start-[caret]
-	tmp_str=props.GetNewExpand("caret.width.", fileNameForExtension.c_str());
-	if(tmp_str.length()){
-		wEditor.Call(SCI_SETCARETWIDTH, IntFromHexByte(tmp_str.c_str()));
-		wOutput.Call(SCI_SETCARETWIDTH, IntFromHexByte(tmp_str.c_str()));
-	}
-	else{
-//!-end-[caret]
 
 	wEditor.Call(SCI_SETCARETWIDTH, props.GetInt("caret.width", 1));
 	wOutput.Call(SCI_SETCARETWIDTH, props.GetInt("caret.width", 1));
-	}//!-add-[caret]
 
 	SString caretLineBack = props.Get("caret.line.back");
 	if (caretLineBack.length()) {
@@ -959,18 +894,6 @@ void SciTEBase::ReadProperties() {
 		wEditor.Call(SCI_INDICSETUNDER, index, underIndicator);
 		wOutput.Call(SCI_INDICSETUNDER, index, underIndicator);
 	}
-//!-start-[output.caret]
-	wOutput.Call(SCI_SETCARETFORE, ColourOfProperty(props, "output.caret.fore", ColourRGB(0x00, 0x00, 0x00)));
-
-	SString outputCaretLineBack = props.Get("output.caret.line.back");
-	if (outputCaretLineBack.length()) {
-		wOutput.Call(SCI_SETCARETLINEVISIBLE, 1);
-		wOutput.Call(SCI_SETCARETLINEBACK, ColourFromString(outputCaretLineBack));
-	} else {
-		wOutput.Call(SCI_SETCARETLINEVISIBLE, 0);
-	}
-	wOutput.Call(SCI_SETCARETLINEBACKALPHA, props.GetInt("output.caret.line.back.alpha", SC_ALPHA_NOALPHA));
-//!-end-[output.caret]
 
 	SString findMark = props.Get("find.mark");
 	if (findMark.length()) {
@@ -1078,30 +1001,19 @@ void SciTEBase::ReadProperties() {
 
 	char key[200];
 	SString sval;
-//!-start-[BetterCalltips]
-	sval = FindLanguageProperty("calltip.*.automatic", "1");
-	callTipAutomatic = sval == "1";
-//!-end-[BetterCalltips]
 
 	sval = FindLanguageProperty("calltip.*.ignorecase");
 	callTipIgnoreCase = sval == "1";
-//!-start-[BetterCalltips]
-	calltipShowPerPage = FindIntLanguageProperty("calltip.*.show.per.page", 1);
-	if (calltipShowPerPage < 1) calltipShowPerPage = 1;
-//!-end-[BetterCalltips]
+	sval = FindLanguageProperty("calltip.*.use.escapes");
+	callTipUseEscapes = sval == "1";
 
 	calltipWordCharacters = FindLanguageProperty("calltip.*.word.characters",
 		"_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
-
 	calltipParametersStart = FindLanguageProperty("calltip.*.parameters.start", "(");
 	calltipParametersEnd = FindLanguageProperty("calltip.*.parameters.end", ")");
 	calltipParametersSeparators = FindLanguageProperty("calltip.*.parameters.separators", ",;");
 
 	calltipEndDefinition = FindLanguageProperty("calltip.*.end.definition");
-//!-start-[BetterCalltips]
-	int calltipWordWrap = FindIntLanguageProperty("calltip.*.word.wrap");
-	wEditor.Call(SCI_CALLTIPSETWORDWRAP, calltipWordWrap > 0 ? calltipWordWrap : 0);
-//!-end-[BetterCalltips]
 
 	sprintf(key, "autocomplete.%s.start.characters", language.c_str());
 	autoCompleteStartCharacters = props.GetExpanded(key);
@@ -1128,7 +1040,7 @@ void SciTEBase::ReadProperties() {
 	wOutput.Call(SCI_AUTOCSETIGNORECASE, 1);
 
 	int autoCChooseSingle = props.GetInt("autocomplete.choose.single");
-	wEditor.Call(SCI_AUTOCSETCHOOSESINGLE, autoCChooseSingle),
+	wEditor.Call(SCI_AUTOCSETCHOOSESINGLE, autoCChooseSingle);
 
 	wEditor.Call(SCI_AUTOCSETCANCELATSTART, 0);
 	wEditor.Call(SCI_AUTOCSETDROPRESTOFWORD, 0);
@@ -1181,9 +1093,6 @@ void SciTEBase::ReadProperties() {
 	} else {
 		wordCharacters = "_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 	}
-//!-start-[GetWordChars]
-	props.Set("CurrentWordCharacters", wordCharacters.c_str() );
-//!-end-[GetWordChars]
 
 	whitespaceCharacters = props.GetNewExpand("whitespace.characters.", fileNameForExtension.c_str());
 	if (whitespaceCharacters.length()) {
@@ -1300,8 +1209,6 @@ void SciTEBase::ReadProperties() {
 
 	wEditor.Call(SCI_SETMARGINMASKN, 2, SC_MASK_FOLDERS);
 	wEditor.Call(SCI_SETMARGINSENSITIVEN, 2, 1);
-	if (props.GetInt("margin.bookmark.by.single.click",1)==1) //!-add-[SetBookmark]
-		wEditor.Call(SCI_SETMARGINSENSITIVEN, 1, 1);	//!-add-[SetBookmark]
 
 	// Enable/disable highlight for current folding bloc (smallest one that contains the caret)
 	int isHighlightEnabled = props.GetInt("fold.highlight", 0);
@@ -1465,6 +1372,14 @@ void SciTEBase::ReadProperties() {
 			}
 		}
 	}
+
+	delayBeforeAutoSave = props.GetInt("save.on.timer");
+	if (delayBeforeAutoSave) {
+		TimerStart(timerAutoSave);
+	} else {
+		TimerEnd(timerAutoSave);
+	}
+
 	firstPropertiesRead = false;
 	needReadProperties = false;
 }

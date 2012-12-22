@@ -49,4 +49,5 @@ public:
 	virtual bool OnMenuCommand(int, int); //!-add-[OnMenuCommand]
 	virtual const char *OnSendEditor(unsigned int, unsigned int, const char *); //!-add-[OnSendEditor]
 	virtual const char *OnSendEditor(unsigned int, unsigned int, long); //!-add-[OnSendEditor]
+	virtual bool OnUserStrip(int control, int change);
 };

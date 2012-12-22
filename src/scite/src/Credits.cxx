@@ -316,18 +316,38 @@ const char *contributors[] = {
             "Chris Angelico",
             "Marat Dukhan",
             "Stefan Weil",
+            "Rex Conn",
+            "Ross McKay",
+            "Bruno Barbieri",
+            "Gordon Smith",
+            "dimitar",
+            "S\xc3\xa9""bastien Granjoux",
+            "zeniko",
+            "James Ribe",
+            "Markus Ni\xc3\x9fl",
+            "Martin Panter",
+            "Mark Yen",
+            "Philippe Elsass",
+            "Dimitar Zhekov",
+            "Fan Yang",
+            "Denis Shelomovskij",
+            "darmar",
+            "John Vella",
+            "Chinh Nguyen",
+            "Sakshi Verma",
+            "Joel B. Mohler",
         };
 
 // AddStyledText only called from About so static size buffer is OK
 void AddStyledText(GUI::ScintillaWindow &wsci, const char *s, int attr) {
-	char buf[1000];
 	size_t len = strlen(s);
+	std::vector<char> buf(len*2);
 	for (size_t i = 0; i < len; i++) {
 		buf[i*2] = s[i];
 		buf[i*2 + 1] = static_cast<char>(attr);
 	}
 	wsci.SendPointer(SCI_ADDSTYLEDTEXT,
-	        static_cast<int>(len*2), const_cast<char *>(buf));
+		static_cast<int>(len*2), const_cast<char *>(&buf.front()));
 }
 
 void SetAboutStyle(GUI::ScintillaWindow &wsci, int style, Colour fore) {

@@ -769,6 +769,10 @@ static void FoldBatchDoc(unsigned int startPos, int length, int,
 }
 //!-end-[BatchLexerImprovement]
 
+#define DIFF_BUFFER_START_SIZE 16
+// Note that ColouriseDiffLine analyzes only the first DIFF_BUFFER_START_SIZE
+// characters of each line to classify the line.
+
 static void ColouriseDiffLine(char *lineBuffer, int endLine, Accessor &styler) {
 	// It is needed to remember the current state to recognize starting
 	// comment lines before the first "diff " or "--- ". If a real
@@ -825,20 +829,27 @@ static void ColouriseDiffLine(char *lineBuffer, int endLine, Accessor &styler) {
 }
 
 static void ColouriseDiffDoc(unsigned int startPos, int length, int, WordList *[], Accessor &styler) {
-	char lineBuffer[1024];
+	char lineBuffer[DIFF_BUFFER_START_SIZE] = "";
 	styler.StartAt(startPos);
 	styler.StartSegment(startPos);
 	unsigned int linePos = 0;
 	for (unsigned int i = startPos; i < startPos + length; i++) {
-		lineBuffer[linePos++] = styler[i];
-		if (AtEOL(styler, i) || (linePos >= sizeof(lineBuffer) - 1)) {
-			// End of line (or of line buffer) met, colourise it
-			lineBuffer[linePos] = '\0';
+		if (AtEOL(styler, i)) {
+			if (linePos < DIFF_BUFFER_START_SIZE) {
+				lineBuffer[linePos] = 0;
+			}
 			ColouriseDiffLine(lineBuffer, i, styler);
 			linePos = 0;
+		} else if (linePos < DIFF_BUFFER_START_SIZE - 1) {
+			lineBuffer[linePos++] = styler[i];
+		} else if (linePos == DIFF_BUFFER_START_SIZE - 1) {
+			lineBuffer[linePos++] = 0;
 		}
 	}
 	if (linePos > 0) {	// Last line does not have ending characters
+		if (linePos < DIFF_BUFFER_START_SIZE) {
+			lineBuffer[linePos] = 0;
+		}
 		ColouriseDiffLine(lineBuffer, startPos + length - 1, styler);
 	}
 }
@@ -870,78 +881,6 @@ static void FoldDiffDoc(unsigned int startPos, int length, int, WordList *[], Ac
 
 		curLineStart = styler.LineStart(++curLine);
 	} while (static_cast<int>(startPos) + length > curLineStart);
-}
-
-static void ColourisePoLine(
-    char *lineBuffer,
-    unsigned int lengthLine,
-    unsigned int startLine,
-    unsigned int endPos,
-    Accessor &styler) {
-
-	unsigned int i = 0;
-	static unsigned int state = SCE_PO_DEFAULT;
-	unsigned int state_start = SCE_PO_DEFAULT;
-
-	while ((i < lengthLine) && isspacechar(lineBuffer[i]))	// Skip initial spaces
-		i++;
-	if (i < lengthLine) {
-		if (lineBuffer[i] == '#') {
-			// check if the comment contains any flags ("#, ") and
-			// then whether the flags contain "fuzzy"
-			if (strstart(lineBuffer, "#, ") && strstr(lineBuffer, "fuzzy"))
-				styler.ColourTo(endPos, SCE_PO_FUZZY);
-			else
-				styler.ColourTo(endPos, SCE_PO_COMMENT);
-		} else {
-			if (lineBuffer[0] == '"') {
-				// line continuation, use previous style
-				styler.ColourTo(endPos, state);
-				return;
-			// this implicitly also matches "msgid_plural"
-			} else if (strstart(lineBuffer, "msgid")) {
-				state_start = SCE_PO_MSGID;
-				state = SCE_PO_MSGID_TEXT;
-			} else if (strstart(lineBuffer, "msgstr")) {
-				state_start = SCE_PO_MSGSTR;
-				state = SCE_PO_MSGSTR_TEXT;
-			} else if (strstart(lineBuffer, "msgctxt")) {
-				state_start = SCE_PO_MSGCTXT;
-				state = SCE_PO_MSGCTXT_TEXT;
-			}
-			if (state_start != SCE_PO_DEFAULT) {
-				// find the next space
-				while ((i < lengthLine) && ! isspacechar(lineBuffer[i]))
-					i++;
-				styler.ColourTo(startLine + i - 1, state_start);
-				styler.ColourTo(startLine + i, SCE_PO_DEFAULT);
-				styler.ColourTo(endPos, state);
-			}
-		}
-	} else {
-		styler.ColourTo(endPos, SCE_PO_DEFAULT);
-	}
-}
-
-static void ColourisePoDoc(unsigned int startPos, int length, int, WordList *[], Accessor &styler) {
-	char lineBuffer[1024];
-	styler.StartAt(startPos);
-	styler.StartSegment(startPos);
-	unsigned int linePos = 0;
-	unsigned int startLine = startPos;
-	for (unsigned int i = startPos; i < startPos + length; i++) {
-		lineBuffer[linePos++] = styler[i];
-		if (AtEOL(styler, i) || (linePos >= sizeof(lineBuffer) - 1)) {
-			// End of line (or of line buffer) met, colourise it
-			lineBuffer[linePos] = '\0';
-			ColourisePoLine(lineBuffer, linePos, startLine, i, styler);
-			linePos = 0;
-			startLine = i + 1;
-		}
-	}
-	if (linePos > 0) {	// Last line does not have ending characters
-		ColourisePoLine(lineBuffer, linePos, startLine, startPos + length - 1, styler);
-	}
 }
 
 static inline bool isassignchar(unsigned char ch) {
@@ -1045,9 +984,9 @@ static char ColourisePropsLine( // return last style //!-change-[PropsColouriseF
 	}
 	return SCE_PROPS_DEFAULT; //!-add-[PropsColouriseFix]
 }
+
 //!static void ColourisePropsDoc(unsigned int startPos, int length, int, WordList *[], Accessor &styler) {
 static void ColourisePropsDoc(unsigned int startPos, int length, int, WordList *keywordlists[], Accessor &styler) { //!-change-[PropsKeysSets]
-
 	char lineBuffer[1024];
 	styler.StartAt(startPos);
 	styler.StartSegment(startPos);
@@ -1059,7 +998,6 @@ static void ColourisePropsDoc(unsigned int startPos, int length, int, WordList *
 	//	This is not suitable for SciTE .properties files which use indentation for flow control but
 	//	can be used for RFC2822 text where indentation is used for continuation lines.
 	bool allowInitialSpaces = styler.GetPropertyInt("lexer.props.allow.initial.spaces", 1) != 0;
-
 //!-start-[PropsColouriseFix]
 	char style = 0;
 	bool continuation = false;
@@ -1067,6 +1005,7 @@ static void ColourisePropsDoc(unsigned int startPos, int length, int, WordList *
 		continuation = styler.StyleAt(startPos-2) != SCE_PROPS_COMMENT && ((styler[startPos-2] == '\\')
 			|| (styler[startPos-3] == '\\' && styler[startPos-2] == '\r'));
 //!-end-[PropsColouriseFix]
+
 	for (unsigned int i = startPos; i < startPos + length; i++) {
 		lineBuffer[linePos++] = styler[i];
 		if (AtEOL(styler, i) || (linePos >= sizeof(lineBuffer) - 1)) {
@@ -1193,17 +1132,19 @@ static void ColouriseMakeLine(
 	while ((i < lengthLine) && isspacechar(lineBuffer[i])) {
 		i++;
 	}
-	if (lineBuffer[i] == '#') {	// Comment
-		styler.ColourTo(endPos, SCE_MAKE_COMMENT);
-		return;
-	}
-	if (lineBuffer[i] == '!') {	// Special directive
-		styler.ColourTo(endPos, SCE_MAKE_PREPROCESSOR);
-		return;
+	if (i < lengthLine) {
+		if (lineBuffer[i] == '#') {	// Comment
+			styler.ColourTo(endPos, SCE_MAKE_COMMENT);
+			return;
+		}
+		if (lineBuffer[i] == '!') {	// Special directive
+			styler.ColourTo(endPos, SCE_MAKE_PREPROCESSOR);
+			return;
+		}
 	}
 	int varCount = 0;
 	while (i < lengthLine) {
-		if (lineBuffer[i] == '$' && lineBuffer[i + 1] == '(') {
+		if (((i + 1) < lengthLine) && (lineBuffer[i] == '$' && lineBuffer[i + 1] == '(')) {
 			styler.ColourTo(startLine + i - 1, state);
 			state = SCE_MAKE_IDENTIFIER;
 			varCount++;
@@ -1362,7 +1303,7 @@ static int RecogniseErrorListLine(const char *lineBuffer, unsigned int lengthLin
 		bool initialTab = (lineBuffer[0] == '\t');
 		bool initialColonPart = false;
 		enum { stInitial,
-			stGccStart, stGccDigit, stGcc,
+			stGccStart, stGccDigit, stGccColumn, stGcc,
 			stMsStart, stMsDigit, stMsBracket, stMsVc, stMsDigitComma, stMsDotNet,
 			stCtagsStart, stCtagsStartString, stCtagsStringDollar, stCtags,
 			stUnrecognized
@@ -1394,11 +1335,17 @@ static int RecogniseErrorListLine(const char *lineBuffer, unsigned int lengthLin
 				state = Is1To9(ch) ? stGccDigit : stUnrecognized;
 			} else if (state == stGccDigit) {	// <filename>:<line>
 				if (ch == ':') {
-					state = stGcc;	// :9.*: is GCC
+					state = stGccColumn;	// :9.*: is GCC
 					startValue = i + 1;
-					break;
 				} else if (!Is0To9(ch)) {
 					state = stUnrecognized;
+				}
+			} else if (state == stGccColumn) {	// <filename>:<line>:<column>
+				if (!Is0To9(ch)) {
+					state = stGcc;
+					if (ch == ':')
+						startValue = i + 1;
+					break;
 				}
 			} else if (state == stMsStart) {	// <filename>(
 				state = Is0To9(ch) ? stMsDigit : stUnrecognized;
@@ -1466,7 +1413,6 @@ static int RecogniseErrorListLine(const char *lineBuffer, unsigned int lengthLin
 		}
 	}
 }
-
 //!-start-[FindResultListStyle]
 // Find part of the string lineBuffer beetwen substrings beginT and endT
 // write results substring to the findValue
@@ -1912,7 +1858,6 @@ static void ColouriseNullDoc(unsigned int startPos, int length, int, WordList *[
 //!LexerModule lmBatch(SCLEX_BATCH, ColouriseBatchDoc, "batch", 0, batchWordListDesc);
 LexerModule lmBatch(SCLEX_BATCH, ColouriseBatchDoc, "batch", FoldBatchDoc, batchWordListDesc); //!-change-[BatchLexerImprovement]
 LexerModule lmDiff(SCLEX_DIFF, ColouriseDiffDoc, "diff", FoldDiffDoc, emptyWordListDesc);
-LexerModule lmPo(SCLEX_PO, ColourisePoDoc, "po", 0, emptyWordListDesc);
 //!LexerModule lmProps(SCLEX_PROPERTIES, ColourisePropsDoc, "props", FoldPropsDoc, emptyWordListDesc);
 LexerModule lmProps(SCLEX_PROPERTIES, ColourisePropsDoc, "props", FoldPropsDoc, propsWordListDesc); //!-change-[PropsKeysSets]
 LexerModule lmMake(SCLEX_MAKEFILE, ColouriseMakeDoc, "makefile", 0, emptyWordListDesc);

@@ -127,6 +127,10 @@ SOURCE=..\..\scintilla\src\ContractionState.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\Src\Credits.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\scintilla\src\Decoration.cxx
 # End Source File
 # Begin Source File
@@ -516,6 +520,10 @@ SOURCE=..\..\scintilla\lexers\LexTAL.cxx
 # Begin Source File
 
 SOURCE=..\..\scintilla\lexers\LexTCL.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\scintilla\lexers\LexTCMD.cxx
 # End Source File
 # Begin Source File
 

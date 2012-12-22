@@ -134,10 +134,10 @@ int ScintillaBase::KeyCommand(unsigned int iMessage) {
 			AutoCompleteMove(-1);
 			return 0;
 		case SCI_PAGEDOWN:
-			AutoCompleteMove(5);
+			AutoCompleteMove(ac.lb->GetVisibleRows());
 			return 0;
 		case SCI_PAGEUP:
-			AutoCompleteMove(-5);
+			AutoCompleteMove(-ac.lb->GetVisibleRows());
 			return 0;
 		case SCI_VCHOME:
 			AutoCompleteMove(-5000);
@@ -200,7 +200,7 @@ void ScintillaBase::AutoCompleteStart(int lenEntered, const char *list) {
 	if (ac.chooseSingle && (listType == 0)) {
 		if (list && !strchr(list, ac.GetSeparator())) {
 			const char *typeSep = strchr(list, ac.GetTypesep());
-			int lenInsert = typeSep ? 
+			int lenInsert = typeSep ?
 				static_cast<int>(typeSep-list) : static_cast<int>(strlen(list));
 			if (ac.ignoreCase) {
 				SetEmptySelection(sel.MainCaret() - lenEntered);
@@ -213,6 +213,7 @@ void ScintillaBase::AutoCompleteStart(int lenEntered, const char *list) {
 				pdoc->InsertString(sel.MainCaret(), list + lenEntered, lenInsert - lenEntered);
 				SetEmptySelection(sel.MainCaret() + lenInsert - lenEntered);
 			}
+			ac.Cancel();
 			return;
 		}
 	}
@@ -225,8 +226,8 @@ void ScintillaBase::AutoCompleteStart(int lenEntered, const char *list) {
 	if (rcPopupBounds.Height() == 0)
 		rcPopupBounds = rcClient;
 
-	int heightLB = 100;
-	int widthLB = 100;
+	int heightLB = ac.heightLBDefault;
+	int widthLB = ac.widthLBDefault;
 	if (pt.x >= rcClient.right - widthLB) {
 		HorizontalScrollTo(xOffset + pt.x - rcClient.right + widthLB);
 		Redraw();
@@ -293,13 +294,8 @@ void ScintillaBase::AutoCompleteMove(int delta) {
 }
 
 void ScintillaBase::AutoCompleteMoveToCurrentWord() {
-	char wordCurrent[1000];
-	int i;
-	int startWord = ac.posStart - ac.startLen;
-	for (i = startWord; i < sel.MainCaret() && i - startWord < 1000; i++)
-		wordCurrent[i - startWord] = pdoc->CharAt(i);
-	wordCurrent[Platform::Minimum(i - startWord, 999)] = '\0';
-	ac.Select(wordCurrent);
+	std::string wordCurrent = RangeText(ac.posStart - ac.startLen, sel.MainCaret());
+	ac.Select(wordCurrent.c_str());
 }
 
 void ScintillaBase::AutoCompleteCharacterAdded(char ch) {
@@ -335,15 +331,12 @@ void ScintillaBase::AutoCompleteCharacterDeleted() {
 }
 
 void ScintillaBase::AutoCompleteCompleted() {
-	int item = ac.lb->GetSelection();
-	char selected[1000];
-	selected[0] = '\0';
-	if (item != -1) {
-		ac.lb->GetValue(item, selected, sizeof(selected));
-	} else {
+	int item = ac.GetSelection();
+	if (item == -1) {
 		AutoCompleteCancel();
 		return;
 	}
+	const std::string selected = ac.GetValue(item);
 
 	ac.Show(false);
 
@@ -355,7 +348,7 @@ void ScintillaBase::AutoCompleteCompleted() {
 	Position firstPos = ac.posStart - ac.startLen;
 	scn.position = firstPos;
 	scn.lParam = firstPos;
-	scn.text = selected;
+	scn.text = selected.c_str();
 	scn.position = item; //!-add-[UserListItemID]
 	NotifyParent(scn);
 
@@ -377,8 +370,8 @@ void ScintillaBase::AutoCompleteCompleted() {
 	}
 	SetEmptySelection(ac.posStart);
 	if (item != -1) {
-		pdoc->InsertCString(firstPos, selected);
-		SetEmptySelection(firstPos + static_cast<int>(strlen(selected)));
+		pdoc->InsertCString(firstPos, selected.c_str());
+		SetEmptySelection(firstPos + static_cast<int>(selected.length()));
 	}
 	SetLastXChosen();
 }
@@ -386,19 +379,17 @@ void ScintillaBase::AutoCompleteCompleted() {
 int ScintillaBase::AutoCompleteGetCurrent() {
 	if (!ac.Active())
 		return -1;
-	return ac.lb->GetSelection();
+	return ac.GetSelection();
 }
 
 int ScintillaBase::AutoCompleteGetCurrentText(char *buffer) {
 	if (ac.Active()) {
-		int item = ac.lb->GetSelection();
-		char selected[1000];
-		selected[0] = '\0';
+		int item = ac.GetSelection();
 		if (item != -1) {
-			ac.lb->GetValue(item, selected, sizeof(selected));
+			const std::string selected = ac.GetValue(item);
 			if (buffer != NULL)
-				strcpy(buffer, selected);
-			return static_cast<int>(strlen(selected));
+				strcpy(buffer, selected.c_str());
+			return static_cast<int>(selected.length());
 		}
 	}
 	if (buffer != NULL)
@@ -742,6 +733,13 @@ sptr_t ScintillaBase::WndProc(unsigned int iMessage, uptr_t wParam, sptr_t lPara
 	case SCI_AUTOCGETIGNORECASE:
 		return ac.ignoreCase;
 
+	case SCI_AUTOCSETCASEINSENSITIVEBEHAVIOUR:
+		ac.ignoreCaseBehaviour = wParam;
+		break;
+
+	case SCI_AUTOCGETCASEINSENSITIVEBEHAVIOUR:
+		return ac.ignoreCaseBehaviour;
+
 	case SCI_USERLISTSHOW:
 		listType = wParam;
 		AutoCompleteStart(0, reinterpret_cast<const char *>(lParam));
@@ -850,12 +848,12 @@ sptr_t ScintillaBase::WndProc(unsigned int iMessage, uptr_t wParam, sptr_t lPara
 //!-start-[BetterCalltips]
 	case SCI_CALLTIPSETWORDWRAP:
 		ct.SetWrapBound((int)wParam);
+//!-end-[BetterCalltips]
 
 	case SCI_CALLTIPSETPOSITION:
 		ct.SetPosition(wParam != 0);
 		InvalidateStyleRedraw();
 		break;
-//!-end-[BetterCalltips]
 
 	case SCI_USEPOPUP:
 		displayPopupMenu = wParam != 0;

@@ -251,7 +251,6 @@ bool MultiplexExtension::OnMacro(const char *p, const char *q) {
 	return handled;
 }
 
-
 //!bool MultiplexExtension::OnUserListSelection(int listType, const char *selection) {
 bool MultiplexExtension::OnUserListSelection(int listType, const char *selection, int id) { //!-change-[UserListItemID]
 	bool handled = false;
@@ -327,3 +326,10 @@ const char *MultiplexExtension::OnSendEditor(unsigned int msg, unsigned int wp, 
 	return result;
 }
 //!-end-[OnSendEditor]
+
+bool MultiplexExtension::OnUserStrip(int control, int change) {
+	for (int i = 0; i < extensionCount; ++i)
+		extensions[i]->OnUserStrip(control, change);
+	return false;
+}
+

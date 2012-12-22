@@ -24,6 +24,9 @@
 #define TS_CHECKED 5
 #define TS_HOTCHECKED 6
 #define TP_BUTTON 1
+#ifndef DFCS_HOT
+#define DFCS_HOT 1000
+#endif
 
 #ifndef WM_UPDATEUISTATE
 #define WM_UPDATEUISTATE 0x0128
@@ -536,8 +539,10 @@ void SciTEWin::CopyAsRTF() {
 				::OpenClipboard(MainHWND());
 				::EmptyClipboard();
 				char *ptr = static_cast<char *>(::GlobalLock(hand));
-				fread(ptr, 1, len, fp);
-				ptr[len] = '\0';
+				if (ptr) {
+					fread(ptr, 1, len, fp);
+					ptr[len] = '\0';
+				}
 				::GlobalUnlock(hand);
 				::SetClipboardData(::RegisterClipboardFormat(CF_RTF), hand);
 				::CloseClipboard();
@@ -559,7 +564,8 @@ void SciTEWin::CopyPath() {
 	if (hand && ::OpenClipboard(MainHWND())) {
 		::EmptyClipboard();
 		GUI::gui_char *ptr = static_cast<GUI::gui_char*>(::GlobalLock(hand));
-		memcpy(ptr, clipText.c_str(), blobSize);
+		if (ptr)
+			memcpy(ptr, clipText.c_str(), blobSize);
 		::GlobalUnlock(hand);
 		::SetClipboardData(CF_UNICODETEXT, hand);
 		::CloseClipboard();
@@ -624,6 +630,27 @@ void SciTEWin::Command(WPARAM wParam, LPARAM lParam) {
 		// From toolbar -> goes to focused pane.
 		menuSource = 0;
 	}
+	if (!menuSource) {
+		if (!wEditor.HasFocus() && !wOutput.HasFocus()) {
+			HWND wWithFocus = ::GetFocus();
+			enum { capSize = 2000 };
+			GUI::gui_char className[capSize];
+			::GetClassName(wWithFocus, className, capSize);
+			if (wcscmp(className, TEXT("Edit")) == 0) {
+				switch (cmdID) {
+				case IDM_UNDO:
+					::SendMessage(wWithFocus, EM_UNDO, 0, 0);
+					return;
+				case IDM_CUT:
+					::SendMessage(wWithFocus, WM_CUT, 0, 0);
+					return;
+				case IDM_COPY:
+					::SendMessage(wWithFocus, WM_COPY, 0, 0);
+					return;
+				}
+			}
+		}
+	}
 
 	switch (cmdID) {
 
@@ -647,10 +674,7 @@ void SciTEWin::Command(WPARAM wParam, LPARAM lParam) {
 			if (needReadProperties)
 				ReadProperties();
 			CheckMenus();
-			for (int icmd = 0; icmd < jobQueue.commandMax; icmd++) {
-				jobQueue.jobQueue[icmd].Clear();
-			}
-			jobQueue.commandCurrent = 0;
+			jobQueue.ClearJobs();
 			CheckReload();
 		}
 		break;
@@ -744,7 +768,7 @@ void SciTEWin::ResetExecution() {
 		ReadProperties();
 	CheckReload();
 	CheckMenus();
-	ClearJobQueue();
+	jobQueue.ClearJobs();
 	::SendMessage(MainHWND(), WM_COMMAND, IDM_FINISHEDEXECUTE, 0);
 }
 
@@ -802,7 +826,10 @@ DWORD SciTEWin::ExecuteOne(const Job &jobToRun) {
 			const char *findWhat = findFiles + strlen(findFiles) + 1;
 			if (cmdWorker.outputScroll == 1)
 				gf = static_cast<GrepFlags>(gf | grepScroll);
-			InternalGrep(gf, jobToRun.directory.AsInternal(), GUI::StringFromUTF8(findFiles).c_str(), findWhat);
+			sptr_t positionEnd = wOutput.Send(SCI_GETCURRENTPOS);
+			InternalGrep(gf, jobToRun.directory.AsInternal(), GUI::StringFromUTF8(findFiles).c_str(), findWhat, positionEnd);
+			if ((gf & grepScroll) && returnOutputToCommand)
+				wOutput.Send(SCI_GOTOPOS, positionEnd, 0);
 		}
 		return exitcode;
 	}
@@ -814,7 +841,6 @@ DWORD SciTEWin::ExecuteOne(const Job &jobToRun) {
 	}
 
 	SECURITY_ATTRIBUTES sa = {sizeof(SECURITY_ATTRIBUTES), 0, 0};
-	char buffer[16384];
 	OutputAppendStringSynchronised(">");
 	OutputAppendEncodedStringSynchronised(GUI::StringFromUTF8(jobToRun.command.c_str()), codePage);
 	OutputAppendStringSynchronised("\n");
@@ -940,6 +966,7 @@ DWORD SciTEWin::ExecuteOne(const Job &jobToRun) {
 
 			DWORD bytesRead = 0;
 			DWORD bytesAvail = 0;
+			char buffer[16384];
 
 			if (!::PeekNamedPipe(hPipeRead, buffer,
 					     sizeof(buffer), &bytesRead, &bytesAvail, NULL)) {
@@ -1122,8 +1149,9 @@ void SciTEWin::ShellExec(const SString &cmd, const char *dir) {
 
 	// guess if cmd is an executable, if this succeeds it can
 	// contain spaces without enclosing it with "
-	char *mycmdcopy = StringDup(cmd.c_str());
-	strlwr(mycmdcopy);
+	SString cmdLower = cmd;
+	cmdLower.lowercase();
+	char *mycmdcopy = StringDup(cmdLower.c_str());
 
 	char *mycmd_end = NULL;
 	char *myparams = NULL;
@@ -1211,6 +1239,9 @@ void SciTEWin::Execute() {
 		return;
 
 	SciTEBase::Execute();
+	if (!jobQueue.HasCommandToRun())
+		// No commands to execute - possibly cancelled in SciTEBase::Execute
+		return;
 
 	cmdWorker.Initialise(false);
 	cmdWorker.outputScroll = props.GetInt("output.scroll", 1);
@@ -2055,9 +2086,15 @@ LRESULT SciTEWin::WndProc(UINT iMessage, WPARAM wParam, LPARAM lParam) {
 					findStrip.Focus();
 				else if (replaceStrip.visible)
 					replaceStrip.Focus();
+				else if (userStrip.visible)
+					userStrip.Focus();
 				else
 					::SetFocus(wFocus);
 			}
+			break;
+
+		case WM_TIMER:
+			OnTimer();
 			break;
 
 		case WM_DROPFILES:
@@ -2325,7 +2362,7 @@ GUI::Window Strip::CreateButton(const char *text, int ident, bool check) {
 		2, 2, width, height,
 		Hwnd(), reinterpret_cast<HMENU>(ident), ::GetModuleHandle(NULL), 0));
 	if (check) {
-		int resNum = 0;
+		int resNum = IDBM_WORD;
 		switch (ident) {
 		case IDWHOLEWORD: resNum = IDBM_WORD; break;
 		case IDMATCHCASE: resNum = IDBM_CASE; break;
@@ -2580,7 +2617,7 @@ void Strip::SetTheme() {
 }
 
 static bool HideKeyboardCues() {
-	BOOL b;
+	BOOL b=FALSE;
 	::SystemParametersInfo(SPI_GETKEYBOARDCUES, 0, &b, 0);
 	return !b;
 }
@@ -3558,6 +3595,280 @@ void ReplaceStrip::Show() {
 	pSearcher->ScrollEditorIfNeeded();
 }
 
+void UserStrip::Creation() {
+	Strip::Creation();
+}
+
+void UserStrip::Destruction() {
+	delete psd;
+	psd = NULL;
+	Strip::Destruction();
+}
+
+void UserStrip::Close() {
+	Strip::Close();
+	if (pSciTEWin)
+		pSciTEWin->UserStripClosed();
+}
+
+void UserStrip::Size() {
+	if (!visible)
+		return;
+	Strip::Size();
+	GUI::Rectangle rcArea = GetPosition();
+
+	rcArea.bottom -= rcArea.top;
+	rcArea.right -= rcArea.left;
+
+	rcArea.left = 2;
+	rcArea.top = 2;
+	rcArea.right -= 2;
+	rcArea.bottom -= 2;
+
+	if (HasClose())
+		rcArea.right -= closeSize.cx + 2;	// Allow for close box and gap
+
+#ifdef BCM_GETIDEALSIZE
+	for (size_t line=0; line<psd->controls.size(); line++) {
+		std::vector<UserControl> &uc = psd->controls[line];
+		// Push buttons can be measured with BCM_GETIDEALSIZE
+		for (std::vector<UserControl>::iterator ctl=uc.begin(); ctl != uc.end(); ++ctl) {
+			if (ctl->controlType == UserControl::ucButton) {
+				SIZE sz = {0, 0};
+				::SendMessage(reinterpret_cast<HWND>(ctl->w.GetID()),
+					BCM_GETIDEALSIZE, 0, reinterpret_cast<LPARAM>(&sz));
+				if (sz.cx > 0) {
+					ctl->widthDesired = sz.cx + 2 * WidthText(fontText, TEXT(" "));
+				}
+			}
+		}
+	}
+#endif
+
+	psd->CalculateColumnWidths(rcArea.Width());
+
+	for (unsigned int line=0; line<psd->controls.size(); line++) {
+		int top = rcArea.top + line * lineHeight;
+		int left = rcArea.left;
+		size_t column = 0;
+		std::vector<UserControl> &uc = psd->controls[line];
+		for (std::vector<UserControl>::iterator ctl=uc.begin(); ctl != uc.end(); ++ctl) {
+			ctl->widthAllocated = psd->widths[column].widthAllocated;
+
+			GUI::Rectangle rcSize = ctl->w.GetClientPosition();
+			int topWithFix = top;
+			if (ctl->controlType == UserControl::ucButton)
+				topWithFix--;
+			if (ctl->controlType == UserControl::ucStatic)
+				topWithFix += 3;
+			if (ctl->controlType == UserControl::ucEdit)
+				rcSize.bottom = rcSize.top + 23;
+			if (ctl->controlType == UserControl::ucCombo)
+				rcSize.bottom = rcSize.top + 180;
+			GUI::Rectangle rcControl(left, topWithFix, left + ctl->widthAllocated, topWithFix + rcSize.Height());
+			ctl->w.SetPosition(rcControl);
+			left += ctl->widthAllocated + 4;
+
+			column++;
+		}
+	}
+
+	::InvalidateRect(Hwnd(), NULL, TRUE);
+}
+
+bool UserStrip::HasClose() const {
+	return psd && psd->hasClose;
+}
+
+void UserStrip::Focus() {
+	for (std::vector<std::vector<UserControl> >::iterator line=psd->controls.begin(); line != psd->controls.end(); ++line) {
+		for (std::vector<UserControl>::iterator ctl=line->begin(); ctl != line->end(); ++ctl) {
+			if (ctl->controlType != UserControl::ucStatic) {
+				::SetFocus(HwndOf(ctl->w));
+				return;
+			}
+		}
+	}
+}
+
+bool UserStrip::KeyDown(WPARAM key) {
+	if (!visible)
+		return false;
+	if (Strip::KeyDown(key))
+		return true;
+	if (key == VK_RETURN) {
+		if (IsChild(Hwnd(), ::GetFocus())) {
+			// Treat Enter as pressing the first default button
+			for (std::vector<std::vector<UserControl> >::iterator line=psd->controls.begin(); line != psd->controls.end(); ++line) {
+				for (std::vector<UserControl>::iterator ctl=line->begin(); ctl != line->end(); ++ctl) {
+					if (ctl->controlType == UserControl::ucDefaultButton) {
+						extender->OnUserStrip(ctl->item, scClicked);
+						return true;
+					}
+				}
+			}
+		}
+	}
+
+	return false;
+}
+
+static StripCommand NotificationToStripCommand(int notification) {
+	switch (notification) {
+		case BN_CLICKED:
+			return scClicked;
+		case EN_CHANGE:
+		case CBN_EDITCHANGE:
+			return scChange;
+		case EN_UPDATE:
+			return scUnknown;
+		case EN_SETFOCUS:
+			return scFocusIn;
+		case EN_KILLFOCUS:
+			return scFocusOut;
+		default:
+			return scUnknown;
+	}
+}
+
+bool UserStrip::Command(WPARAM wParam) {
+	if (entered)
+		return false;
+	int control = ControlIDOfWParam(wParam);
+	int notification = HIWORD(wParam);
+	if (extender) {
+		StripCommand sc = NotificationToStripCommand(notification);
+		if (sc != scUnknown)
+			return extender->OnUserStrip(control, sc);
+	}
+	return false;
+}
+
+LRESULT UserStrip::WndProc(UINT iMessage, WPARAM wParam, LPARAM lParam) {
+	try {
+
+	return Strip::WndProc(iMessage, wParam, lParam);
+
+	} catch (...) {
+	}
+	return 0l;
+}
+
+int UserStrip::Lines() {
+	return psd ? static_cast<int>(psd->controls.size()) : 1;
+}
+
+void UserStrip::SetDescription(const char *description) {
+	entered++;
+	GUI::gui_string sDescription = GUI::StringFromUTF8(description);
+	bool resetting = psd != 0;
+	if (psd) {
+		for (std::vector<std::vector<UserControl> >::iterator line=psd->controls.begin(); line != psd->controls.end(); ++line) {
+			for (std::vector<UserControl>::iterator ctl=line->begin(); ctl != line->end(); ++ctl) {
+				ctl->w.Destroy();
+			}
+		}
+	}
+	delete psd;
+	psd = new StripDefinition(sDescription);
+	int controlID=0;
+	for (unsigned int line=0; line<psd->controls.size(); line++) {
+		std::vector<UserControl> &uc = psd->controls[line];
+		for (unsigned int control=0; control<uc.size(); control++) {
+			UserControl *puc = &(uc[control]);
+			switch (puc->controlType) {
+			case UserControl::ucEdit:
+				puc->widthDesired = 100;
+				puc->fixedWidth = false;
+				puc->w = ::CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("Edit"), puc->text.c_str(),
+					WS_CHILD | WS_TABSTOP | WS_CLIPSIBLINGS | ES_AUTOHSCROLL,
+					60 * control, line * lineHeight + 2, puc->widthDesired, 27,
+					Hwnd(), reinterpret_cast<HMENU>(controlID), ::GetModuleHandle(NULL), 0);
+				break;
+
+			case UserControl::ucCombo:
+				puc->widthDesired = 100;
+				puc->fixedWidth = false;
+				puc->w = ::CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("ComboBox"), puc->text.c_str(),
+					WS_CHILD | WS_TABSTOP | WS_CLIPSIBLINGS | CBS_DROPDOWN | CBS_AUTOHSCROLL,
+					60 * control, line * lineHeight + 2, puc->widthDesired, 180,
+					Hwnd(), reinterpret_cast<HMENU>(controlID), ::GetModuleHandle(NULL), 0);
+				break;
+
+			case UserControl::ucButton:
+			case UserControl::ucDefaultButton:
+				puc->widthDesired = WidthText(fontText, puc->text.c_str()) +
+					2 * ::GetSystemMetrics(SM_CXEDGE) +
+					2 * WidthText(fontText, TEXT(" "));
+				puc->w = ::CreateWindowEx(0, TEXT("Button"), puc->text.c_str(),
+					WS_CHILD | WS_TABSTOP | WS_CLIPSIBLINGS |
+					((puc->controlType == UserControl::ucDefaultButton) ? BS_DEFPUSHBUTTON : BS_PUSHBUTTON),
+					60 * control, line * lineHeight + 2, puc->widthDesired, 25,
+					Hwnd(), reinterpret_cast<HMENU>(controlID), ::GetModuleHandle(NULL), 0);
+				break;
+
+			default:
+				puc->widthDesired = WidthText(fontText, puc->text.c_str());
+				puc->w = ::CreateWindowEx(0, TEXT("Static"), puc->text.c_str(),
+					WS_CHILD | WS_CLIPSIBLINGS | ES_RIGHT,
+					60 * control, line * lineHeight + 2, puc->widthDesired, 21,
+					Hwnd(), reinterpret_cast<HMENU>(controlID), ::GetModuleHandle(NULL), 0);
+				break;
+			}
+			puc->w.Show();
+			SetFontHandle(puc->w, fontText);
+			controlID++;
+		}
+	}
+	if (resetting)
+		Size();
+	entered--;
+	Focus();
+}
+
+void UserStrip::SetExtender(Extension *extender_) {
+	extender = extender_;
+}
+
+void UserStrip::SetSciTE(SciTEWin *pSciTEWin_) {
+	pSciTEWin = pSciTEWin_;
+}
+
+UserControl *UserStrip::FindControl(int control) {
+	return psd->FindControl(control);
+}
+
+void UserStrip::Set(int control, const char *value) {
+	UserControl *ctl = FindControl(control);
+	if (ctl) {
+		GUI::gui_string sValue = GUI::StringFromUTF8(value);
+		::SetWindowTextW(HwndOf(ctl->w), sValue.c_str());
+	}
+}
+
+void UserStrip::SetList(int control, const char *value) {
+	UserControl *ctl = FindControl(control);
+	if (ctl) {
+		if (ctl->controlType == UserControl::ucCombo) {
+			GUI::gui_string sValue = GUI::StringFromUTF8(value);
+			std::vector<GUI::gui_string> listValues = ListFromString(sValue);
+			HWND combo = HwndOf(ctl->w);
+			::SendMessage(combo, CB_RESETCONTENT, 0, 0);
+			for (std::vector<GUI::gui_string>::iterator i = listValues.begin(); i != listValues.end(); ++i) {
+				::SendMessageW(combo, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(i->c_str()));
+			}
+		}
+	}
+}
+
+std::string UserStrip::GetValue(int control) {
+	UserControl *ctl = FindControl(control);
+	if (ctl) {
+		return ControlText(ctl->w).c_str();
+	}
+	return "";
+}
+
 LRESULT PASCAL BaseWin::StWndProc(
     HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam) {
 	// Find C++ object associated with window.
@@ -3724,6 +4035,7 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 
 	::FreeLibrary(hmod);
 #endif
+
 	return static_cast<int>(result);
 }
 //!-start-[ExtendedContextMenu]

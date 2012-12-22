@@ -73,6 +73,15 @@
 
 const GUI::gui_char defaultSessionFileName[] = GUI_TEXT("SciTE.session");
 
+void Buffer::DocumentModified() {
+	documentModTime = time(0);
+}
+
+bool Buffer::NeedsSave(int delayBeforeSave) {
+	time_t now = time(0);
+	return now && documentModTime && isDirty && !pFileWorker && (now-documentModTime > delayBeforeSave) && !IsUntitled();
+}
+
 void Buffer::CompleteLoading() {
 	lifeState = open;
 	if (pFileWorker && pFileWorker->IsLoading()) {
@@ -87,6 +96,16 @@ void Buffer::CompleteStoring() {
 		pFileWorker = 0;
 	}
 	SetTimeFromFile();
+}
+
+void Buffer::AbandonAutomaticSave() {
+	if (pFileWorker && !pFileWorker->IsLoading()) {
+		FileStorer *pFileStorer = static_cast<FileStorer *>(pFileWorker);
+		if (!pFileStorer->visibleProgress) {
+			pFileWorker->Cancel();
+			// File is in partially saved state so may be better to remove
+		}
+	}
 }
 
 void Buffer::CancelLoad() {
@@ -189,8 +208,8 @@ void BufferList::RemoveCurrent() {
 		lengthVisible--;
 
 		buffers[length].Init();
-		if (current >= length) {
-			SetCurrent(length - 1);
+		if (current >= lengthVisible) {
+			SetCurrent(lengthVisible - 1);
 		}
 		if (current < 0) {
 			SetCurrent(0);
@@ -311,6 +330,11 @@ BackgroundActivities BufferList::CountBackgroundActivities() const {
 	for (int i = 0;i < length;i++) {
 		if (buffers[i].pFileWorker) {
 			if (!buffers[i].pFileWorker->FinishedJob()) {
+				if (!buffers[i].pFileWorker->IsLoading()) {
+					FileStorer *fstorer = static_cast<FileStorer*>(buffers[i].pFileWorker);
+					if (!fstorer->visibleProgress)
+						continue;
+				}
 				if (buffers[i].pFileWorker->IsLoading())
 					bg.loaders++;
 				else
@@ -619,8 +643,26 @@ void SciTEBase::RestoreFromSession(const Session &session) {
 }
 
 void SciTEBase::RestoreSession() {
-	if (props.GetInt("session.close.buffers.onload", 1) == 1) //!-add-[session.close.buffers.onload]
+	if (props.GetInt("save.find") != 0) {
+		for (int i = 0;; i++) {
+			SString propKey = IndexPropKey("search", i, "findwhat");
+			SString propStr = propsSession.Get(propKey.c_str());
+			if (propStr == "")
+				break;
+			memFinds.AppendList(propStr.c_str());
+		}
+
+		for (int i = 0;; i++) {
+			SString propKey = IndexPropKey("search", i, "replacewith");
+			SString propStr = propsSession.Get(propKey.c_str());
+			if (propStr == "")
+				break;
+			memReplaces.AppendList(propStr.c_str());
+		}
+	}
+
 	// Comment next line if you don't want to close all buffers before restoring session
+	if (props.GetInt("session.close.buffers.onload", 1) == 1) //!-add-[session.close.buffers.onload]
 	CloseAllBuffers(true);
 
 	Session session;
@@ -703,6 +745,31 @@ void SciTEBase::SaveSessionFile(const GUI::gui_char *sessionName) {
 			if (recentFileStack[i].IsSet()) {
 				propKey = IndexPropKey("mru", j++, "path");
 				fprintf(sessionFile, "%s=%s\n", propKey.c_str(), recentFileStack[i].AsUTF8().c_str());
+			}
+		}
+	}
+
+	if (defaultSession && props.GetInt("save.find")) {
+		SString propKey;
+		std::vector<std::string>::iterator it;
+		std::vector<std::string> mem = memFinds.AsVector();
+		if (!mem.empty()) {
+			fprintf(sessionFile, "\n");
+			it = mem.begin();
+			for (int i = 0; it != mem.end(); i++, it++) {
+				propKey = IndexPropKey("search", i, "findwhat");
+				fprintf(sessionFile, "%s=%s\n", propKey.c_str(), (*it).c_str());
+			}
+		}
+
+		mem = memReplaces.AsVector();
+		if (!mem.empty()) {
+			fprintf(sessionFile, "\n");
+			mem = memReplaces.AsVector();
+			it = mem.begin();
+			for (int i = 0; it != mem.end(); i++, it++) {
+				propKey = IndexPropKey("search", i, "replacewith");
+				fprintf(sessionFile, "%s=%s\n", propKey.c_str(), (*it).c_str());
 			}
 		}
 	}
@@ -811,6 +878,8 @@ void SciTEBase::New() {
 	InitialiseBuffers();
 	UpdateBuffersCurrent();
 
+	propsDiscovered.Clear();
+
 	if ((buffers.size == 1) && (!buffers.buffers[0].IsUntitled())) {
 		AddFileToStack(buffers.buffers[0],
 		        buffers.buffers[0].selection,
@@ -842,6 +911,7 @@ void SciTEBase::New() {
 	jobQueue.isBuilding = false;
 	jobQueue.isBuilt = false;
 	isReadOnly = false;	// No sense to create an empty, read-only buffer...
+	CurrentBuffer()->isReadOnly = false;
 
 	ClearDocument();
 	DeleteFileStackMenu();
@@ -859,7 +929,7 @@ void SciTEBase::RestoreState(const Buffer &buffer, bool restoreBookmarks) {
 		wEditor.Call(SCI_SETCODEPAGE, codePage);
 	}
 	props.SetInteger("editor.unicode.mode", CurrentBuffer()->unicodeMode + IDM_ENCODING_DEFAULT); //!-add-[EditorUnicodeMode]
-	isReadOnly = wEditor.Call(SCI_GETREADONLY);
+	isReadOnly = CurrentBuffer()->isReadOnly;
 
 	// check to see whether there is saved fold state, restore
 	if (!buffer.foldState.empty()) {
@@ -968,6 +1038,7 @@ void SciTEBase::CloseTab(int tab) {
 	if (tab == tabCurrent) {
 		if (SaveIfUnsure() != IDCANCEL) {
 			Close();
+			WindowSetFocus(wEditor);
 		}
 	} else {
 		FilePath fpCurrent = buffers.buffers[tabCurrent].AbsolutePath();
@@ -1113,17 +1184,18 @@ void SciTEBase::SetBuffersMenu() {
 			GUI::gui_string entry;
 			GUI::gui_string titleTab;
 
+#if defined(WIN32) || defined(GTK)
 			if (pos < 10) {
 				GUI::gui_string sPos = GUI::StringFromInteger((pos + 1) % 10);
 				GUI::gui_string sHotKey = GUI_TEXT("&") + sPos + GUI_TEXT(" ");
-#if defined(WIN32)
 				entry = sHotKey;	// hotkey 1..0
+#if defined(WIN32)
 				titleTab = sHotKey; // add hotkey to the tabbar
 #elif defined(GTK)
-				entry = sHotKey;	// hotkey 1..0
 				titleTab = sPos + GUI_TEXT(" ");
 #endif
 			}
+#endif
 
 			if (buffers.buffers[pos].IsUntitled()) {
 				GUI::gui_string untitled = localiser.Text("Untitled");
@@ -1203,23 +1275,17 @@ void SciTEBase::SetFileStackMenu() {
 //!-end-[MoreRecentFiles]
 			int itemID = fileStackCmdID + stackPos;
 			if (recentFileStack[stackPos].IsSet()) {
-				GUI::gui_char entry[MAX_PATH + 20];
-				entry[0] = '\0';
-				if ( stackPos < 10 ) //!-add-[MoreRecentFiles]
-#if defined(GTK)
-				sprintf(entry, GUI_TEXT("&%d "), (stackPos + 1) % 10);
-#elif defined(WIN32)
-#if defined(_MSC_VER) && (_MSC_VER > 1200)
-				swprintf(entry, ELEMENTS(entry), GUI_TEXT("&%d "), (stackPos + 1) % 10);
-#else
-				swprintf(entry, GUI_TEXT("&%d "), (stackPos + 1) % 10);
-				else swprintf(entry, GUI_TEXT("   ")); //!-add-[MoreRecentFiles]
+				GUI::gui_string sEntry;
+
+#if defined(WIN32) || defined(GTK)
+				GUI::gui_string sPos = GUI::StringFromInteger((stackPos + 1) % 10);
+				GUI::gui_string sHotKey = GUI_TEXT("&") + sPos + GUI_TEXT(" ");
+				sEntry = sHotKey;
 #endif
-#endif
+
 				GUI::gui_string path = recentFileStack[stackPos].AsInternal();
 				EscapeFilePathsForMenu(path);
 
-				GUI::gui_string sEntry(entry);
 				sEntry += path;
 				SetMenuItem(menuFile, MRU_START + stackPos + 1, itemID, sEntry.c_str());
 			}
@@ -1248,6 +1314,12 @@ bool SciTEBase::AddFileToBuffer(const BufferState &bufferState) {
 				buffers.buffers[iBuffer].selection = bufferState.selection;
 				buffers.buffers[iBuffer].foldState = bufferState.foldState;
 				buffers.buffers[iBuffer].bookmarks = bufferState.bookmarks;
+				if (buffers.buffers[iBuffer].lifeState == Buffer::open) {
+					// File was opened synchronously
+					RestoreState(buffers.buffers[iBuffer], true);
+					DisplayAround(buffers.buffers[iBuffer]);
+					wEditor.Call(SCI_SCROLLCARET);
+				}
 			}
 		}
 	}
@@ -1710,7 +1782,7 @@ void SciTEBase::ToolsMenu(int item) {
 				flags |= jobGroupUndo;
 
 			AddCommand(command, "", jobType, input, flags);
-			if (jobQueue.commandCurrent > 0)
+			if (jobQueue.HasCommandToRun())
 				Execute();
 		}
 	}
@@ -1758,6 +1830,11 @@ int DecodeMessage(const char *cdoc, char *sourcePath, int format, int &column) {
 						strncpy(sourcePath, cdoc, i);
 						sourcePath[i] = 0;
 					}
+					i += 2;
+					while (isdigitchar(cdoc[i]))
+						++i;
+					if (cdoc[i] == ':' && isdigitchar(cdoc[i + 1]))
+						column = atoi(cdoc + i + 1) - 1;
 					return sourceNumber;
 				}
 			}
@@ -2042,10 +2119,10 @@ int DecodeMessage(const char *cdoc, char *sourcePath, int format, int &column) {
 		}
 
 	case SCE_ERR_DIFF_MESSAGE: {
-			// Diff file header, either +++ <filename>\t or --- <filename>\t
+			// Diff file header, either +++ <filename> or --- <filename>, may be followed by \t
 			// Often followed by a position line @@ <linenumber>
 			const char *startPath = cdoc + 4;
-			const char *endPath = strchr(startPath, '\t');
+			const char *endPath = strpbrk(startPath, "\t\r\n");
 			if (endPath) {
 				ptrdiff_t length = endPath - startPath;
 				strncpy(sourcePath, startPath, length);
@@ -2076,7 +2153,7 @@ void SciTEBase::ShowMessages(int line) {
 		int startPosLine = wOutput.Call(SCI_POSITIONFROMLINE, line, 0);
 		int lineEnd = wOutput.Call(SCI_GETLINEENDPOSITION, line, 0);
 		SString message = GetRange(wOutput, startPosLine, lineEnd);
-		char source[MAX_PATH];	
+		char source[MAX_PATH];
 		int column;
 		char style = acc.StyleAt(startPosLine);
 		int sourceLine = DecodeMessage(message.c_str(), source, style, column);
@@ -2106,17 +2183,20 @@ void SciTEBase::ShowMessages(int line) {
 				msgCurrent += "\n";
 				stylesCurrent += '\0';
 			}
-			msgCurrent += message.c_str();
-			int msgStyle = 0;
-			if (message.search("warning") >= 0)
-				msgStyle = 1;
-			if (message.search("error") >= 0)
-				msgStyle = 2;
-			if (message.search("fatal") >= 0)
-				msgStyle = 3;
-			stylesCurrent += std::string(message.length(), static_cast<char>(msgStyle));
-			wEditor.CallString(SCI_ANNOTATIONSETTEXT, sourceLine, msgCurrent.c_str());
-			wEditor.CallString(SCI_ANNOTATIONSETSTYLES, sourceLine, stylesCurrent.c_str());
+			if (msgCurrent.find(message.c_str()) == std::string::npos) {
+				// Only append unique messages
+				msgCurrent += message.c_str();
+				int msgStyle = 0;
+				if (message.search("warning") >= 0)
+					msgStyle = 1;
+				if (message.search("error") >= 0)
+					msgStyle = 2;
+				if (message.search("fatal") >= 0)
+					msgStyle = 3;
+				stylesCurrent += std::string(message.length(), static_cast<char>(msgStyle));
+				wEditor.CallString(SCI_ANNOTATIONSETTEXT, sourceLine, msgCurrent.c_str());
+				wEditor.CallString(SCI_ANNOTATIONSETSTYLES, sourceLine, stylesCurrent.c_str());
+			}
 		}
 		line++;
 	}
@@ -2223,20 +2303,32 @@ bool SciTEBase::GoMessage(int dir) { //!-change-[GoMessageImprovement]
 
 				// If ctag then get line number after search tag or use ctag line number
 				if (style == SCE_ERR_CTAG) {
-					char cTag[200];
 					//without following focus GetCTag wouldn't work correct
 					WindowSetFocus(wOutput);
-					GetCTag(cTag, 200);
-					if (cTag[0] != '\0') {
-						if (atol(cTag) > 0) {
+					SString cTag = GetCTag();
+					if (cTag.length() != 0) {
+						if (cTag.value() > 0) {
 							//if tag is linenumber, get line
-							sourceLine = atol(cTag) - 1;
+							sourceLine = cTag.value() - 1;
 						} else {
 							findWhat = cTag;
 							FindNext(false);
 							//get linenumber for marker from found position
 							sourceLine = wEditor.Call(SCI_LINEFROMPOSITION, wEditor.Call(SCI_GETCURRENTPOS));
 						}
+					}
+				}
+
+				else if (style == SCE_ERR_DIFF_MESSAGE) {
+					bool isAdd = message.startswith("+++ ");
+					int atLine = lookLine + (isAdd ? 1 : 2); // lines are in this order: ---, +++, @@
+					SString atMessage = GetLine(wOutput, atLine);
+					if (atMessage.startswith("@@ -")) {
+						int atPos = (isAdd
+							? atMessage.search(" +", 7) + 2 // skip "@@ -1,1" and then " +"
+							: 4 // deleted position starts right after "@@ -"
+						);
+						sourceLine = atol(atMessage.c_str() + atPos) - 1;
 					}
 				}
 
@@ -2257,7 +2349,7 @@ bool SciTEBase::GoMessage(int dir) { //!-change-[GoMessageImprovement]
 					// Get the position in line according to current tab setting
 					startSourceLine = wEditor.Call(SCI_FINDCOLUMN, sourceLine, column);
 				}
-				EnsureRangeVisible(startSourceLine, startSourceLine);
+				EnsureRangeVisible(wEditor, startSourceLine, startSourceLine);
 				if (props.GetInt("error.select.line") == 1) {
 					//select whole source source line from column with error
 					SetSelection(endSourceline, startSourceLine);
@@ -2271,9 +2363,9 @@ bool SciTEBase::GoMessage(int dir) { //!-change-[GoMessageImprovement]
 				UpdateStatusBar(false);
 				WindowSetFocus(wEditor);
 				return true; //!-add-[GoMessageImprovement]
+			}
 //!			return;
 			return false; //!-change-[GoMessageImprovement]
-			}
 		}
 		lookLine += dir;
 		if (lookLine < 0)
@@ -2286,3 +2378,4 @@ bool SciTEBase::GoMessage(int dir) { //!-change-[GoMessageImprovement]
 	}
 	return false; //!-add-[GoMessageImprovement]
 }
+

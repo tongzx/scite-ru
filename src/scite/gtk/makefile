@@ -6,19 +6,28 @@
 
 .SUFFIXES: .cxx .o .h .a .c
 ifdef CLANG
-CC = clang
-CCOMP = clang
+ifdef CLANG_ANALYZE
+ANALYZE=--analyze
+endif
+CC = clang $(ANALYZE)
+CCOMP = clang $(ANALYZE)
 else
 CC = g++
 CCOMP = gcc
 endif
 AR = ar
 
+ifdef GTK3
+GTKVERSION=gtk+-3.0
+else
+GTKVERSION=gtk+-2.0
+endif
+
 # For the Gnome desktop stuff to work, prefix must point to where Gnome thinks it is.
-CONFIGFLAGS:=$(shell pkg-config --cflags gtk+-2.0)
-CONFIGLIB:=$(shell pkg-config --libs gtk+-2.0 gthread-2.0)
+CONFIGFLAGS:=$(shell pkg-config --cflags $(GTKVERSION))
+CONFIGLIB:=$(shell pkg-config --libs $(GTKVERSION) gthread-2.0 gmodule-no-export-2.0)
 CONFIGTHREADS:=
-gnomeprefix:=$(shell pkg-config --variable=prefix gtk+-2.0 2>/dev/null)
+gnomeprefix:=$(shell pkg-config --variable=prefix $(GTKVERSION) 2>/dev/null)
 ifndef prefix
 ifdef gnomeprefix
   prefix=$(gnomeprefix)
@@ -41,13 +50,15 @@ vpath %.h ../src ../../scintilla/include
 vpath %.cxx ../src
 
 INCLUDEDIRS=-I ../../scintilla/include -I ../src
-#~ DEPRECATED=-DGDK_PIXBUF_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED
+ifdef CHECK_DEPRECATED
+DEPRECATED=-DGDK_PIXBUF_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED
+endif
 CXXBASEFLAGS=-W -Wall -Wno-char-subscripts -pedantic -DGTK -DSCI_LEXER -DPIXMAP_PATH=\"$(pixmapdir)\" -DSYSCONF_PATH=\"$(SYSCONF_PATH)\" $(INCLUDEDIRS) $(DEPRECATED)
 
 ifdef DEBUG
-CXXTFLAGS=-DDEBUG -g $(CXXBASEFLAGS)
+CXXTFLAGS=-DDEBUG -g $(CXXFLAGS) $(CXXBASEFLAGS)
 else
-CXXTFLAGS=-DNDEBUG -Os $(CXXBASEFLAGS)
+CXXTFLAGS=-DNDEBUG -Os $(CXXFLAGS) $(CXXBASEFLAGS)
 endif
 
 ifndef NO_LUA
@@ -60,37 +71,44 @@ LUA_LIB_OBJS =	lauxlib.o lbaselib.o ldblib.o liolib.o lmathlib.o ltablib.o \
 
 LUA_OBJS = LuaExtension.o $(LUA_CORE_OBJS) $(LUA_LIB_OBJS)
 
+vpath %.c ../lua/src ../lua/src/lib
+
 INCLUDEDIRS=-I ../../scintilla/include -I ../src -I../lua/include
-$(LUA_CORE_OBJS): ../lua/src/*.c
-	$(CCOMP) $(INCLUDEDIRS) -DLUA_USE_POSIX $(CXXTFLAGS) -c ../lua/src/*.c
-$(LUA_LIB_OBJS): ../lua/src/lib/*.c
-	$(CCOMP) $(INCLUDEDIRS) -DLUA_USE_POSIX $(CXXTFLAGS) -c ../lua/src/lib/*.c
-CXXFLAGS=$(CXXTFLAGS)
+
+.c.o:
+	$(CCOMP) $(CFLAGS) $(INCLUDEDIRS) -DLUA_USE_POSIX $(CXXTFLAGS) -c $< -o $@
+
 else
-CXXFLAGS=$(CXXTFLAGS) -DNO_LUA
+CXXTFLAGS+=-DNO_LUA
 endif
 
-ifeq ($(shell uname), Darwin)
-CXXFLAGS:=$(CXXFLAGS) -Dunix
+CXXTFLAGS:=$(CXXTFLAGS) -Wno-long-long
+
+UNAME:=$(shell uname -s)
+ifeq ($(UNAME), Linux)
+LIBDL:=-ldl
+endif
+ifeq ($(UNAME), Darwin)
+CXXTFLAGS:=$(CXXTFLAGS) -Dunix
 endif
 
 .cxx.o:
-	$(CC) $(CONFIGFLAGS) $(CXXFLAGS) -c $< -o $@
+	$(CC) $(CONFIGFLAGS) $(CXXTFLAGS) -c $< -o $@
 
 clean:
 	rm -f *.o $(PROG)
 
 deps:
-	$(CC) -MM $(CONFIGFLAGS) $(CXXFLAGS) *.cxx ../src/*.cxx | sed -e 's/\/usr.* //' | grep [a-zA-Z] >deps.mak
+	$(CC) -MM $(CONFIGFLAGS) $(CXXTFLAGS) *.cxx ../src/*.cxx | sed -e 's/\/usr.* //' | grep [a-zA-Z] >deps.mak
 
 # make should be run in ../../scintilla/gtk to compile all the lexers.
 COMPLIB=../../scintilla/bin/scintilla.a
 
 $(PROG): SciTEGTK.o GUIGTK.o Widget.o \
-FilePath.o SciTEBase.o SciTEBuffers.o SciTEIO.o StringList.o Exporters.o StringHelpers.o \
+FilePath.o SciTEBase.o FileWorker.o Cookie.o Credits.o SciTEBuffers.o SciTEIO.o StringList.o Exporters.o StringHelpers.o \
 PropSetFile.o MultiplexExtension.o DirectorExtension.o SciTEProps.o StyleWriter.o Utf8_16.o \
 	JobQueue.o GTKMutex.o IFaceTable.o $(COMPLIB) $(LUA_OBJS)
-	$(CC) `$(CONFIGTHREADS)` -rdynamic -Wl,--as-needed -Wl,--version-script lua.vers -DGTK $^ -o $@ $(CONFIGLIB) -ldl -lstdc++
+	$(CC) `$(CONFIGTHREADS)` -rdynamic -Wl,--as-needed -Wl,--version-script lua.vers -DGTK $^ -o $@ $(CONFIGLIB) $(LIBDL) -lstdc++
 
 # Automatically generate header dependencies with "make deps"
 include deps.mak
@@ -109,8 +127,9 @@ install:
 	done
 
 ifdef gnomeprefix
-	$(INSTALL) -m 755 -D SciTE.desktop $(DESTDIR)$(datadir)/applications/SciTE.desktop
-	$(INSTALL) -m 644 -D Sci48M.png $(DESTDIR)$(pixmapdir)/Sci48M.png
+	$(INSTALL) -m 755 -d $(DESTDIR)$(datadir)/applications $(DESTDIR)$(pixmapdir)
+	$(INSTALL) -m 755 SciTE.desktop $(DESTDIR)$(datadir)/applications/SciTE.desktop
+	$(INSTALL) -m 644 Sci48M.png $(DESTDIR)$(pixmapdir)/Sci48M.png
 endif
 
 uninstall:

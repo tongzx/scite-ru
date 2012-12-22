@@ -4,9 +4,12 @@
 
 #include <windows.h>
 
+#define VERSION_SCINTILLA "3.2.3"
+#define VERSION_WORDS 3, 2, 3, 0
+
 VS_VERSION_INFO VERSIONINFO
-FILEVERSION	3, 0, 2, 95
-PRODUCTVERSION	3, 0, 2, 95
+FILEVERSION	VERSION_WORDS
+PRODUCTVERSION	VERSION_WORDS
 FILEFLAGSMASK	0x3fL
 FILEFLAGS 0
 FILEOS VOS_NT_WINDOWS32
@@ -21,14 +24,14 @@ BEGIN
 	BEGIN
 		BLOCK "040904b0"
 		BEGIN
-			VALUE	"CompanyName",	"scite-ru.org\0"
+			VALUE	"CompanyName",	"Neil Hodgson neilh@scintilla.org\0"
 			VALUE	"FileDescription",	"Scintilla.DLL - a Source Editing Component\0"
-			VALUE	"FileVersion",	"3.0.2 .95Ru\0"
+			VALUE	"FileVersion",	VERSION_SCINTILLA "\0"
 			VALUE	"InternalName",	"Scintilla\0"
-			VALUE	"LegalCopyright",	"Copyright 1998-2011 by Neil Hodgson\0"
+			VALUE	"LegalCopyright",	"Copyright 1998-2012 by Neil Hodgson\0"
 			VALUE	"OriginalFilename",	"Scintilla.DLL\0"
 			VALUE	"ProductName",	"Scintilla\0"
-			VALUE	"ProductVersion",	"3.0.2 .95Ru\0"
+			VALUE	"ProductVersion",	VERSION_SCINTILLA "\0"
 		END
 	END
 END

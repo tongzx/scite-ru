@@ -121,7 +121,7 @@ inline bool IFaceFunctionIsScriptable(const IFaceFunction &f) {
 }
 
 inline bool IFacePropertyIsScriptable(const IFaceProperty &p) {
-	return (((p.valueType > iface_void) && (p.valueType <= iface_string) && (p.valueType != iface_keymod)) &&
+	return (((p.valueType > iface_void) && (p.valueType <= iface_stringresult) && (p.valueType != iface_keymod)) &&
 	        ((p.paramType < iface_colour) || (p.paramType == iface_string) ||
 	                (p.paramType == iface_bool)) && (p.getter || p.setter));
 }
@@ -423,6 +423,45 @@ static int cf_pane_get_codepage(lua_State *L) {
 static int cf_scite_update_status_bar(lua_State *L) {
 	bool bUpdateSlowData = (lua_gettop(L) > 0 ? lua_toboolean(L, 1) : false) != 0;
 	host->UpdateStatusBar(bUpdateSlowData);
+	return 0;
+}
+
+static int cf_scite_strip_show(lua_State *L) {
+	const char *s = luaL_checkstring(L, 1);
+	if (s) {
+		host->UserStripShow(s);
+	}
+	return 0;
+}
+
+static int cf_scite_strip_set(lua_State *L) {
+	int control = luaL_checkint(L, 1);
+	const char *value = luaL_checkstring(L, 2);
+	if (value) {
+		host->UserStripSet(control, value);
+	}
+	return 0;
+}
+
+static int cf_scite_strip_set_list(lua_State *L) {
+	int control = luaL_checkint(L, 1);
+	const char *value = luaL_checkstring(L, 2);
+	if (value) {
+		host->UserStripSetList(control, value);
+	}
+	return 0;
+}
+
+static int cf_scite_strip_value(lua_State *L) {
+	int control = luaL_checkint(L, 1);
+	const char *value = host->UserStripValue(control);
+	if (value) {
+		lua_pushstring(L, value);
+		delete []value;
+		return 1;
+	} else {
+		lua_pushstring(L, "");
+	}
 	return 0;
 }
 
@@ -1006,7 +1045,7 @@ static bool CallNamedFunction(const char *name, const char *stringArg, const cha
 	return handled;
 }
 //!-end-[macro]
-//!-start-[OnMenuCommand]
+
 static bool CallNamedFunction(const char *name, int numberArg, int numberArg2) {
 	bool handled = false;
 	if (luaState) {
@@ -1021,7 +1060,6 @@ static bool CallNamedFunction(const char *name, int numberArg, int numberArg2) {
 	}
 	return handled;
 }
-//!-end-[OnMenuCommand]
 //!-start-[OnSendEditor]
 static const char *CallNamedFunction(const char *name, unsigned int numberArg, unsigned int numberArg2, const char *stringArg) {
 	const char *handled = NULL;
@@ -1088,7 +1126,7 @@ static int iface_function_helper(lua_State *L, const IFaceFunction &func) {
 		params[0] = lua_strlen(L, arg);
 		params[1] = reinterpret_cast<sptr_t>(params[0] ? lua_tostring(L, arg) : "");
 		loopParamCount = 0;
-	} else if (func.paramType[1] == iface_stringresult) {
+	} else if ((func.paramType[1] == iface_stringresult) || (func.returnType == iface_stringresult)) {
 		needStringResult = true;
 		// The buffer will be allocated later, so it won't leak if Lua does
 		// a longjmp in response to a bad arg.
@@ -1644,6 +1682,18 @@ static bool InitGlobalScope(bool checkProperties, bool forceReload = false) {
 	lua_setfield(luaState, -2, "GetTranslation");
 //!-end-[LocalizationFromLua]
 
+	lua_pushcfunction(luaState, cf_scite_strip_show);
+	lua_setfield(luaState, -2, "StripShow");
+
+	lua_pushcfunction(luaState, cf_scite_strip_set);
+	lua_setfield(luaState, -2, "StripSet");
+
+	lua_pushcfunction(luaState, cf_scite_strip_set_list);
+	lua_setfield(luaState, -2, "StripSetList");
+
+	lua_pushcfunction(luaState, cf_scite_strip_value);
+	lua_setfield(luaState, -2, "StripValue");
+
 	lua_setglobal(luaState, "scite");
 
 	// Metatable for global namespace, to publish iface constants
@@ -1897,9 +1947,8 @@ bool LuaExtension::OnBeforeSave(const char *filename) {
 bool LuaExtension::OnSave(const char *filename) {
 	bool result = CallNamedFunction("OnSave", filename);
 
-	// should this be case insensitive on windows?  check for different
-	// ways of spelling a filename, e.g. short vs. long?
-	if (startupScript && 0 == strcmp(filename, startupScript)) {
+	FilePath fpSaving = FilePath(GUI::StringFromUTF8(filename)).NormalizePath();
+	if (startupScript && fpSaving == FilePath(GUI::StringFromUTF8(startupScript)).NormalizePath()) {
 		if (GetPropertyInt("ext.lua.auto.reload") > 0) {
 			InitGlobalScope(false, true);
 			if (extensionScript.length()) {
@@ -2433,6 +2482,10 @@ static int cf_editor_reload_startup_script(lua_State*) {
 	return 0;
 }
 //!-end-[StartupScriptReload]
+
+bool LuaExtension::OnUserStrip(int control, int change) {
+	return CallNamedFunction("OnStrip", control, change);
+}
 
 #ifdef _MSC_VER
 // Unreferenced inline functions are OK
