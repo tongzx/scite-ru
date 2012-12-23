@@ -28,6 +28,9 @@
         .gtkonly {
             background: #FFFFE7;
         }
+        .osxonly {
+            background: #FFE7E7;
+        }
         .example {
             color: #008000;
             font-weight: bold;
@@ -855,6 +858,7 @@ NameError: mistake
       string or not present symbol evaluates to 0. Into the very top property set
       is inserted one of 'PLAT_GTK' with value '1',
       'PLAT_WIN' with value '1', or 'PLAT_MAC' with value '1'.
+      For both PLAT_GTK and PLAT_MAC, 'PLAT_UNIX' is inserted with value '1'.
       If the test succeeds then following indented statements are executed. When a
       non-indented statement is found the if clause is finished. Only simple set
       statements are allowed in if clauses. The evaluation of if statements occurs
@@ -900,8 +904,9 @@ NameError: mistake
     </h3>
     <p>
       Some properties are only available on
-      <span class="windowsonly">Windows</span> or
-      <span class="gtkonly">GTK+</span>.
+      <span class="windowsonly">Windows</span>,
+      <span class="gtkonly">GTK+</span>, or.
+      <span class="osxonly">OS X</span>.
     </p>
     <table cellpadding="1" cellspacing="0" border="1" summary="Defined variables in property files">
       <tr id='property-position.left'>
@@ -1266,6 +1271,16 @@ NameError: mistake
           When both this and load.on.activate are set to 1, SciTE will ask if you really want to
           reload the modified file, giving you the chance to keep the file as it is. By default this
           property is disabled, causing SciTE to reload the file without bothering you.
+        </td>
+      </tr>
+      <tr id='property-save.on.timer'>
+        <td>
+           save.on.timer
+        </td>
+        <td>
+          The save.on.timer property causes SciTE to save modified files whenever there have been no
+	  modifications for the number of seconds specified by the property.
+	  When set to 0, the default, this feature is disabled and files are not automatically saved.
         </td>
       </tr>
       <tr id='property-reload.preserves.undo'>
@@ -1661,10 +1676,18 @@ NameError: mistake
        </tr>
        <tr id='property-strip.trailing.spaces'>
         <td>
-          strip.trailing.spaces
+          strip.trailing.spaces<br />
+          strip.trailing.spaces.<i>filepattern</i>
         </td>
         <td>
-          Strips trailing white spaces from the file while saving.
+          Strips trailing white spaces from the file while saving.<br />
+          The global strip.trailing.spaces property can be overridden for
+          files that match a pattern by using the file pattern forms: <br />
+          <div class="example">
+          strip.trailing.spaces.*.yaml=0<br />
+          or <br />
+          strip.trailing.spaces.$(file.patterns.yaml)=0<br />
+          </div>
         </td>
       </tr>
        <tr id='property-ensure.final.line.end'>
@@ -1795,8 +1818,19 @@ NameError: mistake
         </td>
         <td>
           When set to 1 the API file is searched in a case insensitive way to find the function
-        which will have its signature displayed as a calltip. The * form is use if there
+        which will have its signature displayed as a calltip. The * form is used if there
         is no lexer specific setting.
+        </td>
+      </tr>
+      <tr id='property-calltip.*.use.escapes'>
+        <td>
+          calltip.<i>lexer</i>.use.escapes<br />
+          calltip.*.use.escapes
+        </td>
+        <td>
+          When set to 1 the API file may contain C style backslash escapes which are listed in
+        the command line arguments section. The * form is used if there is no lexer specific
+        setting.
         </td>
       </tr>
       <tr id='property-calltip.*.word.characters'>
@@ -2035,6 +2069,18 @@ NameError: mistake
 	<tr id='property-lexer.cpp.update.preprocessor'>
 	<td>lexer.cpp.update.preprocessor</td>
 	<td>Set to 1 to update preprocessor definitions when #define found.</td>
+	</tr>
+	<tr id='property-lexer.css.hss.language'>
+	<td>lexer.css.hss.language</td>
+	<td>Set to 1 for HSS (.hss)</td>
+	</tr>
+	<tr id='property-lexer.css.less.language'>
+	<td>lexer.css.less.language</td>
+	<td>Set to 1 for Less CSS (.less)</td>
+	</tr>
+	<tr id='property-lexer.css.scss.language'>
+	<td>lexer.css.scss.language</td>
+	<td>Set to 1 for Sassy CSS (.scss)</td>
 	</tr>
 	<tr id='property-lexer.d.fold.at.else'>
 	<td>lexer.d.fold.at.else</td>
@@ -2376,7 +2422,8 @@ Prev File|IDM_PREVFILE|<br/>
           <a name='property-save.recent'></a><a name='property-save.position'></a>
           save.session<br />
           save.recent<br />
-          save.position
+          save.position<br />
+          save.find
         </td>
         <td>
         If you set save.session, the list of currently opened buffers will be saved on exit
@@ -2392,7 +2439,8 @@ Prev File|IDM_PREVFILE|<br/>
         Setting save.recent causes the most recently used files list to be saved on
         exit in the session file and read at start up.<br />
         Setting save.position causes the SciTE window position on the desktop to be
-        saved on exit in the session file and restored at start up.
+        saved on exit in the session file and restored at start up.<br />
+        Setting save.find cause the "Find what" and "Replace with" to be saved in the session file.
         </td>
       </tr>
       <tr id='property-session.bookmarks'>
@@ -2408,7 +2456,7 @@ Prev File|IDM_PREVFILE|<br/>
         Folding states are not restored if fold.on.open is set.
         </td>
       </tr>
-      <tr id='property-open.dialog.in.file.directory'>
+      <tr class="windowsonly" id='property-open.dialog.in.file.directory'>
         <td>
         open.dialog.in.file.directory
         </td>
@@ -2491,6 +2539,16 @@ Prev File|IDM_PREVFILE|<br/>
           If enabled, searches can be restricted to a particular style (e.g. strings).</span>
         </td>
       </tr>
+      <tr class="osxonly" id='property-find.indicator'>
+        <td>
+         find.indicator
+        </td>
+        <td>
+          Controls the animated golden match indicator on OS X.
+	The default value, 1, shows and animates the find indicator then fades it away so surrounding text can be seen clearly.
+	Use the value 0 to disable the find indicator and the value 2 to keep the find indicator displayed.
+        </td>
+      </tr>
       <tr id='property-find.command'>
         <td>
           find.command<br />
@@ -2554,6 +2612,15 @@ c:\cygwin\bin\xargs -0 fgrep -G -n "$(find.what)"
         <td>
 	If find.in.binary is 1 then Find in Files displays matches in binary files.
 	For Find in Files, a binary file is a file that contains a NUL byte in the first 64K block read from the file.
+        </td>
+      </tr>
+      <tr id='property-find.in.directory'>
+        <td>
+          find.in.directory
+        </td>
+        <td>
+	If set then Find in Files directory will be prefilled by this value.
+	If not set then Find in Files directory will be prefilled by directory of current file.
         </td>
       </tr>
       <tr class="windowsonly" id='property-find.in.files.close.on.find'>
@@ -3508,13 +3575,28 @@ groupundo - yes or no
           Setting has no effect on Windows.
         </td>
       </tr>
+      <tr id='property-fileselector.show.hidden' class="osxonly">
+        <td>
+          fileselector.show.hidden
+        </td>
+        <td>
+          On OS X setting this to 0 makes the file selector dialog
+          invoked by the Open command not show hidden files.
+        </td>
+      </tr>
       <tr id='property-locale.properties'>
         <td>
         locale.properties
         </td>
         <td>
           Set the name of the localisation file. For a multi-user installation
-	this allows each user to set a preferred user interface language.
+	this allows each user to set a preferred user interface language.<br />
+	On OS X, localisation files for some languages are installed in the translations
+	subdirectory of the user home directory which allows setting
+	the user interface to, for example, German with
+		<div class="example">
+		locale.properties=$(SciteUserHome)/translations/locale.de.properties
+		</div>
         </td>
       </tr>
       <tr id='property-translation.missing'>
