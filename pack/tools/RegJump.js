@@ -1,6 +1,6 @@
 /*
 Registry Jump
-Version: 1.3
+Version: 2.0
 Author: mozersЩ
 ------------------------------------------------
 ќткрывает выделенную ветвь в редакторе реестра
@@ -16,15 +16,6 @@ command.mode.78.*=subsystem:windows,replaceselection:no,savebefore:no,quiet:yes
 command.shortcut.78.*=Ctrl+Alt+J
 */
 
-function TaskKill (process_name){
-	var objWMIService = GetObject("winmgmts:\\\\.\\root\\CIMV2");
-	var colProcessList = objWMIService.ExecQuery ('SELECT * FROM Win32_Process WHERE NAME = "' + process_name + '"');
-	var enumItems = new Enumerator(colProcessList);
-	for (; !enumItems.atEnd(); enumItems.moveNext()){
-		enumItems.item().Terminate();
-	}
-}
-
 var key = WScript.StdIn.ReadAll();
 if (key === "") {
 	WScript.Quit();
@@ -38,9 +29,7 @@ key = key.replace(/^HKCU\\/,'HKEY_CURRENT_USER\\');
 key = key.replace(/\\\\/g,'\\');
 key = WshShell.RegRead(LastKey).match(/^[^\\]+/) + '\\' + key;
 
-TaskKill ("regedit.exe");
-
 WshShell.RegWrite (LastKey, key,'REG_SZ');
-WshShell.Run('regedit', 1, false);
+WshShell.Run('regedit -m', 1, false);
 WScript.Quit();
 
