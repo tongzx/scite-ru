@@ -1,5 +1,5 @@
 --[==[--------------------------------------------------
-FindText v8.0.0
+FindText v8.1.0
 Авторы: mozers™, mimir, Алексей, codewarlock1101, VladVRO, Tymur Gubayev
 
 * Если текст выделен - ищется выделенная подстрока
@@ -51,7 +51,7 @@ end -- L
 local firstNum = ifnil(tonumber(props['findtext.first.mark']),31)
 if firstNum < 1 or firstNum > 31 then firstNum = 31 end
 
-local sText = props['CurrentSelection']
+local sText = props['CurrentSelection']:from_utf8(props["editor.code.page"])
 local flag0 = 0
 if (sText == '') then
 	sText = GetCurrentWord()
