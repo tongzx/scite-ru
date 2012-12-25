@@ -2646,25 +2646,15 @@ style the path and line number separately from the rest of the line with style 2
       <td>Для файлов HTML, XML, Lua, C++ и подобных включение данной опции ведет к тому, что пустые строки после элемента свертки свертываются вместе с ней. По умолчанию включено.</td>
     </tr>
 
-      <tr>
-        <td>
-          fold.highlight<br />
-        </td>
-        <td>
-        Set to 1 to enable highlight for current folding block (smallest one that contains the caret).
-	By default, it's disable. Note : The highlight is enabled only when fold.symbols equals
-	to 2 (round headers) or 3 (square headers).
-        </td>
-      </tr>
+    <tr>
+      <td><dfn><a name="fold.highlight">fold.highlight</a></dfn></td>
+      <td>При <var>1</var> включается подсветка вертикальной линии фолдинга. Подсвечивается наименьший блок в котором находится в текущий момент курсор. По умолчанию выключено.<br>Примечание: Подсветка работает только если <dfn>fold.symbols</dfn> равен <var>2</var> (круглые узлы) или <var>3</var> (квадратные узлы)</td>
+    </tr>
 
-      <tr>
-        <td>
-          fold.highlight.colour<br />
-        </td>
-        <td>
-        Define the colour of highlight. The colour by default is red (#FF0000).
-        </td>
-      </tr>
+    <tr>
+      <td><dfn><a name="fold.highlight.colour">fold.highlight.colour</a></dfn></td>
+      <td>Задает цвет подсветки линии, обрамляющей текущий блок свертки. По умолчанию используется красный цвет (#FF0000)</td>
+    </tr>
 
     <tr>
       <td><dfn><a name="title.full.path">title.full.path</a></dfn></td>
