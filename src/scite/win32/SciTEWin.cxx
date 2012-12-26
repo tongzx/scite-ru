@@ -1879,7 +1879,7 @@ LRESULT SciTEWin::KeyDown(WPARAM wParam) {
 				// its possible that the command is for scintilla directly
 				// all scintilla commands are larger then 2000
 //!				if (commandNum < 2000) {
-				if (commandNum < 2000 || (commandNum>IDM_TOOLS && commandNum<IDM_TOOLSMAX)) { //!-change-[ToolsMax]
+				if (commandNum < 2000 || (commandNum>IDM_TOOLS && commandNum<IDM_TOOLS + toolMax)) { //!-change-[ToolsMax]
 					SciTEBase::MenuCommand(commandNum);
 				} else {
 					SciTEBase::CallFocused(commandNum);
@@ -4088,7 +4088,7 @@ void MenuEx::Add(const wchar_t *label, int cmd, int enabled, const char *mnemoni
 
 	::InsertMenuW(menu, (UINT)position, flags, cmd, sTextMnemonic.c_str());
 
-	if (cmd >= IDM_TOOLS && cmd < IDM_TOOLSMAX) {
+	if (cmd >= IDM_TOOLS) {
 		MENUITEMINFO mii;
 		mii.cbSize = sizeof(MENUITEMINFO);
 		mii.fMask = MIIM_DATA;

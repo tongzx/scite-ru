@@ -4751,7 +4751,7 @@ bool SciTEBase::IsMenuItemEnabled(int cmd) {
 		break;
 	}
 
-	if (cmd>IDM_TOOLS && cmd<IDM_TOOLSMAX)
+	if (cmd>IDM_TOOLS && cmd<IDM_TOOLS + toolMax)
 		return !jobQueue.IsExecuting();
 
 	return true;

@@ -285,7 +285,6 @@ static IFaceConstant ifaceConstants[] = {
 	{"IDM_TOGGLE_FOLDALL",236},
 	{"IDM_TOGGLE_FOLDRECURSIVE",237},
 	{"IDM_TOOLS",9000},
-	{"IDM_TOOLSMAX",9300},
 	{"IDM_TOOLWIN",352},
 	{"IDM_UNDO",201},
 	{"IDM_UNSLASH",804},

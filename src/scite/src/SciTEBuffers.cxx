@@ -1549,7 +1549,7 @@ void SciTEBase::SetToolsMenu() {
 			}
 			else {
 				if (issep)
-					arrMenu[0].Add(0, IDM_TOOLSMAX, true, 0, menuPos++);
+					arrMenu[0].Add(0, -1, true, 0, menuPos++);
 				arrMenu[0].Add(lsMenuItem.c_str(), itemID, 1 + ischecked, sMnemonic.c_str(), menuPos++);
 			}
 		}
@@ -1583,7 +1583,7 @@ void SciTEBase::SetToolsMenu() {
 				}
 				else {
 					if (menuPos == TOOLS_START+1)
-						arrMenu[0].Add(0, IDM_TOOLSMAX, true, 0, menuPos++);
+						arrMenu[0].Add(0, -1, true, 0, menuPos++);
 					arrMenu[0].AddSubMenu(lcommandName.c_str(), arrMenu[items], menuPos++);
 				}
 			}
