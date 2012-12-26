@@ -4440,7 +4440,8 @@ void SciTEBase::Notify(SCNotification *notification) {
 			if (notification->wParam == 2)
 				ContinueMacroList(notification->text);
 			else if (extender && notification->wParam > 2)
-				extender->OnUserListSelection(static_cast<int>(notification->wParam), notification->text);
+//!				extender->OnUserListSelection(static_cast<int>(notification->wParam), notification->text);
+				extender->OnUserListSelection(static_cast<int>(notification->wParam), notification->text, notification->position+1); //!-change-[UserListItemID]
 		}
 		break;
 
