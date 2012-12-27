@@ -12,3 +12,4 @@ if=IF "%%*"=="" (\n\tGOTO :EOF\n) ELSE (\n\tECHO %%*\n)\n
 or=type %%windir%%\\system.ini || exit 1\n
 and=ping -n 1 ya.ru > nul && echo OK\n
 sleep=ping -n 5 -w 1000 127.0.0.1 > nul\n
+replace=SET out=%%in:find=rep%%
