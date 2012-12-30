@@ -387,10 +387,12 @@ void SciTEBase::WorkerCommand(int cmd, Worker *pWorker) {
 	case WORK_FILEREAD:
 		TextRead(static_cast<FileLoader *>(pWorker));
 		UpdateProgress(pWorker);
+		CheckMenusSave(); //!-add-[SaveEnabled]
 		break;
 	case WORK_FILEWRITTEN:
 		TextWritten(static_cast<FileStorer *>(pWorker));
 		UpdateProgress(pWorker);
+		CheckMenusSave(); //!-add-[SaveEnabled]
 		break;
 	case WORK_FILEPROGRESS:
  		UpdateProgress(pWorker);
@@ -4520,18 +4522,26 @@ void SciTEBase::CheckMenusClipboard() {
 	EnableAMenuItem(IDM_PASTE, CallFocusedElseDefault(true, SCI_CANPASTE));
 }
 
-void SciTEBase::CheckMenus() {
-	CheckMenusClipboard();
-//!-start-[SaveAllEnabled]
+//!-start-[SaveEnabled]
+void SciTEBase::CheckMenusSave() {
 	bool bSaveAllEnabled = false;
 	for ( int i = 0; i < buffers.length; i++) {
-		if (buffers.buffers[i].isDirty) {
+		if (buffers.buffers[i].DocumentNotSaved()) {
 			bSaveAllEnabled = true;
 			break;
 		}
 	}
 	EnableAMenuItem(IDM_SAVEALL, bSaveAllEnabled);
-//!-end-[SaveAllEnabled]
+	if (!CurrentBuffer()->ShouldNotSave() && !CurrentBuffer()->pFileWorker)
+		EnableAMenuItem(IDM_SAVE, CurrentBuffer()->DocumentNotSaved());
+	else
+		EnableAMenuItem(IDM_SAVE, false);
+}
+//!-end-[SaveEnabled]
+
+void SciTEBase::CheckMenus() {
+	CheckMenusClipboard();
+	CheckMenusSave(); //!-add-[SaveEnabled]
 	EnableAMenuItem(IDM_UNDO, CallFocusedElseDefault(true, SCI_CANUNDO));
 	EnableAMenuItem(IDM_REDO, CallFocusedElseDefault(true, SCI_CANREDO));
 	EnableAMenuItem(IDM_DUPLICATE, !isReadOnly);
@@ -4684,13 +4694,13 @@ bool SciTEBase::IsMenuItemEnabled(int cmd) {
 	case IDM_SAVEALL:
 		{
 			for ( int i = 0; i < buffers.length; i++) {
-				if (buffers.buffers[i].isDirty) return true;
+				if (buffers.buffers[i].DocumentNotSaved()) return true;
 			}
 			return false;
 		}
 		break;
 	case IDM_SAVE:
-		return CurrentBuffer()->isDirty;
+		return CurrentBuffer()->DocumentNotSaved();
 		break;
 	case IDM_UNDO:
 		return CallFocused(SCI_CANUNDO);

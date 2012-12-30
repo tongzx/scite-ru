@@ -861,6 +861,7 @@ protected:
 	virtual void CheckAMenuItem(int wIDCheckItem, bool val) = 0;
 	virtual void EnableAMenuItem(int wIDCheckItem, bool val) = 0;
 	virtual void CheckMenusClipboard();
+	void CheckMenusSave(); //!-add-[SaveEnabled]
 	virtual void CheckMenus();
 //!	virtual void AddToPopUp(const char *label, int cmd = 0, bool enabled = true) = 0; //!-remove-[ExtendedContextMenu]
 	void ContextMenu(GUI::ScintillaWindow &wSource, GUI::Point pt, GUI::Window wCmd);
