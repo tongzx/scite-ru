@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 abbrevlist.lua
 Authors: Dmitry Maslov, frs, mozers™, Tymur Gubayev
-version 3.4.16
+version 3.4.17
 ------------------------------------------------------
   Если при вставке расшифровки аббревиатуры (Ctrl+B) не нашлось точного соответствия,
   то выводится список соответствий начинающихся с этой комбинации символов.
@@ -167,6 +167,7 @@ local function ShowExpansionList(event_IDM_ABBREV)
 		tmp[#tmp+1] = table_user_list[i][2]:sub(1, list_width)
 	end
 	local table_user_list_string = table.concat(tmp, sep):gsub('%?', ' ')
+	if cp ~= 65001 then table_user_list_string = table_user_list_string:from_utf8(cp) end
 	local sep_tmp = editor.AutoCSeparator
 	editor.AutoCSeparator = string.byte(sep)
 	editor:UserListShow(typeUserList, table_user_list_string)
