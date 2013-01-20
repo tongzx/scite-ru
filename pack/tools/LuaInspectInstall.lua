@@ -1,12 +1,12 @@
 --[[--------------------------------------------------
 LuaInspectInstall.lua
 Authors: mozers™, Tymur Gubayev
-Version: 1.3.1
+Version: 1.4.0
 ------------------------------------------------------
 Служит для подключения LuaInspect <http://lua-users.org/wiki/LuaInspect>
 Срабатывает при наличии параметра luainspect.path в .properties файле
 В каталог, указанный этим параметром следует распаковать LuaInspect.
-Реально испольуется только содержимое подкаталогов luainspectlib и metalualib.
+Реально испольуется только содержимое подкаталогов lib и metalualib.
 Все остальное можно спокойно удалять.
 --]]--------------------------------------------------
 
@@ -79,5 +79,5 @@ end
 ----------------------------------------
 local LUAINSPECT_PATH = props["luainspect.path"]
 package.path = package.path .. ";" .. LUAINSPECT_PATH .. "\\metalualib\\?.lua"
-package.path = package.path .. ";" .. LUAINSPECT_PATH .. "\\luainspectlib\\?.lua"
+package.path = package.path .. ";" .. LUAINSPECT_PATH .. "\\lib\\?.lua"
 require "luainspect.scite" : install()

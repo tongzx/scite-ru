@@ -88,7 +88,7 @@ local function unescape_string (s)
          a = "\a", b = "\b", f = "\f",
          n = "\n", r = "\r", t = "\t", v = "\v",
          ["\\"] = "\\", ["'"] = "'", ['"'] = '"', ["\n"] = "\n" }
-      return t[x] or x --error([[Unknown escape sequence '\]]..x..[[']])
+      return t[x] or x --error([[Unknown escape sequence '\]]..x..[[']]) --@scite-ru
    end
 
    return s

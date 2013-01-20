@@ -17,6 +17,7 @@ local function definelocal(scope, name, ast)
     ast.localmasking = scope[name]
   end
   scope[name] = ast
+  if name == '_' then ast.isignore = true end
 end
 
 -- Resolves scoping and usages of variable in AST.
@@ -25,10 +26,11 @@ end
 --     If ast.localdefinition == ast then ast is a "lexical definition".
 --     If ast.localdefinition == nil, then variable is global.
 --   ast.functionlevel is the number of functions the AST is contained in.
---     ast.functionlevel is defined iff ast is a lexical definition. 
+--     ast.functionlevel is defined iff ast is a lexical definition.
 --   ast.isparam is true iff ast is a lexical definition and a function parameter.
 --   ast.isset is true iff ast is a lexical definition and exists an assignment on it.
 --   ast.isused is true iff ast is a lexical definition and has been referred to.
+--   ast.isignore is true if local variable should be ignored (e.g. typically "_")
 --   ast.localmasking - for a lexical definition, this is set to the lexical definition
 --     this is masking (i.e. same name).  nil if not masking.
 --   ast.localmasked - true iff lexical definition masked by another lexical definition.
@@ -153,7 +155,7 @@ local function traverse(ast, scope, globals, level, functionlevel)
       definelocal(parentscope, name, name_ast)
       name_ast.localdefinition = name_ast
       name_ast.functionlevel = functionlevel
-    end  
+    end
   elseif ast.tag == 'Index' then
     if ast[2].tag == 'String' then
       ast[2].isfield = true
