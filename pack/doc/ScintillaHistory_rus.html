@@ -415,6 +415,10 @@
       </tr><tr>
 	<td>Sakshi Verma</td>
 	<td>Joel B. Mohler</td>
+	<td>Isiledhel</td>
+	<td>Vidya Wasi</td>
+      </tr><tr>
+	<td>G. Hu</td>
     </tr>
     </table>
 	<p>
@@ -427,6 +431,87 @@
 			Icons</a> Copyright(C) 1998 by Dean S. Jones<br />
 		</li>
 	</ul>
+
+    <h3>
+       <a href="http://prdownloads.sourceforge.net/scintilla/scite324.zip?download">Release 3.2.4</a>
+    </h3>
+    <ul>
+	<li>
+	Версия 3.2.4 от 17 января 2013 г.
+	</li>
+	<li>
+	Выделение текущей строки может опционально оставаться видимым, когда окно не в фокусе. (Добавлена команда SCI_GETCARETLINEVISIBLEALWAYS).
+	<a href="http://sourceforge.net/p/scintilla/feature-requests/964/">Feature #964.</a>
+	</li>
+	<li>
+	В Cocoa добавлен механизм делегирования уведомлений.
+	</li>
+	<li>
+	Символы NUL в выделении копируются в буфер обмена как пробелы, чтобы избежать их обрезки.
+	<a href="http://sourceforge.net/p/scintilla/bugs/1289/">Bug #1289.</a>
+	</li>
+	<li>
+	В лексере C++ исправлена проблема с отображением неактивной части строк препроцессора, если они оканчиваются комментарием.
+	<a href="http://sourceforge.net/p/scintilla/bugs/1413/">Bug #1413.</a>
+	</li>
+	<li>
+	В лексере C++ исправлена проблема с регулярными выражениями JavaScript, содержащими '/' в диапазоне символов.
+	<a href="http://sourceforge.net/p/scintilla/bugs/1415/">Bug #1415.</a>
+	</li>
+	<li>
+	Добавлена свёртка в LaTeX.
+	<a href="http://sourceforge.net/p/scintilla/feature-requests/970/">Feature #970.</a>
+	</li>
+	<li>
+	В лексере LaTeX улучшена подсветка переменных окружения с именем math.
+	<a href="http://sourceforge.net/p/scintilla/feature-requests/970/">Feature #970.</a>
+	</li>
+	<li>
+	В лексере MySQL реализованы скрытые команды.
+	</li>
+	<li>
+	Только один шаг отмены генерируется при автозавершении одного слова.
+	<a href="http://sourceforge.net/p/scintilla/bugs/1421/">Bug #1421.</a>
+	</li>
+	<li>
+	Исправлено аварийное завершение при печати строки длиннее 8000 символов.
+	<a href="http://sourceforge.net/p/scintilla/bugs/1430/">Bug #1430.</a>
+	</li>
+	<li>
+	Исправлена проблема когда после выделения текста в одну сторону была сделана попытка переместить выделенное в другую сторону. В данной ситуации ничего не происходило, а выделение просто пропадало.
+	</li>
+	<li>
+	Исправлены проблемы с памятью в Cocoa, вызванные владением объекта, временем жизни таймеров и изображений, принадлежащих строке состояния.
+	<a href="http://sourceforge.net/p/scintilla/bugs/1436/">Bug #1436.</a>
+	</li>
+	<li>
+	В Cocoa сочетание клавиш Alt+Delete изменено на "удалить предыдущее слово" для большей совместимости с стандартами платформы.
+	</li>
+	<li>
+	Исправлено аварийное завершение в Cocoa, связанное с полосой прокрутки, когда прокрутка невозможна.
+	<a href="http://sourceforge.net/p/scintilla/bugs/1416/">Bug #1416.</a>
+	</li>
+	<li>
+	В Cocoa с дисплеями Retina исправлено позиционирование списков автозавершения.
+	</li>
+	<li>
+	Исправлена ошибка SciTE в Windows. Если в properties-файле (для команды Выполнить/Собрать/Запустить или любой из меню Tools) был задан пакетный файл содержащей пробел в имени, то при его запуске возникала ошибка.
+	<a href="http://sourceforge.net/p/scintilla/bugs/1423/">Bug #1423.</a>
+	</li>
+	<li>
+	Исправлена ошибка масштабирования при печати в GTK+.
+	<a href="http://sourceforge.net/p/scintilla/bugs/1427/">Bug #1427.</a>
+	</li>
+	<li>
+	В SciTE в GTK удалено свойство toolbar.detachable.
+	</li>
+	<li>
+	Исправлены некоторые ошибки фонового сохранения в SciTE.
+	<a href="http://sourceforge.net/p/scintilla/bugs/1366/">Bug #1366.</a>
+	<a href="http://sourceforge.net/p/scintilla/bugs/1339/">Bug #1339.</a>
+	</li>
+    </ul>
+	<li>Перевод: <b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=ALeXkRU" target=_blank>ALeXkRU</a></b>
 
     <h3>
        <a href="http://prdownloads.sourceforge.net/scintilla/scite323.zip?download">Release 3.2.3</a>
