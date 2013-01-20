@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev, ur4ltz
-Version 1.27.14
+Version 1.27.15
 ------------------------------------------------------
   Note: Require gui.dll <http://scite-ru.googlecode.com/hg/lualib/gui/>
                lpeg.dll <http://scite-ru.googlecode.com/hg/lualib/lpeg/>
@@ -1293,7 +1293,7 @@ local function Abbreviations_ShowExpansion()
 		editor.AnnotationVisible = ANNOTATION_BOXED
 		local linenr = editor:LineFromPosition(cur_pos)
 		editor.AnnotationStyle[linenr] = 255 -- номер стиля, в котором вы задали параметры для аннотаций
-		editor:AnnotationSetText(linenr, expansion:gsub('\t', '    '))
+		editor.AnnotationText[linenr] = expansion:gsub('\t', '    ')
 	end
 end
 
