@@ -283,6 +283,7 @@ class ScintillaWin :
 	void ChangeScrollPos(int barType, int pos);
 
 	void InsertPasteText(const char *text, int len, SelectionPosition selStart, bool isRectangular, bool isLine);
+	void InsertMultiPasteText(const char *text, int len); //!-add-[InsertMultiPasteText]
 
 public:
 	// Public for benefit of Scintilla_DirectFunction
@@ -1763,10 +1764,52 @@ void ScintillaWin::InsertPasteText(const char *text, int len, SelectionPosition 
 		delete []convertedText;
 	}
 }
+//!-start-[InsertMultiPasteText]
+void ScintillaWin::InsertMultiPasteText(const char *text, int len) {
+	char *convertedText = 0;
+	if (convertPastes) {
+		// Convert line endings of the paste into our local line-endings mode
+		convertedText = Document::TransformLineEnds(&len, text, len, pdoc->eolMode);
+		text = convertedText;
+	}
+	FilterSelections();
+	UndoGroup ug(pdoc, (sel.Count() > 1) || !sel.Empty());
+	for (size_t r=0; r<sel.Count(); r++) {
+		if (!RangeContainsProtected(sel.Range(r).Start().Position(),
+			sel.Range(r).End().Position())) {
+			int positionInsert = sel.Range(r).Start().Position();
+			if (!sel.Range(r).Empty()) {
+				if (sel.Range(r).Length()) {
+					pdoc->DeleteChars(positionInsert, sel.Range(r).Length());
+					sel.Range(r).ClearVirtualSpace();
+				} else {
+					// Range is all virtual so collapse to start of virtual space
+					sel.Range(r).MinimizeVirtualSpace();
+				}
+			}
+			positionInsert = InsertSpace(positionInsert, sel.Range(r).caret.VirtualSpace());
+			if (pdoc->InsertString(positionInsert, text, len)) {
+				sel.Range(r).caret.SetPosition(positionInsert + len);
+				sel.Range(r).anchor.SetPosition(positionInsert + len);
+			}
+			sel.Range(r).ClearVirtualSpace();
+			// If in wrap mode rewrap current line so EnsureCaretVisible has accurate information
+			if (wrapState != eWrapNone) {
+				AutoSurface surface(this);
+				if (surface) {
+					WrapOneLine(surface, pdoc->LineFromPosition(positionInsert));
+				}
+			}
+		}
+	}
+	delete []convertedText;
+}
+//!-end-[InsertMultiPasteText]
 
 void ScintillaWin::Paste() {
 	if (!::OpenClipboard(MainHWND()))
 		return;
+/*!-remove-[InsertMultiPasteText]
 	UndoGroup ug(pdoc);
 	bool isLine = SelectionEmpty() && (::IsClipboardFormatAvailable(cfLineSelect) != 0);
 	ClearSelection(multiPasteMode == SC_MULTIPASTE_EACH);
@@ -1774,6 +1817,20 @@ void ScintillaWin::Paste() {
 		sel.Rectangular().Start() :
 		sel.Range(sel.Main()).Start();
 	bool isRectangular = ::IsClipboardFormatAvailable(cfColumnSelect) != 0;
+*/
+//!-start-[InsertMultiPasteText]
+	bool isLine = SelectionEmpty() && (::IsClipboardFormatAvailable(cfLineSelect) != 0);
+	SelectionPosition selStart;
+	bool isRectangular = ::IsClipboardFormatAvailable(cfColumnSelect) != 0;
+	bool isMultiPaste = (!isRectangular)&&(!isLine)&&(sel.Count()>1);
+	if(!isMultiPaste) {
+		UndoGroup ug(pdoc);
+		ClearSelection();
+		selStart = sel.IsRectangular() ?
+			sel.Rectangular().Start() :
+			sel.Range(sel.Main()).Start();
+	}
+//!-end-[InsertMultiPasteText]
 
 	// Always use CF_UNICODETEXT if available
 	GlobalMemory memUSelection(::GetClipboardData(CF_UNICODETEXT));
@@ -1799,7 +1856,14 @@ void ScintillaWin::Paste() {
 					                      putf, len + 1, NULL, NULL);
 			}
 
-			InsertPasteText(putf, len, selStart, isRectangular, isLine);
+//!			InsertPasteText(putf, len, selStart, isRectangular, isLine);
+//!-start-[InsertMultiPasteText]
+			if(!isMultiPaste) {
+				InsertPasteText(putf, len, selStart, isRectangular, isLine);
+			} else {
+				InsertMultiPasteText(putf, len);
+			}
+//!-end-[InsertMultiPasteText]
 			delete []putf;
 		}
 		memUSelection.Unlock();
@@ -1833,11 +1897,25 @@ void ScintillaWin::Paste() {
 					delete []uptr;
 
 					if (putf) {
-						InsertPasteText(putf, mlen, selStart, isRectangular, isLine);
+//!						InsertPasteText(putf, mlen, selStart, isRectangular, isLine);
+//!-begin-[InsertMultiPasteText]
+						if(!isMultiPaste) {
+							InsertPasteText(putf, mlen, selStart, isRectangular, isLine);
+						} else {
+							InsertMultiPasteText(putf, mlen);
+						}
+//!-end-[InsertMultiPasteText]
 						delete []putf;
 					}
 				} else {
-					InsertPasteText(ptr, len, selStart, isRectangular, isLine);
+//!					InsertPasteText(ptr, len, selStart, isRectangular, isLine);
+//!-begin-[InsertMultiPasteText]
+					if(!isMultiPaste) {
+						InsertPasteText(ptr, len, selStart, isRectangular, isLine);
+					} else {
+						InsertMultiPasteText(ptr, len);
+					}
+//!-end-[InsertMultiPasteText]
 				}
 			}
 			memSelection.Unlock();
