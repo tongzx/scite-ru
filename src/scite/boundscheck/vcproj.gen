@@ -420,6 +420,11 @@
 			<File
 				RelativePath="..\src\Utf8_16.cxx">
 			</File>
+<!-- #!-start-[EncodingToLua] -->
+			<File
+				RelativePath="..\src\LuaUtf8.cxx">
+			</File>
+<!-- #!-end-[EncodingToLua] -->
 			<File
 				RelativePath="..\..\scintilla\src\ViewStyle.cxx">
 			</File>
