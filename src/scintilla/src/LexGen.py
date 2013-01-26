@@ -263,14 +263,20 @@ def UpdateLineInFile(path, linePrefix, lineReplace):
 
 def UpdateVersionNumbers(root):
     with open(root + "scintilla/version.txt") as f:
-        version = f.read()
+#!        version = f.read()
+        (version, ru_subversion) = f.read().strip().split(' ') #!-changed-[UpdateRuVersionNumbers]
+    
     versionDotted = version[0] + '.' + version[1] + '.' + version[2]
+    versionDottedRu = version[0] + '.' + version[1] + '.' + version[2] + ' .' + ru_subversion + 'Ru' #!-add-[UpdateRuVersionNumbers]
     versionCommad = version[0] + ', ' + version[1] + ', ' + version[2] + ', 0'
+    versionCommadRu = version[0] + ', ' + version[1] + ', ' + version[2] + ', ' + ru_subversion #!-add-[UpdateRuVersionNumbers]
 
     UpdateLineInFile(root + "scintilla/win32/ScintRes.rc", "#define VERSION_SCINTILLA",
-        "#define VERSION_SCINTILLA \"" + versionDotted + "\"")
+#!        "#define VERSION_SCINTILLA \"" + versionDotted + "\"")
+        "#define VERSION_SCINTILLA \"" + versionDottedRu + "\"") #!-change-[UpdateRuVersionNumbers]
     UpdateLineInFile(root + "scintilla/win32/ScintRes.rc", "#define VERSION_WORDS", 
-        "#define VERSION_WORDS " + versionCommad)
+#!        "#define VERSION_WORDS " + versionCommad)
+        "#define VERSION_WORDS " + versionCommadRu) #!-change-[UpdateRuVersionNumbers]
     UpdateLineInFile(root + "scintilla/qt/ScintillaEditBase/ScintillaEditBase.pro",
         "VERSION =", 
         "VERSION = " + versionDotted)
@@ -285,9 +291,11 @@ def UpdateVersionNumbers(root):
 
     if os.path.exists(root + "scite"):
         UpdateLineInFile(root + "scite/src/SciTE.h", "#define VERSION_SCITE", 
-            "#define VERSION_SCITE \"" + versionDotted + "\"")
+#!            "#define VERSION_SCITE \"" + versionDotted + "\"")
+			"#define VERSION_SCITE \"" + versionDottedRu + "\"") #!-change-[UpdateRuVersionNumbers]
         UpdateLineInFile(root + "scite/src/SciTE.h", "#define VERSION_WORDS", 
-            "#define VERSION_WORDS " + versionCommad)
+#!            "#define VERSION_WORDS " + versionCommad)
+			"#define VERSION_WORDS " + versionCommadRu) #!-change-[UpdateRuVersionNumbers]
         UpdateLineInFile(root + "scite/doc/SciTEDownload.html", "       Release", 
             "       Release " + versionDotted)
         UpdateLineInFile(root + "scite/doc/SciTE.html",
