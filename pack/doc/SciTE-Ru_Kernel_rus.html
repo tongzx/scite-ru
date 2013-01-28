@@ -33,7 +33,7 @@
     </td></tr>
   </table>
 
-    <h1>Текстовый редактор SciTE RU-Board 3.23 .97</h1>
+    <h1>Текстовый редактор SciTE RU-Board 3.24 .98</h1>
 
     <p>Все модификации оригинального кода редактора <A href="http://www.scintilla.org">SciTE</A> выполнены энтузиастами <A href="http://forum.ru-board.com/topic.cgi?forum=5&topic=35160&glp">форума Ru-Board</A>.
 
@@ -371,7 +371,6 @@ calltip.*.word.wrap</div>
 Дополнительная информация в <a href="http://code.google.com/p/scite-ru/issues/detail?id=96">Issue 96</a>.
 
 <h5 id="LocalizationFromLua">
-<sup>updated</sup>
 [LocalizationFromLua] <span class=desc>(Автор: VladVRO, neo4max)</span></h5>
 В SciTE Lua Scripting Extension добавлена новая команда:<br>
 <span class="example">scite.GetTranslation(s, [retainIfNotFound])</span>, которая возвращает перевод строки <span class="example"><i>s</i></span>,<br>
@@ -387,7 +386,6 @@ calltip.*.word.wrap</div>
 Добавлен новый лексер для языка ABAP/4.
 
 <h5 id="EncodingToLua">
-<sup>new</sup>
 [EncodingToLua] <span class=desc>(Автор: neo4max)</span></h5>
 В SciTE Lua Scripting Extension добавлены новые команды:<br>
 <span class="example">string.to_utf8(codepage)</span> - конвертирует текст из указанной кодовой страницы в UTF-8<br>
@@ -424,7 +422,6 @@ calltip.*.word.wrap</div>
 Он может быть равным IDM_SRCWIN (350) - окно редактора, или IDM_RUNWIN (351) - окно вывода, или еще чему-то тому, где находится фокус.
 
 <h5 id="OnSendEditor">
-<sup>updated</sup>
 [OnSendEditor] <span class=desc>(Автор: VladVRO, neo4max)</span></h5>
 Добавлено новое событие SciTE - <span class="example">OnSendEditor (msg, wp, lp)</span><br>
 Параметры теже что и у функции SendEditor.<br>
@@ -470,7 +467,6 @@ end</div>
 <span class="example">function OnMouseButtonUp(ctrl)</span>
 
 <h5 id="UserListItemID">
-<sup>new</sup>
 [UserListItemID] <span class=desc>(Автор: neo4max, Дмитрий Маслов)</span></h5>
 Событие <span class="example">OnUserListSelection</span> возвращает третий параметр, указывающий на позицию выбранного пункта в списке. <a href="http://code.google.com/p/scite-ru/issues/detail?id=245">Issue 245</a>
 
@@ -506,7 +502,6 @@ CurrentWordCharacters - новая внутренняя переменная Sci
 BufferNumber - новая внутренняя переменная SciTE. Cодержит номер текущего буфера.
 
 <h5 id="InsertAbbreviation">
-<sup>updated</sup>
 [InsertAbbreviation] <span class=desc>(Авторы: mimir, VladVRO, Дмитрий Маслов, neo4max)</span></h5>
 В SciTE Lua Scripting Extension добавлена новая команда<br>
 <span class="example">InsertAbbreviation(string)</span><br>
@@ -578,25 +573,21 @@ Tеперь можно задавать до 4х дополнительных н
     </h3>
 
 <h5 id="FixReplaceOnce">
-<sup>new</sup>
 [FixReplaceOnce] <span class=desc>(Автор: neo4max)</span></h5>
 Исправлена ошибка в работе диалога "Заменить", в результате которой введенные в диалоговом окне параметры поиска-замены могут быть случайно модифицированы командой editor:findtext (Подробности - в <a href="http://code.google.com/p/scite-ru/issues/detail?id=175">Issue 175</a>).<br>
 Добавлено предупреждение, возникающее при нажатии кнопки "Заменить" после уже произведенной последней замены.<br>
 Исправлена ошибка, возникающая при перемещении курсора в процессе последовательной замены.
 
 <h5 id="FixFind">
-<sup>new</sup>
 [FixFind] <span class=desc>(Автор: neo4max)</span></h5>
 Если документ заканчивается пустой строкой, а в диалоговом окне поиска задан поиск "^$" (в режиме RegExp), то, при нажатии на "Пометить все" возникало зацикливание.
 
 <h5 id="FixEncoding">
-<sup>new</sup>
 [FixEncoding] <span class=desc>(Автор: neo4max)</span></h5>
 Теперь все калтипы и текст расшифровки аббревиатур отображаются и вставляются в текущей кодировке активного буфера.<br>
 Для этого требуется чтобы соответствующие API и ABBREV файлы были в кодировке UTF-8.
 
 <h5 id="cmdline.spaces.fix">
-<sup>new</sup>
 [cmdline.spaces.fix] <span class=desc>(Автор: nail333)</span></h5>
 Исправление ошибки с открытием лишней пустой вкладки при наличии пробелов в конце командной строки. <a href="http://code.google.com/p/scite-ru/issues/detail?id=239">Issue 239</a>.
 

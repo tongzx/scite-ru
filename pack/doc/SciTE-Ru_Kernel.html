@@ -32,7 +32,7 @@
     </td></tr>
   </table>
 
-    <h1>Text editor SciTE RU-Board 3.23 .97</h1>
+    <h1>Text editor SciTE RU-Board 3.24 .98</h1>
 
     <p>All modifications of original <A href="http://www.scintilla.org">SciTE editor</A> has been developed by persons from <A href="http://forum.ru-board.com/topic.cgi?forum=5&topic=35160&glp">Ru-Board community</A>.
 
@@ -370,7 +370,6 @@ is setup this highlight on, by default it is off.<br>
 For more information look at <a href="http://code.google.com/p/scite-ru/issues/detail?id=96">Issue 96</a>.
 
 <h5 id="LocalizationFromLua">
-<sup>updated</sup>
 [LocalizationFromLua] <span class=desc>(Authors: VladVRO, neo4max)</span></h5>
 In SciTE Lua Scripting Extension added new command:<br>
 <span class="example">scite.GetTranslation(s, [retainIfNotFound])</span>, it returns translation of the sentance <span class="example"><i>s</i></span>,<br>
@@ -386,7 +385,6 @@ Added new SciTE event in Lua API <span class="example">OnFinalise()</span>. Even
 Added new lexer for ABAP/4 language.
 
 <h5 id="EncodingToLua">
-<sup>new</sup>
 [EncodingToLua] <span class=desc>(Authors: neo4max)</span></h5>
 In SciTE Lua Scripting Extension added new commands:<br>
 <span class="example">string.to_utf8(codepage)</span> - converts the text from the specified codepage to UTF-8<br>
@@ -423,7 +421,6 @@ Added new SciTE event - <span class="example">OnMenuCommand (msg, source)</span>
 It can be equal to IDM_SRCWIN (350) - editor's window, or IDM_RUNWIN (351) - output window, or something else where the focus is.
 
 <h5 id="OnSendEditor">
-<sup>updated</sup>
 [OnSendEditor] <span class=desc>(Author: VladVRO, neo4max)</span></h5>
 Added new event to SciTE - <span class="example">OnSendEditor (msg, wp, lp)</span><br>
 Parameters the same as SendEditor.<br>
@@ -469,7 +466,6 @@ Receives the state of Ctrl:<br>
 <span class="example">function OnMouseButtonUp(ctrl)</span>
 
 <h5 id="UserListItemID">
-<sup>new</sup>
 [UserListItemID] <span class=desc>(Author: neo4max, Dmitry Maslov)</span></h5>
 Event <span class="example">OnUserListSelection</span> returns the third parameter with id position of the selected item in the list. <a href="http://code.google.com/p/scite-ru/issues/detail?id=245">Issue 245</a>
 
@@ -505,7 +501,6 @@ CurrentWordCharacters - new SciTE environment variable. Contains which character
 BufferNumber - new SciTE environment variable. Contains number of the current buffer.
 
 <h5 id="InsertAbbreviation">
-<sup>updated</sup>
 [InsertAbbreviation] <span class=desc>(Authors: mimir, VladVRO, Dmitry Maslov, neo4max)</span></h5>
 In SciTE Lua Scripting Extension added new command<br>
 <span class="example">InsertAbbreviation(string)</span><br>
@@ -576,25 +571,21 @@ Now OnSendEditor can trace event SCI_SETZOOM arising at change of the size of a 
     </h3>
 
 <h5 id="FixReplaceOnce">
-<sup>new</sup>
 [FixReplaceOnce] <span class=desc>(Автор: neo4max)</span></h5>
 Fixed a bug in the dialogue "Replace". Entered in the dialog box, the search parameters can be accidentally modified command editor:findtext (more - in <a href="http://code.google.com/p/scite-ru/issues/detail?id=175">Issue 175</a>).<br>
 Added a warning appears when you click "Replace" after the last change has produced.<br>
 Fixed error when moving the cursor in the serial replacement.
 
 <h5 id="FixFind">
-<sup>new</sup>
 [FixFind] <span class=desc>(Автор: neo4max)</span></h5>
 If the document ends with a blank line, and in the dialog box, specify search "^$" (RegExp mode), then when you click on "Mark All" arose loop.
 
 <h5 id="FixEncoding">
-<sup>new</sup>
 [FixEncoding] <span class=desc>(Автор: neo4max)</span></h5>
 Now all calltip and text for the abbreviation are displayed and inserted in the current encoding of the active buffer.<br>
 This requires that by appropriate API and ABBREV files were encoded in UTF-8.
 
 <h5 id="cmdline.spaces.fix">
-<sup>new</sup>
 [cmdline.spaces.fix] <span class=desc>(Author: nail333)</span></h5>
 Fixed bug associated with opening a blank tab if the presence spaces in the end of the command line. <a href="http://code.google.com/p/scite-ru/issues/detail?id=239">Issue 239</a>.
 
