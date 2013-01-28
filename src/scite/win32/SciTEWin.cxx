@@ -1259,6 +1259,8 @@ void SciTEWin::Execute() {
 		if (extender)
 			extender->OnExecute(jobQueue.jobQueue[cmdWorker.icmd].command.c_str());
 
+		if (quitting) return; //!-add-[https://groups.google.com/forum/?fromgroups#!topic/scite-interest/VJgXQ7krzGA]
+
 		if (jobQueue.jobQueue[cmdWorker.icmd].flags & jobGroupUndo)
 			wEditor.Send(SCI_ENDUNDOACTION);
 
