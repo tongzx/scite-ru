@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 CodePage.lua
 Authors: YuriNB, VladVRO, mozers™
-Version: 2.5.1
+Version: 2.5.2
 ------------------------------------------------------
 Гибрид 2х скриптов:
 win1251 to cp866 keyboard mapper (YuriNB icq#2614215)
@@ -76,7 +76,6 @@ local function UpdateStatusCodePage(mode)
 	end
 
 	props["editor.code.page"]=editor:codepage()
-	scite.CheckMenus()
 	scite.UpdateStatusBar()
 end
 
