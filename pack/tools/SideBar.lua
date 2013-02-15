@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
-Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev, ur4ltz
-Version 1.27.15
+Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev, ur4ltz, nicksabaka
+Version 1.28.0
 ------------------------------------------------------
   Note: Require gui.dll <http://scite-ru.googlecode.com/hg/lualib/gui/>
                lpeg.dll <http://scite-ru.googlecode.com/hg/lualib/lpeg/>
@@ -846,6 +846,25 @@ do
 		Lang2lpeg.Python = lpeg.Ct(patt)
 	end --do --^------- Python -------^--
 
+	do --v----- Nemerle ------v--
+		local IGNORED = SC
+		local op = P'if'+P'else'+P'switch'+P'case'+P'while'+P'for'+P'foreach'+P'try'+P'catch'+P'match'+P'when'+P'throw'
+		local nokeyword = -(op)
+		local mod = P'public'+P'private'+P'static'+P'virtual'+P'def'+'new'
+		local funcbody = P"{"*(ESCANY-P"}")^0*P"}"
+
+		local I = C(IDENTIFIER)*cl
+		local type = IDENTIFIER*(P'.'*IDENTIFIER)^0
+		local req = P'requires'*SPACE*(AZ+SPACE+R'09'+S'.,?!=></[]-+()*&^%$#@')^1
+
+		local method = nokeyword*Ct(mod*SPACE*I*SPACE^0*par)*(SPACE^0*P':'*SPACE^0*type)^0*SC^0*req^0*(#funcbody)
+		local ifmethod = nokeyword*Ct((P'new'*SPACE)^0*I*SPACE^0*par)*SPACE^0*P':'*SPACE^0*type*SPACE^0*P';'
+
+		local patt = (method + ifmethod + IGNORED^1 + IDENTIFIER + ANY)^0 * EOF
+
+		Lang2lpeg['Nemerle'] = lpeg.Ct(patt)
+	end --^----- Nemerle ------^--
+
 	do --v------- nnCron -------v--
 		-- redefine common patterns
 		local IDENTIFIER = (ANY - SPACE)^1
@@ -1007,6 +1026,7 @@ do -- Fill_Ext2Lang
 		[props['file.patterns.pascal']]='Pascal',
 		[props['file.patterns.py']]='Python',
 		[props['file.patterns.lua']]='Lua',
+		[props['file.patterns.nemerle']]='Nemerle',
 		[props['file.patterns.nncron']]='nnCron',
 		['*.ahk']='autohotkey',
 	}
