@@ -1381,6 +1381,7 @@ void SciTEBase::DisplayAround(const RecentFile &rf) {
 		int curTop = wEditor.Call(SCI_GETFIRSTVISIBLELINE);
 		int lineTop = wEditor.Call(SCI_VISIBLEFROMDOCLINE, rf.scrollPosition);
 		wEditor.Call(SCI_LINESCROLL, 0, lineTop - curTop);
+		wEditor.Call(SCI_CHOOSECARETX, 0, 0);
 	}
 }
 
@@ -1822,10 +1823,16 @@ int DecodeMessage(const char *cdoc, char *sourcePath, int format, int &column) {
 				}
 			}
 		}
-	case SCE_ERR_GCC: {
+	case SCE_ERR_GCC:
+	case SCE_ERR_GCC_INCLUDED_FROM: {
 			// GCC - look for number after colon to be line number
 			// This will be preceded by file name.
 			// Lua debug traceback messages also piggyback this style, but begin with a tab.
+			// GCC include paths are similar but start with either "In file included from " or
+			// "                 from "
+			if (format == SCE_ERR_GCC_INCLUDED_FROM) {
+				cdoc += strlen("In file included from ");
+			}
 			if (cdoc[0] == '\t')
 				++cdoc;
 			for (int i = 0; cdoc[i]; i++) {
@@ -2158,7 +2165,7 @@ void SciTEBase::ShowMessages(int line) {
 		int startPosLine = wOutput.Call(SCI_POSITIONFROMLINE, line, 0);
 		int lineEnd = wOutput.Call(SCI_GETLINEENDPOSITION, line, 0);
 		SString message = GetRange(wOutput, startPosLine, lineEnd);
-		char source[MAX_PATH];
+		char source[MAX_PATH] = "";	
 		int column;
 		char style = acc.StyleAt(startPosLine);
 		int sourceLine = DecodeMessage(message.c_str(), source, style, column);
@@ -2240,7 +2247,7 @@ bool SciTEBase::GoMessage(int dir) { //!-change-[GoMessageImprovement]
 			wOutput.Call(SCI_MARKERADD, lookLine, 0);
 			wOutput.Call(SCI_SETSEL, startPosLine, startPosLine);
 			SString message = GetRange(wOutput, startPosLine, startPosLine + lineLength);
-			char source[MAX_PATH];
+			char source[MAX_PATH] = "";
 			int column;
 			long sourceLine = DecodeMessage(message.c_str(), source, style, column);
 			if (sourceLine >= 0) {

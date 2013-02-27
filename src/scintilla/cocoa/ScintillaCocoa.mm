@@ -1351,10 +1351,10 @@ void ScintillaCocoa::SetPasteboardData(NSPasteboard* board, const SelectionText 
                                                reinterpret_cast<const UInt8 *>(selectedText.s), 
                                                selectedText.len-1, encoding, false);
 
-  [board declareTypes:[NSArray arrayWithObjects:
-                       NSStringPboardType,
-                       selectedText.rectangular ? ScintillaRecPboardType : nil,
-                       nil] owner:nil];
+  NSArray *pbTypes = selectedText.rectangular ?
+    [NSArray arrayWithObjects: NSStringPboardType, ScintillaRecPboardType, nil] :
+    [NSArray arrayWithObjects: NSStringPboardType, nil];
+  [board declareTypes:pbTypes owner:nil];
   
   if (selectedText.rectangular)
   {
@@ -1387,7 +1387,7 @@ bool ScintillaCocoa::GetPasteboardData(NSPasteboard* board, SelectionText* selec
     {
       CFStringEncoding encoding = EncodingFromCharacterSet(IsUnicodeMode(),
                                                            vs.styles[STYLE_DEFAULT].characterSet);
-      CFRange rangeAll = {0, [data length]};
+      CFRange rangeAll = {0, static_cast<CFIndex>([data length])};
       CFIndex usedLen = 0;
       CFStringGetBytes((CFStringRef)data, rangeAll, encoding, '?',
                        false, NULL, 0, &usedLen);
@@ -1873,7 +1873,7 @@ int ScintillaCocoa::InsertText(NSString* input)
 {
   CFStringEncoding encoding = EncodingFromCharacterSet(IsUnicodeMode(),
                                                          vs.styles[STYLE_DEFAULT].characterSet);
-  CFRange rangeAll = {0, [input length]};
+  CFRange rangeAll = {0, static_cast<CFIndex>([input length])};
   CFIndex usedLen = 0;
   CFStringGetBytes((CFStringRef)input, rangeAll, encoding, '?',
                    false, NULL, 0, &usedLen);

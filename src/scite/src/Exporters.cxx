@@ -738,6 +738,8 @@ void SciTEBase::SaveToPDF(FilePath saveName) {
 	private:
 		FILE *fp;
 		long *offsetList, tableSize;
+		// Private so PDFObjectTracker objects can not be copied
+		PDFObjectTracker(const PDFObjectTracker &) {}
 	public:
 		int index;
 		PDFObjectTracker(FILE *fp_) {
@@ -815,6 +817,8 @@ void SciTEBase::SaveToPDF(FilePath saveName) {
 		int styleCurrent, stylePrev;
 		double leading;
 		char *buffer;
+		// Private so PDFRender objects can not be copied
+		PDFRender(const PDFRender &) {}
 	public:
 		PDFObjectTracker *oT;
 		PDFStyle *style;
@@ -887,7 +891,7 @@ void SciTEBase::SaveToPDF(FilePath saveName) {
 			}
 			// start to write PDF file here (PDF1.4Ref(p63))
 			// ASCII>127 characters to indicate binary-possible stream
-			oT->write("%PDF-1.3\n%Çì¢\n");
+			oT->write("%PDF-1.3\n%\xc7\xec\x8f\xa2\n");
 			styleCurrent = STYLE_DEFAULT;
 
 			// build objects for font resources; note that font objects are

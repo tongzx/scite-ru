@@ -326,6 +326,8 @@ fun void MarkerAddSet=2466(int line, int set)
 # Set the alpha used for a marker that is drawn in the text area, not the margin.
 set void MarkerSetAlpha=2476(int markerNumber, int alpha)
 
+val SC_MAX_MARGIN=4
+
 enu MarginType=SC_MARGIN_
 val SC_MARGIN_SYMBOL=0
 val SC_MARGIN_NUMBER=1
@@ -1053,24 +1055,24 @@ set void CallTipUseStyle=2212(int tabSize,)
 set void CallTipSetPosition=2213(bool above,)
 ##!-start-[BetterCalltips]
 # Add a range of characters to be displayed in a highlight style.
-fun void CallTipAddHlt=4019(int start, int end)
+fun void CallTipAddHlt=4027(int start, int end)
 
 # Delete all highlighted ranges
-fun void CallTipClearHlt=4020(,)
+fun void CallTipClearHlt=4028(,)
 
 # Update calltip window to reflect changes made by CallTipAddHlt and CallTipClearHlt
-fun void CallTipUpdateHlt=4021(,)
+fun void CallTipUpdateHlt=4029(,)
 
 # Set calltip line wrap bound in characters, 0 means no wrap
-fun void CallTipSetWordWrap=4022(int wrapBnd,)
+fun void CallTipSetWordWrap=4030(int wrapBnd,)
 ##!-end-[BetterCalltips]
 ##!-start-[MouseClickHandled]
 # Set mouse capture status
-set void SetMouseCapture=4023(bool on,)
+set void SetMouseCapture=4031(bool on,)
 ##!-end-[MouseClickHandled]
 ##!-start-[HighlightCurrFolder]
 # Set folding highlight color
-fun void SetFoldHighlightColour=4018(bool useSetting, colour fore)
+fun void SetFoldHighlightColour=4032(bool useSetting, colour fore)
 ##!-end-[HighlightCurrFolder]
 
 # Find the display line of a document line taking hidden lines into account.
@@ -2083,6 +2085,12 @@ set void AnnotationSetStyleOffset=2550(int style,)
 # Get the start of the range of style numbers used for annotations
 get int AnnotationGetStyleOffset=2551(,)
 
+# Release all extended (>255) style numbers
+fun void ReleaseAllExtendedStyles=2552(,)
+
+# Allocate some extended (>255) style numbers and return the start of the range
+fun int AllocateExtendedStyles=2553(int numberStyles,)
+
 val UNDO_MAY_COALESCE=1
 
 # Add a container action to the undo stack
@@ -2970,6 +2978,7 @@ val SCE_ERR_ABSF=18
 val SCE_ERR_TIDY=19
 val SCE_ERR_JAVA_STACK=20
 val SCE_ERR_VALUE=21
+val SCE_ERR_GCC_INCLUDED_FROM=22
 ##!-start-[FindResultListStyle]
 val SCE_ERR_FIND_VALUE=30
 ##!-end-[FindResultListStyle]
@@ -4388,6 +4397,50 @@ evt void MouseButtonUp=2062(int modifiers)
 ##!-start-[autocompleteword.incremental]
 evt void AutoCUpdated=2038(void)
 ##!-end-[autocompleteword.incremental]
+
+cat Provisional
+
+# Line end types which may be used in addition to LF, CR, and CRLF
+# SC_LINE_END_TYPE_UNICODE includes U+2028 Line Separator,
+# U+2029 Paragraph Separator, and U+0085 Next Line
+enu LineEndType=SC_LINE_END_TYPE_
+val SC_LINE_END_TYPE_DEFAULT=0
+val SC_LINE_END_TYPE_UNICODE=1
+
+# Set the line end types that the application wants to use. May not be used if incompatible with lexer or encoding.
+set void SetLineEndTypesAllowed=2656(int lineEndBitSet,)
+
+# Get the line end types currently allowed.
+get int GetLineEndTypesAllowed=2657(,)
+
+# Get the line end types currently recognised. May be a subset of the allowed types due to lexer limitation.
+get int GetLineEndTypesActive=2658(,)
+
+# Bit set of LineEndType enumertion for which line ends beyond the standard
+# LF, CR, and CRLF are supported by the lexer.
+get int GetLineEndTypesSupported=4018(,)
+
+# Allocate a set of sub styles for a particular base style, returning start of range
+fun int AllocateSubStyles=4020(int styleBase, int numberStyles)
+
+# The starting style number for the sub styles associated with a base style
+get int GetSubStylesStart=4021(int styleBase,)
+
+# The number of sub styles associated with a base style
+get int GetSubStylesLength=4022(int styleBase,)
+
+# Free allocated sub styles
+fun void FreeSubStyles=4023(,)
+
+# Set the identifiers that are shown in a particular style
+set void SetIdentifiers=4024(int style, string identifiers)
+
+# Where styles are duplicated by a feature such as active/inactive code
+# return the distance between the two types.
+get int DistanceToSecondaryStyles=4025(,)
+
+# Get the set of base styles that can be extended with sub styles
+get int GetSubStyleBases=4026(, stringresult styles)
 
 cat Deprecated
 
