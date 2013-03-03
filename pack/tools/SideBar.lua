@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev, ur4ltz, nicksabaka
-Version 1.28.0
+Version 1.28.1
 ------------------------------------------------------
   Note: Require gui.dll <http://scite-ru.googlecode.com/hg/lualib/gui/>
                lpeg.dll <http://scite-ru.googlecode.com/hg/lualib/lpeg/>
@@ -197,7 +197,7 @@ else
 end
 
 local tabs = gui.tabbar(win_parent)
-tabs:add_tab("FileMan", tab0)
+tabs:add_tab("Files/Fav", tab0)
 tabs:add_tab("Func/Bmk", tab1)
 tabs:add_tab("Abbrev", tab2)
 win_parent:client(tab2)
@@ -848,16 +848,27 @@ do
 
 	do --v----- Nemerle ------v--
 		local IGNORED = SC
-		local op = P'if'+P'else'+P'switch'+P'case'+P'while'+P'for'+P'foreach'+P'try'+P'catch'+P'match'+P'when'+P'throw'
-		local nokeyword = -(op)
-		local mod = P'public'+P'private'+P'static'+P'virtual'+P'def'+'new'
+		local keywords = P'if'+P'else'+P'unless'+P'finally'+P'while'+P'for'+P'foreach'+P'try'+P'catch'+P'match'+P'when'+P'throw'+P'do'
+		local nokeyword = -(keywords)
+		local mod = P'public'+P'private'+P'static'+P'virtual'+P'def'+P'new'
 		local funcbody = P"{"*(ESCANY-P"}")^0*P"}"
 
-		local I = C(IDENTIFIER)*cl
-		local type = IDENTIFIER*(P'.'*IDENTIFIER)^0
-		local req = P'requires'*SPACE*(AZ+SPACE+R'09'+S'.,?!=></[]-+()*&^%$#@')^1
+		local I = nokeyword*C(IDENTIFIER)*cl
 
-		local method = nokeyword*Ct(mod*SPACE*I*SPACE^0*par)*(SPACE^0*P':'*SPACE^0*type)^0*SC^0*req^0*(#funcbody)
+		local typ = IDENTIFIER*(P'.'*IDENTIFIER)^0
+		-- распознаем tuples в типе возвращаемом методом/функцией
+		local tuple = typ*(SPACE^0*P'*'*SPACE^0*typ)^1
+		local tot = tuple+typ
+		-- распознаем коллекции/словари в возвращаемом типе
+		local ar = typ*SPACE^0*P'['*SPACE^0*((tot*SPACE^0*P','*SPACE^0)^0*(tot*SPACE^0))^0*P']'
+		local arr = typ*SPACE^0*P'['*SPACE^0*(((ar+tot)*SPACE^0*P','*SPACE^0)^0*((ar+tot)*SPACE^0))^0*P']'
+		local type = arr+tot
+		-- распознаем контракт метода
+		local req = (P'requires'+P'ensures')*SPACE*(AZ+SPACE+R'09'+S'.,?!=></[]-+()*&^%$#@')^1
+
+		-- методы/функции
+		local method = nokeyword*Ct((mod*SPACE)^0*I*SPACE^0*par)*(SPACE^0*P':'*SPACE^0*type)^0*SC^0*req^0*(#funcbody)
+		-- декларации методов интерфейсов
 		local ifmethod = nokeyword*Ct((P'new'*SPACE)^0*I*SPACE^0*par)*SPACE^0*P':'*SPACE^0*type*SPACE^0*P';'
 
 		local patt = (method + ifmethod + IGNORED^1 + IDENTIFIER + ANY)^0 * EOF
