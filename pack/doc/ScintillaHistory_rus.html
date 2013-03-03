@@ -419,6 +419,8 @@
 	<td>Vidya Wasi</td>
       </tr><tr>
 	<td>G. Hu</td>
+	<td>Byron Hawkins</td>
+	<td>Alpha</td>
     </tr>
     </table>
 	<p>
@@ -431,6 +433,51 @@
 			Icons</a> Copyright(C) 1998 by Dean S. Jones<br />
 		</li>
 	</ul>
+
+    <h3>
+       <a href="http://prdownloads.sourceforge.net/scintilla/scite325.zip?download">Release 3.2.5</a>
+    </h3>
+    <ul>
+	<li>
+	Версия 3.2.5 от 26 февраля 2013 г.
+	</li>
+	<li>
+	Для обеспечения взаимодействия между различными видами использованных дополнительных стилей (свыше 255), они должны быть выделены с помощью SCI_ALLOCATEEXTENDEDSTYLES.
+	</li>
+	<li>
+	В Unicode-документах лексеры, использующие StyleContext, возвращают полностью символы, а не байты. LexAccessor предоставляет метод LineEnd, который является более эффективным способом обработки окончаний строк и может работать с Unicode-концами строк.
+	</li>
+	<li>
+	Лексер C++ теперь понимает директиву #undef в определении препроцессора.
+	<a href="http://sourceforge.net/p/scintilla/feature-requests/978/">Feature #978.</a>
+	</li>
+	<li>
+	Лексер errorlist распознает путь к файлу с ошибкой, который выводится в консоль перед строкой при компиляции с помощью gcc.
+	</li>
+	<li>
+	Реализована свёртка для лексера GetText (PO) языков перевода.
+	<a href="http://sourceforge.net/p/scintilla/bugs/1437/">Bug #1437.</a>
+	</li>
+	<li>
+	Лексер HTML не прерывает стиль комментария при обработке встроенных инструкций.
+	<a href="http://sourceforge.net/p/scintilla/bugs/1447/">Bug #1447.</a>
+	</li>
+	<li>
+	В SciTE исправлена потеря x-позиции каретки при переключении документов.
+	<a href="http://sourceforge.net/p/scintilla/bugs/1442/">Bug #1442.</a>
+	</li>
+	<li>
+	Исправлена ошибка, из-за которой бегунок вертикальной полосы прокрутки появлялся в начале документа при отображении полосы прокрутки.
+	<a href="http://sourceforge.net/p/scintilla/bugs/1446/">Bug #1446.</a>
+	</li>
+	<li>
+	Исправлена ошибка подсветки скобок в OS X 10.8, когда парная скобка находится на другой строке.
+	</li>
+	<li>
+	<a href="ScintillaDoc.html#ProvisionalMessages">Предварительные/временные функции</a> - новые функции, которые могут быть изменены или удалены, если будут вызывать проблемы, но должны стать постоянными, при хорошей работе. Описание таких функций будет выделяться фоном. В этой версии в качестве предварительных/временных функций введены: <a href="ScintillaDoc.html#SCI_GETLINEENDTYPESSUPPORTED">обработка Unicode-концов строк</a> и <a href="ScintillaDoc.html#Substyles">подстили</a>.
+	</li>
+    </ul>
+	<li>Перевод: <b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=ALeXkRU" target=_blank>ALeXkRU</a></b>
 
     <h3>
        <a href="http://prdownloads.sourceforge.net/scintilla/scite324.zip?download">Release 3.2.4</a>
