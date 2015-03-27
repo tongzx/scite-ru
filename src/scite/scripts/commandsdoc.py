@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+# Requires Python 2.5 or later
 
 from __future__ import with_statement
 
 import os, sys
 
-scintillaDirectory = os.path.join("..", "..", "scintilla", "include")
-sys.path.append(scintillaDirectory)
+scintillaDirectory = os.path.join("..", "..", "scintilla")
+scintillaScriptsDirectory = os.path.join(scintillaDirectory, "scripts")
+sys.path.append(scintillaScriptsDirectory)
 import Face
 
 def cell(s):
@@ -17,7 +19,7 @@ def faceFeatures(out):
 	out.write("<table>\n")
 	out.write("<thead>%s%s%s</thead>\n" % (cell("Command"), cell("Name"), cell("Explanation")))
 	face = Face.Face()
-	face.ReadFromFile(os.path.join(scintillaDirectory, "Scintilla.iface"))
+	face.ReadFromFile(os.path.join(scintillaDirectory, "include", "Scintilla.iface"))
 	texts = []
 	for name in face.features:
 		#~ print name
@@ -64,9 +66,12 @@ startFile = """
 <body>
 """
 
-if __name__ == "__main__":
+def RegenerateAll():
 	with open(os.path.join("..", "doc", "CommandValues.html"), "w") as out:
 		out.write(startFile)
 		menuFeatures(out)
 		faceFeatures(out)
 		out.write("</body>\n</html>\n")
+
+if __name__ == "__main__":
+	RegenerateAll()

@@ -12,7 +12,9 @@
 #define JOBQUEUE_H
 
 enum JobSubsystem {
-    jobCLI = 0, jobGUI = 1, jobShell = 2, jobExtension = 3, jobHelp = 4, jobOtherHelp = 5, jobGrep = 6};
+    jobCLI = 0, jobGUI = 1, jobShell = 2, jobExtension = 3, jobHelp = 4, jobOtherHelp = 5, jobGrep = 6, jobImmediate = 7};
+
+JobSubsystem SubsystemFromChar(char c);
 
 enum JobFlags {
     jobForceQueue = 1,
@@ -25,19 +27,28 @@ enum JobFlags {
     jobGroupUndo = 64
 };
 
+struct JobMode {
+	JobSubsystem jobType;
+	int saveBefore;
+	bool isFilter;
+	int flags;
+	std::string input;
+	JobMode(PropSetFile &props, int item, const char *fileNameExt);
+};
+
 class Job {
 public:
-	SString command;
+	std::string command;
 	FilePath directory;
 	JobSubsystem jobType;
-	SString input;
+	std::string input;
 	int flags;
 
 	Job() {
 		Clear();
 	}
 
-	Job(const SString &command_, const FilePath &directory_, JobSubsystem jobType_, const SString &input_, int flags_)
+	Job(const std::string &command_, const FilePath &directory_, JobSubsystem jobType_, const std::string &input_, int flags_)
 		: command(command_), directory(directory_), jobType(jobType_), input(input_), flags(flags_) {
 	}
 
@@ -123,7 +134,7 @@ public:
 	}
 
 	void ClearJobs();
-	void AddCommand(const SString &command, const FilePath &directory, JobSubsystem jobType, const SString &input, int flags);
+	void AddCommand(const std::string &command, const FilePath &directory, JobSubsystem jobType, const std::string &input, int flags);
 };
 
 #endif

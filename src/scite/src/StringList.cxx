@@ -1,6 +1,6 @@
 // SciTE - Scintilla based Text Editor
 /** @file StringList.cxx
- ** IMplementation of class holding a list of strings.
+ ** Implementation of class holding a list of strings.
  **/
 // Copyright 1998-2005 by Neil Hodgson <neilh@scintilla.org>
 // The License.txt file describes the conditions under which this software may be distributed.
@@ -9,20 +9,18 @@
 #include <string.h>
 
 #include <string>
+#include <vector>
+#include <set>
 #include <map>
 
-#include "SString.h"
+#include "Scintilla.h"
+
+#include "GUI.h"
 #include "StringList.h"
+#include "StringHelpers.h"
 
 static inline bool IsASpace(unsigned int ch) {
     return (ch == ' ') || ((ch >= 0x09) && (ch <= 0x0d));
-}
-
-static inline char MakeUpperCase(char ch) {
-	if (ch < 'a' || ch > 'z')
-		return ch;
-	else
-		return static_cast<char>(ch - 'a' + 'A');
 }
 
 static int CompareNCaseInsensitive(const char *a, const char *b, size_t len) {
@@ -48,44 +46,46 @@ static int CompareNCaseInsensitive(const char *a, const char *b, size_t len) {
  * Creates an array that points into each word in the string and puts \0 terminators
  * after each word.
  */
-static char **ArrayFromStringList(char *StringList, int *len, bool onlyLineEnds = false) {
+static char **ArrayFromStringList(char *stringList, int *len, bool onlyLineEnds = false) {
 	int prev = '\n';
 	int words = 0;
 	// For rapid determination of whether a character is a separator, build
 	// a look up table.
 	bool wordSeparator[256];
-	for (int i=0;i<256; i++) {
+	for (int i=0; i<256; i++) {
 		wordSeparator[i] = false;
 	}
-	wordSeparator['\r'] = true;
-	wordSeparator['\n'] = true;
+	wordSeparator[static_cast<unsigned int>('\r')] = true;
+	wordSeparator[static_cast<unsigned int>('\n')] = true;
 	if (!onlyLineEnds) {
-		wordSeparator[' '] = true;
-		wordSeparator['\t'] = true;
+		wordSeparator[static_cast<unsigned int>(' ')] = true;
+		wordSeparator[static_cast<unsigned int>('\t')] = true;
 	}
-	for (int j = 0; StringList[j]; j++) {
-		int curr = static_cast<unsigned char>(StringList[j]);
+	for (int j = 0; stringList[j]; j++) {
+		int curr = static_cast<unsigned char>(stringList[j]);
 		if (!wordSeparator[curr] && wordSeparator[prev])
 			words++;
 		prev = curr;
 	}
 	char **keywords = new char *[words + 1];
-	words = 0;
-	prev = '\0';
-	size_t slen = strlen(StringList);
-	for (size_t k = 0; k < slen; k++) {
-		if (!wordSeparator[static_cast<unsigned char>(StringList[k])]) {
-			if (!prev) {
-				keywords[words] = &StringList[k];
-				words++;
+	int wordsStore = 0;
+	const size_t slen = strlen(stringList);
+	if (words) {
+		prev = '\0';
+		for (size_t k = 0; k < slen; k++) {
+			if (!wordSeparator[static_cast<unsigned char>(stringList[k])]) {
+				if (!prev) {
+					keywords[wordsStore] = &stringList[k];
+					wordsStore++;
+				}
+			} else {
+				stringList[k] = '\0';
 			}
-		} else {
-			StringList[k] = '\0';
+			prev = stringList[k];
 		}
-		prev = StringList[k];
 	}
-	keywords[words] = &StringList[slen];
-	*len = words;
+	keywords[wordsStore] = &stringList[slen];
+	*len = wordsStore;
 	return keywords;
 }
 
@@ -104,7 +104,8 @@ void StringList::Clear() {
 }
 
 void StringList::Set(const char *s) {
-	list = StringDup(s);
+	list = new char[strlen(s)+1];
+	strcpy(list, s);
 	sorted = false;
 	sortedNoCase = false;
 	words = ArrayFromStringList(list, &len, onlyLineEnds);
@@ -112,17 +113,14 @@ void StringList::Set(const char *s) {
 	memcpy(wordsNoCase, words, (len + 1) * sizeof (*words));
 }
 
-char *StringList::Allocate(int size) {
-	list = new char[size + 1];
-	list[size] = '\0';
-	return list;
-}
-
-void StringList::SetFromAllocated() {
+void StringList::Set(const std::vector<char> &data) {
+	list = new char[data.size() + 1];
+	memcpy(list, &data[0], data.size());
+	list[data.size()] = '\0';
 	sorted = false;
 	sortedNoCase = false;
 	words = ArrayFromStringList(list, &len, onlyLineEnds);
-	wordsNoCase = new char * [len + 1];
+	wordsNoCase = new char *[len + 1];
 	memcpy(wordsNoCase, words, (len + 1) * sizeof (*words));
 }
 
@@ -146,60 +144,13 @@ static void SortStringListNoCase(char **wordsNoCase, unsigned int len) {
 	      slCmpStringNoCase);
 }
 
-bool StringList::InList(const char *s) {
-	if (0 == words)
-		return false;
-	if (!sorted) {
-		sorted = true;
-		SortStringList(words, len);
-		for (unsigned int k = 0; k < (sizeof(starts) / sizeof(starts[0])); k++)
-			starts[k] = -1;
-		for (int l = len - 1; l >= 0; l--) {
-			unsigned char indexChar = words[l][0];
-			starts[indexChar] = l;
-		}
-	}
-	unsigned char firstChar = s[0];
-	int j = starts[firstChar];
-	if (j >= 0) {
-		while ((unsigned char)words[j][0] == firstChar) {
-			if (s[1] == words[j][1]) {
-				const char *a = words[j] + 1;
-				const char *b = s + 1;
-				while (*a && *a == *b) {
-					a++;
-					b++;
-				}
-				if (!*a && !*b)
-					return true;
-			}
-			j++;
-		}
-	}
-	j = starts['^'];
-	if (j >= 0) {
-		while (words[j][0] == '^') {
-			const char *a = words[j] + 1;
-			const char *b = s;
-			while (*a && *a == *b) {
-				a++;
-				b++;
-			}
-			if (!*a)
-				return true;
-			j++;
-		}
-	}
-	return false;
-}
-
 /**
  * Returns an element (complete) of the StringList array which has
  * the same beginning as the passed string.
  * The length of the word to compare is passed too.
  * Letter case can be ignored or preserved (default).
  */
-const char *StringList::GetNearestWord(const char *wordStart, size_t searchLen, bool ignoreCase /*= false*/, SString wordCharacters /*='/0' */, int wordIndex /*= -1 */) {
+std::string StringList::GetNearestWord(const char *wordStart, size_t searchLen, bool ignoreCase /*= false*/, std::string wordCharacters /*='/0' */, int wordIndex /*= -1 */) {
 	int start = 0; // lower bound of the api array block to search
 	int end = len - 1; // upper bound of the api array block to search
 	int pivot; // index of api array element just being compared
@@ -207,7 +158,7 @@ const char *StringList::GetNearestWord(const char *wordStart, size_t searchLen, 
 	const char *word; // api array element just being compared
 
 	if (0 == words)
-		return NULL;
+		return std::string();
 	if (ignoreCase) {
 		if (!sortedNoCase) {
 			sortedNoCase = true;
@@ -232,13 +183,13 @@ const char *StringList::GetNearestWord(const char *wordStart, size_t searchLen, 
 				// Finds first word in a series of equal words
 				for (pivot = start; pivot <= end; pivot++) {
 					word = wordsNoCase[pivot];
-					if (!word[searchLen] || !wordCharacters.contains(word[searchLen])) {
+					if (!word[searchLen] || !Contains(wordCharacters, word[searchLen])) {
 						if (wordIndex <= 0) // Checks if a specific index was requested
-							return word; // result must not be freed with free()
+							return std::string(word); // result must not be freed with free()
 						wordIndex--;
 					}
 				}
-				return NULL;
+				return std::string();
 			}
 			else if (cond > 0)
 				start = pivot + 1;
@@ -270,14 +221,14 @@ const char *StringList::GetNearestWord(const char *wordStart, size_t searchLen, 
 				pivot = start;
 				while (pivot <= end) {
 					word = words[pivot];
-					if (!word[searchLen] || !wordCharacters.contains(word[searchLen])) {
+					if (!word[searchLen] || !Contains(wordCharacters, word[searchLen])) {
 						if (wordIndex <= 0) // Checks if a specific index was requested
-							return word; // result must not be freed with free()
+							return std::string(word); // result must not be freed with free()
 						wordIndex--;
 					}
 					pivot++;
 				}
-				return NULL;
+				return std::string();
 			}
 			else if (cond > 0)
 				start = pivot + 1;
@@ -285,7 +236,7 @@ const char *StringList::GetNearestWord(const char *wordStart, size_t searchLen, 
 				end = pivot - 1;
 		}
 	}
-	return NULL;
+	return std::string();
 }
 
 /**
@@ -327,22 +278,21 @@ static unsigned int LengthWord(const char *word, char otherSeparator) {
  *
  * NOTE: returned buffer has to be freed with delete[].
  */
-char *StringList::GetNearestWords(
+std::string StringList::GetNearestWords(
     const char *wordStart,
     size_t searchLen,
     bool ignoreCase /*= false*/,
     char otherSeparator /*= '\0'*/,
     bool exactLen /*=false*/) {
 	unsigned int wordlen; // length of the word part (before the '(' brace) of the api array element
-	SString wordsNear;
-	wordsNear.setsizegrowth(1000);
+	std::string wordsNear;
 	int start = 0; // lower bound of the api array block to search
 	int end = len - 1; // upper bound of the api array block to search
 	int pivot; // index of api array element just being compared
 	int cond; // comparison result (in the sense of strcmp() result)
 
 	if (0 == words)
-		return NULL;
+		return std::string();
 	if (ignoreCase) {
 		if (!sortedNoCase) {
 			sortedNoCase = true;
@@ -366,9 +316,11 @@ char *StringList::GetNearestWords(
 					++pivot;
 					if (exactLen && wordlen != LengthWord(wordStart, otherSeparator) + 1)
 						continue;
-					wordsNear.append(wordsNoCase[pivot-1], wordlen, ' ');
+					if (wordsNear.length() > 0)
+						wordsNear.append(" ", 1);
+					wordsNear.append(wordsNoCase[pivot-1], wordlen);
 				}
-				return wordsNear.detach();
+				return wordsNear;
 			} else if (cond < 0) {
 				end = pivot - 1;
 			} else if (cond > 0) {
@@ -398,9 +350,11 @@ char *StringList::GetNearestWords(
 					++pivot;
 					if (exactLen && wordlen != LengthWord(wordStart, otherSeparator) + 1)
 						continue;
-					wordsNear.append(words[pivot-1], wordlen, ' ');
+					if (wordsNear.length() > 0)
+						wordsNear.append(" ", 1);
+					wordsNear.append(words[pivot-1], wordlen);
 				}
-				return wordsNear.detach();
+				return wordsNear;
 			} else if (cond < 0) {
 				end = pivot - 1;
 			} else if (cond > 0) {
@@ -408,10 +362,5 @@ char *StringList::GetNearestWords(
 			}
 		}
 	}
-	return NULL;
+	return std::string();
 }
-
-#ifdef _MSC_VER
-// Unreferenced inline functions are OK
-#pragma warning(disable: 4514)
-#endif

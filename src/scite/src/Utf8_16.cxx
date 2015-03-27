@@ -82,7 +82,6 @@ size_t Utf8_16_Read::convert(char* buf, size_t len) {
 	size_t newSize = len + len / 2 + 1;
 	if (m_nBufSize != newSize) {
 		delete [] m_pNewBuf;
-		m_pNewBuf = NULL;
 		m_pNewBuf = new ubyte[newSize];
 		m_nBufSize = newSize;
 	}
@@ -95,7 +94,7 @@ size_t Utf8_16_Read::convert(char* buf, size_t len) {
 		*pCur++ = m_Iter16.get();
 	}
 
-	// Return number of bytes writen out
+	// Return number of bytes written out
 	return pCur - m_pNewBuf;
 }
 //!-start-[utf8.auto.check]
@@ -220,7 +219,6 @@ size_t Utf8_16_Write::fwrite(const void* p, size_t _size) {
 	if (_size > m_nBufSize) {
 		m_nBufSize = _size;
 		delete [] m_pBuf;
-		m_pBuf = NULL;
 		m_pBuf = new utf16[_size + 1];
 	}
 
@@ -356,7 +354,7 @@ void Utf16_Iter::set
 	m_pEnd = pBuf + nLen;
 	m_eEncoding = eEncoding;
 	operator++();
-	// Note: m_eState, m_nCur, m_nCur16 not reinitalized.
+	// Note: m_eState, m_nCur, m_nCur16 not reinitialized.
 }
 
 // Goes to the next byte.

@@ -19,6 +19,8 @@
 #include <set>
 #include <map>
 #include <algorithm>
+#include <sstream>
+#include <iomanip>
 
 #ifdef __MINGW_H
 #define _WIN32_IE	0x0400
@@ -33,20 +35,12 @@
 #define _WIN32_WINNT  0x0501
 #define WINVER 0x0501
 #endif
-#ifdef _MSC_VER
-// windows.h, et al, use a lot of nameless struct/unions - can't fix it, so allow it
-#pragma warning(disable: 4201)
-#endif
 #include <windows.h>
 #if defined(DISABLE_THEMES) || (defined(_MSC_VER) && (_MSC_VER <= 1200))
 // Old compilers do not have Uxtheme.h
 typedef void *HTHEME;
 #else
 #include <uxtheme.h>
-#endif
-#ifdef _MSC_VER
-// okay, that's done, don't allow it in our code
-#pragma warning(default: 4201)
 #endif
 #include <commctrl.h>
 #include <richedit.h>
@@ -56,11 +50,28 @@ typedef void *HTHEME;
 #include <process.h>
 #include <mmsystem.h>
 #include <commctrl.h>
-#ifdef _MSC_VER
-#include <direct.h>
+
+#if defined(DTBG_CLIPRECT) && !defined(DISABLE_THEMES)
+#define THEME_AVAILABLE
 #endif
-#ifdef __DMC__
-#include <dir.h>
+
+// Since Vsstyle.h and Vssym32.h are not available from all compilers just define the used symbols
+#define CBS_NORMAL 1
+#define CBS_HOT 2
+#define CBS_PUSHED 3
+#define WP_SMALLCLOSEBUTTON 19
+#define TS_NORMAL 1
+#define TS_HOT 2
+#define TS_PRESSED 3
+#define TS_CHECKED 5
+#define TS_HOTCHECKED 6
+#define TP_BUTTON 1
+#ifndef DFCS_HOT
+#define DFCS_HOT 1000
+#endif
+
+#ifndef WM_UPDATEUISTATE
+#define WM_UPDATEUISTATE 0x0128
 #endif
 
 #include "Scintilla.h"
@@ -68,10 +79,10 @@ typedef void *HTHEME;
 
 #include "GUI.h"
 
-#include "SString.h"
 #include "StringList.h"
 #include "StringHelpers.h"
 #include "FilePath.h"
+#include "StyleDefinition.h"
 #include "PropSetFile.h"
 #include "StyleWriter.h"
 #include "Extender.h"
@@ -81,10 +92,12 @@ typedef void *HTHEME;
 #include "Cookie.h"
 #include "Worker.h"
 #include "FileWorker.h"
+#include "MatchMarker.h"
 #include "SciTEBase.h"
 #include "SciTEKeys.h"
 #include "UniqueInstance.h"
 #include "StripDefinition.h"
+#include "Strips.h"
 #include "Containers.h" //!-add-[user.toolbar]
 
 const int SCITE_TRAY = WM_APP + 0;
@@ -116,27 +129,6 @@ public:
 
 class Dialog;
 
-inline HWND HwndOf(GUI::Window w) {
-	return reinterpret_cast<HWND>(w.GetID());
-}
-
-class BaseWin : public GUI::Window {
-protected:
-	ILocalize *localiser;
-public:
-	BaseWin() : localiser(0) {
-	}
-	void SetLocalizer(ILocalize *localiser_) {
-		localiser = localiser_;
-	}
-	HWND Hwnd() const {
-		return reinterpret_cast<HWND>(GetID());
-	}
-	virtual LRESULT WndProc(UINT iMessage, WPARAM wParam, LPARAM lParam) = 0;
-	static LRESULT PASCAL StWndProc(
-	    HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
-};
-
 class ContentWin : public BaseWin {
 	SciTEWin *pSciTEWin;
 	bool capturedMouse;
@@ -148,204 +140,6 @@ public:
 	}
 	void Paint(HDC hDC, GUI::Rectangle rcPaint);
 	LRESULT WndProc(UINT iMessage, WPARAM wParam, LPARAM lParam);
-};
-
-class Strip : public BaseWin {
-protected:
-	HFONT fontText;
-	HTHEME hTheme;
-	bool capturedMouse;
-	SIZE closeSize;
-	enum stripCloseState { csNone, csOver, csClicked, csClickedOver } closeState;
-	GUI::Window wToolTip;
-
-	GUI::Window CreateText(const char *text);
-	GUI::Window CreateButton(const char *text, int ident, bool check=false);
-	void Tab(bool forwards);
-	virtual void Creation();
-	virtual void Destruction();
-	virtual void Close();
-	virtual bool KeyDown(WPARAM key);
-	virtual bool Command(WPARAM wParam);
-	virtual void Size();
-	virtual void Paint(HDC hDC);
-	virtual bool HasClose() const;
-	GUI::Rectangle CloseArea();
-	void InvalidateClose();
-	bool MouseInClose(GUI::Point pt);
-	void TrackMouse(GUI::Point pt);
-	void SetTheme();
-	virtual LRESULT CustomDraw(NMHDR *pnmh);
-	virtual LRESULT WndProc(UINT iMessage, WPARAM wParam, LPARAM lParam);
-public:
-	bool visible;
-	Strip() : fontText(0), hTheme(0), capturedMouse(false), closeState(csNone), visible(false) {
-		closeSize.cx = 11;
-		closeSize.cy = 11;
-	}
-	virtual int Height() {
-		return 25;
-	}
-};
-
-class BackgroundStrip : public Strip {
-	int entered;
-	int lineHeight;
-	GUI::Window wExplanation;
-	GUI::Window wProgress;
-public:
-	BackgroundStrip() : entered(0), lineHeight(20) {
-	}
-	virtual void Creation();
-	virtual void Destruction();
-	virtual void Close();
-	void Focus();
-	virtual bool KeyDown(WPARAM key);
-	virtual bool Command(WPARAM wParam);
-	virtual void Size();
-	virtual bool HasClose() const;
-	virtual LRESULT WndProc(UINT iMessage, WPARAM wParam, LPARAM lParam);
-	virtual int Height() {
-		return lineHeight + 1;
-	}
-	void SetProgress(const GUI::gui_string &explanation, int size, int progress);
-};
-
-class SearchStrip : public Strip {
-	int entered;
-	int lineHeight;
-	GUI::Window wStaticFind;
-	GUI::Window wText;
-	GUI::Window wButton;
-	Searcher *pSearcher;
-public:
-	SearchStrip() : entered(0), lineHeight(20), pSearcher(0) {
-	}
-	virtual void Creation();
-	virtual void Destruction();
-	void SetSearcher(Searcher *pSearcher_);
-	virtual void Close();
-	void Focus();
-	virtual bool KeyDown(WPARAM key);
-//!	void Next(bool select);
-	void Next(bool select, bool reverseSearch = false); //!-change-[reverse.find]
-	virtual bool Command(WPARAM wParam);
-	virtual void Size();
-	virtual void Paint(HDC hDC);
-	virtual LRESULT WndProc(UINT iMessage, WPARAM wParam, LPARAM lParam);
-	virtual int Height() {
-		return lineHeight + 1;
-	}
-};
-
-class FindStrip : public Strip {
-	int entered;
-	int lineHeight;
-	GUI::Window wStaticFind;
-	GUI::Window wText;
-	GUI::Window wButton;
-	GUI::Window wButtonMarkAll;
-	GUI::Window wCheckWord;
-	GUI::Window wCheckCase;
-	GUI::Window wCheckRE;
-	GUI::Window wCheckBE;
-	GUI::Window wCheckWrap;
-	GUI::Window wCheckUp;
-	Searcher *pSearcher;
-public:
-	FindStrip() : entered(0), lineHeight(20), pSearcher(0) {
-	}
-	virtual void Creation();
-	virtual void Destruction();
-	void SetSearcher(Searcher *pSearcher_);
-	virtual void Close();
-	void Focus();
-	virtual bool KeyDown(WPARAM key);
-	void Next(bool markAll, bool invertDirection);
-	void AddToPopUp(GUI::Menu &popup, const char *label, int cmd, bool checked);
-	void ShowPopup();
-	virtual bool Command(WPARAM wParam);
-	virtual void Size();
-	virtual void Paint(HDC hDC);
-	virtual LRESULT WndProc(UINT iMessage, WPARAM wParam, LPARAM lParam);
-	void CheckButtons();
-	void Show();
-	virtual int Height() {
-		return lineHeight + 1;
-	}
-};
-
-class ReplaceStrip : public Strip {
-	int entered;
-	int lineHeight;
-	GUI::Window wStaticFind;
-	GUI::Window wText;
-	GUI::Window wCheckWord;
-	GUI::Window wCheckCase;
-	GUI::Window wButtonFind;
-	GUI::Window wButtonReplaceAll;
-	GUI::Window wCheckRE;
-	GUI::Window wCheckWrap;
-	GUI::Window wCheckBE;
-	GUI::Window wStaticReplace;
-	GUI::Window wReplace;
-	GUI::Window wButtonReplace;
-	GUI::Window wButtonReplaceInSelection;
-	Searcher *pSearcher;
-public:
-	ReplaceStrip() : entered(0), lineHeight(20), pSearcher(0) {
-	}
-	virtual void Creation();
-	virtual void Destruction();
-	void SetSearcher(Searcher *pSearcher_);
-	virtual void Close();
-	void Focus();
-	virtual bool KeyDown(WPARAM key);
-	void AddToPopUp(GUI::Menu &popup, const char *label, int cmd, bool checked);
-	void ShowPopup();
-	void HandleReplaceCommand(int cmd, bool reverseFind = false);
-	virtual bool Command(WPARAM wParam);
-	virtual void Size();
-	virtual void Paint(HDC hDC);
-	virtual LRESULT WndProc(UINT iMessage, WPARAM wParam, LPARAM lParam);
-	void CheckButtons();
-	void Show();
-	virtual int Height() {
-		return lineHeight * 2 + 1;
-	}
-};
-
-class StripDefinition;
-
-class UserStrip : public Strip {
-	int entered;
-	int lineHeight;
-	StripDefinition *psd;
-	Extension *extender;
-	SciTEWin *pSciTEWin;
-public:
-	UserStrip() : entered(0), lineHeight(26), psd(0), extender(0), pSciTEWin(0) {
-	}
-	virtual void Creation();
-	virtual void Destruction();
-	virtual void Close();
-	void Focus();
-	virtual bool KeyDown(WPARAM key);
-	virtual bool Command(WPARAM wParam);
-	virtual void Size();
-	virtual bool HasClose() const;
-	virtual LRESULT WndProc(UINT iMessage, WPARAM wParam, LPARAM lParam);
-	virtual int Height() {
-		return lineHeight * Lines() + 1;
-	}
-	int Lines();
-	void SetDescription(const char *description);
-	void SetExtender(Extension *extender_);
-	void SetSciTE(SciTEWin *pSciTEWin_);
-	UserControl *FindControl(int control);
-	void Set(int control, const char *value);
-	void SetList(int control, const char *value);
-	std::string GetValue(int control);
 };
 
 struct Band {
@@ -375,7 +169,7 @@ protected:
 
 //!-start-[user.toolbar]
 	void SetToolBar();
-	TMap<int,int, SString, const char *> ToolBarTips;
+	TMap<int,int, std::string, const char *> ToolBarTips;
 	HBITMAP hToolbarBitmap;
 	UINT oldToolbarBitmapID;
 	TArray<int,int> toolbarUsersPressableButtons;
@@ -388,6 +182,8 @@ protected:
 	WINDOWPLACEMENT winPlace;
 	RECT rcWorkArea;
 	GUI::gui_char openWhat[200];
+	GUI::gui_char tooltipText[MAX_PATH*2 + 1];
+	bool tbLarge;
 	bool modalParameters;
 	int filterDefault;
 	bool staticBuild;
@@ -413,7 +209,6 @@ protected:
 	HMODULE hMM;
 
 	// Tab Bar
-	TCITEM tie;
 	HFONT fontTabs;
 
 	/// Preserve focus during deactivation
@@ -437,6 +232,7 @@ protected:
 	virtual void GetWindowPosition(int *left, int *top, int *width, int *height, int *maximize);
 
 	virtual MenuEx GetToolsMenu() { return MenuEx(((GUI::MenuID)::GetSubMenu(::GetMenu(reinterpret_cast<HWND>(wSciTE.GetID())), menuTools)));}; //!-add-[SubMenu]
+	virtual void ReadPropertiesInitial();
 	virtual void ReadProperties();
 
 	virtual void TimerStart(int mask);
@@ -453,8 +249,6 @@ protected:
 	virtual void EnableAMenuItem(int wIDCheckItem, bool val);
 	virtual void CheckMenus();
 
-	void LocaliseAccelerators();
-	GUI::gui_string LocaliseAccelerator(const GUI::gui_char *Accelerator, int cmd);
 	void LocaliseMenu(HMENU hmenu);
 	void LocaliseMenus();
 	void LocaliseControl(HWND w);
@@ -462,8 +256,9 @@ protected:
 
 	int DoDialog(HINSTANCE hInst, const TCHAR *resName, HWND hWnd, DLGPROC lpProc);
 	GUI::gui_string DialogFilterFromProperty(const GUI::gui_char *filterProperty);
-	virtual bool OpenDialog(FilePath directory, const GUI::gui_char *filter);
-	FilePath ChooseSaveName(FilePath directory, const char *title, const GUI::gui_char *filter=0, const char *ext=0);
+	void CheckCommonDialogError();
+	virtual bool OpenDialog(FilePath directory, const GUI::gui_char *filesFilter);
+	FilePath ChooseSaveName(FilePath directory, const char *title, const GUI::gui_char *filesFilter = 0, const char *ext = 0);
 	virtual bool SaveAsDialog();
 	virtual void SaveACopy();
 	virtual void SaveAsHTML();
@@ -481,15 +276,15 @@ protected:
 	/// Handle default print setup values and ask the user its preferences.
 	virtual void PrintSetup();
 
-	BOOL HandleReplaceCommand(int cmd, bool reverseFind = false);
+	BOOL HandleReplaceCommand(int cmd, bool reverseDirection = false);
 
-	virtual int WindowMessageBox(GUI::Window &w, const GUI::gui_string &msg, int style);
-	virtual void FindMessageBox(const SString &msg, const SString *findItem=0);
+	virtual MessageBoxChoice WindowMessageBox(GUI::Window &w, const GUI::gui_string &msg, MessageBoxStyle style = mbsIconWarning);
+	virtual void FindMessageBox(const std::string &msg, const std::string *findItem = 0);
 	virtual void AboutDialog();
 	void DropFiles(HDROP hdrop);
 	void MinimizeToTray();
 	void RestoreFromTray();
-	GUI::gui_string ProcessArgs(const GUI::gui_char *cmdLine);
+	static GUI::gui_string ProcessArgs(const GUI::gui_char *cmdLine);
 	virtual void QuitProgram();
 
 	virtual FilePath GetDefaultDirectory();
@@ -536,7 +331,6 @@ protected:
 	BOOL GrepMessage(HWND hDlg, UINT message, WPARAM wParam);
 	static BOOL CALLBACK GrepDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 	virtual void FindIncrement();
-	bool FindReplaceAdvanced();
 	virtual void Find();
 	virtual void FindInFiles();
 	virtual void Replace();
@@ -563,9 +357,7 @@ protected:
 
 	BOOL AboutMessage(HWND hDlg, UINT message, WPARAM wParam);
 	static BOOL CALLBACK AboutDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
-	void AboutDialogWithBuild(int staticBuild);
-
-	void MakeAccelerator(SString sKey, ACCEL &Accel);
+	void AboutDialogWithBuild(int staticBuild_);
 
 	void RestorePosition();
 
@@ -574,22 +366,22 @@ public:
 	SciTEWin(Extension *ext = 0);
 	~SciTEWin();
 
-	bool DialogHandled(GUI::WindowID id, MSG *pmsg);
+	static bool DialogHandled(GUI::WindowID id, MSG *pmsg);
 	bool ModelessHandler(MSG *pmsg);
 
 	void CreateUI();
 	/// Management of the command line parameters.
 	void Run(const GUI::gui_char *cmdLine);
 	uptr_t EventLoop();
-	void OutputAppendEncodedStringSynchronised(GUI::gui_string s, int codePage);
+	void OutputAppendEncodedStringSynchronised(GUI::gui_string s, int codePageDocument);
 	void ResetExecution();
 	void ExecuteNext();
 	DWORD ExecuteOne(const Job &jobToRun);
 	void ProcessExecute();
-	void ShellExec(const SString &cmd, const char *dir);
+	void ShellExec(const std::string &cmd, const char *dir);
 	virtual void Execute();
 	virtual void StopExecute();
-	virtual void AddCommand(const SString &cmd, const SString &dir, JobSubsystem jobType, const SString &input = "", int flags=0);
+	virtual void AddCommand(const std::string &cmd, const std::string &dir, JobSubsystem jobType, const std::string &input = "", int flags = 0);
 
 	virtual bool PerformOnNewThread(Worker *pWorker);
 	virtual void PostOnMainThread(int cmd, Worker *pWorker);
@@ -600,10 +392,11 @@ public:
 	LRESULT KeyUp(WPARAM wParam);
 //!	virtual void AddToPopUp(const char *label, int cmd=0, bool enabled=true); //!-remove-[ExtendedContextMenu]
 	LRESULT ContextMenuMessage(UINT iMessage, WPARAM wParam, LPARAM lParam);
+	void CheckForScintillaFailure(int statusFailure);
 	LRESULT WndProc(UINT iMessage, WPARAM wParam, LPARAM lParam);
 
-	virtual SString EncodeString(const SString &s);
-	virtual SString GetRangeInUIEncoding(GUI::ScintillaWindow &wCurrent, int selStart, int selEnd);
+	virtual std::string EncodeString(const std::string &s);
+	virtual std::string GetRangeInUIEncoding(GUI::ScintillaWindow &wCurrent, int selStart, int selEnd);
 
 	HACCEL GetAcceleratorTable() {
 		return hAccTable;
