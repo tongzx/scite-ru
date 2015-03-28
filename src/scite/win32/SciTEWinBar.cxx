@@ -747,7 +747,7 @@ void SciTEWin::CheckMenus() {
 		for (int i = 0; i < toolbarUsersPressableButtons.GetSize(); i++) {
 			std::string prefix = "command.checked." + StdStringFromInteger(toolbarUsersPressableButtons[i] - IDM_TOOLS) + ".";
 			std::string val = props.GetNewExpandString(prefix.c_str(), fileNameForExtension.c_str());
-			int ischecked = val.empty()?0:std::stoi(val);
+			int ischecked = val.empty() ? 0 : atoi(val.c_str());
 			::CheckToolbarButton(reinterpret_cast<HWND>(wToolBar.GetID()), toolbarUsersPressableButtons[i], ischecked);
 		}
 	}

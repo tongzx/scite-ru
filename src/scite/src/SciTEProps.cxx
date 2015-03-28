@@ -375,7 +375,7 @@ int SciTEBase::FindIntLanguageProperty(const char *pattern, int defaultValue /*=
 	if (val == "") {
 		return defaultValue;
 	}
-	return std::stoi(val);
+	return atoi(val.c_str());
 }
 //!-end-[BetterCalltips]
 

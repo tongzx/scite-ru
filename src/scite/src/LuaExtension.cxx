@@ -302,10 +302,10 @@ int get_codepage(ExtensionAPI::Pane p) {
 		unsigned int cs = SC_CHARSET_DEFAULT;
 		std::string charSet = host->Property("character.set");
 		if(!charSet.empty())
-			cs = std::stoi(charSet);
+			cs = atoi(charSet.c_str());
 		codePage = GUI::CodePageFromCharSet(cs, codePage);
 	} else { // temporary solution
-		unsigned int unimode = std::stoi(host->Property("editor.unicode.mode"));
+		unsigned int unimode = host->Property("editor.unicode.mode").empty()?0:atoi(host->Property("editor.unicode.mode").c_str());
 		switch(unimode) {
 			case 152: codePage = 1200; break; // UTF-16 LE
 			case 151: codePage = 1201; break; // UTF-16 BE

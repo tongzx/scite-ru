@@ -1526,14 +1526,14 @@ void SciTEBase::SetToolsMenu() {
 				sMnemonic += "Ctrl+" + items;
 			prefix = "command.separator." + StdStringFromInteger(items) + ".";
 			std::string val = props.GetNewExpandString(prefix.c_str(), FileNameExt().AsUTF8().c_str());
-			int issep = val.empty() ? 0 : std::stoi(val);
+			int issep = val.empty() ? 0 : atoi(val.c_str());
 			prefix = "command.parent." + StdStringFromInteger(items) + ".";
 			val = props.GetNewExpandString(prefix.c_str(), FileNameExt().AsUTF8().c_str());
-			int toMenu = val.empty() ? 0 : std::stoi(val);
+			int toMenu = val.empty() ? 0 : atoi(val.c_str());
 			GUI::gui_string lsMenuItem = localiser.Text(sMenuItem.c_str());
 			prefix = "command.checked." + StdStringFromInteger(items) + ".";
 			val = props.GetNewExpandString(prefix.c_str(), FileNameExt().AsUTF8().c_str());
-			int ischecked = val.empty() ? 0 : std::stoi(val);
+			int ischecked = val.empty() ? 0 : atoi(val.c_str());
 			if(toMenu > 0 && toMenu < toolMax) {
 				if (arrMenu[toMenu].GetID() == 0)
 					arrMenu[toMenu].CreatePopUp(&arrMenu[0]);
@@ -1571,7 +1571,7 @@ void SciTEBase::SetToolsMenu() {
 			if (commandName.length()) {
 				prefix = "command.submenu.parent." + StdStringFromInteger(items) + ".";
 				std::string val = props.GetNewExpandString(prefix.c_str(), FileNameExt().AsUTF8().c_str());
-				int toMenu = val.empty() ? 0 : std::stoi(val);
+				int toMenu = val.empty() ? 0 : atoi(val.c_str());
 				GUI::gui_string lcommandName = localiser.Text(commandName.c_str());
 				if (toMenu > 0 && toMenu < toolMax) {
 					arrMenu[toMenu].AddSubMenu(lcommandName.c_str(), arrMenu[items], 0);
