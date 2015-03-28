@@ -4549,7 +4549,7 @@ void SciTEBase::ContextMenu(GUI::ScintillaWindow &wSource, GUI::Point pt, GUI::W
 
 	if (wSource.GetID() == wOutput.GetID()) {
 		std::string userContextMenu = props.GetNewExpandString("user.outputcontext.menu.", ExtensionFileName().c_str());
-		Substitute(userContextMenu, "|", "\0");
+		std::replace(userContextMenu.begin(), userContextMenu.end(), '|', '\0');
 		const char *userContextItem = userContextMenu.c_str();
 		const char *endDefinition = userContextItem + userContextMenu.length();
 		GenerateMenu(subMenu, userContextItem, endDefinition, item, isAdded);
@@ -4557,7 +4557,7 @@ void SciTEBase::ContextMenu(GUI::ScintillaWindow &wSource, GUI::Point pt, GUI::W
 		std::string userContextMenu = props.GetNewExpandString("user.context.menu.", ExtensionFileName().c_str());
 		if (userContextMenu.length() == 0)
 			userContextMenu = props.GetNewExpandString("user.context.menu");
-		Substitute(userContextMenu, "|", "\0");
+		std::replace(userContextMenu.begin(), userContextMenu.end(), '|', '\0');
 		const char *userContextItem = userContextMenu.c_str();
 		const char *endDefinition = userContextItem + userContextMenu.length();
 		GenerateMenu(subMenu, userContextItem, endDefinition, item, isAdded);

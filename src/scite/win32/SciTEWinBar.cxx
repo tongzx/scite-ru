@@ -160,7 +160,7 @@ void SciTEWin::Notify(SCNotification *notification) {
 
 			bool isAdded = false;
 			std::string tabContextMenu = props.GetNewExpandString("user.tabcontext.menu.", ExtensionFileName().c_str());
-			Substitute(tabContextMenu, "|", "\0");
+			std::replace(tabContextMenu.begin(), tabContextMenu.end(), '|', '\0');
 			const char *userContextItem = tabContextMenu.c_str();
 			const char *endDefinition = userContextItem + tabContextMenu.length();
 			GenerateMenu(subMenu, userContextItem, endDefinition, item, isAdded);
@@ -570,7 +570,7 @@ void SciTEWin::SetToolBar() {
 
 	TArray<BarButtonIn,BarButtonIn> barbuttons;
 	std::string userToolbar = props.GetNewExpandString("user.toolbar.", fileNameForExtension.c_str());
-	Substitute(userToolbar, "|", "\0");
+	std::replace(userToolbar.begin(), userToolbar.end(), '|', '\0');
 	const char *userContextItem = userToolbar.c_str();
 	const char *endDefinition = userContextItem + userToolbar.length();
 	while (userContextItem < endDefinition) {
@@ -586,9 +586,7 @@ void SciTEWin::SetToolBar() {
 				if(GetMenuCommandAsInt(command) != 0) ToolBarTips[GetMenuCommandAsInt(command)]=tips;
 				int id = atoi(command);
 				if (id > IDM_TOOLS) {
-					std::string prefix = "command.checked.";
-					prefix += (id - IDM_TOOLS);
-					prefix += ".";
+					std::string prefix = "command.checked." + StdStringFromInteger(id - IDM_TOOLS) + ".";
 					std::string val = props.GetNewExpandString(prefix.c_str(), fileNameForExtension.c_str());
 					if (val != "")
 						toolbarUsersPressableButtons.Add(id);

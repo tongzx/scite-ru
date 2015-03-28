@@ -1518,12 +1518,10 @@ void SciTEBase::SetToolsMenu() {
 		std::string prefix = "command.name." + StdStringFromInteger(items) + ".";
 		std::string sMenuItem = props.GetNewExpandString(prefix.c_str(), FileNameExt().AsUTF8().c_str());
 		if (sMenuItem.length()) {
-			prefix = "command.shortcut.";
-			prefix += items;
-			prefix += ".";
+			prefix = "command.shortcut." + StdStringFromInteger(items) + ".";
 			std::string sMnemonic = props.GetNewExpandString(prefix.c_str(), FileNameExt().AsUTF8().c_str());
 			if (items < 10 && sMnemonic.length() == 0)
-				sMnemonic += "Ctrl+" + items;
+				sMnemonic += "Ctrl+" + StdStringFromInteger(items);
 			prefix = "command.separator." + StdStringFromInteger(items) + ".";
 			std::string val = props.GetNewExpandString(prefix.c_str(), FileNameExt().AsUTF8().c_str());
 			int issep = val.empty() ? 0 : atoi(val.c_str());
