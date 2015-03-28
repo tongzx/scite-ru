@@ -383,8 +383,14 @@ bool PropSetFile::ReadLine(const char *lineBuffer, bool ifIsTrue, FilePath direc
 				}
 			}
 		} else if (filter.IsValid(importName)) {
-                importName += ".properties";
+//!                importName += ".properties"; //!-remove-[import]
 			FilePath importPath(directoryForImports, FilePath(GUI::StringFromUTF8(importName)));
+			//!-start-[import]
+			if (!importPath.Exists()) {
+				importName += ".properties";
+				importPath = FilePath(directoryForImports, FilePath(GUI::StringFromUTF8(importName.c_str())));
+			}
+			//!-end-[import]
 			Import(importPath, directoryForImports, filter, imports, depth+1);
 		}
 	} else if (ifIsTrue && !IsCommentLine(lineBuffer)) {
