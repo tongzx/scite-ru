@@ -79,7 +79,7 @@ function CopyURL(event){
 		id_name = element.name||element.id;
 	}
 	var url = idHTMLDoc.document.URL.replace(/^.*\\(.*?\\.*?)(#.*?)?$/gi, '$1').replace(/\\/gi,'/');
-	url = 'http://scite-ru.googlecode.com/hg/pack/' + url;
+	url = 'http://scite-ru.bitbucket.org/pack/' + url;
 	var url_tag = '[url=' + url + ']' + url.replace(/^.*\//, '') + '[/url]';
 	if (id_name){url_tag = '[url=' + url + '#' + id_name + ']' + id_name + '[/url]';}
 	window.clipboardData.setData('Text',url_tag);
