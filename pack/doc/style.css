@@ -44,6 +44,8 @@ span.example    {background:#F7FCF7; font-family:Courier New; color:#333399;}
 .ref            {color:#80C;}
 .windowsonly    {background:#E7EFFF;}
 .gtkonly        {background:#FFFFE7;}
+.osxonly        {background:#FFE7E7;}
+.windows-osx    {background:#FFF3FF;}
 .ruboardonly    {background:#FFECFF;}
 
 .S0   {color:#808080;}
