@@ -720,6 +720,7 @@ void SciTEWin::CheckAMenuItem(int wIDCheckItem, bool val) {
 		CheckMenuItem(::GetMenu(MainHWND()), wIDCheckItem, MF_CHECKED | MF_BYCOMMAND);
 	else
 		CheckMenuItem(::GetMenu(MainHWND()), wIDCheckItem, MF_UNCHECKED | MF_BYCOMMAND);
+	::CheckToolbarButton(reinterpret_cast<HWND>(wToolBar.GetID()), wIDCheckItem, val); //!-add-[user.toolbar]
 }
 
 void EnableButton(HWND wTools, int id, bool enable) {
