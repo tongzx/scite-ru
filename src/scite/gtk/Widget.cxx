@@ -27,7 +27,7 @@
 #define GKEY_Void GDK_VoidSymbol
 #endif
 
-WBase::operator GtkWidget*() {
+WBase::operator GtkWidget*() const {
 	return GTK_WIDGET(GetID());
 }
 
@@ -37,10 +37,6 @@ GtkWidget* WBase::Pointer() {
 
 bool WBase::Sensitive() {
 	return IS_WIDGET_SENSITIVE(Pointer());
-}
-
-void WBase::SetSensitive(bool sensitive) {
-	gtk_widget_set_sensitive(Pointer(), sensitive);
 }
 
 void WStatic::Create(GUI::gui_string text) {
@@ -75,6 +71,26 @@ int WEntry::Value() {
 
 void WEntry::SetText(const GUI::gui_char *text) {
 	return gtk_entry_set_text(GTK_ENTRY(GetID()), text);
+}
+
+void WEntry::SetValid(GtkEntry *entry, bool valid) {
+#if GTK_CHECK_VERSION(3,0,0)
+	if (valid) {
+		GdkRGBA black = { 0, 0, 0, 1};
+		gtk_widget_override_color(GTK_WIDGET(entry), (GtkStateFlags)GTK_STATE_NORMAL, &black);
+	} else {
+		GdkRGBA red = { 1.0, 0, 0, 1};
+		gtk_widget_override_color(GTK_WIDGET(entry), (GtkStateFlags)GTK_STATE_NORMAL, &red);
+	}
+#else
+	if (valid) {
+		GdkColor white = { 0, 0xFFFF, 0xFFFF, 0xFFFF};
+		gtk_widget_modify_base(GTK_WIDGET(entry), GTK_STATE_NORMAL, &white);
+	} else {
+		GdkColor red = { 0, 0xFFFF, 0x6666, 0x6666 };
+		gtk_widget_modify_base(GTK_WIDGET(entry), GTK_STATE_NORMAL, &red);
+	}
+#endif
 }
 
 void WComboBoxEntry::Create() {
@@ -174,7 +190,7 @@ void WProgress::Create() {
 	SetID(gtk_progress_bar_new());
 }
 
-WCheckDraw::WCheckDraw() : isActive(false), pbGrey(0), over(false) {
+WCheckDraw::WCheckDraw() : isActive(false), pbGrey(0), over(false), cdfn(NULL), user(NULL) {
 #if !GTK_CHECK_VERSION(3,4,0)
 	pStyle = 0;
 #endif
@@ -208,8 +224,6 @@ static void GreyToAlpha(GdkPixbuf *ppb, GdkColor fore) {
 		}
 	}
 }
-
-const int stripIconWidth = 16;
 
 void WCheckDraw::Create(const char **xpmImage, GUI::gui_string toolTip, GtkStyle *pStyle_) {
 	isActive = false;
@@ -276,6 +290,13 @@ void WCheckDraw::SetActive(bool active) {
 void WCheckDraw::Toggle() {
 	isActive = !isActive;
 	InvalidateAll();
+	if (cdfn)
+		cdfn(this, user);
+}
+
+void WCheckDraw::SetChangeFunction(ChangeFunction cdfn_, void *user_) {
+	cdfn = cdfn_;
+	user = user_;
 }
 
 gboolean WCheckDraw::Focus(GtkWidget */*widget*/, GdkEventFocus */*event*/, WCheckDraw *pcd) {
@@ -492,7 +513,11 @@ void WTable::Add(GtkWidget *child, int width, bool expand, int xpadding, int ypa
 	if (child) {
 #if USE_GRID
 		gtk_widget_set_hexpand(child, expand);
+#if GTK_CHECK_VERSION(3,14,0)
+		gtk_widget_set_margin_end(child, xpadding);
+#else
 		gtk_widget_set_margin_right(child, xpadding);
+#endif
 		gtk_widget_set_margin_bottom(child, ypadding);
 		gtk_grid_attach(GTK_GRID(GetID()), child,
 			next % columns, next / columns,
@@ -514,7 +539,12 @@ void WTable::Add(GtkWidget *child, int width, bool expand, int xpadding, int ypa
 }
 
 void WTable::Label(GtkWidget *child) {
+#if GTK_CHECK_VERSION(3,14,0)
+	gtk_widget_set_halign(child, GTK_ALIGN_END);
+	gtk_widget_set_valign(child, GTK_ALIGN_BASELINE);
+#else
 	gtk_misc_set_alignment(GTK_MISC(child), 1.0, 0.5);
+#endif
 	Add(child);
 }
 
@@ -583,13 +613,6 @@ GtkWidget *Dialog::ContentArea() {
 void Dialog::SignalDestroy(GtkWidget *, Dialog *d) {
 	if (d) {
 		d->SetID(0);
-	}
-}
-
-void DestroyDialog(GtkWidget *, gpointer *window) {
-	if (window) {
-		GUI::Window *pwin = reinterpret_cast<GUI::Window *>(window);
-		*(pwin) = 0;
 	}
 }
 
@@ -678,7 +701,7 @@ gboolean Strip::FocusSignal(GtkWidget */*widget*/, GtkDirectionType direction, S
 	return pStrip->Focus(direction);
 }
 
-bool Strip::VisibleHasFocus() {
+bool Strip::VisibleHasFocus() const {
 	return visible && childHasFocus;
 }
 

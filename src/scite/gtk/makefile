@@ -6,13 +6,13 @@
 
 .SUFFIXES: .cxx .o .h .a .c
 ifdef CLANG
-CC = clang --std=c++0x
-CCOMP = clang -Wno-empty-body
-else
-CC = g++
-CCOMP = gcc
+# Can choose aspect to sanitize: address and undefined can simply change SANITIZE but for
+# thread also need to create Position Independent Executable -> search online documentation
+SANITIZE = address
+#SANITIZE = undefined
+CXX = clang++ -fsanitize=$(SANITIZE) --std=c++0x -Wno-deprecated-register
+CC = clang -fsanitize=$(SANITIZE) -Wno-empty-body
 endif
-AR = ar
 
 ifdef GTK3
 GTKVERSION=gtk+-3.0
@@ -50,7 +50,7 @@ INCLUDEDIRS=-I ../../scintilla/include -I ../src
 ifdef CHECK_DEPRECATED
 DEPRECATED=-DGDK_PIXBUF_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED
 endif
-CXXBASEFLAGS=-W -Wall -Wno-char-subscripts -pedantic -DGTK -DSCI_LEXER -DPIXMAP_PATH=\"$(pixmapdir)\" -DSYSCONF_PATH=\"$(SYSCONF_PATH)\" $(INCLUDEDIRS) $(DEPRECATED)
+CXXBASEFLAGS=-W -Wall -pedantic -DGTK -DSCI_LEXER -DPIXMAP_PATH=\"$(pixmapdir)\" -DSYSCONF_PATH=\"$(SYSCONF_PATH)\" $(INCLUDEDIRS) $(DEPRECATED)
 
 ifdef DEBUG
 CXXTFLAGS=-DDEBUG -g $(CXXBASEFLAGS)
@@ -73,7 +73,7 @@ vpath %.c ../lua/src ../lua/src/lib
 INCLUDEDIRS=-I ../../scintilla/include -I ../src -I../lua/include
 
 .c.o:
-	$(CCOMP) $(CFLAGS) $(INCLUDEDIRS) -DLUA_USE_POSIX $(CXXTFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) $(INCLUDEDIRS) -DLUA_USE_POSIX $(CXXTFLAGS) -c $< -o $@
 
 else
 CXXTFLAGS+=-DNO_LUA
@@ -85,12 +85,15 @@ UNAME:=$(shell uname -s)
 ifeq ($(UNAME), Linux)
 LIBDL:=-ldl
 endif
+ifneq (,$(findstring GNU,$(UNAME)))
+LIBDL:=-ldl
+endif
 ifeq ($(UNAME), Darwin)
 CXXTFLAGS:=$(CXXTFLAGS) -Dunix
 endif
 
 .cxx.o:
-	$(CC) $(CONFIGFLAGS) $(CXXTFLAGS) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CONFIGFLAGS) $(CXXTFLAGS) $(CXXFLAGS) -c $< -o $@
 
 clean:
 	rm -f *.o *.plist $(PROG)
@@ -101,16 +104,17 @@ analyze:
 	#clang --analyze $(CONFIGFLAGS) $(CXXTFLAGS) $(CXXFLAGS) *.cxx ../src/*.cxx ../lua/src/*.c ../lua/src/lib/*.c
 
 deps:
-	$(CC) -MM $(CONFIGFLAGS) $(CXXTFLAGS) *.cxx ../src/*.cxx | sed -e 's/\/usr.* //' | grep [a-zA-Z] >deps.mak
+	$(CXX) -MM $(CONFIGFLAGS) $(CXXTFLAGS) *.cxx ../src/*.cxx | sed -e 's/\/usr.* //' | grep [a-zA-Z] >deps.mak
 
 # make should be run in ../../scintilla/gtk to compile all the lexers.
 COMPLIB=../../scintilla/bin/scintilla.a
 
 $(PROG): SciTEGTK.o GUIGTK.o Widget.o \
-FilePath.o SciTEBase.o FileWorker.o Cookie.o Credits.o SciTEBuffers.o SciTEIO.o StringList.o Exporters.o StringHelpers.o \
-PropSetFile.o MultiplexExtension.o DirectorExtension.o SciTEProps.o StyleWriter.o Utf8_16.o \
+FilePath.o SciTEBase.o FileWorker.o Cookie.o Credits.o SciTEBuffers.o SciTEIO.o StringList.o \
+Exporters.o  MatchMarker.o StringHelpers.o \
+PropSetFile.o MultiplexExtension.o DirectorExtension.o SciTEProps.o StyleDefinition.o StyleWriter.o Utf8_16.o \
 	JobQueue.o GTKMutex.o IFaceTable.o $(COMPLIB) $(LUA_OBJS)
-	$(CC) `$(CONFIGTHREADS)` -rdynamic -Wl,--as-needed -Wl,--version-script lua.vers -DGTK $^ -o $@ $(CONFIGLIB) $(LIBDL) -lm -lstdc++
+	$(CXX) `$(CONFIGTHREADS)` -rdynamic -Wl,--as-needed -Wl,--version-script lua.vers -DGTK $^ -o $@ $(CONFIGLIB) $(LIBDL) -lm -lstdc++
 
 # Automatically generate header dependencies with "make deps"
 include deps.mak

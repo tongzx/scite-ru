@@ -5,18 +5,18 @@ IF NOT EXIST "%python%" GOTO error_install
 SET cur_path=%~dp0
 
 :: LexGen.py
-CD %cur_path%scintilla\src
+CD %cur_path%scintilla\scripts
 "%python%" LexGen.py
-IF ERRORLEVEL 1 GOTO error
-
-:: HFacer.py
-CD %cur_path%scintilla\include
-"%python%" HFacer.py
 IF ERRORLEVEL 1 GOTO error
 
 :: IFaceTableGen.py
 CD %cur_path%scite\scripts
 "%python%" IFaceTableGen.py
+IF ERRORLEVEL 1 GOTO error
+
+:: RegenerateSource.py
+CD %cur_path%scite\scripts
+"%python%" RegenerateSource.py
 IF ERRORLEVEL 1 GOTO error
 
 :completed

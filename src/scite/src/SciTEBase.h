@@ -11,19 +11,13 @@ extern const GUI::gui_char propUserFileName[];
 extern const GUI::gui_char propGlobalFileName[];
 extern const GUI::gui_char propAbbrevFileName[];
 
-#ifdef WIN32
+#ifdef _WIN32
 #ifdef _MSC_VER
 // Shut up level 4 warning:
-// warning C4710: function 'void whatever(...)' not inlined
 // warning C4800: forcing value to bool 'true' or 'false' (performance warning)
-#pragma warning(disable: 4710 4800)
-#endif
-#ifdef __DMC__
-#include <time.h>
+#pragma warning(disable: 4800)
 #endif
 #endif
-
-#define ELEMENTS(a) (sizeof(a) / sizeof(a[0]))
 
 inline int Minimum(int a, int b) {
 	return (a < b) ? a : b;
@@ -37,10 +31,6 @@ inline long LongFromTwoShorts(short a,short b) {
 	return (a) | ((b) << 16);
 }
 
-typedef long Colour;
-inline Colour ColourRGB(unsigned int red, unsigned int green, unsigned int blue) {
-	return red | (green << 8) | (blue << 16);
-}
 //!-start-[ExtendedContextMenu]
 class MenuEx {
 public:
@@ -109,21 +99,22 @@ public:
 	sptr_t doc;
 	bool isDirty;
 	bool isReadOnly;
+	bool failedSave;
 	bool useMonoFont;
 	enum { empty, reading, readAll, open } lifeState;
 	UniMode unicodeMode;
 	time_t fileModTime;
 	time_t fileModLastAsk;
 	time_t documentModTime;
-	enum { fmNone, fmMarked, fmModified} findMarks;
-	SString overrideExtension;	///< User has chosen to use a particular language
+	enum { fmNone, fmTemporary, fmMarked, fmModified} findMarks;
+	std::string overrideExtension;	///< User has chosen to use a particular language
 	std::vector<int> foldState;
 	std::vector<int> bookmarks;
 	FileWorker *pFileWorker;
 	PropSetFile props;
 	enum FutureDo { fdNone=0, fdFinishSave=1 } futureDo;
 	Buffer() :
-			RecentFile(), doc(0), isDirty(false), isReadOnly(false), useMonoFont(false), lifeState(empty),
+			RecentFile(), doc(0), isDirty(false), isReadOnly(false), failedSave(false), useMonoFont(false), lifeState(empty),
 			unicodeMode(uni8Bit), fileModTime(0), fileModLastAsk(0), documentModTime(0),
 			findMarks(fmNone), pFileWorker(0), futureDo(fdNone) {}
 
@@ -131,6 +122,7 @@ public:
 		RecentFile::Init();
 		isDirty = false;
 		isReadOnly = false;
+		failedSave = false;
 		useMonoFont = false;
 		lifeState = empty;
 		unicodeMode = uni8Bit;
@@ -149,6 +141,7 @@ public:
 		fileModTime = ModifiedTime();
 		fileModLastAsk = fileModTime;
 		documentModTime = fileModTime;
+		failedSave = false;
 	}
 //!-start-[OpenNonExistent]
 	bool DocumentNotSaved() const {
@@ -157,7 +150,7 @@ public:
 //!-end-[OpenNonExistent]
 
 	void DocumentModified();
-	bool NeedsSave(int delayBeforeSave);
+	bool NeedsSave(int delayBeforeSave) const;
 
 	void CompleteLoading();
 	void CompleteStoring();
@@ -199,7 +192,7 @@ public:
 	void RemoveInvisible(int index);
 	void RemoveCurrent();
 	int Current() const;
-	Buffer *CurrentBuffer();
+	Buffer *CurrentBuffer() const;
 	void SetCurrent(int index);
 	int StackNext();
 	int StackPrev();
@@ -210,7 +203,7 @@ public:
 	bool SingleBuffer() const;
 	BackgroundActivities CountBackgroundActivities() const;
 	bool SavingInBackground() const;
-	bool GetVisible(int index);
+	bool GetVisible(int index) const;
 	void SetVisible(int index, bool visible);
 	void AddFuture(int index, Buffer::FutureDo fd);
 	void FinishedFuture(int index, Buffer::FutureDo fd);
@@ -221,19 +214,20 @@ private:
 // class to hold user defined keyboard short cuts
 class ShortcutItem {
 public:
-	SString menuKey; // the keyboard short cut
-	SString menuCommand; // the menu command to be passed to "SciTEBase::MenuCommand"
+	std::string menuKey; // the keyboard short cut
+	std::string menuCommand; // the menu command to be passed to "SciTEBase::MenuCommand"
 };
 
 class LanguageMenuItem {
 public:
-	SString menuItem;
-	SString menuKey;
-	SString extension;
+	std::string menuItem;
+	std::string menuKey;
+	std::string extension;
 };
 
 enum {
     heightTools = 24,
+    heightToolsBig = 32,
     heightTab = 24,
     heightStatus = 20,
     statusPosWidth = 256
@@ -257,43 +251,13 @@ enum IndentationStatus {
     isKeyWordStart	// Keywords that cause indentation
 };
 
-int IntFromHexDigit(int ch);
-int IntFromHexByte(const char *hexByte);
-
-class StyleDefinition {
-public:
-	SString font;
-	float sizeFractional;
-	int size;
-	SString fore;
-	SString back;
-	int weight;
-	bool italics;
-	bool eolfilled;
-	bool underlined;
-	int caseForce;
-	bool visible;
-	bool changeable;
-	bool hotspot; //!-add-[StyleDefHotspot]
-	enum flags { sdNone = 0, sdFont = 0x1, sdSize = 0x2, sdFore = 0x4, sdBack = 0x8,
-	        sdWeight = 0x10, sdItalics = 0x20, sdEOLFilled = 0x40, sdUnderlined = 0x80,
-//!	        sdCaseForce = 0x100, sdVisible = 0x200, sdChangeable = 0x400} specified;
-	        sdCaseForce = 0x100, sdVisible = 0x200, sdChangeable = 0x400, sdHotspot = 0x800} specified; //!-change-[StyleDefHotspot]
-	StyleDefinition(const char *definition);
-	bool ParseStyleDefinition(const char *definition);
-	long ForeAsLong() const;
-	long BackAsLong() const;
-	int FractionalSize() const;
-	bool IsBold() const;
-};
-
 struct StyleAndWords {
 	int styleNumber;
-	SString words;
+	std::string words;
 	StyleAndWords() : styleNumber(0) {
 	}
-	bool IsEmpty() { return words.length() == 0; }
-	bool IsSingleChar() { return words.length() == 1; }
+	bool IsEmpty() const { return words.length() == 0; }
+	bool IsSingleChar() const { return words.length() == 1; }
 };
 
 struct CurrentWordHighlight {
@@ -304,6 +268,7 @@ struct CurrentWordHighlight {
 		delayAlreadyElapsed // Delay has already elapsed, word at the caret and occurrences are (or have to be) highlighted.
 	} statesOfDelay;
 	bool isEnabled;
+	bool textHasChanged;
 	GUI::ElapsedTime elapsedTimes;
 	bool isOnlyWithSameStyle;
 
@@ -311,17 +276,18 @@ struct CurrentWordHighlight {
 		statesOfDelay = noDelay;
 		isEnabled = false;
 		isOnlyWithSameStyle = false;
+		textHasChanged = false;
 	}
 };
 
 class Localization : public PropSetFile, public ILocalize {
-	SString missing;
+	std::string missing;
 public:
 	bool read;
 	Localization() : PropSetFile(true), read(false) {
 	}
 	GUI::gui_string Text(const char *s, bool retainIfNotFound=true);
-	void SetMissing(const SString &missing_) {
+	void SetMissing(const std::string &missing_) {
 		missing = missing_;
 	}
 };
@@ -329,8 +295,8 @@ public:
 // Interface between SciTE and dialogs and strips for find and replace
 class Searcher {
 public:
-	SString findWhat;
-	SString replaceWhat;
+	std::string findWhat;
+	std::string replaceWhat;
 
 	bool wholeWord;
 	bool matchCase;
@@ -339,8 +305,10 @@ public:
 	bool wrapFind;
 	bool reverseFind;
 
+	int searchStartPosition;
 	bool replacing;
 	bool havefound;
+	bool failedfind;
 	bool findInStyle;
 	int findStyle;
 	bool closeFind;
@@ -351,17 +319,21 @@ public:
 
 	Searcher();
 
+	virtual void SetFindText(const char *sFind) = 0;
 	virtual void SetFind(const char *sFind) = 0;
 	virtual bool FindHasText() const = 0;
+	void InsertFindInMemory();
 	virtual void SetReplace(const char *sReplace) = 0;
-	virtual void MoveBack(int distance) = 0;
+	virtual void SetCaretAsStart() = 0;
+	virtual void MoveBack() = 0;
 	virtual void ScrollEditorIfNeeded() = 0;
 
 	virtual int FindNext(bool reverseDirection, bool showWarnings = true, bool allowRegExp=true) = 0;
 	virtual void HideMatch() = 0;
-	virtual int MarkAll() = 0;
+	enum MarkPurpose { markWithBookMarks, markIncremental };
+	virtual void MarkAll(MarkPurpose purpose=markWithBookMarks) = 0;
 	virtual int ReplaceAll(bool inSelection) = 0;
-	virtual void ReplaceOnce() = 0;
+	virtual void ReplaceOnce(bool showWarnings=true) = 0;
 	virtual void UIClosed() = 0;
 	virtual void UIHasFocus() = 0;
 	bool &FlagFromCmd(int cmd);
@@ -388,6 +360,7 @@ public:
 
 class SciTEBase : public ExtensionAPI, public Searcher, public WorkerListener {
 protected:
+	bool needIdle;
 	virtual void SetToolBar() = 0;	//!-add-[user.toolbar]
 	GUI::gui_string windowName;
 	FilePath filePath;
@@ -405,31 +378,33 @@ protected:
 	enum { importCmdID = IDM_IMPORT };
 	ImportFilter filter;
 
-	enum { indicatorMatch = INDIC_CONTAINER, indicatorHightlightCurrentWord, indicatorSentinel };
+	enum { indicatorMatch = INDIC_CONTAINER,
+		indicatorHighlightCurrentWord,
+		indicatorSpellingMistake,
+		indicatorSentinel };
 	enum { markerBookmark = 1 };
 	ComboMemory memFiles;
 	ComboMemory memDirectory;
-	SString parameterisedCommand;
-	SString abbrevInsert;
+	std::string parameterisedCommand;
+	std::string abbrevInsert;
 
 	enum { languageCmdID = IDM_LANGUAGE };
-	LanguageMenuItem *languageMenu;
-	int languageItems;
+	std::vector<LanguageMenuItem> languageMenu;
 
 	// an array of short cut items that are defined by the user in the properties file.
-	ShortcutItem *shortCutItemList; // array
-	int shortCutItems; // length of array
+	std::vector<ShortcutItem> shortCutItemList;
 
 	int codePage;
 	int characterSet;
-	SString language;
+	std::string language;
 	int lexLanguage;
 	int lexLPeg;
 	StringList apis;
-	SString apisFileNames;
-	SString functionDefinition;
+	std::string apisFileNames;
+	std::string functionDefinition;
 
-	enum { diagnosticStyleStart=256, diagnosticStyleEnd=diagnosticStyleStart+4-1};
+	int diagnosticStyleStart;
+	enum { diagnosticStyles=4};
 
 	bool indentOpening;
 	bool indentClosing;
@@ -439,11 +414,10 @@ protected:
 	StyleAndWords statementEnd;
 	StyleAndWords blockStart;
 	StyleAndWords blockEnd;
-	enum { noPPC, ppcStart, ppcMiddle, ppcEnd, ppcDummy };	///< Indicate the kind of preprocessor condition line
-	char preprocessorSymbol;	///< Preprocessor symbol (in C: #)
-	StringList preprocCondStart;	///< List of preprocessor conditional start keywords (in C: if ifdef ifndef)
-	StringList preprocCondMiddle;	///< List of preprocessor conditional middle keywords (in C: else elif)
-	StringList preprocCondEnd;	///< List of preprocessor conditional end keywords (in C: endif)
+	enum PreProcKind { ppcNone, ppcStart, ppcMiddle, ppcEnd, ppcDummy };	///< Indicate the kind of preprocessor condition line
+	char preprocessorSymbol;	///< Preprocessor symbol (in C, #)
+	std::map<std::string, PreProcKind> preprocOfString; ///< Map preprocessor keywords to positions
+	/// In C, if ifdef ifndef : start, else elif : middle, endif : end.
 
 	GUI::Window wSciTE;  ///< Contains wToolBar, wTabBar, wContent, and wStatusBar
 	GUI::Window wContent;    ///< Contains wEditor and wOutput
@@ -469,8 +443,8 @@ protected:
 	bool tabHideOne; // Hide tab bar if one buffer is opened only
 	bool tabMultiLine;
 	bool sbVisible;	///< @c true if status bar is visible.
-	SString sbValue;	///< Status bar text.
-	int sbNum;	///< Number of the currenly displayed status bar information.
+	std::string sbValue;	///< Status bar text.
+	int sbNum;	///< Number of the currently displayed status bar information.
 	int visHeightTools;
 	int visHeightTab;
 	int visHeightStatus;
@@ -483,7 +457,8 @@ protected:
 	bool wrap;
 	bool wrapOutput;
 	int wrapStyle;
-	bool isReadOnly;
+	int alphaIndicator;
+	bool underIndicator;
 	bool openFilesHere;
 	bool fullScreen;
 //!	enum { toolMax = 50 };
@@ -505,7 +480,6 @@ protected:
 	bool firstPropertiesRead;
 	bool splitVertical;	///< @c true if the split bar between editor and output is vertical.
 	bool bufferedDraw;
-	bool twoPhaseDraw;
 	bool bracesCheck;
 	bool bracesSloppy;
 	int bracesStyle;
@@ -519,19 +493,19 @@ protected:
 	bool callTipIgnoreCase;
 	int calltipShowPerPage; //!-add-[BetterCalltips]
 	bool autoCCausedByOnlyOne;
-	SString calltipWordCharacters;
-	SString calltipParametersStart;
-	SString calltipParametersEnd;
-	SString calltipParametersSeparators;
-	SString calltipEndDefinition;
-	SString autoCompleteStartCharacters;
-	SString autoCompleteFillUpCharacters;
-	SString wordCharacters;
-	SString whitespaceCharacters;
+	std::string calltipWordCharacters;
+	std::string calltipParametersStart;
+	std::string calltipParametersEnd;
+	std::string calltipParametersSeparators;
+	std::string calltipEndDefinition;
+	std::string autoCompleteStartCharacters;
+	std::string autoCompleteFillUpCharacters;
+	std::string wordCharacters;
+	std::string whitespaceCharacters;
 	int startCalltipWord;
 	int currentCallTip;
 	int maxCallTips;
-	SString currentCallTipWord;
+	std::string currentCallTipWord;
 	int lastPosCallTip;
 
 	bool margin;
@@ -553,7 +527,7 @@ protected:
 	JobQueue jobQueue;
 
 	bool macrosEnabled;
-	SString currentMacro;
+	std::string currentMacro;
 	bool recording;
 
 	PropSetFile propsEmbed;
@@ -574,7 +548,7 @@ protected:
 
 	PropSetFile propsStatus;	// Not attached to a file but need SetInteger method.
 
-	enum { bufferMax = 100 };
+	enum { bufferMax = IDM_IMPORT - IDM_BUFFER };
 	BufferList buffers;
 
 	// Handle buffers
@@ -582,10 +556,10 @@ protected:
 	void SwitchDocumentAt(int index, sptr_t pdoc);
 	int AddBuffer();
 	void UpdateBuffersCurrent();
-	bool IsBufferAvailable();
+	bool IsBufferAvailable() const;
 	bool CanMakeRoom(bool maySaveIfDirty = true);
 	void SetDocumentAt(int index, bool updateStack = true);
-	Buffer *CurrentBuffer() {
+	Buffer *CurrentBuffer() const {
 		return buffers.CurrentBuffer();
 	}
 	void SetBuffersMenu();
@@ -612,12 +586,12 @@ protected:
 	int CallFocusedElseDefault(int defaultValue, unsigned int msg, uptr_t wParam = 0, sptr_t lParam = 0);
 	sptr_t CallPane(int destination, unsigned int msg, uptr_t wParam = 0, sptr_t lParam = 0);
 	void CallChildren(unsigned int msg, uptr_t wParam = 0, sptr_t lParam = 0);
-	SString GetTranslationToAbout(const char * const propname, bool retainIfNotFound = true);
+	std::string GetTranslationToAbout(const char * const propname, bool retainIfNotFound = true);
 	int LengthDocument();
 	int GetCaretInLine();
 	void GetLine(char *text, int sizeText, int line = -1);
-	SString GetLine(int line = -1);
-	void GetRange(GUI::ScintillaWindow &win, int start, int end, char *text);
+	std::string GetCurrentLine();
+	static void GetRange(GUI::ScintillaWindow &win, int start, int end, char *text);
 	int IsLinePreprocessorCondition(char *line);
 	bool FindMatchingPreprocessorCondition(int &curLine, int direction, int condEnd1, int condEnd2);
 	bool FindMatchingPreprocCondPosition(bool isForward, int &mppcAtCaret, int &mppcMatch);
@@ -647,13 +621,13 @@ protected:
 	void RestoreState(const Buffer &buffer, bool restoreBookmarks);
 	void Close(bool updateUI = true, bool loadingSession = false, bool makingRoomForNew = false);
 	bool IsAbsolutePath(const char *path);
-	bool Exists(const GUI::gui_char *dir, const GUI::gui_char *path, FilePath *resultPath);
+	static bool Exists(const GUI::gui_char *dir, const GUI::gui_char *path, FilePath *resultPath);
 	void DiscoverEOLSetting();
 	void DiscoverIndentSetting();
-	SString DiscoverLanguage();
-	void OpenFile(long fileSize, bool suppressMessage, bool asynchronous);
+	std::string DiscoverLanguage();
+	void OpenCurrentFile(long fileSize, bool suppressMessage, bool asynchronous);
 	virtual void OpenUriList(const char *) {}
-	virtual bool OpenDialog(FilePath directory, const GUI::gui_char *filter) = 0;
+	virtual bool OpenDialog(FilePath directory, const GUI::gui_char *filesFilter) = 0;
 	virtual bool SaveAsDialog() = 0;
 	virtual void LoadSessionDialog() {}
 	virtual void SaveSessionDialog() {}
@@ -676,17 +650,21 @@ protected:
 	bool Open(FilePath file, OpenFlags of = ofNone);
 	bool OpenSelected();
 	void Revert();
-	FilePath SaveName(const char *ext);
-	int SaveIfUnsure(bool forceQuestion = false);
-	int SaveIfUnsureAll(bool forceQuestion = false);
-	int SaveIfUnsureForBuilt();
-	bool SaveIfNotOpen(const FilePath &destFile, bool fixCase);
-	void AbandonAutomaticSave();
+	FilePath SaveName(const char *ext) const;
 	enum SaveFlags {
 	    sfNone = 0, 		// Default
 	    sfProgressVisible = 1, 	// Show in background save strip
 	    sfSynchronous = 16	// Write synchronously blocking UI
 	};
+	enum SaveResult {
+		saveCompleted,
+		saveCancelled
+	};
+	SaveResult SaveIfUnsure(bool forceQuestion = false, SaveFlags sf = sfProgressVisible);
+	SaveResult SaveIfUnsureAll();
+	SaveResult SaveIfUnsureForBuilt();
+	bool SaveIfNotOpen(const FilePath &destFile, bool fixCase);
+	void AbandonAutomaticSave();
 	bool Save(SaveFlags sf = sfProgressVisible);
 	void SaveAs(const GUI::gui_char *file, bool fixCase);
 	virtual void SaveACopy() = 0;
@@ -696,6 +674,7 @@ protected:
 	bool PrepareBufferForSave(FilePath saveName);
 	bool SaveBuffer(FilePath saveName, SaveFlags sf);
 	virtual void SaveAsHTML() = 0;
+	void SaveToStreamRTF(std::ostream &os, int start = 0, int end = -1);
 	void SaveToRTF(FilePath saveName, int start = 0, int end = -1);
 	virtual void SaveAsRTF() = 0;
 	void SaveToPDF(FilePath saveName);
@@ -713,7 +692,7 @@ protected:
 	FilePath GetLocalPropertiesFileName();
 	FilePath GetAbbrevPropertiesFileName();
 	void OpenProperties(int propsFile);
-	int GetMenuCommandAsInt(SString commandName);
+	static int GetMenuCommandAsInt(std::string commandName);
 	virtual void Print(bool) {}
 	virtual void PrintSetup() {}
 	virtual void UserStripShow(const char * /* description */) {}
@@ -724,29 +703,46 @@ protected:
 	Sci_CharacterRange GetSelection();
 	SelectedRange GetSelectedRange();
 	void SetSelection(int anchor, int currentPos);
-	//	void SelectionExtend(char *sel, int len, char *notselchar);
-	SString GetCTag();
-	SString GetRange(GUI::ScintillaWindow &win, int selStart, int selEnd);
-	virtual SString GetRangeInUIEncoding(GUI::ScintillaWindow &win, int selStart, int selEnd);
-	SString GetLine(GUI::ScintillaWindow &win, int line);
-	SString RangeExtendAndGrab(GUI::ScintillaWindow &wCurrent, int &selStart, int &selEnd,
+	std::string GetCTag();
+	static std::string GetRangeString(GUI::ScintillaWindow &win, int selStart, int selEnd);
+	virtual std::string GetRangeInUIEncoding(GUI::ScintillaWindow &win, int selStart, int selEnd);
+	static std::string GetLine(GUI::ScintillaWindow &win, int line);
+	void RangeExtend(GUI::ScintillaWindow &wCurrent, int &selStart, int &selEnd,
+		bool (SciTEBase::*ischarforsel)(char ch));
+	std::string RangeExtendAndGrab(GUI::ScintillaWindow &wCurrent, int &selStart, int &selEnd,
 	        bool (SciTEBase::*ischarforsel)(char ch), bool stripEol = true);
-	SString SelectionExtend(bool (SciTEBase::*ischarforsel)(char ch), bool stripEol = true);
-	void FindWordAtCaret(int &start, int &end);
-	bool SelectWordAtCaret();
-	SString SelectionWord(bool stripEol = true);
-	SString SelectionFilename();
+	std::string SelectionExtend(bool (SciTEBase::*ischarforsel)(char ch), bool stripEol = true);
+	std::string SelectionWord(bool stripEol = true);
+	std::string SelectionFilename();
 	void SelectionIntoProperties();
 	void SelectionIntoFind(bool stripEol = true);
-	virtual SString EncodeString(const SString &s);
+	virtual std::string EncodeString(const std::string &s);
 	virtual void Find() = 0;
-	virtual int WindowMessageBox(GUI::Window &w, const GUI::gui_string &msg, int style) = 0;
-	virtual void FindMessageBox(const SString &msg, const SString *findItem = 0) = 0;
-	int FindInTarget(const char *findWhat, int lenFind, int startPosition, int endPosition);
+	enum MessageBoxChoice {
+		mbOK,
+		mbCancel,
+		mbYes,
+		mbNo
+	};
+	typedef int MessageBoxStyle;
+	enum {
+		// Same as Win32 MB_*
+		mbsOK = 0,
+		mbsYesNo = 4,
+		mbsYesNoCancel = 3,
+		mbsIconQuestion = 0x20,
+		mbsIconWarning = 0x30
+	};
+	virtual MessageBoxChoice WindowMessageBox(GUI::Window &w, const GUI::gui_string &msg, MessageBoxStyle style = mbsIconWarning) = 0;
+	virtual void FindMessageBox(const std::string &msg, const std::string *findItem = 0) = 0;
+	bool FindReplaceAdvanced() const;
+	int FindInTarget(std::string findWhatText, int startPosition, int endPosition);
+	virtual void SetFindText(const char *sFind);
 	virtual void SetFind(const char *sFind);
 	virtual bool FindHasText() const;
 	virtual void SetReplace(const char *sReplace);
-	virtual void MoveBack(int distance);
+	virtual void SetCaretAsStart();
+	virtual void MoveBack();
 	virtual void ScrollEditorIfNeeded();
 	virtual int FindNext(bool reverseDirection, bool showWarnings = true, bool allowRegExp=true);
 	virtual void HideMatch();
@@ -754,7 +750,7 @@ protected:
 	int IncrementSearchMode();
 	virtual void FindInFiles() = 0;
 	virtual void Replace() = 0;
-	void ReplaceOnce();
+	void ReplaceOnce(bool showWarnings=true);
 	int DoReplaceAll(bool inSelection); // returns number of replacements or negative value if error
 	int ReplaceAll(bool inSelection);
 	int ReplaceInBuffers();
@@ -768,7 +764,7 @@ protected:
 	virtual void ParamGrab() = 0;
 	virtual bool ParametersDialog(bool modal) = 0;
 	bool HandleXml(char ch);
-	SString FindOpenXmlTag(const char sel[], int nSize);
+	static std::string FindOpenXmlTag(const char sel[], int nSize);
 	void GoMatchingBrace(bool select);
 	void GoMatchingPreprocCond(int direction, bool select);
 	virtual void FindReplace(bool replace) = 0;
@@ -781,11 +777,11 @@ protected:
 //!	void GoMessage(int dir);
 	bool GoMessage(int dir); //!-change-[GoMessageImprovement]
 	virtual bool StartCallTip();
-	char *GetNearestWords(const char *wordStart, size_t searchLen,
+	std::string GetNearestWords(const char *wordStart, size_t searchLen,
 		const char *separators, bool ignoreCase=false, bool exactLen=false);
 	virtual void FillFunctionDefinition(int pos = -1);
 	void ContinueCallTip();
-	virtual void EliminateDuplicateWords(char *words);
+	virtual void EliminateDuplicateWords(std::string &words);
 	virtual bool StartAutoComplete();
 	virtual bool StartAutoCompleteWord(bool onlyOneWord);
 	virtual bool StartExpandAbbreviation();
@@ -795,7 +791,7 @@ protected:
 	virtual bool StartBlockComment();
 	virtual bool StartBoxComment();
 	virtual bool StartStreamComment();
-	unsigned int GetLinePartsInStyle(int line, int style1, int style2, SString sv[], int len);
+	unsigned int GetLinePartsInStyle(int line, int style1, int style2, std::string sv[], int len);
 	void SetLineIndentation(int line, int indent);
 	int GetLineIndentation(int line);
 	int GetLineIndentPosition(int line);
@@ -813,14 +809,14 @@ protected:
 	int GetLineLength(int line);
 	int GetCurrentLineNumber();
 	int GetCurrentScrollPosition();
-	virtual void AddCommand(const SString &cmd, const SString &dir,
-	        JobSubsystem jobType, const SString &input = "",
+	virtual void AddCommand(const std::string &cmd, const std::string &dir,
+	        JobSubsystem jobType, const std::string &input = "",
 	        int flags = 0);
 	virtual void AboutDialog() = 0;
 	virtual void QuitProgram() = 0;
 	void CloseTab(int tab);
 	void CloseAllBuffers(bool loadingSession = false);
-	int SaveAllBuffers(bool forceQuestion, bool alwaysYes = false);
+	SaveResult SaveAllBuffers(bool alwaysYes);
 	void SaveTitledBuffers();
 	virtual void CopyAsRTF() {}
 	virtual void CopyPath() {}
@@ -833,7 +829,7 @@ protected:
 	void FoldAll();
 	void ToggleFoldRecursive(int line, int level);
 	void EnsureAllChildrenVisible(int line, int level);
-	void EnsureRangeVisible(GUI::ScintillaWindow &win, int posStart, int posEnd, bool enforcePolicy = true);
+	static void EnsureRangeVisible(GUI::ScintillaWindow &win, int posStart, int posEnd, bool enforcePolicy = true);
 	void GotoLineEnsureVisible(int line);
 	bool MarginClick(int position, int modifiers);
 	void NewLineInOutput();
@@ -845,7 +841,7 @@ protected:
 	virtual void ActivateWindow(const char *timestamp) = 0;
 
 	void RemoveFindMarks();
-	int MarkAll();
+	void MarkAll(MarkPurpose purpose=markWithBookMarks);
 	void BookmarkAdd(int lineno = -1);
 	void BookmarkDelete(int lineno = -1);
 	bool BookmarkPresent(int lineno = -1);
@@ -869,7 +865,6 @@ protected:
 
 	void DeleteFileStackMenu();
 	void SetFileStackMenu();
-	void DropFileStackTop();
 //!-start-[SubMenu]
 	virtual MenuEx GetToolsMenu() = 0;
 //!-end-[SubMenu]
@@ -891,9 +886,9 @@ protected:
 	void RemoveToolsMenu();
 	void SetMenuItemLocalised(int menuNumber, int position, int itemID,
 	        const char *text, const char *mnemonic);
+	bool ToolIsImmediate(int item);
 	void SetToolsMenu();
-	JobSubsystem SubsystemType(char c);
-	JobSubsystem SubsystemType(const char *cmd, int item = -1);
+	JobSubsystem SubsystemType(const char *cmd);
 	void ToolsMenu(int item);
 
 	void AssignKey(int key, int mods, int cmd);
@@ -906,22 +901,23 @@ protected:
 	GUI::gui_string LocaliseMessage(const char *s,
 		const GUI::gui_char *param0 = 0, const GUI::gui_char *param1 = 0, const GUI::gui_char *param2 = 0);
 	virtual void ReadLocalization();
-	SString GetFileNameProperty(const char *name);
+	std::string GetFileNameProperty(const char *name);
 	virtual void ReadPropertiesInitial();
 	void ReadFontProperties();
 	void SetOverrideLanguage(int cmdID);
 	StyleAndWords GetStyleAndWords(const char *base);
-	SString ExtensionFileName();
-	const char *GetNextPropItem(const char *pStart, char *pPropItem, int maxLen);
+	std::string ExtensionFileName() const;
+	static const char *GetNextPropItem(const char *pStart, char *pPropItem, int maxLen);
 	void ForwardPropertyToEditor(const char *key);
 	void DefineMarker(int marker, int markerType, Colour fore, Colour back, Colour backSelected);
-	void ReadAPI(const SString &fileNameForExtension);
-	SString FindLanguageProperty(const char *pattern, const char *defaultValue = "");
+	void ReadAPI(const std::string &fileNameForExtension);
+	std::string FindLanguageProperty(const char *pattern, const char *defaultValue = "");
 	int FindIntLanguageProperty(const char *pattern, int defaultValue = 0); //!-add-[BetterCalltips]
 	virtual void ReadProperties();
 	void SetOneStyle(GUI::ScintillaWindow &win, int style, const StyleDefinition &sd);
 	void SetStyleBlock(GUI::ScintillaWindow &win, const char *lang, int start, int last);
-	void SetStyleFor(GUI::ScintillaWindow &win, const char *language);
+	void SetStyleFor(GUI::ScintillaWindow &win, const char *lang);
+	static void SetOneIndicator(GUI::ScintillaWindow &win, int indicator, const IndicatorDefinition &ind);
 	void ReloadProperties();
 
 	void CheckReload();
@@ -934,6 +930,8 @@ protected:
 	virtual void TimerStart(int mask);
 	virtual void TimerEnd(int mask);
 	void OnTimer();
+	virtual void SetIdler(bool on);
+	void OnIdle();
 
 	void SetHomeProperties();
 	void UIAvailable();
@@ -970,7 +968,7 @@ protected:
 	void Remove(Pane p, int start, int end);
 	void Insert(Pane p, int pos, const char *s);
 	void Trace(const char *s);
-	char *Property(const char *key);
+	std::string Property(const char *key);
 	void SetProperty(const char *key, const char *val);
 	void UnsetProperty(const char *key);
 	uptr_t GetInstance();
@@ -988,6 +986,8 @@ protected:
 
 	CurrentWordHighlight currentWordHighlight;
 	void HighlightCurrentWord(bool highlight);
+	MatchMarker matchMarker;
+	MatchMarker findMarker;
 public:
 
 	enum { maxParam = 4 };
@@ -1016,21 +1016,7 @@ private:
 	void operator=(const SciTEBase&);
 };
 
-#if defined(__unix__)
-// MessageBox
-#define MB_OK	(0L)
-#define MB_YESNO	(0x4L)
-#define MB_YESNOCANCEL	(0x3L)
-#define MB_ICONWARNING	(0x30L)
-#define MB_ICONQUESTION (0x20L)
-#define IDOK	(1)
-#define IDCANCEL	(2)
-#define IDYES	(6)
-#define IDNO	(7)
-#endif
-
 int ControlIDOfCommand(unsigned long);
-std::vector<GUI::gui_string> ListFromString(const GUI::gui_string &args);
 long ColourOfProperty(PropSetFile &props, const char *key, Colour colourDefault);
 void WindowSetFocus(GUI::ScintillaWindow &w);
 

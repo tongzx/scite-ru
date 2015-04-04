@@ -17,25 +17,20 @@
 
 #else
 
+// Only include <windows.h> for Sleep.
+
 #undef _WIN32_WINNT
 #define _WIN32_WINNT  0x0500
-#ifdef _MSC_VER
-// windows.h, et al, use a lot of nameless struct/unions - can't fix it, so allow it
-#pragma warning(disable: 4201)
-#endif
 #include <windows.h>
-#ifdef _MSC_VER
-// okay, that's done, don't allow it in our code
-#pragma warning(default: 4201)
-#endif
 
 #endif
 
 #include "Scintilla.h"
 #include "ILexer.h"
 
+#include "Mutex.h"
+
 #include "GUI.h"
-#include "SString.h"
 
 #include "FilePath.h"
 #include "Cookie.h"
@@ -58,8 +53,7 @@ double FileWorker::Duration() {
 
 FileLoader::FileLoader(WorkerListener *pListener_, ILoader *pLoader_, FilePath path_, long size_, FILE *fp_) :
 	FileWorker(pListener_, path_, size_, fp_), pLoader(pLoader_), readSoFar(0), unicodeMode(uni8Bit) {
-	jobSize = static_cast<int>(size);
-	jobProgress = 0;
+	SetSizeJob(static_cast<int>(size));
 }
 
 FileLoader::~FileLoader() {
@@ -79,7 +73,7 @@ void FileLoader::Execute() {
 		}
 		Utf8_16_Read convert(umCodingCookie==uni8Bit && check_utf8==1);
 //!-end-[utf8.auto.check]
-		while ((lenFile > 0) && (err == 0) && (!cancelling)) {
+		while ((lenFile > 0) && (err == 0) && (!Cancelling())) {
 #ifdef __unix__
 			usleep(sleepTime * 1000);
 #else
@@ -88,7 +82,7 @@ void FileLoader::Execute() {
 			lenFile = convert.convert(&data[0], lenFile);
 			char *dataBlock = convert.getNewBuf();
 			err = pLoader->AddData(dataBlock, static_cast<int>(lenFile));
-			jobProgress += static_cast<int>(lenFile);
+			IncrementProgress(static_cast<int>(lenFile));
 			if (et.Duration() > nextProgress) {
 				nextProgress = et.Duration() + timeBetweenProgress;
 				pListener->PostOnMainThread(WORK_FILEPROGRESS, this);
@@ -104,7 +98,7 @@ void FileLoader::Execute() {
 			unicodeMode = umCodingCookie;
 		}
 	}
-	completed = true;
+	SetCompleted();
 	pListener->PostOnMainThread(WORK_FILEREAD, this);
 }
 
@@ -118,8 +112,7 @@ FileStorer::FileStorer(WorkerListener *pListener_, const char *documentBytes_, F
 	long size_, FILE *fp_, UniMode unicodeMode_, bool visibleProgress_) :
 	FileWorker(pListener_, path_, size_, fp_), documentBytes(documentBytes_), writtenSoFar(0),
 		unicodeMode(unicodeMode_), visibleProgress(visibleProgress_) {
-	jobSize = static_cast<int>(size);
-	jobProgress = 0;
+	SetSizeJob(static_cast<int>(size));
 }
 
 FileStorer::~FileStorer() {
@@ -140,7 +133,7 @@ void FileStorer::Execute() {
 		std::vector<char> data(blockSize + 1);
 		int lengthDoc = static_cast<int>(size);
 		int grabSize;
-		for (int i = 0; i < lengthDoc && (!cancelling); i += grabSize) {
+		for (int i = 0; i < lengthDoc && (!Cancelling()); i += grabSize) {
 #ifdef __unix__
 			usleep(sleepTime * 1000);
 #else
@@ -159,7 +152,7 @@ void FileStorer::Execute() {
 			}
 			memcpy(&data[0], documentBytes+i, grabSize);
 			size_t written = convert.fwrite(&data[0], grabSize);
-			jobProgress += grabSize;
+			IncrementProgress(grabSize);
 			if (et.Duration() > nextProgress) {
 				nextProgress = et.Duration() + timeBetweenProgress;
 				pListener->PostOnMainThread(WORK_FILEPROGRESS, this);
@@ -171,7 +164,7 @@ void FileStorer::Execute() {
 		}
 		convert.fclose();
 	}
-	completed = true;
+	SetCompleted();
 	pListener->PostOnMainThread(WORK_FILEWRITTEN, this);
 }
 

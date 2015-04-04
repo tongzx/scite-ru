@@ -9,7 +9,7 @@ version 1.2
      command.6.*=dofile $(SciteDefaultHome)\tools\ColorSet.lua
      command.mode.6.*=subsystem:lua,savebefore:no
 
-  Note: Needed gui.dll <http://scite-ru.googlecode.com/hg/lualib/gui/>
+  Note: Needed gui.dll
 --]]--------------------------------------------------
 require 'gui'
 

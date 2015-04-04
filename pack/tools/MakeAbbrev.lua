@@ -1,6 +1,6 @@
 --[[-------------------------------------------------
 MakeAbbrev.lua
-Version: 1.5.2
+Version: 1.5.3
 Author: frs, mozers™
 -------------------------------------------------
 add selected text to SciTE Abbreviation, enter the abbreviature in a dialog
@@ -32,6 +32,6 @@ if abbrev_file then
 end
 
 io.output(props["AbbrevPath"])
-sel_text = sel_text:gsub("\\","\\\\"):gsub(GetEOL(),"\\n"):gsub("\t","\\t"):gsub("%%","%%%%")
+sel_text = sel_text:gsub("\\","\\\\"):gsub(GetEOL(),"\\n"):gsub("\t","\\t"):gsub("%%","%%%%"):gsub("|","||")
 io.write(abbrev_file_text..key.."="..sel_text)
 io.close()

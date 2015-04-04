@@ -32,3 +32,4 @@ UpgradeLog.XML
 bin
 BuildLog.htm
 *.user
+*.orig

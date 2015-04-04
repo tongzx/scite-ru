@@ -99,6 +99,7 @@ LEXOBJS=\
 	$(DIR_O)\LexBaan.obj \
 	$(DIR_O)\LexBash.obj \
 	$(DIR_O)\LexBasic.obj \
+	$(DIR_O)\LexBibTeX.obj \
 	$(DIR_O)\LexBullant.obj \
 	$(DIR_O)\LexCaml.obj \
 	$(DIR_O)\LexCLW.obj \
@@ -111,6 +112,8 @@ LEXOBJS=\
 	$(DIR_O)\LexCsound.obj \
 	$(DIR_O)\LexCSS.obj \
 	$(DIR_O)\LexD.obj \
+	$(DIR_O)\LexDMAP.obj \
+	$(DIR_O)\LexDMIS.obj \
 	$(DIR_O)\LexECL.obj \
 	$(DIR_O)\LexEiffel.obj \
 	$(DIR_O)\LexErlang.obj \
@@ -122,9 +125,11 @@ LEXOBJS=\
 	$(DIR_O)\LexGAP.obj \
 	$(DIR_O)\LexGui4Cli.obj \
 	$(DIR_O)\LexHaskell.obj \
+	$(DIR_O)\LexHex.obj \
 	$(DIR_O)\LexHTML.obj \
 	$(DIR_O)\LexInno.obj \
 	$(DIR_O)\LexKix.obj \
+	$(DIR_O)\LexKVIrc.obj \
 	$(DIR_O)\LexLaTeX.obj \
 	$(DIR_O)\LexLisp.obj \
 	$(DIR_O)\LexLout.obj \
@@ -156,7 +161,9 @@ LEXOBJS=\
 	$(DIR_O)\LexPython.obj \
 	$(DIR_O)\LexR.obj \
 	$(DIR_O)\LexRebol.obj \
+	$(DIR_O)\LexRegistry.obj \
 	$(DIR_O)\LexRuby.obj \
+	$(DIR_O)\LexRust.obj \
 	$(DIR_O)\LexScriptol.obj \
 	$(DIR_O)\LexSmalltalk.obj \
 	$(DIR_O)\LexSML.obj \
@@ -164,6 +171,7 @@ LEXOBJS=\
 	$(DIR_O)\LexSpecman.obj \
 	$(DIR_O)\LexSpice.obj \
 	$(DIR_O)\LexSQL.obj \
+	$(DIR_O)\LexSTTXT.obj \
 	$(DIR_O)\LexTACL.obj \
 	$(DIR_O)\LexTADS3.obj \
 	$(DIR_O)\LexTAL.obj \
@@ -319,6 +327,8 @@ $(DIR_O)\LexBash.obj: ..\lexers\LexBash.cxx $(LEX_HEADERS)
 
 $(DIR_O)\LexBasic.obj: ..\lexers\LexBasic.cxx $(LEX_HEADERS)
 
+$(DIR_O)\LexBibTeX.obj: ..\lexers\LexBibTeX.cxx $(LEX_HEADERS)
+
 $(DIR_O)\LexBullant.obj: ..\lexers\LexBullant.cxx $(LEX_HEADERS)
 
 $(DIR_O)\LexCaml.obj: ..\lexers\LexCaml.cxx $(LEX_HEADERS)
@@ -343,6 +353,10 @@ $(DIR_O)\LexCSS.obj: ..\lexers\LexCSS.cxx $(LEX_HEADERS)
 
 $(DIR_O)\LexD.obj: ..\lexers\LexD.cxx $(LEX_HEADERS)
 
+$(DIR_O)\LexDMAP.obj: ..\lexers\LexDMAP.cxx $(LEX_HEADERS)
+
+$(DIR_O)\LexDMIS.obj: ..\lexers\LexDMIS.cxx $(LEX_HEADERS)
+
 $(DIR_O)\LexECL.obj: ..\lexers\LexECL.cxx $(LEX_HEADERS)
 
 $(DIR_O)\LexEiffel.obj: ..\lexers\LexEiffel.cxx $(LEX_HEADERS)
@@ -365,11 +379,15 @@ $(DIR_O)\LexGui4Cli.obj: ..\lexers\LexGui4Cli.cxx $(LEX_HEADERS)
 
 $(DIR_O)\LexHaskell.obj: ..\lexers\LexHaskell.cxx $(LEX_HEADERS)
 
+$(DIR_O)\LexHex.obj: ..\lexers\LexHex.cxx $(LEX_HEADERS)
+
 $(DIR_O)\LexHTML.obj: ..\lexers\LexHTML.cxx $(LEX_HEADERS)
 
 $(DIR_O)\LexInno.obj: ..\lexers\LexInno.cxx $(LEX_HEADERS)
 
 $(DIR_O)\LexKix.obj: ..\lexers\LexKix.cxx $(LEX_HEADERS)
+
+$(DIR_O)\LexKVIrc.obj: ..\lexers\LexKVIrc.cxx $(LEX_HEADERS)
 
 $(DIR_O)\LexLaTeX.obj: ..\lexers\LexLaTeX.cxx $(LEX_HEADERS)
 
@@ -433,7 +451,11 @@ $(DIR_O)\LexR.obj: ..\lexers\LexR.cxx $(LEX_HEADERS)
 
 $(DIR_O)\LexRebol.obj: ..\lexers\LexRebol.cxx $(LEX_HEADERS)
 
+$(DIR_O)\LexRegistry.obj: ..\lexers\LexRegistry.cxx $(LEX_HEADERS)
+
 $(DIR_O)\LexRuby.obj: ..\lexers\LexRuby.cxx $(LEX_HEADERS)
+
+$(DIR_O)\LexRust.obj: ..\lexers\LexRust.cxx $(LEX_HEADERS)
 
 $(DIR_O)\LexScriptol.obj: ..\lexers\LexScriptol.cxx $(LEX_HEADERS)
 
@@ -448,6 +470,8 @@ $(DIR_O)\LexSpecman.obj: ..\lexers\LexSpecman.cxx $(LEX_HEADERS)
 $(DIR_O)\LexSpice.obj: ..\lexers\LexSpice.cxx $(LEX_HEADERS)
 
 $(DIR_O)\LexSQL.obj: ..\lexers\LexSQL.cxx $(LEX_HEADERS)
+
+$(DIR_O)\LexSTTXT.obj: ..\lexers\LexSTTXT.cxx $(LEX_HEADERS)
 
 $(DIR_O)\LexTACL.obj: ..\lexers\LexTACL.cxx $(LEX_HEADERS)
 

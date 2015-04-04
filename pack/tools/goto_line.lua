@@ -6,7 +6,6 @@ version: 1.1.1
 При переходе на линию, текущее положение курсора на экране сохраняется
 для чего текст прокручивается на нужное количество строк.
 Теперь вам не придется искать курсор по всему экрану!
-(Реализация Issue 21 http://code.google.com/p/scite-ru/issues/detail?id=21)
 
   Connection:
    In file SciTEStartup.lua add a line:

@@ -7,8 +7,10 @@ set VC7=%ProgramFiles%\Microsoft Visual Studio .NET
 set VC71=%ProgramFiles%\Microsoft Visual Studio .NET 2003
 set VC8=%ProgramFiles%\Microsoft Visual Studio 8
 set VC9=%ProgramFiles%\Microsoft Visual Studio 9.0
+set VC10=%ProgramFiles%\Microsoft Visual Studio 10.0
+set VC12=%ProgramFiles%\Microsoft Visual Studio 12.0
 set Tools=Common7\Tools
-set path=%VC9%\%Tools%;%VC8%\%Tools%;%VC71%\%Tools%;%VC7%\%Tools%;%path%
+set path=%VC12%\%Tools%;%VC10%\%Tools%;%VC9%\%Tools%;%VC8%\%Tools%;%VC71%\%Tools%;%VC7%\%Tools%;%path%
 call vsvars32.bat
 
 if "%1"=="DEBUG" set parameter1=DEBUG=1

@@ -62,16 +62,13 @@ local function UpdateStatusCodePage(mode)
 	if mode == nil or mode == IDM_ENCODING_DEFAULT then
 		if props["character.set"]=='255' then
 			props["chars.accented"] = chars_accented:from_utf8(866)
-			scite.Perform("reloadproperties:")
 -- print(' dos866 > '..props['CurrentWordCharacters'])
 		else
 			props["chars.accented"] = chars_accented:from_utf8(1251)
-			scite.Perform("reloadproperties:")
 -- print('win1251 > '..props['CurrentWordCharacters'])
 		end
 	else -- utf8
 		props["chars.accented"] = chars_accented
-		scite.Perform("reloadproperties:")
 -- print('   utf8 > '..props['CurrentWordCharacters'])
 	end
 

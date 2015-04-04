@@ -152,7 +152,7 @@ NameError: mistake
 
   <h3><a name="command.subsystem">command.subsystem</a></h3>
 
-    <p>Команды меню &quot;<cite>Tools</cite>&quot; могут быть выполнены в различных режимах SciTE, которые определяются параметром <dfn><a href="#command">command.subsystem</a></dfn>. Различные подсистемы поддерживаются на Windows и GTK +. При запуске команды без параметра <dfn><a href="#command">command.subsystem</a></dfn>, используется заданная по умолчанию подсистема - <var>0</var>.</p>
+    <p>Команды меню &quot;<cite>Tools</cite>&quot; могут быть выполнены в различных режимах SciTE, которые определяются параметром <dfn><a href="#command">command.subsystem</a></dfn>. Различные подсистемы поддерживаются на Windows, GTK+ и OS X. При запуске команды без параметра <dfn><a href="#command">command.subsystem</a></dfn>, используется заданная по умолчанию подсистема - <var>0</var>.</p>
 
   <table class="windowsonly" cellpadding="1" cellspacing="0" border="1" summary="command.subsystem">
     <tr class="windowsonly">
@@ -200,6 +200,11 @@ NameError: mistake
       <td>Строка запуска обрабатывается подобно тому, как это осуществляет программа <code>WinHelp</code> (<code>winhlp32.exe</code>), служащая для запуска справочных файлов в формате HLP (<cite>*</cite>).</td>
     </tr>
     <tr>
+      <td align="center"><dfn>7</dfn></td>
+      <td><dfn>immediate</dfn></td>
+      <td>Внутренний скрипт, который выполняется немедленно, а не встаёт в очередь.</td>
+    </tr>
+    <tr>
       <td colspan=3>
     <cite>*</cite> При использовании значений <dfn>4</dfn> и <dfn>5</dfn> SciTE не вызывает непосредственно программу <code>hh.exe</code> (<code>winhlp32.exe</code>), а открывает файлы справки собственными средствами, позволяющими в командной строке задать не только имя файла справки, но и искомое ключевое слово. При этом команда будет состоять из 2 частей, разделенных символом &quot;<code><font color=red>!</font></code>&quot;, где первая часть представляет собой искомое ключевое слово, а вторая - имя файла справки. Например, так:
     <div class="example">command.3.*=$(CurrentWord)<font color=red>!</font>$(SciteDefaultHome)\help\script56.chm</div>Естественно, поиск по ключевомоу слову будет работать только с теми файлами справки, в которых присутствует индекс.
@@ -208,9 +213,11 @@ NameError: mistake
   </table>
   &nbsp;
   <table class="gtkonly" cellpadding="0" cellspacing="0" border="1" summary="Command line commands">
-  <tr><th colspan="3">GTK+</th></tr>
+  <tr><th colspan="3">GTK+ и OS X</th></tr>
   <tr><td><dfn>0</dfn></td><td><dfn>console</dfn></td><td>Исполняет программу и ожидает ее завершения, перенаправляя результат в панель вывода.</td></tr>
   <tr><td><dfn>2</dfn></td><td><dfn>shellexec</dfn></td><td>Выполняет программу в фоновом режиме.</td></tr>
+  <tr><td><dfn>3</dfn></td><td><dfn>lua<br>director</dfn></td><td>Internal extension or director extension.</td></tr>
+  <tr><td><dfn>7</dfn></td><td><dfn>immediate</dfn></td><td>Internal script that is executed immediately instead of being queued.</td></tr>
   </table>
 
   <h3><a name="cmdline">Параметры командной строки</a></h3>
@@ -487,6 +494,7 @@ NameError: mistake
         <li>IDL - both MSIDL and XPIDL*</li>
         <li>INI, properties* и тому подобные</li>
         <li>InnoSetup*</li>
+        <li>Intel HEX*</li>
         <li>Java*</li>
         <li>JavaScript*</li>
         <li>LISP*</li>
@@ -522,6 +530,7 @@ NameError: mistake
         <li>Spice</li>
         <li>Smalltalk</li>
         <li>SQL and PLSQL</li>
+        <li>S-Record</li>
         <li>TADS3*</li>
         <li>TeX and LaTeX</li>
         <li>Tcl/Tk*</li>
@@ -1028,8 +1037,13 @@ NameError: mistake
 
   <h3><a name="import">Импорт файлов настроек и условная логика</a></h3>
 
-  <p>Оператор <dfn>import</dfn> подключает файл настроек, как если бы в данное место был вставлен текст. Импортируемый файл настроек должен находиться в том же каталоге, что и текущий файл, и иметь расширение <code>properties</code>. Следовательно, оператор <span class="example">import Lua</span> в файле <code>c:\os\scite\bin\SciTEGlobal.properties</code> импортирует файл <code>c:\os\scite\bin\Lua.properties</code>.</p>
-
+  <p>Оператор <dfn>import</dfn> подключает файл настроек, как если бы в данное место был вставлен текст. Путь к импортируемому файлу настроек может быть задан как абсолютный либо как относителный к базовому файлу, и иметь расширение <code>properties</code>. Следовательно, оператор <span class="example">import Lua</span> в файле <code>c:\os\scite\bin\SciTEGlobal.properties</code> импортирует файл <code>c:\os\scite\bin\Lua.properties</code>.<br>
+  Любой оператор <dfn>import</dfn> в импортируемом файле будет брать путь относительно каталога исходного (а не текущего) файла.</p>
+  <p>Imported files are not scope walls: properties may be redefined in another file.
+   Thus, if a file contains both <span class="example">import cplusplus</span>, <span class="example">import java</span>, and <code>style.cpp.1=fore:$(comment.colour)</code> then
+   cplusplus.properties contains <code>comment.colour=#800000</code> and java.properties contains
+   <code>comment.colour=#008000</code> then the last definition wins and is active for the definitions in the base
+   file as well as any definitions in cplusplus.properties and java.properties.</p>
   <p>C помощью оператора <dfn>if</dfn> можно выборочно применять отдельные параметры настройки. Условие <code>if MY_VALUE</code> считается выполненным, если параметру <code>MY_VALUE</code> было присвоено значение <var>1</var>. Если условие выполнено, то идущим далее с отступом от начала строки параметрам настройки присваиваются заданные значения. Действие условия распостраняется до первого параметра, записанного с начала строки без отступа.</p>
 
   <p>Обычно оператор <dfn>if</dfn> используется для подключения определенных блоков в файлах настроек в зависимости от значения переменных <var>PLAT_GTK</var>, <var>PLAT_WIN</var> или <var>PLAT_MAC</var>, с помощью которых SciTE идентифицирует используемую ОС. При использовании оператора <dfn>if</dfn> в своих файлах настроек, учтите, что проверка условия происходит только при загрузке файла настроек, а не во время работы программы.</p>
@@ -2206,7 +2220,7 @@ style the path and line number separately from the rest of the line with style 2
 	  <tr><td>Korean Johab</td><td align="right">1361</td></tr>
   	  </table>
         Значение <var>65001</var> в переменной <dfn>code.page</dfn> запустит режим Юникода и текст будет рассматриваться как последовательность символов UTF-8. Для вывода на экран символы первоначально конвертируются в обычную кодировку Юникод, так что отобразить можно символы любого языка. Глифы будут отображаться корректно только в том случае, если подходящие глифы содержатся в выбранных шрифтах. Для Windows XP рекомендуется <code>Tahoma</code>.<br>
-        <em>Данной переменной нельзя задать набор однобайтовых символов. Любые другие значения данного параметра, кроме вышеперечисленных, недопустимы и будут игнорироваться SciTE. Более того, установка <span class="example">code.page=1251</span>, рекомендуемая в некоторых пособиях, приводит к <a href="http://code.google.com/p/scite-ru/issues/detail?id=49">проблемам с переключением кодировок</a>.</em><br>
+        <em>Данной переменной нельзя задать набор однобайтовых символов. Любые другие значения данного параметра, кроме вышеперечисленных, недопустимы и будут игнорироваться SciTE. Более того, установка <span class="example">code.page=1251</span>, рекомендуемая в некоторых пособиях, приводит к проблемам с переключением кодировок.</em><br>
         Переменная <dfn>output.code.page</dfn> используется в том случае, если настройки панели вывода отличаются от настроек панели редактора.
       </td>
     </tr>

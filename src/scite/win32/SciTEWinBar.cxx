@@ -23,7 +23,8 @@ void SciTEWin::SetFileProperties(
 		FILETIME lft;
 		::FileTimeToLocalFileTime(&ft, &lft);
 		SYSTEMTIME st;
-		::FileTimeToSystemTime(&lft, &st);
+		if (::FileTimeToSystemTime(&lft, &st) == 0)
+			memset(&st, 0, sizeof(st));
 		::GetTimeFormatA(LOCALE_USER_DEFAULT,
 		                0, &st,
 		                NULL, temp, TEMP_LEN);
@@ -35,7 +36,7 @@ void SciTEWin::SetFileProperties(
 		ps.Set("FileDate", temp);
 
 		DWORD attr = ::GetFileAttributesW(filePath.AsInternal());
-		SString fa;
+		std::string fa;
 		if (attr & FILE_ATTRIBUTE_READONLY) {
 			fa += "R";
 		}
@@ -136,15 +137,12 @@ void SciTEWin::Notify(SCNotification *notification) {
 			bool bAddSeparator = false;
 			for (int item = 0; item < toolMax; item++) {
 				int itemID = IDM_TOOLS + item;
-				SString prefix = "command.name.";
-				prefix += SString(item);
+				std::string prefix = "command.name.";
+				prefix += StdStringFromInteger(item);
 				prefix += ".";
-				SString commandName = props.GetNewExpand(prefix.c_str(), filePath.AsUTF8().c_str());
+				std::string commandName = props.GetNewExpandString(prefix.c_str(), filePath.AsUTF8().c_str());
 				if (commandName.length()) {
-					SString sMenuItem = commandName;
-					SString sMnemonic = "Ctrl+";
-					sMnemonic += SString(item);
-					AddToPopUp(sMenuItem.c_str(), itemID, true);
+					AddToPopUp(commandName.c_str(), itemID, true);
 					bAddSeparator = true;
 				}
 			}
@@ -161,8 +159,8 @@ void SciTEWin::Notify(SCNotification *notification) {
 			subMenu[0].CreatePopUp(NULL);
 
 			bool isAdded = false;
-			SString tabContextMenu = props.GetNewExpand("user.tabcontext.menu.", ExtensionFileName().c_str());
-			tabContextMenu.substitute('|', '\0');
+			std::string tabContextMenu = props.GetNewExpandString("user.tabcontext.menu.", ExtensionFileName().c_str());
+			std::replace(tabContextMenu.begin(), tabContextMenu.end(), '|', '\0');
 			const char *userContextItem = tabContextMenu.c_str();
 			const char *endDefinition = userContextItem + tabContextMenu.length();
 			GenerateMenu(subMenu, userContextItem, endDefinition, item, isAdded);
@@ -203,7 +201,6 @@ void SciTEWin::Notify(SCNotification *notification) {
 	case TTN_GETDISPINFO:
 		// Ask for tooltip text
 		{
-			static GUI::gui_char ttt[MAX_PATH*2 + 1];
 //!			const GUI::gui_char *ttext = 0; //!-remove-[user.toolbar]
 			NMTTDISPINFOW *pDispInfo = (NMTTDISPINFOW *)notification;
 			// Toolbar tooltips
@@ -260,11 +257,11 @@ void SciTEWin::Notify(SCNotification *notification) {
 			default: {
 */
 //!-start-[user.toolbar]
-			SString stext;
+			std::string stext;
 			if (ToolBarTips.Lookup(notification->nmhdr.idFrom, stext)) {
 				GUI::gui_string localised = localiser.Text(stext.c_str());
-				wcscpy(ttt, localised.c_str());
-				pDispInfo->lpszText = ttt;
+				StringCopy(tooltipText, localised.c_str());
+				pDispInfo->lpszText = tooltipText;
 			}
 			else {
 //!-end-[user.toolbar]
@@ -288,8 +285,8 @@ void SciTEWin::Notify(SCNotification *notification) {
 							path.insert(amp, GUI_TEXT("&"));
 							amp += 2;
 						}
-						wcscpy(ttt, path.c_str());
-						pDispInfo->lpszText = const_cast<GUI::gui_char *>(ttt);
+						StringCopy(tooltipText, path.c_str());
+						pDispInfo->lpszText = tooltipText;
 					}
 /*!
 				}
@@ -297,8 +294,8 @@ void SciTEWin::Notify(SCNotification *notification) {
 			}
 			if (ttext) {
 				GUI::gui_string localised = localiser.Text(GUI::UTF8FromString(ttext).c_str());
-				wcscpy(ttt, localised.c_str());
-				pDispInfo->lpszText = ttt;
+				StringCopy(tooltipText, localised.c_str());
+				pDispInfo->lpszText = tooltipText;
 */
 			}
 			break;
@@ -317,6 +314,13 @@ void SciTEWin::Notify(SCNotification *notification) {
 		} else {
 			SciTEBase::Notify(notification);
 		}
+		break;
+
+	case SCN_FOCUSIN:
+		if ((notification->nmhdr.idFrom == IDM_SRCWIN) ||
+			(notification->nmhdr.idFrom == IDM_RUNWIN))
+			wFocus = reinterpret_cast<HWND>(notification->nmhdr.hwndFrom);
+		SciTEBase::Notify(notification);
 		break;
 
 	default:     	// Scintilla notification, use default treatment
@@ -392,7 +396,7 @@ void SciTEWin::SizeSubWindows() {
 	bool showTab = false;
 
 	//::SendMessage(MainHWND(), WM_SETREDRAW, false, 0); // suppress flashing
-	visHeightTools = tbVisible ? heightTools : 0;
+	visHeightTools = tbVisible ? (tbLarge ? heightToolsBig : heightTools) : 0;
 	bands[bandTool].visible = tbVisible;
 
 	if (tabVisible) {	// ? hide one tab only
@@ -502,9 +506,9 @@ void SciTEWin::SetToolBar() {
 	// erasing all buttons
 	while ( ::SendMessage(hwndToolBar,TB_DELETEBUTTON,0,0) );
 
-	SString fileNameForExtension = ExtensionFileName();
+	std::string fileNameForExtension = ExtensionFileName();
 
-	GUI::gui_string sIconlib = GUI::StringFromUTF8( props.GetNewExpand("user.toolbar.iconlib.", fileNameForExtension.c_str()).c_str() );
+	GUI::gui_string sIconlib = GUI::StringFromUTF8( props.GetNewExpandString("user.toolbar.iconlib.", fileNameForExtension.c_str()).c_str() );
 	HICON hIcon = NULL;
 	HICON hIconBig = NULL;
 	int iIconsCount = 0;
@@ -565,8 +569,8 @@ void SciTEWin::SetToolBar() {
 	}
 
 	TArray<BarButtonIn,BarButtonIn> barbuttons;
-	SString userToolbar = props.GetNewExpand("user.toolbar.", fileNameForExtension.c_str());
-	userToolbar.substitute('|', '\0');
+	std::string userToolbar = props.GetNewExpandString("user.toolbar.", fileNameForExtension.c_str());
+	std::replace(userToolbar.begin(), userToolbar.end(), '|', '\0');
 	const char *userContextItem = userToolbar.c_str();
 	const char *endDefinition = userContextItem + userToolbar.length();
 	while (userContextItem < endDefinition) {
@@ -582,8 +586,8 @@ void SciTEWin::SetToolBar() {
 				if(GetMenuCommandAsInt(command) != 0) ToolBarTips[GetMenuCommandAsInt(command)]=tips;
 				int id = atoi(command);
 				if (id > IDM_TOOLS) {
-					SString prefix = "command.checked." + SString(id - IDM_TOOLS) + ".";
-					SString val = props.GetNewExpand(prefix.c_str(), fileNameForExtension.c_str());
+					std::string prefix = "command.checked." + StdStringFromInteger(id - IDM_TOOLS) + ".";
+					std::string val = props.GetNewExpandString(prefix.c_str(), fileNameForExtension.c_str());
 					if (val != "")
 						toolbarUsersPressableButtons.Add(id);
 				}
@@ -649,7 +653,7 @@ void SciTEWin::SetMenuItem(int menuNumber, int position, int itemID,
 	HMENU hmenu = ::GetSubMenu(::GetMenu(MainHWND()), menuNumber);
 //!-start-[UserPropertiesFilesSubmenu]
 	if ((menuNumber==menuOptions) && (position>=IMPORT_START)) {
-		if (props.GetExpanded("ext.lua.startup.script").length())
+		if (props.GetExpandedString("ext.lua.startup.script").length())
 			hmenu = ::GetSubMenu(hmenu, IMPORT_START);
 		else
 			hmenu = ::GetSubMenu(hmenu, IMPORT_START-1);
@@ -661,7 +665,7 @@ void SciTEWin::SetMenuItem(int menuNumber, int position, int itemID,
 		keycode = SciTEKeys::ParseKeyCode(GUI::UTF8FromString(mnemonic).c_str());
 		if (keycode) {
 			sTextMnemonic += GUI_TEXT("\t");
-			sTextMnemonic += LocaliseAccelerator(mnemonic, itemID);
+			sTextMnemonic += mnemonic;
 		}
 		// the keycode could be used to make a custom accelerator table
 		// but for now, the menu's item data is used instead for command
@@ -682,7 +686,7 @@ void SciTEWin::SetMenuItem(int menuNumber, int position, int itemID,
 		MENUITEMINFO mii;
 		mii.cbSize = sizeof(MENUITEMINFO);
 		mii.fMask = MIIM_DATA;
-		mii.dwItemData = reinterpret_cast<DWORD&>(keycode);
+		mii.dwItemData = keycode;
 		::SetMenuItemInfo(hmenu, itemID, FALSE, &mii);
 	}
 }
@@ -738,10 +742,11 @@ void SciTEWin::CheckMenus() {
 //!-start-[user.toolbar]
 	// check user toolbar buttons status
 	if (props.GetInt("toolbar.visible") != 0) {
-		SString fileNameForExtension = ExtensionFileName();
+		std::string fileNameForExtension = ExtensionFileName();
 		for (int i = 0; i < toolbarUsersPressableButtons.GetSize(); i++) {
-			SString prefix = "command.checked." + SString(toolbarUsersPressableButtons[i] - IDM_TOOLS) + ".";
-			int ischecked = props.GetNewExpand(prefix.c_str(), fileNameForExtension.c_str()).value();
+			std::string prefix = "command.checked." + StdStringFromInteger(toolbarUsersPressableButtons[i] - IDM_TOOLS) + ".";
+			std::string val = props.GetNewExpandString(prefix.c_str(), fileNameForExtension.c_str());
+			int ischecked = val.empty() ? 0 : atoi(val.c_str());
 			::CheckToolbarButton(reinterpret_cast<HWND>(wToolBar.GetID()), toolbarUsersPressableButtons[i], ischecked);
 		}
 	}
@@ -751,104 +756,6 @@ void SciTEWin::CheckMenus() {
 	                   wEditor.Call(SCI_GETEOLMODE) - SC_EOL_CRLF + IDM_EOL_CRLF, 0);
 	::CheckMenuRadioItem(::GetMenu(MainHWND()), IDM_ENCODING_DEFAULT, IDM_ENCODING_UCOOKIE,
 	                   CurrentBuffer()->unicodeMode + IDM_ENCODING_DEFAULT, 0);
-}
-
-void SciTEWin::MakeAccelerator(SString sAccelerator, ACCEL &Accel) {
-	SString s = sAccelerator;
-
-	if (s.contains("null")) {
-		Accel.key = 0;
-		return ;
-	}
-
-	if (s.contains("Ctrl+")) {
-		Accel.fVirt |= FCONTROL;
-		s.remove("Ctrl+");
-	}
-	if (s.contains("Shift+")) {
-		Accel.fVirt |= FSHIFT;
-		s.remove("Shift+");
-	}
-	if (s.contains("Alt+")) {
-		Accel.fVirt |= FALT;
-		s.remove("Alt+");
-	}
-	if (s.length() == 1) {
-		Accel.key = s[0];
-		Accel.fVirt |= FVIRTKEY;
-	} else if ((s.length() > 1) && (s[0] == 'F') && (isdigit(s[1]))) {
-		s.remove("F");
-		int keyNum = s.value();
-		Accel.key = static_cast<WORD>(keyNum + VK_F1 - 1);
-		Accel.fVirt |= FVIRTKEY;
-	} else if (s.contains("Del")) {
-		Accel.key = VK_DELETE;
-		Accel.fVirt |= FVIRTKEY;
-	} else if (s.contains("Space")) {
-		Accel.key = VK_SPACE;
-		Accel.fVirt |= FVIRTKEY;
-	} else if (s.contains("Enter")) {
-		Accel.key = VK_RETURN;
-		Accel.fVirt |= FVIRTKEY;
-	} else if (s.contains("Back")) {
-		Accel.key = VK_BACK;
-		Accel.fVirt |= FVIRTKEY;
-	} else if (s.contains("Tab")) {
-		Accel.key = VK_TAB;
-		Accel.fVirt |= FVIRTKEY;
-	} else if (s.contains("Num")) {
-		Accel.fVirt |= FVIRTKEY;
-		s.remove("Num");
-		if (isdigit(s[0])) {
-			int keyNum = s.value();
-			Accel.key = static_cast<WORD>(keyNum + VK_NUMPAD0);
-		} else {
-			switch (s[0]) {
-			case '*':
-				Accel.key = VK_MULTIPLY;
-				break;
-			case '+':
-				Accel.key = VK_ADD;
-				break;
-			case '-':
-				Accel.key = VK_SUBTRACT;
-				break;
-			case '/':
-				Accel.key = VK_DIVIDE;
-				break;
-			default:
-				Accel.key = 0;
-				break;
-			}
-		}
-	}
-}
-
-//SString SciTEWin::LocaliseAccelerator(const char *pAccelerator, int cmd) {
-GUI::gui_string SciTEWin::LocaliseAccelerator(const GUI::gui_char *pAccelerator, int) {
-#ifdef LOCALISE_ACCELERATORS_WORKED
-	SString translation = localiser.Text(pAccelerator, true);
-	int AccelCount = ::CopyAcceleratorTable(hAccTable, NULL, 0);
-	ACCEL *AccelTable = new ACCEL[AccelCount];
-	::CopyAcceleratorTable(hAccTable, AccelTable, AccelCount);
-	for (int i = 0; i < AccelCount; i++) {
-		if (AccelTable[i].cmd == cmd) {
-			MakeAccelerator(translation, AccelTable[i]);
-		}
-	}
-
-	::DestroyAcceleratorTable(hAccTable);
-	hAccTable = ::CreateAcceleratorTable(AccelTable, AccelCount);
-	delete []AccelTable;
-
-	if (translation.contains("null")) {
-		translation.clear();
-	}
-
-	return translation;
-#else
-	return pAccelerator;
-#endif
 }
 
 void SciTEWin::LocaliseMenu(HMENU hmenu) {
@@ -882,7 +789,7 @@ void SciTEWin::LocaliseMenu(HMENU hmenu) {
 					if (text.length()) {
 						if (accel != GUI_TEXT("")) {
 							text += GUI_TEXT("\t");
-							text += LocaliseAccelerator(accel.c_str(), mii.wID);
+							text += accel;
 						}
 						mii.dwTypeData = const_cast<GUI::gui_char *>(text.c_str());
 						::SetMenuItemInfoW(hmenu, i, TRUE, &mii);
@@ -896,22 +803,6 @@ void SciTEWin::LocaliseMenu(HMENU hmenu) {
 void SciTEWin::LocaliseMenus() {
 	LocaliseMenu(::GetMenu(MainHWND()));
 	::DrawMenuBar(MainHWND());
-}
-
-void SciTEWin::LocaliseAccelerators() {
-	LocaliseAccelerator(GUI_TEXT("Alt+1"), IDM_BUFFER + 0);
-	LocaliseAccelerator(GUI_TEXT("Alt+2"), IDM_BUFFER + 1);
-	LocaliseAccelerator(GUI_TEXT("Alt+3"), IDM_BUFFER + 2);
-	LocaliseAccelerator(GUI_TEXT("Alt+4"), IDM_BUFFER + 3);
-	LocaliseAccelerator(GUI_TEXT("Alt+5"), IDM_BUFFER + 4);
-	LocaliseAccelerator(GUI_TEXT("Alt+6"), IDM_BUFFER + 5);
-	LocaliseAccelerator(GUI_TEXT("Alt+7"), IDM_BUFFER + 6);
-	LocaliseAccelerator(GUI_TEXT("Alt+8"), IDM_BUFFER + 7);
-	LocaliseAccelerator(GUI_TEXT("Alt+9"), IDM_BUFFER + 8);
-	LocaliseAccelerator(GUI_TEXT("Alt+0"), IDM_BUFFER + 9);
-
-	// todo read keymap from cfg
-	// AssignKey('Y', SCMOD_CTRL, SCI_LINECUT);
 }
 
 void SciTEWin::LocaliseControl(HWND w) {
@@ -1229,7 +1120,7 @@ void SciTEWin::Creation() {
 	               WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS |
 	               TBSTYLE_FLAT | TBSTYLE_TOOLTIPS | CCS_NORESIZE,
 	               0, 0,
-	               100, heightTools,
+	               100, tbLarge ? heightToolsBig : heightTools,
 	               MainHWND(),
 	               reinterpret_cast<HMENU>(IDM_TOOLWIN),
 	               hInstance,
@@ -1238,7 +1129,9 @@ void SciTEWin::Creation() {
 
 /*!-remove-[user.toolbar]
 	::SendMessage(hwndToolBar, TB_BUTTONSTRUCTSIZE, sizeof(TBBUTTON), 0);
-	::SendMessage(hwndToolBar, TB_LOADIMAGES, IDB_STD_SMALL_COLOR,
+	::SendMessage(hwndToolBar, TB_SETBITMAPSIZE, 0, tbLarge ? MAKELPARAM(24, 24) : MAKELPARAM(16, 16));
+	::SendMessage(hwndToolBar, TB_LOADIMAGES, 
+	              tbLarge ? IDB_STD_LARGE_COLOR : IDB_STD_SMALL_COLOR,
 	              reinterpret_cast<LPARAM>(HINST_COMMCTRL));
 
 	TBADDBITMAP addbmp = { hInstance, IDR_CLOSEFILE };
@@ -1271,7 +1164,8 @@ void SciTEWin::Creation() {
 	InitCommonControlsEx(&icce);
 
 	WNDCLASS wndClass = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-	GetClassInfo(NULL, WC_TABCONTROL, &wndClass);
+	if (::GetClassInfo(NULL, WC_TABCONTROL, &wndClass) == 0)
+		exit(FALSE);
 	stDefaultTabProc = wndClass.lpfnWndProc;
 	wndClass.lpfnWndProc = TabWndProc;
 	wndClass.style = wndClass.style | CS_DBLCLKS;
@@ -1298,7 +1192,8 @@ void SciTEWin::Creation() {
 
 	LOGFONT lfIconTitle;
 	ZeroMemory(&lfIconTitle, sizeof(lfIconTitle));
-	::SystemParametersInfo(SPI_GETICONTITLELOGFONT,sizeof(lfIconTitle),&lfIconTitle,FALSE);
+	if (::SystemParametersInfo(SPI_GETICONTITLELOGFONT,sizeof(lfIconTitle),&lfIconTitle,FALSE) == 0)
+		exit(FALSE);
 	fontTabs = ::CreateFontIndirect(&lfIconTitle);
 	::SendMessage(reinterpret_cast<HWND>(wTabBar.GetID()),
 	              WM_SETFONT,
@@ -1389,7 +1284,7 @@ void SciTEWin::Creation() {
 	              SB_SETPARTS, 1,
 	              reinterpret_cast<LPARAM>(widths));
 
-	bands.push_back(Band(true, heightTools, false, wToolBar));
+	bands.push_back(Band(true, tbLarge ? heightToolsBig : heightTools, false, wToolBar));
 	bands.push_back(Band(true, heightTab, false, wTabBar));
 	bands.push_back(Band(true, 100, true, wContent));
 	bands.push_back(Band(true, userStrip.Height(), false, userStrip));
@@ -1400,7 +1295,7 @@ void SciTEWin::Creation() {
 	bands.push_back(Band(true, heightStatus, false, wStatusBar));
 
 #ifndef NO_LUA
-		if (props.GetExpanded("ext.lua.startup.script").length() == 0)
+		if (props.GetExpandedString("ext.lua.startup.script").length() == 0)
 			DestroyMenuItem(menuOptions,IDM_OPENLUAEXTERNALFILE);
 #else
 		DestroyMenuItem(menuOptions,IDM_OPENLUAEXTERNALFILE);
