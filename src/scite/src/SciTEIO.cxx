@@ -888,6 +888,7 @@ SciTEBase::SaveResult SciTEBase::SaveIfUnsureAll() {
 			AddFileToStack(buff, buff.selection, buff.scrollPosition);
 		}
 	}
+	if (!props.GetInt("save.session.multibuffers.only") || buffers.length > 1) //!-add-[save.session.multibuffers.only]
 	if (props.GetInt("save.session") || props.GetInt("save.position") || props.GetInt("save.recent")) {
 		SaveSessionFile(GUI_TEXT(""));
 	}

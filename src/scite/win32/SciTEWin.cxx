@@ -264,7 +264,8 @@ void SciTEWin::Register(HINSTANCE hInstance_) {
 
 	// Register the frame window
 	className = TEXT("SciTEWindow");
-	wndclass.style = 0;
+//!	wndclass.style = 0;
+	wndclass.style = CS_DBLCLKS;	//!-change-[new_on_dbl_clk]
 	wndclass.lpfnWndProc = SciTEWin::TWndProc;
 	wndclass.cbClsExtra = 0;
 	wndclass.cbWndExtra = sizeof(SciTEWin*);
@@ -1228,6 +1229,8 @@ void SciTEWin::Execute() {
 
 		if (extender)
 			extender->OnExecute(jobQueue.jobQueue[cmdWorker.icmd].command.c_str());
+
+		if (quitting) return; //!-add-[https://groups.google.com/forum/?fromgroups#!topic/scite-interest/VJgXQ7krzGA]
 
 		if (jobQueue.jobQueue[cmdWorker.icmd].flags & jobGroupUndo)
 			wEditor.Send(SCI_ENDUNDOACTION);

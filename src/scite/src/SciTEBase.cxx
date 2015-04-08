@@ -1280,6 +1280,7 @@ void SciTEBase::ReplaceOnce(bool showWarnings) {
 			wEditor.CallString(SCI_REPLACETARGET, replaceTarget.length(), replaceTarget.c_str());
 		SetSelection(static_cast<int>(cr.cpMin) + lenReplaced, static_cast<int>(cr.cpMin));
 		havefound = false;
+		FindNext(false, false); //!-add-[FixReplaceOnce]
 	}
 //!	FindNext(false, showWarnings); //!-remove-[FixReplaceOnce]
 }
@@ -1394,6 +1395,7 @@ int SciTEBase::DoReplaceAll(bool inSelection) {
 			if (countSelections == 1)
 				SetSelection(startPosition, endPosition);
 		} else {
+			if(!props.GetInt("find.replace.return.to.start")) //!-add-[ReturnBackAfterRALL]
 			SetSelection(lastMatch, lastMatch);
 		}
 		wEditor.Call(SCI_ENDUNDOACTION);
@@ -1837,12 +1839,12 @@ void SciTEBase::ContinueCallTip() {
 				continue;
 		}
 
-		while (functionDefinition[startHighlight] && !Contains(calltipParametersStart, functionDefinition[startHighlight]))
+		while ((startHighlight < functionDefinition.length()) && !Contains(calltipParametersStart, functionDefinition[startHighlight]))
 			startHighlight++;
 		if (Contains(calltipParametersStart, functionDefinition[startHighlight]))
 			startHighlight++;
 		int comma_cnt = commas;
-		while (functionDefinition[startHighlight] && comma_cnt > 0) {
+		while ((startHighlight < functionDefinition.length()) && comma_cnt > 0) {
 			if (Contains(calltipParametersSeparators, functionDefinition[startHighlight]))
 				comma_cnt--;
 			// If it reached the end of the argument list it means that the user typed in more
@@ -1852,10 +1854,10 @@ void SciTEBase::ContinueCallTip() {
 			else
 				startHighlight++;
 		}
-		if (Contains(calltipParametersSeparators, functionDefinition[startHighlight]))
+		if ((functionDefinition.length() > 0) && Contains(calltipParametersSeparators, functionDefinition[startHighlight]))
 			startHighlight++;
-		int endHighlight = startHighlight;
-		while (functionDefinition[endHighlight] && !Contains(calltipParametersSeparators, functionDefinition[endHighlight]) && !Contains(calltipParametersEnd, functionDefinition[endHighlight]))
+		size_t endHighlight = startHighlight;
+		while ((endHighlight < functionDefinition.length()) && !Contains(calltipParametersSeparators, functionDefinition[endHighlight]) && !Contains(calltipParametersEnd, functionDefinition[endHighlight]))
 			endHighlight++;
 
 		if (callTipUseEscapes) {
@@ -1872,6 +1874,7 @@ void SciTEBase::ContinueCallTip() {
 			endHighlight = unslashedEndHighlight;
 		}
 		wEditor.Call(SCI_CALLTIPADDHLT, startHighlight, endHighlight);
+		if (functionDefinition.length() == 0) break;
 	};
 	wEditor.Call(SCI_CALLTIPUPDATEHLT);
 //!-end-[BetterCalltips]
@@ -1933,6 +1936,7 @@ bool SciTEBase::StartAutoCompleteWord(bool onlyOneWord) {
 	const std::string line = GetCurrentLine();
 	const int current = GetCaretInLine();
 
+	if (!current) wEditor.Call(SCI_AUTOCCANCEL); //!-add-[autocompleteword.incremental]
 	int startword = current;
 	// Autocompletion of pure numbers is mostly an annoyance
 	bool allNumber = true;

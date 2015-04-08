@@ -3392,7 +3392,8 @@ gint SciTEGTK::Key(GdkEventKey *event) {
 		((event->state & GDK_SHIFT_MASK)   ? SCMOD_SHIFT : 0) |
 		((event->state & GDK_CONTROL_MASK) ? SCMOD_CTRL  : 0) |
 		((event->state & GDK_MOD1_MASK)    ? SCMOD_ALT   : 0);
-	if (extender && extender->OnKey(event->keyval, cmodifiers))
+//!	if (extender && extender->OnKey(event->keyval, cmodifiers))
+	if (extender && extender->OnKey(event->keyval, cmodifiers, 0)) //!-change-[OnKey]
 		return 1;
 
 	int commandID = 0;

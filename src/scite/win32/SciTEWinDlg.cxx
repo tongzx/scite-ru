@@ -1238,6 +1238,7 @@ BOOL SciTEWin::GrepMessage(HWND hDlg, UINT message, WPARAM wParam) {
 				return FALSE;
 			}
 			findWhat = dlg.ItemTextU(IDFINDWHAT);
+			if ( findWhat.length() == 0 ) return FALSE; //!-add-[find_in_files_no_empty]
 			props.Set("find.what", findWhat.c_str());
 			InsertFindInMemory();
 

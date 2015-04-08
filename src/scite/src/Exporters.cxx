@@ -121,7 +121,11 @@ void SciTEBase::SaveToStreamRTF(std::ostream &os, int start, int end) {
 	const std::string valDefault = props.GetExpandedString(key);
 
 	StyleDefinition defaultStyle(valdefDefault.c_str());
-	defaultStyle.ParseStyleDefinition(valDefault.c_str());
+	defaultStyle.ParseStyleDefinition(valDefault.c_str()); 
+//!-start-[StyleDefault]
+	if (defaultStyle.fore == "") defaultStyle.fore = "#000000";
+	if (defaultStyle.back == "") defaultStyle.back = "#FFFFFF";
+//!-end-[StyleDefault]
 
 	int tabSize = props.GetInt("export.rtf.tabsize", props.GetInt("tabsize"));
 	int wysiwyg = props.GetInt("export.rtf.wysiwyg", 1);
