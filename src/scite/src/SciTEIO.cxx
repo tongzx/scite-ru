@@ -784,7 +784,7 @@ void SciTEBase::CheckReload() {
 									FileNameExt().AsInternal());
 						}
 						int decision = WindowMessageBox(wSciTE, msg, MB_YESNO);
-						if (decision == IDYES) {
+						if (decision == mbYes) {
 							Open(filePath, static_cast<OpenFlags>(of | ofForceLoad));
 							DisplayAround(rf);
 						}
@@ -804,7 +804,7 @@ void SciTEBase::CheckReload() {
 								"File '^0' is missing or not available.\nDo you wish to keep the file open in the editor?",
 								filePath.AsInternal());
 						int decision = WindowMessageBox(wSciTE, msg, MB_YESNO);
-						if (decision == IDNO) {
+						if (decision == mbNo) {
 							Close();
 						}
 					}
