@@ -1,5 +1,5 @@
 @ECHO OFF
-SET python=c:\Python25\python.exe
+SET python=c:\Python34\python.exe
 
 IF NOT EXIST "%python%" GOTO error_install
 SET cur_path=%~dp0
