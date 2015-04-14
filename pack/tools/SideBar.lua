@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev, ur4ltz, nicksabaka
-Version 1.28.1
+Version 1.28.2
 ------------------------------------------------------
   Note: Require gui.dll
                lpeg.dll
@@ -341,6 +341,7 @@ end
 local function FileMan_FileExecWithSciTE(cmd, mode)
 	local p0 = props["command.0.*"]
 	local p1 = props["command.mode.0.*"]
+	local p2 = props["command.name.0.*"]
 	props["command.name.0.*"] = 'tmp'
 	props["command.0.*"] = cmd
 	if mode == nil then mode = 'console' end
@@ -348,6 +349,7 @@ local function FileMan_FileExecWithSciTE(cmd, mode)
 	scite.MenuCommand(9000)
 	props["command.0.*"] = p0
 	props["command.mode.0.*"] = p1
+	props["command.name.0.*"] = p2
 end
 
 function FileMan_FileExec(params)
