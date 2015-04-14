@@ -19,8 +19,8 @@
 // Menu IDs.
 // These are located 100 apart. No one will want more than 100 in each menu ;)
 #define IDM_MRUFILE			1000
-//!#define IDM_TOOLS			1100
-#define IDM_TOOLS			9000 //!-change-[ToolsMax]
+//!#define IDM_TOOLS			1100 //!-change-[ToolsMax]
+#define IDM_TOOLS			9000
 #define IDM_BUFFER			1200
 #define IDM_IMPORT			1300
 #define IDM_LANGUAGE			1400

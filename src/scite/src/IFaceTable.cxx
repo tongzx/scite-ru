@@ -286,7 +286,7 @@ static IFaceConstant ifaceConstants[] = {
 	{"IDM_TOGGLEPARAMETERS",412},
 	{"IDM_TOGGLE_FOLDALL",236},
 	{"IDM_TOGGLE_FOLDRECURSIVE",237},
-	{"IDM_TOOLS",1100},
+	{"IDM_TOOLS",9000},
 	{"IDM_TOOLWIN",352},
 	{"IDM_UNDO",201},
 	{"IDM_UNSLASH",804},
@@ -3334,7 +3334,7 @@ static IFaceProperty ifaceProperties[] = {
 
 enum {
 	ifaceFunctionCount = 294,
-	ifaceConstantCount = 2671,
+	ifaceConstantCount = 2672,
 	ifacePropertyCount = 223
 };
 
