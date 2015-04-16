@@ -12,7 +12,7 @@ scroll=no
 selection=no
 contextMenu=no
 singleinstance=yes
-version=4.1.1
+version=4.2.0
 >
 <style type="text/css">
 	body {margin:4px;}
@@ -79,13 +79,13 @@ document.title = SWI.applicationName.replace(/_/g,' ') + ' ' + SWI.version;
 
 var WshShell = new ActiveXObject("WScript.Shell");
 var fso = new ActiveXObject("Scripting.FileSystemObject");
-var script_path = unescape(self.location.href).replace(/file:\/\/\/([a-z]:.*)\/.*?$/i,'$1').replace(/\//g,'\\');
+var script_path = unescape(document.URL).replace(/^file:\/\/(.+?)[^\\]+$/, '$1');
 var reg_backup = 'HKLM\\SOFTWARE\\SciTE\\Script\\WinIntegrator\\';
 var scite_path = '';
 
 // Language =============================================
 function Locale(lng){
-	var filename = scite_path + "\\SciTEGlobal.properties";
+	var filename = scite_path + "SciTEGlobal.properties";
 	if (fso.FileExists(filename)){
 		if (fso.GetFile(filename).Size > 0) {
 			var file = fso.OpenTextFile(filename);
@@ -99,11 +99,11 @@ function Locale(lng){
 				text = text.replace(re, '$1#~ $2');
 			}else{
 				if (lng!='rus') return 'eng';
-				if ((fso.FileExists(scite_path + "\\locale-ru.properties"))) {
+				if ((fso.FileExists(scite_path + "locale-ru.properties"))) {
 					// Set Russian
 					text = text.replace(re, '$2');
 				} else {
-					alert("Русификация интерфейса SciTE невозможна ввиду отсутствия файла\n" + scite_path + "\\locale-ru.properties");
+					alert("Русификация интерфейса SciTE невозможна ввиду отсутствия файла\n" + scite_path + "locale-ru.properties");
 					return false;
 				}
 			};
@@ -144,7 +144,7 @@ function SetInterfaceLng(lng){
 		form.btn_cancel.value = "Cancel";
 		form.btn_about.value = "About";
 
-		alert_msvbvm50_locale = '<font color=red>Can\'t register <b>SciTE.Helper</b></font> in your sistem,<br> because required library <a href="http://www.google.com/search?q=MSVBVM50.DLL" target="_blank"><b>MSVBVM50.DLL</b></a> is absent.';
+		alert_msvbvm60_locale = '<font color=red>Can\'t register <b>SciTE.Helper</b></font> in your sistem,<br> because required library <a href="http://www.google.com/search?q=MSVBVM60.DLL" target="_blank"><b>MSVBVM60.DLL</b></a> is absent.';
 		open_with_scite_locale = "Open with &SciTE";
 
 	}else{
@@ -175,7 +175,7 @@ function SetInterfaceLng(lng){
 		form.btn_cancel.value = "Отмена";
 		form.btn_about.value = "О программе";
 
-		alert_msvbvm50_locale = '<b>SciTE.Helper</b> <font color=red>не был зарегистрирован</font> в Вашей системе,<br>поскольку для его работы необходим <a href="http://www.google.com/search?q=MSVBVM50.DLL" target="_blank"><b>MSVBVM50.DLL</b></a>.';
+		alert_msvbvm60_locale = '<b>SciTE.Helper</b> <font color=red>не был зарегистрирован</font> в Вашей системе,<br>поскольку для его работы необходим <a href="http://www.google.com/search?q=MSVBVM60.DLL" target="_blank"><b>MSVBVM60.DLL</b></a>.';
 		open_with_scite_locale = "Открыть в &SciTE";
 	}
 	window.resizeTo(dialogWidth, form.offsetHeight+35);
@@ -219,8 +219,8 @@ function SetAssociations(){
 	}
 	WshShell.RegWrite(reg_backup+'associations', form.associations.value);
 	WshShell.RegWrite('HKCR\\SciTE.File\\', 'SciTE file');
-	WshShell.RegWrite('HKCR\\SciTE.File\\DefaultIcon\\', scite_path + '\\SciTE.exe,1');
-	WshShell.RegWrite('HKCR\\SciTE.File\\shell\\open\\command\\', '"' + scite_path + '\\SciTE.exe" "%1"');
+	WshShell.RegWrite('HKCR\\SciTE.File\\DefaultIcon\\', scite_path + 'SciTE.exe,1');
+	WshShell.RegWrite('HKCR\\SciTE.File\\shell\\open\\command\\', '"' + scite_path + 'SciTE.exe" "%1"');
 	return true;
 }
 
@@ -254,7 +254,7 @@ function CheckOpenfor(){
 
 function SetOpenfor(){
 	with (WshShell.CreateShortcut(WshShell.SpecialFolders("SendTo") + "\\SciTE.lnk")){
-		TargetPath = scite_path + '\\SciTE.exe';
+		TargetPath = scite_path + 'SciTE.exe';
 		Save();
 	}
 	return true;
@@ -285,8 +285,8 @@ function CheckSession(){
 function SetSessions(){
 	WshShell.RegWrite('HKCR\\.session\\', 'SciTE.Session');
 	WshShell.RegWrite('HKCR\\SciTE.Session\\', 'SciTE session file');
-	WshShell.RegWrite('HKCR\\SciTE.Session\\DefaultIcon\\', scite_path + '\\SciTE.exe,2');
-	WshShell.RegWrite('HKCR\\SciTE.Session\\shell\\open\\command\\', 'cmd /v:on /c "set "file=%1" && start "" "' + scite_path.replace(/\\/g,'\\\\') + '\\\\SciTE.exe" -check.if.already.open=0 "-loadsession:!file:\\=\\\\!"');
+	WshShell.RegWrite('HKCR\\SciTE.Session\\DefaultIcon\\', scite_path + 'SciTE.exe,2');
+	WshShell.RegWrite('HKCR\\SciTE.Session\\shell\\open\\command\\', 'cmd /v:on /c "set "file=%1" && start "" "' + scite_path.replace(/\\/g,'\\\\') + 'SciTE.exe" -check.if.already.open=0 "-loadsession:!file:\\=\\\\!"');
 	return true;
 }
 
@@ -312,7 +312,7 @@ function SetHTML_def(){
 	var current_htmldef = "";
 	try {current_htmldef = WshShell.RegRead('HKLM\\SOFTWARE\\Microsoft\\Internet Explorer\\View Source Editor\\Editor Name\\');} catch(e) {}
 	WshShell.RegWrite(reg_backup+'Source Editor', current_htmldef);
-	WshShell.RegWrite('HKLM\\SOFTWARE\\Microsoft\\Internet Explorer\\View Source Editor\\Editor Name\\', '"' + scite_path + '\\SciTE.exe"');
+	WshShell.RegWrite('HKLM\\SOFTWARE\\Microsoft\\Internet Explorer\\View Source Editor\\Editor Name\\', '"' + scite_path + 'SciTE.exe"');
 	return true;
 }
 
@@ -339,11 +339,11 @@ function CheckHTML(){
 
 function SetHTML(){
 	WshShell.RegWrite('HKCR\\.htm\\OpenWithList\\SCITE.EXE\\', '');
-	WshShell.RegWrite('HKCR\\Applications\\SCITE.EXE\\shell\\edit\\command\\', scite_path + '\\SciTE.exe "%1"');
+	WshShell.RegWrite('HKCR\\Applications\\SCITE.EXE\\shell\\edit\\command\\', scite_path + 'SciTE.exe "%1"');
 	try {WshShell.RegDelete('HKCU\\Software\\Microsoft\\Internet Explorer\\Default HTML Editor\\shell\\edit\\ddeexec\\');} catch(e) {}
-	WshShell.RegWrite('HKCU\\Software\\Microsoft\\Internet Explorer\\Default HTML Editor\\shell\\edit\\command\\', scite_path + '\\SciTE.exe "%1"');
+	WshShell.RegWrite('HKCU\\Software\\Microsoft\\Internet Explorer\\Default HTML Editor\\shell\\edit\\command\\', scite_path + 'SciTE.exe "%1"');
 	WshShell.RegWrite('HKCU\\Software\\Microsoft\\Internet Explorer\\Default HTML Editor\\Description', 'SciTE - a Scintilla based Text Editor');
-	WshShell.RegWrite('HKCU\\Software\\Microsoft\\Shared\\HTML\\Default Editor\\shell\\edit\\command\\', scite_path + '\\SciTE.exe "%1"');
+	WshShell.RegWrite('HKCU\\Software\\Microsoft\\Shared\\HTML\\Default Editor\\shell\\edit\\command\\', scite_path + 'SciTE.exe "%1"');
 	return true;
 }
 
@@ -353,15 +353,15 @@ function UnSetHTML(){
 }
 
 // =============================================================
-// Окно "msvbvm50.dll"
-function AlertMSVBVM50() {
+// Окно "msvbvm60.dll"
+function AlertMSVBVM60() {
 	var html = '<html><head>';
 	html += '<title>SciTE.Helper Install Error<\/title>';
 	html += '<meta http-equiv="content-type" content="text\/html; charset=windows-1251">';
 	html += '<\/head><style>body{text-align:center; background-color:infobackground; font-family:verdana; font-size:10pt; a{color:#000080; text-decoration:none;} a:hover{color:red;}<\/style><body>';
-	html += alert_msvbvm50_locale;
+	html += alert_msvbvm60_locale;
 	html += '<\/body><\/html>';
-	var WinAlert = window.open("about:blank", "", "height=80,width=450,status=no,toolbar=no,menubar=no,location=no");
+	var WinAlert = window.open("about:blank", "", "height=60,width=450,status=no,toolbar=no,menubar=no,location=no");
 	WinAlert.document.write(html);
 }
 
@@ -377,11 +377,11 @@ function CheckHelper(){
 }
 
 function SetHelper(){
-	var file_dll = scite_path + '\\tools\\Helper\\SciTE.dll';
+	var file_dll = scite_path + 'tools\\Helper\\SciTE.dll';
 	if (fso.FileExists(file_dll)){
-	var ret = WshShell.Run('cmd /c for /f %i in ("msvbvm50.dll") do if "%~$PATH:i"=="" exit /b 1', 0, true);
+	var ret = WshShell.Run('cmd /c for /f %i in ("msvbvm60.dll") do if "%~$PATH:i"=="" exit /b 1', 0, true);
 		if (ret !== 0) {
-			AlertMSVBVM50();
+			AlertMSVBVM60();
 			return false;
 		} else {
 			WshShell.Run('Regsvr32 "' + file_dll + '"', 1, false);
@@ -391,7 +391,7 @@ function SetHelper(){
 }
 
 function UnSetHelper(){
-	var file_dll = scite_path + '\\tools\\Helper\\SciTE.dll';
+	var file_dll = scite_path + 'tools\\Helper\\SciTE.dll';
 	if (fso.FileExists(file_dll)){
 		WshShell.Run('Regsvr32 /u "' + file_dll + '"', 1, false);
 	}
@@ -476,11 +476,7 @@ function About() {
 // =============================================================
 // Инициализация формы
 function CheckSciTE(scite_path){
-	if (fso.FileExists(scite_path + "\\SciTE.exe")){
-		return true;
-	}else{
-		return false;
-	}
+	return (fso.FileExists(scite_path + "SciTE.exe"));
 }
 
 function FindSciTE(){
@@ -488,12 +484,8 @@ function FindSciTE(){
 	if (CheckSciTE(scite_path)){
 		return scite_path;
 	}else{
-		scite_path = scite_path.replace(/\\[^\\]+$/,'');
-		if (CheckSciTE(scite_path)){
-			return scite_path;
-		}else{
-			return "";
-		}
+		scite_path = fso.GetFolder(scite_path).ParentFolder.Path + '\\';
+		return (CheckSciTE(scite_path)) ? scite_path : "";
 	}
 }
 
