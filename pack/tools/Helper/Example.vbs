@@ -1,5 +1,16 @@
-'  This - an example and descriptions of all available methods SciTE Helper:
-'  Это - пример и описание всех доступных методов SciTE Helper:
+'  Add this block for run only with 32bit WScript|CScript
+'  Вставка для того, чтобы скрипт запускался только в 32bit версии интерпретаторов WScript|CScript
+'  ===============================================
+Set WshShell = CreateObject("WScript.Shell")
+If WshShell.ExpandEnvironmentStrings("%ProgramFiles(x86)%") <> "%ProgramFiles(x86)%" And InStr(WScript.FullName, WshShell.ExpandEnvironmentStrings("%WINDIR%\SysWOW64")) <> 1 Then
+	x = Split(WScript.FullName, "\")
+	cmd = WshShell.ExpandEnvironmentStrings("%WINDIR%\SysWOW64\") & x(UBound(x)) & " """ & WScript.ScriptFullName & """"
+	WshShell.Run cmd
+	WScript.Quit
+End If
+
+'  EXAMPLES AND DESCRIPTIONS OF ALL AVAILABLE METHODS SCITE HELPER
+'  ПРИМЕРЫ И ОПИСАНИЕ ВСЕХ ДОСТУПНЫХ МЕТОДОВ SCITE HELPER
 '  ===============================================
 '  In the beginning we create object
 '  Вначале создаем объект
