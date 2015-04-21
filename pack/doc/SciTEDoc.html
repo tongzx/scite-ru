@@ -2030,7 +2030,7 @@ NameError: mistake
 	</tr>
 	<tr id='property-fold.at.else'>
 	<td>fold.at.else</td>
-	<td>This option enables folding on the else line of an if statement.</td>
+	<td>This option enables C++ folding on a "} else {" line of an if statement.</td>
 	</tr>
 	<tr id='property-fold.basic.comment.explicit'>
 	<td>fold.basic.comment.explicit</td>
@@ -2054,7 +2054,7 @@ NameError: mistake
 	</tr>
 	<tr id='property-fold.comment'>
 	<td>fold.comment</td>
-	<td>This option enables folding multi-line comments when using the Verilog lexer.</td>
+	<td>This option enables folding multi-line comments and explicit fold points when using the C++ lexer. Explicit fold points allows adding extra folding by placing a //{ comment at the start and a //} at the end of a section that should fold.</td>
 	</tr>
 	<tr id='property-fold.cpp.comment.explicit'>
 	<td>fold.cpp.comment.explicit</td>
@@ -2142,7 +2142,7 @@ NameError: mistake
 	</tr>
 	<tr id='property-fold.preprocessor'>
 	<td>fold.preprocessor</td>
-	<td>This option enables folding preprocessor directives when using the Verilog lexer.</td>
+	<td>This option enables folding preprocessor directives when using the C++ lexer. Includes C#'s explicit #region and #endregion folding directives.</td>
 	</tr>
 	<tr id='property-fold.quotes.python'>
 	<td>fold.quotes.python</td>
@@ -2312,6 +2312,10 @@ NameError: mistake
 	<td>lexer.verilog.allupperkeywords</td>
 	<td>Set to 1 to style identifiers that are all uppercase as documentation keyword.</td>
 	</tr>
+	<tr id='property-lexer.verilog.fold.preprocessor.else'>
+	<td>lexer.verilog.fold.preprocessor.else</td>
+	<td>This option enables folding on `else and `elsif preprocessor directives.</td>
+	</tr>
 	<tr id='property-lexer.verilog.portstyling'>
 	<td>lexer.verilog.portstyling</td>
 	<td>Set to 1 to style input, output, and inout ports differently from regular keywords.</td>
@@ -2334,7 +2338,7 @@ NameError: mistake
 	</tr>
 	<tr id='property-styling.within.preprocessor'>
 	<td>styling.within.preprocessor</td>
-	<td>For Haskell code, determines whether all preprocessor code is styled in the preprocessor style (0, the default) or only from the initial # to the end of the command word(1).</td>
+	<td>For C++ code, determines whether all preprocessor code is styled in the preprocessor style (0, the default) or only from the initial # to the end of the command word(1).</td>
 	</tr>
 	<tr id='property-tab.timmy.whinge.level'>
 	<td>tab.timmy.whinge.level</td>
