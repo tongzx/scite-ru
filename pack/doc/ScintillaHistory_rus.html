@@ -1152,758 +1152,709 @@
     </h3>
     <ul>
 	<li>
-	Released 22 March 2014.
+	Версия 3.4.0 от 22 марта 2014.
 	</li>
 	<li>
-	The Unicode line ends and substyles features added as provisional in 3.2.5 are now finalised.
-	There are now no provisional features.
+	Поддержка Unicode-концов строк (символов перевода строки) и подстили, добавленные в качестве предварительных в версии 3.2.5, теперь утверждены. Теперь они не относятся к временным/предварительным функциям.
 	</li>
 	<li>
-	Added wrap mode SC_WRAP_WHITESPACE which only wraps on whitespace, not on style changes.
+	Добавлен режим переноса SC_WRAP_WHITESPACE, при котором перенос осуществляется только по пробельным символам, а не по изменению стиля.
 	</li>
 	<li>
-	SciTE find and replace strips can perform incremental searching and temporary highlighting of all
-	matches with the find.strip.incremental, replace.strip.incremental, and find.indicator.incremental settings.
+	В SciTE панель найти и заменить может выполнять последовательный поиск и временное выделение всех совпадений с настройками find.strip.incremental, replace.strip.incremental и find.indicator.incremental.
 	</li>
 	<li>
-	SciTE default settings changed to use strips for find and replace and to draw with Direct2D and
-	DirectWrite on Windows.
+	В SciTE настройки по умолчанию изменены для использования панели поиска и замены и отрисовки с Direct2D и DirectWrite в Windows.
 	</li>
 	<li>
-	SciTE on Windows scales image buttons on the find and replace strips to match the current system scale factor.
+	В SciTE в Windows масштабирование изображений кнопок в панели поиска и замены в соответствии с текущим масштабным коэффициентом системы.
 	</li>
 	<li>
-	Additional assembler lexer variant As(SCLEX_AS) for Unix assembly code which uses '#' for comments and
-	';' to separate statements.
+	Дополнительный вариант лексера ассемблера As(SCLEX_AS) для Unix сборки кода с использованием '#' для комментариев и ';' для разделения операторов.
 	</li>
 	<li>
-	Fix Coffeescript lexer for keyword style extending past end of word.
-	Also fixes styling 0...myArray.length all as a number.
+	Исправлен лексер Coffeescript, стиль ключевых слов продолжался за конец слова. Также исправлена подсветка 0...myArray.length целиком как число.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1583/">Bug #1583</a>.
 	</li>
 	<li>
-	Fix crashes and other bugs in Fortran folder by removing folding of do-label constructs.
+	Исправлены падение и другие ошибки в блоках Fortran при удалении свертки конструкций do-label.
 	</li>
 	<li>
-	Deleting a whole line deletes the annotations on that line instead of the annotations on the next line.
+	Удаление всей строки удаляет аннотации к этой строке, вместо аннотаций к следующей строке.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1577/">Bug #1577</a>.
 	</li>
 	<li>
-	Changed position of tall calltips to prefer lower half of screen to cut off end instead of start.
+	Изменена позиция высоких всплывающих сообщений на предпочтительно нижнюю половину экрана, чтобы обрезался конец вместо начала.
 	</li>
 	<li>
-	Fix Qt bug where double click treated as triple click.
+	В Qt исправлена ошибка, при которой двойной клик обрабатывался как тройной клик.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1575/">Bug #1575</a>.
 	</li>
 	<li>
-	On Qt, selecting an item in an autocompletion list that is not currently visible positions it at the top.
+	В Qt выбор пункта в списке автозавершения не перемещал его вверх, на текущую видимую позицию.
 	</li>
 	<li>
-	Fix bug on Windows when resizing autocompletion list with only short strings caused the list to move.
+	Исправлена ошибка в Windows, при изменении размера только список автозавершения с короткими строками мог двигаться.
 	</li>
 	<li>
-	On Cocoa reduce scrollable height by one line to fix bugs with moving caret
-	up or down.
+	В Cocoa уменьшена высота прокрутки на одну строку для исправления ошибки перемещения курсора вверх или вниз.
 	</li>
 	<li>
-	On Cocoa fix calltips which did not appear when they were created in an off-screen position.
+	В Cocoa исправлены подсказки, которые не появлялись, если были созданы вне экрана.
 	</li>
     </ul>
+	<li>Перевод: <b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=ALeXkRU" target=_blank>ALeXkRU</a></b>
+
     <h3>
        <a href="http://prdownloads.sourceforge.net/scintilla/scite339.zip?download">Release 3.3.9</a>
     </h3>
     <ul>
 	<li>
-	Released 31 January 2014.
+	Версия 3.3.9 от 31 января 2014.
 	</li>
 	<li>
-	Fix 3.3.8 bug where external lexers became inaccessible.
+	Исправлена ошибка версии 3.3.8, при которой внешние лексеры стали недоступны.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1574/">Bug #1574</a>.
 	</li>
     </ul>
+	<li>Перевод: <b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=ALeXkRU" target=_blank>ALeXkRU</a></b>
+
     <h3>
        <a href="http://prdownloads.sourceforge.net/scintilla/scite338.zip?download">Release 3.3.8</a>
     </h3>
     <ul>
 	<li>
-	Released 28 January 2014.
+	Версия 3.3.8 от 28 января 2014.
 	</li>
 	<li>
-	DropSelectionN API added to drop a selection from a multiple selection.
+	Добавлен DropSelectionN API для снятия выделения из множественного выбора.
 	</li>
 	<li>
-	CallTipSetPosStart API added to change the position at which backspacing removes the calltip.
+	Добавлен CallTipSetPosStart API для изменения позиции, с которой нажатие backspace удаляет всплывающие подсказки (calltip).
 	</li>
 	<li>
-	SC_MARK_BOOKMARK marker symbol added which looks like bookmark ribbons used in
-	book reading applications.
+	Добавлен символ маркера SC_MARK_BOOKMARK, который выглядит как ленты-закладки, используемые в приложениях для чтения книг.
 	</li>
 	<li>
-	Basic lexer highlights hex, octal, and binary numbers in FreeBASIC which use the prefixes
-	&amp;h, &amp;o and &amp;b respectively.
+	В лексере Basic добавлена подсветка в FreeBASIC шестнадцатиричных, восьмеричных и двоичных чисел, использующих префиксы &amp;h, &amp;o и &amp;b соответственно.
 	<a href="http://sourceforge.net/p/scintilla/feature-requests/1041/">Feature #1041.</a>
 	</li>
 	<li>
-	C++ lexer fixes bug where keyword followed immediately by quoted string continued
-	keyword style.
+	Исправлена ошибка лексера C++, когда ключевое слово следовало сразу за строкой в кавычках, продолжало стиль ключевого слова.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1564/">Bug #1564</a>.
 	</li>
 	<li>
-	Matlab lexer treats '!' differently for Matlab and Octave languages.
+	Лексер Matlab обрабатывает '!' по-разному для языков Matlab и Octave.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1571/">Bug #1571</a>.
 	</li>
 	<li>
-	Rust lexer improved with nested comments, more compliant doc-comment detection,
-	octal literals, NUL characters treated as valid, and highlighting of raw string literals and float literals fixed.
+	Для лексера Rust улучшена работа с вложенными комментариями, более гибкое обнаружение комментариев doc-comment, восьмеричных литералов, правильно обрабатываются символы NUL, исправлена подсветка литералов сырых строк и вещественных литералов (с плавающей точкой).
 	<a href="http://sourceforge.net/p/scintilla/feature-requests/1038/">Feature #1038.</a>
 	<a href="http://sourceforge.net/p/scintilla/bugs/1570/">Bug #1570</a>.
 	</li>
 	<li>
-	On Qt expose the EOLMode on the document object.
+	В Qt показывается EOLMode на объекте документа.
 	</li>
 	<li>
-	Fix hotspot clicking where area was off by half a character width.
+	Исправлена область клика, где не работала площадь половины ширины символа.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1562/">Bug #1562</a>.
 	</li>
 	<li>
-	Tweaked scroll positioning by either 2 pixels or 1 pixel when caret is at left or right of view
-	to ensure caret is inside visible area.
+	Изменено позиционирование прокрутки на 2 или 1 пиксель, когда курсор находится слева или справа от вида, чтобы обеспечить положение курсора внутри видимой области.
 	</li>
 	<li>
-	Send SCN_UPDATEUI with SC_UPDATE_SELECTION for Shift+Tab inside text.
+	Отправка сообщения SCN_UPDATEUI с SC_UPDATE_SELECTION для Shift+Tab внутри текста.
 	</li>
 	<li>
-	On Windows update the system caret position when scrolling to help screen readers
-	see the scroll quickly.
+	В Windows обновлена позиция системной каретки при прокрутке, чтобы помочь чтению с экрана при быстрой прокрутке.
 	</li>
 	<li>
-	On Cocoa, GTK+, and Windows/Direct2D draw circles more accurately so that
-	circular folding margin markers appear circular, of consistent size, and centred.
-	Make SC_MARK_ARROWS drawing more even.
-	Fix corners of SC_MARK_ROUNDRECT with Direct2D to be similar to other platforms.
+	В Cocoa, GTK+ и Windows/Direct2D более точно отрисовываются окружности, так что скругленные маркеры границ свёртки отображаются кругами соответствующего масштаба и по центру. Выбрать параметр SC_MARK_ARROWS для более гладкой отрисовки. Исправлены углы у фигур SC_MARK_ROUNDRECT с Direct2D в соответствии с другими платформами.
 	</li>
 	<li>
-	SciTE uses a bookmark ribbon symbol for bookmarks as it scales better to higher resolutions
-	than the previous blue gem bitmap.
+	SciTE использует символ ленты-закладки для меток, который лучше масштабируется на более высокие разрешения, чем в предыдущее изображение синего самоцвета.
 	</li>
 	<li>
-	SciTE will change the width of margins while running when the margin.width and fold.margin.width
-	properties are changed.
+	SciTE будет изменять ширину полей во время работы при изменении свойств margin.width и fold.margin.width.
 	</li>
 	<li>
-	SciTE on Windows can display a larger tool bar with the toolbar.large property.
+	SciTE в Windows может отображать большую панель инструментов с параметром toolbar.large.
 	</li>
 	<li>
-	SciTE displays a warning message when asked to open a directory.
+	SciTE выдает предупреждающее сообщение при запросе на открытие каталога.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1568/">Bug #1568</a>.
 	</li>
     </ul>
+	<li>Перевод: <b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=ALeXkRU" target=_blank>ALeXkRU</a></b>
+
     <h3>
        <a href="http://prdownloads.sourceforge.net/scintilla/scite337.zip?download">Release 3.3.7</a>
     </h3>
     <ul>
 	<li>
-	Released 12 December 2013.
+	Версия 3.3.7 от 12 декабря 2013 г.
 	</li>
 	<li>
-	Lexer added for DMAP language.
+	Добавлен лексер для языка DMAP.
 	<a href="http://sourceforge.net/p/scintilla/feature-requests/1026/">Feature #1026.</a>
 	</li>
 	<li>
-	Basic lexer supports multiline comments in FreeBASIC.
+	Лексер Basic поддерживает многострочные комментарии в FreeBASIC.
 	<a href="http://sourceforge.net/p/scintilla/feature-requests/1023/">Feature #1023.</a>
 	</li>
 	<li>
-	Bash lexer allows '#' inside words..
+	Лексер Bash позволяет символ '#' внутри слов.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1553/">Bug #1553</a>.
 	</li>
 	<li>
-	C++ lexer recognizes C++11 user-defined literals and applies lexical class SCE_C_USERLITERAL.
+	Лексер C++ распознаёт определяемые пользователем литералы в C++11, используется лексический класс SCE_C_USERLITERAL.
 	</li>
 	<li>
-	C++ lexer allows single quote characters as digit separators in numeric literals like 123'456 as this is
-	included in C++14.
+	Лексер C++ распознаёт символ одинарных кавычек в качестве знака разделителя в числовых литералах, например: 123'456 (это входит в C++14).
 	</li>
 	<li>
-	C++ lexer fixes bug with #include statements without " or &gt; terminating filename.
+	В лексере C++ исправлена ошибка с директивой #include без " или &gt; в завершении имени файла.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1538/">Bug #1538</a>.
 	</li>
 	<li>
-	C++ lexer fixes split of Doxygen keywords @code{.fileExtension} and @param[in,out].
+	В лексере C++ для системы документирования Doxygen исправлено разделение ключевых слов @code{.fileExtension} и @param[in,out].
 	<a href="http://sourceforge.net/p/scintilla/bugs/1551/">Bug #1551</a>.
 	</li>
 	<li>
-	C++ lexer styles Doxygen keywords at end of document.
+	В стили лексера C++ добавлена поддержка ключевых слов Doxygen в конце документа.
 	</li>
 	<li>
-	Cmake lexer fixes bug with empty comments.
+	В лексере Cmake исправлена ошибка с пустыми комментариями.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1550/">Bug #1550</a>.
 	</li>
 	<li>
-	Fortran folder improved. Treats "else" as fold header.
+	Улучшена свёртка в Fortran. Обрабатывается "else" как заголовок блока свёртки.
 	<a href="http://sourceforge.net/p/scintilla/feature-requests/962/">Feature #962.</a>
 	</li>
 	<li>
-	Fix bug with adjacent instances of the same indicator with different values where only the first was drawn.
+	Исправлена ошибка отображения только первого индикатора для соседних экземпляров одного индикатора с разными значениями.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1560/">Bug #1560</a>.
 	</li>
 	<li>
-	For DirectWrite, use the GDI ClearType gamma value for SC_EFF_QUALITY_LCD_OPTIMIZED as
-	this results in text that is similar in colour intensity to GDI.
-	For the duller default DirectWrite ClearType text appearance, use SC_EFF_QUALITY_DEFAULT.
+	Для DirectWrite используется значение гаммы GDI ClearType для SC_EFF_QUALITY_LCD_OPTIMIZED, что позволяет получить текст близкий по интенсивности цвета к GDI. Для задания насыщенности по умолчанию текста ClearType в DirectWrite используется SC_EFF_QUALITY_DEFAULT.
 	<a href="http://sourceforge.net/p/scintilla/feature-requests/887/">Feature #887.</a>
 	</li>
 	<li>
-	Fix another problem with drawing on Windows with Direct2D when returning from lock screen.
-	The whole window is redrawn as just redrawing the initially required area left other areas black.
+	Исправлена ещё одна проблема с отрисовкой в Windows с Direct2D при возвращении из экрана блокировки. Всё окно перерисовывается при необходимости перерисовки сначала требуемой области, оставляя другие области черными.
 	</li>
 	<li>
-	When scroll width is tracked, take width of annotation lines into account.
+	При отслеживании ширины прокрутки учитывается ширина строк аннотаций.
 	</li>
 	<li>
-	For Cocoa on OS X 10.9, responsive scrolling is supported.
+	Для Cocoa в OS X 10.9 поддерживается отзывчивая прокрутка.
 	</li>
 	<li>
-	On Cocoa, apply font quality setting to line numbers.
+	В Cocoa настройка качества шрифта применяется к номеру строки.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1544/">Bug #1544</a>.
 	</li>
 	<li>
-	On Cocoa, clicking in margin now sets focus.
+	В Cocoa клик на поле теперь устанавливает фокус.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1542/">Bug #1542</a>.
 	</li>
 	<li>
-	On Cocoa, correct cursor displayed in margin after showing dialog.
+	В Cocoa правильно отображается курсор на поле после показа диалога.
 	</li>
 	<li>
-	On Cocoa, multipaste mode now works.
+	В Cocoa теперь работает режим мультивставки.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1541/">Bug #1541</a>.
 	</li>
 	<li>
-	On GTK+, chain up to superclass finalize so that all finalization is performed.
+	В GTK+ при передаче финализации (finalizize) суперклассу выполняются все финализации.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1549/">Bug #1549</a>.
 	</li>
 	<li>
-	On GTK+, fix horizontal scroll bar range to not be double the needed width.
+	В GTK+ исправлено удвоение диапазона горизонтальной полосы прокрутки для длинных строк.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1546/">Bug #1546</a>.
 	</li>
 	<li>
-	On OS X GTK+, report control key as SCI_META for mouse down events.
+	Для OS X GTK+ добавлено сообщение управляющей клавиши SCI_META для события нажатия кнопки мыши.
 	</li>
 	<li>
-	On Qt, bug fixed with drawing of scrollbars, where previous contents were not drawn over with some
-	themes.
+	В Qt исправлена ошибка с отрисовкой полос прокрутки, из-за которой предыдущее содержимое не перерисовывалось с некоторыми темами.
 	</li>
 	<li>
-	On Qt, bug fixed with finding monitor rectangle which could lead to autocomplete showing at wrong location.
+	В Qt исправлена ошибка с прямоугольником монитора поиска которая может приводить к отображению автозавершения в неправильном месте.
 	</li>
 	<li>
-	SciTE fix for multiple message boxes when failing to save a file with save.on.deactivate.
+	В SciTE исправлено появление множества окон сообщений, когда не удается сохранить файл с save.on.deactivate.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1540/">Bug #1540</a>.
 	</li>
 	<li>
-	SciTE on GTK+ fixes SIGCHLD handling so that Lua scripts can determine the exit status of processes
-	they start.
+	В SciTE на GTK+ исправлена обработка SIGCHLD, чтобы скрипты Lua могли определить статус завершения процессов, начатых ими.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1557/">Bug #1557</a>.
 	</li>
 	<li>
-	SciTE on Windows XP fixes bad display of find and replace values when using strips.
+	В SciTE на Windows XP исправлено плохое отображение значения найти и заменить при использовании панели.
 	</li>
     </ul>
+	<li>Перевод: <b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=ALeXkRU" target=_blank>ALeXkRU</a></b>
+
     <h3>
        <a href="http://prdownloads.sourceforge.net/scintilla/scite336.zip?download">Release 3.3.6</a>
     </h3>
     <ul>
 	<li>
-	Released 15 October 2013.
+	Версия 3.3.6 от 15 октября 2013 г.
 	</li>
 	<li>
-	Added functions to help convert between substyles and base styles and between secondary and primary styles.
-	SCI_GETSTYLEFROMSUBSTYLE finds the base style of substyles.
-	Can be used to treat all substyles of a style equivalent to that style.
-	SCI_GETPRIMARYSTYLEFROMSTYLE finds the primary style of secondary styles.
-	StyleFromSubStyle and PrimaryStyleFromStyle methods were added to ILexerWithSubStyles so each lexer can implement these.
+	Добавлены функции для преобразования между субстилями и базовыми стилями и между вторичными и первичными стилями. SCI_GETSTYLEFROMSUBSTYLE находит базовый стиль субстилей. Может использоваться для обработки всех субстилей стиля эквивалентных этому стилю. SCI_GETPRIMARYSTYLEFROMSTYLE находит первичный стиль вторичных стилей. Методы StyleFromSubStyle и PrimaryStyleFromStyle добавлены к ILexerWithSubStyles, поэтому каждый лексер может это реализовать.
 	</li>
 	<li>
-	Lexer added for Rust language.
+	Добавлен лексер для языка Rust.
 	<a href="http://sourceforge.net/p/scintilla/feature-requests/1024/">Feature #1024.</a>
 	</li>
 	<li>
-	Avoid false matches in errorlist lexer which is used for the SciTE output pane
-	by stricter checking of ctags lines.
+	Исключены ложные совпадения в списке ошибок лексера, которые используются для панели вывода SciTE при более строгой проверке строк ctags.
 	</li>
 	<li>
-	Perl lexer fixes bugs with multi-byte characters, including in HEREDOCs and PODs.
+	Исправлена ошибка лексера Perl с многобайтовыми символами, в том числе в HEREDOC и POD.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1528/">Bug #1528</a>.
 	</li>
 	<li>
-	SQL folder folds 'create view' statements.
+	В SQL добавлена свёртка операторов 'create view'.
 	<a href="http://sourceforge.net/p/scintilla/feature-requests/1020/">Feature #1020.</a>
 	</li>
 	<li>
-	Visual Prolog lexer updated with better support for string literals and Unicode.
+	Лексер Visual Prolog обновлён: улучшена поддержка строковых литералов и Unicode.
 	<a href="http://sourceforge.net/p/scintilla/feature-requests/1025/">Feature #1025.</a>
 	</li>
 	<li>
-	For SCI_SETIDENTIFIERS, \t, \r, and \n are allowed as well as space between identifiers.
+	Для SCI_SETIDENTIFIERS, \t, \r, и \n допускаются использование пробелов между идентификаторами.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1521/">Bug #1521</a>.
 	</li>
 	<li>
-	Gaining and losing focus is now reported as a notification with the code set to SCN_FOCUSIN
-	or SCN_FOCUSOUT.
-	This allows clients to uniformly use notifications instead of commands.
-	Since there is no longer a need for commands they will be deprecated in a future version.
-	Clients should switch any code that currently uses SCEN_SETFOCUS or SCEN_KILLFOCUS.
+	Перенос и потеря фокуса теперь регистрируются как уведомление с кодом, установленным в SCN_FOCUSIN или SCN_FOCUSOUT. Это позволяет клиентам использовать уведомления вместо команд. Так как в командах больше нет необходимости, в будущих версиях их использование будет прекращено. Клиенты должны изменить код, который в настоящее время использует SCEN_SETFOCUS или SCEN_KILLFOCUS.
 	</li>
 	<li>
-	On Cocoa, clients should use the delegate mechanism or subclass ScintillaView in preference
-	to registerNotifyCallback: which will be deprecated in the future.
+	В Cocoa клиенты должны использовать механизм делегирования или подкласс ScintillaView взамен registerNotifyCallback, использование которого будет прекращено в будущем.
 	</li>
 	<li>
-	On Cocoa, the ScintillaView.h header hides internal implementation details from Platform.h and ScintillaCocoa.h.
-	InnerView was renamed to SCIContentView and MarginView was renamed to SCIMarginView.
-	dealloc removed from @interface.
+	В Cocoa заголовок ScintillaView.h скрывает внутренние детали реализации от Platform.h и ScintillaCocoa.h. InnerView переименован в SCIContentView, а MarginView переименован в SCIMarginView. Метод dealloc удален из @interface.
 	</li>
 	<li>
-	On Cocoa, clients may customize SCIContentView by subclassing both SCIContentView and ScintillaView
-	and implementing the contentViewClass class method on the ScintillaView subclass to return the class of
-	the SCIContentView subclass.
+	В Cocoa клиенты могут настроить SCIContentView путем создания обоих подклассов SCIContentView и ScintillaView и реализации метода класса contentViewClass в подклассе ScintillaView для возврата класса подкласса SCIContentView.
 	</li>
 	<li>
-	On Cocoa, fixed appearance of alpha rectangles to use specified alpha and colour for outline as well as corner size.
-	This makes INDIC_STRAIGHTBOX and INDIC_ROUNDBOX look correct.
+	В Cocoa исправлено появление выделения (альфа прямоугольники) при использовании определенных значений альфа и цвета контура, а также размера углов. Это позволяет INDIC_STRAIGHTBOX и INDIC_ROUNDBOX выглядеть правильно.
 	</li>
 	<li>
-	On Cocoa, memory leak fixed for MarginView.
+	В Cocoa исправлена утечка памяти в MarginView.
 	</li>
 	<li>
-	On Cocoa, make drag and drop work when destination view is empty.
+	В Cocoa перетаскивание работает, когда место назначения представлено пустым.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1534/">Bug #1534</a>.
 	</li>
 	<li>
-	On Cocoa, drag image fixed when view scrolled.
+	В Cocoa исправлено перетаскивание изображений при прокрутке вида.
 	</li>
 	<li>
-	On Cocoa, SCI_POSITIONFROMPOINTCLOSE fixed when view scrolled.
+	В Cocoa исправлено SCI_POSITIONFROMPOINTCLOSE при прокрутке вида.
 	<a href="http://sourceforge.net/p/scintilla/feature-requests/1021/">Feature #1021.</a>
 	</li>
 	<li>
-	On Cocoa, don't send selection change notification when scrolling.
+	В Cocoa не отправлялись уведомления изменения выделения при прокрутке
 	<a href="http://sourceforge.net/p/scintilla/bugs/1522/">Bug #1522</a>.
 	</li>
 	<li>
-	On Qt, turn off idle events on destruction to prevent repeatedly calling idle.
+	В Qt выключено событие простоя (idle) при уничтожении для предотвращения многократных его вызов.
 	</li>
 	<li>
-	Qt bindings in ScintillaEdit changed to use signed first parameter.
+	Привязки Qt в ScintillaEdit изменены для использования первого подписанного параметра.
 	</li>
 	<li>
-	Compilation errors fixed on Windows and GTK+ with SCI_NAMESPACE.
+	Исправлены ошибки компиляции в Windows и GTK+ с SCI_NAMESPACE.
 	</li>
 	<li>
-	On Windows, building with gcc will check if Direct2D headers are available and enable Direct2D if they are.
+	В Windows сборка с компилятором gcc будет проверять доступность заголовков Direct2D и разрешать Direct2D при их наличии.
 	</li>
 	<li>
-	Avoid attempts to redraw empty areas when lexing beyond the currently visible lines.
+	Устранены попытки перерисовки пустых областей, когда подсветка лексики выходит за пределы видимых в данный момент строк.
 	</li>
 	<li>
-	Control more attributes of indicators in SciTE with find.mark.indicator and highlight.current.word.indicator
-	properties.
+	Контроль нескольких атрибутов индикаторов в SciTE с свойствами find.mark.indicator и highlight.current.word.indicator.
 	</li>
 	<li>
-	Fix SciTE bug with buffers becoming read-only.
+	Исправлена ошибка в SciTE с буферами, которые становились доступны только для чтения.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1525/">Bug #1525</a>.
 	</li>
 	<li>
-	Fix linking SciTE on non-Linux Unix systems with GNU toolchain by linking to libdl.
+	Исправлена компоновка SciTE на не-Linux Unix системах с набором пакетов программ GNU toolchain при компоновке с libdl.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1523/">Bug #1523</a>.
 	</li>
 	<li>
-	On Windows, SciTE's Incremental Search displays match failures by changing the background colour
-	instead of not adding the character that caused failure.
+	В Windows в SciTE ошибки последовательного поиска показывались с изменением цвета фона вместо добавления ошибочного символа.
 	</li>
 	<li>
-	Fix SciTE on GTK+ 3.x incremental search to change foreground colour when no match as
-	changing background colour is difficult.
+	В SciTE в GTK+ 3.x исправлено изменение цвета текста при последовательном поиске, когда нет совпадений и изменение цвета фона затруднено.
 	</li>
     </ul>
+	<li>Перевод: <b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=ALeXkRU" target=_blank>ALeXkRU</a></b>
+
     <h3>
        <a href="http://prdownloads.sourceforge.net/scintilla/scite335.zip?download">Release 3.3.5</a>
     </h3>
     <ul>
 	<li>
-	Released 31 August 2013.
+	Версия 3.3.5 от 31 августа 2013 г.
 	</li>
 	<li>
-	Characters may be represented by strings.
-	In Unicode mode C1 control characters are represented by their mnemonics.
+	Символы могут быть представлены строками. В Unicode режиме C1 управляющие символы представлены их мнемоники.
 	</li>
 	<li>
-	Added SCI_POSITIONRELATIVE to optimize navigation by character.
+	Добавлено SCI_POSITIONRELATIVE для оптимизации навигации по символам.
 	</li>
 	<li>
-	Option to allow mouse selection to switch to rectangular by pressing Alt after start of gesture.
+	Параметр, разрешающий при выделении мышью перейти к прямоугольному выделению, нажав Alt после начала жеста.
 	<a href="http://sourceforge.net/p/scintilla/feature-requests/1007/">Feature #1007.</a>
 	</li>
 	<li>
-	Lexer added for KVIrc script.
+	Добавлен лексер для сценариев KVIrc.
 	<a href="http://sourceforge.net/p/scintilla/feature-requests/1008/">Feature #1008.</a>
 	</li>
 	<li>
-	Bash lexer fixed quoted HereDoc delimiters.
+	В лексере Bash исправлена обработка разделителей HereDoc с кавычками.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1500/">Bug #1500</a>.
 	</li>
 	<li>
-	MS SQL lexer fixed ';' to appear as an operator.
+	В лексере MS SQL исправлена применение ';' в качестве оператора.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1509/">Bug #1509</a>.
 	</li>
 	<li>
-	Structured Text lexer fixed styling of enumeration members.
+	В лексере структурированного текста (Structured Text) исправлена подсветка нумерованных элементов.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1508/">Bug #1508</a>.
 	</li>
 	<li>
-	Fixed bug with horizontal caret position when margin changed.
+	Исправлена ошибка с горизонтальной позицией каретки при изменении полей.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1512/">Bug #1512</a>.
 	</li>
 	<li>
-	Fixed bug on Cocoa where coordinates were relative to text subview instead of whole view.
+	Исправлена ошибка в Cocoa использования координат относительно подвида текста вместо полного вида.
 	</li>
 	<li>
-	Ensure selection redrawn correctly in two cases.
-	When switching from stream to rectangular selection with Alt+Shift+Up.
-	When reducing the range of an additional selection by moving mouse up.
+	Обеспечена правильная отрисовка выделения в двух случаях. При переключении с потокового на прямоугольное выделение с Alt+Shift+Up. При уменьшении диапазона дополнительного выделения перемещением мыши вверх.
 	<a href="http://sourceforge.net/p/scintilla/feature-requests/1007/">Feature #1007.</a>
 	</li>
 	<li>
-	Copy and paste of rectangular selections compatible with Borland Delphi IDE on Windows.
+	Копирование и вставка прямоугольных выделений совместимы с Borland Delphi IDE в Windows.
 	<a href="http://sourceforge.net/p/scintilla/feature-requests/1002/">Feature #1002.</a>
 	<a href="http://sourceforge.net/p/scintilla/bugs/1513/">Bug #1513</a>.
 	</li>
 	<li>
-	Initialize extended styles to the default style.
+	Инициализации расширенных стилей в стиле по умолчанию.
 	</li>
 	<li>
-	On Windows, fix painting on an explicit HDC when first paint attempt abandoned.
+	В Windows исправлено закрашивание в явной HDC, когда первая попытка окраски прервана.
 	</li>
 	<li>
-	Qt bindings in ScintillaEdit made to work on 64-bit Unix systems.
+	Привязки Qt в ScintillaEdit работают на 64-битных Unix-системах.
 	</li>
 	<li>
-	Easier access to printing on Qt with formatRange method.
+	Упрощенный доступ к печати на Qt с методом formatRange.
 	</li>
 	<li>
-	Fixed SciTE failure to save initial buffer in single buffer mode.
+	В SciTE исправлена ошибка сохранения начального буфера в режиме одиночного буфера.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1339/">Bug #1339</a>.
 	</li>
 	<li>
-	Fixed compilation problem with Visual C++ in non-English locales.
+	Исправлены проблемы компиляции с Visual C++ в не-английских локалях.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1506/">Bug #1506</a>.
 	</li>
 	<li>
-	Disable Direct2D when compiling with MinGW gcc on Windows because of changes in the recent MinGW release.
+	Отключено Direct2D при компиляции с MinGW gcc в Windows в связи с изменениями в новой версии MinGW.
 	</li>
 	<li>
-	SciTE crash fixed for negative line.margin.width.
+	Исправлено падение SciTE при отрицательных значениях line.margin.width.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1504/">Bug #1504</a>.
 	</li>
 	<li>
-	SciTE fix for infinite dialog boxes when failing to automatically save a file.
+	В SciTE исправлено появление бесконечных диалоговых окон при невозможности автоматического сохранения файла.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1503/">Bug #1503</a>.
 	</li>
 	<li>
-	SciTE settings buffered.draw, two.phase.draw, and technology are applied to the
-	output pane as well as the edit pane.
+	В SciTE настройки buffered.draw, two.phase.draw и технологии применяются в панели результатов и панели редактирования.
 	</li>
     </ul>
+	<li>Перевод: <b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=ALeXkRU" target=_blank>ALeXkRU</a></b>
+
     <h3>
        <a href="http://prdownloads.sourceforge.net/scintilla/scite334.zip?download">Release 3.3.4</a>
     </h3>
     <ul>
 	<li>
-	Released 19 July 2013.
+	Версия 3.3.4 от 19 июля 2013 г.
 	</li>
 	<li>
-	Handling of UTF-8 and DBCS text in lexers improved with methods ForwardBytes and
-	GetRelativeCharacter added to StyleContext.
+	Улучшена обработка текста с кодировкой UTF-8 и DBCS в лексерах, в StyleContext добавлены методы ForwardBytes и GetRelativeCharacter.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1483/">Bug #1483</a>.
 	</li>
 	<li>
-	For Unicode text, case-insensitive searching and making text upper or lower case is now
-	compliant with Unicode standards on all platforms and is much faster for non-ASCII characters.
+	Для Unicode-текста регистронезависимый поиск и преобразование текста в верхний или нижниий регистр теперь соответствуют стандартам Unicode на всех платформах и работает гораздо быстрее для не-ASCII символов.
 	</li>
 	<li>
-	A CategoriseCharacter function was added to return the Unicode general category of a character
-	which can be useful in lexers.
+	Функция CategoriseCharacter добавлена для возврата общей категории Unicode символов, которые могут использоваться в лексерах.
 	</li>
 	<li>
-	On Cocoa, the LCD Optimized font quality level turns font smoothing on.
+	В Cocoa уровень качества LCD-оптимизированного шрифта влияет на сглаживание шрифта.
 	</li>
 	<li>
-	SciTE 'immediate' subsystem added to allow scripts that work while tools are executed.
+	В SciTE добавлена подсистема 'немедленного' разрешения скриптов(сценариев), которые работают в качестве инструментов.
 	</li>
 	<li>
-	Font quality exposed in SciTE as font.quality setting.
+	Качество шрифта в SciTE доступно через настройку/параметр font.quality.
 	</li>
 	<li>
-	On Cocoa, message:... methods simplify direct access to Scintilla and avoid call layers..
+	В Cocoa для message:... методы упрощения прямого доступа к Scintilla и отмены вызова слоев.. (layers..)
 	</li>
 	<li>
-	A68K lexer updated.
+	Лексер A68K обновлён.
 	</li>
 	<li>
-	CoffeeScript lexer fixes a bug with comment blocks.
+	В лексере CoffeeScript исправлена ошибка с блоками комментариев.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1495/">Bug #1495</a>
 	</li>
 	<li>
-	ECL lexer regular expression code fixed.
+	Исправлена ошибка лексера ECL при работе с кодом регулярных выражений.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1491/">Bug #1491</a>.
 	</li>
 	<li>
-	errorlist lexer only recognises Perl diagnostics when there is a filename between
-	"at" and "line". Had been triggering for MSVC errors containing "at line".
+	Лексер errorlist распознаёт только Perl диагностики, когда есть имя файла между "в" и "строке" ("at" и "line"). Были случаи ошибок в MSVC, содержащих "в строке" ("at line").
 	</li>
 	<li>
-	Haskell lexer fixed to avoid unnecessary full redraws.
-	Don't highlight CPP inside comments when styling.within.preprocessor is on.
+	В лексере Haskell исправлен вызов ненужной полной перерисовки. Не работала подсветка CPP внутри комментариев при включенном styling.within.preprocessor.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1459/">Bug #1459</a>.
 	</li>
 	<li>
-	Lua lexer fixes bug in labels with UTF-8 text.
+	В лексере Lua исправлена ошибка в метках с UTF-8 текстом.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1483/">Bug #1483</a>.
 	</li>
 	<li>
-	Perl lexer fixes bug in string interpolation with UTF-8 text.
+	В лексере Perl исправлена ошибка при интерполяции строк с UTF-8 текстом.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1483/">Bug #1483</a>.
 	</li>
 	<li>
-	Fixed bugs with case conversion when the result was longer or shorter than the original text.
-	Could access past end of string potentially crashing.
-	Selection now updated to result length.
+	Исправлены ошибки при преобразовании регистра, когда результат был длиннее или короче, чем оригинальный текст. Возможность получить доступ к вставке в конце строки могла привести к сбою. Выделение теперь обновляет и результирующую длину.
 	</li>
 	<li>
-	Fixed bug where data being inserted and removed was not being reported in
-	notification messages. Bug was introduced in 3.3.2.
+	Исправлена ошибка, когда данные вставлялись и удалялись без сообщения в уведомлениях. Ошибка появилась в 3.3.2.
 	</li>
 	<li>
-	Word wrap bug fixed where the last line could be shown twice.
+	Исправлена ошибка переноса по словам, когда последняя строка могла быть показана дважды.
 	</li>
 	<li>
-	Word wrap bug fixed for lines wrapping too short on Windows and GTK+.
+	Исправлена ошибка переноса по словам в Windows и GTK+ со слишком короткими для переноса строками.
 	</li>
 	<li>
-	Word wrap performance improved.
+	Улучшена производительность при переносе по словам.
 	</li>
 	<li>
-	Minor memory leak fixed.
+	Исправлена небольшая утечка памяти.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1487/">Bug #1487</a>.
 	</li>
 	<li>
-	On Cocoa, fixed insertText: method which was broken when implementing a newer protocol.
+	В Cocoa исправлен метод insertText: , который был сломан при реализации нового протокола.
 	</li>
 	<li>
-	On Cocoa, fixed a crash when performing string folding for bytes that do not represent a character
-	in the current encoding.
+	В Cocoa исправлено падение при выполнении свёртки строк для байтов, которые не представляют собой символ в текущей кодировке.
 	</li>
 	<li>
-	On Qt, fixed layout problem when QApplication construction delayed.
+	В Qt исправлена проблема компоновки, когда построение QApplication отложено.
 	</li>
 	<li>
-	On Qt, find_text reports failure with -1 as first element of return value.
+	В Qt при выполнении find_text появлялось сообщение об ошибке с -1 в качестве первого элемента возвращаемого значения.
 	</li>
 	<li>
-	Fixed SciTE on GTK+ bug where a tool command could be performed using the keyboard while one was
-	already running leading to confusion and crashes.
+	В SciTE в GTK+ исправлена ошибка, при которой вызов команды из меню Tools с помощью клавиатуры во время выполнения другой команды приводил к путанице и аварийному отказу.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1486/">Bug #1486</a>.
 	</li>
 	<li>
-	Fixed SciTE bug in Copy as RTF which was limited to first 32 styles.
+	Исправлена ошибка в SciTE на ограничение первыми 32 стилями при использовании команды "Копировать в формате RTF".
 	<a href="http://sourceforge.net/p/scintilla/bugs/1011/">Bug #1011</a>.
 	</li>
 	<li>
-	Fixed SciTE on Windows user strip height when the system text scaling factor is 125% or 150%.
+	В SciTE в Windows исправлена высота пользовательских панелей при масштабе текста в системе 125% или 150%.
 	</li>
 	<li>
-	Compile time checks for Digital Mars C++ removed.
+	Удалена проверка времени компиляции для Digital Mars C++.
 	</li>
 	<li>
-	Visual C++ 2013 supported.
+	Поддерживается Visual C++ 2013.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1492/">Bug #1492</a>.
 	</li>
 	<li>
-	Python scripts used for building and maintenance improved and moved into scripts directory.
+	Скрипты Python, используемые для сборки и обслуживания, улучшены и перенесены в каталог сценариев.
 	</li>
 	<li>
-	Testing scripts now work on Linux using Qt and PySide.
+	Тестирование скриптов на Linux теперь работает с помощью Qt и PySide.
 	</li>
 	<li>
-	Tk platform defined.
-	Implementation for Tk will be available separately from main Scintilla distribution.
+	Определена платформа Tk. Реализация для Tk будет доступна отдельно от основного дистрибутива Scintilla.
 	</li>
     </ul>
+	<li>Перевод: <b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=ALeXkRU" target=_blank>ALeXkRU</a></b>
+
     <h3>
        <a href="http://prdownloads.sourceforge.net/scintilla/scite333.zip?download">Release 3.3.3</a>
     </h3>
     <ul>
 	<li>
-	Released 2 June 2013.
+	Версия 3.3.3 от 2 июня 2013 г.
 	</li>
 	<li>
-	Lexer and folder added for Structured Text language.
+	Добавлены лексер и свёртка для языка структурированного текста (Structured Text, применяется в программируемых контроллерах).
 	<a href="http://sourceforge.net/p/scintilla/feature-requests/959/">Feature #959.</a>
 	</li>
 	<li>
-	Out of bounds access fixed for GTK+.
+	Исправлен доступ за выделенный диапазон в GTK+.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1480/">Bug #1480</a>.
 	</li>
 	<li>
-	Crash fixed for GTK+ on Windows paste.
+	Исправлено падение в GTK+ при вставке в окна.
 	</li>
 	<li>
-	Bug fixed with incorrect event copying on GTK+ 3.x.
+	Исправлена ошибка с некорректным событием при копировании в GTK+ 3.x.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1481/">Bug #1481</a>.
 	</li>
 	<li>
-	Bug fixed with right to left locales, like Hebrew, on GTK+.
+	Исправлена ошибка в GTK+ с языками с написанием справа налево, например, иврит.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1477/">Bug #1477</a>.
 	</li>
 	<li>
-	Bug fixed with undo grouping of tab and backtab commands.
+	Исправлена ошибка с отменой группы команд вставки/отмены табуляции.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1478/">Bug #1478</a>.
 	</li>
     </ul>
+	<li>Перевод: <b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=ALeXkRU" target=_blank>ALeXkRU</a></b>
+
     <h3>
        <a href="http://prdownloads.sourceforge.net/scintilla/scite332.zip?download">Release 3.3.2</a>
     </h3>
     <ul>
 	<li>
-	Released 22 May 2013.
+	Версия 3.3.2 от 22 мая 2013 г.
 	</li>
 	<li>
-	Basic implementations of common folding methods added to Scintilla to make it
-	easier for containers to implement folding.
+	В Scintilla добавлена базовая реализация общих методов свертки, чтобы сделать ее более легкой для контейнеров при реализации свёртки.
 	</li>
 	<li>
-	Add indicator INDIC_COMPOSITIONTHICK, a thick low underline, to mimic an
-	appearance used for Asian language input composition.
+	Добавлен индикатор INDIC_COMPOSITIONTHICK (жирное нижнее подчеркивание) для имитации внешнего вида, используемого при вводе составных конструкций на азиатских языках.
 	</li>
 	<li>
-	On Cocoa, implement font quality setting.
+	В Cocoa добавлена настройка степени соответствия шрифта (font quality).
 	<a href="http://sourceforge.net/p/scintilla/feature-requests/988/">Feature #988.</a>
 	</li>
 	<li>
-	On Cocoa, implement automatic enabling of commands and added clear command.
+	В Cocoa реализовано автоматическое включение команд и добавлена команда Очистить (clear).
 	<a href="http://sourceforge.net/p/scintilla/feature-requests/987/">Feature #987.</a>
 	</li>
 	<li>
-	C++ lexer adds style for preprocessor doc comment.
+	В лексер C++ добавлен стиль для потоковых комментариев препроцессора.
 	<a href="http://sourceforge.net/p/scintilla/feature-requests/990/">Feature #990.</a>
 	</li>
 	<li>
-	Haskell lexer and folder improved. Separate mode for literate Haskell "literatehaskell" SCLEX_LITERATEHASKELL.
+	Улучшен лексер и свёртка для Haskell. Отдельный режим для literate Haskell "literatehaskell" SCLEX_LITERATEHASKELL.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1459/">Bug #1459 </a>.
 	</li>
 	<li>
-	LaTeX lexer bug fixed for Unicode character following '\'.
+	Исправлена ошибка в лексере LaTeX для юникод-символов, следующих за '\'.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1468/">Bug #1468 </a>.
 	</li>
 	<li>
-	PowerShell lexer recognises here strings and doccomment keywords.
-	#region folding added.
+	Лексер PowerShell распознаёт автономные строки (here-string) и ключевые слова в потоковых комментариях doccomment. Добавлена свёртка блока #region.
 	<a href="http://sourceforge.net/p/scintilla/feature-requests/985/">Feature #985.</a>
 	</li>
 	<li>
-	Fix multi-typing when two carets are located in virtual space on one line so that spaces
-	are preserved.
+	Исправлен мультиввод, когда две каретки находятся в виртуальном пространстве на одной строке, так что пространства сохраняются.
 	</li>
 	<li>
-	Fixes to input composition on Cocoa and implementation of accented character input through
-	press and hold. Set selection correctly so that changes to pieces of composition text are easier to perform.
-	Restore undo collection after a sequence of composition actions.
-	Composition popups appear near input.
+	Исправления для ввода составных текстовых конструкций в Cocoa и реализации ввода акцентированных символов с помощью нажатия и удерживания. Правильное определение выделения, чтобы легче выполнять изменения в части составных конструкций текста. Восстановление после ряда отмен последовательности действий с составным текстом. Всплывающие окна составных конструкций текста появляются у места ввода.
 	</li>
 	<li>
-	Fix lexer problem where no line end was seen at end of document.
+	Исправлена проблема лексера, когда строка не заканчивается до конца документа.
 	</li>
 	<li>
-	Fix crash on Cocoa when view deallocated.
+	Исправлено падение в Cocoa при освобождении вида.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1466/">Bug #1466</a>.
 	</li>
 	<li>
-	Fix Qt window positioning to not assume the top right of a monitor is at 0, 0.
+	В Qt исправлено позиционирование окна, когда не присвоено правому верхнем углу монитора значение 0, 0.
 	</li>
 	<li>
-	Fix Qt to not track mouse when widget is hidden.
+	В Qt исправлено неотслеживание мыши при скрытом виджете.
 	</li>
 	<li>
-	Qt now supports Qt 5.0.
+	Qt теперь поддерживает версию Qt 5.0.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1448/">Bug #1448</a>.
 	</li>
 	<li>
-	Fix drawing on Windows with Direct2D when returning from lock screen.
-	The render target had to be recreated and an area would be black since the drawing was not retried.
+	Исправлена отрисовка в Windows с Direct2D при возвращении из экрана блокировки. Вместо воссоздаваемого окна при обновлении появлялась черная область, так как изображение не было повторено.
 	</li>
 	<li>
-	Fix display of DBCS documents on Windows Direct2D/DirectWrite with default character set.
+	Исправлено отображение DBCS-документов (текст с двухбайтовыми символами) в Windows с Direct2D/DirectWrite с кодировкой по умолчанию.
 	</li>
 	<li>
-	For SciTE on Windows, fixed most-recently-used menu when files opened through check.if.already.opened.
+	Для SciTE в Windows исправлено меню недавно использованных файлов при открыии с помощью check.if.already.opened.
+</li>
+	<li>
+	В SciTE не повторяется вызов OnSave при сохранении файлов в асинхронном режиме.
 	</li>
 	<li>
-	In SciTE, do not call OnSave twice when files saved asynchronously.
-	</li>
-	<li>
-	Scintilla no longer builds with Visual C++ 6.0.
+	Scintilla больше не собирается с Visual C++ 6.0.
 	</li>
     </ul>
+	<li>Перевод: <b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=ALeXkRU" target=_blank>ALeXkRU</a></b>
+
     <h3>
        <a href="http://prdownloads.sourceforge.net/scintilla/scite331.zip?download">Release 3.3.1</a>
     </h3>
     <ul>
 	<li>
-	Released 11 April 2013.
+	Версия 3.3.1 от 11 апреля 2013 г.
 	</li>
 	<li>
-	Autocompletion lists can now appear in priority order or be sorted by Scintilla.
+	Списки автозавершения могут отображаться в порядке приоритета или быть отсортированы Scintilla.
 	<a href="http://sourceforge.net/p/scintilla/feature-requests/981/">Feature #981.</a>
 	</li>
 	<li>
-	Most lexers now lex an extra NUL byte at the end of the
-	document which makes it more likely they will classify keywords at document end correctly.
+	Большинство лексеров теперь распознают дополнительный нулевой байт в конце документа, что увеличивает возможность правильно классифицировать ключевые слова в конце документа.
 	<a href="http://sourceforge.net/p/scintilla/bugs/574/">Bug #574</a>,
 	<a href="http://sourceforge.net/p/scintilla/bugs/588/">Bug #588.</a>
 	</li>
 	<li>
-	Haskell lexer improved in several ways.
+	В лексере Haskell внесены ряд улучшений.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1459/">Bug #1459.</a>
 	</li>
 	<li>
-	Matlab/Octave lexer recognises block comments and ... comments.
+	Лексер Matlab/Octave распознаёт блоки комментариев и ... комментарии.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1414/">Bug #1414.</a>
 	</li>
 	<li>
-	Ruby lexer crash fixed with keyword at start of document.
+	Исправлено падение лексера Ruby с ключевым словом в начале документа.
 	</li>
 	<li>
-	The PLAT_NCURSES platform now called PLAT_CURSES as may work on other implementations.
+	Платформа PLAT_NCURSES теперь именуется PLAT_CURSES для работы с другими реализациями.
 	</li>
 	<li>
-	Bug on Cocoa fixed where input composition with multiple selection or virtual space selection
-	could make undo stop working.
+	Исправлена ошибка в Cocoa, которая могла приводить к отмене остановки работы при вводе в сочетании с множественным выделением или выбором виртуального пространства.
 	</li>
 	<li>
-	Direct2D/DirectWrite mode on Windows now displays documents in non-Latin1 8-bit encodings correctly.
+	В режиме Direct2D/DirectWrite в Windows теперь правильно отображаются документы в 8-битной кодировке non-Latin1.
 	</li>
 	<li>
-	Character positioning corrected in Direct2D/DirectWrite mode on Windows to avoid text moving and cutting off
-	lower parts of characters.
+	В режиме Direct2D/DirectWrite в Windows исправлено позиционирование символов для устранения смещения текста и отрезания нижней части символов.
 	</li>
 	<li>
-	Position of calltip and autocompletion lists fixed on Cocoa.
+	В Cocoa исправлено положение всплывающих подсказок и списков автозавершения.
 	</li>
 	<li>
-	While regular expression search in DBCS text is still not working, matching partial characters is now avoided
-	by moving end of match to end of character.
+	Поиск регулярных выражений в DBCS-тексте (текст с двухбайтовыми символами) по-прежнему не работает, соответствующие группы символов в настоящее время пропускаются путём перемещения конца совпадения в конец символа.
 	</li>
     </ul>
+	<li>Перевод: <b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=ALeXkRU" target=_blank>ALeXkRU</a></b>
 
     <h3>
        <a href="http://prdownloads.sourceforge.net/scintilla/scite330.zip?download">Release 3.3.0</a>
