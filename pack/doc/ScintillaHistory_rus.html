@@ -489,664 +489,609 @@
     </h3>
     <ul>
 	<li>
-	Released 17 April 2015.
+	Версия 3.5.5 от 17 апреля 2015.
 	</li>
 	<li>
-	Scintilla on Windows is now always a wide character window so SCI_SETKEYSUNICODE has no effect
-	and SCI_GETKEYSUNICODE always returns true. These APIs are deprecated and should not be called.
+	Scintilla в Windows теперь всегда использует окно wide character, поэтому функция SCI_SETKEYSUNICODE не работает и SCI_GETKEYSUNICODE всегда возвращает истину (true). Эти API являются устаревшими и не должны вызываться.
 	</li>
 	<li>
-	The wxWidgets-specific ascent member of Font has been removed which breaks
-	compatibility with current wxStyledTextCtrl.
+	Удалены характерные для wxWidgets надстрочные элементы шрифта, нарушающие совместимость с текущей wxStyledTextCtrl.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1682/">Bug #1682</a>.
 	</li>
 	<li>
-	IME on Qt supports multiple carets and behaves more like other platforms.
+	Редактор метода ввода (IME) в Qt поддерживает несколько кареток (множественные выделения) и его поведение приближено к другим платформам.
 	</li>
 	<li>
-	Always use inline IME on GTK+ for Korean.
+	Для корейского языка всегда используется встроенный IME в GTK+.
 	</li>
 	<li>
-	SQL lexer fixes handling of '+' and '-' in numbers so the '-' in '1-1' is seen as an operator and for
-	'1--comment' the comment is recognized.
+	В лексере SQL исправлена обработка '+' и '-' в числах, '-' в выражении '1-1' рассматривается как оператор и распознаётся комментарий в конструкции '1--комментарий'.
 	</li>
 	<li>
-	TCL lexer reverts change to string handling.
+	В лексер TCL возвращено изменение обработки строк.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1642/">Bug #1642</a>.
 	</li>
 	<li>
-	Verilog lexer fixes bugs with macro styling.
-	Verilog folder fixes bugs with `end completing an `if* instead of `endif and fold.at.else, and implements
-	folding at preprocessor `else.
+	В лексере Verilog исправлена ошибка стилей макро. Исправлена ошибка свёртки в Verilog с завершением блока `end в `if* вместо `endif и fold.at.else и реализована свёртка препроцессора с `else.
 	</li>
 	<li>
-	VHDL lexer supports extended identifiers.
+	Лексер VHDL поддерживает расширенные идентификаторы.
 	</li>
 	<li>
-	Fix bug on Cocoa where the calltip would display incorrectly when
-	switching calltips and the new calltip required a taller window.
+	Исправлена ошибка в Cocoa с некорректным отображением всплывающих подсказок при их переключении, когда новая подсказка требует более высокого окна.
 	</li>
 	<li>
-	Fix leak on Cocoa with autocompletion lists.
+	В Cocoa исправлена утечка при работе со списками автозавершения.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1706/">Bug #1706</a>.
 	</li>
 	<li>
-	Fix potential crash on Cocoa with drag and drop.
+	В Cocoa исправлены возможные падения при использовании перетаскивания.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1709/">Bug #1709</a>.
 	</li>
 	<li>
-	Fix bug on Windows when compiling with MinGW-w64 which caused text to not be drawn
-	when in wrap mode.
+	Исправлена ошибка в Windows при компиляции с MinGW-w64, вызывающая невозможность отображения текста в режиме переноса по словам.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1705/">Bug #1705</a>.
 	</li>
 	<li>
-	Fix SciTE bug with missing file open filters and add hex to excluded set of properties files so that its
-	settings don't appear.
+	Исправлена ошибка SciTE с потерей фильтров в списке при открывании файла и добавлении знака решётки # для исключённых из набора в файле properties, так что его параметры не отображаются.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1707/">Bug #1707</a>.
 	</li>
 	<li>
-	Fix SciTE bug where files without extensions like "makefile" were not highlighted correctly.
+	Исправлена ошибка SciTE с неправильной подсветкой в файлах без расширений, таких как "makefile".
 	</li>
     </ul>
+	<li>Перевод: <b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=ALeXkRU" target=_blank>ALeXkRU</a></b>
+
     <h3>
        <a href="http://prdownloads.sourceforge.net/scintilla/scite354.zip?download">Release 3.5.4</a>
     </h3>
     <ul>
 	<li>
-	Released 8 March 2015.
+	Версия 3.5.4 от 8 марта 2015.
 	</li>
 	<li>
-	Indicators may have a different colour and style when the mouse is over them or the caret is moved into them.
+	Индикаторы могут иметь различный цвет и стиль при нахождении указателя мыши над ними или перемещении курсора/каретки в них.
 	</li>
 	<li>
-	An indicator may display in a large variety of colours with the SC_INDICFLAG_VALUEFORE
-	flag taking the colour from the indicator's value, which may differ for every character, instead of its
-	foreground colour attribute.
+	Индикатор может отображаться в большем разнообразии цветов с флагом SC_INDICFLAG_VALUEFORE, принимая цвет от значения индикатора, который может отличаться для каждого символа, вместо его атрибута цвета текста (foreground).
 	</li>
 	<li>
-	On Cocoa, additional IME methods implemented so that more commands are enabled.
-	For Japanese: Reverse Conversion, Convert to Related Character, and Search Similar Kanji
-	can now be performed.
-	The global definition hotkey Command+Control+D and the equivalent three finger tap gesture
-	can be used.
+	В Cocoa реализованы дополнительные методы Редактора метода ввода (IME) для включения нескольких команд. Для японского могут быть выполнены: Обратное преобразование, Преобразовать в родственный символ, и Поиск похожих кандзи. Глобальные сочетания клавиш задаются Command+Control+D и может использоваться жест эквивалентный касанию трёх пальцев.
 	</li>
 	<li>
-	Minimum version of Qt supported is now 4.8 due to the use of QElapsedTimer::nsecsElapsed.
+	Теперь минимальная поддерживаемая версия Qt 4.8 из-за использования QElapsedTimer::nsecsElapsed.
 	</li>
 	<li>
-	On Windows, for Korean, the VK_HANJA key is implemented to choose Hanja for Hangul and
-	to convert from Hanja to Hangul.
+	В Windows для корейского языка ключ VK_HANJA реализует выбор иероглифов ханча (Hanja) для хангыля (Hangul) и конвертирование из ханча в хангыль.
 	</li>
 	<li>
-	C++ lexer adds lexer.cpp.verbatim.strings.allow.escapes option that allows verbatim (@") strings
-	to contain escape sequences. This should remain off (0) for C# and be turned on (1) for Objective C.
+	В лексер C++ добавлена опция lexer.cpp.verbatim.strings.allow.escapes, с которой разрешено использование дословных строк (@"), содержащих управляющие последовательности. Её можно отключить (0) для C# и включить (1) для Objective C.
 	</li>
 	<li>
-	Rust lexer accepts new 'is'/'us' integer suffixes instead of 'i'/'u'.
+	Лексер Rust принимает новые суффиксы 'is'/'us' целых переменных вместо 'i'/'u'.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1098/">Bug #1098</a>.
 	</li>
 	<li>
-	Ruby folder can fold multiline comments.
+	В Ruby работает свёртка многострочных комментариев.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1697/">Bug #1697</a>.
 	</li>
 	<li>
-	SQL lexer fixes a bug with the q-quote operator.
+	Исправлена ошибка лексера SQL с оператором кавычки q.
 	</li>
 	<li>
-	TCL lexer fixes a bug with some strings.
+	Исправлена ошибка лексера TCL с некоторыми строками.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1642/">Bug #1642</a>.
 	</li>
 	<li>
-	Verilog lexer handles escaped identifiers that begin with \ and end with space like \reset* .
-	Verilog folder fixes one bug with inconsistent folding when fold.comment is on and another
-	with typedef class statements creating a fold point, expecting an endclass statement.
+	Лексер Verilog пропускал обработку идентификаторов, которые начинаются с \ и заканчиваются пробелом, например: \reset* . Исправлены ошибки в Verilog с неработающей свёрткой при включенном fold.comment, и при обработке операторов typedef class создавалось начало блока свёртки и ожидался оператор endclass.
 	</li>
 	<li>
-	VHDL folder fixes hang in folding when document starts with "entity".
+	Исправлено подвисание свёртки при обработке блоков в VHDL, когда документ начинается с объявления интерфейса объекта "entity".
 	</li>
 	<li>
-	Add new indicators INDIC_COMPOSITIONTHIN, INDIC_FULLBOX, and INDIC_TEXTFORE.
-	INDIC_COMPOSITIONTHIN is a thin underline that mimics the appearance of non-target segments in OS X IME.
-	INDIC_FULLBOX is similar to INDIC_STRAIGHTBOX but covers the entire character area which means that
-	indicators with this style on contiguous lines may touch. INDIC_TEXTFORE changes the text foreground colour.
+	Добавлены новые индикаторы INDIC_COMPOSITIONTHIN, INDIC_FULLBOX и INDIC_TEXTFORE. INDIC_COMPOSITIONTHIN выводит тонкое подчёркивание, имитируя вид нецелевых сегментов в OS X IME. INDIC_FULLBOX похож на INDIC_STRAIGHTBOX, но включает всю область символа, а значит, индикаторы с этим стилем на смежных строках могут касаться. INDIC_TEXTFORE меняет цвет текста (foreground).
 	</li>
 	<li>
-	Fix adaptive scrolling speed for GTK+ on OS X with GTK Quartz backend (as opposed to X11 backend).
+	Исправлена адаптивная скорость прокрутки для GTK+ на OS X с backend-генерацией кода с GTK Quartz (а не X11 backend).
 	<a href="http://sourceforge.net/p/scintilla/bugs/1696/">Bug #1696</a>.
 	</li>
 	<li>
-	Fix position of autocompletion and calltips on Cocoa when there were two screens stacked vertically.
+	Исправлено положение автозавершения и всплывающих подсказок в Cocoa при вертикальном расположении двух экранов.
 	</li>
 	<li>
-	Fix crash in SciTE when saving large files in background when closing application.
+	В SciTE исправлено падение при сохранении больших файлов в фоновом режиме при закрытии приложения.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1691/">Bug #1691</a>.
 	</li>
 	<li>
-	Fix decoding of MSVC warnings in SciTE so that files in the C:\Program Files (x86)\ directory can be opened.
-	This is a common location of system include files.
+	Исправлено декодирование предупреждений MSVC в SciTE что файлы в каталоге C:\Program Files (x86)\ могут быть открыты. Это обычное размещение системных файлов.
 	</li>
 	<li>
-	Fix compilation failure of C++11 &lt;regex&gt; on Windows using gcc.
+	Исправлена ошибка компиляции C++11 &lt;regex&gt; (регулярных выражений) в Windows с помощью gcc.
 	</li>
     </ul>
+	<li>Перевод: <b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=ALeXkRU" target=_blank>ALeXkRU</a></b>
+
     <h3>
        <a href="http://prdownloads.sourceforge.net/scintilla/scite353.zip?download">Release 3.5.3</a>
     </h3>
     <ul>
 	<li>
-	Released 20 January 2015.
+	Версия 3.5.3 от 20 января 2015.
 	</li>
 	<li>
-	Support removed for Windows 95, 98, and ME.
+	Убрана поддержка для Windows 95, 98, и ME.
 	</li>
 	<li>
-	Lexers added for Motorola S-Record files, Intel hex files, and Tektronix extended hex files with folding for Intel hex files.
+	Добавлены лексеры для файлов Motorola S-Record, файлов Intel HEX и файлов Tektronix extended HEX с поддержкой свёртки файлов Intel HEX.
 	<a href="http://sourceforge.net/p/scintilla/feature-requests/1091/">Feature #1091.</a>
 	<a href="http://sourceforge.net/p/scintilla/feature-requests/1093/">Feature #1093.</a>
 	<a href="http://sourceforge.net/p/scintilla/feature-requests/1095/">Feature #1095.</a>
 	<a href="http://sourceforge.net/p/scintilla/feature-requests/1096/">Feature #1096.</a>
 	</li>
 	<li>
-	C++ folder allows folding on square brackets '['.
+	В C++ разрешена свёртка блоков в квадратных скобках '['.
 	<a href="http://sourceforge.net/p/scintilla/feature-requests/1087/">Feature #1087.</a>
 	</li>
 	<li>
-	Shell lexer fixes three issues with here-documents.
+	В лексере Shell исправлены три проблемы с here-документами.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1672/">Bug #1672</a>.
 	</li>
 	<li>
-	Verilog lexer highlights doc comment keywords; has separate styles for input, output, and inout ports
-	(lexer.verilog.portstyling); fixes a bug in highlighting numbers; can treat upper-case identifiers as
-	keywords (lexer.verilog.allupperkeywords); and can use different styles for code that is inactive due
-	to preprocessor commands (lexer.verilog.track.preprocessor, lexer.verilog.update.preprocessor).
+	В лексере Verilog добавлена подсветка ключевых слов doc-комментариев; имеются отдельные стили для портов ввода - input, вывода - output, и inout (lexer.verilog.portstyling); исправлена ошибка в подсветке чисел; лексер может обрабатывать идентификаторы в верхнем регистре как ключевые слова (lexer.verilog.allupperkeywords); лексер может использовать различные стили для неактивного из-за команд препроцессора кода (lexer.verilog.track.preprocessor, lexer.verilog.update.preprocessor).
 	</li>
 	<li>
-	When the calltip window is taller than the Scintilla window, leave it in a
-	position that avoids overlapping the Scintilla text.
+	Когда окно всплывающей подсказки выше, чем окно Scintilla, оно размещается так, чтобы не перекрывать текст Scintilla.
 	</li>
 	<li>
-	When a text margin is displayed, for annotation lines, use the background colour of the base line.
+	При отображении границы текста для строк аннотаций используется цвет фона базовой строки.
 	</li>
 	<li>
-	On Windows GDI, assume font names are encoded in UTF-8. This matches the Direct2D code path.
+	В Windows GDI допустимые имена шрифтов кодируются в UTF-8. Это соответствует разработке кода Direct2D.
 	</li>
 	<li>
-	Fix paste for GTK+ on OS X.
+	Исправлена вставка для GTK+ в OS X.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1677/">Bug #1677</a>.
 	</li>
 	<li>
-	Reverted a fix on Qt where Qt 5.3 has returned to the behaviour of 4.x.
+	Восстановлено исправление в Qt, когда Qt 5.3 вернулась к поведению 4.x.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1575/">Bug #1575</a>.
 	</li>
 	<li>
-	When the mouse is on the line between margin and text changed to treat as within text.
-	This makes the PLAT_CURSES character cell platform work better.
+	Теперь положение мыши на линии между границей и текстом относится к тексту. Это улучшает работу платформы символьных ячеек PLAT_CURSES.
 	</li>
 	<li>
-	Fix a crash in SciTE when the command line is just "-close:".
+	Исправлено падение в SciTE, когда командная строка содержит только "-close:".
 	<a href="http://sourceforge.net/p/scintilla/bugs/1675/">Bug #1675</a>.
 	</li>
 	<li>
-	Fix unexpected dialog in SciTE on Windows when the command line has a quoted filename then ends with a space.
+	Исправлен неожиданный диалог в SciTE в Windows, когда командная строка содержит имя файла в кавычках и заканчивается пробелом.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1673/">Bug #1673</a>.
 	</li>
 	<li>
-	On Windows and GTK+, use indicators for inline IME.
+	В Windows и GTK+ для встроенного Редактора метода ввода (IME) используются индикаторы.
 	</li>
 	<li>
-	SciTE shuts down quicker when there is no user-written OnClose function and no directors are attached.
+	SciTE выключается быстрее при отсутствии пользовательских функций OnClose и подключенных Директоров SciTE.
 	</li>
     </ul>
+	<li>Перевод: <b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=ALeXkRU" target=_blank>ALeXkRU</a></b>
+
     <h3>
        <a href="http://prdownloads.sourceforge.net/scintilla/scite352.zip?download">Release 3.5.2</a>
     </h3>
     <ul>
 	<li>
-	Released 2 December 2014.
+	Версия 3.5.2 от 2 декабря 2014.
 	</li>
 	<li>
-	For OS X Cocoa switch C++ runtime to libc++ to enable use of features that will never
-	be added to libstdc++ including those part of C++11.
-	Scintilla will now run only on OS X 10.7 or later and only in 64-bit mode.
+	Для OS X Cocoa библиотека выполнения C++ переключена на libc++, чтобы разрешить использование возможностей, которые никогда не будут добавлены в libstdc++, включая соответствующую часть C++11. Теперь Scintilla будет работать только на OS X 10.7 или более поздней версии, и только в 64-битном режиме.
 	</li>
 	<li>
-	Include support for using C++11 &lt;regex&gt; for regular expression searches.
-	Enabling this requires rebuilding Scintilla with a non-default option.
-	This is a provisional feature and may change API before being made permanent.
+	Включена поддержка C++11 &lt;regex&gt; при использовании регулярных выражений в поиске. Включение этой функции требует пересборки Scintilla с параметрами не по умолчанию. Это предварительная функция, API может изменяться, прежде чем станет постоянным.
 	</li>
 	<li>
-	Allocate indicators used for Input Method Editors after 31 which was the previous limit of indicators to
-	ensure no clash between the use of indicators for IME and for the application.
+	Для компонентов редактора метода ввода (IME) выделены индикаторы после 31 (ранее - максимальное значение), чтобы исключить конфликты использования индикаторов для IME и для приложения.
 	</li>
 	<li>
-	ANNOTATION_INDENTED added which is similar to ANNOTATION_BOXED in terms of positioning
-	but does not show a border.
+	Добавлено ANNOTATION_INDENTED, аналогичное ANNOTATION_BOXED по позиционированию, но без границы/контура.
 	<a href="http://sourceforge.net/p/scintilla/feature-requests/1086/">Feature #1086.</a>
 	</li>
 	<li>
-	Allow platform overrides for drawing tab arrows, wrap markers, and line markers.
-	Size of double click detection area is a variable.
-	These enable better visuals and behaviour for PLAT_CURSES as it is character cell based.
+	Платформе разрешается переопределять отрисовку стрелок табуляции, меток переноса и меток строк. Размер области обнаружения двойного клика теперь переменный. Это позволяет лучше отображать и контролировать поведение PLAT_CURSES, основанного на символьной сетке.
 	</li>
 	<li>
-	CoffeeScript lexer fixes "/*" to not be a comment.
+	В лексере CoffeeScript исправлена обработка комментариев с "/*".
 	<a href="http://sourceforge.net/p/scintilla/bugs/1420/">Bug #1420</a>.
 	</li>
 	<li>
-	VHDL folder fixes "block" keyword.
+	В VHDL исправлена свёртка ключевых слов "block".
 	<a href="http://sourceforge.net/p/scintilla/bugs/1664/">Bug #1664</a>.
 	</li>
 	<li>
-	Prevent caret blinking when holding down Delete key.
+	Предотвращено мигание курсора при зажатой клавише Delete.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1657/">Bug #1657</a>.
 	</li>
 	<li>
-	On Windows, allow right click selection in popup menu.
+	В Windows разрешен выбор правым кликом в всплывающих/контекстных меню.
 	<a href="http://sourceforge.net/p/scintilla/feature-requests/1080/">Feature #1080.</a>
 	</li>
 	<li>
-	On Windows, only call ShowCaret in GDI mode as it interferes with caret drawing when using Direct2D.
+	В Windows в режиме GDI используется только вызов ShowCaret, т.к. при использовании Direct2D это мешает отображению курсора.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1643/">Bug #1643</a>.
 	</li>
 	<li>
-	On Windows, another DirectWrite mode SC_TECHNOLOGY_DIRECTWRITEDC added
-	which may avoid drawing failures in some circumstances by drawing into a GDI DC.
-	This feature is provisional and may be changed or removed if a better solution is found.
+	В Windows добавлен дополнительный режим DirectWrite с SC_TECHNOLOGY_DIRECTWRITEDC, который устраняет ошибки отрисовки в некоторых случаях при использовании GDI DC. Эта функция является предварительной и может быть изменена или удалена, если будет найдено лучшее решение.
 	</li>
 	<li>
-	On Windows, avoid processing mouse move events where the mouse has not moved as these can
-	cause unexpected dwell start notifications.
+	В Windows убрана обработка событий перемещения мыши, когда мышь не двигается, поскольку они могут привести к неожиданным задержкам запуска уведомлений.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1670/">Bug #1670</a>.
 	</li>
 	<li>
-	For GTK+ on Windows, avoid extra space when pasting from external application.
+	В GTK+ в Windows убраны лишние пробелы при вставке из внешнего приложения.
 	</li>
 	<li>
-	On GTK+ 2.x allow Scintilla to be used inside tool tips by changing when preedit window created.
+	В GTK+ 2.x разрешено использовать Scintilla при изменении в всплывающих подсказках, если создано окно preedit.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1662/">Bug #1662</a>.
 	</li>
 	<li>
-	Support MinGW compilation under Linux.
+	Поддержка компиляции MinGW под Linux.
 	<a href="http://sourceforge.net/p/scintilla/feature-requests/1077/">Feature #1077.</a>
 	</li>
     </ul>
+	<li>Перевод: <b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=ALeXkRU" target=_blank>ALeXkRU</a></b>
+
     <h3>
        <a href="http://prdownloads.sourceforge.net/scintilla/scite351.zip?download">Release 3.5.1</a>
     </h3>
     <ul>
 	<li>
-	Released 30 September 2014.
+	Версия 3.5.1 от 30 сентября 2014.
 	</li>
 	<li>
-	BibTeX lexer added.
+	Добавлен лексер BibTeX.
 	<a href="http://sourceforge.net/p/scintilla/feature-requests/1071/">Feature #1071.</a>
 	</li>
 	<li>
-	SQL lexer supports the q-quote operator as SCE_SQL_QOPERATOR(24).
+	Лексер SQL поддерживает оператор кавычки q с помощью SCE_SQL_QOPERATOR(24).
 	</li>
 	<li>
-	VHDL lexer supports block comments.
+	В лексере VHDL поддерживаются блочные комментарии.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1527/">Bug #1527</a>.
 	</li>
 	<li>
-	VHDL folder fixes case where "component" used before name.
+	В лексере VHDL исправлена работа свёртки, когда перед именем присутствует слово "component".
 	<a href="http://sourceforge.net/p/scintilla/bugs/613/">Bug #613</a>.
 	</li>
 	<li>
-	Restore fractional pixel tab positioning which was truncated to whole pixels in 3.5.0.
+	Восстановлено дробное пиксельное размещение вкладок, которые усекались до целых пикселей в версии 3.5.0.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1652/">Bug #1652</a>.
 	</li>
 	<li>
-	Allow choice between windowed and inline IME on some platforms.
+	Разрешается выбор между оконным и встроенным компонентом IME на некоторых платформах.
 	</li>
 	<li>
-	On GTK+ cache autocomplete window to avoid platform bug where windows
-	were sometimes lost.
+	В GTK+ кэшируется окно автозавершения, чтобы избежать ошибки платформы, иногда приводящей к потере окон.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1649/">Bug #1649</a>.
 	</li>
 	<li>
-	On GTK+ size autocomplete window more accurately.
+	В GTK+ точнее вычисляется размер окна автозавершения.
 	</li>
 	<li>
-	On Windows only unregister windows classes registered.
+	В Windows регистрируются только незарегистрированные классы окон.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1639/">Bug #1639</a>.
 	</li>
 	<li>
-	On Windows another DirectWrite mode SC_TECHNOLOGY_DIRECTWRITERETAIN added
-	which may avoid drawing failures on some cards and drivers.
-	This feature is provisional and may be changed or removed if a better solution is found.
+	В Windows добавлен дополнительный режим DirectWrite с SC_TECHNOLOGY_DIRECTWRITERETAIN, который поможет избежать сбоев отрисовки на некоторых видеокартах и драйверах. Эта функция является предварительной и может быть изменена или удалена, если будет найдено лучшее решение.
 	</li>
 	<li>
-	On Windows support the Visual Studio 2010+ clipboard format that indicates a line copy.
+	В Windows поддерживается формат буфера обмена Visual Studio 2010+, который указывает на копию строки.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1636/">Bug #1636</a>.
 	</li>
 	<li>
-	SciTE session files remember the scroll position.
+	Файлы сессий SciTE запоминают положение прокрутки.
 	</li>
     </ul>
+	<li>Перевод: <b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=ALeXkRU" target=_blank>ALeXkRU</a></b>
+
     <h3>
        <a href="http://prdownloads.sourceforge.net/scintilla/scite350.zip?download">Release 3.5.0</a>
     </h3>
     <ul>
 	<li>
-	Released 13 August 2014.
+	Версия 3.5.0 от 13 августа 2014.
 	</li>
 	<li>
-	Text may share space vertically so that extreme ascenders and descenders are
-	not cut off by calling SCI_SETPHASESDRAW(SC_PHASES_MULTIPLE).
+	Текст может делить пространство по вертикали так, чтобы выступающие надстрочные и подстрочные элементы символов не обрезались при вызове SCI_SETPHASESDRAW(SC_PHASES_MULTIPLE).
 	</li>
 	<li>
-	Separate timers are used for each type of periodic activity and they are turned on and off
-	as required. This saves power as there are fewer wake ups.
-	On recent releases of OS X Cocoa and Windows, coalescing timers are used to further
-	save power.
+	Отдельные таймеры используются для каждого типа периодической активности, они включаются и выключаются по мере необходимости. Это экономит энергию за счет более редких пробуждений. В последних версиях OS X Cocoa и Windows для дополнительного сохранения энергии применяется объединение таймеров.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1086/">Bug #1086</a>.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1532/">Bug #1532</a>.
 	</li>
 	<li>
-	Explicit tab stops may be set for each line.
+	Явные позиции табуляции можно установить для каждой строки.
 	</li>
 	<li>
-	On Windows and GTK+, when using Korean input methods, IME composition is moved from a
-	separate window into the Scintilla window.
+	В Windows и GTK+ при использовании корейских методов ввода компонент IME перемещается из отдельного окна в окно Scintilla.
 	</li>
 	<li>
-	SciTE adds a "Clean" command to the "Tools" menu which is meant to be bound to a command like
-	"make clean".
+	В SciTE в меню "Tools" (Инструменты) добавлена команда "Очистить", предназначенная для привязки к команде "make clean".
 	</li>
 	<li>
-	Lexer added for Windows registry files.
+	Добавлен лексер для файлов реестра Windows.
 	</li>
 	<li>
-	HTML lexer fixes a crash with SGML after a Mako comment.
+	В лексере HTML исправлено падение с SGML после комментария Mako.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1622/">Bug #1622</a>.
 	</li>
 	<li>
-	KiXtart lexer adds a block comment state.
+	В лексер KiXtart добавлена обработка блоковых комментариев.
 	<a href="http://sourceforge.net/p/scintilla/feature-requests/1053/">Feature #1053.</a>
 	</li>
 	<li>
-	Matlab lexer fixes transpose operations like "X{1}'".
+	В лексере Matlab исправлены операции транспонирования, например "X{1}'".
 	<a href="http://sourceforge.net/p/scintilla/bugs/1629/">Bug #1629</a>.
 	</li>
 	<li>
-	Ruby lexer fixes bugs with the syntax of symbols including allowing a symbol to end with '?'.
+	В лексере Ruby исправлены ошибки с синтаксисом символов, включающих разрешенные символы с '?' на конце
 	<a href="http://sourceforge.net/p/scintilla/bugs/1627/">Bug #1627</a>.
 	</li>
 	<li>
-	Rust lexer supports byte string literals, naked CR can be escaped in strings, and files starting with
-	"#![" are not treated as starting with a hashbang comment.
+	Лексер Rust поддерживает литералы байтовых строк; пустой CR можно исключить в строках; файлы, начинающиеся с "#![" не рассматриваются как комментарии, начинающиеся с #!.
 	<a href="http://sourceforge.net/p/scintilla/feature-requests/1063/">Feature #1063.</a>
 	</li>
 	<li>
-	Bug fixed where style data was stale when deleting a rectangular selection.
+	Исправлена ошибка устаревания данных стиля при удалении прямоугольного выделения.
 	</li>
 	<li>
-	Bug fixed where annotations disappeared when SCI_CLEARDOCUMENTSTYLE called.
+	Исправлена ошибка исчезновения аннотаций при вызове SCI_CLEARDOCUMENTSTYLE.
 	</li>
 	<li>
-	Bug fixed where selection not redrawn after SCI_DELWORDRIGHT.
+	Исправлена ошибка не перерисовывания выделения после SCI_DELWORDRIGHT.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1633/">Bug #1633</a>.
 	</li>
 	<li>
-	Change the function prototypes to be complete for functions exported as "C".
+	Изменены прототипы функций для совместимости с функциями, экспортируемыми как "C".
 	<a href="http://sourceforge.net/p/scintilla/bugs/1618/">Bug #1618</a>.
 	</li>
 	<li>
-	Fix a memory leak on GTK+ with autocompletion lists.
+	Устранена утечка памяти в GTK+ при работе со списками автозавершения.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1638/">Bug #1638</a>.
 	</li>
 	<li>
-	On GTK+, use the full character width for the overstrike caret for multibyte characters.
+	В GTK+ используется вся ширина символа для наложения курсора при работе с многобайтовыми символами.
 	</li>
 	<li>
-	On Qt, set list icon size to largest icon. Add padding on OS X.
+	В Qt установлен размер списка иконок для крупных значков. Добавлены отступы на OS X.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1634/">Bug #1634</a>.
 	</li>
 	<li>
-	On Qt, fix building on FreeBSD 9.2.
+	В Qt исправлена сборка в FreeBSD 9.2.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1635/">Bug #1635</a>.
 	</li>
 	<li>
-	On Qt, add a get_character method on the document.
+	В Qt в документ добавлен метод get_character.
 	<a href="http://sourceforge.net/p/scintilla/feature-requests/1064/">Feature #1064.</a>
 	</li>
 	<li>
-	On Qt, add SCI_* for methods to ScintillaConstants.py.
+	В Qt добавлено SCI_* для методов в ScintillaConstants.py.
 	<a href="http://sourceforge.net/p/scintilla/feature-requests/1065/">Feature #1065.</a>
 	</li>
 	<li>
-	SciTE on GTK+ crash fixed with Insert Abbreviation command.
+	Исправлено падение SciTE в GTK+ с командой Вставить аббревиатуру/сокращение.
 	</li>
 	<li>
-	For SciTE with read-only files and are.you.sure=0 reenable choice to save to another
-	location when using Save or Close commands.
+	В SciTE с файлами только для чтения и параметром are.you.sure=0 повторно включается выбор места сохранения при использовании команд Сохранить или Закрыть.
 	</li>
 	<li>
-	Fix SciTE bug where toggle bookmark did not work after multiple lines with bookmarks merged.
+	Исправлена ошибка SciTE с неработающим переключением меток после объединения нескольких строк с метками.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1617/">Bug #1617</a>.
 	</li>
     </ul>
+	<li>Перевод: <b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=ALeXkRU" target=_blank>ALeXkRU</a></b>
+
     <h3>
        <a href="http://prdownloads.sourceforge.net/scintilla/scite344.zip?download">Release 3.4.4</a>
     </h3>
     <ul>
 	<li>
-	Released 3 July 2014.
+	Версия 3.4.4 от 3 июля 2014.
 	</li>
 	<li>
-	Style byte indicators removed. They were deprecated in 2007. Standard indicators should be used instead.
-	Some elements used by lexers no longer take number of bits or mask arguments so lexers may need to be
-	updated for LexAccessor::StartAt,  LexAccessor::SetFlags (removed),  LexerModule::LexerModule.
+	Удалены индикаторы байта стиля. Они устарели в 2007 году. Вместо них должны использоваться стандартные индикаторы. Некоторые элементы, используемые лексерами, больше не получают количество битов или аргументы маски, таким лексерам может потребоваться обновление для LexAccessor::StartAt, LexAccessor::SetFlags (удалён), LexerModule::LexerModule.
 	</li>
 	<li>
-	When multiple selections are active, autocompletion text may be inserted at each selection with new
-	SCI_AUTOCSETMULTI method.
+	При активном множественном выделении с новым методом SCI_AUTOCSETMULTI автозавершение текста может вставляться в каждое выделение.
 	</li>
 	<li>
-	C++ lexer fixes crash for "#define x(".
+	В лексере C++ исправлено падение при наличии в коде "#define x(".
 	<a href="http://sourceforge.net/p/scintilla/bugs/1614/">Bug #1614</a>.
 	</li>
 	<li>
-	C++ lexer fixes raw string recognition so that R"xxx(blah)xxx" is styled as SCE_C_STRINGRAW.
+	В лексере C++ исправлено распознавание сырой строки типа R"xxx(blah)xxx" при использовании стиля SCE_C_STRINGRAW.
 	</li>
 	<li>
-	The Postscript lexer no longer marks token edges with indicators as this used style byte indicators.
+	Лексер Postscript больше не выделяет границы токенов/лексем с индикаторами, для этого используются индикаторы байта стиля.
 	</li>
 	<li>
-	The Scriptol lexer no longer displays indicators for poor indentation as this used style byte indicators.
+	Лексер Scriptol больше не отображает индикаторы для неполных отступов, для этого используются индикаторы байта стиля.
 	</li>
 	<li>
-	TCL lexer fixes names of keyword sets.
+	В лексере TCL исправлено задание имён ключевых слов.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1615/">Bug #1615</a>.
 	</li>
 	<li>
-	Shell lexer fixes fold matching problem caused by "&lt;&lt;&lt;".
+	В лексере Shell исправлена проблема обработки свёртки при использовании "&lt;&lt;&lt;".
 	<a href="http://sourceforge.net/p/scintilla/bugs/1605/">Bug #1605</a>.
 	</li>
 	<li>
-	Fix bug where indicators were not removed when fold highlighting on.
+	Исправлена ошибка неудаления индикаторов при включении подсветки свёртки.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1604/">Bug #1604</a>.
 	</li>
 	<li>
-	Fix bug on Cocoa where emoji were treated as being zero width.
+	В Cocoa исправлена ошибка обработки emoji как имеющих нулевую ширину.
 	</li>
 	<li>
-	Fix crash on GTK+ with Ubuntu 12.04 and overlay scroll bars.
+	Исправлена ошибка в GTK+ с наложением полос прокрутки в Ubuntu 12.04.
 	</li>
 	<li>
-	Avoid creating a Cairo context when measuring text on GTK+ as future versions of GTK+
-	may prohibit calling gdk_cairo_create except inside drawing handlers. This prohibition may
-	be required on Wayland.
+	Исключено создание контекста Cairo при измерении текста в GTK+, так как будущих версиях GTK+ может быть запрещен вызов исключения gdk_cairo_create внутри обработчиков отрисовки. Этот запрет может потребоваться в Wayland.
 	</li>
 	<li>
-	On Cocoa, the registerNotifyCallback method is now marked as deprecated so client code that
-	uses it will display an error message.
-	Client code should use the delegate mechanism or subclassing instead.
-	The method will be removed in the next version.
+	В Cocoa метод registerNotifyCallback теперь помечен как устаревший, и клиентский код, который его использует, будет отображать сообщение об ошибке. Клиентский код должен использовать вместо него механизм делегирования или подклассы. Метод будет удален в следующих версиях.
 	</li>
 	<li>
-	On Cocoa, package Scintilla more in compliance with platform conventions.
-	Only publish public headers in the framework headers directory.
-	Only define the Scintilla namespace in Scintilla.h when compiling as C++.
-	Use the Cocoa NS_ENUM and NS_OPTIONS macros for exposed enumerations.
-	Hide internal methods from public headers.
-	These changes are aimed towards publishing Scintilla as a module which will allow it to
-	be used from the Swift programming language, although more changes will be needed here.
+	В Cocoa пакет Scintilla теперь более соответствует соглашениям платформы. Публичные Public-заголовки публикуются только в каталоге заголовков фреймворка. При компиляции как C++ пространство имен Scintilla определяется только в Scintilla.h. В Cocoa используются макросы NS_ENUM и NS_OPTIONS для открытых/незащищённых перечислений. Внутренние методы скрыты от public-заголовков. Эти изменения внесены с целью публикации Scintilla для использования его из языка программирования Swift, хотя это потребует больших изменений.
 	</li>
 	<li>
-	Fix crash in SciTE when stream comment performed at line end.
+	Исправлено падение в SciTE при выполнении потокового комментария в конце строки.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1610/">Bug #1610</a>.
 	</li>
 	<li>
-	For SciTE on Windows, display error message when common dialogs fail.
+	Для SciTE в Windows отображается сообщение об ошибке при проблемах общих диалоговых окон.
 	<a href="http://sourceforge.net/p/scintilla/bugs/156/">Bug #156</a>.
 	</li>
 	<li>
-	For SciTE on GTK+ fix bug with initialisation of toggle buttons in find and replace strips.
+	Для SciTE в GTK+ исправлена ошибка инициализации кнопок переключения в панели поиска и замены.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1612/">Bug #1612</a>.
 	</li>
     </ul>
+	<li>Перевод: <b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=ALeXkRU" target=_blank>ALeXkRU</a></b>
+
     <h3>
        <a href="http://prdownloads.sourceforge.net/scintilla/scite343.zip?download">Release 3.4.3</a>
     </h3>
     <ul>
 	<li>
-	Released 27 May 2014.
+	Версия 3.4.3 от 27 мая 2014.
 	</li>
 	<li>
-	Fix hangs and crashes in DLL at shutdown on Windows when using Direct2D.
+	Исправлено зависание и падение в DLL с использованием Direct2D при завершении Windows.
 	</li>
     </ul>
+	<li>Перевод: <b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=ALeXkRU" target=_blank>ALeXkRU</a></b>
+
     <h3>
        <a href="http://prdownloads.sourceforge.net/scintilla/scite342.zip?download">Release 3.4.2</a>
     </h3>
     <ul>
 	<li>
-	Released 22 May 2014.
+	Версия 3.4.2 от 22 мая 2014.
 	</li>
 	<li>
-	Insertions can be filtered or modified by calling SCI_CHANGEINSERTION inside a handler for
-	SC_MOD_INSERTCHECK.
+	Вставки могут быть отфильтрованы или изменены при вызове SCI_CHANGEINSERTION внутри обработчика для SC_MOD_INSERTCHECK.
 	</li>
 	<li>
-	DMIS lexer added. DMIS is a language for coordinate measuring machines.
+	Добавлен лексер DMIS. DMIS - это язык для координатно-измерительных машин.
 	<a href="http://sourceforge.net/p/scintilla/feature-requests/1049/">Feature #1049.</a>
 	</li>
 	<li>
-	Line state may be displayed in the line number margin to aid in debugging lexing and folding with
-	SC_FOLDFLAG_LINESTATE (128).
+	Состояния строк могут отображаться в поле нумерации строк, чтобы помочь в отладке подсветки лексики и свёртки с SC_FOLDFLAG_LINESTATE (128).
 	</li>
 	<li>
-	C++ lexer understands more preprocessor statements. #if defined SYMBOL is understood.
-	Some macros with arguments can be understood and these may be predefined in keyword set 4
-	(keywords5 for SciTE)
-	with syntax similar to CHECKVERSION(x)=(x&lt;3).
+	C++ лексер понимает больше директив препроцессора. Распознается #if defined SYMBOL. Могут распознаваться некоторые макросы с аргументами, они могут быть предопределены при задании параметра 4 - keyword 4 (keywords5 для SciTE) с синтаксисом, подобным CHECKVERSION(x)=(x&lt;3).
 	<a href="http://sourceforge.net/p/scintilla/feature-requests/1051/">Feature #1051.</a>
 	</li>
 	<li>
-	C++ lexer can highlight task marker keywords in comments as SCE_C_TASKMARKER.
+	Лексер C++ может подсвечивать заданные маркером ключевые слова в комментариях при использовании SCE_C_TASKMARKER.
 	</li>
 	<li>
-	C++ lexer can optionally highlight escape sequences in strings as SCE_C_ESCAPESEQUENCE.
+	Лексер C++ может опционально подсвечивать управляющие escape-последовательности в строках при использовании SCE_C_ESCAPESEQUENCE.
 	</li>
 	<li>
-	C++ lexer supports Go back quoted raw string literals with lexer.cpp.backquoted.strings option.
+	Лексер C++ поддерживает сырые строковые литералы в обратных кавычках с опцией lexer.cpp.backquoted.strings.
 	<a href="http://sourceforge.net/p/scintilla/feature-requests/1047/">Feature #1047.</a>
 	</li>
 	<li>
-	SciTE performs word and search match highlighting as an idle task to improve interactivity
-	and allow use of these features on large files.
+	SciTE выполняет подсветку слов и результатов поиска как фоновую задачу для повышения интерактивности, что позволяет использовать эти функций при работе с большими файлами.
 	</li>
 	<li>
-	Bug fixed on Cocoa where previous caret lines were visible.
+	Исправлена ошибка в Cocoa, из-за которой отображались предыдущие линии курсора.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1593/">Bug #1593</a>.
 	</li>
 	<li>
-	Bug fixed where caret remained invisible when period set to 0.
+	Исправлена ошибка, из-за которой курсор оставался невидимым при периоде, установленном в 0.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1592/">Bug #1592</a>.
 	</li>
 	<li>
-	Fixed display flashing when scrolling with GTK+ 3.10.
+	Исправлено мигание изображения при прокрутке в GTK+ 3.10.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1567/">Bug #1567</a>.
 	</li>
 	<li>
-	Fixed calls and constants deprecated in GTK+ 3.10.
+	Исправлены вызовы и устаревшие константы в GTK+ 3.10.
 	</li>
 	<li>
-	Fixed bug on Windows where WM_GETTEXT did not provide data in UTF-16 for Unicode window.
+	Исправлена ошибка в Windows, когда WM_GETTEXT не предоставлял данные в UTF-16 для окон в Unicode.
 	<a href="http://sourceforge.net/p/scintilla/bugs/685/">Bug #685</a>.
 	</li>
 	<li>
-	For SciTE, protect access to variables used by threads with a mutex to prevent data races.
+	В SciTE потоки используют защищенный доступ к переменным с помощью мьютекса для предотвращения утечки данных.
 	</li>
 	<li>
-	For SciTE on GTK+ fix thread object leaks.
-	Display the version of GTK+ compiled against in the about box.
+	Для SciTE в GTK+ исправлены утечки нитей объектов. Версия компиляции GTK+ отображается в окне "О программе".
 	</li>
 	<li>
-	For SciTE on GTK+ 3.10, fix the size of the tab bar's content and use
-	freedesktop.org standard icon names where possible.
+	Для SciTE в GTK+ 3.10 исправлены размер содержимого панели вкладок и использование имен стандартных иконок freedesktop.org, где возможно.
 	</li>
 	<li>
-	For SciTE on Windows, fix bug where invoking help resubmitted the
-	running program.
+	Для SciTE в Windows исправлена ошибка повторного запуска программы при вызове справки.
 	<a href="http://sourceforge.net/p/scintilla/bugs/272/">Bug #272</a>.
 	</li>
 	<li>
-	SciTE's highlight current word feature no longer matches the selection when it contains space.
+	Функция подсветки/выделения текущего слова в SciTE больше не обнаруживает соответствия для выделения, если оно содержит пробел.
 	</li>
 	<li>
-	For building SciTE in Visual C++, the win\SciTE.vcxproj project file should be used.
-	The boundscheck directory and its project and solution files have been removed.
+	Для сборки SciTE в Visual C++ следует использовать файл проекта win\SciTE.vcxproj. Каталог boundscheck, его проект и файлы решений удалены.
 	</li>
     </ul>
+	<li>Перевод: <b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=ALeXkRU" target=_blank>ALeXkRU</a></b>
+
     <h3>
        <a href="http://prdownloads.sourceforge.net/scintilla/scite341.zip?download">Release 3.4.1</a>
     </h3>
     <ul>
 	<li>
-	Released 1 April 2014.
+	Версия 3.4.1 от 1 апреля 2014.
 	</li>
 	<li>
-	Display Unicode line ends as [LS], [PS], and [NEL] blobs.
+	Отображение окончаний Unicode-строк - [LS], [PS] и [NEL] точки.
 	</li>
 	<li>
-	Bug fixed where cursor down failed on wrapped lines.
+	Исправлена ошибка с неперемещением курсора вниз на перенесенных строках.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1585/">Bug #1585</a>.
 	</li>
 	<li>
-	Caret positioning changed a little to appear inside characters less often by
-	rounding the caret position to the pixel grid instead of truncating.
+	Немного изменено позиционирование курсора, чтобы предотвратить появление внутри символов, путем округления позиции курсора к пиксельной сетке вместо усечения.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1588/">Bug #1588</a>.
 	</li>
 	<li>
-	Bug fixed where automatic indentation wrong when caret in virtual space.
+	Исправлена ошибка неправильной работы автоматических отступов, если курсор в виртуальном пространстве (за границей конца строк).
 	<a href="http://sourceforge.net/p/scintilla/bugs/1586/">Bug #1586</a>.
 	</li>
 	<li>
-	Bug fixed on Windows where WM_LBUTTONDBLCLK was no longer sent to window.
+	Исправлена ошибка в Windows с долгой отправкой события WM_LBUTTONDBLCLK в окно.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1587/">Bug #1587</a>.
 	</li>
 	<li>
-	Bug fixed with SciTE on Windows XP where black stripes appeared inside the find and
-	replace strips.
+	Исправлена ошибка в SciTE в Windows XP с появлением черных полос внутри панели поиска и замены.
 	</li>
 	<li>
-	Crash fixed in SciTE with recursive properties files.
+	Исправлено падение в SciTE из-за рекурсии в properties-файлах настроек.
 	<a href="http://sourceforge.net/p/scintilla/bugs/1507/">Bug #1507</a>.
 	</li>
 	<li>
-	Bug fixed with SciTE where Ctrl+E before an unmatched end brace jumps to file start.
+	Исправлена ошибка в SciTE, нажатие Ctrl+E перед отсутствующей соответствующей закрывающей скобкой переносило в начало файла.
 	<a href="http://sourceforge.net/p/scintilla/bugs/315/">Bug #315</a>.
 	</li>
 	<li>
-	Fixed scrolling on Cocoa to avoid display glitches and be smoother.
+	Исправлена прокрутка в Cocoa, чтобы избежать проблем отображения и увеличить плавность.
 	</li>
 	<li>
-	Fixed crash on Cocoa when character composition used when autocompletion list active.
+	Исправлен вылет в Cocoa при использовании составных символов, когда активен список автозавершения.
 	</li>
     </ul>
+	<li>Перевод: <b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=ALeXkRU" target=_blank>ALeXkRU</a></b>
+
     <h3>
        <a href="http://prdownloads.sourceforge.net/scintilla/scite340.zip?download">Release 3.4.0</a>
     </h3>
