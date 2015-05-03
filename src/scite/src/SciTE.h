@@ -9,11 +9,11 @@
 #define SCITE_H
 
 // Version numbers and dates
-//!#define VERSION_SCITE "3.5.4"
-#define VERSION_SCITE "3.5.4 .100Ru"
-//!#define VERSION_WORDS 3, 5, 4, 0
-#define VERSION_WORDS 3, 5, 4, 100
-#define COPYRIGHT_DATES "December 1998-March 2015"
+//!#define VERSION_SCITE "3.5.5"
+#define VERSION_SCITE "3.5.5 .101Ru"
+//!#define VERSION_WORDS 3, 5, 5, 0
+#define VERSION_WORDS 3, 5, 5, 101
+#define COPYRIGHT_DATES "December 1998-April 2015"
 #define COPYRIGHT_YEARS "1998-2015"
 
 // Menu IDs.

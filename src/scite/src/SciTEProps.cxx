@@ -306,8 +306,12 @@ std::string SciTEBase::ExtensionFileName() const {
 #if !defined(GTK)
 			// Force extension to lower case
 			std::string extension = name.Extension().AsUTF8();
+			if (extension.empty()) {
+				return name.AsUTF8();
+			} else {
 			LowerCaseAZ(extension);
 			return name.BaseName().AsUTF8() + "." + extension;
+			}
 #else
 			return name.AsUTF8();
 #endif
@@ -487,6 +491,7 @@ static const char *propertiesToForward[] = {
 	"lexer.tex.interface.default",
 	"lexer.tex.use.keywords",
 	"lexer.verilog.allupperkeywords",
+	"lexer.verilog.fold.preprocessor.else",
 	"lexer.verilog.portstyling",
 	"lexer.verilog.track.preprocessor",
 	"lexer.verilog.update.preprocessor",

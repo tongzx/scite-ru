@@ -295,7 +295,7 @@ void DirectorExtension::HandleStringMessage(const char *message) {
 	// be set to zero before time.
 	StringList wlMessage(true);
 	wlMessage.Set(message);
-	for (int i = 0; i < wlMessage.len; i++) {
+	for (size_t i = 0; i < wlMessage.Length(); i++) {
 		// Message format is [:return address:]command:argument
 		char *cmd = wlMessage[i];
 		if (*cmd == ':') {
@@ -315,7 +315,9 @@ void DirectorExtension::HandleStringMessage(const char *message) {
 			wDirector = 0;
 			if (startedByDirector) {
 				shuttingDown = true;
+				if (host) {
 				host->ShutDown();
+				}
 				shuttingDown = false;
 			}
 		} else if (host) {

@@ -44,8 +44,7 @@ static GUI::gui_string GetErrorMessage(DWORD nRet) {
 		GUI::gui_string s = lpMsgBuf;
 		::LocalFree(lpMsgBuf);
 		return s;
-	}
-	else {
+	} else {
 		return TEXT("");
 	}
 }
@@ -818,20 +817,10 @@ DWORD SciTEWin::ExecuteOne(const Job &jobToRun) {
 		codePageOutput = GUI::CodePageFromCharSet(characterSet, codePageOutput); //!-change-[FixEncoding]
 	}
 
-	SECURITY_ATTRIBUTES sa = {sizeof(SECURITY_ATTRIBUTES), 0, 0};
+	SECURITY_ATTRIBUTES sa = {sizeof(SECURITY_ATTRIBUTES), NULL, TRUE};
 	OutputAppendStringSynchronised(">");
 	OutputAppendEncodedStringSynchronised(GUI::StringFromUTF8(jobToRun.command), codePageOutput);
 	OutputAppendStringSynchronised("\n");
-
-	sa.bInheritHandle = TRUE;
-	sa.lpSecurityDescriptor = NULL;
-
-	SECURITY_DESCRIPTOR sd;
-	// Make a real security thing to allow inheriting handles
-	::InitializeSecurityDescriptor(&sd, SECURITY_DESCRIPTOR_REVISION);
-	::SetSecurityDescriptorDacl(&sd, TRUE, NULL, FALSE);
-	sa.nLength = sizeof(SECURITY_ATTRIBUTES);
-	sa.lpSecurityDescriptor = &sd;
 
 	HANDLE hPipeWrite = NULL;
 	HANDLE hPipeRead = NULL;
@@ -944,10 +933,10 @@ DWORD SciTEWin::ExecuteOne(const Job &jobToRun) {
 
 			DWORD bytesRead = 0;
 			DWORD bytesAvail = 0;
-			char buffer[16384];
+			std::vector<char> buffer(16*1024);
 
-			if (!::PeekNamedPipe(hPipeRead, buffer,
-					     sizeof(buffer), &bytesRead, &bytesAvail, NULL)) {
+			if (!::PeekNamedPipe(hPipeRead, &buffer[0],
+					     static_cast<DWORD>(buffer.size()), &bytesRead, &bytesAvail, NULL)) {
 				bytesAvail = 0;
 			}
 
@@ -993,13 +982,13 @@ DWORD SciTEWin::ExecuteOne(const Job &jobToRun) {
 				}
 
 			} else if (bytesAvail > 0) {
-				int bTest = ::ReadFile(hPipeRead, buffer,
-						       sizeof(buffer), &bytesRead, NULL);
+				int bTest = ::ReadFile(hPipeRead, &buffer[0],
+						       static_cast<DWORD>(buffer.size()), &bytesRead, NULL);
 
 				if (bTest && bytesRead) {
 
 					if (jobToRun.flags & jobRepSelMask) {
-						repSelBuf.append(buffer, bytesRead);
+						repSelBuf.append(&buffer[0], bytesRead);
 					}
 
 					if (!(jobToRun.flags & jobQuiet)) {
@@ -1011,12 +1000,12 @@ DWORD SciTEWin::ExecuteOne(const Job &jobToRun) {
 						// Convert OEM output to ANSI
 						if (props.GetInt("output.code.page.oem2ansi")) {
 							if (props.GetInt("character.set") == 204) {
-								::OemToCharBuffA(buffer, buffer, bytesRead);
+								::OemToCharBuffA(&buffer[0], &buffer[0], bytesRead);
 							}
 						}
 //!-end-[oem2ansi]
 						// Display the data
-						OutputAppendStringSynchronised(buffer, bytesRead);
+						OutputAppendStringSynchronised(&buffer[0], bytesRead);
 					}
 
 					::UpdateWindow(MainHWND());
