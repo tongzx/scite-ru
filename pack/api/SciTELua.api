@@ -456,9 +456,12 @@ UpdateStatusBar([bUpdateSlowData])\n perform update status bar
 editor:AddRefDocument
 editor:AddSelection
 editor:AddStyledText
+editor:AddTabStop
 editor:AddText
 editor:AddUndoAction
 editor:Allocate
+editor:AllocateExtendedStyles
+editor:AllocateSubStyles
 editor:AnnotationClearAll
 editor:AppendText
 editor:AssignCmdKey
@@ -489,6 +492,7 @@ editor:CanPaste
 editor:CanRedo
 editor:CanUndo
 editor:Cancel
+editor:ChangeInsertion
 editor:ChangeLexerState
 editor:CharLeft
 editor:CharLeftExtend
@@ -505,7 +509,9 @@ editor:ClearAllCmdKeys
 editor:ClearCmdKey
 editor:ClearDocumentStyle
 editor:ClearRegisteredImages
+editor:ClearRepresentation
 editor:ClearSelections
+editor:ClearTabStops
 editor:Colourise
 editor:ContractedFoldNext
 editor:ConvertEOLs
@@ -532,19 +538,25 @@ editor:DocumentEnd
 editor:DocumentEndExtend
 editor:DocumentStart
 editor:DocumentStartExtend
+editor:DropSelectionN
 editor:EditToggleOvertype
 editor:EmptyUndoBuffer
 editor:EncodedFromUTF8
 editor:EndUndoAction
 editor:EnsureVisible
 editor:EnsureVisibleEnforcePolicy
+editor:ExpandChildren
 editor:FindColumn
 editor:FindIndicatorFlash
 editor:FindIndicatorHide
 editor:FindIndicatorShow
 editor:FindText
+editor:FoldAll
+editor:FoldChildren
+editor:FoldLine
 editor:FormFeed
 editor:FormatRange
+editor:FreeSubStyles
 editor:GetCurLine
 editor:GetHotspotActiveBack
 editor:GetHotspotActiveFore
@@ -552,6 +564,7 @@ editor:GetLastChild
 editor:GetLine
 editor:GetLineSelEndPosition
 editor:GetLineSelStartPosition
+editor:GetNextTabStop
 editor:GetRangePointer
 editor:GetSelText
 editor:GetStyledText
@@ -641,18 +654,21 @@ editor:PositionBefore
 editor:PositionFromLine
 editor:PositionFromPoint
 editor:PositionFromPointClose
+editor:PositionRelative
 editor:PrivateLexerCall
 editor:PropertyNames
 editor:PropertyType
 editor:Redo
 editor:RegisterImage
 editor:RegisterRGBAImage
+editor:ReleaseAllExtendedStyles
 editor:ReleaseDocument
 editor:ReplaceSel
 editor:ReplaceTarget
 editor:ReplaceTargetRE
 editor:RotateSelection
 editor:ScrollCaret
+editor:ScrollRange
 editor:ScrollToEnd
 editor:ScrollToStart
 editor:SearchAnchor
@@ -672,10 +688,11 @@ editor:SetLengthForEncode
 editor:SetSavePoint
 editor:SetSel
 editor:SetSelBack
-editor:SetSelection
 editor:SetSelFore
+editor:SetSelection
 editor:SetStyling
 editor:SetStylingEx
+editor:SetTargetRange
 editor:SetText
 editor:SetVisiblePolicy
 editor:SetWhitespaceBack
@@ -1346,7 +1363,6 @@ IndicUnder[int markNumber] = bool\n [RW] Set an indicator to draw under text or 
 IndicatorCurrent = int indicator\n [RW] Set and get the indicator used for IndicatorFillRange and IndicatorClearRange
 IndicatorValue = int value\n [RW] Set and get the value used for IndicatorFillRange
 KeyWords[int keyWordSet] = string keyWordList\n [WO] Set up the key words used by the lexer
-KeysUnicode = bool \n [RW] Always interpret keyboard input as Unicode
 LayoutCache = int cacheMode\n [RW] Sets the degree of caching of layout information
 Length = int\n [RO] Returns the number of characters in the document
 Lexer = int lexer\n [RW] Set the lexing language of the document
@@ -3593,7 +3609,6 @@ SCI_GETINDENT = 2123
 SCI_GETINDENTATIONGUIDES = 2133
 SCI_GETINDICATORCURRENT = 2501
 SCI_GETINDICATORVALUE = 2503
-SCI_GETKEYSUNICODE = 2522
 SCI_GETLASTCHILD = 2224
 SCI_GETLAYOUTCACHE = 2273
 SCI_GETLENGTH = 2006
@@ -3900,7 +3915,6 @@ SCI_SETINDENT = 2122
 SCI_SETINDENTATIONGUIDES = 2132
 SCI_SETINDICATORCURRENT = 2500
 SCI_SETINDICATORVALUE = 2502
-SCI_SETKEYSUNICODE = 2521
 SCI_SETKEYWORDS = 4005
 SCI_SETLAYOUTCACHE = 2272
 SCI_SETLENGTHFORENCODE = 2448
@@ -4440,6 +4454,7 @@ STYLE_LINENUMBER = 33
 STYLE_MAX = 255
 UNDO_MAY_COALESCE = 1
 VISIBLE_SLOP = 0x01
+VISIBLE_STRICT = 0x04
 
 FilePath \n full path of the current file
 FileDir \n directory of the current file without a trailing slash
