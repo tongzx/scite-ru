@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 SideBar.lua
 Authors: Frank Wunderlich, mozers™, VladVRO, frs, BioInfo, Tymur Gubayev, ur4ltz, nicksabaka
-Version 1.28.2
+Version 1.29.0
 ------------------------------------------------------
   Note: Require gui.dll
                lpeg.dll
@@ -1490,24 +1490,77 @@ end)
 ----------------------------------------------------------
 -- Show Current Colour
 ----------------------------------------------------------
-local function SetColour(colour)
-	if colour:match('%x%x%x%x%x%x') then
-		-- Set colour's value HEX
-		memo_path:set_memo_colour("", "#"..colour)
+local function SetDefaultColour()
+	local def_bg = editor.StyleBack[32]
+	local b = math.floor(def_bg / 65536)
+	local g = math.floor((def_bg - b*65536) / 256)
+	local r = def_bg - b*65536 - g*256
+	local rgb_hex = string.format('#%2X%2X%2X', r, g, b)
+	memo_path:set_memo_colour("", rgb_hex)
+end
+
+local function RGB2Hex(rgb)
+	local hexadecimal = '#'
+	for key, value in pairs(rgb) do
+		local hex = ''
+		while(value > 0)do
+			local index = math.fmod(value, 16) + 1
+			value = math.floor(value / 16)
+			hex = string.sub('0123456789ABCDEF', index, index) .. hex
+		end
+		if(string.len(hex) == 0)then
+			hex = '00'
+		elseif(string.len(hex) == 1)then
+			hex = '0' .. hex
+		end
+		hexadecimal = hexadecimal .. hex
+	end
+	return hexadecimal
+end
+
+local function SetHexColour(colour)
+	colour = colour:gsub("^#", "")
+	local a, b = colour:match('()%x+()')
+	if a and b then
+		local l = b - a
+		if l == string.len(colour) then
+			if l == 3 then -- #rgb
+				local a,b,c = colour:match('(%x)(%x)(%x)')
+				memo_path:set_memo_colour("", "#"..a..a..b..b..c..c)
+			elseif l == 6 then -- #rrggbb
+				memo_path:set_memo_colour("", "#"..colour)
+			else
+				SetDefaultColour()
+			end
+		else
+			SetDefaultColour()
+		end
+	end
+end
+
+local function SetRGBColour(colour)
+	local r,g,b = colour:match('(%d+),%s*(%d+),%s*(%d+)') -- rgb(r,g,b)
+	if r and g and b then
+		local rn = tonumber(r)
+		local gn = tonumber(g)
+		local bn = tonumber(b)
+		if (rn >= 0) and (rn < 256) and (gn >= 0) and (gn < 256) and (bn >= 0) and (bn < 256) then
+			local hexcolor = RGB2Hex({rn, gn, bn})
+			memo_path:set_memo_colour("", hexcolor)
+		end
 	else
-		-- Set default colour
-		local def_bg = editor.StyleBack[32]
-		local b = math.floor(def_bg / 65536)
-		local g = math.floor((def_bg - b*65536) / 256)
-		local r = def_bg - b*65536 - g*256
-		local rgb_hex = string.format('#%2X%2X%2X', r, g, b)
-		memo_path:set_memo_colour("", rgb_hex)
+		SetHexColour(colour)
 	end
 end
 
 AddEventHandler("OnDwellStart", function(pos, cur_word)
 	if pos ~= 0 then
-		SetColour(cur_word)
+		local cur_text = editor:GetSelText()
+		if (cur_text == '') then
+			SetHexColour(cur_word)
+		else
+			SetRGBColour(cur_text)
+		end
 	end
 end)
 props["dwell.period"] = 50
@@ -1517,7 +1570,7 @@ AddEventHandler("OnKey", function()
 	if editor.Focus then
 		local cur_word = GetCurrentWord() -- слово, на котором стояла каретка ДО ТОГО КАК ЕЁ ПЕРЕМЕСТИЛИ
 		if cur_word ~= cur_word_old then
-			SetColour(cur_word)
+			SetHexColour(cur_word)
 			cur_word_old = cur_word
 		end
 	end
