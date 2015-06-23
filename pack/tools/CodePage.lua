@@ -1,7 +1,7 @@
 --[[--------------------------------------------------
 CodePage.lua
 Authors: YuriNB, VladVRO, mozers™
-Version: 2.5.2
+Version: 2.6.0
 ------------------------------------------------------
 Гибрид 2х скриптов:
 win1251 to cp866 keyboard mapper (YuriNB icq#2614215)
@@ -157,7 +157,9 @@ local charset1251to866 =
 [252]=236,[253]=237,[254]=238,[255]=239
 }
 
-local function Win2DOS(charAdded)
+local charAdded
+
+local function Win2DOS()
 	local a1=string.byte(charAdded)
 	if charset1251to866[a1] ~= nil then
 		local pos = editor.CurrentPos
@@ -167,8 +169,13 @@ local function Win2DOS(charAdded)
 end
 
 -- Добавляем свой обработчик события OnChar
-AddEventHandler("OnChar", function(char)
+AddEventHandler("OnChar", function(_)
 	if props["character.set"]=='255' then
-		Win2DOS(char)
+		Win2DOS()
 	end
+end)
+
+-- Добавляем свой обработчик события OnKey
+AddEventHandler("OnKey", function(_, _, _, _, char)
+	charAdded = char
 end)
