@@ -485,6 +485,118 @@
 	</ul>
 
     <h3>
+       <a href="http://prdownloads.sourceforge.net/scintilla/scite357.zip?download">Release 3.5.7</a>
+    </h3>
+    <ul>
+	<li>
+	Версия 3.5.7 от 20 июня 2015.
+	</li>
+	<li>
+	Добавлено SCI_MULTIPLESELECTADDNEXT для добавления следующего вхождения основного выделения в пределах цели в множество выделений как основного. Если текущее выделение пустое, выделится слово под курсором. SCI_MULTIPLESELECTADDEACH добавляет каждое вхождение основного набора в пределах цели в набор выделения.
+	</li>
+	<li>
+	В SciTE в меню Поиск добавлены команды "Добавить следующее в выделение" и "Добавить каждое выделение".
+	</li>
+	<li>
+	Добавлено SCI_ISRANGEWORD для определения, что параметры находятся в начале и в конце слова.
+	</li>
+	<li>
+	Добавлено SCI_TARGETWHOLEDOCUMENT для выбора документа в целом в качестве цели.
+	</li>
+	<li>
+	Лексер Verilog распознаёт блоки protected, добавлена свёртка блоков protected.
+	</li>
+	<li>
+	Исправлена проблема производительности с маркерами при удалении множества строк. 
+	<a href="http://sourceforge.net/p/scintilla/bugs/1733/">Bug #1733</a>.
+	</li>
+	<li>
+	В Cocoa исправлено падение из-за уничтожения ScintillaView, если не отображается автозавершение. 
+	<a href="http://sourceforge.net/p/scintilla/bugs/1728/">Bug #1728</a>.
+	</li>
+	<li>
+	В Cocoa исправлено падение при перетаскивании.
+	</li>
+	<li>
+	В GTK+ 3.4+ при наличии горизонтальной и вертикальной полос прокрутки исправлена отрисовка правого нижнего угла, чтобы он не становился черным при выборе текста. 
+	<a href="http://sourceforge.net/p/scintilla/bugs/1611/">Bug #1611</a>.
+	</li>
+	<li>
+	Исправлены много устаревших вызовов в GTK+ 3.16. Не исправлен стиль переопределения вызовов из-за большей сложности.
+	</li>
+	<li>
+	В SciTE в GTK+ 3.x используется различная техника для подсветки полосы поиска, когда нет совпадений, которая более совместима с будущими и прошлыми версиями и различным темам.
+	</li>
+    </ul>
+	<li>Перевод: <b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=ALeXkRU" target=_blank>ALeXkRU</a></b>
+
+    <h3>
+       <a href="http://prdownloads.sourceforge.net/scintilla/scite356.zip?download">Release 3.5.6</a>
+    </h3>
+    <ul>
+	<li>
+	Версия 3.5.6 от 26 мая 2015.
+	</li>
+	<li>
+	В Qt используется вызов дробного позиционирования без округления для обеспечения согласованности.
+	</li>
+	<li>
+	SCI_TARGETASUTF8 и SCI_ENCODEDFROMUTF8 реализованы в Win32 аналогично GTK+ и Cocoa.
+	</li>
+	<li>
+	В лексере C++ исправлена обработка пустой строки в кавычках. 
+	<a href="http://sourceforge.net/p/scintilla/bugs/1711/">Bug #1711</a>.
+	</li>
+	<li>
+	В лексере C++ исправлена обработка директивы #undef. 
+	<a href="http://sourceforge.net/p/scintilla/bugs/1719/">Bug #1719</a>.
+	</li>
+	<li>
+	Исправлена ошибка свёртки в Fortran при обработке "selecttype" и "selectcase". 
+	<a href="http://sourceforge.net/p/scintilla/bugs/1724/">Bug #1724</a>.
+	</li>
+	<li>
+	В Verilog добавлена свёртка блока определения interface.
+	</li>
+	<li>
+	В VHDL добавлена свёртка блока объявлений units и исправлена ошибка нечувствительности к регистру для обработки "IS" так же, как "is".
+	</li>
+	<li>
+	Исправлена ошибка при отрисовке границ текста в буферизованном режиме из-за использования кодировки по умолчанию вместо выбранной. 
+	<a href="http://sourceforge.net/p/scintilla/bugs/1703/">Bug #1703</a>.
+	</li>
+	<li>
+	Исправлена ошибка преобразования корейских иероглифов ханча (Hanja) в двухбайтовую кодировку (DBCS) в Windows.
+	</li>
+	<li>
+	В SciTE исправлена ошибка чтения файлов UTF-16, когда не-BMP символы (вне основного набора - Basic Multilingual Plane) разрывались на границе буфера чтения. 
+	<a href="http://sourceforge.net/p/scintilla/bugs/1710/">Bug #1710</a>.
+	</li>
+	<li>
+	В GTK+ 2.x для Windows исправлена ошибка с разницей в двоичном (бинарном) интерфейсе приложений (ABI) для версий компилятора. 
+	<a href="http://sourceforge.net/p/scintilla/bugs/1726/">Bug #1726</a>.
+	</li>
+	<li>
+	В Cocoa исправлена ошибка при отмене, которая могла приводить к потере данных..
+	</li>
+	<li>
+	Исправлена ошибка ссылки в Windows при использовании SCI_NAMESPACE.
+	</li>
+	<li>
+	Исправлен экспорт из SciTE при использовании для обработки Scintillua.
+	</li>
+	<li>
+	В SciTE убрано повторное сообщение, что искомая строка не может быть найдена, при нажатии "Заменить".
+	<a href="http://sourceforge.net/p/scintilla/bugs/1716/">Bug #1716</a>.
+	</li>
+	<li>
+	Для SciTE в GTK+ 3.x отключена стрелка в поисковом списке при отсутствии записей.
+	<a href="http://sourceforge.net/p/scintilla/bugs/1717/">Bug #1717</a>.
+	</li>
+    </ul>
+	<li>Перевод: <b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=ALeXkRU" target=_blank>ALeXkRU</a></b>
+
+    <h3>
        <a href="http://prdownloads.sourceforge.net/scintilla/scite355.zip?download">Release 3.5.5</a>
     </h3>
     <ul>
