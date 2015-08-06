@@ -1077,7 +1077,8 @@ UINT CodePageFromCharSet(DWORD characterSet, UINT documentCodePage) {
 	case SC_CHARSET_GREEK: return 1253;
 	case SC_CHARSET_HANGUL: return 949;
 	case SC_CHARSET_MAC: return 10000;
-	case SC_CHARSET_OEM: return 437;
+//!	case SC_CHARSET_OEM: return 437;
+	case SC_CHARSET_OEM: return 866; //!-change-[RussianOEMCP]
 	case SC_CHARSET_RUSSIAN: return 1251;
 	case SC_CHARSET_SHIFTJIS: return 932;
 	case SC_CHARSET_TURKISH: return 1254;
