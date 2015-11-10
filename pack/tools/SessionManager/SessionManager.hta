@@ -3,15 +3,15 @@
 	<meta http-equiv="content-type" content="text/html; charset=utf-8">
 	<meta http-equiv=MSThemeCompatible Content=Yes>
 <hta:application
-	id=SesMgr
-	applicationName=Session_Manager
-	version=1.2
-	maximizeButton=no
-	icon=sysedit.exe
-	innerBorder=no
-	scroll=no
-	singleinstance=yes
-	selection=no
+	id="SesMgr"
+	applicationName="Session Manager"
+	version="1.2"
+	maximizeButton="no"
+	icon="sysedit.exe"
+	innerBorder="no"
+	scroll="no"
+	singleinstance="yes"
+	selection="no"
 >
 <style type="text/css">
 	body,table   {font-family:MS Shell Dlg; font-size:8pt; background-color:threedface; margin:2;}
@@ -44,7 +44,7 @@ if (CmdArg !== ''){
 var winPosX=screen.width/2;
 var winPosY=screen.height/2;
 window.moveTo(winPosX-width/2, winPosY-height/2);
-document.title = SesMgr.applicationName.replace(/_/g,' ') + ' ' + SesMgr.version;
+document.title = SesMgr.applicationName + ' ' + SesMgr.version;
 
 // ------------------------------------------------
 // Пути к SciTE и SciteUserHome относительно этого файла

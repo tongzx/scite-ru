@@ -5,13 +5,13 @@
 <meta name=author content=mozers™>
 <meta name=generator content=SciTE-Ru>
 <hta:application
-id=HTA
-applicationName=html_HELP
-icon=winhlp32.exe
-innerBorder=no
-scroll=no
-version=2.0.0
->
+id="HTA"
+applicationName="html HELP"
+icon="winhlp32.exe"
+innerBorder="no"
+scroll="no"
+version="2.0.1"
+ />
 <script language=JavaScript>
 function ParseCmdLine(cmd){
 	var Arr_cmd = cmd.match(/[^ "]+|"[^"]+"/g);
@@ -206,7 +206,7 @@ function WinLoad() {
 
 function FrameLoad() {
 	if (idHTMLDoc.document.title) {
-		document.title = idHTMLDoc.document.title + " - [" + HTA.applicationName.replace(/_/g,' ') + ' ' + HTA.version + ']';
+		document.title = idHTMLDoc.document.title + " - [" + HTA.applicationName + ' ' + HTA.version + ']';
 
 		// History
 		if (idHTMLDoc.document.URL == "file://"+help_path) idHistory.options[0].text = idHTMLDoc.document.title;
