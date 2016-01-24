@@ -486,6 +486,125 @@
 
 
     <h3>
+       <a href="http://sourceforge.net/projects/scintilla/files/SciTE/3.6.3/scite363.zip/download">Release 3.6.3</a>
+    </h3>
+    <ul>
+	<li>
+	Версия 3.6.3 от 18 января 2016.
+	</li>
+	<li>
+	Разрешена отрисовка всего видимого текста сначала без подсветки стиля, затем добавляется подсветка в фоновом режиме, используя время простоя. Это помогает улучшить производительность при прокрутке вниз очень больших документов. Возможно также постепенное добавление подсветки за видимой областью до конца документа, чтобы документ содержал подсветку, когда пользователь прокручивает его.
+	</li>
+	<li>
+	Поддержка самоанализа (интроспекции) GObject на GTK+.
+	</li>
+	<li>
+	SciTE поддерживает вставку в каждое выделение с настройкой selection.multipaste.  
+	<a href="http://sourceforge.net/p/scintilla/feature-requests/1123/">Feature #1123</a>.
+	</li>
+	<li>
+	SciTE может опционально отображать индикатор "только для чтения" на вкладках и в меню буферов (список вкладок).
+	</li>
+	<li>
+	Лексер Bash помечал незавершённые heredoc-разделители как синтаксические ошибки.  
+	<a href="http://sourceforge.net/p/scintilla/bugs/1789/">Bug #1789</a>.
+	</li>
+	<li>
+	Добавлена поддержка использования символа '#' не только в комментариях, например, в командной оболочке zsh. 
+	<a href="http://sourceforge.net/p/scintilla/bugs/1794/">Bug #1794</a>.
+	</li>
+	<li>
+	Распознаётся больше символов в качестве разделителей heredoc.  
+	<a href="http://sourceforge.net/p/scintilla/bugs/1778/">Bug #1778</a>.
+	</li>
+	<li>
+	Лексер Errorlist подсвечивает предупреждения от компоновщика Microsoft.
+	</li>
+	<li>
+	В лексере Errorlist исправлена ошибка с последней строкой в режиме распознавания управляющих escape-последовательностей.
+	</li>
+	<li>
+	Лексер Lua включает битовые операторы '&' и '|' для Lua 5.3.  
+	<a href="http://sourceforge.net/p/scintilla/bugs/1790/">Bug #1790</a>.
+	</li>
+	<li>
+	Лексер Perl обновлён для поддержки Perl 5.20 и 5.22.
+	</li>
+	<li>
+	Допускается использование подчёркивания '_' для подпрограмм прототипов.  
+	<a href="http://sourceforge.net/p/scintilla/bugs/1791/">Bug #1791</a>.
+	</li>
+	<li>
+	Оператор двойные кавычки <<>>.
+	</li>
+	<li>
+	Шестнадцатеричные литералы с плавающей запятой.
+	</li>
+	<li>
+	Повторение в присвоении списка.  
+	<a href="http://sourceforge.net/p/scintilla/bugs/1793/">Bug #1793</a>.
+	</li>
+	<li>
+	Изменена подсветка синтаксиса подпрограмм прототипов для Perl 5.20.  
+	<a href="http://sourceforge.net/p/scintilla/bugs/1797/">Bug #1797</a>.
+	</li>
+	<li>
+	В Perl исправлена ошибка с модулями ::-syntax при использовании специальных символов, например 'x'.
+	</li>
+	<li>
+	В Perl добавлено обнаружение кавычек ' и " в префиксе символов для x повторений оператора.  
+	<a href="http://sourceforge.net/p/scintilla/bugs/1800/">Bug #1800</a>.
+	</li>
+	<li>
+	Лексер Visual Prolog распознает числа более точно и позволяет точно цитировать не-ASCII символы.  
+	<a href="http://sourceforge.net/p/scintilla/feature-requests/1130/">Feature #1130</a>.
+	</li>
+	<li>
+	Отправляется событие SCN_UPDATEUI с SC_UPDATE_SELECTION, когда приложение изменяет множественное выделение.
+	</li>
+	<li>
+	Перед удалением строки заголовка блока свёрнутые области разворачиваются.  
+	<a href="http://sourceforge.net/p/scintilla/bugs/1796/">Bug #1796</a>.
+	</li>
+	<li>
+	Обработка концов Unicode-строк как обычных строк для сохранения состояния свёртки.
+	</li>
+	<li>
+	Подсветка (выделение) всего потока при индикации наведения курсора с включенным переносом.  
+	<a href="http://sourceforge.net/p/scintilla/bugs/1784/">Bug #1784</a>.
+	</li>
+	<li>
+	В Cocoa исправлено падения при закрытии списка автозавершения во время прокрутки списка вверх кликом выше бегунка.  
+	<a href="http://sourceforge.net/p/scintilla/bugs/1788/">Bug #1788</a>.
+	</li>
+	<li>
+	В Windows исправлен ввод не-BMP символов (вне основного набора - Basic Multilingual Plane) с использованием WM_CHAR и разрешён WM_UNICHAR для работы с не-BMP символами и не-Unicode документами.  
+	<a href="http://sourceforge.net/p/scintilla/bugs/1779/">Bug #1779</a>.
+	</li>
+	<li>
+	В Windows используется DirectWrite для лигатур и других кластеров символов (сложных, составных), отображения курсора и выделений неполных кластеров так, что каретка не прилипает к концу кластера, что делает его понятнее при выполнении редактирования.
+	</li>
+	<li>
+	В Windows Scintilla больше не использует .DEF-файл в процессе компоновки, так как он дублирует директивы исходного кода.
+	</li>
+	<li>
+	В GTK+ и Qt исправлен корейский ввод по словам.
+	</li>
+	<li>
+	В GTK+, Qt и Win32 блокируется ввод с Редактором метода ввода (IME), если документ только для чтения или любой выбранный текст защищён.
+	</li>
+	<li>
+	В GTK+ на OS X исправлено предупреждение во время уничтожения.  
+	<a href="http://sourceforge.net/p/scintilla/bugs/1777/">Bug #1777</a>.
+	</li>
+	<li>
+	Исправлено падение Scite при использовании лексеров LPEG.
+	</li>
+    </ul>
+	<li>Перевод: <b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=NeNeZ" target=_blank>ALeXkRU</a></b>
+
+
+    <h3>
        <a href="http://prdownloads.sourceforge.net/scintilla/scite362.zip?download">Release 3.6.2</a>
     </h3>
     <ul>
@@ -551,7 +670,7 @@
 	<a href="http://sourceforge.net/p/scintilla/bugs/1769/">Bug #1769</a>.
 	</li>
     </ul>
-	<li>Перевод: <b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=ALeXkRU" target=_blank>ALeXkRU</a></b>
+	<li>Перевод: <b><a href="http://forum.ru-board.com/profile.cgi?action=show&member=NeNeZ" target=_blank>ALeXkRU</a></b>
 
 
     <h3>
